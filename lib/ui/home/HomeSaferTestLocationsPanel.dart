@@ -2,6 +2,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as Core;
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -13,7 +14,6 @@ import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:location/location.dart' as Core;
 
 /////////////////////////////////////////////
 // HomeSaferTestLocationsPanel
@@ -28,7 +28,7 @@ class HomeSaferTestLocationsPanel extends StatefulWidget {
 class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPanel>{
   
   List<HealthServiceLocation> _locations;
-  Core.LocationData _currentLocation;
+  Core.Position _currentLocation;
   bool _loadingLocations;
   String _statusString;
 
@@ -124,11 +124,10 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
   }
 
   Future<List<HealthServiceLocation>> _loadLocations() async {
-    String healthUrl = Config().healthUrl;
-    String countyId = Config().saferLocations['county_id'];
-    if ((healthUrl != null) && (countyId != null)) {
-      String url = "$healthUrl/covid19/locations?county-id=$countyId";
-      Response response = await Network().get(url, auth: NetworkAuth.ApiKey);
+    String contentUrl = Config().contentUrl;
+    if ((contentUrl != null)) {
+      String url = "$contentUrl/health_locations";
+      Response response = await Network().get(url, auth: NetworkAuth.Auth2);
       return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(AppJson.decode(response.body)) : null;
     }
     return null;
@@ -267,7 +266,8 @@ class _TestLocation extends StatelessWidget {
                 ],
               ))
             )),*/
-              _buildWaitTime(),
+              // Hide wait times #1099
+              //_buildWaitTime(),
               Semantics(explicitChildNodes:true,button: false, child:
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -286,6 +286,7 @@ class _TestLocation extends StatelessWidget {
       );
   }
 
+  /* Hide wait times
   Widget _buildWaitTime(){
     if(!_isLocationOpen){
       return Container();
@@ -339,7 +340,7 @@ class _TestLocation extends StatelessWidget {
             )
           ],
         ));
-  }
+  }*/
 
   Widget _buildWorkTime(){
     List<HealthLocationDayOfOperation> items = [];
@@ -473,6 +474,7 @@ class _TestLocation extends StatelessWidget {
   }
 
 
+  /* Hide wait times
   bool get _isLocationOpen{
     HealthLocationDayOfOperation todayPeriod;
     if(AppCollection.isCollectionNotEmpty(testLocation?.daysOfOperation)) {
@@ -483,6 +485,7 @@ class _TestLocation extends StatelessWidget {
 
     return todayPeriod?.isOpen ?? false;
   }
+  */
 }
 
 ///////////////////////////////
@@ -503,16 +506,13 @@ class HealthServiceLocation {
   final double latitude;
   final double longitude;
   final HealthLocationWaitTimeColor waitTimeColor;
-  final List<String> availableTests;
   final List<HealthLocationDayOfOperation> daysOfOperation;
   
-  HealthServiceLocation({this.id, this.name, this.availableTests, this.contact, this.city, this.address1, this.address2, this.state, this.country, this.zip, this.url, this.notes, this.latitude, this.longitude, this.waitTimeColor, this.daysOfOperation});
+  HealthServiceLocation({this.id, this.name, this.contact, this.city, this.address1, this.address2, this.state, this.country, this.zip, this.url, this.notes, this.latitude, this.longitude, this.waitTimeColor, this.daysOfOperation});
 
   factory HealthServiceLocation.fromJson(Map<String, dynamic> json) {
-    List jsoTests = json['available_tests'];
-    List jsonDaysOfOperation = json['days_of_operation'];
     return (json != null) ? HealthServiceLocation(
-      id: json['id'],
+      id: json['_id'],
       name: json['name'],
       contact: json["contact"],
       city: json["city"],
@@ -526,14 +526,13 @@ class HealthServiceLocation {
       latitude: AppJson.doubleValue(json["latitude"]),
       longitude: AppJson.doubleValue(json["longitude"]),
       waitTimeColor: HealthServiceLocation.waitTimeColorFromString(json['wait_time_color']),
-      availableTests: jsoTests!=null ? List.from(jsoTests) : null,
-      daysOfOperation: jsonDaysOfOperation!=null ? HealthLocationDayOfOperation.listFromJson(jsonDaysOfOperation) : null,
+      daysOfOperation: HealthLocationDayOfOperation.listFromJson(json['days_of_operation']),
     ) : null;
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      '_id': id,
       'name': name,
       'contact': contact,
       'city': city,
@@ -547,7 +546,6 @@ class HealthServiceLocation {
       'latitude': latitude,
       'longitude': longitude,
       'wait_time_color': HealthServiceLocation.waitTimeColorToKeyString(waitTimeColor),
-      'available_tests': availableTests,
     };
   }
 

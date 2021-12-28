@@ -8,6 +8,7 @@ import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -147,7 +148,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       return _InboxMessageCard(
         message: entry,
         selected: (_isEditMode == true) ? _selectedMessageIds.contains(entry.messageId) : null,
-        onTap: () => _onSelectMessage(entry));
+        onTap: () => _onTapMessage(entry));
     }
     else if (entry is String) {
       return _buildListHeading(text: entry);
@@ -172,20 +173,36 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
           CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary),),),),);
   }
 
-  void _onSelectMessage(InboxMessage message) {
+  void _onTapMessage(InboxMessage message) {
     if (_isEditMode == true) {
-      setState(() {
-        if (_selectedMessageIds.contains(message.messageId)) {
-          _selectedMessageIds.remove(message.messageId);
-          AppSemantics.announceMessage(context, "Deselected");
-        }
-        else {
-          _selectedMessageIds.add(message.messageId);
-          AppSemantics.announceMessage(context, "Selected");
-        }
-      });
+      _handleSelectionTap(message);
+    } else {
+      _handleRedirectTap(message);
     }
   }
+
+  void _handleSelectionTap(InboxMessage message) {
+    setState(() {
+      if (_selectedMessageIds.contains(message?.messageId)) {
+        _selectedMessageIds.remove(message?.messageId);
+        AppSemantics.announceMessage(context, "Deselected");
+      } else {
+        _selectedMessageIds.add(message?.messageId);
+        AppSemantics.announceMessage(context, "Selected");
+      }
+    });
+  }
+
+  void _handleRedirectTap(InboxMessage message) {
+    FirebaseMessaging().processDataMessage(message?.data, allowedTypes: {
+      FirebaseMessaging.payloadTypeEventDetail,
+      FirebaseMessaging.payloadTypeGameDetail,
+      FirebaseMessaging.payloadTypeAthleticsGameStarted,
+      FirebaseMessaging.payloadTypeAthleticsNewDetail,
+      FirebaseMessaging.payloadTypeGroup,
+    });
+  }
+
 
   // Filters
 

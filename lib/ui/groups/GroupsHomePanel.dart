@@ -347,7 +347,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                     _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My groups'), hint: '', selected: _myGroupsSelected, onTap: _onTapMyGroups),
                     Container(width: 15,),
                     Flexible(child: Container()),
-                    Visibility(visible: _canCreateGroup, child: _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10,), selected: false, onTap: _onTapCreate)),
+                    Visibility(visible: _canCreateGroup, child: _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10, excludeFromSemantics: true), selected: false, onTap: _onTapCreate)),
                   ],
                 ),
               )
@@ -689,7 +689,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   bool get _canCreateGroup {
-    return Auth2().isGroupsAccess;
+    return Auth2().isOidcLoggedIn;
   }
 
   ///////////////////////////////////

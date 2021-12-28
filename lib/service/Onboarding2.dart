@@ -27,11 +27,15 @@ class Onboarding2 with Service{
   }
 
   void finalize(BuildContext context) {
+    _proceedToNotificationsAuthIfNeeded(context);
+  }
+
+  void _proceedToNotificationsAuthIfNeeded(BuildContext context) {
     Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
     if (codes.contains('notifications_auth')) {
       OnboardingAuthNotificationsPanel authNotificationsPanel = OnboardingAuthNotificationsPanel(onboardingContext:{
         'onContinueAction':  () {
-          _proceedToLogin(context);
+          _didProceedNotificationsAuth(context);
         }
       });
       authNotificationsPanel.onboardingCanDisplayAsync.then((bool result) {
@@ -39,13 +43,17 @@ class Onboarding2 with Service{
           Navigator.push(context, CupertinoPageRoute(builder: (context) => authNotificationsPanel));
         }
         else {
-          _proceedToLogin(context);
+          _didProceedNotificationsAuth(context);
         }
       });
     }
     else {
-      _proceedToLogin(context);
+      _didProceedNotificationsAuth(context);
     }
+  }
+
+  void _didProceedNotificationsAuth(BuildContext context) {
+    _proceedToLogin(context);
   }
 
   void _proceedToLogin(BuildContext context){

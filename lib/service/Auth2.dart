@@ -9,6 +9,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
@@ -22,18 +23,19 @@ import 'package:url_launcher/url_launcher.dart';
 
 class Auth2 with Service implements NotificationsListener {
   
-  static const String REDIRECT_URI         = 'edu.illinois.rokwire://rokwire.illinois.edu/oidc-auth';
+  static const String REDIRECT_URI            = '${DeepLink.ROKWIRE_URL}/oidc-auth';
 
-  static const String notifyLoginStarted   = "edu.illinois.rokwire.auth2.login.started";
-  static const String notifyLoginSucceeded = "edu.illinois.rokwire.auth2.login.succeeded";
-  static const String notifyLoginFailed    = "edu.illinois.rokwire.auth2.login.failed";
-  static const String notifyLoginChanged   = "edu.illinois.rokwire.auth2.login.changed";
-  static const String notifyLoginFinished  = "edu.illinois.rokwire.auth2.login.finished";
-  static const String notifyLogout         = "edu.illinois.rokwire.auth2.logout";
-  static const String notifyProfileChanged = "edu.illinois.rokwire.auth2.profile.changed";
-  static const String notifyPrefsChanged   = "edu.illinois.rokwire.auth2.prefs.changed";
-  static const String notifyCardChanged    = "edu.illinois.rokwire.auth2.card.changed";
-  static const String notifyUserDeleted    = "edu.illinois.rokwire.auth2.user.deleted";
+  static const String notifyLoginStarted      = "edu.illinois.rokwire.auth2.login.started";
+  static const String notifyLoginSucceeded    = "edu.illinois.rokwire.auth2.login.succeeded";
+  static const String notifyLoginFailed       = "edu.illinois.rokwire.auth2.login.failed";
+  static const String notifyLoginChanged      = "edu.illinois.rokwire.auth2.login.changed";
+  static const String notifyLoginFinished     = "edu.illinois.rokwire.auth2.login.finished";
+  static const String notifyLogout            = "edu.illinois.rokwire.auth2.logout";
+  static const String notifyProfileChanged    = "edu.illinois.rokwire.auth2.profile.changed";
+  static const String notifyPrefsChanged      = "edu.illinois.rokwire.auth2.prefs.changed";
+  static const String notifyCardChanged       = "edu.illinois.rokwire.auth2.card.changed";
+  static const String notifyUserDeleted       = "edu.illinois.rokwire.auth2.user.deleted";
+  static const String notifyPrepareUserDelete = "edu.illinois.rokwire.auth2.user.prepare.delete";
 
   static const String analyticsUin         = 'UINxxxxxx';
   static const String analyticsFirstName   = 'FirstNameXXXXXX';
@@ -106,7 +108,12 @@ class Auth2 with Service implements NotificationsListener {
     _deviceId = await NativeCommunicator().getDeviceId();
 
     if ((_account == null) && (_anonymousPrefs == null)) {
-      Storage().auth2AnonymousPrefs = _anonymousPrefs = Auth2UserPrefs.empty();
+      Storage().auth2AnonymousPrefs = _anonymousPrefs = Auth2UserPrefs.fromStorage(
+        profile: Storage().userProfile,
+        includedFoodTypes: Storage().includedFoodTypesPrefs,
+        excludedFoodIngredients: Storage().excludedFoodIngredientsPrefs,
+        settings: FirebaseMessaging.storedSettings,
+      );
     }
 
     if ((_account == null) && (_anonymousProfile == null)) {
@@ -576,7 +583,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<Auth2EmailAccountState> checkEmailAccountState(String email) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null)) {
-      String url = "${Config().coreUrl}/services/auth/account-exists";
+      String url = "${Config().coreUrl}/services/auth/account/exists";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
@@ -684,6 +691,7 @@ class Auth2 with Service implements NotificationsListener {
   // Delete
 
   Future<bool> deleteUser() async {
+    NotificationService().notify(notifyPrepareUserDelete);
     if (await _deleteUserAccount()) {
       logout(prefs: Auth2UserPrefs.empty());
       NotificationService().notify(notifyUserDeleted);
@@ -711,8 +719,9 @@ class Auth2 with Service implements NotificationsListener {
         if (_refreshTokenFuture != null) {
           Log.d("Auth2: will await refresh token");
           Response response = await _refreshTokenFuture;
-          Log.d("Auth2: did await refresh token");
-          Auth2Token responseToken = (response?.statusCode == 200) ? Auth2Token.fromJson(AppJson.decodeMap(response?.body)) : null;
+          Map<String, dynamic> responseJson = AppJson.decodeMap(response?.body);
+          Auth2Token responseToken = (responseJson != null) ? Auth2Token.fromJson(AppJson.mapValue(responseJson['token'])) : null;
+          Log.d("Auth2: did await refresh token: ${responseToken?.isValid} ${response?.statusCode} ${response?.body}");
           return ((responseToken != null) && responseToken.isValid) ? responseToken : null;
         }
         else {
@@ -728,7 +737,7 @@ class Auth2 with Service implements NotificationsListener {
             if ((responseToken != null) && responseToken.isValid) {
               _refreshTonenFailCount = null;
 
-              Log.d("Auth: did refresh token: ${token?.accessToken}");
+              Log.d("Auth2: did refresh token: ${token?.accessToken}");
               if (_token != null) {
                 Storage().auth2Token = _token = responseToken;
               }
@@ -743,7 +752,7 @@ class Auth2 with Service implements NotificationsListener {
               return responseToken;
             }
             else {
-              Log.d("Auth: failed to refresh token: ${response?.body}");
+              Log.d("Auth2: failed to refresh token: ${response?.statusCode}\n${response?.body}");
               _refreshTonenFailCount = (_refreshTonenFailCount != null) ? (_refreshTonenFailCount + 1) : 1;
               if (Config().refreshTokenRetriesCount <= _refreshTonenFailCount) {
                 logout();
@@ -751,10 +760,11 @@ class Auth2 with Service implements NotificationsListener {
             }
           }
           else if ((response?.statusCode == 400) || (response?.statusCode == 401) || (response?.statusCode == 403)) {
+            Log.d("Auth2: failed to refresh token: ${response?.statusCode}\n${response?.body}");
             logout(); // Logout only on 400, 401 or 403. Do not do anything else for the rest of scenarios
           }
           else {
-            Log.d("Auth: failed to refresh token: ${response?.body}");
+            Log.d("Auth2: failed to refresh token: ${response?.statusCode}\n${response?.body}");
             _refreshTonenFailCount = (_refreshTonenFailCount != null) ? (_refreshTonenFailCount + 1) : 1;
             if (Config().refreshTokenRetriesCount <= _refreshTonenFailCount) {
               logout();

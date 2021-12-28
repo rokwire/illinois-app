@@ -11,7 +11,6 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/Twitter.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -118,7 +117,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 
   Widget _buildHeader() {
-    return Semantics(container: true ,
+    return Semantics(container: true , header: true,
     child: Container(color: Styles().colors.fillColorPrimary, child:
       Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -248,7 +247,7 @@ class _TweetWidget extends StatelessWidget {
                 Column(children: [
                   AppString.isStringNotEmpty(tweet?.media?.url) ?
                     InkWell(onTap: () => _onTap(context), child:
-                      Image.network(tweet?.media?.url)) :
+                      Image.network(tweet?.media?.url, excludeFromSemantics: true)) :
                   Container(),
                   Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
                     //Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),
@@ -283,11 +282,7 @@ class _TweetWidget extends StatelessWidget {
 
   void _launchUrl(String url, {BuildContext context}) {
     if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
-        launch(url);
-      }
+      launch(url);
     }
   }
 }

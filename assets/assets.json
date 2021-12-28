@@ -1084,8 +1084,8 @@
 								"title": "panel.wellness.common.interactive_activities.activity.pledge",
 								"image": "pledge.png",
 								"action": {
-									"name": "web",
-									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+									"name": "guide",
+									"source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37"
 								}
 							},
 							{
@@ -1095,8 +1095,8 @@
 								"title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk",
 								"image": "kognito.png",
 								"action": {
-									"name": "web",
-									"source": "https://counselingcenter.illinois.edu/kognito-at-risk"
+									"name": "guide",
+									"source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito"
 								}
 							}
 						]
@@ -1132,8 +1132,8 @@
 								"title": "panel.wellness.common.interactive_activities.activity.pledge",
 								"image": "pledge.png",
 								"action": {
-									"name": "web",
-									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+									"name": "guide",
+									"source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37"
 								}
 							}
 						]
@@ -1356,8 +1356,8 @@
 								"title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk_center",
 								"image": "kognito.png",
 								"action": {
-									"name": "web",
-									"source": "https://counselingcenter.illinois.edu/kognito-at-risk"
+									"name": "guide",
+									"source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito"
 								}
 							},
 							{
@@ -1388,8 +1388,8 @@
 								"title": "panel.wellness.common.interactive_activities.activity.pledge",
 								"image": "pledge.png",
 								"action": {
-									"name": "web",
-									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+									"name": "guide",
+									"source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37"
 								}
 							}
 						]
@@ -1401,7 +1401,7 @@
 						"ribbon_buttons": [
 							{
 								"title": "panel.wellness.mental.resources.counseling",
-								"url": "https://counselingcenter.illinois.edu/counseling",
+								"url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=Counseling.center",
 								"icon": "link-out.png",
 								"hint": ""
 							},
@@ -1413,7 +1413,7 @@
 							},
 							{
 								"title": "panel.wellness.common.resources.ace_it",
-								"url": "https://counselingcenter.illinois.edu/aceit",
+								"url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=drugs.alcohol.help",
 								"icon": "link-out.png",
 								"hint": ""
 							}
@@ -1510,8 +1510,8 @@
 								"title": "panel.wellness.common.interactive_activities.activity.pledge",
 								"image": "pledge.png",
 								"action": {
-									"name": "web",
-									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+									"name": "guide",
+									"source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37"
 								}
 							}
 						]
@@ -1597,7 +1597,6 @@
 							{
 								"title":"panel.wellness.financial.resources.budgets",
 								"url":"http://mhcwellness.illinois.edu/budget-finances",
-								"guide_id":"wellness.financial.budget_and_finance",
 								"icon": "link-out.png",
 								"hint": ""
 							}
@@ -1634,8 +1633,8 @@
 								"title": "panel.wellness.common.interactive_activities.activity.pledge",
 								"image": "pledge.png",
 								"action": {
-									"name": "web",
-									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+									"name": "guide",
+									"source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37"
 								}
 							}
 						]
@@ -1664,7 +1663,6 @@
 							{
 								"title":"panel.wellness.common.resources.programs",
 								"url":"https://oiir.illinois.edu/programs",
-								"guide_id":"wellness.spiritual.programs",
 								"icon": "link-out.png",
 								"hint": ""
 							},
@@ -1767,8 +1765,8 @@
 								"title": "panel.wellness.common.interactive_activities.activity.pledge",
 								"image": "pledge.png",
 								"action": {
-									"name": "web",
-									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+									"name": "guide",
+									"source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37"
 								}
 							}
 						]
@@ -1895,8 +1893,8 @@
 								"title": "panel.wellness.common.interactive_activities.activity.pledge",
 								"image": "pledge.png",
 								"action": {
-									"name": "web",
-									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+									"name": "guide",
+									"source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37"
 								}
 							}
 						]
@@ -1919,7 +1917,6 @@
 							{
 								"title":"panel.wellness.common.resources.programs",
 								"url":"https://oiir.illinois.edu/programs",
-								"guide_id":"wellness.spiritual.programs",
 								"icon": "link-out.png",
 								"hint": ""
 							},
@@ -1942,13 +1939,13 @@
 						"ribbon_buttons": [
 							{
 								"title":"panel.wellness.common.interactive_activities.activity.kognito_at_risk_center",
-								"url":"https://counselingcenter.illinois.edu/emergency/kognito-risk-suicide-prevention-training",
+								"url":"edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito",
 								"icon": "link-out.png",
 								"hint": ""
 							},
 							{
 								"title":"panel.wellness.common.resources.ace_it",
-								"url":"https://counselingcenter.illinois.edu/aceit",
+								"url":"edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=drugs.alcohol.help",
 								"icon": "link-out.png",
 								"hint": ""
 							}
@@ -2042,8 +2039,8 @@
 								"title": "panel.wellness.common.interactive_activities.activity.pledge",
 								"image": "pledge.png",
 								"action": {
-									"name": "web",
-									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+									"name": "guide",
+									"source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37"
 								}
 							}
 						]

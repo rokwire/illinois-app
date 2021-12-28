@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -27,7 +28,6 @@ import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
-import 'package:location/location.dart' as Core;
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Dining.dart';
@@ -38,7 +38,7 @@ import 'package:illinois/service/Styles.dart';
 class ExploreCard extends StatefulWidget {
   final GestureTapCallback onTap;
   final Explore explore;
-  final Core.LocationData locationData;
+  final Core.Position locationData;
   final bool showTopBorder;
   final bool hideInterests;
   final bool showSmallImage;
@@ -101,97 +101,101 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     String imageUrl = AppString.getDefaultEmptyString(value: widget.explore.exploreImageURL);
     String interestsLabelValue = _getInterestsLabelValue();
 
-    return GestureDetector(
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: widget.onTap,
-        child: Semantics(
-          label: semanticLabel,
-//          excludeSemantics: true,
-          child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),child: Stack(
-              alignment: Alignment.topCenter,
-              children: [
-                ExcludeSemantics(
-                  child:Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                        border: widget.border,
-                        boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        _exploreTop(),
-                        Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                          Expanded(child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Visibility(
-                                visible: (isEvent || isGame),
-                                child: _exploreName(),
-                              ),
-                              _exploreDetails(),
-                            ],)),
-                          Visibility(visible: (widget.showSmallImage &&
-                              AppString.isStringNotEmpty(imageUrl)),
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
-                                child: SizedBox(
-                                  width: _smallImageSize,
-                                  height: _smallImageSize,
-                                  child: Image.network(
-                                    imageUrl, fit: BoxFit.fill,),),)),
-                        ],),
-                        _explorePaymentTypes(),
-                        _buildConvergeButton(),
-                        Visibility(visible: _showInterests(),
-                            child: Column(
+        child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),child: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  border: widget.border,
+                  boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  _exploreTop(),
+                  Container(
+                    child: Semantics(excludeSemantics: true,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                            Expanded(child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Container(
-                                  height: 1, color: Styles().colors.surfaceAccent,),
-                                Padding(padding: EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Flexible(flex: 8,
-                                          child: Container(width: double.infinity, child:
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Text(Localization().getStringEx(
-                                                  'widget.card.label.interests',
-                                                  'Because of your interest in:'),
-                                                style: TextStyle(
+                                Visibility(
+                                  visible: (isEvent || isGame),
+                                  child: _exploreName(),
+                                ),
+                                _exploreDetails(),
+                              ],)),
+                            Visibility(visible: (widget.showSmallImage &&
+                                AppString.isStringNotEmpty(imageUrl)),
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
+                                  child: SizedBox(
+                                    width: _smallImageSize,
+                                    height: _smallImageSize,
+                                    child: Image.network(
+                                      imageUrl, excludeFromSemantics: true, fit: BoxFit.fill,),),)),
+                          ],),
+                          _explorePaymentTypes(),
+                          _buildConvergeButton(),
+                          Visibility(visible: _showInterests(),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    height: 1, color: Styles().colors.surfaceAccent,),
+                                  Padding(padding: EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Flexible(flex: 8,
+                                            child: Container(width: double.infinity, child:
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(Localization().getStringEx(
+                                                    'widget.card.label.interests',
+                                                    'Because of your interest in:'),
+                                                  style: TextStyle(
+                                                      color: Styles().colors.textBackground,
+                                                      fontSize: 12,
+                                                      fontFamily: Styles().fontFamilies.bold),),
+                                                Text(AppString.getDefaultEmptyString(
+                                                    value: interestsLabelValue), style: TextStyle(
                                                     color: Styles().colors.textBackground,
                                                     fontSize: 12,
-                                                    fontFamily: Styles().fontFamilies.bold),),
-                                              Text(AppString.getDefaultEmptyString(
-                                                  value: interestsLabelValue), style: TextStyle(
-                                                  color: Styles().colors.textBackground,
-                                                  fontSize: 12,
-                                                  fontFamily: Styles().fontFamilies.medium),)
-                                            ],)),
-                                        ),
-                                        Flexible(flex: 2,
-                                          child: Container(width: double.infinity, alignment: Alignment.centerRight,
-                                              child: ExploreConvergeDetailItem(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
-
+                                                    fontFamily: Styles().fontFamilies.medium),)
+                                              ],)),
                                           ),
-                                        )
-                                      ],
-                                    ))
+                                          Flexible(flex: 2,
+                                            child: Container(width: double.infinity, alignment: Alignment.centerRight,
+                                                child: ExploreConvergeDetailItem(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
+
+                                            ),
+                                          )
+                                        ],
+                                      ))
                               ],)),
-                        Visibility(visible: isCompositeEvent, child: Container(height: _EventSmallCard._getScaledCardHeight(context),),)
-                      ],
-                    ),
-                  ),
-                ),
-                _topBorder(),
-              ]),),
-            _buildCompositeEventsContent(isCompositeEvent)
-          ],),
-        ));
+                  Visibility(visible: isCompositeEvent, child: Container(height: _EventSmallCard._getScaledCardHeight(context),),)
+                  ])))
+                ],
+              ),
+            ),
+          _topBorder(),
+          ]),),
+        _buildCompositeEventsContent(isCompositeEvent)
+      ],),
+    ));
   }
 
   bool _showInterests() {
@@ -264,13 +268,14 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
               child: Text(
                 leftLabel,
                 style: leftLabelStyle,
+                semanticsLabel: "",
               )
             ),
           ),
-          Visibility(visible: starVisible, child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: _onTapExploreCardStar,
-              child: Semantics(
+          Visibility(visible: starVisible, child:
+            Semantics(container: true, child:
+              Container( child:
+                Semantics(
                   label: isFavorite ? Localization().getStringEx(
                       'widget.card.button.favorite.off.title',
                       'Remove From Favorites') : Localization().getStringEx(
@@ -280,14 +285,17 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                       'widget.card.button.favorite.off.hint', '') : Localization()
                       .getStringEx('widget.card.button.favorite.on.hint', ''),
                   button: true,
-                  excludeSemantics: true,
-                  child: Container(child: Padding(padding: EdgeInsets.only(
+                  child:  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: _onTapExploreCardStar,
+                    child:Container(child: Padding(padding: EdgeInsets.only(
                       right: 16, top: 12, left: 24, bottom: 5),
                       child: Image.asset(isFavorite
                           ? 'images/icon-star-selected.png'
-                          : 'images/icon-star.png')
-                  ))
-              )),)
+                          : 'images/icon-star.png',
+                        excludeFromSemantics: true,)
+                      ))
+                  )),)))
         ],
     );
   }
@@ -336,7 +344,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       padding: _detailPadding,
       child: Row(
         children: <Widget>[
-          Image.asset('images/icon-calendar.png'),
+          Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
           Padding(
             padding: _iconPadding,
           ),
@@ -392,7 +400,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Image.asset('images/icon-time.png'),
+            Image.asset('images/icon-time.png', excludeFromSemantics: true),
             Padding(
               padding: _iconPadding,
             ),
@@ -616,15 +624,15 @@ class _EventSmallCard extends StatelessWidget {
                             button: true,
                             excludeSemantics: true,
                             child: Container(child: Padding(padding: EdgeInsets.only(left: 24, bottom: 5), child: Image.asset(
-                                isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
+                                isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true)
                             ))
                         )),),
                     Visibility(visible: isMoreCardType, child: Padding(
-                      padding: EdgeInsets.only(left: 24, top: 4), child: Image.asset('images/chevron-right.png'),),)
+                      padding: EdgeInsets.only(left: 24, top: 4), child: Image.asset('images/chevron-right.png', excludeFromSemantics: true),),)
                   ],),),
                 Visibility(visible: !isMoreCardType, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
                   Padding(padding: EdgeInsets.only(right: 10),
-                    child: Image.asset('images/icon-time.png'),),
+                    child: Image.asset('images/icon-time.png', excludeFromSemantics: true),),
                   Expanded(child: Text(_subTitle, overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(
                       fontSize: 16, color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.medium),),)
                 ],),)

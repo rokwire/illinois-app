@@ -29,8 +29,9 @@ class ExploreDisplayTypeHeader extends StatelessWidget {
   final GestureTapCallback onTapList;
   final GestureTapCallback onTapMap;
   final bool searchVisible;
+  final Map<String, dynamic> additionalData;
 
-  ExploreDisplayTypeHeader({this.displayType, this.onTapList, this.onTapMap, this.searchVisible = false});
+  ExploreDisplayTypeHeader({this.displayType, this.onTapList, this.onTapMap, this.searchVisible = false, this.additionalData});
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +70,17 @@ class ExploreDisplayTypeHeader extends StatelessWidget {
                       button: true, excludeSemantics: true,
                       label: Localization().getStringEx('panel.search.button.search.title', 'Search'),child:
                     IconButton(
-                      icon: Image.asset('images/icon-search.png'),
+                      icon: Image.asset('images/icon-search.png', excludeFromSemantics: true),
                       onPressed: () {
                         Analytics.instance.logSelect(target: "Search");
-                        Navigator.push(context, CupertinoPageRoute(builder: (context) => SearchPanel()));
+                        Navigator.push(context, CupertinoPageRoute(builder: (context) => SearchPanel(searchData:additionalData ))).
+                          then(
+                            (value){
+                              if(value!=null && value == true){
+                                Navigator.pop(context, true);
+                              }
+                            }
+                        );
                       },
                     ),
                   ))

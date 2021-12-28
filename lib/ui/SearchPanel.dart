@@ -33,6 +33,10 @@ import 'package:sprintf/sprintf.dart';
 import 'athletics/AthleticsGameDetailPanel.dart';
 
 class SearchPanel extends StatefulWidget {
+  final Map<String, dynamic> searchData;
+
+  const SearchPanel({Key key, this.searchData}) : super(key: key);
+
   @override
   _SearchPanelState createState() => _SearchPanelState();
 }
@@ -120,6 +124,7 @@ class _SearchPanelState extends State<SearchPanel> {
                             'images/icon-x-orange.png',
                             width: 25,
                             height: 25,
+                            excludeFromSemantics: true
                           ),
                         ),
                       )
@@ -138,6 +143,7 @@ class _SearchPanelState extends State<SearchPanel> {
                             color: Styles().colors.fillColorSecondary,
                             width: 25,
                             height: 25,
+                            excludeFromSemantics: true
                           ),
                         ),
                       ),
@@ -235,8 +241,16 @@ class _SearchPanelState extends State<SearchPanel> {
           AthleticsGameDetailPanel(gameId: event.speaker, sportName: event.registrationLabel,)));
     }
     else {
+      String groupId = AppJson.stringValue(widget.searchData!= null ? widget.searchData["group_id"] : null);
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-          ExploreDetailPanel(explore: explore)));
+          ExploreDetailPanel(explore: explore, browseGroupId: groupId,))).
+            then(
+              (value){
+                if(value!=null && value == true){
+                  Navigator.pop(context, true);
+                }
+              }
+            );
     }
   }
 

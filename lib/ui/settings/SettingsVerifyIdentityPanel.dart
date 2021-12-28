@@ -76,10 +76,10 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
                   style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.regular, fontSize: 16),
                   children: <TextSpan>[
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription1", "Are you a ")),
-                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription2", "Student "),
+                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription2", "university student"),
                         style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.bold, fontSize: 16)),
-                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription3", "or ")),
-                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription4", "faculty member "),
+                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription3", " or ")),
+                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription4", "employee"),
                         style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.bold, fontSize: 16)),
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription5", "? Log in with your NetID to see Illinois information specific to you, like your Illini Cash and meal plan.")),
                   ],

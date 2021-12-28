@@ -15,11 +15,12 @@
  */
 
 import 'dart:ui';
+import 'package:geolocator/geolocator.dart' as Core;
+
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:location/location.dart' as Core;
 
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
@@ -132,12 +133,12 @@ class ExploreCategory {
 
 class ExploreHelper {
 
-  static String getShortDisplayLocation(Explore explore, Core.LocationData locationData) {
+  static String getShortDisplayLocation(Explore explore, Core.Position locationData) {
     if (explore != null) {
       Location location = explore.exploreLocation;
       if (location != null) {
         if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
-          double distance = AppLocation.distance(location.latitude, location.longitude, locationData.latitude, locationData.longitude);
+          double distance = AppLocation.distance(location.latitude.toDouble(), location.longitude.toDouble(), locationData.latitude, locationData.longitude);
           return distance.toStringAsFixed(1) + " mi away";
         }
         if ((location.description != null) && location.description.isNotEmpty) {
@@ -163,7 +164,7 @@ class ExploreHelper {
     return null;
   }
 
-  static String getLongDisplayLocation(Explore explore, Core.LocationData locationData) {
+  static String getLongDisplayLocation(Explore explore, Core.Position locationData) {
     if (explore != null) {
       String displayText = "";
       Location location = explore.exploreLocation;

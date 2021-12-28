@@ -17,7 +17,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase_messaging;
 import 'package:illinois/model/Auth2.dart';
@@ -38,17 +37,6 @@ import 'package:illinois/utils/Utils.dart';
 
 const String _channelId = "Notifications_Channel_ID";
 
-
-//
-// This may require more handling, because the App may not be fully initialized in the moment of invocation.
-// It is not invoked as it's designed and document - however it's good start for now.
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-
-  await FirebaseService().initFirebase();
-  print("Handling a background message: ${message.toString()}");
-  FirebaseMessaging()._onFirebaseMessage(message);
-}
-
 class FirebaseMessaging with Service implements NotificationsListener {
 
 
@@ -64,6 +52,8 @@ class FirebaseMessaging with Service implements NotificationsListener {
   static const String notifyAthleticsNewsUpdated  = "edu.illinois.rokwire.firebase.messaging.athletics.news.updated";
   static const String notifySettingUpdated        = "edu.illinois.rokwire.firebase.messaging.setting.updated";
   static const String notifyGroupsNotification    = "edu.illinois.rokwire.firebase.messaging.groups.updated";
+  static const String notifyHomeNotification      = "edu.illinois.rokwire.firebase.messaging.home";
+  static const String notifyInboxNotification     = "edu.illinois.rokwire.firebase.messaging.inbox";
 
   // Topic names
   static const List<String> _permanentTopics = [
@@ -126,10 +116,21 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   static const List<String> _groupNotificationsKeyList = [_groupPostsNotificationKey, _groupInvitationsNotificationKey, _groupEventsNotificationKey];
 
-
   static const String _groupUpdatesPostsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupPostsNotificationKey';
   static const String _groupUpdatesInvitationsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupInvitationsNotificationKey';
   static const String _groupUpdatesEventsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupEventsNotificationKey';
+
+  // Payload types
+  static const String payloadTypeConfigUpdate = 'config_update';
+  static const String payloadTypePopupMessage = 'popup_message';
+  static const String payloadTypeOpenPoll = 'poll_open';
+  static const String payloadTypeEventDetail = 'event_detail';
+  static const String payloadTypeGameDetail = 'game_detail';
+  static const String payloadTypeAthleticsGameStarted = 'athletics_game_started';
+  static const String payloadTypeAthleticsNewDetail = 'athletics_news_detail';
+  static const String payloadTypeGroup = 'group';
+  static const String payloadTypeHome = 'home';
+  static const String payloadTypeInbox = 'inbox';
 
   final AndroidNotificationChannel _channel = AndroidNotificationChannel(
     _channelId, // id
@@ -142,8 +143,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
   String   _projectID;
   DateTime _pausedDateTime;
   
-  List<firebase_messaging.RemoteMessage> _messagesCache;
-
   // Singletone instance
 
   FirebaseMessaging._internal();
@@ -186,10 +185,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    // Cache messages until UI is displayed
-    _messagesCache = [];
-
-    firebase_messaging.FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     await _firebaseMessaging.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(_channel);
 
@@ -200,17 +195,14 @@ class FirebaseMessaging with Service implements NotificationsListener {
     );
 
     firebase_messaging.FirebaseMessaging.onMessage.listen((firebase_messaging.RemoteMessage message) {
-      print('A new onMessage event was published!');
+      Log.d('FCM: onMessage');
       _onFirebaseMessage(message);
     });
 
     firebase_messaging.FirebaseMessaging.onMessageOpenedApp.listen((firebase_messaging.RemoteMessage message) {
-       print('A new onMessageOpenedApp event was published!');
+      Log.d('FCM: onMessageOpenedApp');
       _onFirebaseMessage(message);
     });
-
-   // firebase_messaging.FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
 
     firebase_messaging.FirebaseMessaging.instance.getToken().then((String token) {
       _token = token;
@@ -229,7 +221,11 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   @override
   void initServiceUI() {
-    _processCachedMessages();
+    firebase_messaging.FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        processDataMessage(message.data);
+      }
+    });
   }
 
   @override
@@ -292,29 +288,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   Future<dynamic> _onFirebaseMessage(firebase_messaging.RemoteMessage message) async {
     Log.d("FCM: onFirebaseMessage");
-    _onMessageProcess(message);
-  }
-
-  ///We need to process Android and iOS differently as the plugin gives different format for the both platforms.
-
-  ///Android
-  ///{
-  ///    notification: {title: null, body: null},
-  ///    data: {Period: 1, VisitingScore: 20, HomeScore: 14, Path: football, Type: football, IsComplete: false, ClockSeconds: -1, Custom: {"Possession":"","LastPlay":"","Clock":"","Phase":"Pregame"}, GameId: 16692, HasStarted: false}
-  ///}
-
-  ///iOS
-  ///{GameId: 16692, IsComplete: false, gcm.message_id: 1572250193655080, VisitingScore: 20, HomeScore: 14, Custom: {"Possession":"","LastPlay":"","Clock":"","Phase":"Pregame"}, Type: football, Path: football, aps: {content-available: 1}, ClockSeconds: -1, HasStarted: false, Period: 1}
-  void _onMessageProcess(firebase_messaging.RemoteMessage message) {
-    if (message != null) {
-      if (_messagesCache != null) {
-        Log.d("FCM: cacheMessage: $message");
-        _messagesCache.add(message);
-      }
-      else {
-        _processMessage(message);
-      }
-    }
+    _processMessage(message);
   }
 
   void _processMessage(firebase_messaging.RemoteMessage message) {
@@ -327,11 +301,11 @@ class FirebaseMessaging with Service implements NotificationsListener {
           NotificationService().notify(notifyForegroundMessage, {
             "body": message.notification.body,
             "onComplete": (){
-              _processDataMessage(message.data);
+              processDataMessage(message.data);
             }
           });
         } else {
-          _processDataMessage(message.data);
+          processDataMessage(message.data);
         }
       }
       catch(e) {
@@ -340,37 +314,48 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _processDataMessage(Map<String, dynamic> data) {
+  void processDataMessage(Map<String, dynamic> data, {Set<String> allowedTypes}) {
     String type = _getMessageType(data);
-    if (type == "config_update") {
-      _onConfigUpdate(data);
-    }
-    else if (type == "popup_message") {
-      NotificationService().notify(notifyPopupMessage, data);
-    }
-    else if (type == "poll_open") {
-      NotificationService().notify(notifyPollOpen, data);
-    }
-    else if (type == "event_detail") {
-      NotificationService().notify(notifyEventDetail, data);
-    }
-    else if (type == "game_detail") {
-      NotificationService().notify(notifyGameDetail, data);
-    }
-    else if (type == "athletics_game_started") {
-      NotificationService().notify(notifyAthleticsGameStarted, data);
-    }
-    else if (type == "athletics_news_detail") {
-      NotificationService().notify(notifyAthleticsNewsUpdated, data);
-    }
-    else if (_isScoreTypeMessage(type)) {
-      NotificationService().notify(notifyScoreMessage, data);
-    }
-    else if (type == "group") {
-      NotificationService().notify(notifyGroupsNotification, data);
+    if ((type != null) && (allowedTypes?.contains(type) ?? true)) {
+      if (type == payloadTypeConfigUpdate) {
+        _onConfigUpdate(data);
+      }
+      else if (type == payloadTypePopupMessage) {
+        NotificationService().notify(notifyPopupMessage, data);
+      }
+      else if (type == payloadTypeOpenPoll) {
+        NotificationService().notify(notifyPollOpen, data);
+      }
+      else if (type == payloadTypeEventDetail) {
+        NotificationService().notify(notifyEventDetail, data);
+      }
+      else if (type == payloadTypeGameDetail) {
+        NotificationService().notify(notifyGameDetail, data);
+      }
+      else if (type == payloadTypeAthleticsGameStarted) {
+        NotificationService().notify(notifyAthleticsGameStarted, data);
+      }
+      else if (type == payloadTypeAthleticsNewDetail) {
+        NotificationService().notify(notifyAthleticsNewsUpdated, data);
+      }
+      else if (type == payloadTypeGroup) {
+        NotificationService().notify(notifyGroupsNotification, data);
+      }
+      else if (type == payloadTypeHome) {
+        NotificationService().notify(notifyHomeNotification, data);
+      }
+      else if (type == payloadTypeInbox) {
+        NotificationService().notify(notifyInboxNotification, data);
+      }
+      else if (_isScoreTypeMessage(type)) {
+        NotificationService().notify(notifyScoreMessage, data);
+      }
+      else {
+        Log.d("FCM: unknown message type: $type");
+      }
     }
     else {
-      Log.d("FCM: unknown message type: $type");
+      Log.d("FCM: undefined message type: ${AppJson.encode(data)}");
     }
   }
 
@@ -427,17 +412,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
       Log.d("FCM: Perform config update");
       NotificationService().notify(notifyConfigUpdate, data);
     });
-  }
-
-  void _processCachedMessages() {
-    if (_messagesCache != null) {
-      List<firebase_messaging.RemoteMessage> messagesCache = _messagesCache;
-      _messagesCache = null;
-
-      for (firebase_messaging.RemoteMessage message in messagesCache) {
-        _processMessage(message);
-      }
-    }
   }
 
   // Settings topics
@@ -642,7 +616,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  bool _getStoredSetting(name){
+  bool _getStoredSetting(String name){
     bool defaultValue = _defaultNotificationSettings[name] ?? true; //true by default
     if(name == _pauseNotificationKey){ // settings depending on userInfo
       if(Auth2().isLoggedIn && Inbox()?.userInfo != null){
@@ -655,13 +629,29 @@ class FirebaseMessaging with Service implements NotificationsListener {
     return Storage().getNotifySetting(_notifySettingNames[name] ?? name) ?? defaultValue;
   }
 
-  void _storeSetting(name, value) {
+  void _storeSetting(String name, bool value) {
     //// Logged user choice stored in the UserPrefs
     if (Auth2().isLoggedIn) {
       Auth2().prefs?.applySetting(_notifySettingNames[name] ?? name, value);
     } else {
       Storage().setNotifySetting(_notifySettingNames[name] ?? name, value);
     }
+  }
+
+  static Map<String, dynamic> get storedSettings {
+    Map<String, dynamic> result;
+    _notifySettingNames.forEach((String storageKey, String profileKey) {
+      bool value = Storage().getNotifySetting(storageKey) ?? Storage().getNotifySetting(profileKey);
+      if (value != null) {
+        if (result != null) {
+          result[profileKey] = value;
+        }
+        else {
+          result = { profileKey : value };
+        }
+      }
+    });
+    return result;
   }
 
   Set<String> get currentTopics{

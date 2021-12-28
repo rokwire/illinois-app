@@ -71,9 +71,11 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
               SingleChildScrollView(child:
                 Padding(padding: EdgeInsets.only(left: 18, right: 18, top: (148 + 24).toDouble(), bottom: 24), child:
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 36), child:
-                      Text(Localization().getStringEx('panel.onboarding2.phone_or_email.title.text', 'Login by phone or email'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary))
-                    ),
+                    Semantics(
+                      header: true,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 36), child:
+                        Text(Localization().getStringEx('panel.onboarding2.phone_or_email.title.text', 'Login by phone or email'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary))
+                    )),
                     Container(height: 24,),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
                       Text(Localization().getStringEx("panel.onboarding2.phone_or_email.description", "Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email."), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18, color: Styles().colors.fillColorPrimary)),

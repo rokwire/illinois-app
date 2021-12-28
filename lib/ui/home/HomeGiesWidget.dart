@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Storage.dart';
@@ -30,7 +31,7 @@ class HomeGiesWidget extends StatefulWidget {
 
 class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
-  static const String GIES_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/gies';
+  static const String GIES_URI = '${DeepLink.ROKWIRE_URL}/gies';
 
   List<dynamic> _pages;
   List<String>  _navigationPages;
@@ -48,7 +49,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
-        if (!kReleaseMode /*|| (Config().configEnvironment == ConfigEnvironment.dev)*/) {
+        if (kDebugMode /*|| (Config().configEnvironment == ConfigEnvironment.dev)*/) {
           setState(() {
             _resetNavigationPages();
             _resetCompleted();
@@ -92,7 +93,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Expanded(child: 
-              Text(Localization().getStringEx('widget.gies.title', 'iMBA New student checklist'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
+              Text(Localization().getStringEx('widget.gies.title', 'iDegrees New Student Checklist'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
           ],),
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
             Expanded(child: Container()),

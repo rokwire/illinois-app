@@ -15,12 +15,12 @@
  */
 
 
+import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/BluetoothServices.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -95,7 +95,6 @@ class Services {
     AppDateTime(),
     Connectivity(),
     LocationServices(),
-    BluetoothServices(),
     DeepLink(),
 
     Storage(),
@@ -145,18 +144,22 @@ class Services {
 
   Future<ServiceError> init() async {
     bool offlineChecked = false;
+    bool showStatus = kDebugMode;
     for (Service service in _services) {
 
       if (service.isInitialized != true) {
-        try { await service.initService(); }
-        on ServiceError catch (error) {
-          print(error?.toString());
-          if (error?.severity == ServiceErrorSeverity.fatal) {
-            return error;
-          }
+        if (showStatus) {
+          await NativeCommunicator().setLaunchScreenStatus(service.runtimeType.toString());
         }
-        catch(e) {
-          print(e?.toString());
+  
+        ServiceError error = await _initService(service);
+  
+        if (showStatus) {
+          await NativeCommunicator().setLaunchScreenStatus(null);
+        }
+  
+        if (error?.severity == ServiceErrorSeverity.fatal) {
+          return error;
         }
       }
 
@@ -182,6 +185,20 @@ class Services {
       title: 'Text Initialization Error',
       description: 'This is a test initialization error.',
     );*/
+    return null;
+  }
+
+  Future<ServiceError> _initService(Service service) async {
+    try {
+      await service.initService();
+    }
+    on ServiceError catch (error) {
+      print(error?.toString());
+      return error;
+    }
+    catch(e) {
+      print(e?.toString());
+    }
     return null;
   }
 

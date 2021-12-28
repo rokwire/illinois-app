@@ -45,6 +45,7 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
@@ -108,6 +109,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyAthleticsGameStarted,
       FirebaseMessaging.notifyAthleticsNewsUpdated,
       FirebaseMessaging.notifyGroupsNotification,
+      FirebaseMessaging.notifyHomeNotification,
+      FirebaseMessaging.notifyInboxNotification,
       ExploreService.notifyEventDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
@@ -218,6 +221,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyAthleticsNewsUpdated) {
       _onFirebaseAthleticsNewsNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyHomeNotification) {
+      _onFirebaseHomeNotification();
+    }
+    else if (name == FirebaseMessaging.notifyInboxNotification) {
+      _onFirebaseInboxNotification();
     }
   }
 
@@ -467,9 +476,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   Future<void> _onGuideDetail(Map<String, dynamic> content) async {
     String guideId = (content != null) ? AppJson.stringValue(content['guide_id']) : null;
     if(AppString.isStringNotEmpty(guideId)){
-      WidgetsBinding.instance.addPostFrameCallback((_) { //Fix navigator.dart failed assertion line 5307
+      WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
         Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
-            GuideDetailPanel(guideEntryId: guideId,)));});
+          GuideDetailPanel(guideEntryId: guideId,)));
+      });
+      if (mounted) {
+        setState(() {}); // Force the postFrameCallback invokation.
+      }
     }
   }
 
@@ -598,33 +611,41 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebaseGroupsNotification(param) {
-    if(param is Map<String, dynamic>){
-      String groupId = param["entity_id"];
-      _presentGroupDetailPanel(groupId);
+    if (param is Map<String, dynamic>) {
+      String operation = param['operation'];
+      // Do not present GroupDetail panel when the admin creates event. This breakes the navigation stack when the creator receives FCM notification.
+      if (operation != 'event_created') {
+        String groupId = param["entity_id"];
+        _presentGroupDetailPanel(groupId);
+      }
     }
   }
 
   void _presentGroupDetailPanel(String groupId) {
     if (AppString.isStringNotEmpty(groupId)) {
-      Groups().loadGroup(groupId).then((value) {
-        if (value != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: value)));
-        } else {
-          AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
-        }
-      });
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupIdentifier: groupId)));
+    } else {
+      AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
     }
   }
 
   void _onFirebaseAthleticsNewsNotification(param) {
     if (param is Map<String, dynamic>) {
       String newsId = param["news_id"];
-      Sports().loadNewsArticle(newsId).then((article) {
-        if (article != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: article)));
-        }
-      });
+      if (AppString.isStringNotEmpty(newsId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(articleId: newsId)));
+      }
     }
+  }
+
+  void _onFirebaseHomeNotification() {
+    // Pop to Home Panel and select the first tab
+    Navigator.of(context)?.popUntil((route) => route.isFirst);
+    selectTab(rootTab: RootTab.Home);
+  }
+
+  void _onFirebaseInboxNotification() {
+    Navigator.of(context)?.push(CupertinoPageRoute(builder: (context) => InboxHomePanel()));
   }
 }
 

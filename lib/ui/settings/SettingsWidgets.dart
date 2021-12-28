@@ -28,12 +28,13 @@ class SettingsDialog extends StatefulWidget{
   final List<TextSpan> message;
   final String continueButtonTitle;
   final List<String> options;
+  final List<String> initialOptionsSelection;
   final OnContinueCallback onContinue;
   final bool longButtonTitle; // make the button padding fit two lines ot title
 
-  const SettingsDialog({Key key, this.options, this.onContinue, this.title, this.message, this.continueButtonTitle, this.longButtonTitle = false}) : super(key: key);
+  const SettingsDialog({Key key, this.options, this.onContinue, this.title, this.message, this.continueButtonTitle, this.longButtonTitle = false, this.initialOptionsSelection}) : super(key: key);
 
-  static show(BuildContext context, {bool longButtonTitle,String title, String continueTitle, List<TextSpan> message,List<String> options, OnContinueCallback onContinue}) async{
+  static show(BuildContext context, {bool longButtonTitle,String title, String continueTitle, List<TextSpan> message,List<String> options, List<String> initialOptionsSelection, OnContinueCallback onContinue}) async{
     await showDialog(
        context: context,
        builder: (context) {
@@ -49,7 +50,7 @@ class SettingsDialog extends StatefulWidget{
                        Align(alignment: Alignment.center,
                            child: Container(
                              padding: EdgeInsets.symmetric(horizontal: 16,vertical: 17),
-                             child: SettingsDialog(title:title, continueButtonTitle:continueTitle , message: message, options: options, onContinue: onContinue,longButtonTitle: longButtonTitle??false,)
+                             child: SettingsDialog(title:title, continueButtonTitle:continueTitle , message: message, options: options, onContinue: onContinue, initialOptionsSelection: initialOptionsSelection, longButtonTitle: longButtonTitle??false,)
                            )
                        )
                      ],
@@ -67,6 +68,12 @@ class SettingsDialog extends StatefulWidget{
 class _SettingsDialogState extends State<SettingsDialog>{
   List<String> selectedOptions = [];
   bool _loading = false;
+
+  @override
+  void initState() {
+    selectedOptions = widget?.initialOptionsSelection ?? [];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

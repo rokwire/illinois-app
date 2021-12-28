@@ -139,7 +139,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
               alignment: Alignment.bottomCenter,
               children: <Widget>[
                 Positioned(
-                    child: Image.network(randomImageURL)),
+                    child: Image.network(randomImageURL, excludeFromSemantics: true)),
                 CustomPaint(
                   painter: TrianglePainter(painterColor: Colors.white),
                   child: Container(
@@ -177,7 +177,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                           onTap: _onTapSportPreference,
                           child: Padding(
                               padding: EdgeInsets.only(top: 8),
-                              child: hasSportPreference ? Image.asset('images/deselected-dark.png') : Image.asset('images/deselected.png')
+                              child: hasSportPreference ? Image.asset('images/deselected-dark.png', excludeFromSemantics: true) : Image.asset('images/deselected.png', excludeFromSemantics: true)
                           ),
                         ),
                       )
@@ -287,6 +287,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       child: Image.asset('images/slant-down-right.png',
                         color: Styles().colors.fillColorPrimary,
                         fit: BoxFit.fill,
+                        excludeFromSemantics: true
                       ),
                     )
                   ],
@@ -303,7 +304,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                           children: <Widget>[
                             Padding(
                               padding: EdgeInsets.only(right: 16),
-                              child: Image.asset('images/icon-schedule.png'),
+                              child: Image.asset('images/icon-schedule.png', excludeFromSemantics: true),
                             ),
                             Text(
                               Localization().getStringEx("panel.athletics_team.label.schedule.title", 'Schedule'),
@@ -387,7 +388,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                             children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.only(right: 16),
-                                child: Image.asset('images/icon-news.png'),
+                                child: Image.asset('images/icon-news.png', excludeFromSemantics: true),
                               ),
                               Text(
                                 Localization().getStringEx("panel.athletics_team.button.news.title", 'News'),
@@ -571,7 +572,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                   child: Container(
                     height: 98,
                     width: double.infinity,
-                    child: Image.asset('images/slant-down-right-rotated.png', color: Styles().colors.fillColorSecondary,fit: BoxFit.fill),
+                    child: Image.asset('images/slant-down-right-rotated.png', color: Styles().colors.fillColorSecondary,fit: BoxFit.fill, excludeFromSemantics: true),
                   ),
                 ),
                 Row(
@@ -935,7 +936,7 @@ class _RosterItem extends StatelessWidget {
     double width = 128;
     double height = 144;
     if (AppString.isStringNotEmpty(imageUrl)) {
-      return Image.network(imageUrl, width: width, height: height, fit: BoxFit.cover, alignment: Alignment.topCenter);
+      return Image.network(imageUrl, excludeFromSemantics: true, width: width, height: height, fit: BoxFit.cover, alignment: Alignment.topCenter);
     } else {
       return Container(width: width, height: height, color: Styles().colors.background);
     }
@@ -1014,7 +1015,7 @@ class _TeamSocialCell extends StatelessWidget {
             color: Styles().colors.fillColorPrimary,
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Center(
-          child: Image.asset(iconResource),
+          child: Image.asset(iconResource, excludeFromSemantics: true),
         ),
       ),
     );

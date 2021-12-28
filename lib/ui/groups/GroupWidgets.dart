@@ -26,6 +26,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -36,7 +37,9 @@ import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:sprintf/sprintf.dart';
 
 /////////////////////////////////////
@@ -108,7 +111,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                     splashColor: Styles().colors.white,
                   ),
                   child: DropdownButton(
-                      icon: Image.asset('images/icon-down-orange.png'),
+                      icon: Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
                       isExpanded: true,
                       focusColor: Styles().colors.white,
                       underline: Container(),
@@ -157,8 +160,8 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                         ),
                       )),
                   isSelected
-                      ? Image.asset("images/checkbox-selected.png")
-                      : Image.asset("images/oval-orange.png")
+                      ? Image.asset("images/checkbox-selected.png", excludeFromSemantics: true)
+                      : Image.asset("images/oval-orange.png", excludeFromSemantics: true)
                 ]),
             description==null? Container() : Container(height: 6,),
             description==null? Container():
@@ -225,7 +228,7 @@ class GroupMembershipAddButton extends StatelessWidget {
   final double             height;
   final EdgeInsetsGeometry padding;
   final bool               enabled;
-  
+
   GroupMembershipAddButton({
     this.title,
     this.onTap,
@@ -263,7 +266,7 @@ class HeaderBackButton extends StatelessWidget {
       button: true,
       excludeSemantics: true,
       child: IconButton(
-          icon: Image.asset('images/chevron-left-white.png'),
+          icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true),
           onPressed: (){
             Analytics.instance.logSelect(target: "Back");
             Navigator.pop(context);
@@ -610,7 +613,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                     width: _smallImageSize,
                     height: _smallImageSize,
                     child: Image.network(
-                      widget.event.exploreImageURL, fit: BoxFit.fill,),),)),
+                      widget.event.exploreImageURL, excludeFromSemantics: true, fit: BoxFit.fill,),),)),
                 ])
                 )
     ],);
@@ -948,7 +951,7 @@ class GroupCard extends StatelessWidget {
 
   Widget _buildHeading() {
     List<Widget> leftContent = <Widget>[];
-    
+
     if (group?.currentUserAsMember?.status != null) {
       leftContent.add(
         Semantics(
@@ -998,7 +1001,7 @@ class GroupCard extends StatelessWidget {
     if (leftContent.isNotEmpty) {
       content.add(Expanded(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: leftContent,)));
     }
-    
+
     if (rightContent.isNotEmpty) {
       if (leftContent.isEmpty) {
         content.add(Expanded(child: Container()));
@@ -1034,10 +1037,13 @@ class GroupCard extends StatelessWidget {
 // GroupPostCard
 
 class GroupPostCard extends StatefulWidget {
+
+
   final GroupPost post;
   final Group group;
+  final Function onImageTap;
 
-  GroupPostCard({Key key, @required this.post, @required this.group}) :
+  GroupPostCard({Key key, @required this.post, @required this.group, this.onImageTap, }) :
     super(key: key);
 
   @override
@@ -1045,6 +1051,7 @@ class GroupPostCard extends StatefulWidget {
 }
 
 class _GroupPostCardState extends State<GroupPostCard> {
+  static const double _smallImageSize = 64;
 
   @override
   void initState() {
@@ -1055,7 +1062,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
   Widget build(BuildContext context) {
     String memberName = widget.post?.member?.name;
     String htmlBody = widget.post?.body;
-    int visibleRepliesCount = getVisibleRepliesCount();
+    String imageUrl = widget.post?.imageUrl;
+    int visibleRepliesCount =getVisibleRepliesCount();
     bool isRepliesLabelVisible = (visibleRepliesCount > 0);
     String repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
@@ -1091,18 +1099,39 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                     style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14)))
                           ])),
                     ]),
-                    Container(
-                        padding: EdgeInsets.only(top: 10, bottom: 10),
-                        child: Html(data: htmlBody, style: {
-                          "body": Style(
-                              color: Styles().colors.fillColorPrimary,
-                              fontFamily: Styles().fontFamilies.regular,
-                              fontSize: FontSize(16),
-                              maxLines: 3,
-                              textOverflow: TextOverflow.ellipsis,
-                              margin: EdgeInsets.zero,
-                          ),
-                        }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            padding: EdgeInsets.only(top: 10, bottom: 10),
+                            child: Html(data: htmlBody, style: {
+                              "body": Style(
+                                  color: Styles().colors.fillColorPrimary,
+                                  fontFamily: Styles().fontFamilies.regular,
+                                  fontSize: FontSize(16),
+                                  maxLines: 3,
+                                  textOverflow: TextOverflow.ellipsis,
+                                  margin: EdgeInsets.zero,
+                              ),
+                            }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))),
+                        AppString.isStringEmpty(imageUrl)? Container() :
+                        Expanded(
+                          flex: 1,
+                          child: GestureDetector(
+                            onTap: (){
+                              if(widget.onImageTap!=null){
+                                widget.onImageTap();
+                              }
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
+                              child: SizedBox(
+                                width: _smallImageSize,
+                                height: _smallImageSize,
+                                child: Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fill,),),))
+                          )
+                    ],),
                     Container(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1170,14 +1199,16 @@ class GroupReplyCard extends StatefulWidget {
   final Function onIconTap;
   final Function onCardTap;
   final bool showRepliesCount;
+  final Function onImageTap;
 
-  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap});
+  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.onImageTap});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
 }
 
 class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListener{
+  static const double _smallImageSize = 64;
 
   @override
   void initState() {
@@ -1227,25 +1258,51 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                             padding: EdgeInsets.only(left: 10, top: 3),
                             child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath, excludeFromSemantics: true,) : Container())))))))
               ]),
-              Semantics( child:
-              Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Html(data: bodyText, style: {
-                    "body": Style(
-                        color: Styles().colors.fillColorPrimary,
-                        fontFamily: Styles().fontFamilies.regular,
-                        fontSize: FontSize(16),
-                        maxLines: 3000,
-                        textOverflow: TextOverflow.ellipsis,
-                        margin: EdgeInsets.zero
-                    ),
-                    "span": Style(
-                        color: Styles().colors.blackTransparent018,
-                        fontFamily: Styles().fontFamilies.regular,
-                        fontSize: FontSize(16),
-                        maxLines: 1,
-                        textOverflow: TextOverflow.ellipsis)
-                  }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))),
+              Row(
+                children: [
+                  Expanded(
+                      flex: 2,
+                      child: Container(
+                          child: Semantics( child:
+                          Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: Html(
+                                data: bodyText,
+                                style: {
+                                "body": Style(
+                                    color: Styles().colors.fillColorPrimary,
+                                    fontFamily: Styles().fontFamilies.regular,
+                                    fontSize: FontSize(16),
+                                    maxLines: 3000,
+                                    textOverflow: TextOverflow.ellipsis,
+                                    margin: EdgeInsets.zero
+                                ),
+                                "span": Style(
+                                    color: Styles().colors.blackTransparent018,
+                                    fontFamily: Styles().fontFamilies.regular,
+                                    fontSize: FontSize(16),
+                                    maxLines: 1,
+                                    textOverflow: TextOverflow.ellipsis)
+                                },
+                                onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))))),
+                  AppString.isStringEmpty(widget.reply?.imageUrl)? Container() :
+                  Expanded(
+                      flex: 1,
+                      child:
+                      GestureDetector(
+                        onTap: (){
+                          if(widget.onImageTap!=null){
+                            widget.onImageTap();
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
+                          child: SizedBox(
+                          width: _smallImageSize,
+                          height: _smallImageSize,
+                           child: Image.network(widget.reply?.imageUrl, excludeFromSemantics: true, fit: BoxFit.fill,),),))
+                  )
+                ],),
               Semantics( button: true, child:
                 GestureDetector(
                   onTap: widget.onCardTap ?? _onTapCard,
@@ -1287,4 +1344,420 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
       setState(() {});
     }
   }
+}
+
+class ModalImageDialog extends StatelessWidget{
+  final String imageUrl;
+  final GestureTapCallback onClose;
+
+  ModalImageDialog({this.imageUrl, this.onClose});
+
+  static  Widget modalDialogContainer({Widget content, String imageUrl, Function onClose}){
+      return Stack(children: [
+        content,
+        buildModalPhotoDialog(imageUrl: imageUrl, onClose: onClose)
+      ]);
+  }
+
+  static Widget buildModalPhotoDialog({String imageUrl, Function onClose}){
+    return imageUrl!=null ? ModalImageDialog(
+        imageUrl: imageUrl,
+        onClose: onClose
+    ) : Container();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      Expanded(child: PinchZoom(
+        child: GestureDetector(
+        onTap: onClose, //dismiss
+        child: Container(
+            color: Styles().colors.blackTransparent06,
+            child:Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                    child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        child: GestureDetector(
+                            onTap: (){}, //Do not dismiss when tap the dialog
+                            child: Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      color: Styles().colors.fillColorPrimary,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: <Widget>[
+                                          GestureDetector(
+                                            onTap: onClose,
+                                            child: Padding(
+                                              padding: EdgeInsets.only(right: 10, top: 10),
+                                              child: Text('\u00D7',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: Styles().fontFamilies.medium,
+                                                    fontSize: 50
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fitWidth,): Container(),
+                                    )
+                                  ],
+                                ))
+                        )
+                    )
+                ),
+              ],
+            )))
+    ))
+    ],);
+  }
+}
+
+typedef void OnBodyChangedListener(String text);
+
+class PostInputField extends StatefulWidget{
+  final EdgeInsets padding;
+  final String hint;
+  final String text;
+  final OnBodyChangedListener onBodyChanged;
+
+  const PostInputField({Key key, this.padding, this.hint, this.text, this.onBodyChanged}) : super(key: key);
+  
+  @override
+  State<StatefulWidget> createState() {
+    return _PostInputFieldState();
+  }
+}
+
+class _PostInputFieldState extends State<PostInputField>{ //TBD localize properly
+  TextEditingController _bodyController = TextEditingController();
+  TextEditingController _linkTextController = TextEditingController();
+  TextEditingController _linkUrlController = TextEditingController();
+  
+  EdgeInsets _padding;
+  String _hint;
+
+  @override
+  void initState() {
+    super.initState();
+    _padding = widget?.padding ?? EdgeInsets.only(top: 5);
+    _hint = widget?.hint ?? Localization().getStringEx("panel.group.detail.post.reply.create.body.field.hint", "Write a Reply ...");
+    _bodyController.text = widget?.text ?? "";
+  }
+  
+  @override
+  void dispose() {
+    super.dispose();
+    _bodyController.dispose();
+    _linkTextController.dispose();
+    _linkUrlController.dispose();
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Column(
+          children: [
+            Padding(
+                padding: _padding,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _FontIcon(
+                          onTap: _onTapBold,
+                          buttonLabel: "Bold",
+                          iconPath: 'images/icon-bold.png'),
+                      Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: _FontIcon(
+                              onTap: _onTapItalic,
+                              buttonLabel: "Italic",
+                              iconPath: 'images/icon-italic.png')),
+                      Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: _FontIcon(
+                              onTap: _onTapUnderline,
+                              buttonLabel: "Underline",
+                              iconPath: 'images/icon-underline.png')),
+                      Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: Semantics(button: true, child:
+                          GestureDetector(
+                              onTap: _onTapEditLink,
+                              child: Text(
+                                  Localization().getStringEx(
+                                      'panel.group.detail.post.create.link.label',
+                                      'Link'),
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.black,
+                                      fontFamily:
+                                      Styles().fontFamilies.medium)))))
+                    ])),
+            Padding(
+                padding: EdgeInsets.only(top: 8, bottom: 16),
+                child: TextField(
+                    controller: _bodyController,
+                    onChanged: (String text){
+                      widget?.onBodyChanged(text);
+                    },
+                    maxLines: 15,
+                    minLines: 1,
+                    decoration: InputDecoration(
+                        hintText: _hint,
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Styles().colors.mediumGray,
+                                width: 0.0))),
+                    style: TextStyle(
+                        color: Styles().colors.textBackground,
+                        fontSize: 16,
+                        fontFamily: Styles().fontFamilies.regular))),
+          ],
+        )
+    );
+  }
+
+  //HTML Body input Actions
+  void _onTapBold() {
+    Analytics().logSelect(target: 'Bold');
+    _wrapBodySelection('<b>', '</b>');
+  }
+
+  void _onTapItalic() {
+    Analytics().logSelect(target: 'Italic');
+    _wrapBodySelection('<i>', '</i>');
+  }
+
+  void _onTapUnderline() {
+    Analytics().logSelect(target: 'Underline');
+    _wrapBodySelection('<u>', '</u>');
+  }
+
+  void _onTapEditLink() {
+    Analytics().logSelect(target: 'Edit Link');
+    int linkStartPosition = _bodyController.selection.start;
+    int linkEndPosition = _bodyController.selection.end;
+    _linkTextController.text = AppString.getDefaultEmptyString(
+        value: _bodyController.selection?.textInside(_bodyController.text));
+    AppAlert.showCustomDialog(
+        context: context,
+        contentWidget: _buildLinkDialog(),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Analytics().logSelect(target: 'Set Link Url');
+                _onTapOkLink(linkStartPosition, linkEndPosition);
+              },
+              child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
+          TextButton(
+              onPressed: () {
+                Analytics().logSelect(target: 'Cancel');
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                  Localization().getStringEx('dialog.cancel.title', 'Cancel')))
+        ]);
+  }
+
+  void _onTapOkLink(int startPosition, int endPosition) {
+    Navigator.of(context).pop();
+    if ((startPosition < 0) || (endPosition < 0)) {
+      return;
+    }
+    String linkText = _linkTextController.text;
+    _linkTextController.text = '';
+    String linkUrl = _linkUrlController.text;
+    _linkUrlController.text = '';
+    String currentText = _bodyController.text;
+    currentText =
+        currentText.replaceRange(startPosition, endPosition, linkText);
+    _bodyController.text = currentText;
+    endPosition = startPosition + linkText.length;
+    _wrapBody('<a href="$linkUrl">', '</a>', startPosition, endPosition);
+  }
+
+  void _wrapBodySelection(String firstValue, String secondValue) {
+    int startPosition = _bodyController.selection.start;
+    int endPosition = _bodyController.selection.end;
+    if ((startPosition < 0) || (endPosition < 0)) {
+      return;
+    }
+    _wrapBody(firstValue, secondValue, startPosition, endPosition);
+  }
+
+  void _wrapBody(String firstValue, String secondValue, int startPosition,
+      int endPosition) {
+    String currentText = _bodyController.text;
+    String result = AppString.wrapRange(
+        currentText, firstValue, secondValue, startPosition, endPosition);
+    _bodyController.text = result;
+    _bodyController.selection = TextSelection.fromPosition(
+        TextPosition(offset: (endPosition + firstValue.length)));
+  }
+  
+  //Dialog
+  Widget _buildLinkDialog() {
+    return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+              Localization().getStringEx(
+                  'panel.group.detail.post.create.dialog.link.edit.header',
+                  'Edit Link'),
+              style: TextStyle(
+                  fontSize: 20,
+                  color: Styles().colors.fillColorPrimary,
+                  fontFamily: Styles().fontFamilies.medium)),
+          Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Text(
+                  Localization().getStringEx(
+                      'panel.group.detail.post.create.dialog.link.text.label',
+                      'Link Text:'),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: Styles().fontFamilies.regular,
+                      color: Styles().colors.fillColorPrimary))),
+          Padding(
+              padding: EdgeInsets.only(top: 6),
+              child: TextField(
+                  controller: _linkTextController,
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Styles().colors.mediumGray, width: 0.0))),
+                  style: TextStyle(
+                      color: Styles().colors.textBackground,
+                      fontSize: 16,
+                      fontFamily: Styles().fontFamilies.regular))),
+          Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Text(
+                  Localization().getStringEx(
+                      'panel.group.detail.post.create.dialog.link.url.label',
+                      'Link URL:'),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: Styles().fontFamilies.regular,
+                      color: Styles().colors.fillColorPrimary))),
+          Padding(
+              padding: EdgeInsets.only(top: 6),
+              child: TextField(
+                  controller: _linkUrlController,
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Styles().colors.mediumGray, width: 0.0))),
+                  style: TextStyle(
+                      color: Styles().colors.textBackground,
+                      fontSize: 16,
+                      fontFamily: Styles().fontFamilies.regular)))
+        ]);
+  }
+}
+
+class _FontIcon extends StatelessWidget {
+  final Function onTap;
+  final String iconPath;
+  final String buttonLabel;
+  _FontIcon({@required this.onTap, @required this.iconPath, this.buttonLabel});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(button: true, label: buttonLabel,
+        child:GestureDetector(
+            onTap: onTap, child: Image.asset(iconPath, width: 18, height: 18, excludeFromSemantics: true,)));
+  }
+}
+
+typedef void OnImageChangedListener(String imageUrl);
+class ImageChooserWidget extends StatefulWidget{ //TBD Localize properly
+  final String imageUrl;
+  final bool wrapContent;
+  final bool showSlant;
+  final bool buttonVisible;
+  final OnImageChangedListener onImageChanged;
+
+  const ImageChooserWidget({Key key, this.imageUrl, this.onImageChanged, this.wrapContent = false, this.showSlant = true, this.buttonVisible = false}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _ImageChooserState();
+}
+
+class _ImageChooserState extends State<ImageChooserWidget>{
+  String _imageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _imageUrl = widget?.imageUrl;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double _imageHeight = 200;
+    bool wrapContent = widget?.wrapContent;
+    bool explicitlyShowAddButton = widget?.buttonVisible;
+    bool showSlant = widget.showSlant;
+    String imageUrl = _imageUrl ?? widget.imageUrl; // For some reason sometimes the widget url is present but the _imageUrl is null
+
+    return Container(
+        constraints: BoxConstraints(
+          maxHeight: (imageUrl!=null || !wrapContent)? _imageHeight : (double.infinity),
+        ),
+        color: Styles().colors.background,
+        child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+          AppString.isStringNotEmpty(imageUrl)
+              ? Positioned.fill(child: Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.cover))
+              : Container(),
+          Visibility( visible: showSlant,
+              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53))),
+          Visibility( visible: showSlant,
+              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30))),
+          AppString.isStringEmpty(imageUrl) || explicitlyShowAddButton
+              ? Container(
+              child: Center(
+                  child: Semantics(
+                      label: Localization().getStringEx("panel.group.detail.post.add_image", "Add cover image"),
+                      hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
+                      button: true,
+                      excludeSemantics: true,
+                      child: ScalableSmallRoundedButton(
+                          maxLines: 2,
+                          label:AppString.isStringEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
+                          textColor: Styles().colors.fillColorPrimary,
+                          onTap: (){ _onTapAddImage();}
+                      )))):
+          Container()
+        ]));
+  }
+
+  void _onTapAddImage() async {
+    Analytics.instance.logSelect(target: "Add Image");
+    String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
+    if (AppString.isStringNotEmpty(imageUrl)) {
+      widget?.onImageChanged(imageUrl);
+      if (mounted) {
+        setState(() {
+          _imageUrl = imageUrl;
+        });
+      }
+    }
+    Log.d("Image Url: $imageUrl");
+  }
+
 }

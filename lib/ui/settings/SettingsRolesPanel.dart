@@ -144,7 +144,6 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
                       sortOrder: 7,
                       onTap: _onRoleGridButton,
                     ),
-                    Container(height: gridSpacing,),                    
                   ],)),
                   Container(width: gridSpacing,),
                   Expanded(child: Column(children: <Widget>[
@@ -185,8 +184,8 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
                     ),
                     Container(height: gridSpacing,),
                     RoleGridButton(
-                      title: 'GIES Student',
-                      hint: '',
+                      title: Localization().getStringEx('panel.onboarding.roles.button.gies.title', 'GIES Student'),
+                      hint: Localization().getStringEx('panel.onboarding.roles.button.gies.hint', ''),
                       iconPath: 'images/icon-persona-alumni-normal.png',
                       selectedIconPath: 'images/icon-persona-alumni-selected.png',
                       selectedBackgroundColor: Styles().colors.fillColorPrimary,
@@ -196,7 +195,6 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
                       sortOrder: 8,
                       onTap: _onRoleGridButton,
                     ),
-                    Container(height: gridSpacing,),
                   ],),),
                 ],)
               ),

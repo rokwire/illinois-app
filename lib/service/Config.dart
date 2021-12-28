@@ -91,8 +91,7 @@ class Config with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
 
-    _configEnvironment = configEnvFromString(Storage().configEnvironment) ??
-      (kReleaseMode ? ConfigEnvironment.production : ConfigEnvironment.dev);
+    _configEnvironment = configEnvFromString(Storage().configEnvironment) ?? defaultConfigEnvironment;
 
     _packageInfo = await PackageInfo.fromPlatform();
     _appDocumentsDir = await getApplicationDocumentsDirectory();
@@ -333,7 +332,6 @@ class Config with Service implements NotificationsListener {
   Map<String, dynamic> get safer                   { return (_config != null) ? (_config['safer'] ?? {}) : {}; }
   Map<String, dynamic> get saferMcKinley           { return safer['mckinley'] ?? {}; }
   Map<String, dynamic> get saferWellness           { return safer['wellness'] ?? {}; }
-  Map<String, dynamic> get saferLocations          { return safer['locations'] ?? {}; }
 
   // Getters: Encryption Keys
 
@@ -394,19 +392,15 @@ class Config with Service implements NotificationsListener {
   // Getters: Platform Building Blocks
   String get coreUrl                { return platformBuildingBlocks['core_url']; }                    // "https://api-dev.rokwire.illinois.edu/core"
   String get loggingUrl             { return platformBuildingBlocks['logging_url']; }                 // "https://api-dev.rokwire.illinois.edu/logs"
-  String get userProfileUrl         { return platformBuildingBlocks['user_profile_url']; }            // "https://api-dev.rokwire.illinois.edu/profiles"
   String get rokwireAuthUrl         { return platformBuildingBlocks['rokwire_auth_url']; }            // "https://api-dev.rokwire.illinois.edu/authentication"
-  String get imagesServiceUrl       { return platformBuildingBlocks['images_service_url']; }          // "https://api-dev.rokwire.illinois.edu/images-service";
   String get sportsServiceUrl       { return platformBuildingBlocks['sports_service_url']; }          // "https://api-dev.rokwire.illinois.edu/sports-service";
   String get eventsUrl              { return platformBuildingBlocks['events_url']; }                  // "https://api-dev.rokwire.illinois.edu/events"
-  String get talentChooserUrl       { return platformBuildingBlocks['talent_chooser_url']; }          // "https://api-dev.rokwire.illinois.edu/talent-chooser/api/ui-content"
   String get transportationUrl      { return platformBuildingBlocks["transportation_url"]; }          // "https://api-dev.rokwire.illinois.edu/transportation"
   String get quickPollsUrl          { return platformBuildingBlocks["polls_url"]; }                   // "https://api-dev.rokwire.illinois.edu/poll/api";
   String get locationsUrl           { return platformBuildingBlocks["locations_url"]; }               // "https://api-dev.rokwire.illinois.edu/location/api";
   String get groupsUrl              { return platformBuildingBlocks["groups_url"]; }                  // "https://api-dev.rokwire.illinois.edu/gr/api";
   String get contentUrl             { return platformBuildingBlocks["content_url"]; }                 // "https://api-dev.rokwire.illinois.edu/content";
   String get notificationsUrl       { return platformBuildingBlocks["notifications_url"]; }           // "https://api-dev.rokwire.illinois.edu/notifications";
-  String get healthUrl              { return platformBuildingBlocks['health_url']; }                  // "https://api-dev.rokwire.illinois.edu/health"
   
   // Getters: Third Party Services
   String get instagramHostUrl       { return thirdPartyServices['instagram_host_url']; }        // "https://instagram.com/"
@@ -414,7 +408,6 @@ class Config with Service implements NotificationsListener {
   String get laundryHostUrl         { return thirdPartyServices['launtry_host_url']; }          // "http://api.laundryview.com/"
   String get ticketsUrl             { return thirdPartyServices['tickets_url']; }               // "https://ev11.evenue.net/cgi-bin/ncommerce3/SEGetGroupList?groupCode=EOS&linkID=illinois&shopperContext=&caller=&appCode=&utm_source=FI.com&utm_medium=TicketsPage&utm_content=MainImage&utm_campaign=AllTickets"
   String get youtubeUrl             { return thirdPartyServices['youtube_url']; }               // "https://www.youtube.com/c/fightingilliniathletics"
-  String get voterRegistrationUrl   { return thirdPartyServices['voter_registration_url']; }    // "https://ova.elections.il.gov/"
   String get gameDayFootballUrl     { return thirdPartyServices['gameday_football_url']; }      // "https://fightingillini.com/sports/2015/7/31/football_gamedayguide.aspx"
   String get gameDayBasketballUrl   { return thirdPartyServices['gameday_basketball_url']; }    // "https://fightingillini.com/sports/2015/11/30/sfc_fanguide.aspx"
   String get gameDayTennisUrl       { return thirdPartyServices['gameday_tennis_url']; }        // "https://fightingillini.com/sports/2015/6/27/tennis_facilities.aspx#eventinfo"
@@ -559,6 +552,10 @@ class Config with Service implements NotificationsListener {
 
   ConfigEnvironment get configEnvironment {
     return _configEnvironment;
+  }
+
+  static ConfigEnvironment get defaultConfigEnvironment {
+    return kReleaseMode ? ConfigEnvironment.production : ConfigEnvironment.dev;
   }
 
   // Assets cache path

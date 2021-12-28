@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
@@ -39,7 +40,6 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:location/location.dart';
 import 'package:sprintf/sprintf.dart';
 
 enum _EventTab { All, Saved }
@@ -73,7 +73,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   List<Event> _displayEvents;
 
-  LocationData _locationData;
+  Position _locationData;
   LocationServicesStatus _locationServicesStatus;
 
   List<_EventFilter> _tabFilters;

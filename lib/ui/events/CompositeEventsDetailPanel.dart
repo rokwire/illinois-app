@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -31,7 +32,6 @@ import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:location/location.dart' as Core;
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/Explore.dart';
@@ -50,7 +50,7 @@ import 'package:sprintf/sprintf.dart';
 class CompositeEventsDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
   final Event parentEvent;
-  final Core.LocationData initialLocationData;
+  final Core.Position initialLocationData;
   final String browseGroupId;
 
   CompositeEventsDetailPanel({this.parentEvent, this.initialLocationData, this.browseGroupId});
@@ -70,7 +70,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   static final double _horizontalPadding = 24;
 
-  Core.LocationData _locationData;
+  Core.Position     _locationData;
   bool              _addToGroupInProgress = false;
 
   @override

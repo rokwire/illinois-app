@@ -65,7 +65,7 @@ class FilterListItemWidget extends StatelessWidget {
                         : Container(),
                     Padding(
                       padding: EdgeInsets.only(left: 10),
-                      child: Image.asset((selected ? selectedIconRes:unselectedIconRes)),
+                      child: Image.asset(selected ? selectedIconRes:unselectedIconRes, excludeFromSemantics: true),
                     )
                   ],
                 ),
@@ -119,7 +119,7 @@ class FilterSelectorWidget extends StatelessWidget {
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4),
-                          child: Image.asset(active ? 'images/icon-up.png' : 'images/icon-down.png'),
+                          child: Image.asset(active ? 'images/icon-up.png' : 'images/icon-down.png', excludeFromSemantics: true),
                         )
                       ],
                     ),

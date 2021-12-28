@@ -37,9 +37,12 @@ class Group {
 	String              title;
   String              description;
   GroupPrivacy        privacy;
-	bool                certified;
+  bool                certified;
   DateTime            dateCreatedUtc;
   DateTime            dateUpdatedUtc;
+
+  bool                authManEnabled;
+  String              authManGroupName;
 
   String              imageURL;
   String              webURL;
@@ -66,21 +69,23 @@ class Group {
   }
 
   void _initFromJson(Map<String, dynamic> json) {
-    try { id              = json['id'];         } catch(e) { print(e.toString()); }
-    try { category        = json['category'];   } catch(e) { print(e.toString()); }
-    try { type            = json['type'];       } catch(e) { print(e.toString()); }
-    try { title           = json['title'];      } catch(e) { print(e.toString()); }
-    try { description     = json['description'];  } catch(e) { print(e.toString()); }
-    try { privacy         = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
-    try { certified       = json['certified']; } catch(e) { print(e.toString()); }
-    try { dateCreatedUtc  = groupUtcDateTimeFromString(json['date_created']); } catch(e) { print(e.toString()); }
-    try { dateUpdatedUtc  = groupUtcDateTimeFromString(json['date_updated']); } catch(e) { print(e.toString()); }
-    try { imageURL        = json['image_url'];     } catch(e) { print(e.toString()); }
-    try { webURL          = json['web_url'];       } catch(e) { print(e.toString()); }
-    try { tags            = (json['tags'] as List)?.cast<String>(); } catch(e) { print(e.toString()); }
-    try { membershipQuest = GroupMembershipQuest.fromJson(json['membershipQuest']); } catch(e) { print(e.toString()); }
-    try { members         = Member.listFromJson(json['members']); } catch(e) { print(e.toString()); }
-    try { questions       = GroupMembershipQuestion.listFromStringList((json['membership_questions'] as List)?.cast<String>()); } catch(e) { print(e.toString()); }
+    try { id                = json['id'];         } catch(e) { print(e.toString()); }
+    try { category          = json['category'];   } catch(e) { print(e.toString()); }
+    try { type              = json['type'];       } catch(e) { print(e.toString()); }
+    try { title             = json['title'];      } catch(e) { print(e.toString()); }
+    try { description       = json['description'];  } catch(e) { print(e.toString()); }
+    try { privacy           = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
+    try { certified         = json['certified']; } catch(e) { print(e.toString()); }
+    try { authManEnabled    = json['authman_enabled']; } catch(e) { print(e.toString()); }
+    try { authManGroupName  = json['authman_group']; } catch(e) { print(e.toString()); }
+    try { dateCreatedUtc    = groupUtcDateTimeFromString(json['date_created']); } catch(e) { print(e.toString()); }
+    try { dateUpdatedUtc    = groupUtcDateTimeFromString(json['date_updated']); } catch(e) { print(e.toString()); }
+    try { imageURL          = json['image_url'];     } catch(e) { print(e.toString()); }
+    try { webURL            = json['web_url'];       } catch(e) { print(e.toString()); }
+    try { tags              = (json['tags'] as List)?.cast<String>(); } catch(e) { print(e.toString()); }
+    try { membershipQuest   = GroupMembershipQuest.fromJson(json['membershipQuest']); } catch(e) { print(e.toString()); }
+    try { members           = Member.listFromJson(json['members']); } catch(e) { print(e.toString()); }
+    try { questions         = GroupMembershipQuestion.listFromStringList((json['membership_questions'] as List)?.cast<String>()); } catch(e) { print(e.toString()); }
   }
 
   Map<String, dynamic> toJson({bool withId = true}) {
@@ -94,6 +99,8 @@ class Group {
     json['description']          = description;
     json['privacy']              = groupPrivacyToString(privacy);
     json['certified']            = certified;
+    json['authman_enabled']      = authManEnabled;
+    json['authman_group']        = authManGroupName;
     json['date_created']         = groupUtcDateTimeToString(dateCreatedUtc);
     json['date_updated']         = groupUtcDateTimeToString(dateUpdatedUtc);
     json['image_url']            = imageURL;
@@ -106,21 +113,23 @@ class Group {
   }
 
   void _initFromOther(Group other) {
-    id              = other?.id;
-    category        = other?.category;
-    type            = other?.type;
-    title           = other?.title;
-    description     = other?.description;
-    privacy         = other?.privacy;
-    certified       = other?.certified;
-    dateCreatedUtc  = other?.dateCreatedUtc;
-    dateUpdatedUtc  = other?.dateUpdatedUtc;
-    imageURL        = other?.imageURL;
-    webURL          = other?.webURL;
-    members         = other?.members;
-    tags            = (other?.tags != null) ? List.from(other?.tags) : null;
-    questions       = (other?.questions != null) ? other.questions.map((e) => GroupMembershipQuestion.fromString(e.question)).toList()  : null;
-    membershipQuest = GroupMembershipQuest.fromOther(other?.membershipQuest);
+    id                = other?.id;
+    category          = other?.category;
+    type              = other?.type;
+    title             = other?.title;
+    description       = other?.description;
+    privacy           = other?.privacy;
+    certified         = other?.certified;
+    authManEnabled    = other?.authManEnabled;
+    authManGroupName  = other?.authManGroupName;
+    dateCreatedUtc    = other?.dateCreatedUtc;
+    dateUpdatedUtc    = other?.dateUpdatedUtc;
+    imageURL          = other?.imageURL;
+    webURL            = other?.webURL;
+    members           = other?.members;
+    tags              = (other?.tags != null) ? List.from(other?.tags) : null;
+    questions         = (other?.questions != null) ? other.questions.map((e) => GroupMembershipQuestion.fromString(e.question)).toList()  : null;
+    membershipQuest   = GroupMembershipQuest.fromOther(other?.membershipQuest);
   }
 
   Map<String, dynamic> get analyticsAttributes {
@@ -177,8 +186,8 @@ class Group {
     return (currentUser?.isMember ?? false) || (currentUser?.isAdmin ?? false);
   }
 
-  bool get currentUserCanJoin{
-    return currentUserAsMember == null;
+  bool get currentUserCanJoin {
+    return (currentUserAsMember == null) && (authManEnabled != true);
   }
 
   Color get currentUserStatusColor{
@@ -836,8 +845,9 @@ class GroupPost {
   final DateTime dateUpdatedUtc;
   final bool private;
   final List<GroupPost> replies;
+  final String imageUrl;
 
-  GroupPost({this.id, this.parentId, this.member, this.subject, this.body, this.dateCreatedUtc, this.dateUpdatedUtc, this.private, this.replies});
+  GroupPost({this.id, this.parentId, this.member, this.subject, this.body, this.dateCreatedUtc, this.dateUpdatedUtc, this.private, this.imageUrl, this.replies});
 
   factory GroupPost.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -852,6 +862,7 @@ class GroupPost {
         dateCreatedUtc: groupUtcDateTimeFromString(json['date_created']),
         dateUpdatedUtc: groupUtcDateTimeFromString(json['date_updated']),
         private: json['private'],
+        imageUrl: AppJson.stringValue(json["image_url"]),
         replies: GroupPost.fromJsonList(json['replies']));
   }
 
@@ -866,6 +877,9 @@ class GroupPost {
     }
     if (subject != null) {
       json['subject'] = subject;
+    }
+    if(imageUrl!=null){
+      json['image_url'] = imageUrl;
     }
     return json;
   }
@@ -919,6 +933,15 @@ class GroupPost {
     }
     return posts;
   }
+}
+
+//Model for editable post data. Helping to keep GroupPost immutable. Internal use
+class PostDataModel {
+  String body;
+  String subject;
+  String imageUrl;
+
+  PostDataModel({this.body, this.subject, this.imageUrl});
 }
 
 //////////////////////////////

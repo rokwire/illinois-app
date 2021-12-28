@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -61,7 +62,6 @@ import edu.illinois.rokwire.maps.MapActivity;
 import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
 import edu.illinois.rokwire.maps.MapPickLocationActivity;
-import edu.illinois.rokwire.poll.PollPlugin;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodCall;
@@ -77,8 +77,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     private static final String NATIVE_CHANNEL = "edu.illinois.rokwire/native_call";
     private static MainActivity instance = null;
 
-    private PollPlugin pollPlugin;
-
     private static MethodChannel.Result pickLocationResult;
 
     private HashMap keys;
@@ -87,6 +85,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     private Set<Integer> supportedScreenOrientations;
 
     private RequestLocationCallback rlCallback;
+
+    private Toast statusToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,8 +152,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 .getPlatformViewsController()
                 .getRegistry()
                 .registerViewFactory("mapview", new MapViewFactory(this, flutterEngine.getDartExecutor().getBinaryMessenger()));
-
-        flutterEngine.getPlugins().add(new PollPlugin(this));
     }
 
     private void initScreenOrientation() {
@@ -263,9 +261,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     if (granted) {
                         result.success("allowed");
 
-                        if (pollPlugin != null) {
-                            pollPlugin.onLocationPermissionGranted();
-                        }
                         GeofenceMonitor.getInstance().onLocationPermissionGranted();
                     } else {
                         result.success("denied");
@@ -549,6 +544,32 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         }
     }
 
+    private boolean handleLaunchAppSettings(Object params) {
+        Uri settingsUri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
+        Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, settingsUri);
+        settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        boolean activityExists = settingsIntent.resolveActivityInfo(getPackageManager(), 0) != null;
+        if (activityExists) {
+            startActivity(settingsIntent);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void handleSetLaunchScreenStatus(Object params) {
+        String statusText = Utils.Map.getValueFromPath(params, "status", null);
+
+        if (statusToast != null) {
+            statusToast.cancel();
+            statusToast = null;
+        }
+        if (statusText != null) {
+            statusToast = Toast.makeText(this, statusText, Toast.LENGTH_SHORT);
+            statusToast.show();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.SELECT_LOCATION_ACTIVITY_RESULT_CODE) {
@@ -599,6 +620,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     break;
                 case Constants.APP_DISMISS_SAFARI_VC_KEY:
                 case Constants.APP_DISMISS_LAUNCH_SCREEN_KEY:
+                case Constants.APP_SET_LAUNCH_SCREEN_STATUS_KEY:
+                    handleSetLaunchScreenStatus(methodCall.arguments);
+                    result.success(true);
+                    break;
                 case Constants.APP_ADD_CARD_TO_WALLET_KEY:
                     result.success(false);
                     break;
@@ -619,8 +644,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                         requestLocationPermission(result);
                     }
                     break;
-                case Constants.APP_BLUETOOTH_AUTHORIZATION:
-                    result.success("allowed"); // bluetooth is always enabled in Android by default
+                case Constants.APP_TRACKING_AUTHORIZATION:
+                    result.success("allowed"); // tracking is allowed in Android by default
                     break;
                 case Constants.FIREBASE_INFO:
                     String projectId = FirebaseApp.getInstance().getOptions().getProjectId();
@@ -645,6 +670,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 case Constants.LAUNCH_APP:
                     boolean appLaunched = handleLaunchApp(methodCall.arguments);
                     result.success(appLaunched);
+                    break;
+                case Constants.LAUNCH_APP_SETTINGS:
+                    boolean settingsLaunched = handleLaunchAppSettings(methodCall.arguments);
+                    result.success(settingsLaunched);
                     break;
                 default:
                     result.notImplemented();

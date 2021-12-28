@@ -22,20 +22,16 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:intl/intl.dart';
 
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 
 class DiningService  with Service {
-
-  static const String notifyFoodPrefsChanged  = "edu.illinois.rokwire.dining.foodprefs.changed";
 
   static final String _olddiningsFileName = 'dinings_schedules.json';
 
@@ -58,7 +54,7 @@ class DiningService  with Service {
 
   DiningService._internal();
 
-  Future<List<Dining>> loadBackendDinings(bool onlyOpened, PaymentType paymentType, LocationData locationData) async {
+  Future<List<Dining>> loadBackendDinings(bool onlyOpened, PaymentType paymentType, Position locationData) async {
     if(_enabled) {
       List<Dining> dinings = [];
 
@@ -235,43 +231,8 @@ class DiningService  with Service {
     return _enabled ? Localization().getStringFromMapping(text, Assets()['dining.strings']) : null;
   }
 
-  bool hasFoodFilteringApplied(){
-    if(_enabled) {
-      List<String> includedFoodTypesPrefs = Storage().includedFoodTypesPrefs;
-      bool hasFoodTypesPrefs = (includedFoodTypesPrefs != null) && (0 < includedFoodTypesPrefs.length);
-
-      List<String> includedFoodIngredientsPrefs = Storage().excludedFoodIngredientsPrefs;
-      bool hasIngredientsPrefs = (includedFoodIngredientsPrefs != null) && (0 < includedFoodIngredientsPrefs.length);
-
-      return hasFoodTypesPrefs || hasIngredientsPrefs;
-    }
-    return false;
-  }
-
-  List<String> getIncludedFoodTypesPrefs() {
-    return _enabled ? Storage().includedFoodTypesPrefs : null;
-  }
-
-  void setIncludedFoodTypesPrefs(List<String> value) {
-    if(_enabled) {
-      Storage().includedFoodTypesPrefs = value;
-      _notifyFoodPrefsChanged();
-    }
-  }
-
-  List<String> getExcludedFoodIngredientsPrefs() {
-    return _enabled ? Storage().excludedFoodIngredientsPrefs : null;
-  }
-
-  void setExcludedFoodIngredientsPrefs(List<String> value) {
-    if(_enabled) {
-      Storage().excludedFoodIngredientsPrefs = value;
-      _notifyFoodPrefsChanged();
-    }
-  }
-
   // Helpers
-  void _sortExploresByLocation(List<Explore> explores, LocationData locationData) {
+  void _sortExploresByLocation(List<Explore> explores, Position locationData) {
     explores.sort((Explore explore1, Explore explore2) {
       double distance1 = AppLocation.distance(explore1.exploreLocation.latitude, explore1.exploreLocation.longitude, locationData.latitude, locationData.longitude);
       double distance2 = AppLocation.distance(explore2.exploreLocation.latitude, explore2.exploreLocation.longitude, locationData.latitude, locationData.longitude);
@@ -293,11 +254,6 @@ class DiningService  with Service {
     });
   }
 
-  // Events
-  void _notifyFoodPrefsChanged(){
-    NotificationService().notify(notifyFoodPrefsChanged, null);
-  }
-
   /////////////////////////
   // Enabled
 
@@ -315,13 +271,12 @@ class DiningUtils{
     }
   }
    
-  static List<DiningProductItem> getProductsForScheduleId(List<DiningProductItem> allProducts, String scheduleId, List<String> includedFoodTypePrefs, List<String> excludedFoodIngredientsPrefs) {
+  static List<DiningProductItem> getProductsForScheduleId(List<DiningProductItem> allProducts, String scheduleId, Set<String> includedFoodTypePrefs, Set<String> excludedFoodIngredientsPrefs) {
     if(scheduleId != null && allProducts != null){
       return allProducts.where((DiningProductItem item){
-        return scheduleId == item.scheduleId && (
-              includedFoodTypePrefs.isEmpty || item.containsFoodType(includedFoodTypePrefs))
-              && (excludedFoodIngredientsPrefs.isEmpty || !item.containsFoodIngredient(excludedFoodIngredientsPrefs)
-            );
+        return scheduleId == item.scheduleId &&
+              ((includedFoodTypePrefs == null) || includedFoodTypePrefs.isEmpty || item.containsFoodType(includedFoodTypePrefs)) &&
+              ((excludedFoodIngredientsPrefs == null) || excludedFoodIngredientsPrefs.isEmpty || !item.containsFoodIngredient(excludedFoodIngredientsPrefs));
       }).toList();
     }
     return [];

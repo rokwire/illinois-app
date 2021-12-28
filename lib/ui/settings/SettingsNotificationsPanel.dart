@@ -164,7 +164,6 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
           style: _athleticsSubNotificationsEnabled ? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies.bold) :
           TextStyle(color: Styles().colors.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies.bold))
     ]))))]));
-    //TBD localisation fro groups settings
     widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
     widgets.add(_CustomToggleButton(
         enabled: _toggleButtonEnabled,
@@ -243,12 +242,12 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
   }
 
   void _requestAuthorization(BuildContext context) async {
-    NotificationsAuthorizationStatus authorizationSttus = await NativeCommunicator().queryNotificationsAuthorization("query");
-    if (authorizationSttus != NotificationsAuthorizationStatus.NotDetermined) {
+    AuthorizationStatus authorizationSttus = await NativeCommunicator().queryNotificationsAuthorization("query");
+    if (authorizationSttus != AuthorizationStatus.NotDetermined) {
       _onOpenSystemSettings();
     } else {
       authorizationSttus = await NativeCommunicator().queryNotificationsAuthorization("request");
-      if (authorizationSttus == NotificationsAuthorizationStatus.Allowed) {
+      if (authorizationSttus == AuthorizationStatus.Allowed) {
         Analytics.instance.updateNotificationServices();
       }
       _onOpenSystemSettings();

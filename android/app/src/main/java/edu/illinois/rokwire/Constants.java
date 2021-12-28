@@ -28,17 +28,19 @@ public class Constants {
     static final String SHOW_NOTIFICATION_KEY = "showNotification";
     static final String APP_DISMISS_SAFARI_VC_KEY = "dismissSafariVC";
     static final String APP_DISMISS_LAUNCH_SCREEN_KEY = "dismissLaunchScreen";
+    static final String APP_SET_LAUNCH_SCREEN_STATUS_KEY = "setLaunchScreenStatus";
     static final String APP_ADD_CARD_TO_WALLET_KEY = "addToWallet";
     static final String APP_ENABLED_ORIENTATIONS_KEY = "enabledOrientations";
     static final String APP_NOTIFICATIONS_AUTHORIZATION = "notifications_authorization";
     static final String APP_LOCATION_SERVICES_PERMISSION = "location_services_permission";
-    static final String APP_BLUETOOTH_AUTHORIZATION = "bluetooth_authorization";
+    static final String APP_TRACKING_AUTHORIZATION = "tracking_authorization";
     static final String FIREBASE_INFO = "firebaseInfo";
     static final String GEOFENCE_KEY = "geoFence";
     static final String DEVICE_ID_KEY = "deviceId";
     static final String ENCRYPTION_KEY_KEY = "encryptionKey";
     static final String BARCODE_KEY = "barcode";
     static final String LAUNCH_APP = "launchApp";
+    static final String LAUNCH_APP_SETTINGS = "launchAppSettings";
 
     //Maps
     public static final LatLng DEFAULT_INITIAL_CAMERA_POSITION = new LatLng(40.102116, -88.227129); //Illinois University: Center of Campus //(40.096230, -88.235899); // State Farm Center

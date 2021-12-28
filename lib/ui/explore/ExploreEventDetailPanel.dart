@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -29,7 +30,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:location/location.dart' as Core;
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/Explore.dart';
@@ -47,7 +47,7 @@ import 'package:illinois/ui/WebPanel.dart';
 class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event event;
   final bool previewMode;
-  final Core.LocationData initialLocationData;
+  final Core.Position initialLocationData;
   final String superEventTitle;
   final String browseGroupId;
 
@@ -69,7 +69,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   static final double _horizontalPadding = 24;
 
   //Maps
-  Core.LocationData _locationData;
+  Core.Position _locationData;
   bool _addToGroupInProgress = false;
 
   @override
@@ -194,7 +194,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     bool starVisible = Auth2().canFavorite;
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.only(left: _horizontalPadding,top: 16, bottom: 12), child: Row(
+      padding: EdgeInsets.only(left: _horizontalPadding), child: Row(
       children: <Widget>[
         Expanded(child:
           Text(
@@ -213,14 +213,16 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
                   Auth2().prefs?.toggleFavorite(widget.event);
                 },
-                child: Semantics(
+                child: Container(
+                  padding: EdgeInsets.only(left: _horizontalPadding,top: 16, bottom: 12),
+                  child:Semantics(
                     label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization()
                         .getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                         'widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
-                ))
+                    child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true)
+                )))
         )),)
       ],
     ),);
@@ -339,7 +341,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child: Image.asset('images/icon-calendar.png'),
+                  child: Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
                 ),
                 Expanded(child: Text(displayTime,
                     style: TextStyle(
@@ -386,7 +388,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child:Image.asset(iconRes),
+                  child:Image.asset(iconRes, excludeFromSemantics: true),
                 ),
                 Container(decoration: (isOnlineUnderlined ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (isOnlineUnderlined ? 2 : 0)), child: Text(eventType,
                     style: TextStyle(
@@ -425,7 +427,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             padding: EdgeInsets.only(bottom: 16),
             child: Column(children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Image.asset('images/icon-privacy.png')),
+                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Image.asset('images/icon-privacy.png', excludeFromSemantics: true)),
                 Expanded(
                     child: Text(privacyText, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)))
               ])
@@ -451,7 +453,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(right: 10),
-                      child:Image.asset('images/icon-cost.png'),
+                      child:Image.asset('images/icon-cost.png', excludeFromSemantics: true),
                     ),
                       Expanded(child:Text(priceText,
                         style: TextStyle(
@@ -493,7 +495,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/chevron-left.png'),),
+              Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/chevron-left.png', excludeFromSemantics: true),),
               Expanded(child: Text(widget.superEventTitle, style: TextStyle(fontFamily: Styles().fontFamilies.medium,
                   fontSize: 16,
                   color: Styles().colors.fillColorPrimary,

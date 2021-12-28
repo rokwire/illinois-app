@@ -30,7 +30,7 @@ import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
-import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupPostCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupQrCodePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
@@ -53,8 +53,9 @@ enum _DetailTab { Events, Posts, About }
 class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
   final Group group;
+  final String groupIdentifier;
 
-  GroupDetailPanel({this.group});
+  GroupDetailPanel({this.group, this.groupIdentifier});
 
   @override
  _GroupDetailPanelState createState() => _GroupDetailPanelState();
@@ -65,7 +66,11 @@ class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
   }
 
   String get groupId {
-    return group?.id;
+    if (group != null) {
+      return group?.id;
+    } else {
+      return groupIdentifier;
+    }
   }
 }
 
@@ -92,6 +97,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   DateTime           _pausedDateTime;
 
+  String _modalImageUrl;// Used to show image
+
   bool get _isMember {
     return _group?.currentUserAsMember?.isMember ?? false;
   }
@@ -117,6 +124,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _canLeaveGroup {
+    if (_group?.authManEnabled ?? false) {
+      return false;
+    }
+
     Member currentMemberUser = _group?.currentUserAsMember;
     if (currentMemberUser?.isAdmin ?? false) {
       return ((_group?.adminsCount ?? 0) > 1); // Do not allow an admin to leave group if he/she is the only one admin.
@@ -451,20 +462,28 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     }
 
-    return Column(children: <Widget>[
-        Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: content,
+    return
+      ModalImageDialog.modalDialogContainer(
+        imageUrl: _modalImageUrl,
+        onClose: () {
+          Analytics.instance.logSelect(target: "Close");
+          _modalImageUrl = null;
+          setState(() {});
+        },
+        content: Column(children: <Widget>[
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: content,
+              ),
             ),
           ),
-        ),
-        _buildMembershipRequest(),
-        _buildCancelMembershipRequest(),
-      ],
-    );
+          _buildMembershipRequest(),
+          _buildCancelMembershipRequest(),
+        ],
+      ));
   }
 
   Widget _buildImageHeader(){
@@ -474,7 +493,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, fit: BoxFit.cover,)) : Container(),
+          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, excludeFromSemantics: true, fit: BoxFit.cover,)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false),
             child: Container(
@@ -789,7 +808,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (i > 0) {
         postsContent.add(Container(height: 16));
       }
-      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group));
+      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group, onImageTap: (){_showModalImage(post?.imageUrl);}));
     }
 
     if ((_group != null) && _group.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _visibleGroupPosts.length)) {
@@ -988,6 +1007,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 ])
               ]));
         }));
+  }
+
+  void _showModalImage(String url){
+    if(url != null) {
+      setState(() {
+        _modalImageUrl = url;
+      });
+    }
   }
 
   void _onGroupOptionsTap() {
@@ -1228,7 +1255,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapCreatePost() {
     Analytics().logSelect(target: "Create Post");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group))).then((result) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group))).then((result) {
       if (_refreshingPosts != true) {
         _refreshCurrentPosts();
       }
