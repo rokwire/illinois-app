@@ -586,17 +586,17 @@ class AppMapPathKey {
     return null;
   }
   
-  static dynamic _pathKeyEntry(Map<String, dynamic> map, String key) {
+  static dynamic _pathKeyEntry(Map map, String key) {
     String field;
     dynamic entry;
     int position, start = 0;
-    Map<String, dynamic> source = map;
+    Map source = map;
 
     while (0 <= (position = key.indexOf('.', start))) {
       field = key.substring(start, position);
       entry = source[field];
       if ((entry != null) && (entry is Map)) {
-        source = entry as Map<String, dynamic>;
+        source = entry;
         start = position + 1;
       }
       else {
@@ -613,25 +613,21 @@ class AppMapPathKey {
     }
   }
 
-  static dynamic _listKeyEntry(Map<String, dynamic> map, List keys) {
+  static dynamic _listKeyEntry(Map map, List keys) {
     dynamic entry;
-    Map<String, dynamic>? source = map;
+    Map source = map;
     for (dynamic key in keys) {
-      if (source == null) {
-        return null;
-      }
-
       entry = source[key];
 
-      if (entry != null) {
-        source = (entry is Map) ? entry as Map<String, dynamic> : null;
+      if (entry is Map) {
+        source = entry;
       }
       else {
         return null;
       }
     }
 
-    return source ?? entry;
+    return source;
   }
 
 }
