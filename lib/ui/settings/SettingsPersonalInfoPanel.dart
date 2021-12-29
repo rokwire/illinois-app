@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/model/Auth2.dart';

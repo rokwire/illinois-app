@@ -16,11 +16,8 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 import 'dart:math';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart' as Path;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
@@ -238,7 +235,7 @@ class AppVersion {
     }
   }
 
-  static bool matchVersions(String? versionString1, String versionString2) {
+  static bool matchVersions(String? versionString1, String? versionString2) {
     List<String> versionList1 = (versionString1 is String) ? versionString1.split('.') : [];
     List<String> versionList2 = (versionString2 is String) ? versionString2.split('.') : [];
     int minLen = min(versionList1.length, versionList2.length);
@@ -253,7 +250,7 @@ class AppVersion {
     return true;
   }
 
-  static String? majorVersion(String versionString, int versionsLength) {
+  static String? majorVersion(String? versionString, int versionsLength) {
     if (versionString is String) {
       List<String> versionList = versionString.split('.');
       if (versionsLength < versionList.length) {

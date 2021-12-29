@@ -106,7 +106,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                     focusColor: Styles().colors!.white,
                     canvasColor: Styles().colors!.white,
                     primaryColor: Styles().colors!.white,
-                    accentColor: Styles().colors!.white,
+                    /*accentColor: Styles().colors!.white,*/
                     highlightColor: Styles().colors!.white,
                     splashColor: Styles().colors!.white,
                   ),

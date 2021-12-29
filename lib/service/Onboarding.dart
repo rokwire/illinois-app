@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';

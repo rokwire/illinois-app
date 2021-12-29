@@ -18,7 +18,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/Auth2.dart';
