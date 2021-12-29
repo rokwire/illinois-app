@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Localization.dart';

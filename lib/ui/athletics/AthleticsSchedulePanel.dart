@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/model/sport/Team.dart';
 import 'package:illinois/service/Sports.dart';

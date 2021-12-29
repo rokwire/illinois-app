@@ -32,7 +32,7 @@ class NotificationService {
 
   void subscribe(NotificationsListener listener, names) {
     if (names is List) {
-      for (String name in names) {
+      for (dynamic name in names) {
         if (name is String) {
           _subscribe(listener, name);
         }
@@ -55,7 +55,7 @@ class NotificationService {
 
   void unsubscribe(NotificationsListener listener, { dynamic names }) {
     if (names is List) {
-      for (String name in names) {
+      for (dynamic name in names) {
         if (name is String) {
           _unsubscribe(listener, name);
         }

@@ -245,7 +245,7 @@ class Localization with Service implements NotificationsListener {
   // Strings 
 
   String? getString(String? key, {String? defaults, String? language}) {
-    String? value;
+    dynamic value;
     if ((value == null) && (_localeStrings != null) && ((language == null) || (language == _currentLocale?.languageCode))) {
       value = _localeStrings![key];
     }

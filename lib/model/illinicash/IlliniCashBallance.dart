@@ -45,7 +45,7 @@ class IlliniCashBallance {
     return mealBalance.toString();
   }
 
-  bool equals(IlliniCashBallance o) {
+  bool equals(dynamic o) {
     return (o is IlliniCashBallance) &&
       (o.mealPlanName == mealPlanName) &&
       (o.balance == balance) &&

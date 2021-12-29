@@ -18,7 +18,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
