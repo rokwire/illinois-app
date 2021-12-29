@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Sound null safety.
-- Upgrade to Flutter 2.5.3 and Xcode 13.2.1.
+- Upgrade to Flutter 2.8.0 and Xcode 13.2.1.
 
 ## [3.1.5] - 2021-12-23
 ### Added
