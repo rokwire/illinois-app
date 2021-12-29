@@ -35,11 +35,11 @@ class DiningService  with Service {
 
   static final String _olddiningsFileName = 'dinings_schedules.json';
 
-  String _diningLocationsResponse;
-  DateTime _lastDiningLocationsRequestTime;
+  String? _diningLocationsResponse;
+  DateTime? _lastDiningLocationsRequestTime;
 
-  String _diningSpecialsResponse;
-  DateTime _lastDiningSpecialsRequestTime;
+  String? _diningSpecialsResponse;
+  DateTime? _lastDiningSpecialsRequestTime;
 
   static final DiningService _logic = DiningService._internal();
 
@@ -54,7 +54,7 @@ class DiningService  with Service {
 
   DiningService._internal();
 
-  Future<List<Dining>> loadBackendDinings(bool onlyOpened, PaymentType paymentType, Position locationData) async {
+  Future<List<Dining>?> loadBackendDinings(bool onlyOpened, PaymentType? paymentType, Position? locationData) async {
     if(_enabled) {
       List<Dining> dinings = [];
 
@@ -65,13 +65,13 @@ class DiningService  with Service {
         _lastDiningLocationsRequestTime = DateTime.now();
       }
 
-      Map<String, dynamic> jsonData = AppJson.decode(_diningLocationsResponse);
+      Map<String, dynamic>? jsonData = AppJson.decode(_diningLocationsResponse);
       if (jsonData != null) {
         // 1.2.2 Load Menu Schedules
-        List<dynamic> diningLocations = jsonData["DiningOptions"];
+        List<dynamic>? diningLocations = jsonData["DiningOptions"];
         if (diningLocations != null && diningLocations.isNotEmpty) {
-          for (Map<String, dynamic> diningLocation in diningLocations) {
-            dinings.add(Dining.fromJson(diningLocation));
+          for (dynamic diningLocation in diningLocations) {
+            AppList.add(dinings, Dining.fromJson(AppJson.mapValue(diningLocation)));
           }
         }
       }
@@ -85,12 +85,12 @@ class DiningService  with Service {
       }
 
       // Filter by payment type
-      List<Dining> diningsLimited = paymentType != null ? dinings?.where((Dining dining){
+      List<Dining>? diningsLimited = paymentType != null ? dinings.where((Dining? dining){
         return (dining?.paymentTypes?.contains(paymentType) ?? false);
-      })?.toList() : dinings;
+      }).toList() : dinings;
 
       //Filter only opened
-      return onlyOpened ? diningsLimited?.where((Dining dining) => dining.isOpen)?.toList() : diningsLimited;
+      return onlyOpened ? diningsLimited.where((Dining? dining) => dining!.isOpen).toList() : diningsLimited;
     }
     return null;
   }
@@ -99,23 +99,21 @@ class DiningService  with Service {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String configFilePath = join(appDocDir.path, _olddiningsFileName);
     File diningsCacheFile = File(configFilePath);
-    if(diningsCacheFile != null){
-      bool exist = await diningsCacheFile.exists();
-      if(exist){
-        await diningsCacheFile.delete();
-      }
+    bool exist = await diningsCacheFile.exists();
+    if(exist){
+      await diningsCacheFile.delete();
     }
   }
 
   bool get _useCachedDiningLoacations{
     return (_diningLocationsResponse != null && _lastDiningLocationsRequestTime != null
-        && DateTime.now().difference(_lastDiningLocationsRequestTime).inHours.abs() < 24);
+        && DateTime.now().difference(_lastDiningLocationsRequestTime!).inHours.abs() < 24);
   }
 
-  Future<String> _loadDiningsFromServer() async {
+  Future<String?> _loadDiningsFromServer() async {
     final url = (Config().illiniCashBaseUrl != null) ? "${Config().illiniCashBaseUrl}/LocationSchedules" : null;
     final response = await Network().get(url);
-    String responseBody;
+    String? responseBody;
     if ((response != null) && (response.statusCode == 200)) {
       responseBody = response.body;
     } else {
@@ -124,19 +122,19 @@ class DiningService  with Service {
     return responseBody;
   }
 
-  Future<List<DiningProductItem>> loadMenuItemsForDate(String diningId, DateTime diningDate) async{
+  Future<List<DiningProductItem>?> loadMenuItemsForDate(String? diningId, DateTime? diningDate) async{
     if(_enabled) {
       if (diningId != null && diningDate != null) {
-        String filterDateString = DiningUtils.dateToRequestString(diningDate);
+        String? filterDateString = DiningUtils.dateToRequestString(diningDate);
 
         final url = (Config().illiniCashBaseUrl != null) ? "${Config().illiniCashBaseUrl}/Menu/$diningId/$filterDateString" : null;
         final response = await Network().get(url);
         if ((response != null) && (response.statusCode == 200)) {
-          List<dynamic> jsonList = AppJson.decode(response.body);
+          List<dynamic>? jsonList = AppJson.decode(response.body);
           List<DiningProductItem> productList = [];
           if (AppCollection.isCollectionNotEmpty(jsonList)) {
-            for (Map<String, dynamic> jsonEntry in jsonList) {
-              DiningProductItem item = DiningProductItem.fromJson(jsonEntry);
+            for (dynamic jsonEntry in jsonList!) {
+              DiningProductItem? item = DiningProductItem.fromJson(AppJson.mapValue(jsonEntry));
               if (item != null) {
                 productList.add(item);
               }
@@ -153,17 +151,17 @@ class DiningService  with Service {
   }
 
 
-  Future<DiningNutritionItem> loadNutritionItemWithId(String itemId) async {
+  Future<DiningNutritionItem?> loadNutritionItemWithId(String? itemId) async {
     if(_enabled) {
       // TMP: "https://shibtest.housing.illinois.edu/MobileAppWS/api/Nutrition/44";
       final url = (Config().illiniCashBaseUrl != null) ? "${Config().illiniCashBaseUrl}/Nutrition/$itemId" : null;
       final response = await Network().get(url);
-      String responseBody;
+      String? responseBody;
       if ((response != null) && (response.statusCode == 200)) {
         responseBody = response.body;
 
         if (AppString.isStringNotEmpty(responseBody)) {
-          Map<String, dynamic> jsonData = AppJson.decode(responseBody);
+          Map<String, dynamic>? jsonData = AppJson.decode(responseBody);
           return DiningNutritionItem.fromJson(jsonData);
         }
       } else {
@@ -175,7 +173,7 @@ class DiningService  with Service {
     return null;
   }
 
-  Future<String> _loadDiningSpecialsFromServer() async {
+  Future<String?> _loadDiningSpecialsFromServer() async {
     _diningSpecialsResponse = null;
     // TMP: "https://shibtest.housing.illinois.edu/MobileAppWS/api/Offers";
     final url = (Config().illiniCashBaseUrl != null) ? "${Config().illiniCashBaseUrl}/Offers" : null;
@@ -190,23 +188,23 @@ class DiningService  with Service {
 
   bool get _useCachedDiningSpecials{
     return (_diningSpecialsResponse != null && _lastDiningSpecialsRequestTime != null
-        && DateTime.now().difference(_lastDiningSpecialsRequestTime).inHours.abs() < 24);
+        && DateTime.now().difference(_lastDiningSpecialsRequestTime!).inHours.abs() < 24);
   }
 
-  Future<List<DiningSpecial>> loadDiningSpecials() async {
+  Future<List<DiningSpecial>?> loadDiningSpecials() async {
     if(_enabled) {
-      String responseBody = _diningSpecialsResponse;
+      String? responseBody = _diningSpecialsResponse;
       if (!_useCachedDiningSpecials) {
         responseBody = await _loadDiningSpecialsFromServer();
       }
 
       if (responseBody != null) {
-        List<dynamic> jsonList = AppJson.decode(responseBody);
+        List<dynamic>? jsonList = AppJson.decode(responseBody);
         if (AppCollection.isCollectionNotEmpty(jsonList)) {
           List<DiningSpecial> list = [];
 
-          for (Map<String, dynamic> jsonEntry in jsonList) {
-            list.add(DiningSpecial.fromJson(jsonEntry));
+          for (dynamic jsonEntry in jsonList!) {
+            AppList.add(list, DiningSpecial.fromJson(AppJson.mapValue(jsonEntry) ));
           }
 
           return list;
@@ -219,23 +217,29 @@ class DiningService  with Service {
     return null;
   }
 
-  List<String> get foodTypes {
+  List<String>? get foodTypes {
     return _enabled ? Assets()['dining.food_types'].cast<String>() : null;
   }
 
-  List<String> get foodIngredients {
+  List<String>? get foodIngredients {
     return _enabled ? Assets()['dining.food_ingredients'].cast<String>() : null;
   }
 
-  String getLocalizedString(String text) {
+  String? getLocalizedString(String? text) {
     return _enabled ? Localization().getStringFromMapping(text, Assets()['dining.strings']) : null;
   }
 
   // Helpers
   void _sortExploresByLocation(List<Explore> explores, Position locationData) {
     explores.sort((Explore explore1, Explore explore2) {
-      double distance1 = AppLocation.distance(explore1.exploreLocation.latitude, explore1.exploreLocation.longitude, locationData.latitude, locationData.longitude);
-      double distance2 = AppLocation.distance(explore2.exploreLocation.latitude, explore2.exploreLocation.longitude, locationData.latitude, locationData.longitude);
+      double? lat1 = explore1.exploreLocation?.latitude?.toDouble();
+      double? lng1 = explore1.exploreLocation?.longitude?.toDouble();
+      double distance1 = ((lat1 != null) && (lng1 != null)) ? AppLocation.distance(lat1, lng1, locationData.latitude, locationData.longitude) : double.infinity;
+      
+      double? lat2 = explore2.exploreLocation?.latitude?.toDouble();
+      double? lng2 = explore2.exploreLocation?.longitude?.toDouble();
+      double distance2 = ((lat2 != null) && (lng2 != null)) ? AppLocation.distance(lat2, lng2, locationData.latitude, locationData.longitude) : double.infinity;
+      
       if (distance1 < distance2) {
         return -1;
       }
@@ -249,7 +253,7 @@ class DiningService  with Service {
   }
 
   void _sortExploresByName(List<Explore> explores) {
-    explores.sort((Explore explore1, Explore explore2) {
+    explores.sort((Explore? explore1, Explore? explore2) {
       return (explore1?.exploreTitle ?? "").compareTo(explore2?.exploreTitle ?? "");
     });
   }
@@ -262,7 +266,7 @@ class DiningService  with Service {
 
 class DiningUtils{
 
-  static String dateToRequestString(DateTime date) {
+  static String? dateToRequestString(DateTime? date) {
     if(date != null){
       return DateFormat('M-d-yyyy').format(date);
     }
@@ -271,60 +275,62 @@ class DiningUtils{
     }
   }
    
-  static List<DiningProductItem> getProductsForScheduleId(List<DiningProductItem> allProducts, String scheduleId, Set<String> includedFoodTypePrefs, Set<String> excludedFoodIngredientsPrefs) {
+  static List<DiningProductItem> getProductsForScheduleId(List<DiningProductItem>? allProducts, String? scheduleId, Set<String>? includedFoodTypePrefs, Set<String>? excludedFoodIngredientsPrefs) {
     if(scheduleId != null && allProducts != null){
       return allProducts.where((DiningProductItem item){
         return scheduleId == item.scheduleId &&
-              ((includedFoodTypePrefs == null) || includedFoodTypePrefs.isEmpty || item.containsFoodType(includedFoodTypePrefs)) &&
-              ((excludedFoodIngredientsPrefs == null) || excludedFoodIngredientsPrefs.isEmpty || !item.containsFoodIngredient(excludedFoodIngredientsPrefs));
+            ((includedFoodTypePrefs == null) || includedFoodTypePrefs.isEmpty || item.containsFoodType(includedFoodTypePrefs)) &&
+            ((excludedFoodIngredientsPrefs == null) || excludedFoodIngredientsPrefs.isEmpty || !item.containsFoodIngredient(excludedFoodIngredientsPrefs));
       }).toList();
     }
     return [];
   }
 
-  static Map<String,List<DiningProductItem>> getStationGroupedProducts(List<DiningProductItem> allProducts){
+  static Map<String,List<DiningProductItem>> getStationGroupedProducts(List<DiningProductItem>? allProducts){
     Map<String, List<DiningProductItem>> mapping = Map<String,
         List<DiningProductItem>>();
     if(allProducts != null) {
       for(DiningProductItem item in allProducts){
-        if(!mapping.containsKey(item.servingUnit)){
-          mapping[item.servingUnit] = [];
+        if((item.servingUnit != null) && !mapping.containsKey(item.servingUnit)){
+          mapping[item.servingUnit!] = [];
         }
-        mapping[item.servingUnit].add(item);
+        mapping[item.servingUnit]!.add(item);
       }
     }
     return mapping;
   }
 
-  static Map<String,List<DiningProductItem>> getCourseGroupedProducts(List<DiningProductItem> allProducts){
+  static Map<String,List<DiningProductItem>> getCourseGroupedProducts(List<DiningProductItem>? allProducts){
     Map<String, List<DiningProductItem>> mapping = Map<String,
         List<DiningProductItem>>();
     if(allProducts != null) {
       for(DiningProductItem item in allProducts){
-        if(!mapping.containsKey(item.course)){
-          mapping[item.course] = [];
+        if((item.course != null) && !mapping.containsKey(item.course)){
+          mapping[item.course!] = [];
         }
-        mapping[item.course].add(item);
+        mapping[item.course]!.add(item);
       }
     }
     return mapping;
   }
 
-  static Map<String,List<DiningProductItem>> getCategoryGroupedProducts(List<DiningProductItem> allProducts){
+  static Map<String,List<DiningProductItem>> getCategoryGroupedProducts(List<DiningProductItem>? allProducts){
     Map<String, List<DiningProductItem>> mapping = Map<String,
         List<DiningProductItem>>();
     if(allProducts != null) {
       for(DiningProductItem item in allProducts){
-        if(!mapping.containsKey(item.category)){
-          mapping[item.category] = [];
+        if (item.category != null) {
+          if(!mapping.containsKey(item.category)){
+            mapping[item.category!] = [];
+          }
+          mapping[item.category!]!.add(item);
         }
-        mapping[item.category].add(item);
       }
     }
     return mapping;
   }
 
-  static DiningNutritionItem getNutritionItemById(String itemId, List<DiningNutritionItem> allItems){
+  static DiningNutritionItem? getNutritionItemById(String? itemId, List<DiningNutritionItem>? allItems){
     if(itemId != null && allItems != null && allItems.isNotEmpty){
       for(DiningNutritionItem item in allItems){
         if(item.itemID == itemId)

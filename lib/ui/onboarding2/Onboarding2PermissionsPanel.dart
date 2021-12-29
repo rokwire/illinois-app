@@ -1,5 +1,4 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/LocationServices.dart';
@@ -22,25 +21,25 @@ class _Onboarding2PermissionsPanelState extends State <Onboarding2PermissionsPan
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
     );
   }
 
   void _requestLocation(BuildContext context) async {
     Analytics.instance.logSelect(target: 'Share My locaiton') ;
-    await LocationServices.instance.status.then((LocationServicesStatus status){
+    await LocationServices.instance.status.then((LocationServicesStatus? status){
       if (status == LocationServicesStatus.ServiceDisabled) {
         LocationServices.instance.requestService();
       }
       else if (status == LocationServicesStatus.PermissionNotDetermined) {
-        LocationServices.instance.requestPermission().then((LocationServicesStatus status) {
+        LocationServices.instance.requestPermission().then((LocationServicesStatus? status) {
           //Next
           _goNext();
         });
       }
       else if (status == LocationServicesStatus.PermissionDenied) {
         //Denied  - request again
-        LocationServices.instance.requestPermission().then((LocationServicesStatus status) {
+        LocationServices.instance.requestPermission().then((LocationServicesStatus? status) {
           //Next
           _goNext();
         });

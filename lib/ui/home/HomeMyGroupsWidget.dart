@@ -13,18 +13,18 @@ import 'package:illinois/ui/widgets/TrianglePainter.dart';
 
 
 class HomeMyGroupsWidget extends StatefulWidget {
-  final StreamController<void> refreshController;
+  final StreamController<void>? refreshController;
 
-  const HomeMyGroupsWidget({Key key, this.refreshController}) : super(key: key);
+  const HomeMyGroupsWidget({Key? key, this.refreshController}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HomeMyGroupsState();
 }
 
 class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements NotificationsListener{
-  List<Group> _myGroups;
-  PageController _pageController;
-  DateTime _pausedDateTime;
+  List<Group>? _myGroups;
+  PageController? _pageController;
+  DateTime? _pausedDateTime;
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,]);
     if (widget.refreshController != null) {
-      widget.refreshController.stream.listen((_) {
+      widget.refreshController!.stream.listen((_) {
         _loadGroups();
       });
     }
@@ -81,7 +81,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
 
   Widget _buildHeader() {
     return Semantics(container: true , header: true,
-    child: Container(color: Styles().colors.fillColorPrimary, child:
+    child: Container(color: Styles().colors!.fillColorPrimary, child:
       Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Padding(padding: EdgeInsets.only(right: 16),
@@ -89,17 +89,17 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
           Expanded(child:
             Text("My Groups", style:
               TextStyle(
-                color: Styles().colors.white,
-                fontFamily: Styles().fontFamilies.extraBold,
+                color: Styles().colors!.white,
+                fontFamily: Styles().fontFamilies!.extraBold,
                 fontSize: 20,),),),
     ],),),));
   }
 
   Widget _buildSlant() {
     return Column(children: <Widget>[
-      Container(color:  Styles().colors.fillColorPrimary, height: 45,),
-      Container(color: Styles().colors.fillColorPrimary, child:
-      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, left : true), child:
+      Container(color:  Styles().colors!.fillColorPrimary, height: 45,),
+      Container(color: Styles().colors!.fillColorPrimary, child:
+      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, left : true), child:
       Container(height: 65,),
       )),
     ],);
@@ -108,7 +108,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   Widget _buildContent() {
     List<Widget> pages = <Widget>[];
     if(_myGroups?.isNotEmpty ?? false) {
-      for (Group group in _myGroups) {
+      for (Group? group in _myGroups!) {
         if (group != null) {
           pages.add(GroupCard(
             group: group, displayType: GroupCardDisplayType.homeGroups,));
@@ -132,9 +132,9 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
       );
   }
 
-  List<Group> _sortGroups(List<Group> groups){
+  List<Group>? _sortGroups(List<Group>? groups){
     if(groups?.isNotEmpty ?? false){
-      groups.sort((group1, group2) {
+      groups!.sort((group1, group2) {
         if (group2.dateUpdatedUtc == null) {
           return -1;
         }
@@ -142,7 +142,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
           return 1;
         }
 
-        return group2.dateUpdatedUtc.compareTo(group1.dateUpdatedUtc);
+        return group2.dateUpdatedUtc!.compareTo(group1.dateUpdatedUtc!);
       });
     }
 
@@ -164,13 +164,13 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
     else if (state == AppLifecycleState.resumed) {
       if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _loadGroups();
         }

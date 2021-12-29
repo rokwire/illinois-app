@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Sound null safety.
+- Upgrade to Flutter 2.8.1 and Xcode 13.2.1.
 
 ## [3.1.5] - 2021-12-23
 ### Added
@@ -18,10 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Authman integration for Groups [#1159](https://github.com/rokwire/illinois-app/issues/1159).
 
 ## [3.1.3] - 2021-12-20
+### Fixed
 - Fix bad concurrent Groups login API synchronisation [#1150](https://github.com/rokwire/illinois-app/issues/1150).
+### Changed
 - Updated ui for add image for post and reply [1134](https://github.com/rokwire/illinois-app/issues/1134)
 
 ## [3.1.2] - 2021-12-17
+### Changed
 - Updated ui for add image for post and reply [1134](https://github.com/rokwire/illinois-app/issues/1134)
 
 ## [3.1.1] - 2021-12-15

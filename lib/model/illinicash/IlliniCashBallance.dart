@@ -18,12 +18,12 @@
 /// IlliniCashBallance
 
 class IlliniCashBallance {
-  String mealPlanName;
-  double balance;
-  double cafeCreditBalance;
-  int mealBalance;
-  String status;
-  bool housingResidenceStatus;
+  String? mealPlanName;
+  double? balance;
+  double? cafeCreditBalance;
+  int? mealBalance;
+  String? status;
+  bool? housingResidenceStatus;
 
   IlliniCashBallance(
       {this.mealPlanName,
@@ -34,18 +34,18 @@ class IlliniCashBallance {
       this.housingResidenceStatus = false});
 
   String get balanceDisplayText {
-    return _formatBalance(balance);
+    return _formatBalance(balance!);
   }
 
   String get cafeCreditBalanceDisplayText {
-    return _formatBalance(cafeCreditBalance);
+    return _formatBalance(cafeCreditBalance!);
   }
 
   String get mealBalanceDisplayText {
     return mealBalance.toString();
   }
 
-  bool equals(IlliniCashBallance o) {
+  bool equals(dynamic o) {
     return (o is IlliniCashBallance) &&
       (o.mealPlanName == mealPlanName) &&
       (o.balance == balance) &&
@@ -56,7 +56,7 @@ class IlliniCashBallance {
   }
 
 
-  factory IlliniCashBallance.fromJson(Map<String, dynamic> json) {
+  static IlliniCashBallance? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? IlliniCashBallance(
         mealPlanName: json['MealPlanName'],
         balance: json['IllinCashBalance'],

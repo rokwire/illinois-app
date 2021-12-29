@@ -31,9 +31,9 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class AthleticsScheduleCard extends StatefulWidget {
-  final Game _game;
+  final Game? _game;
 
-  AthleticsScheduleCard({Key key, Game game})
+  AthleticsScheduleCard({Key? key, Game? game})
       : _game = game,
         super(key: key);
 
@@ -66,7 +66,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   @override
   Widget build(BuildContext context) {
     // Padding( padding: EdgeInsets.only(top: 24))
-    Widget last = _cardScore();
+    Widget? last = _cardScore();
     if (last == null) {
       last = _cardAction(context);
     }
@@ -76,21 +76,21 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
       );
     }
 
-    String title = widget?._game?.title ?? "";
-    String subTitle = widget?._game?.shortDescription ?? "";
-    String displayTime = widget?._game?.displayTime ?? "";
+    String title = widget._game?.title ?? "";
+    String subTitle = widget._game?.shortDescription ?? "";
+    String displayTime = widget._game?.displayTime ?? "";
 
     return GestureDetector(
       onTap: _onTapSchedule,
       child: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4.0), bottomRight: Radius.circular(4.0)),
-              boxShadow: [BoxShadow(color: Styles().colors.fillColorPrimaryTransparent015, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2))]),
+              boxShadow: [BoxShadow(color: Styles().colors!.fillColorPrimaryTransparent015!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2))]),
           child: Container(
             color: Colors.white,
             child: Column(
               children: <Widget>[
-                Container(height: 4, width: MediaQuery.of(context).size.width, color: Styles().colors.fillColorPrimaryVariant),
+                Container(height: 4, width: MediaQuery.of(context).size.width, color: Styles().colors!.fillColorPrimaryVariant),
                 Column(children: <Widget>[
                     Semantics(
                       label: "$title $subTitle $displayTime",
@@ -113,7 +113,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   Widget _cardTitle() {
-    bool starVisible = widget._game.isUpcoming && Auth2().canFavorite;
+    bool starVisible = widget._game!.isUpcoming && Auth2().canFavorite;
     bool isGameSaved = Auth2().isFavorite(widget._game);
 
     return Padding(
@@ -126,8 +126,8 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
             child: Padding(
                 padding: EdgeInsets.only(top: 16, right: 24),
                 child: Text(
-                  widget._game.title,
-                  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 24, color: Styles().colors.fillColorPrimary),
+                  widget._game!.title,
+                  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24, color: Styles().colors!.fillColorPrimary),
                 )),
           ),
           Visibility(
@@ -142,15 +142,15 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   Widget _cardSubTitle() {
-    return AppString.isStringNotEmpty(widget._game.shortDescription)
+    return AppString.isStringNotEmpty(widget._game!.shortDescription)
         ? Padding(
             padding: EdgeInsets.only(left: 24, right: 24, top: 8),
             child: Row(
               children: <Widget>[
                 Expanded(
                     child: Text(
-                  widget._game.shortDescription,
-                  style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.textBackground),
+                  widget._game!.shortDescription!,
+                  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground),
                 ))
               ],
             ),
@@ -159,7 +159,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   Widget _cardTimeDetail() {
-    String displayTime = widget._game.displayTime;
+    String? displayTime = widget._game?.displayTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Padding(
         padding: EdgeInsets.only(top: 12, left: 24, right: 24),
@@ -169,7 +169,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
             Padding(
               padding: EdgeInsets.only(right: 5),
             ),
-            Text(displayTime, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
+            Text(displayTime, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
           ],
         ),
       );
@@ -178,8 +178,8 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     }
   }
 
-  Widget _cardAction(BuildContext context) {
-    SportDefinition sport = Sports().getSportByShortName(widget._game.sport?.shortName);
+  Widget? _cardAction(BuildContext context) {
+    SportDefinition? sport = Sports().getSportByShortName(widget._game!.sport?.shortName);
     bool hasTickets = _hasTickets();
     return Semantics(
       label: _getTicketsInformationText(sport),
@@ -191,7 +191,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
           children: <Widget>[
             Container(
               height: 1,
-              color: Styles().colors.fillColorPrimaryTransparent015,
+              color: Styles().colors!.fillColorPrimaryTransparent015,
             ),
             GestureDetector(
                 behavior: HitTestBehavior.opaque,
@@ -206,12 +206,12 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                   visible: _hasTickets(),
                   child: Container(
                       height: 48,
-                      color: Styles().colors.background,
+                      color: Styles().colors!.background,
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           child: Row(children: <Widget>[
-                            Text(_getTicketsInformationText(sport),
-                                style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
+                            Text(_getTicketsInformationText(sport)!,
+                                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
                             Padding(
                               padding: EdgeInsets.only(left: 8),
                             ),
@@ -224,24 +224,24 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     );
   }
 
-  String _getTicketsInformationText(SportDefinition sport) {
+  String? _getTicketsInformationText(SportDefinition? sport) {
     return _hasTickets() ? Localization().getStringEx("widget.schedule_card.button.get_tickets.title", "Get Tickets") : "";
   }
 
-  String _getTicketsInformationHint(SportDefinition sport) {
+  String? _getTicketsInformationHint(SportDefinition? sport) {
     return _hasTickets() ? Localization().getStringEx("widget.schedule_card.button.get_tickets.hint", "") : "";
   }
 
-  Widget _cardScore() {
-    GameResult result = (widget._game.results != null && widget._game.results.isNotEmpty) ? widget._game.results[0] : null;
+  Widget? _cardScore() {
+    GameResult? result = (widget._game!.results != null && widget._game!.results!.isNotEmpty) ? widget._game!.results![0] : null;
     if (result == null) {
       return null;
     }
-    String formattedResult = AppString.getDefaultEmptyString(value: result.status);
+    String formattedResult = AppString.getDefaultEmptyString(result.status);
     if (AppString.isStringNotEmpty(result.teamScore)) {
-      formattedResult += ' ' + result.teamScore;
+      formattedResult += ' ' + result.teamScore!;
       if (AppString.isStringNotEmpty(result.opponentScore)) {
-        formattedResult += '-' + result.opponentScore;
+        formattedResult += '-' + result.opponentScore!;
       }
     }
     return Padding(
@@ -250,20 +250,20 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
         children: <Widget>[
           Container(
             height: 1,
-            color: Styles().colors.fillColorPrimaryTransparent015,
+            color: Styles().colors!.fillColorPrimaryTransparent015,
           ),
           Container(
               height: 48,
-              color: Styles().colors.background,
+              color: Styles().colors!.background,
               child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Row(children: <Widget>[
-                    Text(Localization().getStringEx("widget.schedule_card.final_score", "Final Score"),
-                        style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
+                    Text(Localization().getStringEx("widget.schedule_card.final_score", "Final Score")!,
+                        style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
                     Expanded(
                       child: Container(),
                     ),
-                    Text(formattedResult, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
+                    Text(formattedResult, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
                   ])))
         ],
       ),
@@ -285,7 +285,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   void _onTapGetTickets() {
-    Analytics.instance.logSelect(target: "SchedulteCard: " + widget._game.title + " -Tickets");
+    Analytics.instance.logSelect(target: "SchedulteCard: " + widget._game!.title + " -Tickets");
 
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
@@ -297,12 +297,12 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   void _pushTicketsWebPanel() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget._game.links.tickets)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget._game!.links!.tickets)));
   }
 
   bool _hasTickets() {
-    bool homeGame = widget._game.isHomeGame;
-    SportDefinition sportDefinition = Sports().getSportByShortName(widget._game?.sport?.shortName);
+    bool homeGame = widget._game!.isHomeGame;
+    SportDefinition? sportDefinition = Sports().getSportByShortName(widget._game?.sport?.shortName);
     bool ticketedSport = sportDefinition?.ticketed ?? false;
     bool hasTicketsUrl = AppString.isStringNotEmpty(widget._game?.links?.tickets);
     return homeGame && ticketedSport && hasTicketsUrl;

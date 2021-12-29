@@ -109,7 +109,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
                   slivers: <Widget>[
                     SliverAppBar(pinned: true, floating: true, primary: true, forceElevated: true, centerTitle: true,
                       title: Text(
-                        Localization().getStringEx('panel.browse.label.title','Browse'),
+                        Localization().getStringEx('panel.browse.label.title','Browse')!,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -139,7 +139,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
             ),
           ],
         ),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
       );
   }
 
@@ -156,7 +156,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     const int gridWidth = 2;
     List<dynamic> codes = FlexUI()['browse.all'] ?? [];
     for (String code in codes) {
-      Widget entry = _buildBrowseAllEntry(code);
+      Widget? entry = _buildBrowseAllEntry(code);
       if (entry != null) {
         
         if (0 < rowEntries) {
@@ -199,13 +199,13 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(children: list),);
   }
   
-  Widget _buildBrowseAllEntry(String code) {
+  Widget? _buildBrowseAllEntry(String code) {
     if (code == 'athletics') {
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.athletics.title', 'Athletics'),
         hint: Localization().getStringEx('panel.browse.button.athletics.hint', ''),
         icon: 'images/icon-browse-athletics.png',
-        color: Styles().colors.fillColorPrimary,
+        color: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateToAthletics(),
       );
     }
@@ -214,7 +214,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.events.title', 'Events'),
         hint: Localization().getStringEx('panel.browse.button.events.hint', ''),
         icon: 'images/icon-browse-events.png',
-        color: Styles().colors.fillColorSecondary,
+        color: Styles().colors!.fillColorSecondary,
         onTap: () => _navigateToExploreEvents(),
       );
     }
@@ -223,7 +223,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.dining.title', 'Dining'),
         hint: Localization().getStringEx('panel.browse.button.dining.hint', ''),
         icon: 'images/icon-browse-dinings.png',
-        color: Styles().colors.mango,
+        color: Styles().colors!.mango,
         onTap: () => _navigateToExploreDining(),
       );
     }
@@ -232,7 +232,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.wellness.title', 'Wellness'),
         hint: Localization().getStringEx('panel.browse.button.wellness.hint', ''),
         icon: 'images/icon-browse-wellness.png',
-        color: Styles().colors.accentColor3,
+        color: Styles().colors!.accentColor3,
         onTap: () => _navigateToWellness(),
       );
     }
@@ -242,7 +242,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         hint: Localization().getStringEx('panel.browse.button.saved.hint', ''),
         icon: 'images/icon-browse-saved.png',
         color: Colors.white,
-        textColor: Styles().colors.fillColorPrimary,
+        textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateSaved(),
       );
     }
@@ -251,7 +251,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.quick_polls.title', 'Quick polls'),
         hint: Localization().getStringEx('panel.browse.button.quick_polls.hint', ''),
         icon: 'images/icon-browse-quick-polls.png',
-        color: Styles().colors.accentColor2,
+        color: Styles().colors!.accentColor2,
         onTap: () => _navigateQuickPolls(),
       );
     }
@@ -263,14 +263,14 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
             title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
             hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
             icon: 'images/icon-browse-gropus.png',
-            color: Styles().colors.accentColor2,
+            color: Styles().colors!.accentColor2,
             onTap: () => _navigateGroups(),
           ),
           Visibility(
             visible: _groupsLogin,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.white)
+              valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white)
             ),
           )
         ],
@@ -281,7 +281,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.safer.title', 'Safer Illinois'),
         hint: Localization().getStringEx('panel.browse.button.safer.hint', ''),
         icon: 'images/icon-browse-safer.png',
-        color: Styles().colors.fillColorPrimary,
+        color: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateToSaferIllinois(),
       );
     }
@@ -290,7 +290,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Entry'),
         hint: Localization().getStringEx('panel.browse.button.building_status.hint', ''),
         icon: 'images/icon-browse-building-status.png',
-        color: Styles().colors.fillColorPrimary,
+        color: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateToBuildingStatus(),
       );
     }
@@ -299,7 +299,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.campus_guide.title', 'Campus Guide'),
         hint: Localization().getStringEx('panel.browse.button.campus_guide.hint', ''),
         icon: 'images/icon-browse-student-guide.png',
-        color: Styles().colors.accentColor3,
+        color: Styles().colors!.accentColor3,
         onTap: () => _navigateCampusGuide(),
       );
     }
@@ -308,7 +308,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.inbox.title', 'Inbox'),
         hint: Localization().getStringEx('panel.browse.button.inbox.hint', ''),
         icon: 'images/icon-browse-inbox.png',
-        color: Styles().colors.fillColorSecondary,
+        color: Styles().colors!.fillColorSecondary,
         onTap: () => _navigateInbox(),
       );
     }
@@ -317,7 +317,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.privacy_center.title', 'Privacy Center'),
         hint: Localization().getStringEx('panel.browse.button.privacy_center.hint', ''),
         icon: 'images/icon-browse-privacy-center.png',
-        color: Styles().colors.accentColor4,
+        color: Styles().colors!.accentColor4,
         onTap: () => _navigatePrivacyCenter(),
       );
     }
@@ -332,17 +332,17 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     ];
     List<dynamic> codes = FlexUI()['browse.content'] ?? [];
     for (String code in codes) {
-      Widget entry = _buildBrowseContentEntry(code);
+      Widget? entry = _buildBrowseContentEntry(code);
       if (entry != null) {
         list.add(entry);
-        list.add(Padding(padding: _ribbonButtonPadding, child: Container(height: 1, color: Styles().colors.surfaceAccent,),));
+        list.add(Padding(padding: _ribbonButtonPadding, child: Container(height: 1, color: Styles().colors!.surfaceAccent,),));
       }
     }
 
     return list;
   }
 
-  Widget _buildBrowseContentEntry(String code) {
+  Widget? _buildBrowseContentEntry(String code) {
     if (code == 'settings') {
       return _RibbonButton(
         icon: Image.asset('images/icon-settings.png'),
@@ -499,7 +499,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     }
     else if (AppString.isStringNotEmpty(Config().myIlliniUrl)) {
-      url_launcher.launch(Config().myIlliniUrl);
+      url_launcher.launch(Config().myIlliniUrl!);
     }
   }
 
@@ -616,13 +616,13 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Analytics.instance.logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String email = Auth2().email;
-      String name =  Auth2().fullName;
-      String phone = Auth2().phone;
+      String? email = Auth2().email;
+      String? name =  Auth2().fullName;
+      String? phone = Auth2().phone;
       String params = _constructFeedbackParams(email, phone, name);
-      String feedbackUrl = Config().feedbackUrl + params;
+      String feedbackUrl = Config().feedbackUrl! + params;
 
-      String panelTitle = Localization().getStringEx('panel.settings.feedback.label.title', 'PROVIDE FEEDBACK');
+      String? panelTitle = Localization().getStringEx('panel.settings.feedback.label.title', 'PROVIDE FEEDBACK');
       Navigator.push(
           context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
     }
@@ -631,7 +631,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
-  String _constructFeedbackParams(String email, String phone, String name) {
+  String _constructFeedbackParams(String? email, String? phone, String? name) {
     Map params = Map();
     params['email'] = Uri.encodeComponent(email != null ? email : "");
     params['phone'] = Uri.encodeComponent(phone != null ? phone : "");
@@ -712,15 +712,15 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
 class _RibbonButton extends StatelessWidget {
   final Image icon;
-  final Image accessoryIcon;
-  final String title;
-  final String hint;
-  final GestureTapCallback onTap;
+  final Image? accessoryIcon;
+  final String? title;
+  final String? hint;
+  final GestureTapCallback? onTap;
   final EdgeInsets padding;
 
-  _RibbonButton({@required this.icon,
-    @required this.title,
-    @required this.hint,
+  _RibbonButton({required this.icon,
+    required this.title,
+    required this.hint,
     this.onTap,
     this.padding = const EdgeInsets.symmetric(horizontal: 0),
     this.accessoryIcon,
@@ -749,12 +749,12 @@ class _RibbonButton extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
-                      title,
+                      title!,
                       textAlign: TextAlign.start,
                       style: TextStyle(
-                          color: Styles().colors.fillColorPrimary,
+                          color: Styles().colors!.fillColorPrimary,
                           fontSize: 16,
-                          fontFamily: Styles().fontFamilies.bold),
+                          fontFamily: Styles().fontFamilies!.bold),
                     ),
                   ),
                 ),
@@ -771,12 +771,12 @@ class _RibbonButton extends StatelessWidget {
 // _GridSquareButton
 
 class _GridSquareButton extends StatelessWidget {
-  final String title;
-  final String hint;
-  final String icon;
-  final Color color;
-  final Color textColor;
-  final GestureTapCallback onTap;
+  final String? title;
+  final String? hint;
+  final String? icon;
+  final Color? color;
+  final Color? textColor;
+  final GestureTapCallback? onTap;
 
   _GridSquareButton({this.title, this.hint = '', this.icon, this.color, this.textColor = Colors.white, this.onTap});
 
@@ -798,17 +798,17 @@ class _GridSquareButton extends StatelessWidget {
                           color: color,
                           //border: Border.all(color: Colors.grey, width: 1),
                           borderRadius: BorderRadius.circular(6),
-                          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+                          boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
             ),
             child: Padding(padding: EdgeInsets.all(12), child: Stack(children: <Widget>[
-              Align(alignment: Alignment.topLeft, child: Text(title,
+              Align(alignment: Alignment.topLeft, child: Text(title!,
                 style: TextStyle(
-                    fontFamily: Styles().fontFamilies.bold,
+                    fontFamily: Styles().fontFamilies!.bold,
                     color: textColor,
                     fontSize: 20,),
               ),),
               Align(alignment: Alignment.bottomRight, child:
-                Image.asset(icon, color: color, colorBlendMode:BlendMode.multiply),
+                Image.asset(icon!, color: color, colorBlendMode:BlendMode.multiply),
               ),
               
             ],),)

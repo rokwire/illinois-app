@@ -32,7 +32,7 @@ class NotificationService {
 
   void subscribe(NotificationsListener listener, names) {
     if (names is List) {
-      for (String name in names) {
+      for (dynamic name in names) {
         if (name is String) {
           _subscribe(listener, name);
         }
@@ -43,9 +43,9 @@ class NotificationService {
     }
   }
 
-  void _subscribe(NotificationsListener listener, String name) {
+  void _subscribe(NotificationsListener? listener, String? name) {
     if ((listener != null) && (name != null)) {
-      Set<NotificationsListener> listenersForName = _listeners[name];
+      Set<NotificationsListener>? listenersForName = _listeners[name];
       if (listenersForName == null) {
         _listeners[name] = listenersForName = Set<NotificationsListener>();
       }
@@ -55,7 +55,7 @@ class NotificationService {
 
   void unsubscribe(NotificationsListener listener, { dynamic names }) {
     if (names is List) {
-      for (String name in names) {
+      for (dynamic name in names) {
         if (name is String) {
           _unsubscribe(listener, name);
         }
@@ -69,10 +69,10 @@ class NotificationService {
     }
   }
 
-  void _unsubscribe(NotificationsListener listener, String name) {
+  void _unsubscribe(NotificationsListener? listener, String? name) {
     if ((listener != null) && (name != null)) {
       // Unsubscribe for 'name'
-      Set<NotificationsListener> listenersForName = _listeners[name];
+      Set<NotificationsListener>? listenersForName = _listeners[name];
       if (listenersForName != null) {
         listenersForName.remove(listener);
       }
@@ -87,7 +87,7 @@ class NotificationService {
   }
 
   void notify(String name, [dynamic param]) {
-    Set<NotificationsListener> listenersForName = _listeners[name];
+    Set<NotificationsListener>? listenersForName = _listeners[name];
     if (listenersForName != null) {
       for (NotificationsListener listener in listenersForName) {
         listener.onNotification(name, param);

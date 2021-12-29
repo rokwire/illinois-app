@@ -20,21 +20,21 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class News implements Favorite {
-  final String id;
-  final String title;
-  final String link;
-  final String category;
-  final String description;
-  final String fullText;
-  final String fullTextRaw;
-  final String imageUrl;
-  final DateTime pubDateUtc;
+  final String? id;
+  final String? title;
+  final String? link;
+  final String? category;
+  final String? description;
+  final String? fullText;
+  final String? fullTextRaw;
+  final String? imageUrl;
+  final DateTime? pubDateUtc;
 
-  final Map<String, dynamic> json;
+  final Map<String, dynamic>? json;
 
   News({this.id, this.title, this.link, this.category, this.description, this.fullText, this.fullTextRaw, this.imageUrl, this.pubDateUtc, this.json});
 
-  factory News.fromJson(Map<String, dynamic> json) {
+  static News? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -51,24 +51,24 @@ class News implements Favorite {
         json: json);
   }
 
-  String get fillText {
+  String? get fillText {
     return AppString.isStringNotEmpty(fullText) ? fullText : fullTextRaw;
   }
 
-  String get displayTime {
+  String? get displayTime {
     if (pubDateUtc == null) {
       return "";
     }
-    bool useDeviceLocalTimeZone = Storage().useDeviceLocalTimeZone;
-    DateTime pubDateTime = useDeviceLocalTimeZone ? AppDateTime().getDeviceTimeFromUtcTime(pubDateUtc) : pubDateUtc;
+    bool useDeviceLocalTimeZone = Storage().useDeviceLocalTimeZone!;
+    DateTime? pubDateTime = useDeviceLocalTimeZone ? AppDateTime().getDeviceTimeFromUtcTime(pubDateUtc) : pubDateUtc;
     return AppDateTime().formatDateTime(pubDateTime, format: "MMM dd ", ignoreTimeZone: useDeviceLocalTimeZone);
   }
 
   @override
-  String get favoriteId => id;
+  String? get favoriteId => id;
 
   @override
-  String get favoriteTitle => title;
+  String? get favoriteTitle => title;
 
   @override
   String get favoriteKey => favoriteKeyName;

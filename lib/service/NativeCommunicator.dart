@@ -95,9 +95,9 @@ class NativeCommunicator with Service implements NotificationsListener {
     }
   }
 
-  void _onDeepLinkUri(Uri uri) {
+  void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri settingsUri = Uri.tryParse(APP_SETTINGS_URI);
+      Uri? settingsUri = Uri.tryParse(APP_SETTINGS_URI);
       if ((settingsUri != null) &&
           (settingsUri.scheme == uri.scheme) &&
           (settingsUri.authority == uri.authority) &&
@@ -133,8 +133,8 @@ class NativeCommunicator with Service implements NotificationsListener {
 
   Future<void> launchMapDirections({dynamic jsonData}) async {
     try {
-      String lastPageName = Analytics().currentPageName;
-      Map<String, dynamic> lastPageAttributes = Analytics().currentPageAttributes;
+      String? lastPageName = Analytics().currentPageName;
+      Map<String, dynamic>? lastPageAttributes = Analytics().currentPageAttributes;
       Analytics().logPage(name: 'MapDirections');
       Analytics().logMapShow();
       
@@ -152,16 +152,16 @@ class NativeCommunicator with Service implements NotificationsListener {
     }
   }
 
-  Future<String> launchSelectLocation({dynamic explore}) async {
+  Future<String?> launchSelectLocation({dynamic explore}) async {
     try {
 
-      String lastPageName = Analytics().currentPageName;
-      Map<String, dynamic> lastPageAttributes = Analytics().currentPageAttributes;
+      String? lastPageName = Analytics().currentPageName;
+      Map<String, dynamic>? lastPageAttributes = Analytics().currentPageAttributes;
       Analytics().logPage(name: 'MapSelectLocation');
       Analytics().logMapShow();
 
       dynamic jsonData = (explore != null) ? explore.toJson() : null;
-      String result = await _platformChannel.invokeMethod('pickLocation', {"explore": jsonData});
+      String? result = await _platformChannel.invokeMethod('pickLocation', {"explore": jsonData});
 
       Analytics().logMapHide();
       Analytics().logPage(name: lastPageName, attributes: lastPageAttributes);
@@ -176,8 +176,8 @@ class NativeCommunicator with Service implements NotificationsListener {
 
   Future<void> launchMap({dynamic target, dynamic markers}) async {
     try {
-      String lastPageName = Analytics().currentPageName;
-      Map<String, dynamic> lastPageAttributes = Analytics().currentPageAttributes;
+      String? lastPageName = Analytics().currentPageName;
+      Map<String, dynamic>? lastPageAttributes = Analytics().currentPageAttributes;
       Analytics().logPage(name: 'Map');
       Analytics().logMapShow();
 
@@ -198,7 +198,7 @@ class NativeCommunicator with Service implements NotificationsListener {
     }
   }
 
-  Future<void>launchNotification({String title, String subtitle, String body, bool sound = true}) async {
+  Future<void>launchNotification({String? title, String? subtitle, String? body, bool sound = true}) async {
     await _platformChannel.invokeMethod('showNotification', {
       'title': title,
       'subtitle': subtitle,
@@ -223,7 +223,7 @@ class NativeCommunicator with Service implements NotificationsListener {
     }
   }
 
-  Future<void> setLaunchScreenStatus(String status) async {
+  Future<void> setLaunchScreenStatus(String? status) async {
     try {
       await _platformChannel.invokeMethod('setLaunchScreenStatus', {
         'status': status
@@ -242,7 +242,7 @@ class NativeCommunicator with Service implements NotificationsListener {
     }
   }
 
-  Future<dynamic> geoFence({List<dynamic> regions, Map<String, dynamic> beacons}) async {
+  Future<dynamic> geoFence({List<dynamic>? regions, Map<String, dynamic>? beacons}) async {
     try {
       Map<String, dynamic> params = {};
       if (regions != null) {
@@ -258,8 +258,8 @@ class NativeCommunicator with Service implements NotificationsListener {
     return null;
   }
 
-  Future<List<DeviceOrientation>> enabledOrientations(List<DeviceOrientation> orientationsList) async {
-    List<DeviceOrientation> result;
+  Future<List<DeviceOrientation>?> enabledOrientations(List<DeviceOrientation> orientationsList) async {
+    List<DeviceOrientation>? result;
     try {
       dynamic inputStringsList = AppDeviceOrientation.toStrList(orientationsList);
       dynamic outputStringsList = await _platformChannel.invokeMethod('enabledOrientations', { "orientations" : inputStringsList });
@@ -270,8 +270,8 @@ class NativeCommunicator with Service implements NotificationsListener {
     return result;
   }
 
-  Future<String> queryFirebaseInfo() async {
-    String result;
+  Future<String?> queryFirebaseInfo() async {
+    String? result;
     try {
       result = await _platformChannel.invokeMethod('firebaseInfo');
     } on PlatformException catch (e) {
@@ -280,8 +280,8 @@ class NativeCommunicator with Service implements NotificationsListener {
     return result;
   }
 
-  Future<AuthorizationStatus> queryNotificationsAuthorization(String method) async {
-    AuthorizationStatus result;
+  Future<AuthorizationStatus?> queryNotificationsAuthorization(String method) async {
+    AuthorizationStatus? result;
     try {
       result = _authorizationStatusFromString(await _platformChannel.invokeMethod('notifications_authorization', {"method": method }));
     } on PlatformException catch (e) {
@@ -290,8 +290,8 @@ class NativeCommunicator with Service implements NotificationsListener {
     return result;
   }
 
-  Future<String> queryLocationServicesPermission(String method) async {
-    String result;
+  Future<String?> queryLocationServicesPermission(String method) async {
+    String? result;
     try {
       result = await _platformChannel.invokeMethod('location_services_permission', {"method": method });
     } on PlatformException catch (e) {
@@ -300,8 +300,8 @@ class NativeCommunicator with Service implements NotificationsListener {
     return result;
   }
 
-  Future<AuthorizationStatus> queryTrackingAuthorization(String method) async {
-    AuthorizationStatus result;
+  Future<AuthorizationStatus?> queryTrackingAuthorization(String method) async {
+    AuthorizationStatus? result;
     try {
       result = _authorizationStatusFromString(await _platformChannel.invokeMethod('tracking_authorization', {"method": method }));
     } on PlatformException catch (e) {
@@ -310,57 +310,59 @@ class NativeCommunicator with Service implements NotificationsListener {
     return result;
   }
 
-  Future<String> getDeviceId() async {
-    String result;
+  Future<String?> getDeviceId() async {
+    String? result;
     try {
       result = await _platformChannel.invokeMethod('deviceId');
-    }on PlatformException catch (e) {
+    } on PlatformException catch (e) {
       print(e.message);
     }
     return result;
   }
 
-  Future<String> encryptionKey({String identifier, int size}) async {
+  Future<String?> encryptionKey({String? identifier, int? size}) async {
+    String? result;
     try {
-      return await _platformChannel.invokeMethod('encryptionKey', {
+      result = await _platformChannel.invokeMethod('encryptionKey', {
         'identifier': identifier,
         'size': size,
       });
     } catch (e) {
-      print(e?.toString());
+      print(e.toString());
     }
-    return null;
+    return result;
   }
 
-  Future<Uint8List> getBarcodeImageData(Map<String, dynamic> params) async {
+  Future<Uint8List?> getBarcodeImageData(Map<String, dynamic> params) async {
+    Uint8List? result;
     try {
-      String base64String = await _platformChannel.invokeMethod('barcode', params);
-      return (base64String != null) ? base64Decode(base64String) : null;
+      String? base64String = await _platformChannel.invokeMethod('barcode', params);
+      result = (base64String != null) ? base64Decode(base64String) : null;
     }
     catch (e) {
-      print(e.message);
+      print(e.toString());
     }
-    return null;
+    return result;
   }
 
-  Future<bool> launchApp(Map<String, dynamic> params) async {
-    bool appLaunched = false;
+  Future<bool?> launchApp(Map<String, dynamic> params) async {
+    bool? result;
     try {
-      appLaunched = await _platformChannel.invokeMethod('launchApp', params);
+      result = await _platformChannel.invokeMethod('launchApp', params);
     } catch (e) {
-      print(e.message);
+      print(e.toString());
     }
-    return appLaunched;
+    return result;
   }
 
-  Future<bool> launchAppSettings() async {
-    bool appLaunched = false;
+  Future<bool?> launchAppSettings() async {
+    bool? result;
     try {
-      appLaunched = await _platformChannel.invokeMethod('launchAppSettings');
+      result = await _platformChannel.invokeMethod('launchAppSettings');
     } catch (e) {
-      print(e.message);
+      print(e.toString);
     }
-    return appLaunched;
+    return result;
   }
 
   Future<void> launchTest() async {
@@ -412,9 +414,9 @@ class NativeCommunicator with Service implements NotificationsListener {
 
   void _notifyMapSelectExplore(dynamic arguments) {
     dynamic jsonData = (arguments is String) ? AppJson.decode(arguments) : null;
-    Map<String, dynamic> params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
-    int mapId = (params is Map) ? params['mapId'] : null;
-    dynamic exploreJson = (params is Map) ? params['explore'] : null;
+    Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
+    int? mapId = (params is Map) ? params!['mapId'] : null;
+    dynamic exploreJson = (params is Map) ? params!['explore'] : null;
 
     NotificationService().notify(notifyMapSelectExplore, {
       'mapId': mapId,
@@ -424,8 +426,8 @@ class NativeCommunicator with Service implements NotificationsListener {
   
   void _notifyMapClearExplore(dynamic arguments) {
     dynamic jsonData = (arguments is String) ? AppJson.decode(arguments) : null;
-    Map<String, dynamic> params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
-    int mapId = (params is Map) ? params['mapId'] : null;
+    Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
+    int? mapId = (params is Map) ? params!['mapId'] : null;
 
     NotificationService().notify(notifyMapClearExplore, {
       'mapId': mapId,
@@ -434,13 +436,13 @@ class NativeCommunicator with Service implements NotificationsListener {
 
   void _notifyMapRouteStart(dynamic arguments) {
     dynamic jsonData = (arguments is String) ? AppJson.decode(arguments) : null;
-    Map<String, dynamic> params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
+    Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
     NotificationService().notify(notifyMapRouteStart, params);
   }
 
   void _notifyMapRouteFinish(dynamic arguments) {
     dynamic jsonData = (arguments is String) ? AppJson.decode(arguments) : null;
-    Map<String, dynamic> params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
+    Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
     NotificationService().notify(notifyMapRouteFinish, params);
   }
 
@@ -468,7 +470,7 @@ enum AuthorizationStatus {
   Allowed
 }
 
-AuthorizationStatus _authorizationStatusFromString(String value){
+AuthorizationStatus? _authorizationStatusFromString(String? value){
   if("not_determined" == value) {
     return AuthorizationStatus.NotDetermined;
   }

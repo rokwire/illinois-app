@@ -24,7 +24,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupTagsPanel extends StatefulWidget {
-  final List<String> selectedTags;
+  final List<String>? selectedTags;
 
   GroupTagsPanel({this.selectedTags});
 
@@ -34,8 +34,8 @@ class GroupTagsPanel extends StatefulWidget {
 
 class _GroupTagsState extends State<GroupTagsPanel> {
 
-  List<String> _allTags;
-  List<String> _groupTags;
+  List<String>? _allTags;
+  List<String>? _groupTags;
 
   bool _searchView = false;
   TextEditingController _searchController = TextEditingController();
@@ -60,47 +60,47 @@ class _GroupTagsState extends State<GroupTagsPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
           context: context,
-          titleWidget: Text(Localization().getStringEx('panel.group.tags.header.title', 'Group Tags'),
+          titleWidget: Text(Localization().getStringEx('panel.group.tags.header.title', 'Group Tags')!,
               style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0))),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       body: Stack(alignment: Alignment.center, children: <Widget>[
         SingleChildScrollView(
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
                 Expanded(child: Container()),
-                RoundedButton(label: Localization().getStringEx('panel.group.tags.button.done.title', 'Done'), width: 120, textColor: Styles().colors.fillColorPrimary, borderColor: Styles().colors.fillColorSecondary, backgroundColor: Styles().colors.white, onTap: _onTapDone)
+                RoundedButton(label: Localization().getStringEx('panel.group.tags.button.done.title', 'Done'), width: 120, textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary, backgroundColor: Styles().colors!.white, onTap: _onTapDone)
               ])),
               Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
-              Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.search.label', "SEARCH")))),
-              Visibility(visible: _searchView, child: _buildTagsWidget(_filterTags(_searchController?.text))),
-              Visibility(visible: hasGroupTags, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.selected.label', "SELECTED")))),
+              Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.search.label', "SEARCH")!))),
+              Visibility(visible: _searchView, child: _buildTagsWidget(_filterTags(_searchController.text))),
+              Visibility(visible: hasGroupTags, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.selected.label', "SELECTED")!))),
               Visibility(visible: hasGroupTags, child: _buildTagsWidget(_groupTags)),
-              Visibility(visible: !_searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.all.label', "ALL TAGS")))),
+              Visibility(visible: !_searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.all.label', "ALL TAGS")!))),
               Visibility(visible: !_searchView, child: _buildTagsWidget(_allTags))
             ]))),
-        Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: Styles().colors.background, child: CircularProgressIndicator()))
+        Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: Styles().colors!.background, child: CircularProgressIndicator()))
       ])
     );
   }
 
   void _initTags() {
     _setLoading(true);
-    _groupTags = AppCollection.isCollectionNotEmpty(widget.selectedTags) ? List.from(widget.selectedTags) : [];
-    Groups().loadTags().then((List<String> tagList) {
+    _groupTags = AppCollection.isCollectionNotEmpty(widget.selectedTags) ? List.from(widget.selectedTags!) : [];
+    Groups().loadTags().then((List<String>? tagList) {
       _allTags = tagList;
       _setLoading(false);
     });
   }
 
-  Widget _buildTagsWidget(List<String> tags) {
+  Widget _buildTagsWidget(List<String>? tags) {
     if (AppCollection.isCollectionEmpty(tags)) {
       return Container();
     }
 
     List<Widget> tagWidgets = [];
-    for (String tag in tags) {
+    for (String tag in tags!) {
       if (AppCollection.isCollectionNotEmpty(tagWidgets)) {
-        tagWidgets.add(Container(height: 1, color: Styles().colors.surfaceAccent));
+        tagWidgets.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
       }
       tagWidgets.add(_TagSelectionWidget(label: tag, selected: _isTagSelected(tag), onTap: () => _onTagTaped(tag)));
     }
@@ -108,7 +108,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
             borderRadius: BorderRadius.circular(15),
             child: Container(
                 foregroundDecoration: BoxDecoration(
-                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1.0),
+                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1.0),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Column(children: tagWidgets)));
@@ -135,10 +135,10 @@ class _GroupTagsState extends State<GroupTagsPanel> {
     if (_groupTags == null) {
       _groupTags = [];
     }
-    if (_groupTags.contains(tag)) {
-      _groupTags.remove(tag);
+    if (_groupTags!.contains(tag)) {
+      _groupTags!.remove(tag);
     } else {
-      _groupTags.add(tag);
+      _groupTags!.add(tag);
     }
     setState(() {});
   }
@@ -146,7 +146,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
   Widget _buildSearchWidget() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
-      color: Styles().colors.surface,
+      color: Styles().colors!.surface,
       height: 48,
       child: Row(
         children: <Widget>[
@@ -160,9 +160,9 @@ class _GroupTagsState extends State<GroupTagsPanel> {
                   controller: _searchController,
                   onChanged: (text) => _onTextChanged(text),
                   onSubmitted: (_) => () {},
-                  cursorColor: Styles().colors.fillColorSecondary,
+                  cursorColor: Styles().colors!.fillColorSecondary,
                   keyboardType: TextInputType.text,
-                  style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground),
+                  style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                   ),
@@ -198,7 +198,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
                 },
                 child: Image.asset(
                   'images/icon-search.png',
-                  color: Styles().colors.fillColorSecondary,
+                  color: Styles().colors!.fillColorSecondary,
                   width: 25,
                   height: 25,
                 ),
@@ -229,11 +229,11 @@ class _GroupTagsState extends State<GroupTagsPanel> {
     });
   }
 
-  List<String> _filterTags(String key) {
+  List<String>? _filterTags(String key) {
     if (AppString.isStringEmpty(key)) {
       return _allTags;
     } else if (AppCollection.isCollectionNotEmpty(_allTags)) {
-      return _allTags.where((String tag) => tag.toLowerCase().contains(key.toLowerCase())).toList();
+      return _allTags!.where((String tag) => tag.toLowerCase().contains(key.toLowerCase())).toList();
     }
     return null;
   }
@@ -253,10 +253,10 @@ class _GroupTagsState extends State<GroupTagsPanel> {
 
 class _TagSelectionWidget extends StatelessWidget {
   final String label;
-  final GestureTapCallback onTap;
+  final GestureTapCallback? onTap;
   final bool selected;
 
-  _TagSelectionWidget({@required this.label, this.onTap, this.selected = false});
+  _TagSelectionWidget({required this.label, this.onTap, this.selected = false});
 
   @override
   Widget build(BuildContext context) {
@@ -267,9 +267,9 @@ class _TagSelectionWidget extends StatelessWidget {
                     "toggle_button.status.checked",
                     "checked",
                   )
-                : Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
+                : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
             ", " +
-            Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
+            Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
         excludeSemantics: true,
         child: GestureDetector(
             onTap: onTap,
@@ -281,7 +281,7 @@ class _TagSelectionWidget extends StatelessWidget {
                       Flexible(
                           child: Text(label,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary, fontSize: 16))),
+                              style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16))),
                       Image.asset(selected ? 'images/deselected-dark.png' : 'images/deselected.png')
                     ])))));
   }

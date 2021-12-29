@@ -45,7 +45,7 @@ class DeepLink with Service {
     });
 
     // 2. Updated uri
-    uriLinkStream.listen((Uri uri) {
+    uriLinkStream.listen((Uri? uri) {
       if (uri != null) {
         NotificationService().notify(notifyUri, uri);
       }
@@ -54,11 +54,11 @@ class DeepLink with Service {
     await super.initService();
   }
 
-  static bool isRokwireUri(Uri uri) => (uri?.scheme == ROKWIRE_SCHEME) && (uri?.host == ROKWIRE_HOST);
-  static bool isRokwireUrl(String url) =>  isRokwireUri((url != null) ? Uri.tryParse(url) : null);
-  static void launchUrl(String url) => launchUri((url != null) ? Uri.tryParse(url) : null);
+  static bool isRokwireUri(Uri? uri) => (uri?.scheme == ROKWIRE_SCHEME) && (uri?.host == ROKWIRE_HOST);
+  static bool isRokwireUrl(String? url) =>  isRokwireUri((url != null) ? Uri.tryParse(url) : null);
+  static void launchUrl(String? url) => launchUri((url != null) ? Uri.tryParse(url) : null);
 
-  static void launchUri(Uri uri) {
+  static void launchUri(Uri? uri) {
     if (uri != null) {
       NotificationService().notify(notifyUri, uri);
     }

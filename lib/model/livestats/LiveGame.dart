@@ -15,14 +15,14 @@
  */
 
 class LiveGame {
-  String gameId;
-  String path;
-  bool hasStarted;
-  bool isComplete;
-  int clockSeconds;
-  int period;
-  int homeScore;
-  int visitingScore;
+  String? gameId;
+  String? path;
+  bool? hasStarted;
+  bool? isComplete;
+  int? clockSeconds;
+  int? period;
+  int? homeScore;
+  int? visitingScore;
   dynamic custom;
 
   LiveGame(
@@ -36,8 +36,8 @@ class LiveGame {
       this.visitingScore,
       this.custom});
 
-  factory LiveGame.fromJson(Map<String, dynamic> json) {
-    return LiveGame(
+  static LiveGame? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? LiveGame(
         gameId: json['GameId'],
         path: json['Path'],
         hasStarted: json['HasStarted'] == 'true',
@@ -47,6 +47,6 @@ class LiveGame {
         homeScore: int.parse(json['HomeScore']),
         visitingScore: int.parse(json['VisitingScore']),
         custom: json["Custom"]
-        );
+        ) : null;
   }
 }

@@ -26,7 +26,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembershipRequestPanel extends StatefulWidget implements AnalyticsPageAttributes {
-  final Group group;
+  final Group? group;
 
   GroupMembershipRequestPanel({this.group});
 
@@ -35,15 +35,15 @@ class GroupMembershipRequestPanel extends StatefulWidget implements AnalyticsPag
       _GroupMembershipRequestPanelState();
 
   @override
-  Map<String, dynamic> get analyticsPageAttributes =>
+  Map<String, dynamic>? get analyticsPageAttributes =>
     group?.analyticsAttributes;
 }
 
 class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPanel> {
-  List<GroupMembershipQuestion> _questions;
-  List<FocusNode> _focusNodes;
-  List<TextEditingController> _controllers;
-  bool _submitting;
+  late List<GroupMembershipQuestion> _questions;
+  late List<FocusNode> _focusNodes;
+  late List<TextEditingController> _controllers;
+  bool? _submitting;
 
   @override
   void initState() {
@@ -80,11 +80,11 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
       appBar: SimpleHeaderBarWithBack(
         context: context,
         backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.membership_request.label.request.title", 'Membership Questions'),
+        titleWidget: Text(Localization().getStringEx("panel.membership_request.label.request.title", 'Membership Questions')!,
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
-              fontFamily: Styles().fontFamilies.extraBold,
+              fontFamily: Styles().fontFamilies!.extraBold,
               letterSpacing: 1.0),
         ),
       ),
@@ -102,34 +102,34 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
           _buildSubmit(),
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
 
   Widget _buildHeading() {
-    return Text(Localization().getStringEx("panel.membership_request.label.description", 'This group asks you to answer the following question(s) for membership consideration.'), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Color(0xff494949)));
+    return Text(Localization().getStringEx("panel.membership_request.label.description", 'This group asks you to answer the following question(s) for membership consideration.')!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949)));
   }
 
   List<Widget> _buildQuestions() {
     List<Widget> content = [];
     for (int index = 0; index < _questions.length; index++) {
-      content.add(_buildQuestion(question: _questions[index].question, controller:_controllers[index], focusNode: _focusNodes[index]));
+      content.add(_buildQuestion(question: _questions[index].question!, controller:_controllers[index], focusNode: _focusNodes[index]));
     }
     return content;
   }
 
-  Widget _buildQuestion({String question, TextEditingController controller, FocusNode focusNode}) {
+  Widget _buildQuestion({required String question, TextEditingController? controller, FocusNode? focusNode}) {
     return Padding(padding: EdgeInsets.symmetric(vertical:16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(question, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+        Text(question, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
         Padding(padding: EdgeInsets.only(top: 8),
           child: TextField(
             maxLines: 6,
             controller: controller,
             focusNode: focusNode,
             decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-            style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
+            style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground,),
           ),
         ),
       ],)
@@ -143,12 +143,12 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
           Row(children: <Widget>[
             Expanded(child: Container(),),
             RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request'),
-              backgroundColor: Styles().colors.white,
-              textColor: Styles().colors.fillColorPrimary,
-              fontFamily: Styles().fontFamilies.bold,
+              backgroundColor: Styles().colors!.white,
+              textColor: Styles().colors!.fillColorPrimary,
+              fontFamily: Styles().fontFamilies!.bold,
               fontSize: 16,
               padding: EdgeInsets.symmetric(horizontal: 32, ),
-              borderColor: Styles().colors.fillColorSecondary,
+              borderColor: Styles().colors!.fillColorSecondary,
               borderWidth: 2,
               height: 42,
               onTap:() { _onSubmit();  }
@@ -159,7 +159,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
             Center(child:
               Padding(padding: EdgeInsets.only(top: 10.5), child:
                Container(width: 21, height:21, child:
-                  CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), strokeWidth: 2,)
+                  CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), strokeWidth: 2,)
                 ),
               ),
             ),
@@ -174,15 +174,15 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
     if (_submitting != true) {
       List<GroupMembershipAnswer> answers = [];
       for (int index = 0; index < _questions.length; index++) {
-        String question = _questions[index].question;
+        String? question = _questions[index].question;
         TextEditingController controller = _controllers[index];
         FocusNode focusNode = _focusNodes[index];
         String answer = controller.text;
-        if ((answer != null) && (0 < answer.length)) {
+        if (0 < answer.length) {
           answers.add(GroupMembershipAnswer(question: question, answer: answer));
         }
         else {
-          AppAlert.showDialogResult(context,Localization().getStringEx("panel.membership_request.label.alert",  'Please answer ')+ question).then((_){
+          AppAlert.showDialogResult(context,Localization().getStringEx("panel.membership_request.label.alert",  'Please answer ')!+ question!).then((_){
             focusNode.requestFocus();
           });
           return;

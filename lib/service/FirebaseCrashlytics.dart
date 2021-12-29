@@ -50,7 +50,7 @@ class FirebaseCrashlytics with Service {
     GoogleFirebase.FirebaseCrashlytics.instance.recordError(exception, stack);
   }
 
-  void recordError(dynamic exception, StackTrace stack) {
+  void recordError(dynamic exception, StackTrace? stack) {
     print(exception);
     GoogleFirebase.FirebaseCrashlytics.instance.recordError(exception, stack);
   }

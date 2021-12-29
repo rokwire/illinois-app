@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -12,9 +11,9 @@ import 'package:illinois/utils/Utils.dart';
 import 'GroupWidgets.dart';
 
 class GroupPostCreatePanel extends StatefulWidget{
-  final Group group;
+  final Group? group;
 
-  const GroupPostCreatePanel({Key key, this.group}) : super(key: key);
+  const GroupPostCreatePanel({Key? key, this.group}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupPostCreatePanelState();
@@ -39,22 +38,22 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
         appBar: AppBar(
           leading: HeaderBackButton(),
           title: Text(
-            Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
+            Localization().getStringEx('panel.group.detail.post.header.title', 'Post')!,
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
-              fontFamily: Styles().fontFamilies.extraBold,
+              fontFamily: Styles().fontFamilies!.extraBold,
               letterSpacing: 1),
           ),
           centerTitle: true),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         bottomNavigationBar: TabBarWidget(),
         body: Stack(alignment: Alignment.topCenter, children: [
           SingleChildScrollView(child:
           Column(children: [
             ImageChooserWidget(
               key: _postImageHolderKey,
-              imageUrl: _postData?.imageUrl,
+              imageUrl: _postData.imageUrl,
               buttonVisible: true ,
               onImageChanged: (url) => _postData.imageUrl = url,),
             Container(
@@ -63,11 +62,11 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
+                  Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject')!,
                     style: TextStyle(
                         fontSize: 18,
-                        fontFamily: Styles().fontFamilies.bold,
-                        color: Styles().colors.fillColorPrimary)),
+                        fontFamily: Styles().fontFamilies!.bold,
+                        color: Styles().colors!.fillColorPrimary)),
                   Padding(
                     padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
                     child: TextField(
@@ -77,14 +76,14 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                         hintText: Localization().getStringEx('panel.group.detail.post.create.subject.field.hint', 'Write a Subject'),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Styles().colors.mediumGray,
+                              color: Styles().colors!.mediumGray!,
                               width: 0.0))),
                       style: TextStyle(
-                        color: Styles().colors.textBackground,
+                        color: Styles().colors!.textBackground,
                         fontSize: 16,
-                        fontFamily: Styles().fontFamilies.regular))),
+                        fontFamily: Styles().fontFamilies!.regular))),
                   PostInputField(
-                    text: _postData?.body,
+                    text: _postData.body,
                     onBodyChanged: (text) => _postData.body = text,
                     hint:  Localization().getStringEx( "panel.group.detail.post.create.body.field.hint",  "Write a Post ..."),
                   ),
@@ -93,18 +92,18 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                       flex: 1,
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        textColor: Styles().colors.fillColorPrimary,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: Styles().colors!.fillColorSecondary,
+                        textColor: Styles().colors!.fillColorPrimary,
+                        backgroundColor: Styles().colors!.white,
                         onTap: _onTapSend)),
                     Container(width: 20),
                     Flexible(
                       flex: 1,
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.group.detail.post.create.button.cancel.title', 'Cancel'),
-                        borderColor: Styles().colors.textSurface,
-                        textColor: Styles().colors.fillColorPrimary,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: Styles().colors!.textSurface,
+                        textColor: Styles().colors!.fillColorPrimary,
+                        backgroundColor: Styles().colors!.white,
                         onTap: _onTapCancel))
                   ])
               ],),
@@ -128,10 +127,9 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     Analytics().logSelect(target: 'Send');
     FocusScope.of(context).unfocus();
 
-    String subject;
-    String body = _postData?.body;
-    String imageUrl = _postData?.imageUrl;
-    subject = _postData?.subject;
+    String? body = _postData.body;
+    String? imageUrl = _postData.imageUrl;
+    String? subject = _postData.subject;
     if (AppString.isStringEmpty(subject)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.subject.msg', "Post subject required"));
       return;

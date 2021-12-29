@@ -8,45 +8,45 @@ final _canvasDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
 // CanvasCourse
 
 class CanvasCourse {
-  final int id;
-  final int accountId;
-  final int rootAccountId;
-  final int enrollmentTermId;
-  final int gradingStandardId;
-  final int sisImportId;
-  final int integrationId;
-  final String sisCourseId;
+  final int? id;
+  final int? accountId;
+  final int? rootAccountId;
+  final int? enrollmentTermId;
+  final int? gradingStandardId;
+  final int? sisImportId;
+  final int? integrationId;
+  final String? sisCourseId;
 
-  final String uuid;
-  final String name;
-  final String friendlyName;
-  final String courseCode;
-  final String courseColor;
-  final String timezone;
+  final String? uuid;
+  final String? name;
+  final String? friendlyName;
+  final String? courseCode;
+  final String? courseColor;
+  final String? timezone;
   
-  final DateTime createdAt;
-  final DateTime startAt;
-  final DateTime endAt;
+  final DateTime? createdAt;
+  final DateTime? startAt;
+  final DateTime? endAt;
   
-  final bool isPublic;
-  final bool isPublicToAuthUsers;
-  final bool publicSyllabus;
-  final bool publicSyllabusToAuth;
-  final bool homeroomCourse;
-  final bool applyAssignmentGroupWeights;
-  final bool hideFinalGrades;
-  final bool restrictEnrollmentsToCourseDates;
-  final bool blueprint;
-  final bool template;
+  final bool? isPublic;
+  final bool? isPublicToAuthUsers;
+  final bool? publicSyllabus;
+  final bool? publicSyllabusToAuth;
+  final bool? homeroomCourse;
+  final bool? applyAssignmentGroupWeights;
+  final bool? hideFinalGrades;
+  final bool? restrictEnrollmentsToCourseDates;
+  final bool? blueprint;
+  final bool? template;
   
-  final String gradePassbackSetting;
-  final String workflowState;
-  final String defaultView;
-  final String license;
+  final String? gradePassbackSetting;
+  final String? workflowState;
+  final String? defaultView;
+  final String? license;
 
-  final int storageQuotaMb;
-  final CanvasCalendar calendar;
-  final List<CanvasEnrollment> enrollments;
+  final int? storageQuotaMb;
+  final CanvasCalendar? calendar;
+  final List<CanvasEnrollment>? enrollments;
 
   CanvasCourse({
     this.id, this.accountId, this.rootAccountId, this.enrollmentTermId, this.gradingStandardId, this.sisImportId, this.integrationId, this.sisCourseId,
@@ -57,7 +57,7 @@ class CanvasCourse {
     this.storageQuotaMb, this.calendar, this.enrollments
   });
 
-  factory CanvasCourse.fromJson(Map<String, dynamic> json) {
+  static CanvasCourse? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? CanvasCourse(
       id: AppJson.intValue(json['id']),
       accountId: AppJson.intValue(json['account_id']),
@@ -226,18 +226,18 @@ class CanvasCourse {
 
     (storageQuotaMb?.hashCode ?? 0) ^
     (calendar?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(enrollments) ?? 0);
+    DeepCollectionEquality().hash(enrollments);
 }
 
 ////////////////////////////////
 // CanvasCalendar
 
 class CanvasCalendar {
-  final String ics;
+  final String? ics;
 
   CanvasCalendar({this.ics});
 
-  factory CanvasCalendar.fromJson(Map<String, dynamic> json) {
+  static CanvasCalendar? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? CanvasCalendar(
       ics: AppJson.stringValue(json['ics']),
     ) : null;
@@ -261,16 +261,16 @@ class CanvasCalendar {
 // CanvasEnrollment
 
 class CanvasEnrollment {
-  final int id;
-  final int userId;
-  final String type;
-  final String role;
-  final String enrollmentState;
-  final bool limitPrivilegesToCourseSection;
+  final int? id;
+  final int? userId;
+  final String? type;
+  final String? role;
+  final String? enrollmentState;
+  final bool? limitPrivilegesToCourseSection;
 
   CanvasEnrollment({this.id, this.userId, this.type, this.role, this.enrollmentState, this.limitPrivilegesToCourseSection});
 
-  factory CanvasEnrollment.fromJson(Map<String, dynamic> json) {
+  static CanvasEnrollment? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? CanvasEnrollment(
       id: AppJson.intValue(json['is']),
       userId: AppJson.intValue(json['user_id']),
@@ -309,19 +309,19 @@ class CanvasEnrollment {
     (enrollmentState?.hashCode ?? 0) ^
     (limitPrivilegesToCourseSection?.hashCode ?? 0);
 
-  static List<CanvasEnrollment> listFromJson(List<dynamic> jsonList) {
-    List<CanvasEnrollment> result;
+  static List<CanvasEnrollment>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasEnrollment>? result;
     if (jsonList != null) {
       result = <CanvasEnrollment>[];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? CanvasEnrollment.fromJson(jsonEntry) : null);
+        AppList.add(result, CanvasEnrollment.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<CanvasEnrollment> contentList) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<CanvasEnrollment>? contentList) {
+    List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = <dynamic>[];
       for (dynamic contentEntry in contentList) {

@@ -1,5 +1,4 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -20,7 +19,7 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
 
   bool _loading = false;
 
-  InboxUserInfo _info;
+  InboxUserInfo? _info;
 
   @override
   void initState() {
@@ -37,9 +36,9 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
 
   Future<void> _lodUserInfo() async{
       try {
-        Response response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user",
+        Response? response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user",
             auth: NetworkAuth.Auth2) : null;
-        Map<String, dynamic> jsonData = AppJson.decode(response?.body);
+        Map<String, dynamic>? jsonData = AppJson.decode(response?.body);
         if(jsonData != null){
           setState(() {
             _info = InboxUserInfo.fromJson(jsonData);
@@ -82,19 +81,19 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("User ID"),
-          Text(_info.userId ?? ""),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
+          Text(_info?.userId ?? ""),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
           Text("Date Created"),
-          Text(_info.dateCreated.toIso8601String() ?? ""),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
+          Text(_info?.dateCreated?.toIso8601String() ?? ""),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
           Text("Date Updated"),
-          Text(_info.dateUpdated.toIso8601String() ?? ""),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
+          Text(_info?.dateUpdated?.toIso8601String() ?? ""),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
           Text("Topics"),
           Wrap(
-            children: _info.topics.map((e) => Container(
+            children: _info!.topics!.map((e) => Container(
               decoration: BoxDecoration(
-                color: Styles().colors.fillColorPrimary,
+                color: Styles().colors!.fillColorPrimary,
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
               padding: EdgeInsets.all(8),
@@ -102,20 +101,20 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
               child: Text(e, style: TextStyle(color: Colors.white),),
             )).toList(),
           ),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
           Text("Tokens"),
 
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: _info.firebaseTokens.map((e) => Container(
+            children: _info!.firebaseTokens!.map((e) => Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(e.token, style: TextStyle(fontFamily: Styles().fontFamilies.bold),),
-                  Text("Platform: ${e.appPlatform}", style: TextStyle(fontFamily: Styles().fontFamilies.regular),),
-                  Text("Version: ${e.appVersion}", style: TextStyle(fontFamily: Styles().fontFamilies.regular),),
-                  Text("Date created: ${e.dateCreated.toIso8601String()}", style: TextStyle(fontFamily: Styles().fontFamilies.regular),),
-                  Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
+                  Text(e.token!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold),),
+                  Text("Platform: ${e.appPlatform}", style: TextStyle(fontFamily: Styles().fontFamilies!.regular),),
+                  Text("Version: ${e.appVersion}", style: TextStyle(fontFamily: Styles().fontFamilies!.regular),),
+                  Text("Date created: ${e.dateCreated!.toIso8601String()}", style: TextStyle(fontFamily: Styles().fontFamilies!.regular),),
+                  Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
                 ],
               ),
             )).toList(),
@@ -127,42 +126,38 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
 }
 
 class InboxUserInfo{
-  final String userId;
-  final List<FirebaseToken> firebaseTokens;
-  final List<String> topics;
-  final DateTime dateCreated;
-  final DateTime dateUpdated;
+  final String? userId;
+  final List<FirebaseToken>? firebaseTokens;
+  final List<String>? topics;
+  final DateTime? dateCreated;
+  final DateTime? dateUpdated;
 
   InboxUserInfo({this.userId, this.firebaseTokens, this.topics, this.dateCreated, this.dateUpdated});
 
-  factory InboxUserInfo.fromJson(Map<String, dynamic> json) {
-    List<dynamic> tokensData = json['firebase_tokens'];
-    List<dynamic> topics = json['topics'];
-    String dateCreatedStr = json['date_created'];
-    String dateUpdatedStr = json['date_updated'];
-    return InboxUserInfo(
+  static InboxUserInfo? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? InboxUserInfo(
       userId: json['user_id'],
-      firebaseTokens: AppCollection.isCollectionNotEmpty(tokensData) ? tokensData.map((e) => FirebaseToken.fromJson(e)).toList() : [],
-      topics:  AppCollection.isCollectionNotEmpty(topics) ? topics.map((e) => e.toString()).toList() : [],
-      dateCreated: AppString.isStringNotEmpty(dateCreatedStr) ? AppDateTime().dateTimeFromString(dateCreatedStr) : null,
-      dateUpdated: AppString.isStringNotEmpty(dateUpdatedStr) ? AppDateTime().dateTimeFromString(dateUpdatedStr) : null,
-    );
+      firebaseTokens: json['firebase_tokens']?.map((e) => FirebaseToken.fromJson(e))?.toList(),
+      topics:  json['topics']?.map((e) => e.toString())?.toList(),
+      dateCreated: AppDateTime().dateTimeFromString(json['date_created']),
+      dateUpdated: AppDateTime().dateTimeFromString(json['date_updated']),
+    ) : null;
   }
 }
 
 class FirebaseToken{
-  final String token;
-  final String appPlatform;
-  final String appVersion;
-  final DateTime dateCreated;
+  final String? token;
+  final String? appPlatform;
+  final String? appVersion;
+  final DateTime? dateCreated;
   FirebaseToken({this.token, this.appPlatform, this.appVersion, this.dateCreated});
 
-  factory FirebaseToken.fromJson(Map<String, dynamic> json) {
-    return FirebaseToken(
+  static FirebaseToken? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? FirebaseToken(
       token: json['token'] ?? "",
       appPlatform: json['app_platform'] ?? "",
       appVersion: json['app_version'] ?? "",
       dateCreated: AppDateTime().dateTimeFromString(json['date_created'] ?? "", format: "yyyy-MM-ddTHH:mm:ssZ", isUtc: true),
-    );
+    ) : null;
   }
 }

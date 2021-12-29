@@ -15,29 +15,28 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class RibbonButton extends StatelessWidget {
-  final String label;
+  final String? label;
 
-  final GestureTapCallback onTap;
+  final GestureTapCallback? onTap;
   final EdgeInsets padding;
-  final BorderRadius borderRadius;
-  final BoxBorder border;
-  final List<BoxShadow> shadow;
-  final TextStyle style;
-  final double height;
-  final String leftIcon;
-  final String icon;
-  final BuildContext context;
-  final String hint;
+  final BorderRadius? borderRadius;
+  final BoxBorder? border;
+  final List<BoxShadow>? shadow;
+  final TextStyle? style;
+  final double? height;
+  final String? leftIcon;
+  final String? icon;
+  final BuildContext? context;
+  final String? hint;
   final Color backgroundColor;
 
   RibbonButton({
-    @required this.label,
+    this.label,
     this.onTap,
     this.borderRadius = BorderRadius.zero,
     this.border,
@@ -62,9 +61,9 @@ class RibbonButton extends StatelessWidget {
   }
 
   Widget _content() {
-    Widget image = getImage();
+    Widget? image = getImage();
     return GestureDetector(
-      onTap: () { onTap(); anaunceChange(); },
+      onTap: () { onTap!(); anaunceChange(); },
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[ Expanded(
         child: Container(
           decoration: BoxDecoration(color: backgroundColor, border:border, borderRadius: borderRadius, boxShadow: shadow),
@@ -73,10 +72,10 @@ class RibbonButton extends StatelessWidget {
             padding: padding,
             child:  Row(
               children: <Widget>[
-                AppString.isStringNotEmpty(leftIcon) ? Padding(padding: EdgeInsets.only(right: 7), child: Image.asset(leftIcon, excludeFromSemantics: true)) : Container(),
+                AppString.isStringNotEmpty(leftIcon) ? Padding(padding: EdgeInsets.only(right: 7), child: Image.asset(leftIcon!, excludeFromSemantics: true)) : Container(),
                 Expanded(child:
-                  Text(label,
-                    style: style ?? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),
+                  Text(label!,
+                    style: style ?? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
                   )
                 ),
                 (image != null) ? Padding(padding: EdgeInsets.only(left: 7), child: image) : Container(),
@@ -88,27 +87,27 @@ class RibbonButton extends StatelessWidget {
     );
   }
 
-  Widget getImage() {
-    return (icon != null) ? Image.asset(icon, excludeFromSemantics: true) : null;
+  Widget? getImage() {
+    return (icon != null) ? Image.asset(icon!, excludeFromSemantics: true) : null;
   }
 
   void anaunceChange() {}
 }
 
 class ToggleRibbonButton extends RibbonButton {
-  final String label;
-  final GestureTapCallback onTap;
-  final bool toggled;
-  final BorderRadius borderRadius;
-  final BoxBorder border;
-  final BuildContext context; //Required in order to announce the VO status change
-  final TextStyle style;
-  final double height;
+  final String? label;
+  final GestureTapCallback? onTap;
+  final bool? toggled;
+  final BorderRadius? borderRadius;
+  final BoxBorder? border;
+  final BuildContext? context; //Required in order to announce the VO status change
+  final TextStyle? style;
+  final double? height;
   final EdgeInsets padding;
   final Color backgroundColor;
 
   ToggleRibbonButton ({
-    @required this.label,
+    this.label,
     this.onTap,
     this.toggled = false,
     this.borderRadius = BorderRadius.zero,
@@ -122,28 +121,28 @@ class ToggleRibbonButton extends RibbonButton {
 
   @override
   Widget getImage() {
-    return Image.asset(toggled ? 'images/switch-on.png' : 'images/switch-off.png', excludeFromSemantics: true);
+    return Image.asset(toggled! ? 'images/switch-on.png' : 'images/switch-off.png', excludeFromSemantics: true);
   }
 
   @override
   Semantics getSemantics() {
     return Semantics(
         label: label,
-        value: (toggled
+        value: (toggled!
                 ? Localization().getStringEx(
                     "toggle_button.status.checked",
                     "checked",
                   )
-                : Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
+                : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
             ", " +
-            Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
+            Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
         excludeSemantics: true,
         child: _content());
   }
 
   @override
   void anaunceChange() {
-    AppSemantics.announceCheckBoxStateChange(context, !toggled, label); // !toggled because we announce before the state got updated
+    AppSemantics.announceCheckBoxStateChange(context, !toggled!, label); // !toggled because we announce before the state got updated
     super.anaunceChange();
   }
 }

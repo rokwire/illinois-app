@@ -26,14 +26,14 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 
 class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttributes {
-  final Explore explore;
-  final Position initialLocationData;
-  final String browseGroupId;
+  final Explore? explore;
+  final Position? initialLocationData;
+  final String? browseGroupId;
 
   ExploreDetailPanel({this.explore, this.initialLocationData, this.browseGroupId});
 
   @override
-  Map<String, dynamic> get analyticsPageAttributes {
+  Map<String, dynamic>? get analyticsPageAttributes {
     return explore?.analyticsAttributes;
   }
 
@@ -41,13 +41,13 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
   Widget build(BuildContext context) {
     if(explore is Dining){
       return ExploreDiningDetailPanel(
-          dining: explore,
+          dining: explore as Dining,
           initialLocationData: initialLocationData
       );
     }
     else if(explore is Event) {
       return ExploreEventDetailPanel(
-          event: explore,
+          event: explore as Event,
           initialLocationData: initialLocationData,
           browseGroupId: browseGroupId,
       );

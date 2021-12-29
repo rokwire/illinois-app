@@ -18,13 +18,13 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Styles.dart';
 
 class RoundedTab extends StatelessWidget {
-  final String title;
-  final String hint;
+  final String? title;
+  final String? hint;
   final int tabIndex;
-  final RoundedTabListener listener;
-  final bool selected;
+  final RoundedTabListener? listener;
+  final bool? selected;
   static const Color _borderColor = Color(0xffdadde1);
-  RoundedTab({this.title, this.hint, this.tabIndex, this.listener, this.selected})
+  RoundedTab({this.title, this.hint, required this.tabIndex, this.listener, this.selected})
       : super();
 
   @override
@@ -52,27 +52,27 @@ class RoundedTab extends StatelessWidget {
                     child: Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 10, horizontal: 20),
-                        child: Text(title,
-                            style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: getTextColor(),
+                        child: Text(title!,
+                            style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: getTextColor(),
                                 fontSize: 16,)))))
         )
     ),),);
   }
 
-  Color getBackColor() {
-    return selected
-        ? Styles().colors.fillColorPrimary
-        : Styles().colors.surfaceAccent;
+  Color? getBackColor() {
+    return selected!
+        ? Styles().colors!.fillColorPrimary
+        : Styles().colors!.surfaceAccent;
   }
 
-  Color getTextColor(){
-    return selected
+  Color? getTextColor(){
+    return selected!
         ? Colors.white
-        : Styles().colors.fillColorPrimary;
+        : Styles().colors!.fillColorPrimary;
   }
 
   void onPressed() {
-    listener.onTabClicked(tabIndex, this);
+    listener?.onTabClicked(tabIndex, this);
   }
 }
 

@@ -17,10 +17,10 @@
 import 'package:intl/intl.dart';
 
 abstract class BaseTransaction {
-  String dateString;
-  String description;
-  String location;
-  String amount;
+  String? dateString;
+  String? description;
+  String? location;
+  String? amount;
 
   BaseTransaction(
       {this.dateString, this.description, this.location, this.amount});
@@ -30,10 +30,10 @@ abstract class BaseTransaction {
 class IlliniCashTransaction extends BaseTransaction {
 
   IlliniCashTransaction(
-      {String dateString, String description, String location, String amount}):
+      {String? dateString, String? description, String? location, String? amount}):
         super(dateString: dateString, description: description, location: location, amount: amount);
 
-  factory IlliniCashTransaction.fromJson(Map<String, dynamic> json) {
+  static IlliniCashTransaction? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -52,10 +52,10 @@ class IlliniCashTransaction extends BaseTransaction {
 class MealPlanTransaction extends BaseTransaction{
 
   MealPlanTransaction(
-      {String dateString, String description, String location, String amount}):
+      {String? dateString, String? description, String? location, String? amount}):
         super(dateString: dateString, description: description, location: location, amount: amount);
 
-  factory MealPlanTransaction.fromJson(Map<String, dynamic> json) {
+  static MealPlanTransaction? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -72,10 +72,10 @@ class MealPlanTransaction extends BaseTransaction{
 class CafeCreditTransaction extends BaseTransaction{
 
   CafeCreditTransaction(
-      {String dateString, String description, String location, String amount}):
+      {String? dateString, String? description, String? location, String? amount}):
         super(dateString: dateString, description: description, location: location, amount: amount);
 
-  factory CafeCreditTransaction.fromJson(Map<String, dynamic> json) {
+  static CafeCreditTransaction? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
       return null;
     }
