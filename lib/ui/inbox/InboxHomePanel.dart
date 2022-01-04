@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/model/Auth2.dart';
@@ -12,6 +13,7 @@ import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -64,7 +66,9 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, []);
+    NotificationService().subscribe(this, [
+      Inbox.notifyInboxUserInfoChanged
+    ]);
 
     _scrollController.addListener(_scrollListener);
 
@@ -78,9 +82,15 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   // NotificationsListener
-
   @override
   void onNotification(String name, dynamic param) {
+    if(name == Inbox.notifyInboxUserInfoChanged){
+      if(mounted){
+        setState(() {
+          //refresh
+        });
+      }
+    }
   }
 
   @override
@@ -90,6 +100,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       // Text(Localization().getStringEx('panel.inbox.label.heading', 'Inbox'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          _buildBanner(),
           _buildFilters(),
           Expanded(child:
             _buildContent(),
@@ -202,6 +213,43 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       FirebaseMessaging.payloadTypeAthleticsNewDetail,
       FirebaseMessaging.payloadTypeGroup,
     });
+  }
+  // Banner
+  Widget _buildBanner(){ //TBD localize
+    return
+    Visibility(
+      visible: _showBanner,
+      child:GestureDetector(
+        onTap: (){
+          Navigator.of(context).push(CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
+        },
+        child:Container(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          color: Styles().colors?.saferLocationWaitTimeColorYellow ?? Colors.amberAccent,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(child:
+                Text(
+                  "Notifications Paused",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Styles().colors?.fillColorPrimary,
+                    fontFamily: Styles().fontFamilies?.regular,
+                    fontSize: 16
+                  ),
+                ),
+              ),
+              Text(">",
+                style: TextStyle(
+                    color: Styles().colors?.fillColorPrimary,
+                    fontSize: 16,
+                ),
+              ),
+
+          ],)
+        )
+      ));
   }
 
 
@@ -757,6 +805,10 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreMessages != false) && (_loadingMore != true) && (_loading != true)) {
       _loadMoreContent();
     }
+  }
+
+  bool get _showBanner{
+    return FirebaseMessaging().notificationsPaused ?? false;
   }
 }
 
