@@ -139,6 +139,9 @@ class LocationServices with Service implements NotificationsListener {
         _locationMonitor = Geolocator.getPositionStream(locationSettings: locationSettings).listen((Position position) {
           _lastLocation = position;
           _notifyLocationChanged();
+        },
+        onError: (e) {
+          print(e?.toString());  
         });
       }
       catch(e) {
