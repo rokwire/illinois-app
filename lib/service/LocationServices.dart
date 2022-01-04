@@ -134,11 +134,16 @@ class LocationServices with Service implements NotificationsListener {
 
   void _openLocationMonitor() {
     if (_locationMonitor == null) {
-      final LocationSettings locationSettings = LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 100);
-      _locationMonitor = Geolocator.getPositionStream(locationSettings: locationSettings).listen((Position position) {
-        _lastLocation = position;
-        _notifyLocationChanged();
-      });
+      try {
+        final LocationSettings locationSettings = LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 100);
+        _locationMonitor = Geolocator.getPositionStream(locationSettings: locationSettings).listen((Position position) {
+          _lastLocation = position;
+          _notifyLocationChanged();
+        });
+      }
+      catch(e) {
+        print(e.toString());
+      }
     }
   }
 
