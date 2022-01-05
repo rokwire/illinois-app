@@ -874,7 +874,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void onNameChanged(String name){
-    _group!.title = name;
+    _group!.title = name.trim();
     validateName(name);
   }
 
