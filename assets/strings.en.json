@@ -1587,6 +1587,7 @@
     "panel.group_detail.label.tags": "Group Tags: ",
     "panel.group_detail.button.events.title": "Events",
     "panel.group_detail.button.posts.title": "Posts",
+    "panel.group_detail.button.polls.title": "Polls",
     "panel.group_detail.button.about.title": "About",
     "panel.group_detail.button.leave.title": "Leave",
     "panel.group_detail.button.group.delete.title": "Delete group",
