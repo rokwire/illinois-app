@@ -6,15 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Trim Group Name when create/modify.[#1174](https://github.com/rokwire/illinois-app/issues/1174)
-- Remove GIES from onboarding roles in 3.1[#1176](https://github.com/rokwire/illinois-app/issues/1176).
+- Trim Group Name when create/modify [#1174](https://github.com/rokwire/illinois-app/issues/1174).
+- Remove GIES from onboarding roles in 3.1 [#1176](https://github.com/rokwire/illinois-app/issues/1176).
+- Upgraded plugins and third party libraries [#1173](https://github.com/rokwire/illinois-app/issues/1173).
 
 ## [3.1.6] - 2022-01-04
 ### Added
 - Add yellow Banner at the top of the Inbox when notifications are paused.[#1169](https://github.com/rokwire/illinois-app/issues/1169).
 ### Changed
-- Sound null safety.
-- Upgrade to Flutter 2.8.1 and Xcode 13.2.1.
+- Sound null safety [#1166](https://github.com/rokwire/illinois-app/issues/1166).
+- Upgrade to Flutter 2.8.1 and Xcode 13.2.1 [#1167](https://github.com/rokwire/illinois-app/issues/1167).
 
 ## [3.1.5] - 2021-12-23
 ### Added
