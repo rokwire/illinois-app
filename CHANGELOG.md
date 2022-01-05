@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Trim Group Name when create/modify.[#1174](https://github.com/rokwire/illinois-app/issues/1174)
+- Remove GIES from onboarding roles in 3.1[#1176](https://github.com/rokwire/illinois-app/issues/1176).
 
 ## [3.1.6] - 2022-01-04
 ### Added
