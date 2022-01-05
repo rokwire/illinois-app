@@ -103,20 +103,36 @@ class Polls with Service implements NotificationsListener {
 
   // Accessories
 
-  Future<PollsChunk?>? getMyPolls({String? cursor}) async {
-    return _enabled ? _getPolls('mypolls', cursor) : null;
+  Future<PollsChunk?>? getMyPolls({String? cursor, List<String>? groupIds}) async {
+    return _enabled ? _getPolls('mypolls', cursor, groupIds: groupIds) : null;
+  }
+
+  Future<PollsChunk?>? getGroupPolls(List<String>? groupIds, {String? cursor}) async {
+    return _enabled ? _getPolls('grouppolls', cursor, includeAccountId: false, groupIds: groupIds) : null;
   }
 
   Future<PollsChunk?>? getRecentPolls({String? cursor}) async {
     return _enabled ?  _getPolls('recentpolls', cursor) : null;
   }
 
-  Future<PollsChunk?> _getPolls(String pollsType, String? cursor) async {
+  Future<PollsChunk?> _getPolls(String pollsType, String? cursor, {bool includeAccountId = true, List<String>? groupIds}) async {
     if(_enabled) {
       try {
-        String urlParams = (cursor != null) ? '?cursor=$cursor' : '';
-        String url = '${Config().quickPollsUrl}/$pollsType/${Auth2().accountId}$urlParams';
-        Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
+        String? body;
+        if (AppCollection.isCollectionNotEmpty(groupIds)) {
+          body = json.encode({'group_ids': groupIds});
+        }
+
+        String url = '${Config().quickPollsUrl}/$pollsType';
+        if (includeAccountId) {
+          url += '/${Auth2().accountId}';
+        }
+
+        if (cursor != null) {
+          url += '?cursor=$cursor';
+        }
+
+        Response? response = await Network().get(url, body: body, auth: NetworkAuth.Auth2);
         int responseCode = response?.statusCode ?? -1;
         String? responseBody = response?.body;
         if ((response != null) && (responseCode == 200)) {
@@ -522,6 +538,10 @@ class Polls with Service implements NotificationsListener {
   }
 
   _PollChunk? _addPollToChunks(Poll poll, { _PollUIStatus? status, bool save = true}) {
+    if (poll.hasGroup) {
+      return null;
+    }
+
     _PollChunk? pollChunk;
     if (poll.pollId != null) {
       if (_pollChunks[poll.pollId] == null) {
@@ -655,7 +675,7 @@ class Polls with Service implements NotificationsListener {
   }
 
   set _presentPoll(_PollChunk? pollChunk) {
-    if (pollChunk != null) {
+    if ((pollChunk != null) && !pollChunk.poll!.hasGroup) {
       if ((pollChunk.status == _PollUIStatus.waitingVote) && (pollChunk.poll!.status == PollStatus.opened)) {
         pollChunk.status = _PollUIStatus.presentVote;
         _savePollChunks();
