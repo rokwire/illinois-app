@@ -32,8 +32,8 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-    pod 'GoogleMaps', '3.3.0'
-    pod 'MapsIndoors', '3.8.0'
+    pod 'GoogleMaps', '3.10.0'
+    pod 'MapsIndoors', '3.28.0'
     pod 'MeridianSDK', '5.10.0'
     pod 'ZXingObjC', '3.6.4'
 
