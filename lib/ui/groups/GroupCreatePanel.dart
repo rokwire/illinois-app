@@ -715,6 +715,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void onNameChanged(String name){
-    _group!.title = name;
+    _group!.title = name.trim();
   }
 }
