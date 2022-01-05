@@ -1,6 +1,6 @@
 # Uncomment this line to define a global platform for your project
 # Set platform version to 11.0 because of MeridianSDK 5.10.0
-platform :ios, '11.0'
+platform :ios, '12.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -32,9 +32,9 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-    pod 'GoogleMaps', '3.3.0'
-    pod 'MapsIndoors', '3.8.0'
-    pod 'MeridianSDK', '5.10.0'
+    pod 'GoogleMaps', '3.10.0'
+    pod 'MapsIndoors', '3.28.0'
+    pod 'MeridianSDK', '7.5.0'
     pod 'ZXingObjC', '3.6.4'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
