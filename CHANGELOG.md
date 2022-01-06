@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Authman UI work in GroupSettings and GroupCreate panels[#1179](https://github.com/rokwire/illinois-app/issues/1179).
+- Authman UI work in GroupSettings and GroupCreate panels [#1179](https://github.com/rokwire/illinois-app/issues/1179).
+- Show Gies roles button only in Dev builds [#1181](https://github.com/rokwire/illinois-app/issues/1181).
 
 ## [3.1.7] - 2022-01-05
 ### Changed
@@ -16,14 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.1.6] - 2022-01-04
 ### Added
-- Add yellow Banner at the top of the Inbox when notifications are paused.[#1169](https://github.com/rokwire/illinois-app/issues/1169).
+- Add yellow Banner at the top of the Inbox when notifications are paused[#1169](https://github.com/rokwire/illinois-app/issues/1169).
 ### Changed
 - Sound null safety [#1166](https://github.com/rokwire/illinois-app/issues/1166).
 - Upgrade to Flutter 2.8.1 and Xcode 13.2.1 [#1167](https://github.com/rokwire/illinois-app/issues/1167).
 
 ## [3.1.5] - 2021-12-23
 ### Added
-- Do not allow users to join / leave Authman groups. [#1162](https://github.com/rokwire/illinois-app/issues/1162).
+- Do not allow users to join / leave Authman groups [#1162](https://github.com/rokwire/illinois-app/issues/1162).
 
 ## [3.1.4] - 2021-12-22
 ### Fixed
