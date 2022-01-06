@@ -1104,19 +1104,20 @@ class _PollCardState extends State<_PollCard>{
   }
 
   String get _pollVotesStatus {
-    String statusString;
-    if (widget.group != null) {
-      statusString = sprintf('%d %s %d', [_uniqueVotersCount, Localization().getStringEx('panel.polls_home.card.of.label', 'of')!, _groupMembersCount]);
-    } else {
-      int totalVotes = (widget.poll!.results?.totalVotes ?? 0);
+    bool hasGroup = (widget.group != null);
+    int votes = hasGroup ? _uniqueVotersCount : (widget.poll!.results?.totalVotes ?? 0);
 
-      if (1 < totalVotes) {
-        statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$totalVotes']);
-      } else if (0 < totalVotes) {
-        statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote')!;
-      } else {
-        statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet')!;
-      }
+    String statusString;
+    if (1 < votes) {
+      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votes']);
+    } else if (0 < votes) {
+      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote')!;
+    } else {
+      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet')!;
+    }
+
+    if (hasGroup && (votes > 0)) {
+      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of')!, _groupMembersCount]);
     }
 
     return statusString;
