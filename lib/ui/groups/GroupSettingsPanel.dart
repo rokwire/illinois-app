@@ -110,8 +110,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             ]))),
                             Container(height: 12, color: Styles().colors!.background),
                             _buildPrivacyDropDown(),
-                            _buildMembershipLayout(),
                             _buildAuthManLayout(),
+                            Visibility(
+                              visible: !_isAuthManGroup,
+                              child: _buildMembershipLayout()),
                             Container(height: 24,  color: Styles().colors!.background,),
                           ],),)
                       ]),
@@ -687,13 +689,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   // AuthMan Group
   Widget _buildAuthManLayout() {
-    bool isAuthManGroup = _group?.authManEnabled ?? false;
+    bool isAuthManGroup = _isAuthManGroup;
 
     return Container(
         color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(children: <Widget>[
-          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "Authman")!, "images/icon-member.png"),
+          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "University managed membership")!, "images/icon-member.png"),
           Container(height: 12),
           Padding(
               padding: EdgeInsets.only(top: 12),
@@ -706,8 +708,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                        Text(Localization().getStringEx("panel.groups_settings.authman.enabled.label", "Is this an Authman Group")!,
-                            style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
+                        Expanded( child:
+                        Text(Localization().getStringEx("panel.groups_settings.authman.enabled.label", "Is this a managed membership group?")!,
+                            style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
                         GestureDetector(
                             onTap: _onTapAuthMan,
                             child: Padding(
@@ -718,7 +721,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     visible: isAuthManGroup,
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Row(children: [
-                        _buildInfoHeader(Localization().getStringEx("panel.groups_settings.authman.group.name.label", "AUTHMAN GROUP NAME")!, null),
+                        _buildInfoHeader(Localization().getStringEx("panel.groups_settings.authman.group.name.label", "Membership name")!, null),
                         Padding(padding: EdgeInsets.only(top: 14), child: Text('*', style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)))
                       ]),
                       Container(
@@ -884,6 +887,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {
       _nameIsValid = !takenNames.contains(name);
     });
+  }
+
+  bool get _isAuthManGroup{
+    return _group?.authManEnabled ?? false;
   }
 }
 

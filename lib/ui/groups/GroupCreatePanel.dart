@@ -138,11 +138,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy")!, "images/icon-privacy.png"),
                             Container(height: 8),
                             _buildPrivacyDropDown(),
-                            _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership")!, "images/icon-member.png"),
-                            _buildMembershipLayout(),
-                            Container(height: 8),
-                            _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "Authman")!, "images/icon-member.png"),
+                            _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership")!, "images/icon-member.png"),
                             _buildAuthManLayout(),
+                            Visibility(
+                              visible: !_isAuthManGroup,
+                              child: Column(children: [
+                                Container(height: 16),
+                                _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership")!, "images/icon-member.png"),
+                                _buildMembershipLayout(),
+                              ],)),
                             Container(height: 40),
                         ],),)
 
@@ -533,7 +537,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   // AuthMan Group
   Widget _buildAuthManLayout() {
-    bool isAuthManGroup = _group?.authManEnabled ?? false;
+    bool isAuthManGroup = _isAuthManGroup;
     return Padding(
         padding: EdgeInsets.only(left: 16, top: 12, right: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -545,8 +549,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Text(Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this an Authman Group")!,
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
+                  Expanded(
+                    child: Text(Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this a managed membership group?")!,
+                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
                   GestureDetector(
                       onTap: _onTapAuthMan,
                       child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset(isAuthManGroup ? 'images/switch-on.png' : 'images/switch-off.png')))
@@ -555,7 +560,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           Visibility(
               visible: isAuthManGroup,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                _buildSectionTitle(Localization().getStringEx("panel.groups_create.authman.group.name.label", "AUTHMAN GROUP NAME"), null, true),
+                _buildSectionTitle(Localization().getStringEx("panel.groups_create.authman.group.name.label", "Membership name"), null, true),
                 Container(
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white),
                     child: TextField(
@@ -716,5 +721,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void onNameChanged(String name){
     _group!.title = name.trim();
+  }
+
+  bool get _isAuthManGroup{
+    return _group?.authManEnabled ?? false;
   }
 }
