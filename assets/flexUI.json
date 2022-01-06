@@ -139,7 +139,8 @@
 			"settings.connected.email.login"      : { "emailLoggedIn": false }
 		},
 		"platform":{
-			"onboarding.notifications_auth" : { "os": "ios" }
+			"onboarding.notifications_auth" : { "os": "ios" },
+			"roles.gies": { "envirnment": "dev" }
 		},
 		"illini_cash": {
 			"laundry"                       : { "housingResidenceStatus" : true }
