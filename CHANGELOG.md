@@ -5,9 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.1.8] - 2022-01-06
 ### Changed
 - Authman UI work in GroupSettings and GroupCreate panels [#1179](https://github.com/rokwire/illinois-app/issues/1179).
 - Show Gies roles button only in Dev builds [#1181](https://github.com/rokwire/illinois-app/issues/1181).
+- Implement Quick Polls into Groups [#1157](https://github.com/rokwire/illinois-app/issues/1157).
 
 ## [3.1.7] - 2022-01-05
 ### Changed
