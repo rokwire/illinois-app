@@ -976,7 +976,7 @@ class _PollCardState extends State<_PollCard>{
             Expanded(
               flex: 5,
               key: progressKey, child:
-                Stack(children: <Widget>[
+                Stack(alignment: Alignment.centerLeft, children: <Widget>[
               CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.white, progressColor: useCustomColor ?Styles().colors!.fillColorPrimary:Styles().colors!.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
               Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
                 Padding(padding: EdgeInsets.only(left: 5), child:
