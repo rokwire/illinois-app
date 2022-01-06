@@ -48,7 +48,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel>  {
                           SingleChildScrollView(child:
                           Column(children: <Widget>[ Container(
                             decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
-                            child: Padding(padding: EdgeInsets.all(20), child:  PollContentWidget(pollId: widget?.pollId,),),
+                            child: Padding(padding: EdgeInsets.all(20), child:  PollContentWidget(pollId: widget.pollId,),),
                           ),],)),
                       Container(alignment: Alignment.topRight, child: _buildCloseButton()),
                     ])
