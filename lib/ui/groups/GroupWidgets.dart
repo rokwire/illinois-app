@@ -20,6 +20,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -34,6 +35,7 @@ import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
+import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -1763,4 +1765,32 @@ class _ImageChooserState extends State<ImageChooserWidget>{
     Log.d("Image Url: $imageUrl");
   }
 
+}
+
+//Polls
+
+class GroupPollCard extends StatefulWidget{
+  final Poll poll;
+  final Group? group;
+
+  const GroupPollCard({Key? key, required this.poll, this.group}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _GroupPollCardState();
+
+}
+
+class _GroupPollCardState extends State<GroupPollCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(children: <Widget>[
+        Container(padding: EdgeInsets.symmetric(),
+          decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5)),
+          child: PollContentWidget(pollId: widget.poll.pollId,
+              textColor: Styles().colors!.fillColorPrimary,
+              backgroundColor: Styles().colors!.white,
+              doneButtonColor: Styles().colors!.fillColorSecondary,)
+    )]));
+  }
 }

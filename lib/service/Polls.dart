@@ -103,20 +103,36 @@ class Polls with Service implements NotificationsListener {
 
   // Accessories
 
-  Future<PollsChunk?>? getMyPolls({String? cursor}) async {
-    return _enabled ? _getPolls('mypolls', cursor) : null;
+  Future<PollsChunk?>? getMyPolls({String? cursor, List<String>? groupIds}) async {
+    return _enabled ? _getPolls('mypolls', cursor, groupIds: groupIds) : null;
+  }
+
+  Future<PollsChunk?>? getGroupPolls(List<String>? groupIds, {String? cursor}) async {
+    return _enabled ? _getPolls('grouppolls', cursor, includeAccountId: false, groupIds: groupIds) : null;
   }
 
   Future<PollsChunk?>? getRecentPolls({String? cursor}) async {
     return _enabled ?  _getPolls('recentpolls', cursor) : null;
   }
 
-  Future<PollsChunk?> _getPolls(String pollsType, String? cursor) async {
+  Future<PollsChunk?> _getPolls(String pollsType, String? cursor, {bool includeAccountId = true, List<String>? groupIds}) async {
     if(_enabled) {
       try {
-        String urlParams = (cursor != null) ? '?cursor=$cursor' : '';
-        String url = '${Config().quickPollsUrl}/$pollsType/${Auth2().accountId}$urlParams';
-        Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
+        String? body;
+        if (AppCollection.isCollectionNotEmpty(groupIds)) {
+          body = json.encode({'group_ids': groupIds});
+        }
+
+        String url = '${Config().quickPollsUrl}/$pollsType';
+        if (includeAccountId) {
+          url += '/${Auth2().accountId}';
+        }
+
+        if (cursor != null) {
+          url += '?cursor=$cursor';
+        }
+
+        Response? response = await Network().get(url, body: body, auth: NetworkAuth.Auth2);
         int responseCode = response?.statusCode ?? -1;
         String? responseBody = response?.body;
         if ((response != null) && (responseCode == 200)) {
@@ -162,7 +178,9 @@ class Polls with Service implements NotificationsListener {
 
             Analytics().logPoll(poll, Analytics.LogPollCreateActionName);
 
-            _addPollToChunks(poll);
+            if (!poll.hasGroup) {
+              _addPollToChunks(poll);
+            }
 
             if (poll.status == PollStatus.opened) {
               Analytics().logPoll(poll, Analytics.LogPollOpenActionName);
@@ -176,7 +194,9 @@ class Polls with Service implements NotificationsListener {
 
             Timer(Duration(milliseconds: 500), () {
               NotificationService().notify(notifyCreated, poll.pollId);
-              _presentWaiting();
+              if (!poll.hasGroup) {
+                _presentWaiting();
+              }
             });
           }
           else {
@@ -450,11 +470,13 @@ class Polls with Service implements NotificationsListener {
           Map<String, dynamic>? responseJson = AppJson.decode(responseString);
           Poll? poll = (responseJson != null) ? Poll.fromJson(responseJson) : null;
           if ((poll != null) && (!poll.isGeoFenced || GeoFence().currentRegionIds.contains(poll.regionId))) {
-            _addPollToChunks(poll);
-            NotificationService().notify(notifyCreated, pollId);
-            _presentWaiting();
-            if (AppLivecycle().state == AppLifecycleState.paused) {
-              _launchPollNotification(poll);
+            if (!poll.hasGroup) {
+              _addPollToChunks(poll);
+              NotificationService().notify(notifyCreated, pollId);
+              _presentWaiting();
+              if (AppLivecycle().state == AppLifecycleState.paused) {
+                _launchPollNotification(poll);
+              }
             }
             return poll;
           }
@@ -676,6 +698,7 @@ class Polls with Service implements NotificationsListener {
   }
 
   void _closePresent() {
+
     _PollChunk? presentPoll = _presentPoll;
     if (presentPoll != null) {
       if (presentPoll.status == _PollUIStatus.presentVote) {
@@ -720,12 +743,13 @@ class Polls with Service implements NotificationsListener {
         if (pollsJson != null) {
           for (dynamic pollJson in pollsJson) {
             Poll poll = Poll.fromJson(pollJson)!;
-            _PollUIStatus? status = _pollUIStatusFromString(chunksJson[poll.pollId]);
-            if (poll.status != PollStatus.closed) {
-              _addPollToChunks(poll, status: status, save: false);
-            }
-            else if ((status != _PollUIStatus.waitingVote) && poll.settings!.hideResultsUntilClosed!) {
-              _addPollToChunks(poll, status: _PollUIStatus.waitingClose, save: false);
+            if (!poll.hasGroup) {
+              _PollUIStatus? status = _pollUIStatusFromString(chunksJson[poll.pollId]);
+              if (poll.status != PollStatus.closed) {
+                _addPollToChunks(poll, status: status, save: false);
+              } else if ((status != _PollUIStatus.waitingVote) && poll.settings!.hideResultsUntilClosed!) {
+                _addPollToChunks(poll, status: _PollUIStatus.waitingClose, save: false);
+              }
             }
           }
         }

@@ -36,10 +36,13 @@ class Poll {
   PollVote? results;         // results for this poll
   PollVote? userVote;        // vote for particual user (as comes from mypolls / recentpolls).
 
+  String? groupId;           // The Id of the Group that the Poll belongs to.
+  int? uniqueVotersCount;    // The number of unique users that voted
+
   Poll({
     this.pollId, this.title, this.options, this.settings,
     this.creatorUserUuid, this.creatorUserName, this.regionId, this.pinCode,
-    this.status, this.results, this.userVote
+    this.status, this.results, this.userVote, this.groupId, this.uniqueVotersCount
   });
 
   static Poll? fromJson(Map<String, dynamic>? json) {
@@ -64,6 +67,9 @@ class Poll {
       status: pollStatusFromString(json['status']),
       results: PollVote.fromJson(results:json['results'], total:json['total']),
       userVote: PollVote.fromJson(votes:json['voted']),
+
+      groupId: json['group_id'],
+      uniqueVotersCount: json['unique_voters_count'],
     ) : null;
   }
 
@@ -88,6 +94,9 @@ class Poll {
       'results': results?.toResultsJson(length: options?.length),
       'total': results?.total,
       'voted': userVote?.toVotesJson(),
+
+      'group_id': groupId,
+      'unique_voters_count': uniqueVotersCount
     };
   }
 
@@ -101,6 +110,10 @@ class Poll {
 
   bool get isGeoFenced {
     return (regionId != null) && regionId!.isNotEmpty && (settings?.geoFence ?? false);
+  }
+
+  bool get hasGroup {
+    return AppString.isStringNotEmpty(groupId);
   }
 
   static int get randomPin {

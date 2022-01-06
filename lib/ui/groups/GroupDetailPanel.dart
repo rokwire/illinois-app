@@ -18,6 +18,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -25,6 +26,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
@@ -32,6 +34,7 @@ import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/groups/GroupPostCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupQrCodePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -47,7 +50,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum _DetailTab { Events, Posts, About }
+enum _DetailTab { Events, Posts, Polls, About }
 
 class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
@@ -97,6 +100,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   DateTime?           _pausedDateTime;
 
   String? _modalImageUrl;// Used to show image
+
+  GlobalKey          _pollsKey = GlobalKey();
+  List<Poll>?        _groupPolls;
+  bool               _pollsLoading = false;
 
   bool get _isMember {
     return _group?.currentUserAsMember?.isMember ?? false;
@@ -157,7 +164,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupEventsUpdated,
-      Groups.notifyGroupPostsUpdated]);
+      Groups.notifyGroupPostsUpdated,
+      Polls.notifyCreated]);
 
     _loadGroup(loadEvents: true);
   }
@@ -177,6 +185,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _group = group;
           _groupAdmins = _group!.getMembersByStatus(GroupMemberStatus.admin);
           _loadInitialPosts();
+          _loadPolls();
         }
         if (loadEvents) {
           _loadEvents();
@@ -197,6 +206,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _groupAdmins = _group!.getMembersByStatus(GroupMemberStatus.admin);
         });
         _refreshCurrentPosts();
+        _refreshPolls();
       }
     });
   }
@@ -293,6 +303,28 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
   }
 
+  Future<void> _loadPolls() async {
+    String? groupId = _group?.id;
+    if (AppString.isStringNotEmpty(groupId) && _group!.currentUserIsMemberOrAdmin) {
+      _setPollsLoading(true);
+      Polls().getGroupPolls([groupId!])!.then((result) {
+        _groupPolls = (result != null) ? result.polls : null;
+        _setPollsLoading(false);
+      });
+    }
+  }
+
+  void _refreshPolls() {
+    _loadPolls();
+  }
+
+  void _setPollsLoading(bool loading) {
+    _pollsLoading = loading;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   void _cancelMembershipRequest() {
     _setConfirmationLoading(true);
     Groups().cancelRequestMembership(widget.group).whenComplete(() {
@@ -381,8 +413,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _loadGroup(loadEvents: true);
     } else if (name == Groups.notifyGroupPostsUpdated) {
       _refreshCurrentPosts(delta: param is int ? param : null);
-    }
-    else if (name == AppLivecycle.notifyStateChanged) {
+    } else if (name == Polls.notifyCreated) {
+      _refreshPolls();
+    } else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
   }
@@ -445,6 +478,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (_currentTab != _DetailTab.About) {
         content.add(_buildEvents());
         content.add(_buildPosts());
+        content.add(_buildPolls());
       }
       else if (_currentTab == _DetailTab.About) {
         content.add(_buildAbout());
@@ -684,6 +718,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         case _DetailTab.Posts:
           title = Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
           break;
+        case _DetailTab.Polls:
+          title = Localization().getStringEx("panel.group_detail.button.polls.title", 'Polls');
+          break;
         case _DetailTab.About:
           title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
           break;
@@ -692,7 +729,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
       if (0 < tabs.length) {
         tabs.add(Padding(
-          padding: EdgeInsets.only(left: 8),
+          padding: EdgeInsets.only(left: 6),
           child: Container(),
         ));
       }
@@ -713,11 +750,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     if (_canLeaveGroup) {
-      tabs.add(Expanded(child: Container()));
       Widget leaveButton = GestureDetector(
           onTap: _onTapLeave,
           child: Padding(
-              padding: EdgeInsets.only(left: 12, top: 10, bottom: 10),
+              padding: EdgeInsets.only(left: 24, top: 10, bottom: 10),
               child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave')!,
                   style: TextStyle(
                       fontSize: 14,
@@ -729,7 +765,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       tabs.add(leaveButton);
     }
 
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Row(children: tabs));
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: tabs)));
   }
 
   Widget _buildEvents() {
@@ -837,6 +873,37 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           rightIconAction: _canCreatePost ? _onTapCreatePost : null,
           rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
           children: postsContent)
+    ]);
+  }
+
+  Widget _buildPolls() {
+    List<Widget> pollsContentList = [];
+
+    if (AppCollection.isCollectionNotEmpty(_groupPolls)) {
+      for (Poll? groupPoll in _groupPolls!) {
+        if(groupPoll!=null) {
+          pollsContentList.add(Container(height: 10));
+          pollsContentList.add(GroupPollCard(poll: groupPoll,));
+        }
+      }
+    }
+
+    return Stack(key: _pollsKey, children: [
+      Column(children: <Widget>[
+        SectionTitlePrimary(
+            title: Localization().getStringEx('panel.group_detail.label.polls', 'Polls')!,
+            iconPath: 'images/icon-calendar.png',
+            rightIconPath: 'images/icon-add-20x18.png',
+            rightIconAction: _onTapCreatePoll,
+            rightIconLabel: Localization().getStringEx('panel.group_detail.button.create_event.title', 'Create Poll'),
+            children: pollsContentList)
+      ]),
+      _pollsLoading
+          ? Center(
+              child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 50),
+                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary))))
+          : Container()
     ]);
   }
 
@@ -1149,11 +1216,18 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       setState(() {
         _currentTab = tab;
       });
-      
-      if ((_currentTab == _DetailTab.Posts)) {
-        if (AppCollection.isCollectionNotEmpty(_visibleGroupPosts)) {
-          _scheduleLastPostScroll();
-        }
+
+      switch (_currentTab) {
+        case _DetailTab.Posts:
+          if (AppCollection.isCollectionNotEmpty(_visibleGroupPosts)) {
+            _scheduleLastPostScroll();
+          }
+          break;
+        case _DetailTab.Polls:
+          _schedulePollsScroll();
+          break;
+        default:
+          break;
       }
     }
   }
@@ -1263,6 +1337,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     });
   }
 
+  void _onTapCreatePoll() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel(group: _group)));
+  }
+
   Future<void>_onPullToRefresh() async {
     Group? group = await Groups().loadGroup(widget.groupId); // The same as _refreshGroup(refreshEvents: true) but use await to show the pull to refresh progress indicator properly
     if ((group != null)) {
@@ -1284,9 +1362,25 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _scrollToLastPost() {
-    BuildContext? currentContext = _lastPostKey.currentContext;
-    if (currentContext != null) {
-      Scrollable.ensureVisible(currentContext, duration: Duration(milliseconds: 10));
+    _scrollTo(_lastPostKey);
+  }
+
+  void _schedulePollsScroll() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _scrollToPolls();
+    });
+  }
+
+  void _scrollToPolls() {
+    _scrollTo(_pollsKey);
+  }
+
+  void _scrollTo(GlobalKey? key) {
+    if(key != null) {
+      BuildContext? currentContext = key.currentContext;
+      if (currentContext != null) {
+        Scrollable.ensureVisible(currentContext, duration: Duration(milliseconds: 10));
+      }
     }
   }
 
