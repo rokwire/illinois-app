@@ -1106,7 +1106,7 @@ class _PollCardState extends State<_PollCard>{
   String get _pollVotesStatus {
     String statusString;
     if (widget.group != null) {
-      statusString = sprintf('%d of %d', [_uniqueVotersCount, _groupMembersCount]);
+      statusString = sprintf('%d %s %d', [_uniqueVotersCount, Localization().getStringEx('panel.polls_home.card.of.label', 'of')!, _groupMembersCount]);
     } else {
       int totalVotes = (widget.poll!.results?.totalVotes ?? 0);
 
