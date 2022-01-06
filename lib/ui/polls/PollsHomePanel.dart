@@ -16,11 +16,13 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Polls.dart';
@@ -56,6 +58,11 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   String? _recentPollsCursor;
   String? _recentPollsError;
   bool _recentPollsLoading = false;
+
+  List<Poll>? _groupPolls;
+  String? _groupPollsCursor;
+  String? _groupPollsError;
+  bool _groupPollsLoading = false;
 
   bool _loggingIn = false;
   
@@ -187,15 +194,23 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
             Expanded(
               child: _PollsHomePanelFilterTab(
                 text: Localization().getStringEx("panel.polls_home.tab.title.recent_polls","Recent Polls"),
-                left: true,
+                tabPosition: _PollFilterTabPosition.left,
                 selected: (_selectedPollType == _PollType.recentPolls),
                 onTap: _onRecentPollsTapped,
               )
             ),
             Expanded(
+                child: _PollsHomePanelFilterTab(
+                  text: Localization().getStringEx("panel.polls_home.tab.title.group_polls","Group Polls"),
+                  tabPosition: _PollFilterTabPosition.center,
+                  selected: (_selectedPollType == _PollType.groupPolls),
+                  onTap: _onGroupPollsTapped,
+                )
+            ),
+            Expanded(
               child: _PollsHomePanelFilterTab(
                 text: Localization().getStringEx("panel.polls_home.tab.title.my_polls","My Polls"),
-                left: false,
+                tabPosition: _PollFilterTabPosition.right,
                 selected: (_selectedPollType == _PollType.myPolls),
                 onTap: _onMyPollsTapped,
               )
@@ -223,6 +238,12 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       pollsLoading = _recentPollsLoading;
       pollsError = _recentPollsError;
     }
+    else if (_selectedPollType == _PollType.groupPolls) {
+      polls = _groupPolls;
+      pollsLoading = _groupPollsLoading;
+      pollsError = _groupPollsError;
+    }
+
     int pollsLenght = (polls?.length ?? 0) + (localPolls?.length ?? 0);
 
     Widget pollsContent;
@@ -263,14 +284,15 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   List<Poll>? get _polls {
-    if (_selectedPollType == _PollType.myPolls) {
-      return _myPolls;
-    }
-    else if (_selectedPollType == _PollType.recentPolls) {
-      return _recentPolls;
-    }
-    else {
-      return null;
+    switch (_selectedPollType) {
+      case _PollType.myPolls:
+        return _myPolls;
+      case _PollType.recentPolls:
+        return _recentPolls;
+      case _PollType.groupPolls:
+        return _groupPolls;
+      default:
+        return null;
     }
   }
 
@@ -324,6 +346,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     else if (_selectedPollType == _PollType.recentPolls) {
       message = Localization().getStringEx("panel.polls_home.tab.empty.message.recent_polls","There’s nothing here…yet");
       description = Localization().getStringEx("panel.polls_home.tab.empty.description.recent_polls","Once you've participated in a poll you can track the results here.");
+    }
+    else if (_selectedPollType == _PollType.groupPolls) {
+      message = Localization().getStringEx("panel.polls_home.tab.empty.message.group_polls","There’s nothing here…yet");
+      description = Localization().getStringEx("panel.polls_home.tab.empty.description.group_polls","You will see the polls for all your groups.");
     }
     else {
       message = description = '';
@@ -482,6 +508,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     _selectPollType(_PollType.myPolls);
   }
 
+  void _onGroupPollsTapped() {
+    _selectPollType(_PollType.groupPolls);
+  }
+
   void _selectPollType(_PollType pollType) {
     if (_selectedPollType != pollType) {
       setState(() {
@@ -509,6 +539,9 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     }
     else if (_selectedPollType == _PollType.recentPolls) {
       _loadRecentPolls();
+    }
+    else if (_selectedPollType == _PollType.groupPolls) {
+      _loadGroupPolls();
     }
   }
 
@@ -565,6 +598,53 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     }
   }
 
+  void _loadGroupPolls() {
+    if (((_groupPolls == null) || (_groupPollsCursor != null)) && !_groupPollsLoading) {
+      _setGroupPollsLoading(true);
+      _loadGroupIds().then((groupIds) {
+        if (AppCollection.isCollectionNotEmpty(groupIds)) {
+          Polls().getGroupPolls(groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
+            setState(() {
+              if (result != null) {
+                if (_groupPolls == null) {
+                  _groupPolls = [];
+                }
+                _groupPolls!.addAll(result.polls!);
+                _groupPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
+                _groupPollsError = null;
+              }
+            });
+          }).catchError((e) {
+            _groupPollsError = e.toString();
+          }).whenComplete(() {
+            _setGroupPollsLoading(false);
+          });
+        } else {
+          _setGroupPollsLoading(false);
+        }
+      });
+    }
+  }
+
+  Future<List<String>?> _loadGroupIds() async {
+    List<Group>? myGroups = await Groups().loadGroups(myGroups: true);
+    List<String>? groupIds;
+    if (AppCollection.isCollectionNotEmpty(myGroups)) {
+      groupIds = [];
+      myGroups!.forEach((group) {
+        groupIds!.add(group.id!);
+      });
+    }
+    return groupIds;
+  }
+
+  void _setGroupPollsLoading(bool loading) {
+    _groupPollsLoading = loading;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   void _stripRecentLocalPolls(List<Poll>?recentPolls) {
     if (recentPolls != null) {
       for (Poll? poll in recentPolls) {
@@ -598,8 +678,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       }
     }
   }
-  
-  
+
   void _resetMyPolls() {
     _myPolls = null;
     _myPollsCursor = null;
@@ -659,11 +738,11 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 class _PollsHomePanelFilterTab extends StatelessWidget {
   final String? text;
   final String hint;
-  final bool left;
+  final _PollFilterTabPosition tabPosition;
   final bool selected;
   final GestureTapCallback? onTap;
 
-  _PollsHomePanelFilterTab({Key? key, this.text, this.hint = '', this.left = false, this.selected = false, this.onTap}) : super(key: key);
+  _PollsHomePanelFilterTab({Key? key, this.text, this.hint = '', this.tabPosition = _PollFilterTabPosition.left, this.selected = false, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -675,7 +754,7 @@ class _PollsHomePanelFilterTab extends StatelessWidget {
           decoration: BoxDecoration(
             color: selected ? Colors.white : Styles().colors!.lightGray,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1.5, style: BorderStyle.solid),
-            borderRadius: left ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
+            borderRadius: _borderRadius,
           ),
           child:Center(child: Text(text!,style:TextStyle(
               fontFamily: selected ? Styles().fontFamilies!.extraBold : Styles().fontFamilies!.medium,
@@ -684,10 +763,23 @@ class _PollsHomePanelFilterTab extends StatelessWidget {
         ),
         ));
   }
+
+  BorderRadiusGeometry get _borderRadius {
+    switch (tabPosition) {
+      case _PollFilterTabPosition.left:
+        return BorderRadius.horizontal(left: Radius.circular(100.0));
+      case _PollFilterTabPosition.center:
+        return BorderRadius.zero;
+      case _PollFilterTabPosition.right:
+        return BorderRadius.horizontal(right: Radius.circular(100.0));
+    }
+  }
 }
 
 
-enum _PollType { myPolls, recentPolls}
+enum _PollType { myPolls, recentPolls, groupPolls }
+
+enum _PollFilterTabPosition { left, center, right }
 
 class _PollCard extends StatefulWidget{
   final Poll? poll;
