@@ -20,6 +20,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -1761,6 +1762,31 @@ class _ImageChooserState extends State<ImageChooserWidget>{
       }
     }
     Log.d("Image Url: $imageUrl");
+  }
+
+}
+
+//Polls
+
+class GroupPollCard extends StatefulWidget{
+  final Poll poll;
+
+  const GroupPollCard({Key? key, required this.poll}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _GroupPollCard();
+
+}
+
+class _GroupPollCard extends State<GroupPollCard>{
+
+  @override
+  Widget build(BuildContext context) {
+    Poll poll = widget.poll;
+
+    //TBD Droaw the Card
+    return Container(
+        width: 80, height: 50, color: Colors.red, child: Text(AppString.getDefaultEmptyString(poll.title), style: TextStyle(color: Colors.white)));
   }
 
 }

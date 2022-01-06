@@ -881,10 +881,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     if (AppCollection.isCollectionNotEmpty(_groupPolls)) {
       for (Poll? groupPoll in _groupPolls!) {
-        //TBD: draw the UI
-        pollsContentList.add(Container(
-            width: 80, height: 50, color: Colors.red, child: Text(AppString.getDefaultEmptyString(groupPoll!.title), style: TextStyle(color: Colors.white))));
-        pollsContentList.add(Container(height: 10));
+        if(groupPoll!=null) {
+          pollsContentList.add(Container(height: 10));
+          pollsContentList.add(GroupPollCard(poll: groupPoll,));
+        }
       }
     }
 
