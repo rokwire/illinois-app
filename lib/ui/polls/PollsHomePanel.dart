@@ -847,17 +847,7 @@ class _PollCardState extends State<_PollCard>{
   @override
   Widget build(BuildContext context) {
     Poll poll = widget.poll!;
-    int totalVotes = (poll.results?.totalVotes ?? 0);
-    String? votesNum;
-    if (1 < totalVotes) {
-      votesNum = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$totalVotes']);
-    }
-    else if (0 < totalVotes) {
-      votesNum = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
-    }
-    else {
-      votesNum = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet');
-    }
+    String pollVotesStatus = _pollVotesStatus;
 
     List<Widget> footerWidgets = [];
 
@@ -902,9 +892,9 @@ class _PollCardState extends State<_PollCard>{
             Padding(padding: EdgeInsets.only(right: 3), child: Text(Localization().getStringEx('panel.polls_home.card.group.label', 'Group:')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14))),
             Expanded(child: Text(AppString.getDefaultEmptyString(groupName), overflow: TextOverflow.ellipsis, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
           ]))),
-          Semantics(excludeSemantics: true, label: "$pollStatus,$votesNum",
+          Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus",
           child: Padding(padding: EdgeInsets.only(bottom: 12), child: Row(children: <Widget>[
-            Text(votesNum ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),),
+            Text(AppString.getDefaultEmptyString(pollVotesStatus), style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),),
             Text('  ', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12,),),
             Expanded(child:
             Text(pollStatus ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, ),),
@@ -1113,4 +1103,30 @@ class _PollCardState extends State<_PollCard>{
     );
   }
 
+  String get _pollVotesStatus {
+    String statusString;
+    if (widget.group != null) {
+      statusString = sprintf('%d of %d', [_uniqueVotersCount, _groupMembersCount]);
+    } else {
+      int totalVotes = (widget.poll!.results?.totalVotes ?? 0);
+
+      if (1 < totalVotes) {
+        statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$totalVotes']);
+      } else if (0 < totalVotes) {
+        statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote')!;
+      } else {
+        statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet')!;
+      }
+    }
+
+    return statusString;
+  }
+
+  int get _uniqueVotersCount {
+    return widget.poll?.uniqueVotersCount ?? 0;
+  }
+
+  int get _groupMembersCount {
+    return widget.group?.membersCount ?? 0;
+  }
 }

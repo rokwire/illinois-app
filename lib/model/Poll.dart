@@ -37,11 +37,12 @@ class Poll {
   PollVote? userVote;        // vote for particual user (as comes from mypolls / recentpolls).
 
   String? groupId;           // The Id of the Group that the Poll belongs to.
+  int? uniqueVotersCount;    // The number of unique users that voted
 
   Poll({
     this.pollId, this.title, this.options, this.settings,
     this.creatorUserUuid, this.creatorUserName, this.regionId, this.pinCode,
-    this.status, this.results, this.userVote, this.groupId
+    this.status, this.results, this.userVote, this.groupId, this.uniqueVotersCount
   });
 
   static Poll? fromJson(Map<String, dynamic>? json) {
@@ -68,6 +69,7 @@ class Poll {
       userVote: PollVote.fromJson(votes:json['voted']),
 
       groupId: json['group_id'],
+      uniqueVotersCount: json['unique_voters_count'],
     ) : null;
   }
 
@@ -93,7 +95,8 @@ class Poll {
       'total': results?.total,
       'voted': userVote?.toVotesJson(),
 
-      'group_id': groupId
+      'group_id': groupId,
+      'unique_voters_count': uniqueVotersCount
     };
   }
 
