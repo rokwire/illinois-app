@@ -25,16 +25,20 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
+import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
+import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
+import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -1770,23 +1774,26 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 
 class GroupPollCard extends StatefulWidget{
   final Poll poll;
+  final Group? group;
 
-  const GroupPollCard({Key? key, required this.poll}) : super(key: key);
+  const GroupPollCard({Key? key, required this.poll, this.group}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _GroupPollCard();
+  State<StatefulWidget> createState() => _GroupPollCardState();
 
 }
 
-class _GroupPollCard extends State<GroupPollCard>{
-
+class _GroupPollCardState extends State<GroupPollCard> {
   @override
   Widget build(BuildContext context) {
-    Poll poll = widget.poll;
-
-    //TBD Droaw the Card
     return Container(
-        width: 80, height: 50, color: Colors.red, child: Text(AppString.getDefaultEmptyString(poll.title), style: TextStyle(color: Colors.white)));
+      child: Column(children: <Widget>[
+        Container(padding: EdgeInsets.symmetric(),
+          decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5)),
+          child: PollContentWidget(pollId: widget.poll.pollId,
+              textColor: Styles().colors!.fillColorPrimary,
+              backgroundColor: Styles().colors!.white,
+              doneButtonColor: Styles().colors!.fillColorSecondary,)
+    )]));
   }
-
 }
