@@ -34,6 +34,8 @@
 		"settings.privacy": ["buttons", "delete"],
 		"settings.privacy.buttons": ["personal_info", "notifications"],
 
+		"roles": ["student", "visitor", "fan", "employee", "alumni", "parent", "resident", "gies"],
+
 		"onboarding":["get_started", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
 
 		"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
@@ -53,11 +55,12 @@
 			"home.content"                    : ["~gies?"],
 			"home.gies_only_content"          : ["gies!"],
 			"home.twitter.user.gies"          : ["gies"],
+			"home.gies_only_content.gies"     : ["gies"],
+			"home.content.gies"               : ["gies"],
 
 			"game_day"                        : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
 			"pref_sports"                     : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
 			"campus_reminders"                : [["NOT", "alumni"], "OR", "student", "OR", "fan", "OR", "employee", "OR", "parent"],
-			"gies"                            : ["gies"],
 
 			"my_illini"                       : ["student"],
 			"illini_cash"                     : ["student", "OR", "employee", "OR", "parent"],
