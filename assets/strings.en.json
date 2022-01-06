@@ -1286,6 +1286,7 @@
     "panel.polls_home.tab.empty.description.group_polls":"You will see the polls for all your groups.",
     "panel.polls_home.text.create_poll":"Create a poll",
     "panel.polls_home.text.login":"Login",
+    "panel.polls_home.card.group.label":"Group:",
     "panel.polls_home.card.text.vote":"vote",
     "panel.polls_home.card.text.no_votes":"No votes yet",
     "panel.polls_home.card.state.text.created":"Polls created",

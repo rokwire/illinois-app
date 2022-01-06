@@ -1286,6 +1286,7 @@
 	"panel.polls_home.text.create_poll":"创建投票",
 	"panel.polls_home.text.login":"登录",
 	"panel.polls_home.card.text.vote":"投票",
+	"panel.polls_home.card.group.label":"團體:",
 	"panel.polls_home.card.text.no_votes":"还没有投票",
 	"panel.polls_home.card.state.text.created":" 已创建投票 ",
 	"panel.polls_home.card.state.text.closed":" 投票结束 ",

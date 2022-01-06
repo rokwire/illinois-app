@@ -1285,6 +1285,7 @@
     "panel.polls_home.tab.empty.description.group_polls":"Verás las encuestas de todos tus grupos.",
     "panel.polls_home.text.create_poll":"Crea una encuesta",
     "panel.polls_home.text.login":"Iniciar sesión",
+    "panel.polls_home.card.group.label":"Grupo:",
     "panel.polls_home.card.text.vote":"Votar",
     "panel.polls_home.card.text.no_votes":"Aún no hay votos",
     "panel.polls_home.card.state.text.created":"Encuestas creadas",

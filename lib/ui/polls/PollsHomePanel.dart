@@ -63,6 +63,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   String? _groupPollsCursor;
   String? _groupPollsError;
   bool _groupPollsLoading = false;
+  List<Group>? _myGroups;
 
   bool _loggingIn = false;
   
@@ -80,6 +81,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       Polls.notifyResultsChanged,
       GeoFence.notifyCurrentRegionsUpdated,
       FlexUI.notifyChanged,
+      Groups.notifyUserMembershipUpdated
     ]);
 
     _scrollController = ScrollController();
@@ -309,14 +311,16 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
     if (0 < pols1Len) {
       polls1!.forEach((poll){
-        content.add(_PollCard(poll: poll));
+        Group? group = _getGroup(poll.groupId);
+        content.add(_PollCard(poll: poll, group: group));
         content.add(_constructListSeparator());
       });
     }
 
     if (0 < pols2Len) {
       polls2!.forEach((poll){
-        content.add(_PollCard(poll: poll));
+        Group? group = _getGroup(poll.groupId);
+        content.add(_PollCard(poll: poll, group: group));
         content.add(_constructListSeparator());
       });
     }
@@ -550,22 +554,25 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       setState(() {
         _myPollsLoading = true;
       });
-      Polls().getMyPolls(cursor: _myPollsCursor)!.then((PollsChunk? result){
-        setState((){
-          if (result != null) {
-            if (_myPolls == null) {
-              _myPolls = [];
+
+      _loadMyGroupsIfNeeded().then((_) {
+        Polls().getMyPolls(cursor: _myPollsCursor)!.then((PollsChunk? result) {
+          setState(() {
+            if (result != null) {
+              if (_myPolls == null) {
+                _myPolls = [];
+              }
+              _myPolls!.addAll(result.polls!);
+              _myPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
+              _myPollsError = null;
             }
-            _myPolls!.addAll(result.polls!);
-            _myPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
-            _myPollsError = null;
-          }
-        });
-      }).catchError((e){
-        _myPollsError = e.toString();
-      }).whenComplete((){
-        setState((){
-          _myPollsLoading = false;
+          });
+        }).catchError((e) {
+          _myPollsError = e.toString();
+        }).whenComplete(() {
+          setState(() {
+            _myPollsLoading = false;
+          });
         });
       });
     }
@@ -576,23 +583,26 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       setState(() {
         _recentPollsLoading = true;
       });
-      Polls().getRecentPolls(cursor: _recentPollsCursor)!.then((PollsChunk? result){
-        setState((){
-          if (result != null) {
-            if (_recentPolls == null) {
-              _recentPolls = [];
+
+      _loadMyGroupsIfNeeded().then((_) {
+        Polls().getRecentPolls(cursor: _recentPollsCursor)!.then((PollsChunk? result){
+          setState((){
+            if (result != null) {
+              if (_recentPolls == null) {
+                _recentPolls = [];
+              }
+              _stripRecentLocalPolls(result.polls);
+              _recentPolls!.addAll(result.polls!);
+              _recentPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
+              _recentPollsError = null;
             }
-            _stripRecentLocalPolls(result.polls);
-            _recentPolls!.addAll(result.polls!);
-            _recentPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
-            _recentPollsError = null;
-          }
-        });
-      }).catchError((e){
-        _recentPollsError = e.toString();
-      }).whenComplete((){
-        setState((){
-          _recentPollsLoading = false;
+          });
+        }).catchError((e){
+          _recentPollsError = e.toString();
+        }).whenComplete((){
+          setState((){
+            _recentPollsLoading = false;
+          });
         });
       });
     }
@@ -601,19 +611,19 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   void _loadGroupPolls() {
     if (((_groupPolls == null) || (_groupPollsCursor != null)) && !_groupPollsLoading) {
       _setGroupPollsLoading(true);
-      _loadGroupIds().then((groupIds) {
+      _loadMyGroupsIfNeeded().then((_) {
+        List<String>? groupIds = _myGroupIds;
         if (AppCollection.isCollectionNotEmpty(groupIds)) {
           Polls().getGroupPolls(groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
-            setState(() {
-              if (result != null) {
-                if (_groupPolls == null) {
-                  _groupPolls = [];
-                }
-                _groupPolls!.addAll(result.polls!);
-                _groupPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
-                _groupPollsError = null;
+            if (result != null) {
+              if (_groupPolls == null) {
+                _groupPolls = [];
               }
-            });
+              _groupPolls!.addAll(result.polls!);
+              _groupPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
+              _groupPollsError = null;
+            }
+            setState(() {});
           }).catchError((e) {
             _groupPollsError = e.toString();
           }).whenComplete(() {
@@ -626,16 +636,36 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     }
   }
 
-  Future<List<String>?> _loadGroupIds() async {
-    List<Group>? myGroups = await Groups().loadGroups(myGroups: true);
+  Future<void> _loadMyGroupsIfNeeded() async {
+    if (AppCollection.isCollectionEmpty(_myGroups)) {
+      await _reloadMyGroups();
+    }
+  }
+
+  Future<void> _reloadMyGroups() async {
+    _myGroups = await Groups().loadGroups(myGroups: true);
+  }
+
+  List<String>? get _myGroupIds {
     List<String>? groupIds;
-    if (AppCollection.isCollectionNotEmpty(myGroups)) {
+    if (AppCollection.isCollectionNotEmpty(_myGroups)) {
       groupIds = [];
-      myGroups!.forEach((group) {
+      _myGroups!.forEach((group) {
         groupIds!.add(group.id!);
       });
     }
     return groupIds;
+  }
+
+  Group? _getGroup(String? groupId) {
+    if (AppString.isStringNotEmpty(groupId) && AppCollection.isCollectionNotEmpty(_myGroups)) {
+      for (Group group in _myGroups!) {
+        if (groupId == group.id) {
+          return group;
+        }
+      }
+    }
+    return null;
   }
 
   void _setGroupPollsLoading(bool loading) {
@@ -732,6 +762,11 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     else if (name == FlexUI.notifyChanged) {
       setState(() { });
     }
+    else if (name == Groups.notifyUserMembershipUpdated) {
+      _reloadMyGroups().then((_) {
+        _loadPolls();
+      });
+    }
   }
 }
 
@@ -783,8 +818,9 @@ enum _PollFilterTabPosition { left, center, right }
 
 class _PollCard extends StatefulWidget{
   final Poll? poll;
+  final Group? group;
 
-  const _PollCard({Key? key, this.poll}) : super(key: key);
+  const _PollCard({Key? key, this.poll, this.group}) : super(key: key);
   _PollCardState createState() => _PollCardState();
 }
 
@@ -847,6 +883,8 @@ class _PollCardState extends State<_PollCard>{
       pollStatus =  Localization().getStringEx("panel.polls_home.card.state.text.closed","Polls closed");
     }
 
+    String? groupName = widget.group?.title;
+
     String pin = sprintf(Localization().getStringEx('panel.polls_home.card.text.pin', 'Pin: %s')!, [
       sprintf('%04i', [poll.pinCode ?? 0])
     ]);
@@ -860,6 +898,10 @@ class _PollCardState extends State<_PollCard>{
         decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5)),
         child: Padding(padding: EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:
         <Widget>[
+          Visibility(visible: (widget.group != null), child: Padding(padding: EdgeInsets.only(bottom: 10), child: Row(children: [
+            Padding(padding: EdgeInsets.only(right: 3), child: Text(Localization().getStringEx('panel.polls_home.card.group.label', 'Group:')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14))),
+            Expanded(child: Text(AppString.getDefaultEmptyString(groupName), overflow: TextOverflow.ellipsis, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
+          ]))),
           Semantics(excludeSemantics: true, label: "$pollStatus,$votesNum",
           child: Padding(padding: EdgeInsets.only(bottom: 12), child: Row(children: <Widget>[
             Text(votesNum ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),),
@@ -867,9 +909,8 @@ class _PollCardState extends State<_PollCard>{
             Expanded(child:
             Text(pollStatus ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, ),),
             ),
-            Expanded(child:
-              Text(pin, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),),
-            )
+            Expanded(child: Container()),
+            Text(pin, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),)
           ],),),
           ),
           Row(children: <Widget>[Expanded(child: Container(),)],),
