@@ -28,6 +28,7 @@ import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
+import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -615,7 +616,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                     width: _smallImageSize,
                     height: _smallImageSize,
                     child: Image.network(
-                      widget.event!.exploreImageURL!, excludeFromSemantics: true, fit: BoxFit.fill,),),)),
+                      widget.event!.exploreImageURL!, excludeFromSemantics: true, fit: BoxFit.fill, headers: Network.authApiKeyHeader),),)),
                 ])
                 )
     ],);
@@ -1412,7 +1413,7 @@ class ModalImageDialog extends StatelessWidget{
                                       ),
                                     ),
                                     Container(
-                                      child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fitWidth,): Container(),
+                                      child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fitWidth, headers: Network.authApiKeyHeader): Container(),
                                     )
                                   ],
                                 ))
