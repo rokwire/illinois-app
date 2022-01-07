@@ -1500,7 +1500,7 @@
 	"panel.web.offline.title": "網頁內容不可用",
 	"panel.web.offline.message": "您需要在線才能訪問網絡內容。 請檢查您的互聯網連接。",
 	"panel.web.tracking_disabled.title": "網頁內容被阻止",
-	"panel.web.tracking_disabled.message": "您已選擇拒絕使用此應用程序中的網絡內容的 cookie，因此我們已阻止訪問網站。 如果您改變主意，請在<a href='%s'>此處</a>更改您的偏好。",
+	"panel.web.tracking_disabled.message": "您已選擇拒絕使用此應用程序中的網絡內容的 cookie，因此我們已阻止訪問網站。 如果您改變主意，請在<a href='%s'>此處</a>更改您的偏好。您的手機設置可能還需要啟用隱私> 跟踪。",
 
 	"panel.groups_admin.header.title": "管理视角",
 	"panel.groups_admin.label.members": "成员",

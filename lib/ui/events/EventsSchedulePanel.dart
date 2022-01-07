@@ -63,7 +63,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   List<_EventTab> _eventTabs = [];
   _EventTab  _selectedTab = _EventTab.All;
 
-  Map<String,Map<String,List<Event>>>? _sortedEvents;
+  Map<String,Map<String?,List<Event>>>? _sortedEvents;
   List<dynamic>? _eventCategories;
   List<String>? _eventTags;
   //Search tags
@@ -233,9 +233,9 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
         content.add(_buildDateTitle(date!));
         Map? categoryEvents = _sortedEvents![date];
         if (categoryEvents != null && categoryEvents.isNotEmpty) {
-          for (String category in categoryEvents.keys) {
+          for (String? category in categoryEvents.keys) {
             if (AppString.isStringNotEmpty(category)) {
-              content.add(_buildCategoryTitle(category));
+              content.add(_buildCategoryTitle(category!));
             }
             List<Event> events = categoryEvents[category];
             for (Event event in events) {
@@ -274,8 +274,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   //Event utils
-  String? getEventDate(Event event) {
-    return AppDateTime().getDisplayDay(dateTimeUtc: event.startDateGmt, allDay: event.allDay);
+  String getEventDate(Event event) {
+    return AppDateTime().getDisplayDay(dateTimeUtc: event.startDateGmt, allDay: event.allDay)!;
   }
 
   Widget _buildEmpty() {
@@ -813,13 +813,14 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
           continue;
         }
         //Sort by date
-        String? eventDate = getEventDate(event);
-        Map<String,List<Event>>? eventsForDate;
+        String eventDate = getEventDate(event);
+        Map<String?,List<Event>>? eventsForDate;
         if(_sortedEvents!.containsKey(eventDate)) {
           eventsForDate = _sortedEvents![eventDate];
         }
-        else if (eventDate != null) {
-          _sortedEvents![eventDate] = eventsForDate = Map();
+        else {
+          eventsForDate = Map();
+          _sortedEvents![eventDate] = eventsForDate;
         }
         //Sort By Category
         String? category = event.track;
@@ -827,8 +828,9 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
         if(eventsForDate!.containsKey(category)) {
           eventsForCategory = eventsForDate[category];
         }
-        else if (category != null) {
-          eventsForDate[category] = eventsForCategory = [];
+        else {
+          eventsForCategory = [];
+          eventsForDate[category] = eventsForCategory;
         }
         eventsForCategory!.add(event);
     }
