@@ -347,6 +347,7 @@ class Member {
 	String?            id;
   String?            userId;
 	String?            name;
+	String?            email;
 	String?            photoURL;
   GroupMemberStatus? status;
   String?            officerTitle;
@@ -370,6 +371,7 @@ class Member {
     try { id          = json['id'];      } catch(e) { print(e.toString()); }
     try { userId      = json['user_id'];      } catch(e) { print(e.toString()); }
     try { name        = json['name'];     } catch(e) { print(e.toString()); }
+    try { email       = json['email'];     } catch(e) { print(e.toString()); }
     try { photoURL    = json['photo_url']; } catch(e) { print(e.toString()); }
     try { status       = groupMemberStatusFromString(json['status']); } catch(e) { print(e.toString()); }
     try { officerTitle = json['officerTitle']; } catch(e) { print(e.toString()); }
@@ -407,6 +409,7 @@ class Member {
     json['id']                  = id;
     json['user_id']             = userId;
     json['name']                = name;
+    json['email']               = email;
     json['photo_url']           = photoURL;
     json['status']              = groupMemberStatusToString(status);
     json['officerTitle']        = officerTitle;
@@ -417,11 +420,26 @@ class Member {
     return json;
   }
 
+  String get displayName {
+    String displayName = '';
+    if (AppString.isStringNotEmpty(name)) {
+      displayName += name!;
+    }
+    if (AppString.isStringNotEmpty(email)) {
+      if (AppString.isStringNotEmpty(displayName)) {
+        displayName += ' ';
+      }
+      displayName += email!;
+    }
+    return displayName;
+  }
+
   bool operator == (dynamic o) {
     return (o is Member) &&
            (o.id == id) &&
            (o.userId == userId) &&
            (o.name == name) &&
+           (o.email == email) &&
            (o.photoURL == photoURL) &&
            (o.status == status) &&
            (o.officerTitle == officerTitle) &&
@@ -434,6 +452,7 @@ class Member {
     return (id?.hashCode ?? 0) ^
            (userId?.hashCode ?? 0) ^
            (name?.hashCode ?? 0) ^
+           (email?.hashCode ?? 0) ^
            (photoURL?.hashCode ?? 0) ^
            (status?.hashCode ?? 0) ^
            (officerTitle?.hashCode ?? 0) ^
