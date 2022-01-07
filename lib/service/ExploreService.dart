@@ -573,10 +573,7 @@ class ExploreService with Service implements NotificationsListener {
     if (AppCollection.isCollectionNotEmpty(subEventsJsonList)) {
       for (dynamic eventJson in subEventsJsonList!) {
         String? id = eventJson['id'];
-        Map<String, dynamic>? subEventJson = (subEventsMap as List<Map<String, dynamic>?>).firstWhere((jsonEntry) => (id == jsonEntry!['id']), orElse: () {
-          print('No matching sub event');
-          return null;
-        });
+        Map<String, dynamic>? subEventJson = subEventsMap?.firstWhere((jsonEntry) => (id == jsonEntry['id']));
         if (subEventJson != null) {
           Event event = Event.fromJson(eventJson)!;
           event.track = subEventJson['track'];
