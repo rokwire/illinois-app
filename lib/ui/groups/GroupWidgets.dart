@@ -29,6 +29,7 @@ import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
@@ -36,6 +37,7 @@ import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
+import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -1780,17 +1782,436 @@ class GroupPollCard extends StatefulWidget{
 
 }
 
-class _GroupPollCardState extends State<GroupPollCard> {
+class _GroupPollCardState extends State<GroupPollCard> implements NotificationsListener{
+  Poll? _poll;
+  bool _voteDone = false;
+  Map<int, int> _votingOptions = {};
+
+  List<GlobalKey>? _progressKeys;
+  double? _progressWidth;
+
+  final Color? _backgroundColor = Styles().colors!.white;
+  final Color? _textColor       = Styles().colors!.fillColorPrimary;
+  final Color? _doneButtonColor = Styles().colors!.fillColorSecondary;
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Polls.notifyResultsChanged,
+      Polls.notifyVoteChanged,
+      Polls.notifyStatusChanged,
+    ]);
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _evalProgressWidths();
+    });
+    _poll = Polls().getPoll(pollId: widget.poll.pollId);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+  @override
+  void onNotification(String name, dynamic param) {
+    if ((name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged) || (name == Polls.notifyStatusChanged)) {
+      if (widget.poll.pollId == param) {
+        setState(() {
+          _poll = Polls().getPoll(pollId: widget.poll.pollId);
+        });
+        if (_poll!.status == PollStatus.closed) {
+          _onClose();
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(children: <Widget>[
-        Container(padding: EdgeInsets.symmetric(),
-          decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5)),
-          child: PollContentWidget(pollId: widget.poll.pollId,
-              textColor: Styles().colors!.fillColorPrimary,
-              backgroundColor: Styles().colors!.white,
-              doneButtonColor: Styles().colors!.fillColorSecondary,)
-    )]));
+    return
+      Container(
+        decoration: BoxDecoration(color: _backgroundColor, borderRadius: BorderRadius.circular(5)),
+        child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildContent(),),),
+      );
+  }
+
+  List<Widget> _buildContent() {
+    if (_voteDone && _poll!.settings!.hideResultsUntilClosed! && (_poll!.status != PollStatus.closed)) {
+      return _buildCheckoutContent();
+    }
+    else {
+      return _buildStandardContent();
+    }
+  }
+
+  List<Widget> _buildStandardContent() {
+
+    String? creator = _poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
+    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
+
+    String? votesNum;
+    int totalVotes = _poll?.results?.totalVotes ?? 0;
+    if (1 < totalVotes) {
+      votesNum = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$totalVotes']);
+    }
+    else if (0 < totalVotes) {
+      votesNum = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
+    }
+    else {
+      votesNum = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet');
+    }
+
+    String? pollStatus;
+    if (_poll?.status == PollStatus.opened) {
+      pollStatus = Localization().getStringEx('panel.poll_prompt.text.poll_open', 'Polls open');
+    }
+    else if (_poll?.status == PollStatus.closed) {
+      pollStatus = Localization().getStringEx('panel.poll_prompt.text.poll_closed', 'Polls closed');
+    }
+
+    Widget footerWidget;
+    List<Widget> contentOptionsList;
+    if (_voteDone) {
+      contentOptionsList = _buildResultOptions();
+      footerWidget = _buildVoteDoneButton(_onClose);
+    }
+    else {
+      contentOptionsList = _allowRepeatOptions ? _buildCheckboxOptions() : _buildButtonOptions();
+      footerWidget = (_allowMultipleOptions || _allowRepeatOptions) ? _buildVoteDoneButton(_onVoteDone) : Container();
+    }
+    String pollTitle = _poll?.title ?? '';
+    String semanticsQuestionText =  "$wantsToKnow\n+$pollTitle";
+    String semanticsStatusText = "$pollStatus,$votesNum";
+    return <Widget>[
+      Row(children: <Widget>[Expanded(child: Container(),)],),
+      Semantics(label:semanticsQuestionText,excludeSemantics: true,child:
+      Text(wantsToKnow, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w600),)),
+      Semantics(excludeSemantics: true,child:
+      Padding(padding: EdgeInsets.symmetric(vertical: 20),child:
+      Text(pollTitle, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 24, fontWeight: FontWeight.w900),),)),
+      Padding(padding: EdgeInsets.only(bottom: 20),child:
+      Text(_votingRulesDetails, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 15),),),
+
+      Column(children: contentOptionsList,),
+
+      Semantics(label: semanticsStatusText, excludeSemantics: true,child:
+      Padding(padding: EdgeInsets.only(top: 20), child: Wrap(children: <Widget>[
+        Text(votesNum ?? '', style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w500),),
+        Text('  ', style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w900),),
+        Text(pollStatus ?? '', style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w200),),
+      ],),)),
+
+      footerWidget,
+    ];
+  }
+
+  List<Widget> _buildCheckoutContent() {
+    String thanks = Localization().getStringEx('panel.poll_prompt.text.thanks_for_voting', 'Thanks for voting!')!;
+    String willNotify = Localization().getStringEx('panel.poll_prompt.text.will_notify', 'We will notify you once the poll results are in.')!;
+    return <Widget>[
+      Row(children: <Widget>[Expanded(child: Container(),)],),
+      Padding(padding: EdgeInsets.only(top: 32, bottom:20),child:
+      Text(thanks, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 24, fontWeight: FontWeight.w900),),),
+      Text(willNotify, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w300),),
+    ];
+  }
+
+  List<Widget> _buildButtonOptions() {
+    List<Widget> result = [];
+    int optionsCount = _poll?.options?.length ?? 0;
+    for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
+      result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
+      Stack(children: <Widget>[
+        ScalableRoundedButton(
+            label: _poll!.options![optionIndex],
+            backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors!.fillColorSecondary : _backgroundColor,
+            hint: Localization().getStringEx("panel.poll_prompt.hint.select_option","Double tab to select this option"),
+//            height: 42,
+            fontSize: 16.0,
+            textColor: _textColor,
+            borderColor: Styles().colors!.fillColorSecondary,
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            onTap: () { _onButtonOption(optionIndex); }
+        ),
+        Visibility(visible: (_votingOptions[optionIndex] != null),
+          child: Container(
+            height: 42,
+            child: Align(alignment: Alignment.center,
+              child: SizedBox(height: 21, width: 21,
+                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_textColor), )
+              ),
+            ),
+          ),
+        ),
+      ],),
+      ));
+    }
+    return result;
+  }
+
+  List<Widget> _buildCheckboxOptions() {
+    List<Widget> result = [];
+    _progressKeys = [];
+    int totalVotes = _totalOptionVotes;
+    int optionsCount = _poll?.options?.length ?? 0;
+    for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
+      String checkboxImage = (0 < _optionVotes(optionIndex)) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
+
+      String optionString = _poll!.options![optionIndex];
+      String? votesString;
+      int votesCount = _optionVotes(optionIndex);
+      double votesPercent = (0 < totalVotes) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
+      if (votesCount <= 0) {
+        votesString = '';
+      }
+      else if (votesCount == 1) {
+        votesString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
+      }
+      else {
+        votesString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votesCount']);
+      }
+
+      GlobalKey progressKey = GlobalKey();
+      _progressKeys!.add(progressKey);
+
+      String semanticsText = optionString +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+
+      result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
+      GestureDetector(
+          onTap: () { _onButtonOption(optionIndex); },
+          child:  Semantics(label: semanticsText, excludeSemantics: true, child:
+          Row(children: <Widget>[
+            Padding(padding: EdgeInsets.only(right: 10), child: Stack(children: <Widget>[
+              Image.asset(checkboxImage,),
+              Visibility(visible: (_votingOptions[optionIndex] != null),
+                child: SizedBox(height: 24, width: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_textColor), )
+                ),
+              ),
+            ],),),
+            Expanded(key: progressKey, child:Stack(children: <Widget>[
+              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.fillColorPrimary, progressColor: Styles().colors!.lightGray!.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              Container(height: 15 + 16*MediaQuery.of(context).textScaleFactor, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                Padding(padding: EdgeInsets.only(left: 5), child:
+                Row(children: <Widget>[
+                  Expanded(child:
+                  Text(optionString, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
+                ],))
+              ],),),
+            ],)
+            ),
+            Padding(padding: EdgeInsets.only(left: 10), child: Text(votesString, style: TextStyle(color: Styles().colors!.surfaceAccent, fontFamily: Styles().fontFamilies!.regular, fontSize: 14, fontWeight: FontWeight.w500),),),
+          ],)
+          ))));
+    }
+    return result;
+  }
+
+  List<Widget> _buildResultOptions() {
+    List<Widget> result = [];
+    _progressKeys = [];
+    int totalVotes = _poll?.results?.totalVotes ?? 0;
+    for (int optionIndex = 0; optionIndex < _poll!.options!.length; optionIndex++) {
+      String checkboxImage = (0 < _optionVotes(optionIndex)) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
+
+      String optionString = _poll!.options![optionIndex];
+      String? votesString;
+      int? votesCount = (_poll!.results != null) ? _poll!.results![optionIndex] : null;
+      double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
+      if ((votesCount == null) || (votesCount <= 0)) {
+        votesString = Localization().getStringEx('panel.poll_prompt.text.no_votes', 'No votes');
+      }
+      else if (votesCount == 1) {
+        votesString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
+      }
+      else {
+        votesString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votesCount']);
+      }
+
+      GlobalKey progressKey = GlobalKey();
+      _progressKeys!.add(progressKey);
+
+      String semanticsText = optionString +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
+      Semantics(label: semanticsText, excludeSemantics: true, child:
+      Row(children: <Widget>[
+        Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(checkboxImage,),),
+        Expanded(
+            key: progressKey, child:Stack(children: <Widget>[
+          CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.fillColorPrimary, progressColor: Styles().colors!.lightGray!.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+          Container(/*height: 30,*/ child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            Padding(padding: EdgeInsets.only(left: 5), child:
+            Text(_poll!.options![optionIndex],  maxLines: 5, overflow:TextOverflow.ellipsis, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
+          ],),),
+        ],)
+        ),
+        Expanded(child:
+        Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign:TextAlign.right, style: TextStyle(color: Styles().colors!.surfaceAccent, fontFamily: Styles().fontFamilies!.regular, fontSize: 14, fontWeight: FontWeight.w500),),),
+        )
+      ],))
+      ));
+    }
+    return result;
+  }
+
+  Widget _buildVoteDoneButton(void Function() handler) {
+    return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
+        label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
+        backgroundColor: _backgroundColor,
+//        height: 42,
+        fontSize: 16.0,
+        textColor: _textColor,
+        borderColor: _doneButtonColor,
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        onTap: handler)
+    );
+  }
+
+  void _evalProgressWidths() {
+    if (_progressKeys != null) {
+      double progressWidth = -1.0;
+      for (GlobalKey progressKey in _progressKeys!) {
+        final RenderObject? progressRender = progressKey.currentContext?.findRenderObject();
+        if ((progressRender is RenderBox) && (0 < progressRender.size.width)) {
+          if ((progressWidth < 0.0) || (progressRender.size.width < progressWidth)) {
+            progressWidth = progressRender.size.width;
+          }
+        }
+      }
+      if (0 < progressWidth) {
+        setState(() {
+          _progressWidth = progressWidth;
+        });
+      }
+    }
+  }
+
+  int _optionVotes(int optionIndex) {
+    int? userVotes = (_poll!.userVote != null) ? _poll!.userVote![optionIndex] : null;
+    return (userVotes ?? 0) + (_votingOptions[optionIndex] ?? 0);
+  }
+
+  int get _totalOptionVotes {
+    int total = (_poll!.userVote?.totalVotes ?? 0);
+    _votingOptions.forEach((int optionIndex, int optionVotes) {
+      total += optionVotes;
+    });
+    return total;
+  }
+
+  int get _totalOptions {
+    return _poll?.options?.length ?? 0;
+  }
+
+  int get _totalVotedOptions {
+    int totalOptions = 0;
+    for (int optionIndex = 0; optionIndex < _totalOptions; optionIndex++) {
+      int? userVotes = (_poll!.userVote != null) ? _poll!.userVote![optionIndex] : null;
+      if ((userVotes != null) || (_votingOptions[optionIndex] != null)) {
+        totalOptions++;
+      }
+    }
+    return totalOptions;
+  }
+
+  bool get _allowMultipleOptions {
+    return _poll?.settings?.allowMultipleOptions ?? false;
+  }
+
+  bool get _allowRepeatOptions {
+    return _poll?.settings?.allowRepeatOptions ?? false;
+  }
+
+  bool get _hideResultsUntilClosed {
+    return _poll?.settings?.hideResultsUntilClosed ?? false;
+  }
+
+  void _onButtonOption(int optionIndex) {
+    if (_allowMultipleOptions) {
+      if (_allowRepeatOptions) {
+        _onVote(optionIndex);
+      }
+      else if (_optionVotes(optionIndex) == 0) {
+        _onVote(optionIndex);
+      }
+    }
+    else {
+      if (_allowRepeatOptions) {
+        if (_optionVotes(optionIndex) == _totalOptionVotes) {
+          _onVote(optionIndex);
+        }
+      }
+      else if (_totalOptionVotes == 0) {
+        _onVote(optionIndex);
+      }
+    }
+  }
+
+  void _onVote(int optionIndex) {
+    setState(() {
+      _votingOptions[optionIndex] = (_votingOptions[optionIndex] ?? 0) + 1;
+    });
+    Polls().vote(widget.poll.pollId, PollVote(votes: { optionIndex : 1 })).then((_) {
+      if ((!_allowMultipleOptions && !_allowRepeatOptions) ||
+          (_allowMultipleOptions && !_allowRepeatOptions && (_totalVotedOptions == _totalOptions))) {
+        setState(() {
+          _voteDone = true;
+        });
+      }
+    }).catchError((e){
+      AppAlert.showDialogResult(context, e.toString());
+    }).whenComplete((){
+      setState(() {
+        int? value = _votingOptions[optionIndex];
+        if (value != null) {
+          if (1 < value) {
+            _votingOptions[optionIndex] = value - 1;
+          }
+          else {
+            _votingOptions.remove(optionIndex);
+          }
+        }
+      });
+    });
+  }
+
+  void _onVoteDone() {
+    if (_votingOptions.length == 0) {
+      setState(() {
+        _voteDone = true;
+      });
+    }
+  }
+
+  void _onClose() {
+    if (_votingOptions.length == 0) {
+      Navigator.of(context).pop();
+      Polls().closePresent();
+    }
+  }
+
+  String get _votingRulesDetails {
+    String details = '';
+    if (_allowMultipleOptions) {
+      if (details.isNotEmpty) {
+        details += '\n';
+      }
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.multy_choice", "You can choose more that one answer.")!;
+    }
+    if (_allowRepeatOptions) {
+      if (details.isNotEmpty) {
+        details += '\n';
+      }
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.repeat_vote", "You can vote as many times as you want before the poll closes.")!;
+    }
+    if (_hideResultsUntilClosed) {
+      if (details.isNotEmpty) {
+        details += '\n';
+      }
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends.")!;
+    }
+    return details;
   }
 }

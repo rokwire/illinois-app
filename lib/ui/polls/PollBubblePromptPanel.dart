@@ -137,7 +137,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
   Widget build(BuildContext context) {
     return
       Container(
-        decoration: BoxDecoration(color: widget.backgroundColor, borderRadius: BorderRadius.circular(5)),
+        decoration: BoxDecoration(color: _backgroundColor, borderRadius: BorderRadius.circular(5)),
         child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildContent(),),),
       );
   }
