@@ -884,7 +884,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       for (Poll? groupPoll in _groupPolls!) {
         if(groupPoll!=null) {
           pollsContentList.add(Container(height: 10));
-          pollsContentList.add(GroupPollCard(poll: groupPoll,));
+          pollsContentList.add(GroupPollCard(poll: groupPoll, group: _group,));
         }
       }
     }

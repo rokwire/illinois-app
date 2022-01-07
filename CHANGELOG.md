@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Display name and email in GroupMembersPanel [#1188](https://github.com/rokwire/illinois-app/issues/1188).
 ### Changed
 - Update disabled tracking message [#1168](https://github.com/rokwire/illinois-app/issues/1168)
+- Update GroupPollCard style [#1157](https://github.com/rokwire/illinois-app/issues/1157).
 
 ## [3.1.8] - 2022-01-06
 ### Changed
