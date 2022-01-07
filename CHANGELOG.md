@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Loading Event images [#1184](https://github.com/rokwire/illinois-app/issues/1184).
 ### Added
 - Auth2: created extended logs for hunting refresh token problem [#1186](https://github.com/rokwire/illinois-app/issues/1186).
+### Changed
+- Update disabled tracking message [#1168](https://github.com/rokwire/illinois-app/issues/1168)
 
 ## [3.1.8] - 2022-01-06
 ### Changed
