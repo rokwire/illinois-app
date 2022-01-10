@@ -48,9 +48,11 @@ class Auth2 with Service implements NotificationsListener {
   bool? _processingOidcAuthentication;
   Timer? _oidcAuthenticationTimer;
 
+  bool? _processingAuthentication;
+
   Future<Response?>? _refreshTokenFuture;
-  int? _refreshTonenFailCount = 0;
-  
+  int? _refreshTonenFailCount;
+
   Client? _updateUserPrefsClient;
   Timer? _updateUserPrefsTimer;
   
@@ -303,15 +305,14 @@ class Auth2 with Service implements NotificationsListener {
     NativeCommunicator().dismissSafariVC();
     
     _cancelOidcAuthenticationTimer();
+
     _processingOidcAuthentication = true;
-    
     bool result = await _processOidcAuthentication(uri);
+    _processingOidcAuthentication = false;
 
     Analytics().logAuth(action: Analytics.LogAuthLoginNetIdActionName, result: result);
 
-    _processingOidcAuthentication = false;
     _completeOidcAuthentication(result);
-
     return result;
   }
 
@@ -333,14 +334,14 @@ class Auth2 with Service implements NotificationsListener {
         'device': _deviceInfo,
       });
       _oidcLogin = null;
-      
+
+      _processingAuthentication = true;
       Response? response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      if (await _processLoginResponse(responseJson)) {
-        _log("Auth2: login succeeded: ${response?.statusCode}\n${response?.body}");
-        return true;
-      }
-      _log("Auth2: login failed: ${response?.statusCode}\n${response?.body}");
+      bool result = await _processLoginResponse(responseJson);
+      _processingAuthentication = false;
+      _log(result ? "Auth2: login succeeded: ${response?.statusCode}\n${response?.body}" : "Auth2: login failed: ${response?.statusCode}\n${response?.body}");
+      return result;
     }
     return false;
   }
@@ -372,6 +373,8 @@ class Auth2 with Service implements NotificationsListener {
 
         _authCard = authCard;
         Storage().auth2CardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
+
+        _refreshTonenFailCount = null;
 
         if (prefsUpdated == true) {
           _saveAccountUserPrefs();
@@ -499,11 +502,12 @@ class Auth2 with Service implements NotificationsListener {
         'device': _deviceInfo,
       });
 
+      _processingAuthentication = true;
       Response? response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      if (await _processLoginResponse(responseJson)) {
-        return true;
-      }
+      bool result = await _processLoginResponse(responseJson);
+      _processingAuthentication = false;
+      return result;
     }
     return false;
   }
@@ -530,21 +534,25 @@ class Auth2 with Service implements NotificationsListener {
         'device': _deviceInfo,
       });
 
+      _processingAuthentication = true;
       Response? response = await Network().post(url, headers: headers, body: post);
+      Auth2EmailSignInResult result = Auth2EmailSignInResult.failed;
       if (response?.statusCode == 200) {
         if (await _processLoginResponse(AppJson.decodeMap(response?.body))) {
-          return Auth2EmailSignInResult.succeded;
+          result = Auth2EmailSignInResult.succeded;
         }
       }
       else {
         Auth2Error? error = Auth2Error.fromJson(AppJson.decodeMap(response?.body));
         if (error?.status == 'unverified') {
-          return Auth2EmailSignInResult.failedNotActivated;
+          result = Auth2EmailSignInResult.failedNotActivated;
         }
         else if (error?.status == 'verification-expired') {
-          return Auth2EmailSignInResult.failedActivationExpired;
+          result = Auth2EmailSignInResult.failedActivationExpired;
         }
       }
+      _processingAuthentication = false;
+      return result;
     }
     return Auth2EmailSignInResult.failed;
   }
@@ -717,7 +725,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<Auth2Token?> refreshToken() async {
     Auth2Token? token = _token ?? _anonymousToken;
-    if ((Config().coreUrl != null) && (token != null) && (token.refreshToken != null)) {
+    if ((Config().coreUrl != null) && (token != null) && (token.refreshToken != null) && (_processingAuthentication != true)) {
       try {
 
         if (_refreshTokenFuture != null) {
@@ -742,18 +750,18 @@ class Auth2 with Service implements NotificationsListener {
               _refreshTonenFailCount = null;
 
               _log("Auth2: did refresh token:\nResponse Token: ${responseToken.refreshToken}\nSource Token: ${token.refreshToken}");
-              if (_token != null) {
+              if (token == _token) {
                 Storage().auth2Token = _token = responseToken;
+
+                Map<String, dynamic>? params = (responseJson != null) ? AppJson.mapValue(responseJson['params']) : null;
+                Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
+                Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
+                return responseToken;
               }
-              else if (_anonymousToken != null) {
+              else if (token == _anonymousToken) {
                 Storage().auth2AnonymousToken = _anonymousToken = responseToken;
+                return responseToken;
               }
-
-              Map<String, dynamic>? params = (responseJson != null) ? AppJson.mapValue(responseJson['params']) : null;
-              Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
-              Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
-
-              return responseToken;
             }
             else {
               _log("Auth2: failed to refresh token: ${response?.statusCode}\n${response?.body}\nSource Token: ${token.refreshToken}");
