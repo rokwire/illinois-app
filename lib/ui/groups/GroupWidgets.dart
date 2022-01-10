@@ -1771,18 +1771,19 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 
 //Polls
 
-class GroupPollCard extends StatefulWidget{
+//Not used with the current PollService. Remove after deciding are we going to support as feature
+class GroupPollVoteCard extends StatefulWidget{
   final Poll poll;
   final Group? group;
 
-  GroupPollCard({required this.poll, this.group});
+  GroupPollVoteCard({required this.poll, this.group});
 
   @override
-  _GroupPollCardState createState() => _GroupPollCardState();
+  _GroupPollVoteCardState createState() => _GroupPollVoteCardState();
 
 }
 
-class _GroupPollCardState extends State<GroupPollCard> implements NotificationsListener {
+class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements NotificationsListener {
   bool _voteDone = false;
   Map<int, int> _votingOptions = {};
 
@@ -2325,3 +2326,4 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
     return widget.group?.membersCount ?? 0;
   }
 }
+
