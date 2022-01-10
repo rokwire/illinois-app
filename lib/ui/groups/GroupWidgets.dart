@@ -1794,7 +1794,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
 
   final Color? _backgroundColor = Styles().colors!.white;
   final Color? _textColor       = Styles().colors!.fillColorPrimary;
-  final Color? _doneButtonColor = Styles().colors!.fillColorSecondary;
+  // final Color? _doneButtonColor = Styles().colors!.fillColorSecondary;
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -2071,7 +2071,6 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
   }
 
   Widget _createEndPollButton(){ //TBD localize whole panel
-    bool enabled = true;
     return  Container( padding: EdgeInsets.symmetric(horizontal: 54,),
         child: Semantics(label: Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll"), button: true, excludeSemantics: true,
           child: InkWell(
@@ -2082,7 +2081,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
                   decoration: BoxDecoration(
                     color: Styles().colors!.white,
                     border: Border.all(
-                        color: enabled? Styles().colors!.fillColorSecondary! :Styles().colors!.surfaceAccent!,
+                        color: Styles().colors!.fillColorSecondary!,
                         width: 2.0),
                     borderRadius: BorderRadius.circular(24.0),
                   ),
@@ -2112,18 +2111,18 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
         ));
   }
 
-  Widget _buildVoteDoneButton(void Function() handler) {
-    return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
-        label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
-        backgroundColor: _backgroundColor,
-//        height: 42,
-        fontSize: 16.0,
-        textColor: _textColor,
-        borderColor: _doneButtonColor,
-        padding: EdgeInsets.symmetric(horizontal: 24),
-        onTap: handler)
-    );
-  }
+//   Widget _buildVoteDoneButton(void Function() handler) {
+//     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
+//         label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
+//         backgroundColor: _backgroundColor,
+// //        height: 42,
+//         fontSize: 16.0,
+//         textColor: _textColor,
+//         borderColor: _doneButtonColor,
+//         padding: EdgeInsets.symmetric(horizontal: 24),
+//         onTap: handler)
+//     );
+//   }
 
   void _evalProgressWidths() {
     if (_progressKeys != null) {
@@ -2236,13 +2235,13 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
     });
   }
 
-  void _onVoteDone() {
-    if (_votingOptions.length == 0) {
-      setState(() {
-        _voteDone = true;
-      });
-    }
-  }
+  // void _onVoteDone() {
+  //   if (_votingOptions.length == 0) {
+  //     setState(() {
+  //       _voteDone = true;
+  //     });
+  //   }
+  // }
 
   void _onClose() {
     if (_votingOptions.length == 0) {
@@ -2296,7 +2295,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
 
   void _onEndPollTapped(){
     _setEndButtonProgress(true);
-    Polls().close(widget.poll!.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
+    Polls().close(widget.poll.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
       _setEndButtonProgress(false);
       AppAlert.showDialogResult(context, e.toString());
     });
