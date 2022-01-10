@@ -329,6 +329,15 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               borderColor: Styles().colors!.fillColorPrimary,
                               onTap: _onTapStyles)),
                     ),
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: "Refresh Token",
+                            backgroundColor: Styles().colors!.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors!.fillColorPrimary,
+                            borderColor: Styles().colors!.fillColorPrimary,
+                            onTap: _onTapRefreshToken)),
                     Visibility(
                       visible: Config().configEnvironment == ConfigEnvironment.dev,
                       child: Padding(
@@ -617,6 +626,12 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onTapCrash(){
     FirebaseCrashlytics.instance.crash();
+  }
+
+  void _onTapRefreshToken() {
+    Auth2().refreshToken().then((token) {
+      AppAlert.showDialogResult(context, (token != null) ? "Token refreshed successfully" : "Failed to refresh token");
+    });
   }
 
   // SettingsListenerMixin

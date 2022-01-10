@@ -574,26 +574,19 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   void _navigateGroups() {
     Analytics.instance.logSelect(target: "Groups");
     if(Auth2().isOidcLoggedIn) {
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
-    } else {
-      if (!_groupsLogin) {
-        setState(() {
-          _groupsLogin = true;
-        });
-        Auth2().authenticateWithOidc().then((success) {
-          setState(() {
-            _groupsLogin = false;
-          });
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+    } else if (_groupsLogin != true) {
+      setState(() { _groupsLogin = true; });
+      Auth2().authenticateWithOidc().then((bool? success) {
+        if (mounted) {
+          setState(() { _groupsLogin = false; });
           if (success == true) {
-            Navigator.push(
-                context,
-                CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
           } else if (success == false) {
-            AppAlert.showDialogResult(context, Localization().getStringEx("panel.browse.button.groups.login.error", "Unable to login"));
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
-        });
-      }
+        }
+      });
     }
   }
 

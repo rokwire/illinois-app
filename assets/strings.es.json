@@ -189,7 +189,6 @@
     "panel.browse.button.state_farm_wayfinding.hint":"",
     "panel.browse.button.groups.title":"Grupos",
     "panel.browse.button.groups.hint":"",
-    "panel.browse.button.groups.login.error": "Unable to login",
     "panel.browse.button.safer.title": "Illinois más seguro",
     "panel.browse.button.safer.hint": "",
     "panel.browse.button.building_status.title": "Entrada al edificio",
@@ -437,7 +436,6 @@
     "panel.onboarding.login.phone.label.title.hint":"Encabezado 1",
     "panel.onboarding.login.netid.label.description":"Inicie sesión con su NetID para usar las características académicas y de residencia específicas.",
     "panel.onboarding.login.phone.label.description":"Esto guarda sus preferencias para que pueda tener la misma experiencia en más de un dispositivo",
-    "panel.onboarding.login.label.login_failed":"No se puede iniciar sesión. Vuelva a intentarlo más tarde",
     "panel.onboarding.login.netid.button.continue.title":"Sign in with NetID",
     "panel.onboarding.login.phone.button.continue.title":"Verificar mi número de teléfono",
     "panel.onboarding.login.netid.button.continue.hint":"",
@@ -823,8 +821,6 @@
     "panel.settings.illini_cash.transactions.message.start_end_validation.hint": "",
     "panel.settings.illini_cash.transactions.message.no_transactions.text": "No hay transacciones para el período seleccionado",
     "panel.settings.illini_cash.transactions.message.no_transactions.hint": "",
-    "panel.settings.illini_cash.login.label.login_failed": "No se puede iniciar sesión. Vuelva a intentarlo más tarde",
-    "panel.settings.illini_cash.login.label.login_failed.hint": "",
 
     "panel.settings.add_illini_cash.header.title": "Agregar Illini Cash",
     "panel.settings.add_illini_cash.label.recipient_uin.text": "UIN DEL RECIPIENTE",
@@ -1062,7 +1058,6 @@
     "panel.settings.login.netid.button.continue.title":"Iniciar sesión con NetID",
     "panel.settings.login.netid.button.continue.hint":"",
     "panel.settings.login.netid.button.dont_continue.hint":"Omitir verificación",
-    "panel.settings.login.label.login_failed":"Incapaz de iniciar sesión. Por favor, inténtelo de nuevo más tarde",
 
     "panel.settings.login.phone.label.title":"verifica tu numero de telefono",
     "panel.settings.login.phone.button.dont_continue.title":"No ahora",
@@ -2203,6 +2198,7 @@
     "logic.general.unknown_error": "Ocurrió un error desconocido",
     "logic.general.invalid_response": "Servidor inválido",
     "logic.general.response_error": "Error de respuesta: %s %s",
+    "logic.general.login_failed": "Incapaz de iniciar sesión. Por favor, inténtelo de nuevo más tarde.",
 
     "app.exit_dialog.message":"¿Está seguro de que desea salir?",
 

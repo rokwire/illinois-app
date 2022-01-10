@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
@@ -61,7 +62,17 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
   }
 }
 
-class HomeLoginNetIdWidget extends StatelessWidget{
+class HomeLoginNetIdWidget extends StatefulWidget {
+
+  HomeLoginNetIdWidget();
+
+  @override
+  _HomeLoginNetIdWidgetState createState() => _HomeLoginNetIdWidgetState();
+}
+
+class _HomeLoginNetIdWidgetState extends State<HomeLoginNetIdWidget> {
+
+  bool _authLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -83,14 +94,25 @@ class HomeLoginNetIdWidget extends StatelessWidget{
           )),
           Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-          Semantics(explicitChildNodes: true, child: ScalableRoundedButton(
-            label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Connect your NetID"),
-            hint: '',
-            borderColor: Styles().colors!.fillColorSecondary,
-            backgroundColor: Styles().colors!.surface,
-            textColor: Styles().colors!.fillColorPrimary,
-            onTap: ()=> _onTapConnectNetIdClicked(context),
-          )),
+          Stack(children: <Widget>[
+            Semantics(explicitChildNodes: true, child: ScalableRoundedButton(
+              label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Connect your NetID"),
+              hint: '',
+              borderColor: Styles().colors!.fillColorSecondary,
+              backgroundColor: Styles().colors!.surface,
+              textColor: Styles().colors!.fillColorPrimary,
+              onTap: ()=> _onTapConnectNetIdClicked(context),
+            )),
+            Visibility(visible: _authLoading == true, child:
+              Container(height: 42, child:
+                Align(alignment: Alignment.center, child:
+                  SizedBox(height: 24, width: 24, child:
+                    CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                  ),
+                ),
+              ),
+            ),
+          ]),
           ),
         ]),
         ),
@@ -101,10 +123,19 @@ class HomeLoginNetIdWidget extends StatelessWidget{
 
   void _onTapConnectNetIdClicked(BuildContext context) {
     Analytics.instance.logSelect(target: "Connect netId");
-    if (Connectivity().isNotOffline) {
-      Auth2().authenticateWithOidc();
-    } else {
+    if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context,"");
+    }
+    else if (_authLoading != true) {
+      setState(() { _authLoading = true; });
+      Auth2().authenticateWithOidc().then((bool? result) {
+        if (mounted) {
+          setState(() { _authLoading = false; });
+          if (result == false) {
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          }
+        }
+      });
     }
   }
 }

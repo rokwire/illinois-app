@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Issues with Group Polls [#1157](https://github.com/rokwire/illinois-app/issues/1157).
+### Changed
+- Cleanup and fixes for Auth2 login and refresh token [#1168](https://github.com/rokwire/illinois-app/issues/1168).
 
 ## [3.1.9] - 2022-01-07
 ### Fixed

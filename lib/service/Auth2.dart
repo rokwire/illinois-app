@@ -44,13 +44,15 @@ class Auth2 with Service implements NotificationsListener {
   static const String _authCardName        = "idCard.json";
 
   _OidcLogin? _oidcLogin;
-  List<Completer<bool>>? _oidcAuthenticationCompleters;
+  List<Completer<bool?>>? _oidcAuthenticationCompleters;
   bool? _processingOidcAuthentication;
   Timer? _oidcAuthenticationTimer;
 
+  bool? _processingAuthentication;
+
   Future<Response?>? _refreshTokenFuture;
-  int? _refreshTonenFailCount = 0;
-  
+  int? _refreshTonenFailCount;
+
   Client? _updateUserPrefsClient;
   Timer? _updateUserPrefsTimer;
   
@@ -272,12 +274,12 @@ class Auth2 with Service implements NotificationsListener {
 
   // OIDC Authentication
 
-  Future<bool> authenticateWithOidc() async {
+  Future<bool?> authenticateWithOidc() async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null)) {
 
-      NotificationService().notify(notifyLoginStarted);
-      
       if (_oidcAuthenticationCompleters == null) {
+        _oidcAuthenticationCompleters = <Completer<bool?>>[];
+        NotificationService().notify(notifyLoginStarted);
 
         _OidcLogin? oidcLogin = await _getOidcData();
         if (oidcLogin?.loginUrl != null) {
@@ -285,15 +287,12 @@ class Auth2 with Service implements NotificationsListener {
           await _launchUrl(_oidcLogin?.loginUrl);
         }
         else {
-          NotificationService().notify(notifyLoginFailed);
-          NotificationService().notify(notifyLoginFinished);
+          _completeOidcAuthentication(false);
           return false;
         }
-
-        _oidcAuthenticationCompleters = <Completer<bool>>[];
       }
 
-      Completer<bool> completer = Completer<bool>();
+      Completer<bool?> completer = Completer<bool?>();
       _oidcAuthenticationCompleters!.add(completer);
       return completer.future;
     }
@@ -306,15 +305,14 @@ class Auth2 with Service implements NotificationsListener {
     NativeCommunicator().dismissSafariVC();
     
     _cancelOidcAuthenticationTimer();
+
     _processingOidcAuthentication = true;
-    
     bool result = await _processOidcAuthentication(uri);
+    _processingOidcAuthentication = false;
 
     Analytics().logAuth(action: Analytics.LogAuthLoginNetIdActionName, result: result);
 
-    _processingOidcAuthentication = false;
     _completeOidcAuthentication(result);
-
     return result;
   }
 
@@ -336,19 +334,19 @@ class Auth2 with Service implements NotificationsListener {
         'device': _deviceInfo,
       });
       _oidcLogin = null;
-      
+
+      _processingAuthentication = true;
       Response? response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      if (await _processLoginResponse(responseJson, loadCard: true)) {
-        _log("Auth2: login succeeded: ${response?.statusCode}\n${response?.body}");
-        return true;
-      }
-      _log("Auth2: login failed: ${response?.statusCode}\n${response?.body}");
+      bool result = await _processLoginResponse(responseJson);
+      _processingAuthentication = false;
+      _log(result ? "Auth2: login succeeded: ${response?.statusCode}\n${response?.body}" : "Auth2: login failed: ${response?.statusCode}\n${response?.body}");
+      return result;
     }
     return false;
   }
 
-  Future<bool> _processLoginResponse(Map<String, dynamic>? responseJson, { bool? loadCard }) async {
+  Future<bool> _processLoginResponse(Map<String, dynamic>? responseJson) async {
     if (responseJson != null) {
       Auth2Token? token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
       Auth2Account? account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']),
@@ -357,12 +355,26 @@ class Auth2 with Service implements NotificationsListener {
 
       if ((token != null) && token.isValid && (account != null) && account.isValid) {
         
+        Map<String, dynamic>? params = AppJson.mapValue(responseJson['params']);
+        Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
+
+        String? authCardString = (AppString.isStringNotEmpty(account.authType?.uiucUser?.uin) && AppString.isStringNotEmpty(uiucToken?.accessToken)) ?
+          await _loadAuthCardStringFromNet(uin: account.authType?.uiucUser?.uin, accessToken: uiucToken?.accessToken) : null;
+        AuthCard? authCard = AuthCard.fromJson(AppJson.decodeMap(authCardString));
+        await _saveAuthCardStringToCache(authCardString);
+
         bool? prefsUpdated = account.prefs?.apply(_anonymousPrefs);
         bool? profileUpdated = account.profile?.apply(_anonymousProfile);
         Storage().auth2Token = _token = token;
         Storage().auth2Account = _account = account;
         Storage().auth2AnonymousPrefs = _anonymousPrefs = null;
         Storage().auth2AnonymousProfile = _anonymousProfile = null;
+        Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
+
+        _authCard = authCard;
+        Storage().auth2CardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
+
+        _refreshTonenFailCount = null;
 
         if (prefsUpdated == true) {
           _saveAccountUserPrefs();
@@ -372,21 +384,9 @@ class Auth2 with Service implements NotificationsListener {
           _saveAccountUserProfile(account.profile);
         }
 
-        Map<String, dynamic>? params = AppJson.mapValue(responseJson['params']);
-        Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
-        Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
-
         NotificationService().notify(notifyProfileChanged);
         NotificationService().notify(notifyPrefsChanged);
-
-        if (loadCard == true) {
-          String? authCardString = await _loadAuthCardStringFromNet();
-          _authCard = AuthCard.fromJson(AppJson.decodeMap((authCardString)));
-          Storage().auth2CardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
-          await _saveAuthCardStringToCache(authCardString);
-          NotificationService().notify(notifyCardChanged);
-        }
-
+        NotificationService().notify(notifyCardChanged);
         NotificationService().notify(notifyLoginChanged);
         return true;
       }
@@ -443,8 +443,10 @@ class Auth2 with Service implements NotificationsListener {
     }
     NotificationService().notify(notifyLoginFinished);
 
+    _oidcLogin = null;
+
     if (_oidcAuthenticationCompleters != null) {
-      List<Completer<bool>> loginCompleters = _oidcAuthenticationCompleters!;
+      List<Completer<bool?>> loginCompleters = _oidcAuthenticationCompleters!;
       _oidcAuthenticationCompleters = null;
 
       for(Completer<void> completer in loginCompleters){
@@ -500,11 +502,12 @@ class Auth2 with Service implements NotificationsListener {
         'device': _deviceInfo,
       });
 
+      _processingAuthentication = true;
       Response? response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      if (await _processLoginResponse(responseJson)) {
-        return true;
-      }
+      bool result = await _processLoginResponse(responseJson);
+      _processingAuthentication = false;
+      return result;
     }
     return false;
   }
@@ -531,21 +534,25 @@ class Auth2 with Service implements NotificationsListener {
         'device': _deviceInfo,
       });
 
+      _processingAuthentication = true;
       Response? response = await Network().post(url, headers: headers, body: post);
+      Auth2EmailSignInResult result = Auth2EmailSignInResult.failed;
       if (response?.statusCode == 200) {
         if (await _processLoginResponse(AppJson.decodeMap(response?.body))) {
-          return Auth2EmailSignInResult.succeded;
+          result = Auth2EmailSignInResult.succeded;
         }
       }
       else {
         Auth2Error? error = Auth2Error.fromJson(AppJson.decodeMap(response?.body));
         if (error?.status == 'unverified') {
-          return Auth2EmailSignInResult.failedNotActivated;
+          result = Auth2EmailSignInResult.failedNotActivated;
         }
         else if (error?.status == 'verification-expired') {
-          return Auth2EmailSignInResult.failedActivationExpired;
+          result = Auth2EmailSignInResult.failedActivationExpired;
         }
       }
+      _processingAuthentication = false;
+      return result;
     }
     return Auth2EmailSignInResult.failed;
   }
@@ -718,7 +725,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<Auth2Token?> refreshToken() async {
     Auth2Token? token = _token ?? _anonymousToken;
-    if ((Config().coreUrl != null) && (token != null) && (token.refreshToken != null)) {
+    if ((Config().coreUrl != null) && (token != null) && (token.refreshToken != null) && (_processingAuthentication != true)) {
       try {
 
         if (_refreshTokenFuture != null) {
@@ -743,18 +750,18 @@ class Auth2 with Service implements NotificationsListener {
               _refreshTonenFailCount = null;
 
               _log("Auth2: did refresh token:\nResponse Token: ${responseToken.refreshToken}\nSource Token: ${token.refreshToken}");
-              if (_token != null) {
+              if (token == _token) {
                 Storage().auth2Token = _token = responseToken;
+
+                Map<String, dynamic>? params = (responseJson != null) ? AppJson.mapValue(responseJson['params']) : null;
+                Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
+                Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
+                return responseToken;
               }
-              else if (_anonymousToken != null) {
+              else if (token == _anonymousToken) {
                 Storage().auth2AnonymousToken = _anonymousToken = responseToken;
+                return responseToken;
               }
-
-              Map<String, dynamic>? params = (responseJson != null) ? AppJson.mapValue(responseJson['params']) : null;
-              Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
-              Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
-
-              return responseToken;
             }
             else {
               _log("Auth2: failed to refresh token: ${response?.statusCode}\n${response?.body}\nSource Token: ${token.refreshToken}");
@@ -840,11 +847,8 @@ class Auth2 with Service implements NotificationsListener {
     return AuthCard.fromJson(AppJson.decodeMap(await _loadAuthCardStringFromCache()));
   }
 
-  Future<String?> _loadAuthCardStringFromNet() async {
+  Future<String?> _loadAuthCardStringFromNet({String? uin, String? accessToken}) async {
     String? url = Config().iCardUrl;
-    String? uin = _account?.authType?.uiucUser?.uin;
-    String? accessToken = _uiucToken?.accessToken;
-
     if (AppString.isStringNotEmpty(url) &&  AppString.isStringNotEmpty(uin) && AppString.isStringNotEmpty(accessToken)) {
       Response? response = await Network().post(url, headers: {
         'UIN': uin,
@@ -872,7 +876,7 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<AuthCard?> _refreshAuthCard() async {
-    String? authCardString = await _loadAuthCardStringFromNet();
+    String? authCardString = await _loadAuthCardStringFromNet(uin: _account?.authType?.uiucUser?.uin, accessToken : _uiucToken?.accessToken);
     AuthCard? authCard = AuthCard.fromJson(AppJson.decodeMap((authCardString)));
     if ((authCard != null) && (authCard != _authCard)) {
       _authCard = authCard;
