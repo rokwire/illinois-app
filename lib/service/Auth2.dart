@@ -440,6 +440,8 @@ class Auth2 with Service implements NotificationsListener {
     }
     NotificationService().notify(notifyLoginFinished);
 
+    _oidcLogin = null;
+
     if (_oidcAuthenticationCompleters != null) {
       List<Completer<bool>> loginCompleters = _oidcAuthenticationCompleters!;
       _oidcAuthenticationCompleters = null;
