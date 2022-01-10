@@ -23,6 +23,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class SettingsLoginNetIdPanel extends StatefulWidget{
   
@@ -150,61 +151,28 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
         ));
   }
 
-  Widget _buildDialogWidget(BuildContext context) {
-    return Dialog(
-      child: Padding(
-        padding: EdgeInsets.all(18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              Localization().getStringEx('app.title', 'Illinois')!,
-              style: TextStyle(fontSize: 24, color: Colors.black),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 26),
-              child: Text(
-                Localization().getStringEx('panel.settings.login.label.login_failed', 'Unable to login. Please try again later')!,
-                textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                TextButton(
-                    onPressed: () {
-                      Analytics.instance.logAlert(text: "Unable to login", selection: "Ok");
-                      Navigator.pop(context);
-                      //_finish();
-                    },
-                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')!))
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
   void _onLoginTapped() {
     Analytics.instance.logSelect(target: 'Log in with NetID');
-    setState(() { _progress = true; });
-    Auth2().authenticateWithOidc().then((bool? result) {
-      if (mounted) {
-        if (result == true) {
-          FlexUI().update().then((_){
+    if (_progress != true) {
+      setState(() { _progress = true; });
+      Auth2().authenticateWithOidc().then((bool? result) {
+        if (mounted) {
+          if (result == true) {
+            FlexUI().update().then((_) {
+              if (mounted) {
+                setState(() { _progress = false; });
+                Navigator.pop(context, true);
+              }
+            });
+          } else if (result == false) {
             setState(() { _progress = false; });
-            Navigator.pop(context,true);
-          });
-        } else if (result == false) {
-          setState(() { _progress = false; });
-          showDialog(context: context, builder: (context) => _buildDialogWidget(context));
-        } else {
-          setState(() { _progress = false; });
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          } else {
+            setState(() { _progress = false; });
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   void _onSkipTapped() {

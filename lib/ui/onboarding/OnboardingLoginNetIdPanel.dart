@@ -192,7 +192,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
-                Localization().getStringEx('panel.onboarding.login.label.login_failed', 'Unable to login. Please try again later')!,
+                Localization().getStringEx('logic.general.login_failed', 'Unable to login. Please try again later.')!,
                 textAlign: TextAlign.left,
                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
               ),
@@ -217,30 +217,34 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
 
   void _onLoginTapped() {
     Analytics.instance.logSelect(target: 'Log in with NetID');
-    setState(() { _progress = true; });
-    Auth2().authenticateWithOidc().then((bool? result) {
-      if (mounted) {
-        if (result == true) {
-          FlexUI().update().then((_){
+    if (_progress != true) {
+      setState(() { _progress = true; });
+      Auth2().authenticateWithOidc().then((bool? result) {
+        if (mounted) {
+          if (result == true) {
+            FlexUI().update().then((_) {
+              if (mounted) {
+                setState(() { _progress = false; });
+                Function? onSuccess = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null; // Hook this panels to Onboarding2
+                if (onSuccess != null) {
+                  onSuccess();
+                } else {
+                  Onboarding().next(context, widget);
+                }
+              }
+            });
+          }
+          else if (result == false) {
             setState(() { _progress = false; });
-            Function? onSuccess = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null; // Hook this panels to Onboarding2
-            if (onSuccess != null) {
-              onSuccess();
-            } else {
-              Onboarding().next(context, widget);
-            }
-          });
+            showDialog(context: context, builder: (context) => _buildDialogWidget(context));
+          }
+          else {
+            // login canceled
+            setState(() { _progress = false; });
+          }
         }
-        else if (result == false) {
-          setState(() { _progress = false; });
-          showDialog(context: context, builder: (context) => _buildDialogWidget(context));
-        }
-        else {
-          // login canceled
-          setState(() { _progress = false; });
-        }
-      }
-    });
+      });
+    }
   }
 
   void _onSkipTapped() {

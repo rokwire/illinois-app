@@ -515,48 +515,6 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             fontSize: 14));
   }
 
-  Widget _buildDialogWidget(BuildContext context) {
-    String text = Localization().getStringEx(
-        'panel.settings.illini_cash.login.label.login_failed',
-        'Unable to login. Please try again later')!;
-    return Dialog(
-      child: Padding(
-        padding: EdgeInsets.all(18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              Localization().getStringEx('app.title', 'Illinois')!,
-              style: TextStyle(fontSize: 24, color: Colors.black),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 26),
-              child: Text(
-                text,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.medium,
-                    fontSize: 16,
-                    color: Colors.black),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                TextButton(
-                    onPressed: () {
-                      Analytics.instance.logAlert(text:text, selection: "Ok");
-                      Navigator.pop(context);
-                    },
-                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')!))
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
   void _onTransactionsLoaded(List<IlliniCashTransaction>? transactions) {
     _showTransactionsProgress(false, changeState: false);
     if (mounted) {
@@ -594,15 +552,17 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
 
   void _onTapLogIn() {
     Analytics.instance.logSelect(target: "Log in");
-    setState(() { _authLoading = true; });
-    Auth2().authenticateWithOidc().then((bool? result) {
-      if (mounted) {
-        setState(() { _authLoading = false; });
-        if (result == false) {
-          showDialog(context: context, builder: (context) => _buildDialogWidget(context));
+    if (_authLoading != true) {
+      setState(() { _authLoading = true; });
+      Auth2().authenticateWithOidc().then((bool? result) {
+        if (mounted) {
+          setState(() { _authLoading = false; });
+          if (result == false) {
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   void _onStartDateTap() {

@@ -521,48 +521,6 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             fontSize: 14));
   }
 
-  Widget _buildDialogWidget(BuildContext context) {
-    String text = Localization().getStringEx(
-        'panel.settings.meal_plan.login.label.login_failed',
-        'Unable to login. Please try again later')!;
-    return Dialog(
-      child: Padding(
-        padding: EdgeInsets.all(18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              Localization().getStringEx('app.title', 'Illinois')!,
-              style: TextStyle(fontSize: 24, color: Colors.black),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 26),
-              child: Text(
-                text,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.medium,
-                    fontSize: 16,
-                    color: Colors.black),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                TextButton(
-                    onPressed: () {
-                      Analytics.instance.logAlert(text:text, selection: "Ok");
-                      Navigator.pop(context);
-                    },
-                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')!))
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
   void _onMealPlanTransactionsLoaded(List<MealPlanTransaction>? transactions) {
     _showMealPlanTransactionsProgress(false, changeState: false);
     if (mounted) {
@@ -635,21 +593,21 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
 
   void _onTapLogIn() {
     Analytics.instance.logSelect(target: "Log in");
-    setState(() { _authLoading = true; });
-    Auth2().authenticateWithOidc().then((bool? result) {
-      if (mounted) {
-        setState(() { _authLoading = false; });
-        if (result == true) {
-          _loadCafeCreditTransactions();
-          _loadMealPlanTransactions();
+    if (_authLoading != true) {
+      setState(() { _authLoading = true; });
+      Auth2().authenticateWithOidc().then((bool? result) {
+        if (mounted) {
+          setState(() { _authLoading = false; });
+          if (result == true) {
+            _loadCafeCreditTransactions();
+            _loadMealPlanTransactions();
+          }
+          else if (result == false) {
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          }
         }
-        else if (result == false) {
-          showDialog(context: context, builder: (context) => _buildDialogWidget(context));
-        }
-      }
-    });
-
-
+      });
+    }
   }
 
   void _onStartDateChanged(DateTime? startDate) {
