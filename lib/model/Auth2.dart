@@ -46,6 +46,19 @@ class Auth2Token {
     };
   }
 
+  bool operator ==(o) =>
+    (o is Auth2Token) &&
+      (o.idToken == idToken) &&
+      (o.accessToken == accessToken) &&
+      (o.refreshToken == refreshToken) &&
+      (o.tokenType == tokenType);
+
+  int get hashCode =>
+    (idToken?.hashCode ?? 0) ^
+    (accessToken?.hashCode ?? 0) ^
+    (refreshToken?.hashCode ?? 0) ^
+    (tokenType?.hashCode ?? 0);
+
   bool get isValid {
     return AppString.isStringNotEmpty(accessToken) && AppString.isStringNotEmpty(refreshToken) && AppString.isStringNotEmpty(tokenType);
   }
