@@ -218,7 +218,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
   void _onLoginTapped() {
     Analytics.instance.logSelect(target: 'Log in with NetID');
     setState(() { _progress = true; });
-    Auth2().authenticateWithOidc().then((bool result) {
+    Auth2().authenticateWithOidc().then((bool? result) {
       if (mounted) {
         if (result == true) {
           FlexUI().update().then((_){

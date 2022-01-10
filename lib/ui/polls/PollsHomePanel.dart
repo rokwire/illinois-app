@@ -496,7 +496,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   void _onLoginTapped() {
     if (!_loggingIn) {
       setState(() { _loggingIn = true; });
-      Auth2().authenticateWithOidc().then((bool result) {
+      Auth2().authenticateWithOidc().then((bool? result) {
         if (mounted) {
           setState(() { _loggingIn = false; });
         }

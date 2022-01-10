@@ -44,7 +44,7 @@ class Auth2 with Service implements NotificationsListener {
   static const String _authCardName        = "idCard.json";
 
   _OidcLogin? _oidcLogin;
-  List<Completer<bool>>? _oidcAuthenticationCompleters;
+  List<Completer<bool?>>? _oidcAuthenticationCompleters;
   bool? _processingOidcAuthentication;
   Timer? _oidcAuthenticationTimer;
 
@@ -272,11 +272,11 @@ class Auth2 with Service implements NotificationsListener {
 
   // OIDC Authentication
 
-  Future<bool> authenticateWithOidc() async {
+  Future<bool?> authenticateWithOidc() async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null)) {
 
       if (_oidcAuthenticationCompleters == null) {
-        _oidcAuthenticationCompleters = <Completer<bool>>[];
+        _oidcAuthenticationCompleters = <Completer<bool?>>[];
         NotificationService().notify(notifyLoginStarted);
 
         _OidcLogin? oidcLogin = await _getOidcData();
@@ -290,7 +290,7 @@ class Auth2 with Service implements NotificationsListener {
         }
       }
 
-      Completer<bool> completer = Completer<bool>();
+      Completer<bool?> completer = Completer<bool?>();
       _oidcAuthenticationCompleters!.add(completer);
       return completer.future;
     }
@@ -443,7 +443,7 @@ class Auth2 with Service implements NotificationsListener {
     _oidcLogin = null;
 
     if (_oidcAuthenticationCompleters != null) {
-      List<Completer<bool>> loginCompleters = _oidcAuthenticationCompleters!;
+      List<Completer<bool?>> loginCompleters = _oidcAuthenticationCompleters!;
       _oidcAuthenticationCompleters = null;
 
       for(Completer<void> completer in loginCompleters){

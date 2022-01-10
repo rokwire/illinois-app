@@ -205,7 +205,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       onTap: () {
         Analytics.instance.logSelect(target: "Log in");
         setState(() { _authLoading = true; });
-        Auth2().authenticateWithOidc().then((bool result) {
+        Auth2().authenticateWithOidc().then((bool? result) {
           if (mounted) {
             setState(() { _authLoading = false; });
           }

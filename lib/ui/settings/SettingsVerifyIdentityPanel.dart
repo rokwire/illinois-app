@@ -121,9 +121,9 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
 
   void _onTapConnectNetId() {
     _setLoading(true);
-    Auth2().authenticateWithOidc().then((success) {
+    Auth2().authenticateWithOidc().then((bool? success) {
       _setLoading(false);
-      if (success) {
+      if (success == true) {
         _didLogin(context);
       }
     });
