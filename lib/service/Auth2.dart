@@ -336,7 +336,7 @@ class Auth2 with Service implements NotificationsListener {
       
       Response? response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      if (await _processLoginResponse(responseJson, loadCard: true)) {
+      if (await _processLoginResponse(responseJson)) {
         _log("Auth2: login succeeded: ${response?.statusCode}\n${response?.body}");
         return true;
       }
@@ -345,7 +345,7 @@ class Auth2 with Service implements NotificationsListener {
     return false;
   }
 
-  Future<bool> _processLoginResponse(Map<String, dynamic>? responseJson, { bool? loadCard }) async {
+  Future<bool> _processLoginResponse(Map<String, dynamic>? responseJson) async {
     if (responseJson != null) {
       Auth2Token? token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
       Auth2Account? account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']),
@@ -354,12 +354,24 @@ class Auth2 with Service implements NotificationsListener {
 
       if ((token != null) && token.isValid && (account != null) && account.isValid) {
         
+        Map<String, dynamic>? params = AppJson.mapValue(responseJson['params']);
+        Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
+
+        String? authCardString = (AppString.isStringNotEmpty(account.authType?.uiucUser?.uin) && AppString.isStringNotEmpty(uiucToken?.accessToken)) ?
+          await _loadAuthCardStringFromNet(uin: account.authType?.uiucUser?.uin, accessToken: uiucToken?.accessToken) : null;
+        AuthCard? authCard = AuthCard.fromJson(AppJson.decodeMap(authCardString));
+        await _saveAuthCardStringToCache(authCardString);
+
         bool? prefsUpdated = account.prefs?.apply(_anonymousPrefs);
         bool? profileUpdated = account.profile?.apply(_anonymousProfile);
         Storage().auth2Token = _token = token;
         Storage().auth2Account = _account = account;
         Storage().auth2AnonymousPrefs = _anonymousPrefs = null;
         Storage().auth2AnonymousProfile = _anonymousProfile = null;
+        Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
+
+        _authCard = authCard;
+        Storage().auth2CardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
 
         if (prefsUpdated == true) {
           _saveAccountUserPrefs();
@@ -369,21 +381,9 @@ class Auth2 with Service implements NotificationsListener {
           _saveAccountUserProfile(account.profile);
         }
 
-        Map<String, dynamic>? params = AppJson.mapValue(responseJson['params']);
-        Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
-        Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
-
         NotificationService().notify(notifyProfileChanged);
         NotificationService().notify(notifyPrefsChanged);
-
-        if (loadCard == true) {
-          String? authCardString = await _loadAuthCardStringFromNet();
-          _authCard = AuthCard.fromJson(AppJson.decodeMap((authCardString)));
-          Storage().auth2CardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
-          await _saveAuthCardStringToCache(authCardString);
-          NotificationService().notify(notifyCardChanged);
-        }
-
+        NotificationService().notify(notifyCardChanged);
         NotificationService().notify(notifyLoginChanged);
         return true;
       }
@@ -839,11 +839,8 @@ class Auth2 with Service implements NotificationsListener {
     return AuthCard.fromJson(AppJson.decodeMap(await _loadAuthCardStringFromCache()));
   }
 
-  Future<String?> _loadAuthCardStringFromNet() async {
+  Future<String?> _loadAuthCardStringFromNet({String? uin, String? accessToken}) async {
     String? url = Config().iCardUrl;
-    String? uin = _account?.authType?.uiucUser?.uin;
-    String? accessToken = _uiucToken?.accessToken;
-
     if (AppString.isStringNotEmpty(url) &&  AppString.isStringNotEmpty(uin) && AppString.isStringNotEmpty(accessToken)) {
       Response? response = await Network().post(url, headers: {
         'UIN': uin,
@@ -871,7 +868,7 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<AuthCard?> _refreshAuthCard() async {
-    String? authCardString = await _loadAuthCardStringFromNet();
+    String? authCardString = await _loadAuthCardStringFromNet(uin: _account?.authType?.uiucUser?.uin, accessToken : _uiucToken?.accessToken);
     AuthCard? authCard = AuthCard.fromJson(AppJson.decodeMap((authCardString)));
     if ((authCard != null) && (authCard != _authCard)) {
       _authCard = authCard;
