@@ -275,9 +275,9 @@ class Auth2 with Service implements NotificationsListener {
   Future<bool> authenticateWithOidc() async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null)) {
 
-      NotificationService().notify(notifyLoginStarted);
-      
       if (_oidcAuthenticationCompleters == null) {
+        _oidcAuthenticationCompleters = <Completer<bool>>[];
+        NotificationService().notify(notifyLoginStarted);
 
         _OidcLogin? oidcLogin = await _getOidcData();
         if (oidcLogin?.loginUrl != null) {
@@ -285,12 +285,9 @@ class Auth2 with Service implements NotificationsListener {
           await _launchUrl(_oidcLogin?.loginUrl);
         }
         else {
-          NotificationService().notify(notifyLoginFailed);
-          NotificationService().notify(notifyLoginFinished);
+          _completeOidcAuthentication(false);
           return false;
         }
-
-        _oidcAuthenticationCompleters = <Completer<bool>>[];
       }
 
       Completer<bool> completer = Completer<bool>();
