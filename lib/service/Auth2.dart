@@ -261,9 +261,11 @@ class Auth2 with Service implements NotificationsListener {
         if ((anonymousToken != null) && anonymousToken.isValid && (anonymousId != null) && anonymousId.isNotEmpty) {
           Storage().auth2AnonymousId = _anonymousId = anonymousId;
           Storage().auth2AnonymousToken = _anonymousToken = anonymousToken;
+          _log("Auth2: anonymous auth succeeded: ${response?.statusCode}\n${response?.body}");
           return true;
         }
       }
+      _log("Auth2: anonymous auth failed: ${response?.statusCode}\n${response?.body}");
     }
     return false;
   }
@@ -338,8 +340,10 @@ class Auth2 with Service implements NotificationsListener {
       Response? response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
       if (await _processLoginResponse(responseJson, loadCard: true)) {
+        _log("Auth2: login succeeded: ${response?.statusCode}\n${response?.body}");
         return true;
       }
+      _log("Auth2: login failed: ${response?.statusCode}\n${response?.body}");
     }
     return false;
   }
@@ -660,6 +664,7 @@ class Auth2 with Service implements NotificationsListener {
 
   void logout({ Auth2UserPrefs? prefs }) {
     if ((_token != null) || (_account != null)) {
+      _log("Auth2: logout");
       Storage().auth2AnonymousPrefs = _anonymousPrefs = prefs ?? _account?.prefs ?? Auth2UserPrefs.empty();
       Storage().auth2AnonymousProfile = _anonymousProfile = Auth2UserProfile.empty();
       Storage().auth2Token = _token = null;
@@ -713,21 +718,21 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<Auth2Token?> refreshToken() async {
     Auth2Token? token = _token ?? _anonymousToken;
-    if ((Config().coreUrl != null) && (token?.refreshToken != null)) {
+    if ((Config().coreUrl != null) && (token != null) && (token.refreshToken != null)) {
       try {
 
         if (_refreshTokenFuture != null) {
-          Log.d("Auth2: will await refresh token");
+          _log("Auth2: will await refresh token:\nSource Token: ${token.refreshToken}");
           Response? response = await _refreshTokenFuture;
-          Map<String, dynamic>? responseJson = AppJson.decodeMap(response?.body);
+          Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
           Auth2Token? responseToken = (responseJson != null) ? Auth2Token.fromJson(AppJson.mapValue(responseJson['token'])) : null;
-          Log.d("Auth2: did await refresh token: ${responseToken?.isValid} ${response?.statusCode} ${response?.body}");
+          _log("Auth2: did await refresh token: ${responseToken?.isValid} ${response?.statusCode}\n${response?.body}\nSource Token: ${token.refreshToken}");
           return ((responseToken != null) && responseToken.isValid) ? responseToken : null;
         }
         else {
-          Log.d("Auth2: will refresh token");
+          _log("Auth2: will refresh token:\nSource Token: ${token.refreshToken}");
 
-          _refreshTokenFuture = _refreshToken(token?.refreshToken);
+          _refreshTokenFuture = _refreshToken(token.refreshToken);
           Response? response = await _refreshTokenFuture;
           _refreshTokenFuture = null;
 
@@ -737,7 +742,7 @@ class Auth2 with Service implements NotificationsListener {
             if ((responseToken != null) && responseToken.isValid) {
               _refreshTonenFailCount = null;
 
-              Log.d("Auth2: did refresh token: ${token?.accessToken}");
+              _log("Auth2: did refresh token:\nResponse Token: ${responseToken.refreshToken}\nSource Token: ${token.refreshToken}");
               if (_token != null) {
                 Storage().auth2Token = _token = responseToken;
               }
@@ -752,7 +757,7 @@ class Auth2 with Service implements NotificationsListener {
               return responseToken;
             }
             else {
-              Log.d("Auth2: failed to refresh token: ${response?.statusCode}\n${response?.body}");
+              _log("Auth2: failed to refresh token: ${response?.statusCode}\n${response?.body}\nSource Token: ${token.refreshToken}");
               _refreshTonenFailCount = (_refreshTonenFailCount != null) ? (_refreshTonenFailCount! + 1) : 1;
               if (Config().refreshTokenRetriesCount <= _refreshTonenFailCount!) {
                 logout();
@@ -760,11 +765,11 @@ class Auth2 with Service implements NotificationsListener {
             }
           }
           else if ((response?.statusCode == 400) || (response?.statusCode == 401) || (response?.statusCode == 403)) {
-            Log.d("Auth2: failed to refresh token: ${response?.statusCode}\n${response?.body}");
+            _log("Auth2: failed to refresh token: ${response?.statusCode}\n${response?.body}\nSource Token: ${token.refreshToken}");
             logout(); // Logout only on 400, 401 or 403. Do not do anything else for the rest of scenarios
           }
           else {
-            Log.d("Auth2: failed to refresh token: ${response?.statusCode}\n${response?.body}");
+            _log("Auth2: failed to refresh token: ${response?.statusCode}\n${response?.body}\nSource Token: ${token.refreshToken}");
             _refreshTonenFailCount = (_refreshTonenFailCount != null) ? (_refreshTonenFailCount! + 1) : 1;
             if (Config().refreshTokenRetriesCount <= _refreshTonenFailCount!) {
               logout();
@@ -1001,6 +1006,10 @@ class Auth2 with Service implements NotificationsListener {
     catch(e) {
       print(e);
     }
+  }
+
+  static void _log(String message) {
+    Log.d(message, lineLength: 996); // max line length of VS Code Debug Console
   }
 
 }

@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/Styles.dart';
 
 class ImageHolderListItem extends StatelessWidget {
@@ -54,6 +55,7 @@ class ImageHolderListItem extends StatelessWidget {
                       height: imageHeight,
                       width: MediaQuery.of(context).size.width,
                       fit: BoxFit.cover,
+                      headers: Network.authApiKeyHeader,
                       excludeFromSemantics: true,
                     ) : Container(height: 0),
                     Padding(

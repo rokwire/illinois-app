@@ -575,9 +575,9 @@ class ExploreService with Service implements NotificationsListener {
         String? id = eventJson['id'];
         Map<String, dynamic>? subEventJson = (subEventsMap as List<Map<String, dynamic>?>).firstWhere((jsonEntry) => (id == jsonEntry!['id']), orElse: () {
           print('No matching sub event');
-          return null;
+          return Map();
         });
-        if (subEventJson != null) {
+        if ((subEventJson != null) && subEventJson.isNotEmpty) {
           Event event = Event.fromJson(eventJson)!;
           event.track = subEventJson['track'];
           if (true == subEventJson['isFeatured']) {

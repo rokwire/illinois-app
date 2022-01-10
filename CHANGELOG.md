@@ -5,13 +5,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.1.9] - 2022-01-07
+### Fixed
+- Loading Event images [#1184](https://github.com/rokwire/illinois-app/issues/1184).
+### Added
+- Auth2: created extended logs for hunting refresh token problem [#1186](https://github.com/rokwire/illinois-app/issues/1186).
+- Display name and email in GroupMembersPanel [#1188](https://github.com/rokwire/illinois-app/issues/1188).
 ### Changed
-- Sound null safety.
-- Upgrade to Flutter 2.8.1 and Xcode 13.2.1.
+- Update disabled tracking message [#1168](https://github.com/rokwire/illinois-app/issues/1168)
+- Update GroupPollCard style [#1157](https://github.com/rokwire/illinois-app/issues/1157).
+
+## [3.1.8] - 2022-01-06
+### Changed
+- Authman UI work in GroupSettings and GroupCreate panels [#1179](https://github.com/rokwire/illinois-app/issues/1179).
+- Show Gies roles button only in Dev builds [#1181](https://github.com/rokwire/illinois-app/issues/1181).
+- Implement Quick Polls into Groups [#1157](https://github.com/rokwire/illinois-app/issues/1157).
+
+## [3.1.7] - 2022-01-05
+### Changed
+- Trim Group Name when create/modify [#1174](https://github.com/rokwire/illinois-app/issues/1174).
+- Remove GIES from onboarding roles in 3.1 [#1176](https://github.com/rokwire/illinois-app/issues/1176).
+- Upgraded plugins and third party libraries [#1173](https://github.com/rokwire/illinois-app/issues/1173).
+
+## [3.1.6] - 2022-01-04
+### Added
+- Add yellow Banner at the top of the Inbox when notifications are paused[#1169](https://github.com/rokwire/illinois-app/issues/1169).
+### Changed
+- Sound null safety [#1166](https://github.com/rokwire/illinois-app/issues/1166).
+- Upgrade to Flutter 2.8.1 and Xcode 13.2.1 [#1167](https://github.com/rokwire/illinois-app/issues/1167).
 
 ## [3.1.5] - 2021-12-23
 ### Added
-- Do not allow users to join / leave Authman groups. [#1162](https://github.com/rokwire/illinois-app/issues/1162).
+- Do not allow users to join / leave Authman groups [#1162](https://github.com/rokwire/illinois-app/issues/1162).
 
 ## [3.1.4] - 2021-12-22
 ### Fixed

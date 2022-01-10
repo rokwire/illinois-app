@@ -34,17 +34,72 @@ class PollBubblePromptPanel extends StatefulWidget {
   _PollBubblePromptPanelState createState() => _PollBubblePromptPanelState();
 }
 
-class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implements NotificationsListener {
+class _PollBubblePromptPanelState extends State<PollBubblePromptPanel>  {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Colors.black.withOpacity(0.3), //Colors.transparent,
+        body: SafeArea(
+            child: Padding(
+                padding: EdgeInsets.only(top: kToolbarHeight),
+                child: Padding(
+                    padding: EdgeInsets.all(5),
+                    child: Stack(children: <Widget>[
+                          SingleChildScrollView(child:
+                          Column(children: <Widget>[ Container(
+                            decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
+                            child: Padding(padding: EdgeInsets.all(20), child:  PollContentWidget(pollId: widget.pollId,),),
+                          ),],)),
+                      Container(alignment: Alignment.topRight, child: _buildCloseButton()),
+                    ])
+      ))));
+  }
 
+  Widget _buildCloseButton() {
+    return Semantics(
+        label: Localization().getStringEx('panel.poll_prompt.button.close.title', 'Close'),
+        button: true,
+        excludeSemantics: true,
+        child: InkWell(
+            onTap : _onClose,
+            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-white.png'))));
+  }
+
+  void _onClose() {
+    Navigator.of(context).pop();
+    Polls().closePresent();
+  }
+}
+
+class PollContentWidget extends StatefulWidget{
+  final String? pollId;
+  final Color? backgroundColor;
+  final Color? textColor;
+  final Color? doneButtonColor;
+
+  PollContentWidget({this.pollId, this.backgroundColor , this.textColor, this.doneButtonColor});
+
+  @override
+  State<StatefulWidget> createState() => _PollContentState();
+}
+
+class _PollContentState extends State<PollContentWidget> implements NotificationsListener{
   Poll? _poll;
   bool _voteDone = false;
   Map<int, int> _votingOptions = {};
-  
+
   List<GlobalKey>? _progressKeys;
   double? _progressWidth;
 
+  late Color? _backgroundColor;
+  late Color? _textColor;
+  late Color? _doneButtonColor;
   @override
   void initState() {
+    _backgroundColor = widget.backgroundColor ?? Styles().colors!.fillColorPrimary;
+    _textColor = widget.textColor ?? Styles().colors!.white;
+    _doneButtonColor = widget.doneButtonColor ?? Styles().colors!.white;
+
     NotificationService().subscribe(this, [
       Polls.notifyResultsChanged,
       Polls.notifyVoteChanged,
@@ -80,35 +135,24 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.black.withOpacity(0.3), //Colors.transparent,
-        body: SafeArea(
-            child: Padding(
-                padding: EdgeInsets.only(top: kToolbarHeight),
-                child: Padding(
-                    padding: EdgeInsets.all(5),
-                    child: Stack(children: <Widget>[
-                          SingleChildScrollView(child:
-                          Column(children: <Widget>[ Container(
-                            decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
-                            child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildContent(),),),
-                          ),],)),
-                      Container(alignment: Alignment.topRight, child: _buildCloseButton()),
-                    ])
-      ))));
+    return
+      Container(
+        decoration: BoxDecoration(color: _backgroundColor, borderRadius: BorderRadius.circular(5)),
+        child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildContent(),),),
+      );
   }
 
   List<Widget> _buildContent() {
     if (_voteDone && _poll!.settings!.hideResultsUntilClosed! && (_poll!.status != PollStatus.closed)) {
       return _buildCheckoutContent();
-    } 
+    }
     else {
       return _buildStandardContent();
     }
   }
-  
+
   List<Widget> _buildStandardContent() {
-    
+
     String? creator = _poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
     String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
 
@@ -123,7 +167,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
     else {
       votesNum = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet');
     }
-    
+
     String? pollStatus;
     if (_poll?.status == PollStatus.opened) {
       pollStatus = Localization().getStringEx('panel.poll_prompt.text.poll_open', 'Polls open');
@@ -148,20 +192,20 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
       Semantics(label:semanticsQuestionText,excludeSemantics: true,child:
-        Text(wantsToKnow, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w600),)),
+      Text(wantsToKnow, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w600),)),
       Semantics(excludeSemantics: true,child:
       Padding(padding: EdgeInsets.symmetric(vertical: 20),child:
-        Text(pollTitle, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 24, fontWeight: FontWeight.w900),),)),
+      Text(pollTitle, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 24, fontWeight: FontWeight.w900),),)),
       Padding(padding: EdgeInsets.only(bottom: 20),child:
-        Text(_votingRulesDetails, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 15),),),
+      Text(_votingRulesDetails, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 15),),),
 
       Column(children: contentOptionsList,),
 
       Semantics(label: semanticsStatusText, excludeSemantics: true,child:
-        Padding(padding: EdgeInsets.only(top: 20), child: Wrap(children: <Widget>[
-          Text(votesNum ?? '', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w500),),
-          Text('  ', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w900),),
-          Text(pollStatus ?? '', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w200),),
+      Padding(padding: EdgeInsets.only(top: 20), child: Wrap(children: <Widget>[
+        Text(votesNum ?? '', style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w500),),
+        Text('  ', style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w900),),
+        Text(pollStatus ?? '', style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w200),),
       ],),)),
 
       footerWidget,
@@ -174,8 +218,8 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
       Padding(padding: EdgeInsets.only(top: 32, bottom:20),child:
-        Text(thanks, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 24, fontWeight: FontWeight.w900),),),
-      Text(willNotify, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w300),),
+      Text(thanks, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 24, fontWeight: FontWeight.w900),),),
+      Text(willNotify, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w300),),
     ];
   }
 
@@ -184,29 +228,29 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
     int optionsCount = _poll?.options?.length ?? 0;
     for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
-        Stack(children: <Widget>[
-          ScalableRoundedButton(
+      Stack(children: <Widget>[
+        ScalableRoundedButton(
             label: _poll!.options![optionIndex],
-            backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary,
+            backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors!.fillColorSecondary : _backgroundColor,
             hint: Localization().getStringEx("panel.poll_prompt.hint.select_option","Double tab to select this option"),
 //            height: 42,
             fontSize: 16.0,
-            textColor: Colors.white,
+            textColor: _textColor,
             borderColor: Styles().colors!.fillColorSecondary,
             padding: EdgeInsets.symmetric(horizontal: 24),
             onTap: () { _onButtonOption(optionIndex); }
-          ),       
-          Visibility(visible: (_votingOptions[optionIndex] != null),
-            child: Container(
-              height: 42,
-              child: Align(alignment: Alignment.center,
-                child: SizedBox(height: 21, width: 21,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white), )
-                ),
+        ),
+        Visibility(visible: (_votingOptions[optionIndex] != null),
+          child: Container(
+            height: 42,
+            child: Align(alignment: Alignment.center,
+              child: SizedBox(height: 21, width: 21,
+                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_textColor), )
               ),
             ),
           ),
-        ],),
+        ),
+      ],),
       ));
     }
     return result;
@@ -240,7 +284,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
       String semanticsText = optionString +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
-        GestureDetector(
+      GestureDetector(
           onTap: () { _onButtonOption(optionIndex); },
           child:  Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
@@ -248,7 +292,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
               Image.asset(checkboxImage,),
               Visibility(visible: (_votingOptions[optionIndex] != null),
                 child: SizedBox(height: 24, width: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white), )
+                    child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_textColor), )
                 ),
               ),
             ],),),
@@ -258,17 +302,17 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
                 Padding(padding: EdgeInsets.only(left: 5), child:
                 Row(children: <Widget>[
                   Expanded(child:
-                    Text(optionString, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
+                  Text(optionString, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
                 ],))
               ],),),
-              ],)
+            ],)
             ),
             Padding(padding: EdgeInsets.only(left: 10), child: Text(votesString, style: TextStyle(color: Styles().colors!.surfaceAccent, fontFamily: Styles().fontFamilies!.regular, fontSize: 14, fontWeight: FontWeight.w500),),),
           ],)
-        ))));
+          ))));
     }
     return result;
-}
+  }
 
   List<Widget> _buildResultOptions() {
     List<Widget> result = [];
@@ -293,25 +337,25 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
 
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
-      
+
       String semanticsText = optionString +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
       Semantics(label: semanticsText, excludeSemantics: true, child:
-        Row(children: <Widget>[
-          Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(checkboxImage,),),
-          Expanded(
-              key: progressKey, child:Stack(children: <Widget>[
-            CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.fillColorPrimary, progressColor: Styles().colors!.lightGray!.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
-            Container(/*height: 30,*/ child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              Padding(padding: EdgeInsets.only(left: 5), child:
-                Text(_poll!.options![optionIndex],  maxLines: 5, overflow:TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
-            ],),),
-            ],)
-          ),
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign:TextAlign.right, style: TextStyle(color: Styles().colors!.surfaceAccent, fontFamily: Styles().fontFamilies!.regular, fontSize: 14, fontWeight: FontWeight.w500),),),
-          )
-          ],))
+      Row(children: <Widget>[
+        Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(checkboxImage,),),
+        Expanded(
+            key: progressKey, child:Stack(children: <Widget>[
+          CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.fillColorPrimary, progressColor: Styles().colors!.lightGray!.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+          Container(/*height: 30,*/ child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            Padding(padding: EdgeInsets.only(left: 5), child:
+            Text(_poll!.options![optionIndex],  maxLines: 5, overflow:TextOverflow.ellipsis, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
+          ],),),
+        ],)
+        ),
+        Expanded(child:
+        Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign:TextAlign.right, style: TextStyle(color: Styles().colors!.surfaceAccent, fontFamily: Styles().fontFamilies!.regular, fontSize: 14, fontWeight: FontWeight.w500),),),
+        )
+      ],))
       ));
     }
     return result;
@@ -320,24 +364,14 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
   Widget _buildVoteDoneButton(void Function() handler) {
     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
         label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
-        backgroundColor: Styles().colors!.fillColorPrimary,
+        backgroundColor: _backgroundColor,
 //        height: 42,
         fontSize: 16.0,
-        textColor: Colors.white,
-        borderColor: Colors.white,
+        textColor: _textColor,
+        borderColor: _doneButtonColor,
         padding: EdgeInsets.symmetric(horizontal: 24),
-        onTap: handler)       
-      );
-  } 
-
-  Widget _buildCloseButton() {
-    return Semantics(
-        label: Localization().getStringEx('panel.poll_prompt.button.close.title', 'Close'),
-        button: true,
-        excludeSemantics: true,
-        child: InkWell(
-            onTap : _onClose,
-            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-white.png'))));
+        onTap: handler)
+    );
   }
 
   void _evalProgressWidths() {
@@ -379,9 +413,9 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
   int get _totalVotedOptions {
     int totalOptions = 0;
     for (int optionIndex = 0; optionIndex < _totalOptions; optionIndex++) {
-    int? userVotes = (_poll!.userVote != null) ? _poll!.userVote![optionIndex] : null;
+      int? userVotes = (_poll!.userVote != null) ? _poll!.userVote![optionIndex] : null;
       if ((userVotes != null) || (_votingOptions[optionIndex] != null)) {
-        totalOptions++; 
+        totalOptions++;
       }
     }
     return totalOptions;
@@ -485,5 +519,4 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
     }
     return details;
   }
-
 }

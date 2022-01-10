@@ -52,7 +52,6 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
 
   @override
   Widget build(BuildContext context) {
-    final double gridSpacing = 5;
     return Scaffold(
       backgroundColor: Styles().colors!.background,
       body: SafeArea(child: Column( children: <Widget>[
@@ -81,6 +80,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
             Padding(padding: EdgeInsets.only(left: 42),),
           ],),
         ),
+        
         Padding(padding: EdgeInsets.symmetric(horizontal: 36, vertical: 6),
           child: Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Select all that apply to help us understand who you are.')!,
             textAlign: TextAlign.center,
@@ -92,111 +92,11 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
             ),
           ),
         ),
+        
         Expanded(child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
-        Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Expanded(child: Column(children: <Widget>[
-            RoleGridButton(
-              title: Localization().getStringEx('panel.onboarding2.roles.button.student.title', 'University student'),
-              hint: Localization().getStringEx('panel.onboarding2.roles.button.student.hint', ''),
-              iconPath: 'images/icon-persona-student-normal.png',
-              selectedIconPath: 'images/icon-persona-student-selected.png',
-              selectedBackgroundColor: Styles().colors!.fillColorSecondary,
-              selected: (_selectedRoles!.contains(UserRole.student)),
-              data: UserRole.student,
-              sortOrder: 1,
-              onTap: _onRoleGridButton,
-            ),
-            Container(height: gridSpacing,),
-            RoleGridButton(
-              title: Localization().getStringEx('panel.onboarding2.roles.button.fan.title', 'Athletics fan'),
-              hint: Localization().getStringEx('panel.onboarding2.roles.button.fan.hint', ''),
-              iconPath: 'images/icon-persona-athletics-normal.png',
-              selectedIconPath: 'images/icon-persona-athletics-selected.png',
-              selectedBackgroundColor: Styles().colors!.accentColor2,
-              selected: _selectedRoles!.contains(UserRole.fan),
-              data: UserRole.fan,
-              sortOrder: 3,
-              onTap: _onRoleGridButton,
-            ),
-            Container(height: gridSpacing,),
-            RoleGridButton(
-              title: Localization().getStringEx('panel.onboarding2.roles.button.alumni.title', 'Alumni'),
-              hint: Localization().getStringEx('panel.onboarding2.roles.button.alumni.hint', ''),
-              iconPath: 'images/icon-persona-alumni-normal.png',
-              selectedIconPath: 'images/icon-persona-alumni-selected.png',
-              selectedBackgroundColor: Styles().colors!.fillColorPrimary,
-              selectedTextColor: Colors.white,
-              selected:(_selectedRoles!.contains(UserRole.alumni)),
-              data: UserRole.alumni,
-              sortOrder: 5,
-              onTap: _onRoleGridButton,
-            ),
-            Container(height: gridSpacing,),
-            RoleGridButton(
-              title: Localization().getStringEx('panel.onboarding2.roles.button.resident.title', 'Resident'),
-              hint: Localization().getStringEx('panel.onboarding2.roles.button.resident.hint', ''),
-              iconPath: 'images/icon-persona-resident-normal.png',
-              selectedIconPath: 'images/icon-persona-resident-selected.png',
-              selectedBackgroundColor: Styles().colors!.fillColorPrimary,
-              selectedTextColor: Colors.white,
-              selected:(_selectedRoles!.contains(UserRole.resident)),
-              data: UserRole.resident,
-              sortOrder: 7,
-              onTap: _onRoleGridButton,
-            ),
-          ],)),
-          Container(width: gridSpacing,),
-          Expanded(child: Column(children: <Widget>[
-            RoleGridButton(
-              title: Localization().getStringEx('panel.onboarding2.roles.button.visitor.title', 'Visitor'),
-              hint: Localization().getStringEx('panel.onboarding2.roles.button.visitor.hint', ''),
-              iconPath: 'images/icon-persona-visitor-normal.png',
-              selectedIconPath: 'images/icon-persona-visitor-selected.png',
-              selectedBackgroundColor: Styles().colors!.fillColorSecondary,
-              selected: (_selectedRoles!.contains(UserRole.visitor)),
-              data: UserRole.visitor,
-              sortOrder: 2,
-              onTap: _onRoleGridButton,
-            ),
-            Container(height: gridSpacing,),
-            RoleGridButton(
-              title: Localization().getStringEx('panel.onboarding2.roles.button.employee.title', 'University employee'),
-              hint: Localization().getStringEx('panel.onboarding2.roles.button.employee.hint', ''),
-              iconPath: 'images/icon-persona-employee-normal.png',
-              selectedIconPath: 'images/icon-persona-employee-selected.png',
-              selectedBackgroundColor: Styles().colors!.accentColor3,
-              selected: (_selectedRoles!.contains(UserRole.employee)),
-              data: UserRole.employee,
-              sortOrder: 4,
-              onTap: _onRoleGridButton,
-            ),
-            Container(height: gridSpacing,),
-            RoleGridButton(
-              title: Localization().getStringEx('panel.onboarding2.roles.button.parent.title', 'Parent'),
-              hint: Localization().getStringEx('panel.onboarding2.roles.button.parent.hint', ''),
-              iconPath: 'images/icon-persona-parent-normal.png',
-              selectedIconPath: 'images/icon-persona-parent-selected.png',
-              selectedBackgroundColor: Styles().colors!.fillColorSecondary,
-              selected: (_selectedRoles!.contains(UserRole.parent)),
-              data: UserRole.parent,
-              sortOrder: 6,
-              onTap: _onRoleGridButton,
-            ),
-            Container(height: gridSpacing,),
-            RoleGridButton(
-              title: Localization().getStringEx('panel.onboarding2.roles.button.gies.title', 'GIES Student'),
-              hint: Localization().getStringEx('panel.onboarding2.roles.button.gies.hint', ''),
-              iconPath: 'images/icon-persona-alumni-normal.png',
-              selectedIconPath: 'images/icon-persona-alumni-selected.png',
-              selectedBackgroundColor: Styles().colors!.fillColorPrimary,
-              selectedTextColor: Colors.white,
-              selected:(_selectedRoles!.contains(UserRole.gies)),
-              data: UserRole.gies,
-              sortOrder: 8,
-              onTap: _onRoleGridButton,
-            ),
-          ],),),
-        ],),),),),
+          RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton),
+        ),),),
+        
         !_allowNext? Container():
          Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 20),
           child: Stack(children:<Widget>[

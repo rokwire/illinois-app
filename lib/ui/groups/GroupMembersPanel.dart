@@ -96,14 +96,14 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     setState(() {
       _isMembersLoading = false;
       _pendingMembers = _group?.getMembersByStatus(GroupMemberStatus.pending);
-      _pendingMembers?.sort((member1, member2) => member1.name!.compareTo(member2.name!));
+      _pendingMembers?.sort((member1, member2) => member1.displayName.compareTo(member2.displayName));
 
       _members = AppCollection.isCollectionNotEmpty(_group?.members)
           ? _group!.members!.where((member) => (member.status != GroupMemberStatus.pending)).toList()
           : [];
       _members!.sort((member1, member2){
         if(member1.status == member2.status){
-          return member1.name!.compareTo(member2.name!);
+          return member1.displayName.compareTo(member2.displayName);
         } else {
           if(member1.isAdmin && !member2.isAdmin) return -1;
           else if(!member1.isAdmin && member2.isAdmin) return 1;
@@ -369,8 +369,7 @@ class _GroupMemberCard extends StatelessWidget{
                     Row(
                       children: <Widget>[
                         Expanded(child:
-                          Text(
-                            member?.name ?? "",
+                          Text(AppString.getDefaultEmptyString(member?.displayName),
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies!.bold,
                                 fontSize: 20,

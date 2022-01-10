@@ -15,6 +15,7 @@
  */
 
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as Http;
@@ -443,12 +444,31 @@ class FlexUI with Service implements NotificationsListener {
     if (platformRule is Map) {
       platformRule.forEach((dynamic key, dynamic value) {
         if (key is String) {
+          String? target;
           if (key == 'os') {
+            target = Platform.operatingSystem;
+          }
+          else if (key == 'envirnment') {
+            target = configEnvToString(Config().configEnvironment);
+          }
+          else if (key == 'build') {
+            if (kReleaseMode) {
+              target = 'release';
+            }
+            else if (kProfileMode) {
+              target = 'profile';
+            }
+            else if (kDebugMode) {
+              target = 'debug';
+            }
+          }
+
+          if (target != null) {
             if (value is List) {
-              result = result && value.contains(Platform.operatingSystem);
+              result = result && value.contains(target);
             }
             else if (value is String) {
-              result = result && (value == Platform.operatingSystem);
+              result = result && (value == target);
             }
           }
         }

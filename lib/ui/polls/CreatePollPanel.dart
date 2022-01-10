@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
@@ -29,6 +30,10 @@ import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class CreatePollPanel extends StatefulWidget {
+  final Group? group;
+
+  CreatePollPanel({this.group});
+
   _CreatePollPanelState createState() => _CreatePollPanelState();
 }
 
@@ -455,6 +460,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         creatorUserName: Auth2().fullName ?? 'Someone',
         pinCode: Poll.randomPin,
         status: status,
+        groupId: widget.group?.id
       );
       
       setState(() {
