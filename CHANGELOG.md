@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Reworked refresh token functionality [#1168](https://github.com/rokwire/illinois-app/issues/1168).
+- Optimized Sports service startup, data caching and refreshing [#1196](https://github.com/rokwire/illinois-app/issues/1196).
 
 ## [3.1.10] - 2022-01-10
 ### Fixed
