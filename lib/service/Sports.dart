@@ -87,23 +87,10 @@ class Sports with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
 
-    List<SportDefinition>? sports = await _loadSportsFromCache();
-    if (sports != null) {
-      _applySports(sports);
-      _updateSportsFromNet();
-    }
-    else {
-      await _applySportsFromNet();
-    }
-
-    List<SportSocialMedia>? socialMedias = await _loadSportSocialMediaFromCache();
-    if (socialMedias != null) {
-      _socialMedias = socialMedias;
-      _updateSportSocialMediaFromNet();
-    }
-    else {
-      await _applySportSocialMediaFromNet();
-    }
+    await Future.wait([
+      _initSports(),
+      _initSportSocialMedia(),
+    ]);
 
     if ((_sports != null) && (_socialMedias != null)) {
       await super.initService();
@@ -205,6 +192,17 @@ class Sports with Service implements NotificationsListener {
   }
 
   // Sports
+
+  Future<void> _initSports() async {
+    List<SportDefinition>? sports = await _loadSportsFromCache();
+    if (sports != null) {
+      _applySports(sports);
+      _updateSportsFromNet();
+    }
+    else {
+      await _applySportsFromNet();
+    }
+  }
 
   static Future<List<SportDefinition>?> _loadSportsFromCache() async {
     return SportDefinition.listFromJson(AppJson.decodeList(await _loadContentStringFromCache(_sportsCacheFileName)));
@@ -321,6 +319,17 @@ class Sports with Service implements NotificationsListener {
   }
 
   // Sport Social Media
+
+  Future<void> _initSportSocialMedia() async {
+    List<SportSocialMedia>? socialMedias = await _loadSportSocialMediaFromCache();
+    if (socialMedias != null) {
+      _socialMedias = socialMedias;
+      _updateSportSocialMediaFromNet();
+    }
+    else {
+      await _applySportSocialMediaFromNet();
+    }
+  }
 
   static Future<List<SportSocialMedia>?> _loadSportSocialMediaFromCache() async {
     return SportSocialMedia.listFromJson(AppJson.decodeList(await _loadContentStringFromCache(_sportsSocialMediaCacheFileName)));
