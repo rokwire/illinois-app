@@ -140,13 +140,11 @@ class Network  {
     Http.Response? response;
 
     try {
-      Auth2Token? token = _authToken(auth);
+      Auth2Token? token = Auth2().token;
       response = await _get(url, headers: headers, body: body, encoding: encoding, auth: auth, client: client, timeout: timeout);
       
-      if ((response is Http.Response) && _requiresRefreshToken(response, auth, token)) {
-        if (await _refreshToken() == true) {
-          response = await _get(url, body: body, headers: headers, auth: auth, client: client, timeout: timeout);
-        }
+      if (await _refreshTokenIfNeeded(response, auth, token)) {
+        response = await _get(url, body: body, headers: headers, auth: auth, client: client, timeout: timeout);
       }
     } catch (e) { 
       Log.d(e.toString());
@@ -180,13 +178,11 @@ class Network  {
     Http.Response? response;
     
     try {
-      Auth2Token? token = _authToken(auth);
+      Auth2Token? token = Auth2().token;
       response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       
-      if ((response is Http.Response) && _requiresRefreshToken(response, auth, token)) {
-        if (await _refreshToken() == true) {
-          response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
-        }
+      if (await _refreshTokenIfNeeded(response, auth, token)) {
+        response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       }
     } catch (e) {
       Log.d(e.toString());
@@ -226,13 +222,11 @@ class Network  {
     Http.Response? response;
     
     try {
-      Auth2Token? token = _authToken(auth);
+      Auth2Token? token = Auth2().token;
       response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
       
-      if ((response is Http.Response) && _requiresRefreshToken(response, auth, token)) {
-        if (await _refreshToken() == true) {
-          response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
-        }
+      if (await _refreshTokenIfNeeded(response, auth, token)) {
+        response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
       }
     } catch (e) {
       Log.d(e.toString());
@@ -266,13 +260,11 @@ class Network  {
     Http.Response? response;
     
     try {    
-      Auth2Token? token = _authToken(auth);
+      Auth2Token? token = Auth2().token;
       response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       
-      if ((response is Http.Response) && _requiresRefreshToken(response, auth, token)) {
-        if (await _refreshToken() == true) {
-          response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
-        }
+      if (await _refreshTokenIfNeeded(response, auth, token)) {
+        response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       }
     } catch (e) {
       Log.d(e.toString());
@@ -305,13 +297,11 @@ class Network  {
   Future<Http.Response?> delete(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60, bool sendAnalytics = true, String? analyticsUrl }) async {
     Http.Response? response;
     try {
-      Auth2Token? token = _authToken(auth);
+      Auth2Token? token = Auth2().token;
       response = await _delete(url, body: body, encoding:encoding, headers: headers, auth: auth, timeout: timeout);
       
-      if ((response is Http.Response) && _requiresRefreshToken(response, auth, token)) {
-        if (await _refreshToken() == true) {
-          response = await _delete(url, body: body, encoding:encoding, headers: headers, auth: auth, timeout: timeout);
-        }
+      if (await _refreshTokenIfNeeded(response, auth, token)) {
+        response = await _delete(url, body: body, encoding:encoding, headers: headers, auth: auth, timeout: timeout);
       }
     } catch (e) {
       Log.d(e.toString());
@@ -374,14 +364,11 @@ class Network  {
     Http.StreamedResponse? response;
 
     try {
-      Auth2Token? token = _authToken(auth);
+      Auth2Token? token = Auth2().token;
       response = await _multipartPost(url: url, fileKey: fileKey, fileBytes: fileBytes, fileName: fileName, contentType: contentType, headers: headers, fields: fields, auth: auth);
 
-      if (refreshToken && (response is Http.BaseResponse) && _requiresRefreshToken(response, auth, token)) {
-        if (await _refreshToken() == true) {
-          response = await _multipartPost(
-              url: url, fileKey: fileKey, fileBytes: fileBytes, fileName: fileName, contentType: contentType, headers: headers, fields: fields, auth: auth);
-        }
+      if (await _refreshTokenIfNeeded(response, auth, token)) {
+        response = await _multipartPost(url: url, fileKey: fileKey, fileBytes: fileBytes, fileName: fileName, contentType: contentType, headers: headers, fields: fields, auth: auth);
       }
     } catch (e) {
       Log.d(e.toString());
@@ -499,6 +486,18 @@ class Network  {
     return result;
   }
 
+  Future<bool> _refreshTokenIfNeeded(Http.BaseResponse? response, NetworkAuth? auth, Auth2Token? token) async {
+    if ((response?.statusCode == 401) && (token != null) && (token == Auth2().token)) {
+      if (NetworkAuth.Auth2 == auth) {
+        return (await Auth2().refreshToken(token) != null);
+      }
+      else if (((NetworkAuth.UIUC_Id == auth) || (NetworkAuth.UIUC_Access == auth)) && (token == Auth2().userToken)) {
+        return (await Auth2().refreshToken(token) != null);
+      }
+    }
+    return false;
+  }
+
   static Map<String, String>? _ensureMapValues(Map<String, String?>? headers) {
     Map<String, String>? result = <String, String>{};
     headers?.forEach((key, value) {
@@ -507,38 +506,6 @@ class Network  {
       }
     });
     return result;
-  }
-
-  static Auth2Token? _authToken(NetworkAuth? auth) {
-    
-    if (auth == NetworkAuth.UIUC_Id) {
-      return Auth2().uiucToken;
-    }
-    else if (auth == NetworkAuth.UIUC_Access) {
-      return Auth2().uiucToken;
-    }
-    else if (auth == NetworkAuth.Auth2) {
-      return Auth2().token;
-    }
-
-    return null;
-  }
-
-  bool _requiresRefreshToken(Http.BaseResponse? response, NetworkAuth? auth, Auth2Token? token) {
-    return ((response != null)
-      && (
-//        (response.statusCode == 400) || 
-          (response.statusCode == 401)
-      )
-      && ((NetworkAuth.UIUC_Id == auth) || (NetworkAuth.UIUC_Access == auth) || (NetworkAuth.Auth2 == auth))
-      && (token != null)
-      && (token == _authToken(auth))
-      && (Auth2().token?.refreshToken != null)
-    );
-  }
-
-  Future<bool?> _refreshToken() async {
-    return (await Auth2().refreshToken() != null);
   }
 
   Http.Response _responseTimeoutHandler() {
