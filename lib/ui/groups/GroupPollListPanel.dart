@@ -19,6 +19,7 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -38,7 +39,7 @@ class GroupPollListPanel extends StatefulWidget implements AnalyticsPageAttribut
   Map<String, dynamic>? get analyticsPageAttributes => group.analyticsAttributes;
 }
 
-class _GroupPollListPanelState extends State<GroupPollListPanel> {
+class _GroupPollListPanelState extends State<GroupPollListPanel> implements NotificationsListener {
   List<Poll>? _polls;
   String? _pollsCursor;
   String? _pollsError;
@@ -48,10 +49,11 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> {
 
   @override
   void initState() {
+    super.initState();
+    NotificationService().subscribe(this, [Polls.notifyCreated, Polls.notifyStatusChanged, Polls.notifyVoteChanged, Polls.notifyResultsChanged]);
     _loadPolls();
     _scrollController = ScrollController();
     _scrollController!.addListener(_scrollListener);
-    super.initState();
   }
 
   @override
@@ -168,6 +170,27 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> {
     }
   }
 
+  void _onPollUpdated(String? pollId) {
+    Poll? poll = Polls().getPoll(pollId: pollId);
+    if (poll != null) {
+      if (mounted) {
+        setState(() {
+          _updatePoll(poll);
+        });
+      }
+    }
+  }
+
+  void _updatePoll(Poll poll) {
+    if (AppCollection.isCollectionNotEmpty(_polls)) {
+      for (int index = 0; index < _polls!.length; index++) {
+        if (_polls![index].pollId == poll.pollId) {
+          _polls![index] = poll;
+        }
+      }
+    }
+  }
+
   void _scrollListener() {
     if (_scrollController!.offset >= _scrollController!.position.maxScrollExtent) {
       _loadPolls();
@@ -178,6 +201,13 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> {
     _pollsLoading = loading;
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if((name == Polls.notifyStatusChanged) || (name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged)) {
+      _onPollUpdated(param);
     }
   }
 }
