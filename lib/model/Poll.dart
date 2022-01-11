@@ -126,10 +126,19 @@ class Poll {
     }
     results!.apply(pollVote);
 
+    _increaseUniqueVotersCount();
+
     if (userVote == null) {
       userVote = PollVote();
     }
     userVote!.apply(pollVote);
+  }
+
+  void _increaseUniqueVotersCount() {
+    if (uniqueVotersCount == null) {
+      uniqueVotersCount = 0;
+    }
+    uniqueVotersCount = uniqueVotersCount! + 1;
   }
 
   static List<Poll> fromJsonList(List<dynamic>? jsonList) {

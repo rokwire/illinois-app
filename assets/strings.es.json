@@ -1591,6 +1591,7 @@
     "panel.group_detail.button.group.add_event.title": "Add existing event",
     "panel.group_detail.button.group.create_event.title": "Create new event",
     "panel.group_detail.button.all_events.title": "See all events",
+    "panel.group_detail.button.all_polls.title": "See all polls",
     "panel.group_detail.label.upcoming_events": "Upcoming Events",
     "panel.group_detail.label.upcoming_events.empty": "No upcoming events",
     "panel.group_detail.label.upcoming_events.hint": "Create a new event or share an existing event with your members. ",
@@ -1847,6 +1848,11 @@
     "panel.group.detail.post.create.button.send.title": "Send",
     "panel.group.detail.post.update.button.update.title": "Update",
     "panel.groups_all_events.label.heading": "Upcoming Events",
+
+    "panel.group_polls.label.heading": "All Polls",
+    "panel.group_polls.empty.message": "There are no group polls.",
+    "panel.group_polls.empty.description": "You will see the polls for your group here.",
+    "panel.group_polls.text.error": "Error",
 
     "panel.guide_categories.label.heading": "Campus Guide",
     "panel.guide_categories.label.content.empty": "Contenido de la guía vacía",

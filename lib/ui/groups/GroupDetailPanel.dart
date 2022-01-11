@@ -32,6 +32,7 @@ import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
+import 'package:illinois/ui/groups/GroupPollListPanel.dart';
 import 'package:illinois/ui/groups/GroupPostCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupQrCodePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -890,10 +891,26 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     if (AppCollection.isCollectionNotEmpty(_groupPolls)) {
       for (Poll? groupPoll in _groupPolls!) {
-        if(groupPoll!=null) {
+        if (groupPoll != null) {
           pollsContentList.add(Container(height: 10));
-          pollsContentList.add(GroupPollCard(poll: groupPoll, group: _group,));
+          pollsContentList.add(GroupPollCard(poll: groupPoll, group: _group));
         }
+      }
+
+      if (_groupPolls!.length >= 5) {
+        pollsContentList.add(Padding(
+            padding: EdgeInsets.only(top: 16),
+            child: ScalableSmallRoundedButton(
+                label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls'),
+                widthCoeficient: 2,
+                backgroundColor: Styles().colors!.white,
+                textColor: Styles().colors!.fillColorPrimary,
+                fontFamily: Styles().fontFamilies!.bold,
+                fontSize: 16,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                borderColor: Styles().colors!.fillColorSecondary,
+                borderWidth: 2,
+                onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPollListPanel(group: _group!))))));
       }
     }
 
