@@ -563,7 +563,7 @@ class Storage with Service {
   }
 
   set inboxUserInfo(InboxUserInfo? value) {
-    _setStringWithName(illiniCashBallanceKey, value != null ? json.encode(value.toJson()) : null);
+    _setStringWithName(inboxUserInfoKey, value != null ? json.encode(value.toJson()) : null);
   }
 
   //////////////
