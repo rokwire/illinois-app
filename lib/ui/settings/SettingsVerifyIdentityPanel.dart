@@ -24,6 +24,7 @@ import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class SettingsVerifyIdentityPanel extends StatefulWidget{
   @override
@@ -120,13 +121,20 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
   }
 
   void _onTapConnectNetId() {
-    _setLoading(true);
-    Auth2().authenticateWithOidc().then((success) {
-      _setLoading(false);
-      if (success) {
-        _didLogin(context);
-      }
-    });
+    if (_loading != true) {
+      _setLoading(true);
+      Auth2().authenticateWithOidc().then((bool? success) {
+        if (mounted) {
+          _setLoading(false);
+          if (success == true) {
+            _didLogin(context);
+          }
+          else if (success == false) {
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          }
+        }
+      });
+    }
   }
 
   void _onTapProceed() {

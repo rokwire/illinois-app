@@ -16,12 +16,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class HomeCreatePollWidget extends StatefulWidget {
   @override
@@ -145,11 +147,15 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   }
 
   void _onLogin(){
-    if (!_authLoading) {
+    Analytics().logSelect(target: "Login");
+    if (_authLoading != true) {
       setState(() { _authLoading = true; });
-      Auth2().authenticateWithOidc().then((_) {
+      Auth2().authenticateWithOidc().then((bool? result) {
         if (mounted) {
           setState(() { _authLoading = false; });
+          if (result == false) {
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          }
         }
       });
     }

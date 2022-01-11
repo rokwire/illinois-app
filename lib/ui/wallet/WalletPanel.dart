@@ -36,6 +36,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/VerticalTitleContentSection.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class WalletPanel extends StatefulWidget{
 
@@ -204,12 +205,17 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       borderColor: Styles().colors!.fillColorSecondary,
       onTap: () {
         Analytics.instance.logSelect(target: "Log in");
-        setState(() { _authLoading = true; });
-        Auth2().authenticateWithOidc().then((bool result) {
-          if (mounted) {
-            setState(() { _authLoading = false; });
-          }
-        });
+        if (_authLoading != true) {
+          setState(() { _authLoading = true; });
+          Auth2().authenticateWithOidc().then((bool? result) {
+            if (mounted) {
+              setState(() { _authLoading = false; });
+              if (result == false) {
+                AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+              }
+            }
+          });
+        }
       },
     );
   }
