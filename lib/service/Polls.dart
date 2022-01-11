@@ -108,7 +108,7 @@ class Polls with Service implements NotificationsListener {
   }
 
   Future<PollsChunk?>? getGroupPolls(List<String>? groupIds, {String? cursor}) async {
-    return _enabled ? _getPolls('grouppolls', cursor, includeAccountId: false, groupIds: groupIds) : null;
+    return _enabled ? _getPolls('grouppolls', cursor, groupIds: groupIds) : null;
   }
 
   Future<PollsChunk?>? getRecentPolls({String? cursor}) async {
