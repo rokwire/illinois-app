@@ -43,6 +43,7 @@ import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContentWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/rokwire_plugin.dart';
 
 final AppExitListener appExitListener = AppExitListener();
 
@@ -50,6 +51,9 @@ void main() async {
 
   // https://stackoverflow.com/questions/57689492/flutter-unhandled-exception-servicesbinding-defaultbinarymessenger-was-accesse
   WidgetsFlutterBinding.ensureInitialized();
+
+  String? platformVersion = await RokwirePlugin.platformVersion;
+  Log.d("RokwirePlugin.platformVersion: $platformVersion");
 
   NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
 

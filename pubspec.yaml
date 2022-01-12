@@ -13,6 +13,8 @@ description: Illinois client application.
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 version: 3.2.0+1200
 
+publish_to: none
+
 environment:
   sdk: '>=2.12.0 <3.0.0'
 
@@ -69,6 +71,14 @@ dependencies:
   device_calendar: ^4.0.1
   gallery_saver: ^2.3.2
   pinch_zoom: ^1.0.0
+
+  rokwire_plugin:
+    # When depending on this package from a real application you should use:
+    #   rokwire_plugin: ^x.y.z
+    # See https://dart.dev/tools/pub/dependencies#version-constraints
+    # The example app is bundled with the plugin so we use a path dependency on
+    # the parent directory to use the current plugin's version.
+    path: plugin
 
 dev_dependencies:
   flutter_test:
