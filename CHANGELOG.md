@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.0] - ????-??-??
+Please log changes here until the first 3.2 build. Fill the date of the build as a version date above.
+
 ## [3.1.11] - 2022-01-11
 ### Added
 - Paging for Group Polls [#1157](https://github.com/rokwire/illinois-app/issues/1157).
