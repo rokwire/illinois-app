@@ -97,6 +97,18 @@ class SportSocialMedia {
     return result;
   }
 
+  bool operator ==(o) =>
+    (o is SportSocialMedia) &&
+      (o.shortName == shortName) &&
+      (o.twitterName == twitterName) &&
+      (o.instagramName == instagramName) &&
+      (o.facebookPage == facebookPage);
+
+  int get hashCode =>
+    (shortName?.hashCode ?? 0) ^
+    (twitterName?.hashCode ?? 0) ^
+    (instagramName?.hashCode ?? 0) ^
+    (facebookPage?.hashCode ?? 0);
 }
 
 class SportDefinition {
@@ -137,4 +149,57 @@ class SportDefinition {
       iconPath: AppJson.stringValue(json["icon"]),
     );
   }
+
+  static List<SportDefinition>? listFromJson(List<dynamic>? jsonList) {
+    List<SportDefinition>? result;
+    if (jsonList != null) {
+      result = <SportDefinition>[];
+      for (dynamic jsonEntry in jsonList) {
+        AppList.add(result, SportDefinition.fromJson(AppJson.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<SportDefinition>? subList(List<SportDefinition>? list, { String? gender }) {
+    List<SportDefinition>? result;
+    if (list != null) {
+      result = <SportDefinition>[];
+      for (SportDefinition entry in list) {
+        if ((gender == null) || (gender == entry.gender)) {
+          result.add(entry);
+        }
+      }
+    }
+    return result;
+  }
+
+  bool operator ==(o) =>
+    (o is SportDefinition) &&
+      (o.name == name) &&
+      (o.customName == customName) &&
+      (o.shortName == shortName) &&
+      (o.hasHeight == hasHeight) &&
+      (o.hasWeight == hasWeight) &&
+      (o.hasPosition == hasPosition) &&
+      (o.hasSortByPosition == hasSortByPosition) &&
+      (o.hasSortByNumber == hasSortByNumber) &&
+      (o.hasScores == hasScores) &&
+      (o.gender == gender) &&
+      (o.ticketed == ticketed) &&
+      (o.iconPath == iconPath);
+
+  int get hashCode =>
+    (name?.hashCode ?? 0) ^
+    (customName?.hashCode ?? 0) ^
+    (shortName?.hashCode ?? 0) ^
+    (hasHeight?.hashCode ?? 0) ^
+    (hasWeight?.hashCode ?? 0) ^
+    (hasPosition?.hashCode ?? 0) ^
+    (hasSortByPosition?.hashCode ?? 0) ^
+    (hasSortByNumber?.hashCode ?? 0) ^
+    (hasScores?.hashCode ?? 0) ^
+    (gender?.hashCode ?? 0) ^
+    (ticketed?.hashCode ?? 0) ^
+    (iconPath?.hashCode ?? 0);
 }

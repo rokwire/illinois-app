@@ -15,11 +15,14 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/sport/Team.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/News.dart';
+import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 
@@ -31,10 +34,11 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 
 import 'package:illinois/service/Network.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Sports with Service implements NotificationsListener {
 
@@ -44,6 +48,9 @@ class Sports with Service implements NotificationsListener {
   static const String notifySocialMediasChanged  = "edu.illinois.rokwire.sports.social.medias.changed";
   static const String notifyGameDetail = "edu.illinois.rokwire.sports.game.detail";
 
+  static const String _sportsCacheFileName = "sports.json";
+  static const String _sportsSocialMediaCacheFileName = "sports.social.mdeia.json";
+
   static final Sports _logic = Sports._internal();
 
   List<SportDefinition>? _sports;
@@ -51,6 +58,7 @@ class Sports with Service implements NotificationsListener {
   List<SportDefinition>? _womenSports;
   List<SportSocialMedia>? _socialMedias;
   List<Map<String, dynamic>>? _gameDetailsCache;
+  int? _lastCheckSportsTime, _lastCheckSocialMediasTime;
 
   // Singletone Factory
 
@@ -66,6 +74,7 @@ class Sports with Service implements NotificationsListener {
   void createService() {
     NotificationService().subscribe(this,[
       DeepLink.notifyUri,
+      AppLivecycle.notifyStateChanged,
     ]);
     _gameDetailsCache = [];
   }
@@ -77,9 +86,23 @@ class Sports with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    await _loadSportDefinitions();
-    await _loadSportSocialMedias();
-    await super.initService();
+
+    await Future.wait([
+      _initSports(),
+      _initSportSocialMedia(),
+    ]);
+
+    if ((_sports != null) && (_socialMedias != null)) {
+      await super.initService();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.nonFatal,
+        title: 'Sports Initialization Failed',
+        description: 'Failed to initialize Sports content.',
+      );
+    }
   }
 
   @override
@@ -89,7 +112,7 @@ class Sports with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Auth2(), Storage(), Config()]);
+    return Set.from([Config(), Auth2()]);
   }
 
   // NotificationsListener
@@ -98,6 +121,16 @@ class Sports with Service implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     if (name == DeepLink.notifyUri) {
       _onDeepLinkUri(param);
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.resumed) {
+      _updateSportsFromNet();
+      _updateSportSocialMediaFromNet();
     }
   }
 
@@ -115,51 +148,99 @@ class Sports with Service implements NotificationsListener {
     return _womenSports;
   }
 
-  SportSocialMedia? getSocialMediaForSport(String? shortName) {
-    if (AppString.isStringNotEmpty(shortName) && AppCollection.isCollectionNotEmpty(_socialMedias)) {
-      try {
-        return (_socialMedias as List<SportSocialMedia?>).firstWhere((socialMedia) => shortName == socialMedia?.shortName, orElse: () => null);
-      }
-      catch(e){}
+  // Utils
+
+  static Future<File?> _getCacheFile(String fileName) async {
+    try {
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      String cacheFilePath = join(appDocDir.path, fileName);
+      return File(cacheFilePath);
     }
+    catch(e) { print(e.toString()); }
     return null;
   }
 
-  Future<void> _loadSportDefinitions() async {
-    String? serviceUrl = Config().sportsServiceUrl;
-    if (AppString.isStringEmpty(serviceUrl)) {
-      return;
+  static Future<String?> _loadContentStringFromCache(String fileName) async {
+    try {
+      File? cacheFile = await _getCacheFile(fileName);
+      return (await cacheFile?.exists() == true) ? await cacheFile?.readAsString() : null;
     }
-    String sportsUrl = serviceUrl! + '/api/v2/sports';
-    Response? response = await Network().get(sportsUrl, auth: NetworkAuth.Auth2);
-    String? responseBody = response?.body;
-    if (response?.statusCode == 200) {
-      List<dynamic>? jsonData = AppJson.decode(responseBody);
-      if (AppCollection.isCollectionNotEmpty(jsonData)) {
-        _sports = [];
-        _menSports = [];
-        _womenSports = [];
-        jsonData!.forEach((value) {
-          SportDefinition? sport = SportDefinition.fromJson(value);
-          if (sport != null) {
-            _sports!.add(sport);
-            if ('men' == sport.gender) {
-              _menSports!.add(sport);
-            } else if ('women' == sport.gender) {
-              _womenSports!.add(sport);
-            }
-          }
-        });
+    catch(e) { print(e.toString()); }
+    return null;
+  }
+
+  static Future<void> _saveContentStringToCache(String fileName, String? value) async {
+    try {
+      File? cacheFile = await _getCacheFile(fileName);
+      if (value != null) {
+        await cacheFile?.writeAsString(value, flush: true);
       }
-    } else {
-      _sports = null;
-      _menSports = null;
-      _womenSports = null;
-      Log.e('Failed to load sport definitions');
-      Log.e(responseBody);
+      else {
+        await cacheFile?.delete();
+      }
     }
+    catch(e) { print(e.toString()); }
+  }
+
+  static Future<String?> _loadContentStringFromNet(String url) async {
+    try {
+      Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
+      return ((response != null) && (response.statusCode == 200)) ? response.body : null;
+    }
+    catch (e) { print(e.toString()); }
+    return null;
+  }
+
+  // Sports
+
+  Future<void> _initSports() async {
+    List<SportDefinition>? sports = await _loadSportsFromCache();
+    if (sports != null) {
+      _applySports(sports);
+      _updateSportsFromNet();
+    }
+    else {
+      await _applySportsFromNet();
+    }
+  }
+
+  static Future<List<SportDefinition>?> _loadSportsFromCache() async {
+    return SportDefinition.listFromJson(AppJson.decodeList(await _loadContentStringFromCache(_sportsCacheFileName)));
+  }
+
+  void _applySports(List<SportDefinition>? sports) {
+    _sports = sports;
+    _menSports = SportDefinition.subList(_sports, gender: 'men');
+    _womenSports = SportDefinition.subList(_sports, gender: 'women');
     _sortSports();
-    NotificationService().notify(notifyChanged, null);
+  }
+
+  Future<bool> _applySportsFromNet() async {
+    String? serviceUrl = Config().sportsServiceUrl;
+    if (AppString.isStringNotEmpty(serviceUrl)) {
+      String? contentString = await _loadContentStringFromNet("$serviceUrl/api/v2/sports");
+      List<SportDefinition>? sports = SportDefinition.listFromJson(AppJson.decodeList(contentString));
+      if (sports != null) {
+        _lastCheckSportsTime = DateTime.now().millisecondsSinceEpoch;
+        if (!DeepCollectionEquality().equals(_sports, sports)) {
+          _applySports(sports);
+          await _saveContentStringToCache(_sportsCacheFileName, contentString);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  Future<void> _updateSportsFromNet() async {
+    // Update once daily
+    DateTime today = AppDateTime.midnight(DateTime.now())!;
+    DateTime lastCheck = AppDateTime.midnight(DateTime.fromMillisecondsSinceEpoch(_lastCheckSportsTime ?? 0))!;
+    if (lastCheck.compareTo(today) < 0) {
+      if (await _applySportsFromNet()) {
+        NotificationService().notify(notifyChanged, null);
+      }
+    }
   }
 
   void _sortSports() {
@@ -237,29 +318,52 @@ class Sports with Service implements NotificationsListener {
         }
   }
 
-  Future<void> _loadSportSocialMedias() async {
-    _socialMedias = SportSocialMedia.listFromJson(Storage().sportSocialMediaList);
+  // Sport Social Media
 
-    if (AppString.isStringEmpty(Config().sportsServiceUrl)) {
-      return;
+  Future<void> _initSportSocialMedia() async {
+    List<SportSocialMedia>? socialMedias = await _loadSportSocialMediaFromCache();
+    if (socialMedias != null) {
+      _socialMedias = socialMedias;
+      _updateSportSocialMediaFromNet();
     }
-    String socialUrl = Config().sportsServiceUrl! + '/api/v2/social';
-    Response? response = await Network().get(socialUrl, auth: NetworkAuth.Auth2);
-    String? responseBody = response?.body;
-    if (response?.statusCode == 200) {
-      List<dynamic>? jsonList = AppJson.decodeList(responseBody);
-      List<SportSocialMedia>? socialMedias = SportSocialMedia.listFromJson(jsonList);
-      if ((socialMedias != null) && ((_socialMedias == null) || !DeepCollectionEquality().equals(socialMedias, _socialMedias))) {
-        _socialMedias = socialMedias;
-        Storage().sportSocialMediaList = jsonList;
-        NotificationService().notify(notifyChanged, null);
-      }
-    } else {
-      Log.e('Failed to load social media');
-      Log.e(responseBody);
-      return null;
+    else {
+      await _applySportSocialMediaFromNet();
     }
   }
+
+  static Future<List<SportSocialMedia>?> _loadSportSocialMediaFromCache() async {
+    return SportSocialMedia.listFromJson(AppJson.decodeList(await _loadContentStringFromCache(_sportsSocialMediaCacheFileName)));
+  }
+
+  Future<bool> _applySportSocialMediaFromNet() async {
+    String? serviceUrl = Config().sportsServiceUrl;
+    if (AppString.isStringNotEmpty(serviceUrl)) {
+      String? contentString = await _loadContentStringFromNet("$serviceUrl/api/v2/social");
+      List<SportSocialMedia>? socialMedias = SportSocialMedia.listFromJson(AppJson.decodeList(contentString));
+      if (socialMedias != null) {
+        _lastCheckSocialMediasTime = DateTime.now().millisecondsSinceEpoch;
+        if (!DeepCollectionEquality().equals(_socialMedias, socialMedias)) {
+          _socialMedias = socialMedias;
+          await _saveContentStringToCache(_sportsSocialMediaCacheFileName, contentString);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  Future<void> _updateSportSocialMediaFromNet() async {
+    // Update once daily
+    DateTime today = AppDateTime.midnight(DateTime.now())!;
+    DateTime lastCheck = AppDateTime.midnight(DateTime.fromMillisecondsSinceEpoch(_lastCheckSocialMediasTime ?? 0))!;
+    if (lastCheck.compareTo(today) < 0) {
+      if (await _applySportSocialMediaFromNet()) {
+        NotificationService().notify(notifyChanged, null);
+      }
+    }
+  }
+
+  // Getters
 
   SportDefinition? getSportByShortName(String? sportShortName) {
     if (AppCollection.isCollectionNotEmpty(_sports) && AppString.isStringNotEmpty(sportShortName)) {
@@ -271,6 +375,19 @@ class Sports with Service implements NotificationsListener {
     }
     return null;
   }
+
+
+  SportSocialMedia? getSocialMediaForSport(String? shortName) {
+    if (AppString.isStringNotEmpty(shortName) && AppCollection.isCollectionNotEmpty(_socialMedias)) {
+      try {
+        return (_socialMedias as List<SportSocialMedia?>).firstWhere((socialMedia) => shortName == socialMedia?.shortName, orElse: () => null);
+      }
+      catch(e){}
+    }
+    return null;
+  }
+
+  // APIs
 
   Future<List<Roster>?> loadRosters(String? sportKey) async {
     if (AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {

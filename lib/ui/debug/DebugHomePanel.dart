@@ -18,6 +18,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -329,6 +330,15 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               borderColor: Styles().colors!.fillColorPrimary,
                               onTap: _onTapStyles)),
                     ),
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: _refreshTokenTitle,
+                            backgroundColor: Styles().colors!.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors!.fillColorPrimary,
+                            borderColor: Styles().colors!.fillColorPrimary,
+                            onTap: _onTapRefreshToken)),
                     Visibility(
                       visible: Config().configEnvironment == ConfigEnvironment.dev,
                       child: Padding(
@@ -617,6 +627,31 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onTapCrash(){
     FirebaseCrashlytics.instance.crash();
+  }
+
+  String get _refreshTokenTitle {
+    Auth2Token? token = Auth2().token;
+    if (token == Auth2().userToken) {
+      return "Refresh User Token";
+    }
+    else if (token == Auth2().anonymousToken) {
+      return "Refresh Anonymous Token";
+    }
+    else {
+      return (token != null) ? "Refresh Token" : "Refresh Token NA";
+    }
+  }
+
+  void _onTapRefreshToken() {
+    Auth2Token? token = Auth2().token;
+    if (token != null) {
+      Auth2().refreshToken(token).then((token) {
+        AppAlert.showDialogResult(context, (token != null) ? "Token refreshed successfully" : "Failed to refresh token");
+      });
+    }
+    else {
+      AppAlert.showDialogResult(context, "No token to refresh");
+    }
   }
 
   // SettingsListenerMixin

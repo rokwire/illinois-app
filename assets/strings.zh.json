@@ -189,7 +189,6 @@
 	"panel.browse.button.state_farm_wayfinding.hint":"",
 	"panel.browse.button.groups.title":"组",
 	"panel.browse.button.groups.hint":"",
-	"panel.browse.button.groups.login.error": "Unable to login",
 	"panel.browse.button.safer.title": "伊利诺伊",
 	"panel.browse.button.safer.hint": "",
 	"panel.browse.button.building_status.title": "建築入口",
@@ -437,7 +436,6 @@
 	"panel.onboarding.login.phone.label.title.hint":"标题1",
 	"panel.onboarding.login.netid.label.description":"使用您的NetID登錄以使用特定於學術和宿舍的功能.",
 	"panel.onboarding.login.phone.label.description":"这将保存您的首选项，因此您可以在多台设备上获得相同的体验。",
-	"panel.onboarding.login.label.login_failed":"无法登录。请稍后再试",
 	"panel.onboarding.login.netid.button.continue.title":"Sign in with NetID",
 	"panel.onboarding.login.phone.button.continue.title":"验证我的电话号码",
 	"panel.onboarding.login.netid.button.continue.hint":"",
@@ -823,8 +821,6 @@
 	"panel.settings.illini_cash.transactions.message.start_end_validation.hint":"",
 	"panel.settings.illini_cash.transactions.message.no_transactions.text":"所选期间没有交易",
 	"panel.settings.illini_cash.transactions.message.no_transactions.hint":"",
-	"panel.settings.illini_cash.login.label.login_failed":"无法登录。请稍后再试",
-	"panel.settings.illini_cash.login.label.login_failed.hint":"",
 
 	"panel.settings.add_illini_cash.header.title":"添加ILLINI现金",
 	"panel.settings.add_illini_cash.label.recipient_uin.text":"收件人的UIN",
@@ -1062,7 +1058,6 @@
 	"panel.settings.login.netid.button.continue.title":"使用NETID登录",
 	"panel.settings.login.netid.button.continue.hint":"",
 	"panel.settings.login.netid.button.dont_continue.hint":"跳过验证",
-	"panel.settings.login.label.login_failed":"无法登录。请稍后再试",
 
 	"panel.settings.login.phone.label.title":"验证您的电话号码",
 	"panel.settings.login.phone.button.dont_continue.title":"现在不行",
@@ -1594,6 +1589,7 @@
 	"panel.group_detail.button.group.add_event.title": "Add existing event",
 	"panel.group_detail.button.group.create_event.title": "Create new event",
 	"panel.group_detail.button.all_events.title": "See all events",
+	"panel.group_detail.button.all_polls.title": "See all polls",
 	"panel.group_detail.label.upcoming_events": "Upcoming Events",
 	"panel.group_detail.label.upcoming_events.empty": "No upcoming events",
 	"panel.group_detail.label.upcoming_events.hint": "Create a new event or share an existing event with your members. ",
@@ -1850,6 +1846,11 @@
 	"panel.group.detail.post.create.button.send.title": "Send",
 	"panel.group.detail.post.update.button.update.title": "Update",
 	"panel.groups_all_events.label.heading": "Upcoming Events",
+
+	"panel.group_polls.label.heading": "All Polls",
+	"panel.group_polls.empty.message": "There are no group polls.",
+	"panel.group_polls.empty.description": "You will see the polls for your group here.",
+	"panel.group_polls.text.error": "Error",
 
 	"panel.guide_categories.label.heading": "Campus Guide",
 	"panel.guide_categories.label.content.empty": "空的指南內容",
@@ -2201,6 +2202,7 @@
 	"logic.general.unknown_error": "發生未知錯誤",
 	"logic.general.invalid_response": "无效的服务器响应",
 	"logic.general.response_error": "响应错误: %s %s",
+	"logic.general.login_failed": "無法登入。 請稍後再試。",
 
 	"app.exit_dialog.message":"确定要退出吗?",
 

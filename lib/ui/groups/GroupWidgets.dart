@@ -25,6 +25,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
+import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
@@ -1771,28 +1772,30 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 
 //Polls
 
-class GroupPollCard extends StatefulWidget{
+//Not used with the current PollService. Remove after deciding are we going to support as feature
+class GroupPollVoteCard extends StatefulWidget{
   final Poll poll;
   final Group? group;
 
-  const GroupPollCard({Key? key, required this.poll, this.group}) : super(key: key);
+  GroupPollVoteCard({required this.poll, this.group});
 
   @override
-  State<StatefulWidget> createState() => _GroupPollCardState();
+  _GroupPollVoteCardState createState() => _GroupPollVoteCardState();
 
 }
 
-class _GroupPollCardState extends State<GroupPollCard> implements NotificationsListener{
-  Poll? _poll;
+class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements NotificationsListener {
   bool _voteDone = false;
   Map<int, int> _votingOptions = {};
 
   List<GlobalKey>? _progressKeys;
   double? _progressWidth;
 
+  bool _showEndPollProgress = false;
+
   final Color? _backgroundColor = Styles().colors!.white;
   final Color? _textColor       = Styles().colors!.fillColorPrimary;
-  final Color? _doneButtonColor = Styles().colors!.fillColorSecondary;
+  // final Color? _doneButtonColor = Styles().colors!.fillColorSecondary;
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -1803,7 +1806,6 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _evalProgressWidths();
     });
-    _poll = widget.poll;
     super.initState();
   }
 
@@ -1819,7 +1821,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
     if ((name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged) || (name == Polls.notifyStatusChanged)) {
       if (widget.poll.pollId == param) {
         _refreshPoll();
-        if (_poll!.status == PollStatus.closed) {
+        if (widget.poll.status == PollStatus.closed) {
           _onClose();
         }
       }
@@ -1836,7 +1838,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
   }
 
   List<Widget> _buildContent() {
-    if (_voteDone && _poll!.settings!.hideResultsUntilClosed! && (_poll!.status != PollStatus.closed)) {
+    if (_voteDone && widget.poll.settings!.hideResultsUntilClosed! && (widget.poll.status != PollStatus.closed)) {
       return _buildCheckoutContent();
     } else {
       return _buildStandardContent();
@@ -1844,29 +1846,37 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
   }
 
   List<Widget> _buildStandardContent() {
+    List<Widget> footerWidgets = [];
+    List<Widget> contentOptionsList;
 
-    String? creator = _poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
+    bool isClosed = widget.poll.status == PollStatus.closed;
+    String? creator = widget.poll.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
     String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
 
     String? pollStatus;
-    if (_poll?.status == PollStatus.opened) {
+    if (widget.poll.status == PollStatus.opened) {
       pollStatus = Localization().getStringEx('panel.poll_prompt.text.poll_open', 'Polls open');
+      if (widget.poll.isMine) {
+        footerWidgets.add(Container(height:8));
+        footerWidgets.add(_createEndPollButton());
+      }
     }
-    else if (_poll?.status == PollStatus.closed) {
+    else if (isClosed) {
       pollStatus = Localization().getStringEx('panel.poll_prompt.text.poll_closed', 'Polls closed');
     }
 
-    Widget footerWidget;
-    List<Widget> contentOptionsList;
     if (_voteDone) {
       contentOptionsList = _buildResultOptions();
-      footerWidget = _buildVoteDoneButton(_onClose);
+      // footerWidgets.add(_buildVoteDoneButton(_onClose));
     }
+
     else {
-      contentOptionsList = _allowRepeatOptions || _poll?.status == PollStatus.closed ? _buildCheckboxOptions() : _buildButtonOptions();
-      footerWidget = (_allowMultipleOptions || _allowRepeatOptions) ? _buildVoteDoneButton(_onVoteDone) : Container();
+      contentOptionsList = _allowRepeatOptions || widget.poll.status == PollStatus.closed ? _buildCheckboxOptions() : _buildButtonOptions();
+      // Widget footerWidget = (_allowMultipleOptions || _allowRepeatOptions) ? _buildVoteDoneButton(_onVoteDone) : Container();
+      // footerWidgets.add(footerWidget);
     }
-    String pollTitle = _poll?.title ?? '';
+
+    String pollTitle = widget.poll.title ?? '';
     String semanticsQuestionText =  "$wantsToKnow\n+$pollTitle";
     String semanticsStatusText = "$pollStatus,$_pollVotesStatus";
     return <Widget>[
@@ -1889,7 +1899,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
         Expanded(child:Text(pollStatus ?? '', textAlign: TextAlign.right, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w200),)),
       ],),)),
 
-      footerWidget,
+      Column(children: footerWidgets),
     ];
   }
 
@@ -1906,12 +1916,12 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
 
   List<Widget> _buildButtonOptions() {
     List<Widget> result = [];
-    int optionsCount = _poll?.options?.length ?? 0;
+    int optionsCount = widget.poll.options?.length ?? 0;
     for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
       Stack(children: <Widget>[
         ScalableRoundedButton(
-            label: _poll!.options![optionIndex],
+            label: widget.poll.options![optionIndex],
             backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors!.fillColorSecondary : _backgroundColor,
             hint: Localization().getStringEx("panel.poll_prompt.hint.select_option","Double tab to select this option"),
 //            height: 42,
@@ -2016,13 +2026,13 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
   List<Widget> _buildResultOptions() {
     List<Widget> result = [];
     _progressKeys = [];
-    int totalVotes = _poll?.results?.totalVotes ?? 0;
-    for (int optionIndex = 0; optionIndex < _poll!.options!.length; optionIndex++) {
+    int totalVotes = widget.poll.results?.totalVotes ?? 0;
+    for (int optionIndex = 0; optionIndex < widget.poll.options!.length; optionIndex++) {
       String checkboxImage = (0 < _optionVotes(optionIndex)) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
 
-      String optionString = _poll!.options![optionIndex];
+      String optionString = widget.poll.options![optionIndex];
       String? votesString;
-      int? votesCount = (_poll!.results != null) ? _poll!.results![optionIndex] : null;
+      int? votesCount = (widget.poll.results != null) ? widget.poll.results![optionIndex] : null;
       double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
       if ((votesCount == null) || (votesCount <= 0)) {
         votesString = Localization().getStringEx('panel.poll_prompt.text.no_votes', 'No votes');
@@ -2047,7 +2057,7 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
           CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.fillColorPrimary, progressColor: Styles().colors!.lightGray!.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
           Container(/*height: 30,*/ child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
             Padding(padding: EdgeInsets.only(left: 5), child:
-            Text(_poll!.options![optionIndex],  maxLines: 5, overflow:TextOverflow.ellipsis, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
+            Text(widget.poll.options![optionIndex],  maxLines: 5, overflow:TextOverflow.ellipsis, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
           ],),),
         ],)
         ),
@@ -2060,18 +2070,59 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
     return result;
   }
 
-  Widget _buildVoteDoneButton(void Function() handler) {
-    return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
-        label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
-        backgroundColor: _backgroundColor,
-//        height: 42,
-        fontSize: 16.0,
-        textColor: _textColor,
-        borderColor: _doneButtonColor,
-        padding: EdgeInsets.symmetric(horizontal: 24),
-        onTap: handler)
-    );
+  Widget _createEndPollButton(){ //TBD localize whole panel
+    return  Container( padding: EdgeInsets.symmetric(horizontal: 54,),
+        child: Semantics(label: Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll"), button: true, excludeSemantics: true,
+          child: InkWell(
+              onTap: _onEndPollTapped,
+              child: Stack(children: <Widget>[
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 5,horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Styles().colors!.white,
+                    border: Border.all(
+                        color: Styles().colors!.fillColorSecondary!,
+                        width: 2.0),
+                    borderRadius: BorderRadius.circular(24.0),
+                  ),
+                  child: Center(
+                    child: Text(
+                      Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll")!,
+                      style: TextStyle(
+                        fontFamily: Styles().fontFamilies!.bold,
+                        fontSize: 16,
+                        height: 1.38,
+                        color: Styles().colors!.fillColorPrimary,
+                      ),
+                    ),
+                  ),
+                ),
+                Visibility(visible: _showEndPollProgress,
+                  child: Container(padding: EdgeInsets.symmetric(vertical: 5),
+                    child: Align(alignment: Alignment.center,
+                      child: SizedBox(height: 24, width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
+                      ),
+                    ),
+                  ),
+                )
+              ])
+          ),
+        ));
   }
+
+//   Widget _buildVoteDoneButton(void Function() handler) {
+//     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
+//         label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
+//         backgroundColor: _backgroundColor,
+// //        height: 42,
+//         fontSize: 16.0,
+//         textColor: _textColor,
+//         borderColor: _doneButtonColor,
+//         padding: EdgeInsets.symmetric(horizontal: 24),
+//         onTap: handler)
+//     );
+//   }
 
   void _evalProgressWidths() {
     if (_progressKeys != null) {
@@ -2093,12 +2144,12 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
   }
 
   int _optionVotes(int optionIndex) {
-    int? userVotes = (_poll!.userVote != null) ? _poll!.userVote![optionIndex] : null;
+    int? userVotes = (widget.poll.userVote != null) ? widget.poll.userVote![optionIndex] : null;
     return (userVotes ?? 0) + (_votingOptions[optionIndex] ?? 0);
   }
 
   int get _totalOptionVotes {
-    int total = (_poll!.userVote?.totalVotes ?? 0);
+    int total = (widget.poll.userVote?.totalVotes ?? 0);
     _votingOptions.forEach((int optionIndex, int optionVotes) {
       total += optionVotes;
     });
@@ -2106,13 +2157,13 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
   }
 
   int get _totalOptions {
-    return _poll?.options?.length ?? 0;
+    return widget.poll.options?.length ?? 0;
   }
 
   int get _totalVotedOptions {
     int totalOptions = 0;
     for (int optionIndex = 0; optionIndex < _totalOptions; optionIndex++) {
-      int? userVotes = (_poll!.userVote != null) ? _poll!.userVote![optionIndex] : null;
+      int? userVotes = (widget.poll.userVote != null) ? widget.poll.userVote![optionIndex] : null;
       if ((userVotes != null) || (_votingOptions[optionIndex] != null)) {
         totalOptions++;
       }
@@ -2121,18 +2172,21 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
   }
 
   bool get _allowMultipleOptions {
-    return _poll?.settings?.allowMultipleOptions ?? false;
+    return widget.poll.settings?.allowMultipleOptions ?? false;
   }
 
   bool get _allowRepeatOptions {
-    return _poll?.settings?.allowRepeatOptions ?? false;
+    return widget.poll.settings?.allowRepeatOptions ?? false;
   }
 
   bool get _hideResultsUntilClosed {
-    return _poll?.settings?.hideResultsUntilClosed ?? false;
+    return widget.poll.settings?.hideResultsUntilClosed ?? false;
   }
 
   void _onButtonOption(int optionIndex) {
+    if(widget.poll.status == PollStatus.closed){
+      return; //Disable vote options for closed polls
+    }
     if (_allowMultipleOptions) {
       if (_allowRepeatOptions) {
         _onVote(optionIndex);
@@ -2181,13 +2235,13 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
     });
   }
 
-  void _onVoteDone() {
-    if (_votingOptions.length == 0) {
-      setState(() {
-        _voteDone = true;
-      });
-    }
-  }
+  // void _onVoteDone() {
+  //   if (_votingOptions.length == 0) {
+  //     setState(() {
+  //       _voteDone = true;
+  //     });
+  //   }
+  // }
 
   void _onClose() {
     if (_votingOptions.length == 0) {
@@ -2239,19 +2293,348 @@ class _GroupPollCardState extends State<GroupPollCard> implements NotificationsL
     return statusString;
   }
 
+  void _onEndPollTapped(){
+    _setEndButtonProgress(true);
+    Polls().close(widget.poll.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
+      _setEndButtonProgress(false);
+      AppAlert.showDialogResult(context, e.toString());
+    });
+
+  }
+
+  void _setEndButtonProgress(bool showProgress){
+    setState(() {
+      _showEndPollProgress = showProgress;
+    });
+  }
+
   void _refreshPoll()  async{
     // PollsChunk? groupPolls = await Polls().getGroupPolls([widget.group?.id??""]); //TBD request backend directly for one poll
     // Poll? updatedPoll = groupPolls?.polls!=null? groupPolls?.polls?.firstWhere((element) => element.pollId == widget.poll.pollId) : null;
-    Poll? updatedPoll = Polls().getPoll(pollId: widget.poll.pollId);
-    if(updatedPoll!=null){
-      setState(() {
-        _poll = updatedPoll;
-      });
-    }
+    // Poll? updatedPoll = Polls().getPoll(pollId: widget.poll.pollId);
+    // if(updatedPoll!=null){
+    //   setState(() {
+    //     _poll = updatedPoll;
+    //   });
+    // }
   }
 
   int get _uniqueVotersCount {
     return widget.poll.uniqueVotersCount ?? 0;
+  }
+
+  int get _groupMembersCount {
+    return widget.group?.membersCount ?? 0;
+  }
+}
+
+class GroupPollCard extends StatefulWidget{
+  final Poll? poll;
+  final Group? group;
+
+  GroupPollCard({required this.poll, this.group});
+
+  @override
+  State<StatefulWidget> createState() => _GroupPollCardState();
+
+}
+
+class _GroupPollCardState extends State<GroupPollCard>{
+  List<GlobalKey>? _progressKeys;
+  double? _progressWidth;
+
+  bool _showStartPollProgress = false;
+  bool _showEndPollProgress = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _evalProgressWidths();
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Poll poll = widget.poll!;
+    String pollVotesStatus = _pollVotesStatus;
+
+    List<Widget> footerWidgets = [];
+
+    String? pollStatus;
+
+    String? creator = widget.poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');//TBD localize
+    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
+    String semanticsQuestionText =  "$wantsToKnow\n+${poll.title!}";
+
+    if(poll.status == PollStatus.created) {
+      pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.created","Polls created");
+      if (poll.isMine) {
+        footerWidgets.add(_createStartPollButton());
+        footerWidgets.add(Container(height:8));
+      }
+    } if (poll.status == PollStatus.opened) {
+      pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.open","Polls open");
+      if (_canVote) {
+        footerWidgets.add(_createVoteButton());
+        footerWidgets.add(Container(height:8));
+      }
+      if (poll.isMine) {
+        footerWidgets.add(_createEndPollButton());
+        footerWidgets.add(Container(height:8));
+      }
+    }
+    else if (poll.status == PollStatus.closed) {
+      pollStatus =  Localization().getStringEx("panel.polls_home.card.state.text.closed","Polls closed");
+    }
+
+    Widget cardBody = ((poll.status == PollStatus.opened) && (poll.settings?.hideResultsUntilClosed ?? false)) ?
+    Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends.")!, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 15, fontWeight: FontWeight.w500),) :
+    Column(children: _buildCheckboxOptions(),);
+    return
+      Column(children: <Widget>[ Container(padding: EdgeInsets.symmetric(),
+        decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5)),
+        child: Padding(padding: EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+        <Widget>[
+          Row(children: <Widget>[Expanded(child: Container(),)],),
+          Semantics(label:semanticsQuestionText,excludeSemantics: true,child:
+            Text(wantsToKnow, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w600),)),
+          Container(height: 12,),
+          Padding(padding: EdgeInsets.symmetric(vertical: 0),child:
+            Text(poll.title!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, height: 1.2 ),),),
+          Container(height:12),
+          cardBody,
+          Container(height:25),
+          Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus",
+            child: Padding(padding: EdgeInsets.only(bottom: 12), child: Row(children: <Widget>[
+              Expanded(child:
+                Text(pollVotesStatus, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, ),),
+              ),
+              Expanded(child:
+                Text(pollStatus ?? "", textAlign: TextAlign.right, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),))
+            ],),),
+          ),
+          Column(children: footerWidgets,),
+        ]
+          ,),),
+      ),],);
+  }
+
+  List<Widget> _buildCheckboxOptions() {
+    bool isClosed = widget.poll!.status == PollStatus.closed;
+
+    List<Widget> result = [];
+    _progressKeys = [];
+    int maxValueIndex=-1;
+    if(isClosed  && ((widget.poll!.results?.totalVotes ?? 0) > 0)){
+      maxValueIndex = 0;
+      for (int optionIndex = 0; optionIndex<widget.poll!.options!.length ; optionIndex++) {
+        int? optionVotes =  widget.poll!.results![optionIndex];
+        if(optionVotes!=null &&  optionVotes > widget.poll!.results![maxValueIndex]!)
+          maxValueIndex = optionIndex;
+      }
+    }
+
+    int totalVotes = (widget.poll!.results?.totalVotes ?? 0);
+    for (int optionIndex = 0; optionIndex<widget.poll!.options!.length ; optionIndex++) {
+      bool useCustomColor = isClosed && maxValueIndex == optionIndex;
+      String option = widget.poll!.options![optionIndex];
+      bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
+      String checkboxImage = 'images/checkbox-unselected.png'; // 'images/checkbox-selected.png'
+
+      String? votesString;
+      int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
+      double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
+      if ((votesCount == null) || (votesCount == 0)) {
+        votesString = '';
+      }
+      else if (votesCount == 1) {
+        votesString = Localization().getStringEx("panel.polls_home.card.text.one_vote","1 vote");
+      }
+      else {
+        String? votes = Localization().getStringEx("panel.polls_home.card.text.votes","votes");
+        votesString = '$votesCount $votes';
+      }
+      Color? votesColor = Styles().colors!.textBackground;
+
+      GlobalKey progressKey = GlobalKey();
+      _progressKeys!.add(progressKey);
+
+      String semanticsText = option +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+
+      result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
+      GestureDetector(
+          child:
+          Semantics(label: semanticsText, excludeSemantics: true, child:
+          Row(children: <Widget>[
+            Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(checkboxImage,),),
+            Expanded(
+                flex: 5,
+                key: progressKey, child:
+            Stack(alignment: Alignment.centerLeft, children: <Widget>[
+              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.white, progressColor: useCustomColor ?Styles().colors!.fillColorPrimary:Styles().colors!.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
+              Padding(padding: EdgeInsets.only(left: 5), child:
+              Row(children: <Widget>[
+                Expanded( child:
+                Padding( padding: EdgeInsets.symmetric(horizontal: 5),
+                  child: Text(option, style: TextStyle(color: useCustomColor?Styles().colors!.white:Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500,height: 1.25),),)),
+                Visibility( visible: didVote,
+                    child:Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/checkbox-small.png',),)
+                ),
+              ],),)
+              ),
+            ],)
+            ),
+            Expanded(
+              flex: 5,
+              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: TextStyle(color: votesColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 14, fontWeight: FontWeight.w500,height: 1.29),),),
+            )
+          ],)
+          ))));
+    }
+    return result;
+  }
+
+  Widget _createStartPollButton(){
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.start_poll","Start Poll")!, _onStartPollTapped, loading: _showStartPollProgress);
+  }
+  Widget _createEndPollButton(){
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll")!, _onEndPollTapped, loading: _showEndPollProgress);
+  }
+  Widget _createVoteButton(){
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.vote","Vote")!, _onVoteTapped);
+  }
+
+  Widget _createButton(String title, void Function()? onTap, {bool enabled=true, bool loading = false}){
+    return Container( padding: EdgeInsets.symmetric(horizontal: 54,),
+        child: Semantics(label: title, button: true, excludeSemantics: true,
+          child: InkWell(
+              onTap: onTap,
+              child: Stack(children: <Widget>[
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 5,horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Styles().colors!.white,
+                    border: Border.all(
+                        color: enabled? Styles().colors!.fillColorSecondary! :Styles().colors!.surfaceAccent!,
+                        width: 2.0),
+                    borderRadius: BorderRadius.circular(24.0),
+                  ),
+                  child: Center(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontFamily: Styles().fontFamilies!.bold,
+                        fontSize: 16,
+                        height: 1.38,
+                        color: Styles().colors!.fillColorPrimary,
+                      ),
+                    ),
+                  ),
+                ),
+                Visibility(visible: loading,
+                  child: Container(padding: EdgeInsets.symmetric(vertical: 5),
+                    child: Align(alignment: Alignment.center,
+                      child: SizedBox(height: 24, width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
+                      ),
+                    ),
+                  ),
+                )
+              ])
+          ),
+        ));
+  }
+
+  void _onStartPollTapped(){
+    _setStartButtonProgress(true);
+    Polls().open(widget.poll!.pollId).then((result) => _setStartButtonProgress(false)).catchError((e){
+      _setStartButtonProgress(false);
+      AppAlert.showDialogResult(context, e.toString());
+    });
+  }
+
+  void _onEndPollTapped(){
+    _setEndButtonProgress(true);
+    Polls().close(widget.poll!.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
+      _setEndButtonProgress(false);
+      AppAlert.showDialogResult(context, e.toString());
+    });
+
+  }
+
+  void _onVoteTapped(){
+    Polls().presentPollVote(widget.poll);
+  }
+
+  void _evalProgressWidths() {
+    if (_progressKeys != null) {
+      double progressWidth = -1.0;
+      for (GlobalKey progressKey in _progressKeys!) {
+        final RenderObject? progressRender = progressKey.currentContext?.findRenderObject();
+        if ((progressRender is RenderBox) && (0 < progressRender.size.width)) {
+          if ((progressWidth < 0.0) || (progressRender.size.width < progressWidth)) {
+            progressWidth = progressRender.size.width;
+          }
+        }
+      }
+      if (0 < progressWidth) {
+        setState(() {
+          _progressWidth = progressWidth;
+        });
+      }
+    }
+  }
+
+  void _setStartButtonProgress(bool showProgress){
+    setState(() {
+      _showStartPollProgress = showProgress;
+    });
+  }
+  void _setEndButtonProgress(bool showProgress){
+    setState(() {
+      _showEndPollProgress = showProgress;
+    });
+  }
+
+  bool get _canVote {
+    return ((widget.poll!.status == PollStatus.opened) &&
+        (((widget.poll!.userVote?.totalVotes ?? 0) == 0) ||
+            widget.poll!.settings!.allowMultipleOptions! ||
+            widget.poll!.settings!.allowRepeatOptions!
+        ) &&
+        (!widget.poll!.isGeoFenced || GeoFence().currentRegionIds.contains(widget.poll!.regionId))
+    );
+  }
+
+  String get _pollVotesStatus {
+    bool hasGroup = (widget.group != null);
+    int votes = hasGroup ? _uniqueVotersCount : (widget.poll!.results?.totalVotes ?? 0);
+
+    String statusString;
+    if (1 < votes) {
+      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votes']);
+    } else if (0 < votes) {
+      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote')!;
+    } else {
+      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet')!;
+    }
+
+    if (hasGroup && (votes > 0)) {
+      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of')!, _groupMembersCount]);
+    }
+
+    return statusString;
+  }
+
+  int get _uniqueVotersCount {
+    return widget.poll?.uniqueVotersCount ?? 0;
   }
 
   int get _groupMembersCount {

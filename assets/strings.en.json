@@ -188,7 +188,6 @@
     "panel.browse.button.state_farm_wayfinding.hint":"",
     "panel.browse.button.groups.title":"Groups",
     "panel.browse.button.groups.hint":"",
-    "panel.browse.button.groups.login.error": "Unable to login",
     "panel.browse.button.safer.title": "Safer Illinois",
     "panel.browse.button.safer.hint": "",
     "panel.browse.button.building_status.title": "Building Entry",
@@ -436,7 +435,6 @@
     "panel.onboarding.login.phone.label.title.hint":"Header 1",
     "panel.onboarding.login.netid.label.description":"Log in with your NetID to use academic and residence hall specific features.",
     "panel.onboarding.login.phone.label.description":"This saves your preferences so you can have the same experience on more than one device.",
-    "panel.onboarding.login.label.login_failed":"Unable to login. Please try again later",
     "panel.onboarding.login.netid.button.continue.title":"Sign in with NetID",
     "panel.onboarding.login.phone.button.continue.title":"Verify My Phone Number",
     "panel.onboarding.login.netid.button.continue.hint":"",
@@ -822,8 +820,6 @@
     "panel.settings.illini_cash.transactions.message.start_end_validation.hint": "",
     "panel.settings.illini_cash.transactions.message.no_transactions.text": "There are no transactions for the selected period",
     "panel.settings.illini_cash.transactions.message.no_transactions.hint": "",
-    "panel.settings.illini_cash.login.label.login_failed": "Unable to login. Please try again later",
-    "panel.settings.illini_cash.login.label.login_failed.hint": "",
 
     "panel.settings.add_illini_cash.header.title": "Add Illini Cash",
     "panel.settings.add_illini_cash.label.recipient_uin.text": "RECIPIENT'S UIN",
@@ -1062,7 +1058,6 @@
     "panel.settings.login.netid.button.continue.title":"Log in with NetID",
     "panel.settings.login.netid.button.continue.hint":"",
     "panel.settings.login.netid.button.dont_continue.hint":"Skip verification",
-    "panel.settings.login.label.login_failed":"Unable to login. Please try again later",
 
     "panel.settings.login.phone.label.title":"Verify your phone number",
     "panel.settings.login.phone.button.dont_continue.title":"Not right now",
@@ -1599,6 +1594,7 @@
     "panel.group_detail.button.group.add_event.title": "Add existing event",
     "panel.group_detail.button.group.create_event.title": "Create new event",
     "panel.group_detail.button.all_events.title": "See all events",
+    "panel.group_detail.button.all_polls.title": "See all polls",
     "panel.group_detail.label.upcoming_events": "Upcoming Events",
     "panel.group_detail.label.upcoming_events.empty": "No upcoming events",
     "panel.group_detail.label.upcoming_events.hint": "Create a new event or share an existing event with your members. ",
@@ -1855,6 +1851,11 @@
     "panel.group.detail.post.create.button.send.title": "Send",
     "panel.group.detail.post.update.button.update.title": "Update",
     "panel.groups_all_events.label.heading": "Upcoming Events",
+
+    "panel.group_polls.label.heading": "All Polls",
+    "panel.group_polls.empty.message": "There are no group polls.",
+    "panel.group_polls.empty.description": "You will see the polls for your group here.",
+    "panel.group_polls.text.error": "Error",
 
     "panel.guide_categories.label.heading": "Campus Guide",
     "panel.guide_categories.label.content.empty": "Empty guide content",
@@ -2207,6 +2208,7 @@
     "logic.general.unknown_error": "Unknown Error Occured",
     "logic.general.invalid_response": "Invalid server responce",
     "logic.general.response_error": "Response Error: %s %s",
+    "logic.general.login_failed": "Unable to login. Please try again later.",
 
     "app.exit_dialog.message":"Are you sure you want to exit?",
 

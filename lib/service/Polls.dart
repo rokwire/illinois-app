@@ -108,7 +108,7 @@ class Polls with Service implements NotificationsListener {
   }
 
   Future<PollsChunk?>? getGroupPolls(List<String>? groupIds, {String? cursor}) async {
-    return _enabled ? _getPolls('grouppolls', cursor, includeAccountId: false, groupIds: groupIds) : null;
+    return _enabled ? _getPolls('grouppolls', cursor, groupIds: groupIds) : null;
   }
 
   Future<PollsChunk?>? getRecentPolls({String? cursor}) async {
@@ -178,9 +178,7 @@ class Polls with Service implements NotificationsListener {
 
             Analytics().logPoll(poll, Analytics.LogPollCreateActionName);
 
-            if (!poll.hasGroup) {
-              _addPollToChunks(poll);
-            }
+            _addPollToChunks(poll);
 
             if (poll.status == PollStatus.opened) {
               Analytics().logPoll(poll, Analytics.LogPollOpenActionName);
@@ -470,9 +468,9 @@ class Polls with Service implements NotificationsListener {
           Map<String, dynamic>? responseJson = AppJson.decode(responseString);
           Poll? poll = (responseJson != null) ? Poll.fromJson(responseJson) : null;
           if ((poll != null) && (!poll.isGeoFenced || GeoFence().currentRegionIds.contains(poll.regionId))) {
+            _addPollToChunks(poll);
+            NotificationService().notify(notifyCreated, pollId);
             if (!poll.hasGroup) {
-              _addPollToChunks(poll);
-              NotificationService().notify(notifyCreated, pollId);
               _presentWaiting();
               if (AppLivecycle().state == AppLifecycleState.paused) {
                 _launchPollNotification(poll);
@@ -743,14 +741,12 @@ class Polls with Service implements NotificationsListener {
         if (pollsJson != null) {
           for (dynamic pollJson in pollsJson) {
             Poll poll = Poll.fromJson(pollJson)!;
-            if (!poll.hasGroup) {
               _PollUIStatus? status = _pollUIStatusFromString(chunksJson[poll.pollId]);
               if (poll.status != PollStatus.closed) {
                 _addPollToChunks(poll, status: status, save: false);
               } else if ((status != _PollUIStatus.waitingVote) && poll.settings!.hideResultsUntilClosed!) {
                 _addPollToChunks(poll, status: _PollUIStatus.waitingClose, save: false);
               }
-            }
           }
         }
         _savePollChunks();

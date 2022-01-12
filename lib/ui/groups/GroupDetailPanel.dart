@@ -32,6 +32,7 @@ import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
+import 'package:illinois/ui/groups/GroupPollListPanel.dart';
 import 'package:illinois/ui/groups/GroupPostCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupQrCodePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -166,7 +167,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Groups.notifyGroupUpdated,
       Groups.notifyGroupEventsUpdated,
       Groups.notifyGroupPostsUpdated,
-      Polls.notifyCreated]);
+      Polls.notifyCreated,
+      Polls.notifyStatusChanged,
+      Polls.notifyVoteChanged,
+      Polls.notifyResultsChanged,
+    ]);
 
     _loadGroup(loadEvents: true);
   }
@@ -416,7 +421,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _refreshCurrentPosts(delta: param is int ? param : null);
     } else if (name == Polls.notifyCreated) {
       _refreshPolls();
-    } else if (name == AppLivecycle.notifyStateChanged) {
+    } else if (name == Polls.notifyVoteChanged
+            || name == Polls.notifyResultsChanged 
+            || name == Polls.notifyStatusChanged) {
+      _onPollUpdated(param); // Deep collection update single element (do not reload whole list)
+    }else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
   }
@@ -882,10 +891,26 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     if (AppCollection.isCollectionNotEmpty(_groupPolls)) {
       for (Poll? groupPoll in _groupPolls!) {
-        if(groupPoll!=null) {
+        if (groupPoll != null) {
           pollsContentList.add(Container(height: 10));
-          pollsContentList.add(GroupPollCard(poll: groupPoll, group: _group,));
+          pollsContentList.add(GroupPollCard(poll: groupPoll, group: _group));
         }
+      }
+
+      if (_groupPolls!.length >= 5) {
+        pollsContentList.add(Padding(
+            padding: EdgeInsets.only(top: 16),
+            child: ScalableSmallRoundedButton(
+                label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls'),
+                widthCoeficient: 2,
+                backgroundColor: Styles().colors!.white,
+                textColor: Styles().colors!.fillColorPrimary,
+                fontFamily: Styles().fontFamilies!.bold,
+                fontSize: 16,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                borderColor: Styles().colors!.fillColorSecondary,
+                borderWidth: 2,
+                onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPollListPanel(group: _group!))))));
       }
     }
 
@@ -1342,6 +1367,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel(group: _group)));
   }
 
+  void _onPollUpdated(String? pollId) {
+    if(pollId!= null && _groupPolls!=null
+        && _groupPolls?.firstWhere((element) => pollId == element.pollId) != null) { //This is Group poll
+
+      Poll? poll = Polls().getPoll(pollId: pollId);
+      if (poll != null) {
+        setState(() {
+          _updatePollInList(poll);
+        });
+      }
+    }
+  }
+
   Future<void>_onPullToRefresh() async {
     Group? group = await Groups().loadGroup(widget.groupId); // The same as _refreshGroup(refreshEvents: true) but use await to show the pull to refresh progress indicator properly
     if ((group != null)) {
@@ -1405,6 +1443,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   bool get _showMembershipBadge {
     return _isMemberOrAdmin || _isPending;
+  }
+
+  //Util
+  void _updatePollInList(Poll? poll) {
+    if ((poll != null) && (_groupPolls != null)) {
+      for (int index = 0; index < _groupPolls!.length; index++) {
+        if (_groupPolls![index].pollId == poll.pollId) {
+          _groupPolls![index] = poll;
+        }
+      }
+    }
   }
 }
 

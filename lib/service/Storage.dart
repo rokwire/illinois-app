@@ -407,20 +407,6 @@ class Storage with Service {
   }
 
   //////////////
-  // Sport Social Media
-
-  static const String sportSocialMediaListKey  = 'sport_social_media';
-  
-  List<dynamic>? get sportSocialMediaList {
-    final String? jsonString = _getStringWithName(sportSocialMediaListKey);
-    return AppJson.decode(jsonString);
-  }
-
-  set sportSocialMediaList(List<dynamic>? sportSocialMedia) {
-    _setStringWithName(sportSocialMediaListKey, sportSocialMedia != null ? json.encode(sportSocialMedia) : null);
-  }
-
-  //////////////
   // Recent Items
 
   static const String recentItemsKey  = '_recent_items_json_string';
@@ -577,7 +563,7 @@ class Storage with Service {
   }
 
   set inboxUserInfo(InboxUserInfo? value) {
-    _setStringWithName(illiniCashBallanceKey, value != null ? json.encode(value.toJson()) : null);
+    _setStringWithName(inboxUserInfoKey, value != null ? json.encode(value.toJson()) : null);
   }
 
   //////////////

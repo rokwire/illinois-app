@@ -5,6 +5,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.2.0] - ????-??-??
+Please log changes here until the first 3.2 build. Fill the date of the build as a version date above.
+
+## [3.1.11] - 2022-01-11
+### Added
+- Paging for Group Polls [#1157](https://github.com/rokwire/illinois-app/issues/1157).
+### Changed
+- Reworked refresh token functionality [#1168](https://github.com/rokwire/illinois-app/issues/1168).
+- Optimized Sports service startup, data caching and refreshing [#1196](https://github.com/rokwire/illinois-app/issues/1196).
+### Fixed
+- Issues with updating status for Group Polls [#1157](https://github.com/rokwire/illinois-app/issues/1157).
+
+## [3.1.10] - 2022-01-10
+### Fixed
+- Issues with Group Polls [#1157](https://github.com/rokwire/illinois-app/issues/1157).
+### Changed
+- Cleanup and fixes for Auth2 login and refresh token [#1168](https://github.com/rokwire/illinois-app/issues/1168).
+
 ## [3.1.9] - 2022-01-07
 ### Fixed
 - Loading Event images [#1184](https://github.com/rokwire/illinois-app/issues/1184).

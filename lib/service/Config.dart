@@ -147,7 +147,7 @@ class Config with Service implements NotificationsListener {
 
   Future<Map<String, dynamic>?> _loadFromFile(File? configFile) async {
     try {
-      String? configContent = (configFile != null) ? await configFile.readAsString() : null;
+      String? configContent = (await configFile?.exists() == true) ? await configFile?.readAsString() : null;
       return _configFromJsonString(configContent);
     } catch (e) {
       print(e.toString());

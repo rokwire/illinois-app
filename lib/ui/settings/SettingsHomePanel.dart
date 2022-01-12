@@ -62,6 +62,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   static BorderRadius _allRounding = BorderRadius.all(Radius.circular(5));
   
   String _versionName = "";
+  bool _connectingNetId = false;
 
   @override
   void initState() {
@@ -279,12 +280,25 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 ],
               ),
             )),);
-          contentList.add(RibbonButton(
-            height: null,
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-            borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Connect your NetID"),
-            onTap: _onConnectNetIdClicked),);
+          contentList.add(Stack(children: [
+            RibbonButton(
+              height: null,
+              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+              borderRadius: _allRounding,
+              label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Connect your NetID"),
+              onTap: _onConnectNetIdClicked),
+            Visibility(visible: _connectingNetId == true, child:
+              Container(height: 46, child:
+                Align(alignment: Alignment.centerRight, child:
+                  Padding(padding: EdgeInsets.only(right: 10), child:
+                    SizedBox(height: 24, width: 24, child:
+                      CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                    ),
+                  )
+                ),
+              ),
+            ),
+          ],),);
       }
       else if (code == 'phone_or_email') {
           contentList.add(Padding(
@@ -321,7 +335,17 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   void _onConnectNetIdClicked() {
     Analytics.instance.logSelect(target: "Connect netId");
-    Auth2().authenticateWithOidc();
+    if (_connectingNetId != true) {
+      setState(() { _connectingNetId = true; });
+      Auth2().authenticateWithOidc().then((bool? result) {
+        if (mounted) {
+          setState(() { _connectingNetId = false; });
+          if (result == false) {
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          }
+        }
+      });
+    }
   }
 
   void _onPhoneOrEmailLoginClicked() {
@@ -455,12 +479,25 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               ]))));
       }
       else if (code == 'connect') {
-        contentList.add(RibbonButton(
-            height: null,
-            borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-            label: Localization().getStringEx("panel.settings.home.net_id.button.connect", "Connect your NetID"),
-            onTap: _onConnectNetIdClicked));
+        contentList.add(Stack(children: [
+            RibbonButton(
+              height: null,
+              borderRadius: borderRadius,
+              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+              label: Localization().getStringEx("panel.settings.home.net_id.button.connect", "Connect your NetID"),
+              onTap: _onConnectNetIdClicked),
+            Visibility(visible: _connectingNetId == true, child:
+              Container(height: 46, child:
+                Align(alignment: Alignment.centerRight, child:
+                  Padding(padding: EdgeInsets.only(right: 10), child:
+                    SizedBox(height: 24, width: 24, child:
+                      CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                    ),
+                  )
+                ),
+              ),
+            ),
+          ],),);
       }
       else if (code == 'disconnect') {
         contentList.add(RibbonButton(
