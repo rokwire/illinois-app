@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -57,7 +56,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
         'YOUR PRIVACY LEVEL IS');*/
 
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         body: SafeArea(child: SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
@@ -68,7 +67,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                   Column(
                     children:[
                     Container(
-                        color: Styles().colors.fillColorPrimary,
+                        color: Styles().colors!.fillColorPrimary,
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
@@ -77,7 +76,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 //                                padding: EdgeInsets.symmetric(vertical: 19),
                                 child: Row(children: [
                                 Onboarding2BackButton(padding: const EdgeInsets.only(top:19,left: 17, right: 20, bottom: 19),
-                                    color: Styles().colors.white,
+                                    color: Styles().colors!.white,
                                     onTap: () {
                                       Analytics.instance.logSelect(target: "Back");
                                       _goBack(context);
@@ -147,12 +146,12 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                                     child: Align(
                                         alignment: Alignment.topCenter,
                                         child: Text(
-                                          _privacyDescription,
+                                          _privacyDescription!,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                              fontFamily: Styles().fontFamilies.bold,
+                                              fontFamily: Styles().fontFamilies!.bold,
                                               fontSize: 32,
-                                              color: Styles().colors.white),
+                                              color: Styles().colors!.white),
                                         )),
                                   )),
                               Container(height: 35,),
@@ -168,14 +167,14 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                                               children: [
                                                 CustomPaint(
                                                   painter: TrianglePainter(
-                                                    painterColor: Styles().colors
+                                                    painterColor: Styles().colors!
                                                         .background,),
                                                   child: Container(
                                                     height: 90,
                                                   ),
                                                 ),
                                                 Container(height: 0,
-                                                  color: Styles().colors.background,)
+                                                  color: Styles().colors!.background,)
                                               ]),
                                         ),
                                       ),
@@ -191,12 +190,12 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child:
                       Text(
-                        _privacyLongDescription,
+                        _privacyLongDescription!,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontFamily: Styles().fontFamilies.regular,
+                            fontFamily: Styles().fontFamilies!.regular,
                             fontSize: 16,
-                            color: Styles().colors.fillColorPrimary),
+                            color: Styles().colors!.fillColorPrimary),
                       )
                     ),
                     _buildPrivacySlider(),
@@ -209,12 +208,12 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                   children: <Widget>[
                     Container(height: 16,),
                     Text(
-                      Localization().getStringEx("panel.onboarding2.privacy.label.continue.description", "You can adjust what you store and share at any time in the Privacy Center."),
+                      Localization().getStringEx("panel.onboarding2.privacy.label.continue.description", "You can adjust what you store and share at any time in the Privacy Center.")!,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontFamily: Styles().fontFamilies.regular,
+                          fontFamily: Styles().fontFamilies!.regular,
                           fontSize: 14,
-                          color: Styles().colors.textSurface),
+                          color: Styles().colors!.textSurface),
                     ),
                     Padding(
                       padding: EdgeInsets.only(
@@ -224,9 +223,9 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
                         fontSize: 16,
                         padding: EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Styles().colors.white,
-                        borderColor: Styles().colors.fillColorSecondaryVariant,
-                        textColor: Styles().colors.fillColorPrimary,
+                        backgroundColor: Styles().colors!.white,
+                        borderColor: Styles().colors!.fillColorSecondaryVariant,
+                        textColor: Styles().colors!.fillColorPrimary,
                         onTap: () => _goNext(context),
                       ),),
                     Container(height: 16,)
@@ -407,7 +406,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
   Widget _buildPrivacyBadge(){
     return
       Semantics(
-        label: Localization().getStringEx('panel.onboarding2.privacy.badge.privacy_level.title', "Privacy Level: ") + _privacyLevel?.toString(),
+        label: Localization().getStringEx('panel.onboarding2.privacy.badge.privacy_level.title', "Privacy Level: ")! + _privacyLevel.toString(),
         excludeSemantics: true,
         child:Container(
           height: 60,
@@ -434,11 +433,11 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           height: 50,
                           child:
                         Text(
-                          _privacyLevel?.toString()??"",
+                          _privacyLevel.toString(),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 26,
-                              color: Styles().colors.white
+                              color: Styles().colors!.white
                           ),
                         ))
                     )
@@ -459,17 +458,17 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
           padding: EdgeInsets.symmetric(vertical: 19),
           child:Container(
             decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
+                border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1, ),)
             ),
             padding: EdgeInsets.only(bottom: 2),
             child:
             Row(children: [
               Text(
-                Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy notice "),
+                Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy notice ")!,
                 style: TextStyle(
-                    fontFamily: Styles().fontFamilies.regular,
+                    fontFamily: Styles().fontFamilies!.regular,
                     fontSize: 14,
-                    color: Styles().colors.white),
+                    color: Styles().colors!.white),
 
               ),
               Container(padding: EdgeInsets.only(bottom: 3),
@@ -485,14 +484,14 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
     return
       Container(
           padding: EdgeInsets.symmetric(vertical:24, horizontal: 20),
-          color: Styles().colors.background,
+          color: Styles().colors!.background,
           child: SafeArea(
               top: false,
               child: Column(children: <Widget>[
                 Container(height: 6,),
                 PrivacyLevelSlider(
-                  color: Styles().colors.background,
-                  initialValue: _privacyLevel?.toDouble() ?? 1,
+                  color: Styles().colors!.background,
+                  initialValue: _privacyLevel.toDouble(),
                   onValueChanged: (){}),
               ],)
           ));
@@ -502,9 +501,9 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
     return Onboarding2().getPrivacyLevel;
   }
 
-  String get _privacyDescription{
-    String description = Localization().getStringEx('panel.onboarding2.privacy.description_short.unknown.title', "Unknown privacy level");
-    int privacyLevel = _privacyLevel ?? -1;
+  String? get _privacyDescription{
+    String? description = Localization().getStringEx('panel.onboarding2.privacy.description_short.unknown.title', "Unknown privacy level");
+    int privacyLevel = _privacyLevel;
     switch(privacyLevel){
       case 1 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.1.title', "Browse privately");
       case 2 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.2.title', "Explore privately ");
@@ -515,9 +514,9 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
     return description;
   }
 
-  String get _privacyLongDescription{
-    String description = Localization().getStringEx('panel.onboarding2.privacy.description_long.unknown.title', "Unknown privacy level");
-    int privacyLevel = _privacyLevel ?? -1;
+  String? get _privacyLongDescription{
+    String? description = Localization().getStringEx('panel.onboarding2.privacy.description_long.unknown.title', "Unknown privacy level");
+    int privacyLevel = _privacyLevel;
     switch(privacyLevel){
       case 1 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.1.title', "Based on your answers, no personal information will be stored or shared. You can only browse information in the app.");
       case 2 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.2.title', "Based on your answers, your location is used to explore campus and find things nearby. Your data will not be stored or shared.");
@@ -530,12 +529,10 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 
   String get _continueButtonLabel{
     switch(_privacyLevel){
-      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_browsing.title', "Start browsing");
-          break;
-      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_exploring.title', "Start exploring");
-          break;
+      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_browsing.title', "Start browsing")!;
+      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_exploring.title', "Start exploring")!;
     }
-    return Localization().getStringEx('panel.onboarding2.privacy.button.save_privacy.title', "Save privacy level");
+    return Localization().getStringEx('panel.onboarding2.privacy.button.save_privacy.title', "Save privacy level")!;
   }
 
   void _goNext(BuildContext context) {

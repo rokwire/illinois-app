@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/illinicash/Transaction.dart';
@@ -34,7 +33,7 @@ import 'package:illinois/service/Styles.dart';
 
 class SettingsMealPlanPanel extends StatefulWidget {
 
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   SettingsMealPlanPanel({this.scrollController});
 
@@ -49,10 +48,10 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   bool _mealPlanTransactionsLoading = false;
   bool _cafeCreditTransactionsLoading = false;
 
-  DateTime _startDate;
-  DateTime _endDate;
-  List<BaseTransaction> _mealPlanTransactions;
-  List<BaseTransaction> _cafeCreditTransactions;
+  DateTime? _startDate;
+  DateTime? _endDate;
+  List<BaseTransaction>? _mealPlanTransactions;
+  List<BaseTransaction>? _cafeCreditTransactions;
 
   _SettingsMealPlanPanelState();
 
@@ -111,7 +110,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: widget.scrollController == null
           ? TabBarWidget()
           : Container(height: 0,),
@@ -131,11 +130,11 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
               ? 'images/chevron-left-white.png'
               : 'images/chevron-left-blue.png',
           titleWidget: Text(
-            Localization().getStringEx('panel.settings.meal_plan.label.title','University Housing Meal Plan'),
+            Localization().getStringEx('panel.settings.meal_plan.label.title','University Housing Meal Plan')!,
             style: TextStyle(
                 color: widget.scrollController == null
-                    ? Styles().colors.white
-                    : Styles().colors.fillColorPrimary,
+                    ? Styles().colors!.white
+                    : Styles().colors!.fillColorPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.0),
@@ -185,7 +184,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     );
   }
 
-  Widget _buildSettingsHeader(String title, String iconSrc){
+  Widget _buildSettingsHeader(String? title, String iconSrc){
     if (!Auth2().isLoggedIn) {
       return Container();
     }
@@ -194,7 +193,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       header: true,
       excludeSemantics: true,
       child: Container(
-        color: Styles().colors.fillColorPrimaryVariant,
+        color: Styles().colors!.fillColorPrimaryVariant,
 //        height: 56,
         child: Align(
           alignment: Alignment.centerLeft,
@@ -203,12 +202,12 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             child: Row(
               children: <Widget>[
                 Image.asset(AppString.getDefaultEmptyString(
-                    value: iconSrc, defaultValue: 'images/icon-settings.png')),
+                    iconSrc, defaultValue: 'images/icon-settings.png')),
                 Expanded(child:
                   Padding(
                     padding: EdgeInsets.only(left: 12),
                     child: Text(
-                      AppString.getDefaultEmptyString(value: title),
+                      AppString.getDefaultEmptyString(title),
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   )
@@ -233,10 +232,10 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
               "panel.settings.meal_plan.button.login_to_view_meal_plan.text", "Log in to view your Meal Plan"),
           hint: Localization().getStringEx(
               'panel.settings.meal_plan.button.login_to_view_meal_plan.hint', ''),
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors!.white,
           fontSize: 16.0,
-          textColor: Styles().colors.fillColorPrimary,
-          borderColor: Styles().colors.fillColorSecondary,
+          textColor: Styles().colors!.fillColorPrimary,
+          borderColor: Styles().colors!.fillColorSecondary,
           onTap: _onTapLogIn,
         ),
       ));
@@ -296,11 +295,11 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
-                Localization().getStringEx("panel.settings.meal_plan.label.custom_period", "CUSTOM PERIOD"),
+                Localization().getStringEx("panel.settings.meal_plan.label.custom_period", "CUSTOM PERIOD")!,
                 style: TextStyle(
-                    color: Styles().colors.fillColorPrimary,
+                    color: Styles().colors!.fillColorPrimary,
                     fontSize: 16,
-                    fontFamily: Styles().fontFamilies.regular
+                    fontFamily: Styles().fontFamilies!.regular
                 )
             ),
           ),
@@ -309,7 +308,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             _DateLabel(label: Localization().getStringEx('panel.settings.meal_plan.label.start_date', 'Start Date'),),
             Container(width: 8,),
             Expanded(child: _DateValue(title: AppString.getDefaultEmptyString(
-                value: _getFormattedDate(_startDate)),
+                _getFormattedDate(_startDate)),
               label: Localization().getStringEx('panel.settings.meal_plan.button.start_date.title', 'Start Date'),
               hint: Localization().getStringEx('panel.settings.meal_plan.button.start_date.hint', ''),
               onTap: _onStartDateTap,))
@@ -320,7 +319,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             Container(width: 8,),
             Expanded(child: _DateValue(
               title: AppString.getDefaultEmptyString(
-                  value: _getFormattedDate(_endDate)),
+                  _getFormattedDate(_endDate)),
               label: Localization().getStringEx('panel.settings.meal_plan.button.end_date.title', 'End Date'),
               hint: Localization().getStringEx('panel.settings.meal_plan.button.end_date.hint', ''),
               onTap: _onEndDateTap,))
@@ -328,60 +327,60 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
             Expanded(child: ScalableRoundedButton(
-              textColor: Styles().colors.fillColorPrimary,
+              textColor: Styles().colors!.fillColorPrimary,
               label: Localization().getStringEx('panel.settings.meal_plan.button.view_history.title', 'View History'),
               hint: Localization().getStringEx('panel.settings.meal_plan.button.view_history.hint', ''),
               backgroundColor: Colors.white,
-              borderColor: Styles().colors.fillColorSecondary,
+              borderColor: Styles().colors!.fillColorSecondary,
               fontSize: 16,
               onTap: _onTapViewHistory,)),
           ],)
         ],),);
   }
 
-  Widget _buildBalanceTableRow(bool loadingFlag, List<BaseTransaction> transactionList) {
+  Widget _buildBalanceTableRow(bool loadingFlag, List<BaseTransaction>? transactionList) {
     if(Auth2().isLoggedIn) {
       if (loadingFlag) {
         return Center(child: Padding(padding: EdgeInsets.only(bottom: 20),
           child: CircularProgressIndicator(),),);
       }
       if (_startDate == null || _endDate == null ||
-          _startDate.isAfter(_endDate)) {
+          _startDate!.isAfter(_endDate!)) {
         String text = Localization().getStringEx(
             'panel.settings.meal_plan.transactions.message.start_end_validation.text',
-            'Start date must be before end date');
+            'Start date must be before end date')!;
         return Semantics(
           label: text, hint: Localization().getStringEx(
             'panel.settings.meal_plan.transactions.message.start_end_validation.hint',
             ''), excludeSemantics: true, child: Center(child: Padding(
           padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
           child: Text(text,
-            style: TextStyle(color: Styles().colors.fillColorPrimary,
+            style: TextStyle(color: Styles().colors!.fillColorPrimary,
                 fontSize: 16,
-                fontFamily: Styles().fontFamilies.bold),),),),);
+                fontFamily: Styles().fontFamilies!.bold),),),),);
       }
       if (transactionList == null || transactionList.isEmpty) {
         String text = Localization().getStringEx(
             'panel.settings.meal_plan.transactions.message.no_transactions.text',
-            'There is no transactions for the selected period');
+            'There is no transactions for the selected period')!;
         return Semantics(label: text, hint: Localization().getStringEx(
             'panel.settings.meal_plan.transactions.message.no_transactions.hint',
             ''), excludeSemantics: true, child: Center(child: Padding(
           padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
           child: Text(text,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Styles().colors.fillColorPrimary,
+            style: TextStyle(color: Styles().colors!.fillColorPrimary,
                 fontSize: 16,
-                fontFamily: Styles().fontFamilies.bold),),),),);
+                fontFamily: Styles().fontFamilies!.bold),),),),);
       }
       String dateHeader = Localization().getStringEx(
-          'panel.settings.meal_plan.label.date', 'Date');
+          'panel.settings.meal_plan.label.date', 'Date')!;
       String locationHeader = Localization().getStringEx(
-          'panel.settings.meal_plan.label.location', 'Location');
+          'panel.settings.meal_plan.label.location', 'Location')!;
       String descriptionHeader = Localization().getStringEx(
-          'panel.settings.meal_plan.label.description', 'Description');
+          'panel.settings.meal_plan.label.description', 'Description')!;
       String amountHeader = Localization().getStringEx(
-          'panel.settings.meal_plan.label.amount', 'Amount');
+          'panel.settings.meal_plan.label.amount', 'Amount')!;
       List<Widget> dateWidgets =  [];
       List<Widget> locationWidgets =  [];
       List<Widget> descriptionWidgets =  [];
@@ -398,21 +397,21 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       int locationLenght = locationHeader.length;
       int descriptionLenght = descriptionHeader.length;
       int amountLenght = amountHeader.length;
-      transactionList.forEach((BaseTransaction balance) {
+      transactionList.forEach((BaseTransaction? balance) {
         //date
-        String date = balance.dateString;
+        String date = balance!.dateString!;
         dateLenght = dateLenght < date.length ? date.length : dateLenght;
         //location
-        String location = balance.location;
+        String location = balance.location!;
         locationLenght =
         locationLenght < location.length ? location.length : locationLenght;
         //description
-        String description = balance.description;
+        String description = balance.description!;
         descriptionLenght = descriptionLenght < description.length
             ? description.length
             : descriptionLenght;
         //balance
-        String amount = balance.amount;
+        String amount = balance.amount!;
         amountLenght =
         amountLenght < amount.length ? amount.length : amountLenght;
 
@@ -467,29 +466,29 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   Widget _buildBalanceTableHeaderItem(String text){
-    return _buildBalanceTableItem(text: text, backColor: Styles().colors.fillColorPrimaryVariant,
+    return _buildBalanceTableItem(text: text, backColor: Styles().colors!.fillColorPrimaryVariant,
         showBorder: false,
         textStyle: TextStyle(
-            fontFamily: Styles().fontFamilies.regular,
-            color: Styles().colors.white,
+            fontFamily: Styles().fontFamilies!.regular,
+            color: Styles().colors!.white,
             fontWeight: FontWeight.bold,
             fontSize: 14));
   }
 
-  Widget _buildBalanceTableItem({String text, bool showBorder = true, Color backColor, TextStyle textStyle, TextAlign textAlign = TextAlign.left}) {
+  Widget _buildBalanceTableItem({required String text, bool showBorder = true, Color? backColor, TextStyle? textStyle, TextAlign textAlign = TextAlign.left}) {
     return
       Container(
           width: double.infinity,
           height: 40,
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
-              color: backColor ?? Styles().colors.background,
+              color: backColor ?? Styles().colors!.background,
               border: showBorder?
               Border.all(
-                  color: Styles().colors.surfaceAccent,
+                  color: Styles().colors!.surfaceAccent!,
                   width: 1,
                   style: BorderStyle.solid) :
-              Border.all(color: backColor ?? Styles().colors.background, width: 0)
+              Border.all(color: backColor ?? Styles().colors!.background!, width: 0)
           ),
           child: Padding(
             padding: EdgeInsets.all(8),
@@ -502,8 +501,8 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
                     textAlign: textAlign,
                     style: textStyle!=null? textStyle:
                     TextStyle(
-                        fontFamily: Styles().fontFamilies.regular,
-                        color: Styles().colors.textBackground,
+                        fontFamily: Styles().fontFamilies!.regular,
+                        color: Styles().colors!.textBackground,
                         fontSize: 14),),
                 ),
               ],
@@ -514,57 +513,15 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   Widget _buildAmountView(String balance){
-    return _buildBalanceTableItem(text: balance, backColor: Styles().colors.white,
+    return _buildBalanceTableItem(text: balance, backColor: Styles().colors!.white,
         textAlign: TextAlign.right,
         textStyle: TextStyle(
-            fontFamily: Styles().fontFamilies.bold,
-            color: Styles().colors.textBackground,
+            fontFamily: Styles().fontFamilies!.bold,
+            color: Styles().colors!.textBackground,
             fontSize: 14));
   }
 
-  Widget _buildDialogWidget(BuildContext context) {
-    String text = Localization().getStringEx(
-        'panel.settings.meal_plan.login.label.login_failed',
-        'Unable to login. Please try again later');
-    return Dialog(
-      child: Padding(
-        padding: EdgeInsets.all(18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              Localization().getStringEx('app.title', 'Illinois'),
-              style: TextStyle(fontSize: 24, color: Colors.black),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 26),
-              child: Text(
-                text,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies.medium,
-                    fontSize: 16,
-                    color: Colors.black),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                TextButton(
-                    onPressed: () {
-                      Analytics.instance.logAlert(text:text, selection: "Ok");
-                      Navigator.pop(context);
-                    },
-                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')))
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _onMealPlanTransactionsLoaded(List<MealPlanTransaction> transactions) {
+  void _onMealPlanTransactionsLoaded(List<MealPlanTransaction>? transactions) {
     _showMealPlanTransactionsProgress(false, changeState: false);
     if (mounted) {
       setState(() {
@@ -573,7 +530,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     }
   }
 
-  void _onCafeCreditTransactionsLoaded(List<CafeCreditTransaction> transactions) {
+  void _onCafeCreditTransactionsLoaded(List<CafeCreditTransaction>? transactions) {
     _showCafeCreditTransactionsProgress(false, changeState: false);
     if (mounted) {
       setState(() {
@@ -602,10 +559,10 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       firstDate: firstDate,
       lastDate: lastDate,
       initialDate: initialDate,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light(),
-          child: child,
+          child: child!,
         );
       },
     ).then((selectedDateTime) => _onStartDateChanged(selectedDateTime));
@@ -625,10 +582,10 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       firstDate: firstDate,
       lastDate: lastDate,
       initialDate: initialDate,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light(),
-          child: child,
+          child: child!,
         );
       },
     ).then((selectedDateTime) => _onEndDateChanged(selectedDateTime));
@@ -636,24 +593,24 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
 
   void _onTapLogIn() {
     Analytics.instance.logSelect(target: "Log in");
-    setState(() { _authLoading = true; });
-    Auth2().authenticateWithOidc().then((bool result) {
-      if (mounted) {
-        setState(() { _authLoading = false; });
-        if (result == true) {
-          _loadCafeCreditTransactions();
-          _loadMealPlanTransactions();
+    if (_authLoading != true) {
+      setState(() { _authLoading = true; });
+      Auth2().authenticateWithOidc().then((bool? result) {
+        if (mounted) {
+          setState(() { _authLoading = false; });
+          if (result == true) {
+            _loadCafeCreditTransactions();
+            _loadMealPlanTransactions();
+          }
+          else if (result == false) {
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          }
         }
-        else if (result == false) {
-          showDialog(context: context, builder: (context) => _buildDialogWidget(context));
-        }
-      }
-    });
-
-
+      });
+    }
   }
 
-  void _onStartDateChanged(DateTime startDate) {
+  void _onStartDateChanged(DateTime? startDate) {
     if(mounted) {
       setState(() {
         _startDate = startDate;
@@ -661,7 +618,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     }
   }
 
-  void _onEndDateChanged(DateTime endDate) {
+  void _onEndDateChanged(DateTime? endDate) {
     if(mounted) {
       setState(() {
         _endDate = endDate;
@@ -689,7 +646,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     }
   }
 
-  String _getFormattedDate(DateTime date) {
+  String? _getFormattedDate(DateTime? date) {
     return AppDateTime().formatDateTime(
         date, format: AppDateTime.scheduleServerQueryDateTimeFormat);
   }
@@ -711,7 +668,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
 }
 
 class _DateLabel extends StatelessWidget {
-  final String label;
+  final String? label;
 
   _DateLabel({this.label});
 
@@ -720,38 +677,38 @@ class _DateLabel extends StatelessWidget {
     return Container(width: 70,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(label, style: TextStyle(color: Styles().colors.textBackground,
+        Text(label!, style: TextStyle(color: Styles().colors!.textBackground,
             fontSize: 16,
-            fontFamily: Styles().fontFamilies.regular),),
-        Container(height: 2, color: Styles().colors.surfaceAccent,)
+            fontFamily: Styles().fontFamilies!.regular),),
+        Container(height: 2, color: Styles().colors!.surfaceAccent,)
       ],),);
   }
 }
 
 class _DateValue extends StatelessWidget {
-  final String title;
-  final String label;
-  final String hint;
-  final GestureTapCallback onTap;
+  final String? title;
+  final String? label;
+  final String? hint;
+  final GestureTapCallback? onTap;
 
   _DateValue({this.title, this.label, this.hint, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(label: (0 < title.length) ? title : label, hint: hint, button: true, excludeSemantics: true, child:InkWell(onTap: onTap, child: Column(children: <Widget>[
+    return Semantics(label: (0 < title!.length) ? title : label, hint: hint, button: true, excludeSemantics: true, child:InkWell(onTap: onTap, child: Column(children: <Widget>[
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Expanded(child:
-            Text(title,
+            Text(title!,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: Styles().colors.fillColorPrimary,
+                color: Styles().colors!.fillColorPrimary,
                 fontSize: 16,
-                fontFamily: Styles().fontFamilies.bold),),
+                fontFamily: Styles().fontFamilies!.bold),),
           ),
           Image.asset('images/icon-down.png')
-        ],), Container(height: 2, color: Styles().colors.fillColorSecondary,)
+        ],), Container(height: 2, color: Styles().colors!.fillColorSecondary,)
     ],),),);
   }
 }

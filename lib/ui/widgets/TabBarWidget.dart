@@ -15,9 +15,7 @@
  */
 
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -33,7 +31,7 @@ class TabBarWidget extends StatefulWidget {
   static double tabBarHeight = 60;
   static double tabTextSize = 12;
 
-  final TabController tabController;
+  final TabController? tabController;
 
   TabBarWidget({this.tabController});
 
@@ -42,7 +40,7 @@ class TabBarWidget extends StatefulWidget {
 
 class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsListener {
 
-  List<dynamic> _contentListCodes;
+  List<dynamic>? _contentListCodes;
 
   @override
   void initState() {
@@ -50,8 +48,8 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
 
     NotificationService().subscribe(this, FlexUI.notifyChanged);
 
-    if(widget?.tabController != null) {
-      widget.tabController.addListener(_onTabControllerChanged);
+    if(widget.tabController != null) {
+      widget.tabController!.addListener(_onTabControllerChanged);
     }
 
     _contentListCodes = _getContentListCodes();
@@ -63,8 +61,8 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
 
     NotificationService().unsubscribe(this);
 
-    if(widget?.tabController != null) {
-      widget.tabController.removeListener(_onTabControllerChanged);
+    if(widget.tabController != null) {
+      widget.tabController!.removeListener(_onTabControllerChanged);
     }
   }
 
@@ -79,22 +77,23 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
 
   @override
   Widget build(BuildContext context) {
-    double height = 35 + (TabBarWidget.tabTextSize * (MediaQuery.of(context).textScaleFactor?? 60)); // 35 is icon height + paddings
+    double height = 35 + (TabBarWidget.tabTextSize * MediaQuery.of(context).textScaleFactor); // 35 is icon height + paddings
     if(TabBarWidget.tabBarHeight < height){
       TabBarWidget.tabBarHeight = height;
     }
 
 
-    Color backgroundColor;
+    Color? backgroundColor;
     switch(Config().configEnvironment) {
       case ConfigEnvironment.dev:        backgroundColor = Colors.yellowAccent; break;
       case ConfigEnvironment.test:       backgroundColor = Colors.lightGreenAccent; break;
       case ConfigEnvironment.production: backgroundColor = Colors.white; break;
+      default: break;
     }
     return Container(
       decoration: BoxDecoration(
           color: backgroundColor,
-          border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid))),
+          border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid))),
       child: SafeArea(
         child: Container(
           height: TabBarWidget.tabBarHeight,
@@ -108,9 +107,9 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
 
   List<Widget> _buildTabs() {
     List<Widget> tabs = [];
-    int tabsCount = (_contentListCodes != null) ? _contentListCodes.length : 0;
+    int tabsCount = (_contentListCodes != null) ? _contentListCodes!.length : 0;
     for (int tabIndex = 0; tabIndex < tabsCount; tabIndex++) {
-      String code = _contentListCodes[tabIndex];
+      String code = _contentListCodes![tabIndex];
       if ((code == 'home') || (code == 'athletics')) {
         tabs.add(Expanded(
           child: TabWidget(
@@ -118,7 +117,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
             hint: Localization().getStringEx('tabbar.home.hint', ''),
             iconResource: 'images/tab-home.png',
             iconResourceSelected: 'images/tab-home-selected.png',
-            selected: (widget?.tabController != null) && (widget.tabController.index == tabIndex),
+            selected: (widget.tabController != null) && (widget.tabController!.index == tabIndex),
             onTap: ()=>_onSwitchTab(tabIndex, 'Home'),
           ),
         ));
@@ -130,7 +129,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
             hint: Localization().getStringEx('tabbar.explore.hint', ''),
             iconResource: 'images/tab-explore.png',
             iconResourceSelected: 'images/tab-explore-selected.png',
-            selected: (widget?.tabController != null) && (widget.tabController.index == tabIndex),
+            selected: (widget.tabController != null) && (widget.tabController!.index == tabIndex),
             onTap: ()=>_onSwitchTab(tabIndex, 'Explore'),
           )
         ));
@@ -153,7 +152,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
             hint: Localization().getStringEx('tabbar.browse.hint', ''),
             iconResource: 'images/tab-browse.png',
             iconResourceSelected: 'images/tab-browse-selected.png',
-            selected: (widget?.tabController != null) && (widget.tabController.index == tabIndex),
+            selected: (widget.tabController != null) && (widget.tabController!.index == tabIndex),
             onTap: ()=>_onSwitchTab(tabIndex, 'Browse'),
           ),
         ));
@@ -170,8 +169,8 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
     Analytics().logSelect(target: tabName);
 
     Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-    RootPanel rootPanel = App.instance?.panelState?.rootPanel;
-    RootTab tab = rootPanel?.panelState?.getRootTabByIndex(tabIndex);
+    RootPanel? rootPanel = App.instance?.panelState?.rootPanel;
+    RootTab? tab = rootPanel?.panelState?.getRootTabByIndex(tabIndex);
     rootPanel?.selectTab(rootTab: tab);
   }
 
@@ -189,7 +188,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
     );
   }
 
-  List<String> _getContentListCodes() {
+  List<String>? _getContentListCodes() {
     try {
       dynamic tabsList = FlexUI()['tabbar'];
       return (tabsList is List) ? tabsList.cast<String>() : null;
@@ -201,7 +200,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
   }
 
   void _updateContentListCodes() {
-    List<String> contentListCodes = _getContentListCodes();
+    List<String>? contentListCodes = _getContentListCodes();
     if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       if (mounted) {
         setState(() {
@@ -213,10 +212,10 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
 }
 
 class TabWidget extends StatelessWidget {
-  final String label;
-  final String hint;
-  final String iconResource;
-  final String iconResourceSelected;
+  final String? label;
+  final String? hint;
+  final String? iconResource;
+  final String? iconResourceSelected;
   final bool selected;
   final GestureTapCallback onTap;
 
@@ -226,7 +225,7 @@ class TabWidget extends StatelessWidget {
       this.iconResourceSelected,
       this.hint = '',
       this.selected = false,
-      @required this.onTap});
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -253,17 +252,17 @@ class TabWidget extends StatelessWidget {
                           padding: EdgeInsets.only(bottom: 5),
                           child: Image(
                               image: (selected
-                                  ? AssetImage(iconResourceSelected)
-                                  : AssetImage(iconResource)),
+                                  ? AssetImage(iconResourceSelected!)
+                                  : AssetImage(iconResource!)),
                               width: 20.0,
                               height: 20.0)),
                       Expanded(child:
                       Text(
-                        label,
+                        label!,
                         textScaleFactor: scaleFactor,
                         style: TextStyle(
-                            fontFamily: Styles().fontFamilies.bold,
-                            color: selected ? Styles().colors.fillColorSecondary : Styles().colors.mediumGray,
+                            fontFamily: Styles().fontFamilies!.bold,
+                            color: selected ? Styles().colors!.fillColorSecondary : Styles().colors!.mediumGray,
                             fontSize: TabBarWidget.tabTextSize),
                       )
                       )
@@ -275,7 +274,7 @@ class TabWidget extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Container(height: 4, color: Styles().colors.fillColorSecondary,)
+                Container(height: 4, color: Styles().colors!.fillColorSecondary,)
               ],
             ),
           ) : Container(),

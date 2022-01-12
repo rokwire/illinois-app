@@ -34,7 +34,7 @@ class ImageUtils {
   ///
   /// returns true if save operation succeed and false otherwise
   ///
-  static Future<bool> saveToFs(Uint8List imageBytes, String fileName) async {
+  static Future<bool?> saveToFs(Uint8List? imageBytes, String fileName) async {
     if ((imageBytes == null) || AppString.isStringEmpty(fileName)) {
       return false;
     }
@@ -42,11 +42,11 @@ class ImageUtils {
     final String fullPath = '$dir/$fileName.png';
     File capturedFile = File(fullPath);
     await capturedFile.writeAsBytes(imageBytes);
-    bool saveResult = false;
+    bool? saveResult = false;
     try {
       saveResult = await GallerySaver.saveImage(capturedFile.path);
     } catch (e) {
-      Log.e('Failed to save image to fs. \nException: ${e?.toString()}');
+      Log.e('Failed to save image to fs. \nException: ${e.toString()}');
     }
     return saveResult;
   }
@@ -62,7 +62,7 @@ class ImageUtils {
   ///
   /// returns the bytes of the updated image
   ///
-  static Future<Uint8List> applyLabelOverImage(Uint8List imageBytes, String label, {double width = 1024, double height = 1024}) async {
+  static Future<Uint8List?> applyLabelOverImage(Uint8List? imageBytes, String? label, {double width = 1024, double height = 1024}) async {
     if (imageBytes != null) {
       final double labelHeight = 156;
       double newHeight = (height + labelHeight);
@@ -80,16 +80,16 @@ class ImageUtils {
         canvas.drawImage(frameInfo.image, Offset(0.0, labelHeight), fillPaint);
 
         final ui.ParagraphBuilder paragraphBuilder = ui.ParagraphBuilder(
-            ui.ParagraphStyle(textDirection: ui.TextDirection.ltr, textAlign: TextAlign.center, fontSize: 54, fontFamily: Styles().fontFamilies.bold))
-          ..pushStyle(new ui.TextStyle(color: Styles().colors.textSurface))
-          ..addText(label);
+            ui.ParagraphStyle(textDirection: ui.TextDirection.ltr, textAlign: TextAlign.center, fontSize: 54, fontFamily: Styles().fontFamilies!.bold))
+          ..pushStyle(new ui.TextStyle(color: Styles().colors!.textSurface))
+          ..addText(label!);
         final ui.Paragraph paragraph = paragraphBuilder.build()..layout(ui.ParagraphConstraints(width: width));
         double textY = ((newHeight - height) - paragraph.height) / 2.0;
         canvas.drawParagraph(paragraph, Offset(0.0, textY));
 
         final picture = recorder.endRecording();
         final img = await picture.toImage(width.toInt(), newHeight.toInt());
-        ByteData pngBytes = await img.toByteData(format: ui.ImageByteFormat.png);
+        ByteData pngBytes = await img.toByteData(format: ui.ImageByteFormat.png) ?? ByteData(0);
         Uint8List newQrBytes = Uint8List(pngBytes.lengthInBytes);
         for (int i = 0; i < pngBytes.lengthInBytes; i++) {
           newQrBytes[i] = pngBytes.getUint8(i);

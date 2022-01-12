@@ -24,6 +24,7 @@ import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class SettingsVerifyIdentityPanel extends StatefulWidget{
   @override
@@ -33,7 +34,7 @@ class SettingsVerifyIdentityPanel extends StatefulWidget{
 
 class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPanel> {
 
-  bool _loading;
+  bool? _loading;
 
   @override
   void initState() {
@@ -46,12 +47,12 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx("panel.settings.verify_identity.label.title", "Verify your Identity"),
-          style: TextStyle(color: Styles().colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold, letterSpacing: 1.0),
+          Localization().getStringEx("panel.settings.verify_identity.label.title", "Verify your Identity")!,
+          style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
         ),
       ),
       body: SingleChildScrollView(child: _buildContent()),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -65,22 +66,22 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           Container(height: 41),
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
             child: Text(
-              Localization().getStringEx("panel.settings.verify_identity.label.description", "Connect to Illinois"),
-              style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 24, fontFamily: Styles().fontFamilies.extraBold),
+              Localization().getStringEx("panel.settings.verify_identity.label.description", "Connect to Illinois")!,
+              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 24, fontFamily: Styles().fontFamilies!.extraBold),
             ),
           ),
           Container(height: 8,),
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
               child:RichText(
                 text: TextSpan(
-                  style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.regular, fontSize: 16),
+                  style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
                   children: <TextSpan>[
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription1", "Are you a ")),
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription2", "university student"),
-                        style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.bold, fontSize: 16)),
+                        style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription3", " or ")),
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription4", "employee"),
-                        style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.bold, fontSize: 16)),
+                        style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription5", "? Log in with your NetID to see Illinois information specific to you, like your Illini Cash and meal plan.")),
                   ],
                 ),
@@ -97,10 +98,10 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
               child:RichText(
                 text: TextSpan(
-                  style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.regular, fontSize: 16),
+                  style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
                   children: <TextSpan>[
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.phone_or_email.desription1", "Don’t have a NetID"),
-                        style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.bold, fontSize: 16)),
+                        style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.phone_or_email.desription2", "? Verify your phone number or sign in by email to save your preferences and have the same experience on more than one device.")),
                   ],
                 ),
@@ -120,13 +121,20 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
   }
 
   void _onTapConnectNetId() {
-    _setLoading(true);
-    Auth2().authenticateWithOidc().then((success) {
-      _setLoading(false);
-      if (success) {
-        _didLogin(context);
-      }
-    });
+    if (_loading != true) {
+      _setLoading(true);
+      Auth2().authenticateWithOidc().then((bool? success) {
+        if (mounted) {
+          _setLoading(false);
+          if (success == true) {
+            _didLogin(context);
+          }
+          else if (success == false) {
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          }
+        }
+      });
+    }
   }
 
   void _onTapProceed() {
@@ -143,7 +151,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
   }
 
   void _didLogin(_) {
-    Navigator.of(context)?.popUntil((Route route) {
+    Navigator.of(context).popUntil((Route route) {
       bool isCurrent = (AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType);
       if (isCurrent) {
         Navigator.of(context).pop();

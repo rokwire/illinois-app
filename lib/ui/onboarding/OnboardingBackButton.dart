@@ -18,8 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Localization.dart';
 
 class OnboardingBackButton extends StatelessWidget {
-  final EdgeInsetsGeometry padding;
-  final GestureTapCallback onTap;
+  final EdgeInsetsGeometry? padding;
+  final GestureTapCallback? onTap;
   final String image;
 
   OnboardingBackButton({this.padding, this.onTap, this.image = 'images/chevron-left-gray.png'});
@@ -34,7 +34,7 @@ class OnboardingBackButton extends StatelessWidget {
         onTap: onTap,
         behavior: HitTestBehavior.translucent,
         child: Padding(
-          padding: padding,
+          padding: padding!,
           child: Container(
               height: 32,
               width: 32,

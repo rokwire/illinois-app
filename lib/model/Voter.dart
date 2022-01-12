@@ -15,32 +15,33 @@
  */
 
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class VoterRule {
-  DateTime startDate;
-  DateTime endDate;
+  DateTime? startDate;
+  DateTime? endDate;
 
-  String nrvTitle;
-  String nrvText;
-  List<RuleOption> nrvOptions;
-  String nrvPlaceTitle;
-  List<RuleOption> nrvPlaceOptions;
-  String nrvAlert;
+  String? nrvTitle;
+  String? nrvText;
+  List<RuleOption>? nrvOptions;
+  String? nrvPlaceTitle;
+  List<RuleOption>? nrvPlaceOptions;
+  String? nrvAlert;
 
-  String rvPlaceTitle;
-  List<RuleOption> rvPlaceOptions;
-  String rvTitle;
-  String rvText;
-  List<RuleOption> rvOptions;
-  String rvUrl;
-  String rvAlert;
+  String? rvPlaceTitle;
+  List<RuleOption>? rvPlaceOptions;
+  String? rvTitle;
+  String? rvText;
+  List<RuleOption>? rvOptions;
+  String? rvUrl;
+  String? rvAlert;
 
-  String vbmText;
-  String vbmButtonTitle;
-  String vbmUrl;
+  String? vbmText;
+  String? vbmButtonTitle;
+  String? vbmUrl;
 
-  bool hideForPeriod;
-  bool electionPeriod;
+  bool? hideForPeriod;
+  bool? electionPeriod;
 
   VoterRule({this.startDate, this.endDate,
     this.nrvTitle, this.nrvText, this.nrvOptions, this.nrvPlaceTitle, this.nrvPlaceOptions, this.nrvAlert,
@@ -48,37 +49,21 @@ class VoterRule {
     this.vbmText, this.vbmButtonTitle, this.vbmUrl,
     this.hideForPeriod, this.electionPeriod});
 
-  factory VoterRule.fromJson(Map<String, dynamic> json) {
-    if (json == null) {
-      return null;
-    }
-
-    List<dynamic> nrvOptionsJson = json['NRV_options'];
-    List<RuleOption> nrvOptions = nrvOptionsJson != null ? nrvOptionsJson.map((value) => RuleOption.fromJson(value)).toList() : null;
-
-    List<dynamic> nrvPlaceOptionsJson = json['NRV_place_options'];
-    List<RuleOption> nrvPlaceOptions = nrvPlaceOptionsJson != null ? nrvPlaceOptionsJson.map((value) => RuleOption.fromJson(value)).toList() : null;
-
-    List<dynamic> rvPlaceOptionsJson = json['RV_place_options'];
-    List<RuleOption> rvPlaceOptions = rvPlaceOptionsJson != null ? rvPlaceOptionsJson.map((value) => RuleOption.fromJson(value)).toList() : null;
-
-    List<dynamic> rvOptionsJson = json['RV_options'];
-    List<RuleOption> rvOptions = rvOptionsJson != null ? rvOptionsJson.map((value) => RuleOption.fromJson(value)).toList() : null;
-
-    return VoterRule(
+  static VoterRule? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? VoterRule(
         startDate: AppDateTime().dateTimeFromString(json['date_start'], format: AppDateTime.voterDateFormat, isUtc: false),
         endDate: AppDateTime().dateTimeFromString(json['date_end'], format: AppDateTime.voterDateFormat, isUtc: false),
         nrvTitle: json['NRV_title'],
         nrvText: json['NRV_text'],
-        nrvOptions: nrvOptions,
+        nrvOptions: RuleOption.listFromJson(AppJson.listValue(json['NRV_options'])),
         nrvPlaceTitle: json['NRV_place_title'],
-        nrvPlaceOptions: nrvPlaceOptions,
+        nrvPlaceOptions: RuleOption.listFromJson(AppJson.listValue(json['NRV_place_options'])),
         nrvAlert: json['NRV_alert'],
         rvPlaceTitle: json['RV_place_title'],
-        rvPlaceOptions: rvPlaceOptions,
+        rvPlaceOptions: RuleOption.listFromJson(AppJson.listValue(json['RV_place_options'])),
         rvTitle: json['RV_title'],
         rvText: json['RV_text'],
-        rvOptions: rvOptions,
+        rvOptions: RuleOption.listFromJson(AppJson.listValue(json['RV_options'])),
         rvUrl: json['RV_url'],
         rvAlert: json['RV_alert'],
         vbmText: json['VBM_text'],
@@ -86,17 +71,39 @@ class VoterRule {
         vbmUrl: json['VBM_url'],
         hideForPeriod: json['hide_for_period'],
         electionPeriod: json['election_period']
-    );
+    ) : null;
+  }
+
+  static List<VoterRule>? listFromJson(List<dynamic>? jsonList) {
+    List<VoterRule>? result;
+    if (jsonList != null) {
+      result = <VoterRule>[];
+      for (dynamic jsonEntry in jsonList) {
+        AppList.add(result, VoterRule.fromJson(AppJson.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<VoterRule>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
   }
 }
 
 class RuleOption {
-  String label;
-  String value;
+  String? label;
+  String? value;
 
   RuleOption({this.label, this.value});
 
-  factory RuleOption.fromJson(Map<String, dynamic> json) {
+  static RuleOption? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -105,5 +112,34 @@ class RuleOption {
         label: json['label'],
         value: json['value']
     );
+  }
+
+  toJson() {
+    return {
+      'label' : label,
+      'value' : value,
+    };
+  }
+
+  static List<RuleOption>? listFromJson(List<dynamic>? json) {
+    List<RuleOption>? values;
+    if (json != null) {
+      values = <RuleOption>[];
+      for (dynamic entry in json) {
+        AppList.add(values, RuleOption.fromJson(AppJson.mapValue(entry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<RuleOption>? values) {
+    List<dynamic>? json;
+    if (values != null) {
+      json = <dynamic>[];
+      for (RuleOption value in values) {
+        json.add(value.toJson());
+      }
+    }
+    return json;
   }
 }

@@ -135,13 +135,13 @@ class FirebaseMessaging with Service implements NotificationsListener {
   final AndroidNotificationChannel _channel = AndroidNotificationChannel(
     _channelId, // id
     "Illinois",
-    "Receive notifications",
+    description: "Receive notifications",
     importance: Importance.high,
   );
 
-  String   _token;
-  String   _projectID;
-  DateTime _pausedDateTime;
+  String?   _token;
+  String?   _projectID;
+  DateTime? _pausedDateTime;
   
   // Singletone instance
 
@@ -159,8 +159,8 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   // Public getters
 
-  String get token => _token;
-  String get projectID => _projectID;
+  String? get token => _token;
+  String? get projectID => _projectID;
   bool get hasToken => AppString.isStringNotEmpty(_token);
 
   // Service
@@ -204,7 +204,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
       _onFirebaseMessage(message);
     });
 
-    firebase_messaging.FirebaseMessaging.instance.getToken().then((String token) {
+    firebase_messaging.FirebaseMessaging.instance.getToken().then((String? token) {
       _token = token;
       Log.d('FCM: token: $token');
       NotificationService().notify(notifyToken, null);
@@ -212,7 +212,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     });
     
     //The project id is not given via the lib so we need to get it via NativeCommunicator
-    NativeCommunicator().queryFirebaseInfo().then((String info) {
+    NativeCommunicator().queryFirebaseInfo().then((String? info) {
       _projectID = info;
     });
 
@@ -260,13 +260,13 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
     else if (state == AppLifecycleState.resumed) {
       if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _updateSubscriptions();
         }
@@ -276,11 +276,11 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   // Subscription APIs
 
-  Future<bool> subscribeToTopic(String topic) async {
+  Future<bool> subscribeToTopic(String? topic) async {
     return await Inbox().subscribeToTopic(topic: topic, token: _token);
   }
 
-  Future<bool> unsubscribeFromTopic(String topic) async {
+  Future<bool> unsubscribeFromTopic(String? topic) async {
     return await Inbox().unsubscribeFromTopic(topic: topic, token: _token);
   }
 
@@ -291,21 +291,21 @@ class FirebaseMessaging with Service implements NotificationsListener {
     _processMessage(message);
   }
 
-  void _processMessage(firebase_messaging.RemoteMessage message) {
+  void _processMessage(firebase_messaging.RemoteMessage? message) {
     Log.d("FCM: onMessageProcess: $message");
     if (message?.data != null) {
       try {
         if(AppLivecycle.instance.state == AppLifecycleState.resumed &&
-          AppString.isStringNotEmpty(message.notification?.body)
+          AppString.isStringNotEmpty(message?.notification?.body)
         ){
           NotificationService().notify(notifyForegroundMessage, {
-            "body": message.notification.body,
+            "body": message?.notification?.body,
             "onComplete": (){
-              processDataMessage(message.data);
+              processDataMessage(message!.data);
             }
           });
         } else {
-          processDataMessage(message.data);
+          processDataMessage(message!.data);
         }
       }
       catch(e) {
@@ -314,8 +314,8 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void processDataMessage(Map<String, dynamic> data, {Set<String> allowedTypes}) {
-    String type = _getMessageType(data);
+  void processDataMessage(Map<String, dynamic>? data, {Set<String>? allowedTypes}) {
+    String? type = _getMessageType(data);
     if ((type != null) && (allowedTypes?.contains(type) ?? true)) {
       if (type == payloadTypeConfigUpdate) {
         _onConfigUpdate(data);
@@ -359,24 +359,24 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  String _getMessageType(Map<String, dynamic> data) {
+  String? _getMessageType(Map<String, dynamic>? data) {
     if (data == null)
       return null;
 
     //1. check type
-    String type = data["type"];
+    String? type = data["type"];
     if (type != null)
       return type;
 
     //2. check Type - deprecated!
-    String type2 = data["Type"];
+    String? type2 = data["Type"];
     if (type2 != null)
       return type2;
 
     //3. check Path - deprecated!
-    String path = data["Path"];
+    String? path = data["Path"];
     if (path != null) {
-      String gameId = data['GameId'];
+      String? gameId = data['GameId'];
       dynamic hasStarted = data['HasStarted'];
       // Handle 'Game Started / Ended' notification which does not contain key 'HasStarted'
       if (AppString.isStringNotEmpty(gameId) && (hasStarted == null)) {
@@ -390,7 +390,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     return "config_update";
   }
 
-  bool _isScoreTypeMessage(String type) {
+  bool _isScoreTypeMessage(String? type) {
     return type == "football" ||
         type == "mbball" ||
         type == "wbball" ||
@@ -403,7 +403,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
         type == "wsoc";
   }
 
-  void _onConfigUpdate(Map<String, dynamic> data) {
+  void _onConfigUpdate(Map<String, dynamic>? data) {
     int interval = 5 * 60; // 5 minutes
     var rng = new Random();
     int delay = rng.nextInt(interval);
@@ -416,45 +416,45 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   // Settings topics
 
-  bool get notifyEventReminders               { return _getNotifySetting('event_reminders'); } 
-       set notifyEventReminders(bool value)   { _setNotifySetting('event_reminders', value); }
+  bool? get notifyEventReminders               { return _getNotifySetting('event_reminders'); } 
+       set notifyEventReminders(bool? value)   { _setNotifySetting('event_reminders', value); }
 
-  bool get notifyAthleticsUpdates             { return _getNotifySetting(_athleticsUpdatesNotificationKey); }
-       set notifyAthleticsUpdates(bool value) { _setNotifySetting(_athleticsUpdatesNotificationKey, value); }
+  bool? get notifyAthleticsUpdates             { return _getNotifySetting(_athleticsUpdatesNotificationKey); }
+       set notifyAthleticsUpdates(bool? value) { _setNotifySetting(_athleticsUpdatesNotificationKey, value); }
 
-  bool get notifyStartAthleticsUpdates              { return _getNotifySetting(_athleticsUpdatesStartNotificationSetting); }
-       set notifyStartAthleticsUpdates(bool value)  { _setNotifySetting(_athleticsUpdatesStartNotificationSetting, value); }
+  bool? get notifyStartAthleticsUpdates              { return _getNotifySetting(_athleticsUpdatesStartNotificationSetting); }
+       set notifyStartAthleticsUpdates(bool? value)  { _setNotifySetting(_athleticsUpdatesStartNotificationSetting, value); }
 
-  bool get notifyEndAthleticsUpdates                { return _getNotifySetting(_athleticsUpdatesEndNotificationSetting); }
-       set notifyEndAthleticsUpdates(bool value)    { _setNotifySetting(_athleticsUpdatesEndNotificationSetting, value); }
+  bool? get notifyEndAthleticsUpdates                { return _getNotifySetting(_athleticsUpdatesEndNotificationSetting); }
+       set notifyEndAthleticsUpdates(bool? value)    { _setNotifySetting(_athleticsUpdatesEndNotificationSetting, value); }
 
-  bool get notifyNewsAthleticsUpdates               { return _getNotifySetting(_athleticsUpdatesNewsNotificationSetting); }
-       set notifyNewsAthleticsUpdates(bool value)   { _setNotifySetting(_athleticsUpdatesNewsNotificationSetting, value); }
+  bool? get notifyNewsAthleticsUpdates               { return _getNotifySetting(_athleticsUpdatesNewsNotificationSetting); }
+       set notifyNewsAthleticsUpdates(bool? value)   { _setNotifySetting(_athleticsUpdatesNewsNotificationSetting, value); }
 
-  bool get notifyGroupUpdates             { return _getNotifySetting(_groupUpdatesNotificationKey); }
-  set notifyGroupUpdates(bool value) { _setNotifySetting(_groupUpdatesNotificationKey, value); }
+  bool? get notifyGroupUpdates             { return _getNotifySetting(_groupUpdatesNotificationKey); }
+  set notifyGroupUpdates(bool? value) { _setNotifySetting(_groupUpdatesNotificationKey, value); }
 
-  bool get notifyGroupPostUpdates              { return _getNotifySetting(_groupUpdatesPostsNotificationSetting); }
-  set notifyGroupPostUpdates(bool value)  { _setNotifySetting(_groupUpdatesPostsNotificationSetting, value); }
+  bool? get notifyGroupPostUpdates              { return _getNotifySetting(_groupUpdatesPostsNotificationSetting); }
+  set notifyGroupPostUpdates(bool? value)  { _setNotifySetting(_groupUpdatesPostsNotificationSetting, value); }
 
-  bool get notifyGroupInvitationsUpdates                { return _getNotifySetting(_groupUpdatesInvitationsNotificationSetting); }
-  set notifyGroupInvitationsUpdates(bool value)    { _setNotifySetting(_groupUpdatesInvitationsNotificationSetting, value); }
+  bool? get notifyGroupInvitationsUpdates                { return _getNotifySetting(_groupUpdatesInvitationsNotificationSetting); }
+  set notifyGroupInvitationsUpdates(bool? value)    { _setNotifySetting(_groupUpdatesInvitationsNotificationSetting, value); }
 
-  bool get notifyGroupEventsUpdates               { return _getNotifySetting(_groupUpdatesEventsNotificationSetting); }
-  set notifyGroupEventsUpdates(bool value)   { _setNotifySetting(_groupUpdatesEventsNotificationSetting, value); }
+  bool? get notifyGroupEventsUpdates               { return _getNotifySetting(_groupUpdatesEventsNotificationSetting); }
+  set notifyGroupEventsUpdates(bool? value)   { _setNotifySetting(_groupUpdatesEventsNotificationSetting, value); }
 
-  bool get notifyDiningSpecials               { return _getNotifySetting('dining_specials'); } 
-       set notifyDiningSpecials(bool value)   { _setNotifySetting('dining_specials', value); }
+  bool? get notifyDiningSpecials               { return _getNotifySetting('dining_specials'); } 
+       set notifyDiningSpecials(bool? value)   { _setNotifySetting('dining_specials', value); }
 
-  set notificationsPaused(bool value)   {_setNotifySetting(_pauseNotificationKey, value);}
+  set notificationsPaused(bool? value)   {_setNotifySetting(_pauseNotificationKey, value);}
 
-  bool get notificationsPaused {return _getStoredSetting(_pauseNotificationKey,);}
+  bool? get notificationsPaused {return _getStoredSetting(_pauseNotificationKey,);}
 
   bool get _notifySettingsAvailable  {
     return Auth2().privacyMatch(4);
   }
 
-  bool _getNotifySetting(String name) {
+  bool? _getNotifySetting(String name) {
     if (_notifySettingsAvailable) {
       return _getStoredSetting(name);
     }
@@ -463,7 +463,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _setNotifySetting(String name, bool value) {
+  void _setNotifySetting(String name, bool? value) {
     if (_notifySettingsAvailable && (_getNotifySetting(name) != value)) {
       _storeSetting(name, value);
       NotificationService().notify(notifySettingUpdated, name);
@@ -491,7 +491,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   void _updateSubscriptions(){
     if (hasToken) {
-      Set<String> subscribedTopics = currentTopics;
+      Set<String?>? subscribedTopics = currentTopics;
       _processPermanentSubscriptions(subscribedTopics: subscribedTopics);
       _processRolesSubscriptions(subscribedTopics: subscribedTopics);
       _processNotifySettingsSubscriptions(subscribedTopics: subscribedTopics);
@@ -518,7 +518,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _processPermanentSubscriptions({Set<String> subscribedTopics}) {
+  void _processPermanentSubscriptions({Set<String?>? subscribedTopics}) {
     for (String permanentTopic in _permanentTopics) {
       if ((subscribedTopics == null) || !subscribedTopics.contains(permanentTopic)) {
         subscribeToTopic(permanentTopic);
@@ -526,8 +526,8 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _processRolesSubscriptions({Set<String> subscribedTopics}) {
-    Set<UserRole> roles = Auth2().prefs?.roles;
+  void _processRolesSubscriptions({Set<String?>? subscribedTopics}) {
+    Set<UserRole>? roles = Auth2().prefs?.roles;
     for (UserRole role in UserRole.values) {
       String roleTopic = role.toString();
       bool roleSubscribed = (subscribedTopics != null) && subscribedTopics.contains(roleTopic);
@@ -541,17 +541,17 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
   
-  void _processNotifySettingsSubscriptions({Set<String> subscribedTopics}) {
+  void _processNotifySettingsSubscriptions({Set<String?>? subscribedTopics}) {
     _notifySettingTopics.forEach((String setting, String topic) {
-      bool value = _getNotifySetting(setting);
+      bool? value = _getNotifySetting(setting);
       _processNotifySettingSubscription(topic: topic, value: value, subscribedTopics: subscribedTopics);
     });
   }
 
-  void _processNotifySettingSubscription({String topic, bool value, Set<String> subscribedTopics}) {
+  void _processNotifySettingSubscription({String? topic, bool? value, Set<String?>? subscribedTopics}) {
     if (topic != null) {
       bool itemSubscribed = (subscribedTopics != null) && subscribedTopics.contains(topic);
-      if (value && !itemSubscribed) {
+      if (value! && !itemSubscribed) {
         subscribeToTopic(topic);
       }
       else if (!value && itemSubscribed) {
@@ -560,12 +560,12 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _processAthleticsSubscriptions({Set<String> subscribedTopics}) {
-    bool notifyAthletics = notifyAthleticsUpdates;
-    List<SportDefinition> sportDefs = Sports().sports;
+  void _processAthleticsSubscriptions({Set<String?>? subscribedTopics}) {
+    bool? notifyAthletics = notifyAthleticsUpdates;
+    List<SportDefinition>? sportDefs = Sports().sports;
     if (sportDefs != null) {
       for (SportDefinition sportDef in sportDefs) {
-        String sport = sportDef.shortName;
+        String? sport = sportDef.shortName;
         for (String key in _athleticsNotificationsKeyList) {
           _processAthleticsSubscriptionForSport(notifyAllowed: notifyAthletics, athleticsKey: key, sport: sport, subscribedTopics: subscribedTopics);
         }
@@ -574,18 +574,18 @@ class FirebaseMessaging with Service implements NotificationsListener {
   }
 
   void _processAthleticsSingleSubscription(String athleticsKey) {
-    List<SportDefinition> sports = Sports().sports;
+    List<SportDefinition>? sports = Sports().sports;
     if (AppCollection.isCollectionNotEmpty(sports)) {
-      Set<String> subscribedTopics = currentTopics;
-      for (SportDefinition sport in sports) {
+      Set<String?>? subscribedTopics = currentTopics;
+      for (SportDefinition sport in sports!) {
         _processAthleticsSubscriptionForSport(notifyAllowed: true, athleticsKey: athleticsKey, sport: sport.shortName, subscribedTopics: subscribedTopics);
       }
     }
   }
 
-  void _processAthleticsSubscriptionForSport({bool notifyAllowed, String athleticsKey, String sport, Set<String> subscribedTopics}) {
+  void _processAthleticsSubscriptionForSport({bool? notifyAllowed, String? athleticsKey, String? sport, Set<String?>? subscribedTopics}) {
     if (AppString.isStringNotEmpty(sport)) {
-      bool notify = notifyAllowed && _getNotifySetting('$_athleticsUpdatesNotificationKey.$athleticsKey');
+      bool notify = notifyAllowed! && _getNotifySetting('$_athleticsUpdatesNotificationKey.$athleticsKey')!;
       bool sportSelected = Auth2().prefs?.sportsInterests?.contains(sport) ?? false;
       bool subscriptionValue = notify && sportSelected;
       String topic = 'athletics.$sport.notification.$athleticsKey';
@@ -598,8 +598,8 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _processGroupsSubscriptions({Set<String> subscribedTopics}) {
-    bool groupSettingsAvailable  = notifyGroupUpdates;
+  void _processGroupsSubscriptions({Set<String?>? subscribedTopics}) {
+    bool? groupSettingsAvailable  = notifyGroupUpdates;
     if (groupSettingsAvailable  != null) {
       for (String key in _groupNotificationsKeyList) {
         String topic = "$_groupUpdatesNotificationKey.$key";
@@ -616,20 +616,20 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  bool _getStoredSetting(String name){
+  bool? _getStoredSetting(String name){
     bool defaultValue = _defaultNotificationSettings[name] ?? true; //true by default
     if(name == _pauseNotificationKey){ // settings depending on userInfo
-      if(Auth2().isLoggedIn && Inbox()?.userInfo != null){
-        return Inbox()?.userInfo?.notificationsDisabled ?? false; //This is the only setting stored in the userInfo
+      if(Auth2().isLoggedIn && Inbox().userInfo != null){
+        return Inbox().userInfo?.notificationsDisabled ?? false; //This is the only setting stored in the userInfo
       }
     }
     if(Auth2().isLoggedIn){ // Logged user choice stored in the UserPrefs
-      return  Auth2()?.prefs?.getBoolSetting(settingName: _notifySettingNames [name]?? name, defaultValue: defaultValue);
+      return  Auth2().prefs?.getBoolSetting(settingName: _notifySettingNames [name]?? name, defaultValue: defaultValue);
     }
     return Storage().getNotifySetting(_notifySettingNames[name] ?? name) ?? defaultValue;
   }
 
-  void _storeSetting(String name, bool value) {
+  void _storeSetting(String name, bool? value) {
     //// Logged user choice stored in the UserPrefs
     if (Auth2().isLoggedIn) {
       Auth2().prefs?.applySetting(_notifySettingNames[name] ?? name, value);
@@ -638,13 +638,13 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  static Map<String, dynamic> get storedSettings {
-    Map<String, dynamic> result;
+  static Map<String, dynamic>? get storedSettings {
+    Map<String, dynamic>? result;
     _notifySettingNames.forEach((String storageKey, String profileKey) {
-      bool value = Storage().getNotifySetting(storageKey) ?? Storage().getNotifySetting(profileKey);
+      bool? value = Storage().getNotifySetting(storageKey) ?? Storage().getNotifySetting(profileKey);
       if (value != null) {
         if (result != null) {
-          result[profileKey] = value;
+          result![profileKey] = value;
         }
         else {
           result = { profileKey : value };
@@ -654,8 +654,8 @@ class FirebaseMessaging with Service implements NotificationsListener {
     return result;
   }
 
-  Set<String> get currentTopics{
-    Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
+  Set<String?>? get currentTopics{
+    Set<String?>? subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
     if(Auth2().isLoggedIn){
       subscribedTopics = (Inbox().userInfo)?.topics;
     }

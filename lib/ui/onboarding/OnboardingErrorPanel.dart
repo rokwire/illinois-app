@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/service/Localization.dart';
@@ -22,10 +21,10 @@ import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Styles.dart';
 
 class OnboardingErrorPanel extends StatefulWidget {
-  final ServiceError error;
-  final Future<ServiceError>Function() retryHandler;
+  final ServiceError? error;
+  final Future<ServiceError?>Function()? retryHandler;
   
-  OnboardingErrorPanel({Key key, this.error, this.retryHandler}) : super(key: key);
+  OnboardingErrorPanel({Key? key, this.error, this.retryHandler}) : super(key: key);
 
   @override
   _OnboardingErrorPanelState createState() => _OnboardingErrorPanelState();
@@ -33,8 +32,8 @@ class OnboardingErrorPanel extends StatefulWidget {
 
 class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
 
-  ServiceError _error;
-  bool _retryInProgress;
+  ServiceError? _error;
+  bool? _retryInProgress;
 
   @override
   void initState() {
@@ -48,8 +47,8 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
 
     App.instance.homeContext = context;
 
-    String buttonTitle = Localization().getStringEx('panel.onboarding.error.button.try_again.title', 'Try Again') ;
-    String buttonHint = Localization().getStringEx('panel.onboarding.error.button.try_again.hint', '');
+    String buttonTitle = Localization().getStringEx('panel.onboarding.error.button.try_again.title', 'Try Again')! ;
+    String? buttonHint = Localization().getStringEx('panel.onboarding.error.button.try_again.hint', '');
     Color buttonBackColor = Styles().colors?.fillColorSecondary ?? Color(0xFFE84A27);
 
     return Scaffold(backgroundColor: Styles().colors?.background ?? Color(0xFFF5F5F5), body:
@@ -118,7 +117,7 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
       setState(() {
         _retryInProgress = true;
       });
-      widget.retryHandler().then((ServiceError error) {
+      widget.retryHandler!().then((ServiceError? error) {
         setState(() {
           _retryInProgress = false;
           _error = error;

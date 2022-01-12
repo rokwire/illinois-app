@@ -15,6 +15,7 @@
  */
 
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as Http;
@@ -37,11 +38,11 @@ class FlexUI with Service implements NotificationsListener {
 
   static const String _flexUIName   = "flexUI.json";
 
-  Map<String, dynamic> _content;
-  Map<String, dynamic> _contentSource;
-  Set<dynamic>         _features;
-  File                 _cacheFile;
-  DateTime             _pausedDateTime;
+  Map<String, dynamic>? _content;
+  Map<String, dynamic>? _contentSource;
+  Set<dynamic>?         _features;
+  File?                 _cacheFile;
+  DateTime?             _pausedDateTime;
 
   // Singleton Factory
 
@@ -121,13 +122,13 @@ class FlexUI with Service implements NotificationsListener {
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
     else if (state == AppLifecycleState.resumed) {
       if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _updateContentSourceFromNet();
         }
@@ -137,38 +138,40 @@ class FlexUI with Service implements NotificationsListener {
 
   // Flex UI
 
-  Future<File> _getCacheFile() async {
-    Directory assetsDir = Config().assetsCacheDir;
-    if ((assetsDir != null) && !await assetsDir.exists()) {
+  Future<File?> _getCacheFile() async {
+    Directory? assetsDir = Config().assetsCacheDir!;
+    if (!await assetsDir.exists()) {
       await assetsDir.create(recursive: true);
     }
     String cacheFilePath = join(assetsDir.path, _flexUIName);
     return File(cacheFilePath);
   }
 
-  Future<String> _loadContentSourceStringFromCache() async {
-    return ((_cacheFile != null) && await _cacheFile.exists()) ? await _cacheFile.readAsString() : null;
+  Future<String?> _loadContentSourceStringFromCache() async {
+    return ((_cacheFile != null) && await _cacheFile!.exists()) ? await _cacheFile!.readAsString() : null;
   }
 
-  Future<void> _saveContentSourceStringToCache(String contentString) async {
+  Future<void> _saveContentSourceStringToCache(String? contentString) async {
     if (contentString != null) {
       await _cacheFile?.writeAsString(contentString, flush: true);
     }
-    else if ((_cacheFile != null) && (await _cacheFile.exists())) {
-      try { _cacheFile.delete(); } catch(e) { print(e?.toString()); }
+    else if ((_cacheFile != null) && (await _cacheFile!.exists())) {
+      try { _cacheFile!.delete(); } catch(e) { print(e.toString()); }
     }
   }
 
-  Future<Map<String, dynamic>> _loadContentSourceFromCache() async {
+  Future<Map<String, dynamic>?> _loadContentSourceFromCache() async {
     return AppJson.decodeMap(await _loadContentSourceStringFromCache());
   }
 
-  Future<Map<String, dynamic>> _loadContentSourceFromAssets() async {
-    return AppJson.decodeMap(await rootBundle.loadString('assets/$_flexUIName'));
+  Future<Map<String, dynamic>?> _loadContentSourceFromAssets() async {
+    try { return AppJson.decodeMap(await rootBundle.loadString('assets/$_flexUIName')); }
+    catch(e) {print(e.toString());}
+    return null;
   }
 
-  Future<Map<String, dynamic>> _loadContentSource() async {
-    Map<String, dynamic> conentSource;
+  Future<Map<String, dynamic>?> _loadContentSource() async {
+    Map<String, dynamic>? conentSource;
     if (_isValidContentSource(conentSource = await _loadContentSourceFromCache())) {
       return conentSource;
     }
@@ -180,19 +183,19 @@ class FlexUI with Service implements NotificationsListener {
     }
   }
 
-  Future<String> _loadContentSourceStringFromNet() async {
-    Http.Response response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$_flexUIName") : null;
+  Future<String?> _loadContentSourceStringFromNet() async {
+    Http.Response? response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$_flexUIName") : null;
     return ((response != null) && (response.statusCode == 200)) ? response.body : null;
   }
 
   Future<void> _updateContentSourceFromNet() async {
-    String contentSourceString = await _loadContentSourceStringFromNet();
+    String? contentSourceString = await _loadContentSourceStringFromNet();
     if (contentSourceString != null) { // request succeeded
       
-      Map<String, dynamic> contentSource = AppJson.decodeMap(contentSourceString);
-      if (!_isValidContentSource(contentSource) && (_cacheFile != null) && await _cacheFile.exists()) { // empty JSON content
-        try { _cacheFile.delete(); }                          // clear cached content source
-        catch(e) { print(e?.toString()); }
+      Map<String, dynamic>? contentSource = AppJson.decodeMap(contentSourceString);
+      if (!_isValidContentSource(contentSource) && (_cacheFile != null) && await _cacheFile!.exists()) { // empty JSON content
+        try { _cacheFile!.delete(); }                          // clear cached content source
+        catch(e) { print(e.toString()); }
         contentSource = await _loadContentSourceFromAssets(); // load content source from assets
         contentSourceString = null;                           // do not store this content source
       }
@@ -206,7 +209,7 @@ class FlexUI with Service implements NotificationsListener {
   }
 
   void _updateContent() {
-    Map<String, dynamic> content = _buildContent(_contentSource);
+    Map<String, dynamic>? content = _buildContent(_contentSource);
     if ((content != null) && ((_content == null) || !DeepCollectionEquality().equals(_content, content))) {
       _content = content;
       _features = _buildFeatures(_content);
@@ -214,31 +217,31 @@ class FlexUI with Service implements NotificationsListener {
     }
   }
 
-  static Set<dynamic> _buildFeatures(Map<String, dynamic> content) {
+  static Set<dynamic>? _buildFeatures(Map<String, dynamic>? content) {
     dynamic featuresList = (content != null) ? content['features'] : null;
     return (featuresList is Iterable) ? Set.from(featuresList) : null;
   }
 
-  static bool _isValidContentSource(Map<String, dynamic> contentSource) {
+  static bool _isValidContentSource(Map<String, dynamic>? contentSource) {
     return (contentSource != null) && (contentSource['content'] is Map) && (contentSource['rules'] is Map);
   }
 
   // Content
 
-  Map<String, dynamic> get content {
+  Map<String, dynamic>? get content {
     return _content;
   }
 
   dynamic operator [](dynamic key) {
-    return (_content != null) ? _content[key] : null;
+    return (_content != null) ? _content![key] : null;
   }
 
-  Set<dynamic> get features {
+  Set<dynamic>? get features {
     return _features;
   }
 
   bool hasFeature(String feature) {
-    return (_features == null) || _features.contains(feature);
+    return (_features == null) || _features!.contains(feature);
   }
 
   Future<void> update() async {
@@ -247,66 +250,66 @@ class FlexUI with Service implements NotificationsListener {
 
 // Local Build
 
-  static Map<String, dynamic> _buildContent(Map<String, dynamic> contentSource) {
-    Map<String, dynamic> result;
+  static Map<String, dynamic>? _buildContent(Map<String, dynamic>? contentSource) {
+    Map<String, dynamic>? result;
     if (contentSource != null) {
       Map<String, dynamic> contents = contentSource['content'];
-      Map<String, dynamic> rules = contentSource['rules'];
+      Map<String, dynamic>? rules = contentSource['rules'];
 
       result = Map();
       contents.forEach((String key, dynamic list) {
         if (list is List) {
           List<String> resultList = <String>[];
           for (String entry in list) {
-            if (_localeIsEntryAvailable(entry, group: key, rules: rules)) {
+            if (_localeIsEntryAvailable(entry, group: key, rules: rules!)) {
               resultList.add(entry);
             }
           }
-          result[key] = resultList;
+          result![key] = resultList;
         }
         else {
-          result[key] = list;
+          result![key] = list;
         }
       });
     }
     return result;
   }
 
-  static bool _localeIsEntryAvailable(String entry, { String group, Map<String, dynamic> rules }) {
+  static bool _localeIsEntryAvailable(String entry, { String? group, required Map<String, dynamic> rules }) {
 
-    String pathEntry = (group != null) ? '$group.$entry' : null;
+    String? pathEntry = (group != null) ? '$group.$entry' : null;
 
-    Map<String, dynamic> roleRules = rules['roles'];
+    Map<String, dynamic>? roleRules = rules['roles'];
     dynamic roleRule = (roleRules != null) ? (((pathEntry != null) ? roleRules[pathEntry] : null) ?? roleRules[entry]) : null;
     if ((roleRule != null) && !_localeEvalRoleRule(roleRule)) {
       return false;
     }
 
-    Map<String, dynamic> privacyRules = rules['privacy'];
+    Map<String, dynamic>? privacyRules = rules['privacy'];
     dynamic privacyRule = (privacyRules != null) ? (((pathEntry != null) ? privacyRules[pathEntry] : null) ?? privacyRules[entry]) : null;
     if ((privacyRule != null) && !_localeEvalPrivacyRule(privacyRule)) {
       return false;
     }
     
-    Map<String, dynamic> authRules = rules['auth'];
+    Map<String, dynamic>? authRules = rules['auth'];
     dynamic authRule = (authRules != null) ? (((pathEntry != null) ? authRules[pathEntry] : null) ?? authRules[entry])  : null;
     if ((authRule != null) && !_localeEvalAuthRule(authRule)) {
       return false;
     }
     
-    Map<String, dynamic> platformRules = rules['platform'];
+    Map<String, dynamic>? platformRules = rules['platform'];
     dynamic platformRule = (platformRules != null) ? (((pathEntry != null) ? platformRules[pathEntry] : null) ?? platformRules[entry])  : null;
     if ((platformRule != null) && !_localeEvalPlatformRule(platformRule)) {
       return false;
     }
 
-    Map<String, dynamic> illiniCashRules = rules['illini_cash'];
+    Map<String, dynamic>? illiniCashRules = rules['illini_cash'];
     dynamic illiniCashRule = (illiniCashRules != null) ? (((pathEntry != null) ? illiniCashRules[pathEntry] : null) ?? illiniCashRules[entry])  : null;
     if ((illiniCashRule != null) && !_localeEvalIlliniCashRule(illiniCashRule)) {
       return false;
     }
     
-    Map<String, dynamic> enableRules = rules['enable'];
+    Map<String, dynamic>? enableRules = rules['enable'];
     dynamic enableRule = (enableRules != null) ? (((pathEntry != null) ? enableRules[pathEntry] : null) ?? enableRules[entry])  : null;
     if ((enableRule != null) && !_localeEvalEnableRule(enableRule)) {
       return false;
@@ -316,9 +319,9 @@ class FlexUI with Service implements NotificationsListener {
   }
 
   static bool _localeEvalRoleRule(dynamic roleRule) {
-    return AppBoolExpr.eval(roleRule, (String argument) {
+    return AppBoolExpr.eval(roleRule, (String? argument) {
       if (argument != null) {
-        bool not, all, any;
+        bool? not, all, any;
         if (not = argument.startsWith('~')) {
           argument = argument.substring(1);
         }
@@ -329,7 +332,7 @@ class FlexUI with Service implements NotificationsListener {
           argument = argument.substring(0, argument.length - 1);
         }
         
-        Set<UserRole> userRoles = _localeEvalRoleParam(argument);
+        Set<UserRole>? userRoles = _localeEvalRoleParam(argument);
         if (userRoles != null) {
           if (not == true) {
             userRoles = Set.from(UserRole.values).cast<UserRole>().difference(userRoles);
@@ -339,7 +342,7 @@ class FlexUI with Service implements NotificationsListener {
             return DeepCollectionEquality().equals(Auth2().prefs?.roles, userRoles);
           }
           else if (any == true) {
-            return Auth2().prefs?.roles?.intersection(userRoles)?.isNotEmpty ?? false;
+            return Auth2().prefs?.roles?.intersection(userRoles).isNotEmpty ?? false;
           }
           else {
             return Auth2().prefs?.roles?.containsAll(userRoles) ?? false;
@@ -350,14 +353,14 @@ class FlexUI with Service implements NotificationsListener {
     });
   }
 
-  static Set<UserRole> _localeEvalRoleParam(String roleParam) {
+  static Set<UserRole>? _localeEvalRoleParam(String? roleParam) {
     if (roleParam != null) {
       if (RegExp("{.+}").hasMatch(roleParam)) {
         Set<UserRole> roles = Set<UserRole>();
         String rolesStr = roleParam.substring(1, roleParam.length - 1);
         List<String> rolesStrList = rolesStr.split(',');
         for (String roleStr in rolesStrList) {
-          UserRole role = UserRole.fromString(roleStr.trim());
+          UserRole? role = UserRole.fromString(roleStr.trim());
           if (role != null) {
             roles.add(role);
           }
@@ -365,7 +368,7 @@ class FlexUI with Service implements NotificationsListener {
         return roles;
       }
       else {
-        UserRole userRole = UserRole.fromString(roleParam);
+        UserRole? userRole = UserRole.fromString(roleParam);
         return (userRole != null) ? Set.from([userRole]) : null;
       }
     }
@@ -441,12 +444,31 @@ class FlexUI with Service implements NotificationsListener {
     if (platformRule is Map) {
       platformRule.forEach((dynamic key, dynamic value) {
         if (key is String) {
+          String? target;
           if (key == 'os') {
+            target = Platform.operatingSystem;
+          }
+          else if (key == 'envirnment') {
+            target = configEnvToString(Config().configEnvironment);
+          }
+          else if (key == 'build') {
+            if (kReleaseMode) {
+              target = 'release';
+            }
+            else if (kProfileMode) {
+              target = 'profile';
+            }
+            else if (kDebugMode) {
+              target = 'debug';
+            }
+          }
+
+          if (target != null) {
             if (value is List) {
-              result = result && value.contains(Platform.operatingSystem);
+              result = result && value.contains(target);
             }
             else if (value is String) {
-              result = result && (value == Platform.operatingSystem);
+              result = result && (value == target);
             }
           }
         }

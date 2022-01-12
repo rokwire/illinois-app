@@ -16,11 +16,8 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 import 'dart:math';
-import 'package:illinois/service/Styles.dart';
 import 'package:path/path.dart' as Path;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
@@ -29,39 +26,37 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Log.dart';
+import 'package:illinois/service/Styles.dart';
 
 class AppString {
 
-  static bool isStringEmpty(String stringToCheck) {
+  static bool isStringEmpty(String? stringToCheck) {
     return (stringToCheck == null || stringToCheck.isEmpty);
   }
 
-  static bool isStringNotEmpty(String stringToCheck) {
+  static bool isStringNotEmpty(String? stringToCheck) {
     return !isStringEmpty(stringToCheck);
   }
 
-  static String getDefaultEmptyString({String value, String defaultValue = ''}) {
+  static String getDefaultEmptyString(String? value, {String defaultValue = ''}) {
     if (isStringEmpty(value)) {
       return defaultValue;
     }
-    return value;
+    return value!;
   }
 
   static String wrapRange(String s, String firstValue, String secondValue, int startPosition, int endPosition) {
-    if ((s == null) || (firstValue == null) || (secondValue == null) || (startPosition < 0) || (endPosition < 0)) {
-      return s;
-    }
     String word = s.substring(startPosition, endPosition);
     String wrappedWord = firstValue + word + secondValue;
     String updatedString = s.replaceRange(startPosition, endPosition, wrappedWord);
     return updatedString;
   }
 
-  static String getMaskedPhoneNumber(String phoneNumber) {
+  static String getMaskedPhoneNumber(String? phoneNumber) {
     if(AppString.isStringEmpty(phoneNumber)) {
       return "*********";
     }
-    int phoneNumberLength = phoneNumber.length;
+    int phoneNumberLength = phoneNumber!.length;
     int lastXNumbers = min(phoneNumberLength, 4);
     int starsCount = (phoneNumberLength - lastXNumbers);
     String replacement = "*" * starsCount;
@@ -70,10 +65,7 @@ class AppString {
   }
 
   static String capitalize(String value) {
-    if (value == null) {
-      return null;
-    }
-    else if (value.length == 0) {
+    if (value.length == 0) {
       return '';
     }
     else if (value.length == 1) {
@@ -85,20 +77,18 @@ class AppString {
   }
 
   static String stripHtmlTags(String value) {
-    return value?.replaceAll(RegExp(r'<[^>]*>'), '')?.replaceAll(RegExp(r'&[^;]+;'), ' ');
+    return value.replaceAll(RegExp(r'<[^>]*>'), '').replaceAll(RegExp(r'&[^;]+;'), ' ');
   }
 
-  static String fullName(List<String> names) {
-    String fullName;
-    if (names != null) {
-      for (String name in names) {
-        if ((name != null) && (0 < name.length)) {
-          if (fullName == null) {
-            fullName = '$name';
-          }
-          else {
-            fullName += ' $name';
-          }
+  static String? fullName(List<String?> names) {
+    String? fullName;
+    for (String? name in names) {
+      if ((name != null) && (0 < name.length)) {
+        if (fullName == null) {
+          fullName = '$name';
+        }
+        else {
+          fullName += ' $name';
         }
       }
     }
@@ -114,28 +104,28 @@ class AppString {
   static const String _phonePattern = "^((\\+?\\d{1,3})?[\\(\\- ]?\\d{3,5}[\\)\\- ]?)?(\\d[.\\- ]?\\d)+\$";   // Valid: +123456789120
 
 
-  static bool isUsPhoneValid(String phone){
+  static bool isUsPhoneValid(String? phone){
     if(isStringNotEmpty(phone)){
-      return (phone.length == 10 && RegExp(_usPhonePattern1).hasMatch(phone))
+      return (phone!.length == 10 && RegExp(_usPhonePattern1).hasMatch(phone))
           || (phone.length == 11 && RegExp(_usPhonePattern2).hasMatch(phone))
           || (phone.length == 12 && RegExp(_usPhonePattern3).hasMatch(phone));
     }
     return false;
   }
 
-  static bool isUsPhoneNotValid(String phone){
+  static bool isUsPhoneNotValid(String? phone){
     return !isUsPhoneValid(phone);
   }
 
-  static bool isPhoneValid(String phone) {
-    return isStringNotEmpty(phone) && RegExp(_phonePattern).hasMatch(phone);
+  static bool isPhoneValid(String? phone) {
+    return isStringNotEmpty(phone) && RegExp(_phonePattern).hasMatch(phone!);
   }
 
   /// US Phone construction
 
-  static String constructUsPhone(String phone){
+  static String? constructUsPhone(String? phone){
     if(isUsPhoneValid(phone)){
-      if(phone.length == 10 && RegExp(_usPhonePattern1).hasMatch(phone)){
+      if(phone!.length == 10 && RegExp(_usPhonePattern1).hasMatch(phone)){
         return "+1$phone";
       }
       else if (phone.length == 11 && RegExp(_usPhonePattern2).hasMatch(phone)){
@@ -158,23 +148,47 @@ class AppString {
 }
 
 class AppCollection {
-  static bool isCollectionNotEmpty(Iterable<Object> collection) {
+  static bool isCollectionNotEmpty(Iterable<Object?>? collection) {
     return collection != null && collection.isNotEmpty;
   }
 
-  static bool isCollectionEmpty(Iterable<Object> collection) {
+  static bool isCollectionEmpty(Iterable<Object?>? collection) {
     return !isCollectionNotEmpty(collection);
   }
 }
 
+class AppList {
+  static void add<T>(List<T>? list, T? entry) {
+    if ((list != null) && (entry != null)) {
+      list.add(entry);
+    }
+  }
+}
+
+class AppSet {
+  static void add<T>(Set<T>? set, T? entry) {
+    if ((set != null) && (entry != null)) {
+      set.add(entry);
+    }
+  }
+}
+
+class AppMap {
+  static void set<K, T>(Map<K, T>? map, K? key, T? value) {
+    if ((map != null) && (key != null) && (value != null)) {
+      map[key] = value;
+    }
+  }
+}
+
 class AppColor {
-  static Color fromHex(String strValue) {
+  static Color? fromHex(String? strValue) {
     if (strValue != null) {
       if (strValue.startsWith("#")) {
         strValue = strValue.substring(1);
       }
       
-      int intValue = int.tryParse(strValue, radix: 16);
+      int? intValue = int.tryParse(strValue, radix: 16);
       if (intValue != null) {
         if (strValue.length <= 6) {
           intValue += 0xFF000000;
@@ -187,10 +201,7 @@ class AppColor {
   }
 
   static String toHex(Color value) {
-    if (value == null) {
-      return null;
-    }
-    else if (value.alpha < 0xFF) {
+    if (value.alpha < 0xFF) {
       return "#${value.alpha.toRadixString(16)}${value.red.toRadixString(16)}${value.green.toRadixString(16)}${value.blue.toRadixString(16)}";
     }
     else {
@@ -201,13 +212,13 @@ class AppColor {
 
 class AppVersion {
 
-  static int compareVersions(String versionString1, String versionString2) {
+  static int compareVersions(String? versionString1, String? versionString2) {
     List<String> versionList1 = (versionString1 is String) ? versionString1.split('.') : [];
     List<String> versionList2 = (versionString2 is String) ? versionString2.split('.') : [];
     int minLen = min(versionList1.length, versionList2.length);
     for (int index = 0; index < minLen; index++) {
       String s1 = versionList1[index], s2 = versionList2[index];
-      int n1 = int.tryParse(s1), n2 = int.tryParse(s2);
+      int? n1 = int.tryParse(s1), n2 = int.tryParse(s2);
       int result = ((n1 != null) && (n2 != null)) ? n1.compareTo(n2) : s1.compareTo(s2);
       if (result != 0) {
         return result;
@@ -224,13 +235,13 @@ class AppVersion {
     }
   }
 
-  static bool matchVersions(String versionString1, String versionString2) {
+  static bool matchVersions(String? versionString1, String? versionString2) {
     List<String> versionList1 = (versionString1 is String) ? versionString1.split('.') : [];
     List<String> versionList2 = (versionString2 is String) ? versionString2.split('.') : [];
     int minLen = min(versionList1.length, versionList2.length);
     for (int index = 0; index < minLen; index++) {
       String s1 = versionList1[index], s2 = versionList2[index];
-      int n1 = int.tryParse(s1), n2 = int.tryParse(s2);
+      int? n1 = int.tryParse(s1), n2 = int.tryParse(s2);
       int result = ((n1 != null) && (n2 != null)) ? n1.compareTo(n2) : s1.compareTo(s2);
       if (result != 0) {
         return false;
@@ -239,7 +250,7 @@ class AppVersion {
     return true;
   }
 
-  static String majorVersion(String versionString, int versionsLength) {
+  static String? majorVersion(String? versionString, int versionsLength) {
     if (versionString is String) {
       List<String> versionList = versionString.split('.');
       if (versionsLength < versionList.length) {
@@ -253,37 +264,37 @@ class AppVersion {
 
 class AppUrl {
   
-  static String getScheme(String url) {
+  static String? getScheme(String? url) {
     try {
-      Uri uri = (url != null) ? Uri.parse(url) : null;
+      Uri? uri = (url != null) ? Uri.parse(url) : null;
       return (uri != null) ? uri.scheme : null;
     } catch(e) {}
     return null;
   }
 
-  static String getExt(String url) {
+  static String? getExt(String? url) {
     try {
-      Uri uri = (url != null) ? Uri.parse(url) : null;
-      String path = (uri != null) ? uri.path : null;
+      Uri? uri = (url != null) ? Uri.parse(url) : null;
+      String? path = (uri != null) ? uri.path : null;
       return (path != null) ? Path.extension(path) : null;
     } catch(e) {}
     return null;
   }
 
-  static bool isPdf(String url) {
+  static bool isPdf(String? url) {
     return (getExt(url) == '.pdf');
   }
 
-  static bool isWebScheme(String url) {
-    String scheme = getScheme(url);
+  static bool isWebScheme(String? url) {
+    String? scheme = getScheme(url);
     return (scheme == 'http') || (scheme == 'https');
   }
 
-  static bool launchInternal(String url) {
+  static bool launchInternal(String? url) {
     return AppUrl.isWebScheme(url) && !(Platform.isAndroid && AppUrl.isPdf(url));
   }
 
-  static String getGameDayGuideUrl(String sportKey) {
+  static String? getGameDayGuideUrl(String? sportKey) {
     if (sportKey == "football") {
       return Config().gameDayFootballUrl;
     } else if ((sportKey == "mbball") || (sportKey == "wbball")) {
@@ -313,9 +324,9 @@ class AppUrl {
     }
   }
 
-  static String getDeepLinkRedirectUrl(String deepLink) {
-    Uri assetsUri = AppString.isStringNotEmpty(Config().assetsUrl) ? Uri.tryParse(Config().assetsUrl) : null;
-    String redirectUrl = assetsUri != null ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
+  static String? getDeepLinkRedirectUrl(String? deepLink) {
+    Uri? assetsUri = AppString.isStringNotEmpty(Config().assetsUrl) ? Uri.tryParse(Config().assetsUrl!) : null;
+    String? redirectUrl = assetsUri != null ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
     return AppString.isStringNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
   }
 }
@@ -351,7 +362,7 @@ class AppJson {
 
   static List<dynamic> encodeList(List items) {
     List<dynamic> result =  [];
-    if (items != null && items.isNotEmpty) {
+    if (items.isNotEmpty) {
       items.forEach((item) {
         result.add(item.toJson());
       });
@@ -360,22 +371,8 @@ class AppJson {
     return result;
   }
 
-  static List<String> castToStringList(List<dynamic> items) {
-    if (items == null)
-      return null;
-
-    List<String> result =  [];
-    if (items != null && items.isNotEmpty) {
-      items.forEach((item) {
-        result.add(item is String ? item : item.toString());
-      });
-    }
-
-    return result;
-  }
-
-  static String encode(dynamic value, { bool prettify }) {
-    String result;
+  static String? encode(dynamic value, { bool? prettify }) {
+    String? result;
     if (value != null) {
       try {
         if (prettify == true) {
@@ -385,63 +382,63 @@ class AppJson {
           result = json.encode(value);
         }
       } catch (e) {
-        Log.e(e?.toString());
+        Log.e(e.toString());
       }
     }
     return result;
   }
 
   // TBD: Use everywhere decodeMap or decodeList to guard type cast
-  static dynamic decode(String jsonString) {
+  static dynamic decode(String? jsonString) {
     dynamic jsonContent;
     if (AppString.isStringNotEmpty(jsonString)) {
       try {
-        jsonContent = json.decode(jsonString);
+        jsonContent = json.decode(jsonString!);
       } catch (e) {
-        Log.e(e?.toString());
+        Log.e(e.toString());
       }
     }
     return jsonContent;
   }
 
-  static List<dynamic> decodeList(String jsonString) {
+  static List<dynamic>? decodeList(String? jsonString) {
     try {
-      return (decode(jsonString) as List)?.cast<dynamic>();
+      return (decode(jsonString) as List?)?.cast<dynamic>();
     } catch (e) {
-      print(e?.toString());
+      print(e.toString());
       return null;
     }
   }
 
-  static Map<String, dynamic> decodeMap(String jsonString) {
+  static Map<String, dynamic>? decodeMap(String? jsonString) {
     try {
-      return (decode(jsonString) as Map)?.cast<String, dynamic>();
+      return (decode(jsonString) as Map?)?.cast<String, dynamic>();
     } catch (e) {
-      print(e?.toString());
+      print(e.toString());
       return null;
     }
   }
 
-  static String stringValue(dynamic value) {
+  static String? stringValue(dynamic value) {
     if (value is String) {
       return value;
     }
     else if (value != null) {
       try { return value.toString(); }
-      catch(e) { print(e?.toString()); }
+      catch(e) { print(e.toString()); }
     }
     return null;
   }
 
-  static int intValue(dynamic value) {
+  static int? intValue(dynamic value) {
     return (value is int) ? value : null;
   }
 
-  static bool boolValue(dynamic value) {
+  static bool? boolValue(dynamic value) {
     return (value is bool) ? value : null;
   }
 
-  static double doubleValue(dynamic value) {
+  static double? doubleValue(dynamic value) {
     if (value is double) {
       return value;
     }
@@ -456,49 +453,49 @@ class AppJson {
     }
   }
 
-  static Map<String, dynamic> mapValue(dynamic value) {
+  static Map<String, dynamic>? mapValue(dynamic value) {
     try { return (value is Map) ? value.cast<String, dynamic>() : null; }
-    catch(e) { print(e?.toString()); }
+    catch(e) { print(e.toString()); }
     return null;
   }
 
-  static List<dynamic> listValue(dynamic value) {
+  static List<dynamic>? listValue(dynamic value) {
     try { return (value is List) ? value.cast<dynamic>() : null; }
-    catch(e) { print(e?.toString()); }
+    catch(e) { print(e.toString()); }
     return null;
   }
 
-  static List<String> stringListValue(dynamic value) {
-    List<String> result;
+  static List<String>? stringListValue(dynamic value) {
+    List<String>? result;
     if (value is List) {
       result = <String>[];
       for (dynamic entry in value) {
-        result.add(entry?.toString());
+        result.add(entry.toString());
       }
     }
     return result;
   }
 
-  static Set<String> stringSetValue(dynamic value) {
-    Set<String> result;
+  static Set<String>? stringSetValue(dynamic value) {
+    Set<String>? result;
     if (value is List) {
       result = Set<String>();
       for (dynamic entry in value) {
-        result.add(entry?.toString());
+        result.add(entry.toString());
       }
     }
     return result;
   }
   
-  static List<String> listStringsValue(dynamic value) {
+  static List<String>? listStringsValue(dynamic value) {
     try { return (value is List) ? value.cast<String>() : null; }
-    catch(e) { print(e?.toString()); }
+    catch(e) { print(e.toString()); }
     return null;
   }
 
-  static Set<String> setStringsValue(dynamic value) {
+  static Set<String>? setStringsValue(dynamic value) {
     try { return (value is List) ? Set.from(value.cast<String>()) : null; }
-    catch(e) { print(e?.toString()); }
+    catch(e) { print(e.toString()); }
     return null;
   }
 }
@@ -511,40 +508,37 @@ class AppToast {
       toastLength: Toast.LENGTH_LONG,
       timeInSecForIosWeb: 3,
       gravity: ToastGravity.BOTTOM,
-      backgroundColor: Styles().colors.blackTransparent06,
+      backgroundColor: Styles().colors!.blackTransparent06,
     );
   }
 }
 
 class AppAlert {
-  static Future<bool> showDialogResult(
-      BuildContext builderContext, String message) async {
-    if(builderContext != null) {
-      bool alertDismissed = await showDialog(
-        context: builderContext,
-        builder: (context) {
-          return AlertDialog(
-            content: Text(message),
-            actions: <Widget>[
-              TextButton(
-                  child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
-                  onPressed: () {
-                    Analytics.instance.logAlert(text: message, selection: "Ok");
-                    Navigator.pop(context, true);
-                  }
-              ) //return dismissed 'true'
-            ],
-          );
-        },
-      );
-      return alertDismissed;
-    }
-    return true; // dismissed
+  static Future<bool?> showDialogResult(
+    BuildContext builderContext, String? message) async {
+    bool? alertDismissed = await showDialog(
+      context: builderContext,
+      builder: (context) {
+        return AlertDialog(
+          content: Text(message!),
+          actions: <Widget>[
+            TextButton(
+                child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
+                onPressed: () {
+                  Analytics.instance.logAlert(text: message, selection: "Ok");
+                  Navigator.pop(context, true);
+                }
+            ) //return dismissed 'true'
+          ],
+        );
+      },
+    );
+    return alertDismissed;
   }
 
-  static Future<bool> showCustomDialog(
-    {BuildContext context, Widget contentWidget, List<Widget> actions, EdgeInsets contentPadding = const EdgeInsets.all(18), }) async {
-    bool alertDismissed = await showDialog(
+  static Future<bool?> showCustomDialog(
+    {required BuildContext context, Widget? contentWidget, List<Widget>? actions, EdgeInsets contentPadding = const EdgeInsets.all(18), }) async {
+    bool? alertDismissed = await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(content: contentWidget, actions: actions,contentPadding: contentPadding,);
@@ -553,17 +547,17 @@ class AppAlert {
     return alertDismissed;
   }
 
-  static Future<bool> showOfflineMessage(BuildContext context, String message) async {
+  static Future<bool?> showOfflineMessage(BuildContext context, String? message) async {
     return showDialog(context: context, builder: (context) {
       return AlertDialog(
         content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 18),),
+          Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline")!, style: TextStyle(fontSize: 18),),
           Container(height:16),
-          Text(message, textAlign: TextAlign.center,),
+          Text(message!, textAlign: TextAlign.center,),
         ],),
         actions: <Widget>[
           TextButton(
-              child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
+              child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
               onPressed: (){
                 Analytics.instance.logAlert(text: message, selection: "OK");
                   Navigator.pop(context, true);
@@ -577,7 +571,7 @@ class AppAlert {
 }
 
 class AppMapPathKey {
-  static dynamic entry(Map<String, dynamic> map, dynamic key) {
+  static dynamic entry(Map<String, dynamic>? map, dynamic key) {
     if ((map != null) && (key != null)) {
       if (key is String) {
         return _pathKeyEntry(map, key);
@@ -589,11 +583,11 @@ class AppMapPathKey {
     return null;
   }
   
-  static dynamic _pathKeyEntry(Map<String, dynamic> map, String key) {
+  static dynamic _pathKeyEntry(Map map, String key) {
     String field;
     dynamic entry;
     int position, start = 0;
-    Map<String, dynamic> source = map;
+    Map source = map;
 
     while (0 <= (position = key.indexOf('.', start))) {
       field = key.substring(start, position);
@@ -616,55 +610,51 @@ class AppMapPathKey {
     }
   }
 
-  static dynamic _listKeyEntry(Map<String, dynamic> map, List keys) {
+  static dynamic _listKeyEntry(Map map, List keys) {
     dynamic entry;
-    Map<String, dynamic> source = map;
+    Map source = map;
     for (dynamic key in keys) {
-      if (source == null) {
-        return null;
-      }
-
       entry = source[key];
 
-      if (entry != null) {
-        source = (entry is Map) ? entry : null;
+      if (entry is Map) {
+        source = entry;
       }
       else {
         return null;
       }
     }
 
-    return source ?? entry;
+    return source;
   }
 
 }
 
 class AppSemantics {
-    static void announceCheckBoxStateChange(BuildContext context, bool checked, String name){
-      String message = (AppString.isStringNotEmpty(name)?name+", " :"")+
+    static void announceCheckBoxStateChange(BuildContext? context, bool checked, String? name){
+      String message = (AppString.isStringNotEmpty(name)?name!+", " :"")+
           (checked ?
-            Localization().getStringEx("toggle_button.status.checked", "checked",) :
-            Localization().getStringEx("toggle_button.status.unchecked", "unchecked")); // !toggled because we announce before it got changed
+            Localization().getStringEx("toggle_button.status.checked", "checked",)! :
+            Localization().getStringEx("toggle_button.status.unchecked", "unchecked")!); // !toggled because we announce before it got changed
       announceMessage(context, message);
     }
 
-    static Semantics buildCheckBoxSemantics({Widget child, String title, bool selected = false, double sortOrder}){
+    static Semantics buildCheckBoxSemantics({Widget? child, String? title, bool selected = false, double? sortOrder}){
       return Semantics(label: title, button: true ,excludeSemantics: true, sortKey: sortOrder!=null?OrdinalSortKey(sortOrder) : null,
       value: (selected?Localization().getStringEx("toggle_button.status.checked", "checked",) :
-      Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
-      ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
+      Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
+      ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
       child: child );
     }
 
-    static void announceMessage(BuildContext context, String message){
+    static void announceMessage(BuildContext? context, String message){
         if(context != null){
-          context.findRenderObject().sendSemanticsEvent(AnnounceSemanticsEvent(message,TextDirection.ltr));
+          context.findRenderObject()!.sendSemanticsEvent(AnnounceSemanticsEvent(message,TextDirection.ltr));
         }
     }
 }
 
 class AppSort {
-  static int compareIntegers(int v1, int v2) {
+  static int compareIntegers(int? v1, int? v2) {
     if (v1 != null) {
       if (v2 != null) {
         return v1.compareTo(v2);
@@ -681,7 +671,7 @@ class AppSort {
     }
   }
 
-  static int compareDateTimes(DateTime v1, DateTime v2) {
+  static int compareDateTimes(DateTime? v1, DateTime? v2) {
     if (v1 != null) {
       if (v2 != null) {
         return v1.compareTo(v2);
@@ -701,7 +691,7 @@ class AppSort {
 
 class AppDeviceOrientation {
   
-  static DeviceOrientation fromStr(String value) {
+  static DeviceOrientation? fromStr(String value) {
     switch (value) {
       case 'portraitUp': return DeviceOrientation.portraitUp;
       case 'portraitDown': return DeviceOrientation.portraitDown;
@@ -711,24 +701,23 @@ class AppDeviceOrientation {
     return null;
   }
 
-  static String toStr(DeviceOrientation value) {
+  static String? toStr(DeviceOrientation value) {
       switch(value) {
         case DeviceOrientation.portraitUp: return "portraitUp";
         case DeviceOrientation.portraitDown: return "portraitDown";
         case DeviceOrientation.landscapeLeft: return "landscapeLeft";
         case DeviceOrientation.landscapeRight: return "landscapeRight";
       }
-      return null;
   }
 
-  static List<DeviceOrientation> fromStrList(List<dynamic> stringsList) {
+  static List<DeviceOrientation>? fromStrList(List<dynamic>? stringsList) {
     
-    List<DeviceOrientation> orientationsList;
+    List<DeviceOrientation>? orientationsList;
     if (stringsList != null) {
       orientationsList = [];
       for (dynamic string in stringsList) {
         if (string is String) {
-          DeviceOrientation orientation = fromStr(string);
+          DeviceOrientation? orientation = fromStr(string);
           if (orientation != null) {
             orientationsList.add(orientation);
           }
@@ -738,13 +727,13 @@ class AppDeviceOrientation {
     return orientationsList;
   }
 
-  static List<String> toStrList(List<DeviceOrientation> orientationsList) {
+  static List<String>? toStrList(List<DeviceOrientation>? orientationsList) {
     
-    List<String> stringsList;
+    List<String>? stringsList;
     if (orientationsList != null) {
       stringsList = [];
       for (DeviceOrientation orientation in orientationsList) {
-        String orientationString = toStr(orientation);
+        String? orientationString = toStr(orientation);
         if (orientationString != null) {
           stringsList.add(orientationString);
         }
@@ -784,7 +773,7 @@ class AppGeometry {
 
 class AppBoolExpr {
   
-  static bool eval(dynamic expr, bool Function(String) evalArg) {
+  static bool eval(dynamic expr, bool? Function(String?)? evalArg) {
     
     if (expr is String) {
 
@@ -795,7 +784,7 @@ class AppBoolExpr {
         return false;
       }
 
-      bool argValue = (evalArg != null) ? evalArg(expr) : null;
+      bool? argValue = (evalArg != null) ? evalArg(expr) : null;
       return argValue ?? true; // allow everything that is not defined or we do not understand
     }
     
@@ -834,5 +823,23 @@ class AppBoolExpr {
     }
     
     return true; // allow everything that is not defined or we do not understand
+  }
+}
+
+class AppBundle {
+  static Future<String?> loadString(String key, {bool cache = true}) async {
+    try { return rootBundle.loadString(key, cache: cache); }
+    catch(e) { print(e.toString()); }
+    return null;
+  }
+}
+
+
+class AppHtml {
+  static String replaceNewLineSymbols(String? value) {
+    if (AppString.isStringEmpty(value)) {
+      return value!;
+    }
+    return value!.replaceAll('\r\n', '</br>').replaceAll('\n', '</br>');
   }
 }

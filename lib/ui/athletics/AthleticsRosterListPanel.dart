@@ -30,8 +30,8 @@ import 'package:illinois/service/Styles.dart';
 
 
 class AthleticsRosterListPanel extends StatefulWidget {
-  final SportDefinition sport;
-  final List<Roster> allRosters;
+  final SportDefinition? sport;
+  final List<Roster>? allRosters;
 
   AthleticsRosterListPanel(this.sport,this.allRosters);
 
@@ -41,20 +41,20 @@ class AthleticsRosterListPanel extends StatefulWidget {
 
 class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> implements RoundedTabListener, _RosterItemListener{
 
-  final String _tabFilterByName = Localization().getStringEx("panel.athletics_roster_list.button.by_name.title", "By Name") ;
-  final String _tabFilterByPosition = Localization().getStringEx("panel.athletics_roster_list.button.by_position.title", "By Position");
-  final String _tabFilterByNumber = Localization().getStringEx("panel.athletics_roster_list.button.by_number.title", "By Number");
+  final String _tabFilterByName = Localization().getStringEx("panel.athletics_roster_list.button.by_name.title", "By Name")!;
+  final String _tabFilterByPosition = Localization().getStringEx("panel.athletics_roster_list.button.by_position.title", "By Position")!;
+  final String _tabFilterByNumber = Localization().getStringEx("panel.athletics_roster_list.button.by_number.title", "By Number")!;
 
-  int _selectedTabIndex = 0;
-  List<RoundedTab> _tabs;
-  List<String> _tabStrings;
-  List<Roster> allRosters;
+  int? _selectedTabIndex = 0;
+  late List<RoundedTab> _tabs;
+  late List<String> _tabStrings;
+  List<Roster>? allRosters;
 
   _AthleticsRosterListPanelState(this.allRosters);
 
   @override
   void initState() {
-    if (allRosters == null || allRosters.length == 0) {
+    if (allRosters == null || allRosters!.length == 0) {
       _loadAllRosters();
     }
     super.initState();
@@ -67,7 +67,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx('panel.athletics_roster_list.header.title', 'Roster'),
+          Localization().getStringEx('panel.athletics_roster_list.header.title', 'Roster')!,
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -76,14 +76,14 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
         ),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
 
   Widget _buildContent() {
     _tabs = _constructTabWidgets();
-    return allRosters != null && allRosters.length > 0 ? Column(
+    return allRosters != null && allRosters!.length > 0 ? Column(
         children: <Widget>[
           _RosterListHeading(widget.sport),
           _tabs.isNotEmpty ? SingleChildScrollView(
@@ -104,10 +104,9 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   }
 
   void _loadAllRosters() {
-    Future<List<dynamic>> result = Sports().loadRosters(widget.sport.shortName);
-    result.then((list) {
+    Sports().loadRosters(widget.sport!.shortName).then((List<Roster>? result) {
       setState(() {
-        allRosters = list;
+        allRosters = result;
       });
     });
   }
@@ -118,11 +117,11 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
 
     if(widget.sport != null) {
       _tabStrings.add(_tabFilterByName);
-      if (widget.sport.hasSortByPosition || widget.sport.hasSortByNumber) {
-        if (widget.sport.hasSortByPosition) {
+      if (widget.sport!.hasSortByPosition! || widget.sport!.hasSortByNumber!) {
+        if (widget.sport!.hasSortByPosition!) {
           _tabStrings.add(_tabFilterByPosition);
         }
-        if (widget.sport.hasSortByNumber) {
+        if (widget.sport!.hasSortByNumber!) {
           _tabStrings.add(_tabFilterByNumber);
         }
       }
@@ -139,14 +138,14 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   }
 
   List<Widget> _constructRostersList(){
-    if(_tabStrings.isNotEmpty) {
-      if (_tabFilterByName == _tabStrings[_selectedTabIndex]) {
+    if(_tabStrings.isNotEmpty && (_selectedTabIndex != null)) {
+      if (_tabFilterByName == _tabStrings[_selectedTabIndex!]) {
         return _constructRostersByNameList();
       }
-      else if (_tabFilterByPosition == _tabStrings[_selectedTabIndex]) {
+      else if (_tabFilterByPosition == _tabStrings[_selectedTabIndex!]) {
         return _constructRostersByPositionList();
       }
-      else if (_tabFilterByNumber == _tabStrings[_selectedTabIndex]) {
+      else if (_tabFilterByNumber == _tabStrings[_selectedTabIndex!]) {
         return _constructRostersByNumberList();
       }
       else {
@@ -159,8 +158,8 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   List<Widget> _constructRostersByNameList(){
     List<Widget> widgets = [];
     if(allRosters != null) {
-      List<Roster> clonedRosters = allRosters.map((r) => r).toList();
-      clonedRosters.sort((r1, r2) => r1.name.compareTo(r2.name));
+      List<Roster> clonedRosters = allRosters!.map((r) => r).toList();
+      clonedRosters.sort((r1, r2) => r1.name!.compareTo(r2.name!));
       clonedRosters.forEach((roster) =>
       {
         widgets.add(_RosterItem(roster, widget.sport, this, showTopGrey: false,))
@@ -173,11 +172,15 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   List<Widget> _constructRostersByPositionList(){
     List<Widget> widgets = [];
     Map<String,List<Roster>> categoryMap = Map<String,List<Roster>>();
-    for (Roster roster in allRosters){
-      if(!categoryMap.containsKey(roster.position)){
-        categoryMap[roster.position] = [];
+    if (allRosters != null) {
+      for (Roster roster in allRosters!){
+        if (roster.position != null) {
+          if(!categoryMap.containsKey(roster.position)){
+            categoryMap[roster.position!] = [];
+          }
+          categoryMap[roster.position]?.add(roster);
+        }
       }
-      categoryMap[roster.position].add(roster);
     }
 
     for(String category in categoryMap.keys){
@@ -185,7 +188,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
         widgets.add(Container(height: 20,));
       }
       widgets.add(_HeadingItem(category));
-      List<Roster> rosters = categoryMap[category];
+      List<Roster> rosters = categoryMap[category]!;
       for(int i = 0; i < rosters.length; i++){
         widgets.add(_RosterItem(rosters[i], widget.sport, this, showTopGrey: i==0,));
       }
@@ -197,7 +200,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   List<Widget> _constructRostersByNumberList(){
     List<Widget> widgets = [];
     if(allRosters != null) {
-      List<Roster> clonedRosters = allRosters.map((r) => r).toList();
+      List<Roster> clonedRosters = allRosters!.map((r) => r).toList();
       clonedRosters.sort((r1, r2) => r1.number >= r2.number ? 1 : -1);
       clonedRosters.forEach((roster) =>
       {
@@ -209,7 +212,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   }
 
   void _onRosterItemTap(Roster roster){
-    Analytics.instance.logSelect(target: "Roster: "+roster.name);
+    Analytics.instance.logSelect(target: "Roster: "+roster.name!);
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -217,7 +220,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   }
 
   @override
-  void onTabClicked(int tabIndex, RoundedTab caller) {
+  void onTabClicked(int? tabIndex, RoundedTab caller) {
     Analytics.instance.logSelect(target: caller.title) ;
     setState(() {
       _selectedTabIndex = tabIndex;
@@ -227,7 +230,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
 }
 
 class _RosterListHeading extends StatelessWidget{
-  final SportDefinition sport;
+  final SportDefinition? sport;
 
   _RosterListHeading(this.sport);
 
@@ -236,7 +239,7 @@ class _RosterListHeading extends StatelessWidget{
     return Row(children: <Widget>[
       Expanded(
         child: Container(
-          color: Styles().colors.fillColorPrimaryVariant,
+          color: Styles().colors!.fillColorPrimaryVariant,
           padding: EdgeInsets.only(left: 16, right: 16, top:12, bottom: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,13 +247,14 @@ class _RosterListHeading extends StatelessWidget{
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Image.asset(sport.iconPath, width: 16, height: 16, excludeFromSemantics: true,),
+                  AppString.isStringNotEmpty(sport?.iconPath) ?
+                    Image.asset(sport!.iconPath!, width: 16, height: 16, excludeFromSemantics: true,) : Container(),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
-                    child: Text(sport.name,
+                    child: Text(sport!.name!,
                       style: TextStyle(
-                          color: Styles().colors.surfaceAccent,
-                          fontFamily: Styles().fontFamilies.medium,
+                          color: Styles().colors!.surfaceAccent,
+                          fontFamily: Styles().fontFamilies!.medium,
                           fontSize: 16
                       ),
                     ),
@@ -258,10 +262,10 @@ class _RosterListHeading extends StatelessWidget{
                 ],
               ),
               SizedBox(height: 10.0,),
-              Text(Localization().getStringEx("panel.athletics_roster_list.label.heading.title", '2019-2020 Roster') ,
+              Text(Localization().getStringEx("panel.athletics_roster_list.label.heading.title", '2019-2020 Roster')! ,
                 style: TextStyle(
                     color: Colors.white,
-                    fontFamily: Styles().fontFamilies.extraBold,
+                    fontFamily: Styles().fontFamilies!.extraBold,
                     fontSize: 20,
                 ),
               ),
@@ -276,7 +280,7 @@ class _RosterListHeading extends StatelessWidget{
 
 
 class _HeadingItem extends StatelessWidget {
-  final String heading;
+  final String? heading;
 
   _HeadingItem(this.heading);
 
@@ -284,11 +288,11 @@ class _HeadingItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(16),
-      color: Styles().colors.backgroundVariant,
-      child: Text(heading,
+      color: Styles().colors!.backgroundVariant,
+      child: Text(heading!,
         style: TextStyle(
-            color: Styles().colors.fillColorPrimary,
-            fontFamily: Styles().fontFamilies.extraBold,
+            color: Styles().colors!.fillColorPrimary,
+            fontFamily: Styles().fontFamilies!.extraBold,
             fontSize: 20
         ),
       ),
@@ -309,7 +313,7 @@ class _RosterItem extends StatelessWidget{
   final _RosterItemListener listener;
   final bool showTopGrey;
   final Roster roster;
-  final SportDefinition sportConfig;
+  final SportDefinition? sportConfig;
 
   _RosterItem(this.roster, this.sportConfig, this.listener, {this.showTopGrey = false});
 
@@ -328,7 +332,7 @@ class _RosterItem extends StatelessWidget{
               children: <Widget>[
                 _buildGrayHeading(),
                 Container(
-                  color: Styles().colors.fillColorPrimary,
+                  color: Styles().colors!.fillColorPrimary,
                   height: _blueHeight,
                   margin: EdgeInsets.only(top: _photoMargin*2, left: _horizontalMargin, right: _horizontalMargin,),
                   child: Container(
@@ -341,18 +345,18 @@ class _RosterItem extends StatelessWidget{
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Expanded(
-                              child: Text(roster.name,
+                              child: Text(roster.name!,
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontFamily: Styles().fontFamilies.bold,
+                                    fontFamily: Styles().fontFamilies!.bold,
                                     fontSize: 20
                                 ),
                               ),
                             ),
-                            Text(AppString.getDefaultEmptyString(value: roster.numberString),
+                            Text(AppString.getDefaultEmptyString(roster.numberString),
                               style: TextStyle(
-                                  color: Styles().colors.whiteTransparent06,
-                                  fontFamily: Styles().fontFamilies.medium,
+                                  color: Styles().colors!.whiteTransparent06,
+                                  fontFamily: Styles().fontFamilies!.medium,
                                   fontSize: 20
                               ),
                             ),
@@ -372,7 +376,7 @@ class _RosterItem extends StatelessWidget{
                         bottomEnd: Radius.circular(5),
                       ),
                       boxShadow: [
-                        BoxShadow(color: Styles().colors.fillColorPrimary,blurRadius: 4,),
+                        BoxShadow(color: Styles().colors!.fillColorPrimary!,blurRadius: 4,),
                       ]
 
                   ),
@@ -392,9 +396,9 @@ class _RosterItem extends StatelessWidget{
                   alignment: Alignment.centerRight,
                   child: Container(
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
-                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
+                    decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
                     child: (AppString.isStringNotEmpty(roster.thumbPhotoUrl) ?
-                      Image.network(roster.thumbPhotoUrl, excludeFromSemantics: true, width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,) :
+                      Image.network(roster.thumbPhotoUrl!, excludeFromSemantics: true, width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,) :
                       Container(height: 96, width: 80, color: Colors.white,)),
                   ),
                 ),
@@ -409,10 +413,10 @@ class _RosterItem extends StatelessWidget{
   List<Widget> _buildRosterInfoWidgets(){
     List<Widget> list = [];
     if(sportConfig != null) {
-      if (sportConfig.hasPosition) {
+      if (sportConfig!.hasPosition!) {
         list.add(_RosterInfoLine(Localization().getStringEx("panel.athletics_roster_list.label.position.title", 'Position'), roster.position));
       }
-      if (sportConfig.hasWeight || sportConfig.hasHeight) {
+      if (sportConfig!.hasWeight! || sportConfig!.hasHeight!) {
         list.add(_buildHeightWeightWidget());
       }
       list.add(_RosterInfoLine(Localization().getStringEx("panel.athletics_roster_list.label.year.title", 'Year'), roster.year));
@@ -422,13 +426,13 @@ class _RosterItem extends StatelessWidget{
 
   Widget _buildHeightWeightWidget(){
     if(sportConfig != null) {
-      if (sportConfig.hasWeight && sportConfig.hasHeight) {
+      if (sportConfig!.hasWeight! && sportConfig!.hasHeight!) {
         return _RosterInfoLine(Localization().getStringEx("panel.athletics_roster_list.label.htwt.title",'Ht./Wt.'), '${roster.height} / ${roster.weight}');
       }
-      else if (sportConfig.hasHeight) {
+      else if (sportConfig!.hasHeight!) {
         return _RosterInfoLine(Localization().getStringEx("panel.athletics_roster_list.label.ht.title",'Ht.'), roster.height);
       }
-      else if (sportConfig.hasWeight) {
+      else if (sportConfig!.hasWeight!) {
         return _RosterInfoLine(Localization().getStringEx("panel.athletics_roster_list.label.wt.title",'Wt.'), roster.weight);
       }
       else {
@@ -440,7 +444,7 @@ class _RosterItem extends StatelessWidget{
 
   Widget _buildGrayHeading(){
     return showTopGrey ? Container(
-        color: Styles().colors.backgroundVariant,
+        color: Styles().colors!.backgroundVariant,
         height: _photoMargin*2,
         margin: EdgeInsets.only(top: 0, left: 0, right: 0),
     ) : Container();
@@ -448,8 +452,8 @@ class _RosterItem extends StatelessWidget{
 }
 
 class _RosterInfoLine extends StatelessWidget{
-  final String name;
-  final String value;
+  final String? name;
+  final String? value;
 
   _RosterInfoLine(this.name, this.value);
 
@@ -461,19 +465,19 @@ class _RosterInfoLine extends StatelessWidget{
         children: <Widget>[
           Container(
             width: 80,
-            child: Text(name,
+            child: Text(name!,
               style: TextStyle(
-                  color: Styles().colors.textBackground,
-                  fontFamily: Styles().fontFamilies.medium,
+                  color: Styles().colors!.textBackground,
+                  fontFamily: Styles().fontFamilies!.medium,
                   fontSize: 14
               ),
             ),
           ),
           Expanded(child:
-            Text(value,
+            Text(value!,
                 style: TextStyle(
-                    color: Styles().colors.textBackground,
-                    fontFamily: Styles().fontFamilies.bold,
+                    color: Styles().colors!.textBackground,
+                    fontFamily: Styles().fontFamilies!.bold,
                     fontSize: 14
                 )
             ),

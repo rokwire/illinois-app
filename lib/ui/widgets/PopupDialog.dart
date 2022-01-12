@@ -21,10 +21,10 @@ import 'package:illinois/service/Styles.dart';
 import 'RoundedButton.dart';
 
 class PopupDialog extends StatelessWidget {
-  final String _displayText;
-  final String _positiveButtonText;
+  final String? _displayText;
+  final String? _positiveButtonText;
 
-  PopupDialog({String displayText, String positiveButtonText}) : _displayText = displayText, _positiveButtonText = positiveButtonText;
+  PopupDialog({String? displayText, String? positiveButtonText}) : _displayText = displayText, _positiveButtonText = positiveButtonText;
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +41,12 @@ class PopupDialog extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: Container(
-                    color: Styles().colors.fillColorPrimary,
+                    color: Styles().colors!.fillColorPrimary,
                     child: Padding(
                       padding: EdgeInsets.all(8),
                       child: Center(
                         child: Text(
-                          Localization().getStringEx("app.title", "Illinois"),
+                          Localization().getStringEx("app.title", "Illinois")!,
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                       ),
@@ -57,10 +57,10 @@ class PopupDialog extends StatelessWidget {
             ),
             Container(height: 26,),
             Text(
-              _displayText,
+              _displayText!,
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontFamily: Styles().fontFamilies.bold,
+                  fontFamily: Styles().fontFamilies!.bold,
                   fontSize: 16,
                   color: Colors.black),
             ),
@@ -75,8 +75,8 @@ class PopupDialog extends StatelessWidget {
                         Navigator.of(context).pop(true);
                       },
                       backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors.fillColorSecondary,
-                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorSecondary,
+                      textColor: Styles().colors!.fillColorPrimary,
                       label: _positiveButtonText),
                   Container(height: 10,),
                 ],

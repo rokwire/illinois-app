@@ -186,14 +186,20 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         }
 
         // Meridian
-        String meridianEditorToken = Utils.Map.getValueFromPath(keysMap, "meridian.app_token", null);
-        Meridian.DomainRegion[] domainRegions = Meridian.DomainRegion.values();
-        int domainRegionIndex = Utils.Map.getValueFromPath(keysMap, "meridian.domain_region", 0);
-        Meridian.DomainRegion domainRegion = (domainRegionIndex < domainRegions.length) ? domainRegions[domainRegionIndex] : Meridian.DomainRegion.DomainRegionDefault;
-        Meridian.configure(this);
-        Meridian.getShared().setDomainRegion(domainRegion);
-        if (!Utils.Str.isEmpty(meridianEditorToken)) {
-            Meridian.getShared().setEditorToken(meridianEditorToken);
+        try {
+            String meridianEditorToken = Utils.Map.getValueFromPath(keysMap, "meridian.app_token", null);
+            Meridian.DomainRegion[] domainRegions = Meridian.DomainRegion.values();
+            int domainRegionIndex = Utils.Map.getValueFromPath(keysMap, "meridian.domain_region", 0);
+            Meridian.DomainRegion domainRegion = (domainRegionIndex < domainRegions.length) ? domainRegions[domainRegionIndex] : Meridian.DomainRegion.DomainRegionDefault;
+            Meridian.configure(this, meridianEditorToken);
+            Meridian.getShared().setDomainRegion(domainRegion);
+            //if (!Utils.Str.isEmpty(meridianEditorToken)) {
+            //    Meridian.getShared().setEditorToken(meridianEditorToken);
+            //}
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, "Failed to generate uuid");
         }
 
         // Geofence
@@ -631,9 +637,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     Object orientations = methodCall.argument("orientations");
                     List<String> orientationsList = handleEnabledOrientations(orientations);
                     result.success(orientationsList);
-                    break;
-                case Constants.APP_NOTIFICATIONS_AUTHORIZATION:
-                    result.success("allowed"); // notifications are allowed in Android by default
                     break;
                 case Constants.APP_LOCATION_SERVICES_PERMISSION:
                     String locationServicesMethod = Utils.Map.getValueFromPath(methodCall.arguments, "method", null);

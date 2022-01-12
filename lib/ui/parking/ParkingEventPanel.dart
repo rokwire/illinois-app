@@ -30,7 +30,7 @@ import 'package:illinois/service/Styles.dart';
 
 class ParkingEventPanel extends StatefulWidget{
 
-  final ParkingEvent event;
+  final ParkingEvent? event;
 
   ParkingEventPanel({this.event});
 
@@ -41,7 +41,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
 
   bool _isLoading = false;
 
-  List<ParkingLot> _eventLots;
+  List<ParkingLot>? _eventLots;
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
     setState(() {
       _isLoading = true;
     });
-    TransportationService().loadParkingEventInventory(widget.event.id).then((List<ParkingLot> eventLots){
+    TransportationService().loadParkingEventInventory(widget.event!.id).then((List<ParkingLot>? eventLots){
       _eventLots = eventLots;
       setState(() {
         _isLoading = false;
@@ -68,7 +68,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-        Localization().getStringEx("panel.parking_lots.label.heading","Parking Spots"),
+        Localization().getStringEx("panel.parking_lots.label.heading","Parking Spots")!,
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -77,7 +77,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
         ),
       ),
       body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -103,12 +103,12 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
                             Row(children:[
                               Expanded(child:
                                 Text(
-                                  Localization().getStringEx("panel.parking_lots.label.loading", "Loading parking lots. Please wait..."),
+                                  Localization().getStringEx("panel.parking_lots.label.loading", "Loading parking lots. Please wait...")!,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontFamily: Styles().fontFamilies.regular,
+                                    fontFamily: Styles().fontFamilies!.regular,
                                     fontSize: 16,
-                                    color: Styles().colors.mediumGray,
+                                    color: Styles().colors!.mediumGray,
                                   ),
                                 )
                               )
@@ -132,8 +132,8 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
   Widget _buildLots(){
     List<Widget> widgets = [];
     if(AppCollection.isCollectionNotEmpty(_eventLots)){
-      for(ParkingLot inventory in _eventLots ){
-        if(inventory != null && inventory.totalSpots > 0){
+      for(ParkingLot inventory in _eventLots! ){
+        if(inventory.totalSpots != null && inventory.totalSpots! > 0){
           if(widgets.isNotEmpty){
             widgets.add(Container(height: 1,));
           }
@@ -144,11 +144,11 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
     if(AppCollection.isCollectionEmpty(widgets)){
       widgets.add(Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Text(Localization().getStringEx("panel.parking_lots.label.empty","No parking lots available for this event"),
+        child: Text(Localization().getStringEx("panel.parking_lots.label.empty","No parking lots available for this event")!,
           style: TextStyle(
-            fontFamily: Styles().fontFamilies.regular,
+            fontFamily: Styles().fontFamilies!.regular,
             fontSize: 16,
-            color: Styles().colors.textBackground,
+            color: Styles().colors!.textBackground,
           ),
         ),
       ));
@@ -160,10 +160,10 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            widget?.event?.name ?? "",
+            widget.event?.name ?? "",
             style: TextStyle(
               fontSize: 20,
-              color: Styles().colors.fillColorPrimary,
+              color: Styles().colors!.fillColorPrimary,
             ),
           ),
         ),
@@ -176,9 +176,9 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
 }
 
 class _ParkingLotWidget extends StatefulWidget {
-  final ParkingLot inventory;
+  final ParkingLot? inventory;
 
-  _ParkingLotWidget({Key key, this.inventory}) : super(key: key);
+  _ParkingLotWidget({Key? key, this.inventory}) : super(key: key);
 
   @override
   _ParkingLotWidgetState createState() => _ParkingLotWidgetState();
@@ -211,7 +211,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
 
   @override
   Widget build(BuildContext context) {
-    bool directionsVisible = FlexUI().hasFeature('parking_lot_directions') && (widget.inventory.entrance != null);
+    bool directionsVisible = FlexUI().hasFeature('parking_lot_directions') && (widget.inventory!.entrance != null);
     return Semantics(container: true, child: Container(color: Colors.white, child: Row(
       children: <Widget>[
         Expanded(
@@ -222,27 +222,27 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  widget.inventory.lotName,
+                  widget.inventory!.lotName!,
                   style: TextStyle(
-                    fontFamily: Styles().fontFamilies.bold,
+                    fontFamily: Styles().fontFamilies!.bold,
                     fontSize: 18,
-                    color: Styles().colors.fillColorPrimary,
+                    color: Styles().colors!.fillColorPrimary,
                   ),
                 ),
                 Text(
-                  "${AppString.getDefaultEmptyString(value: widget.inventory.lotAddress)}",
+                  "${AppString.getDefaultEmptyString(widget.inventory!.lotAddress)}",
                   style: TextStyle(
-                    fontFamily: Styles().fontFamilies.medium,
+                    fontFamily: Styles().fontFamilies!.medium,
                     fontSize: 16,
-                    color: Styles().colors.fillColorPrimary,
+                    color: Styles().colors!.fillColorPrimary,
                   ),
                 ),
                 Text(
-                  Localization().getStringEx("panel.parking_lots.label.available_spots", "Available Spots: ") + "${widget.inventory.availableSpots}",
+                  Localization().getStringEx("panel.parking_lots.label.available_spots", "Available Spots: ")! + "${widget.inventory!.availableSpots}",
                   style: TextStyle(
-                    fontFamily: Styles().fontFamilies.regular,
+                    fontFamily: Styles().fontFamilies!.regular,
                     fontSize: 16,
-                    color: Styles().colors.mediumGray,
+                    color: Styles().colors!.mediumGray,
                   ),
                 ),
               ],
@@ -257,8 +257,8 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
             hint: Localization().getStringEx('panel.parking_lots.button.directions.hint', ''),
             backgroundColor: Colors.white,
             fontSize: 16.0,
-            textColor: Styles().colors.fillColorPrimary,
-            borderColor: Styles().colors.fillColorSecondary,
+            textColor: Styles().colors!.fillColorPrimary,
+            borderColor: Styles().colors!.fillColorSecondary,
             padding: EdgeInsets.symmetric(horizontal: 12),
             onTap: _onTapDirections),),))
         )

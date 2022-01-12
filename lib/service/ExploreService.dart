@@ -42,7 +42,7 @@ class ExploreService with Service implements NotificationsListener {
   static const String notifyEventCreated = "edu.illinois.rokwire.explore.event.created";
   static const String notifyEventUpdated = "edu.illinois.rokwire.explore.event.updated";
 
-  List<Map<String, dynamic>> _eventDetailsCache;
+  List<Map<String, dynamic>>? _eventDetailsCache;
   
   // Singletone Factory
   static final ExploreService _instance = ExploreService._internal();
@@ -90,9 +90,9 @@ class ExploreService with Service implements NotificationsListener {
 
   // Implementation
 
-  Future<List<Explore>> loadEvents({String searchText, Core.Position locationData, Set<String> categories, EventTimeFilter eventFilter = EventTimeFilter.upcoming, Set<String> tags, bool excludeRecurring = true, int recurrenceId, int limit = 0}) async {
+  Future<List<Event>?> loadEvents({String? searchText, Core.Position? locationData, Set<String?>? categories, EventTimeFilter? eventFilter = EventTimeFilter.upcoming, Set<String>? tags, bool excludeRecurring = true, int? recurrenceId, int limit = 0}) async {
     if(_enabled) {
-      http.Response response;
+      http.Response? response;
       String queryParameters = _buildEventsQueryParameters(
           searchText,
           locationData,
@@ -108,14 +108,14 @@ class ExploreService with Service implements NotificationsListener {
         Log.e(e.toString());
         return null;
       }
-      String responseBody = response?.body;
+      String? responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
         //Directory appDocDir = await getApplicationDocumentsDirectory();
         //String cacheFilePath = join(appDocDir.path, 'events.json');
         //File cacheFile = File(cacheFilePath);
         //cacheFile.writeAsString(responseBody, flush: true);
-        List<dynamic> jsonList = AppJson.decode(responseBody);
-        List<Event> events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: excludeRecurring, eventFilter: eventFilter);
+        List<dynamic>? jsonList = AppJson.decode(responseBody);
+        List<Event>? events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: excludeRecurring, eventFilter: eventFilter);
         return events;
       } else {
         Log.e('Failed to load events');
@@ -125,12 +125,12 @@ class ExploreService with Service implements NotificationsListener {
     return null;
   }
 
-  Future<Explore> getEventById(String eventId) async {
+  Future<Event?> getEventById(String? eventId) async {
     if(_enabled) {
       if (AppString.isStringEmpty(eventId)) {
         return null;
       }
-      http.Response response;
+      http.Response? response;
       try {
         response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/$eventId', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
       } catch (e) {
@@ -139,10 +139,10 @@ class ExploreService with Service implements NotificationsListener {
         return null;
       }
       int responseCode = response?.statusCode ?? -1;
-      String responseBody = response?.body;
+      String? responseBody = response?.body;
       if ((response != null) && (responseCode >= 200 && responseCode <= 300)) {
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        Event event = Event.fromJson(jsonData);
+        Map<String, dynamic>? jsonData = AppJson.decode(responseBody);
+        Event? event = Event.fromJson(jsonData);
         return event;
       } else {
         Log.e('Failed to retrieve event with id: $eventId');
@@ -152,17 +152,16 @@ class ExploreService with Service implements NotificationsListener {
     return null;
   }
 
-  Future<String> postNewEvent(Explore explore) async{
-    if(_enabled) {
-      Event event = explore is Event ? explore : null;
-      http.Response response;
+  Future<String?> postNewEvent(Event? event) async{
+    if(_enabled && (event != null)) {
+      http.Response? response;
       try {
         dynamic body = json.encode(event.toNotNullJson());
         response = (Config().eventsUrl != null) ? await Network().post(Config().eventsUrl, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
             auth: NetworkAuth.Auth2) : null;
-        Map<String, dynamic> jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? AppJson.decode(response?.body) : null;
-        String eventId = (jsonData != null) ? AppJson.stringValue(jsonData["id"]) : null;
+        Map<String, dynamic>? jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? AppJson.decode(response?.body) : null;
+        String? eventId = (jsonData != null) ? AppJson.stringValue(jsonData["id"]) : null;
         if (eventId != null) {
           NotificationService().notify(notifyEventCreated, eventId);
         }
@@ -175,17 +174,17 @@ class ExploreService with Service implements NotificationsListener {
     return null;
   }
 
-  Future<String> updateEvent(Event event) async{
+  Future<String?> updateEvent(Event? event) async{
     if(_enabled && event!=null) {
-      http.Response response;
+      http.Response? response;
       try {
         dynamic body = json.encode(event.toNotNullJson());
-        String url = Config().eventsUrl + "/" + event.id;
+        String url = Config().eventsUrl! + "/" + event.id!;
         response = (Config().eventsUrl != null) ? await Network().put(url, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
             auth: NetworkAuth.Auth2) : null;
-        Map<String, dynamic> jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? AppJson.decode(response?.body) : null;
-        String eventId = (jsonData != null) ? AppJson.stringValue(jsonData["id"]) : null;
+        Map<String, dynamic>? jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? AppJson.decode(response?.body) : null;
+        String? eventId = (jsonData != null) ? AppJson.stringValue(jsonData["id"]) : null;
         if (eventId != null) {
           NotificationService().notify(notifyEventUpdated, eventId);
         }
@@ -198,15 +197,15 @@ class ExploreService with Service implements NotificationsListener {
     return null;
   }
 
-  Future<bool> deleteEvent(String eventId) async{
+  Future<bool?> deleteEvent(String? eventId) async{
     if(_enabled && eventId!=null) {
-      http.Response response;
+      http.Response? response;
       try {
-        String url = Config().eventsUrl + "/" + eventId;
+        String url = Config().eventsUrl! + "/" + eventId;
         response = (Config().eventsUrl != null) ? await Network().delete(url,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
             auth: NetworkAuth.Auth2) : null;
-    Map<String, dynamic> jsonData = AppJson.decode(response?.body);
+    Map<String, dynamic>? jsonData = AppJson.decode(response?.body);
     return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201|| response.statusCode == 202));
     } catch (e) {
     Log.e('Failed to delete event $eventId');
@@ -216,32 +215,32 @@ class ExploreService with Service implements NotificationsListener {
     return null;
   }
 
-  Future<List<Event>> loadEventsByIds(Set<String> eventIds) async {
+  Future<List<Event>?> loadEventsByIds(Set<String?>? eventIds) async {
     if(_enabled) {
       if (AppCollection.isCollectionEmpty(eventIds)) {
         Log.i('Missing event ids param');
         return null;
       }
       StringBuffer idsBuffer = StringBuffer();
-      eventIds.forEach((eventId) {
+      eventIds!.forEach((eventId) {
         idsBuffer.write('id=$eventId&');
       });
       String idsQueryParam = idsBuffer.toString().substring(0, (idsBuffer.length - 1)); //Remove & at last position
       EventTimeFilter upcomingFilter = EventTimeFilter.upcoming;
-      String timeQueryParams = _constructEventTimeFilterParams(upcomingFilter);
+      String? timeQueryParams = _constructEventTimeFilterParams(upcomingFilter);
       String url = '${Config().eventsUrl}?$idsQueryParam&$timeQueryParams';
-      http.Response response;
+      http.Response? response;
       try {
         response = (Config().eventsUrl != null) ? await Network().get(url, auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load events by ids.');
-        Log.e(e?.toString());
+        Log.e(e.toString());
         return null;
       }
-      String responseBody = response?.body;
+      String? responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
-        List<dynamic> jsonList = AppJson.decode(responseBody);
-        List<Event> events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: false, eventFilter: upcomingFilter);
+        List<dynamic>? jsonList = AppJson.decode(responseBody);
+        List<Event>? events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: false, eventFilter: upcomingFilter);
         return events;
       } else {
         Log.e('Failed to load events by ids');
@@ -251,8 +250,8 @@ class ExploreService with Service implements NotificationsListener {
     return null;
   }
 
-  Future<List<ExploreCategory>> loadEventCategoriesEx() async {
-    http.Response response;
+  Future<List<ExploreCategory>?> loadEventCategoriesEx() async {
+    http.Response? response;
     if(_enabled) {
       try {
         response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
@@ -261,11 +260,9 @@ class ExploreService with Service implements NotificationsListener {
         Log.e(e.toString());
         return null;
       }
-      String responseBody = response?.body;
+      String? responseBody = response?.body;
       if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
-        List<dynamic> categoriesJson = AppJson.decode(responseBody);
-        List<ExploreCategory> categories = AppCollection.isCollectionNotEmpty(categoriesJson) ? categoriesJson.map((entry) => ExploreCategory.fromJson(entry)).toList() : null;
-        return categories;
+        return ExploreCategory.listFromJson(AppJson.decodeList(responseBody));
       } else {
         Log.e('Failed to load event categories');
         Log.e(responseBody);
@@ -276,9 +273,9 @@ class ExploreService with Service implements NotificationsListener {
   }
 
 
-  Future<List<dynamic>> loadEventCategories() async {
+  Future<List<dynamic>?> loadEventCategories() async {
     if(_enabled) {
-      http.Response response;
+      http.Response? response;
       try {
         response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
       } catch (e) {
@@ -286,9 +283,9 @@ class ExploreService with Service implements NotificationsListener {
         Log.e(e.toString());
         return null;
       }
-      String responseBody = response?.body;
+      String? responseBody = response?.body;
       if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
-        List<dynamic> categories = AppJson.decode(responseBody);
+        List<dynamic>? categories = AppJson.decode(responseBody);
         return categories;
       } else {
         Log.e('Failed to load event categories');
@@ -299,9 +296,9 @@ class ExploreService with Service implements NotificationsListener {
     return null;
   }
 
-  Future<List<String>> loadEventTags() async {
+  Future<List<String>?> loadEventTags() async {
     if(_enabled) {
-      http.Response response;
+      http.Response? response;
       try {
         response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/tags', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
       } catch (e) {
@@ -309,9 +306,9 @@ class ExploreService with Service implements NotificationsListener {
         return null;
       }
       int responseCode = response?.statusCode ?? -1;
-      String responseBody = response?.body;
+      String? responseBody = response?.body;
       if ((response != null) && (responseCode >= 200) && (responseCode <= 301)) {
-        List<dynamic> tagsList = AppJson.decode(responseBody);
+        List<dynamic>? tagsList = AppJson.decode(responseBody);
         return (tagsList != null) ? List.from(tagsList) : null;
       } else {
         Log.e(responseBody);
@@ -321,23 +318,23 @@ class ExploreService with Service implements NotificationsListener {
     return null;
   }
 
-  void sortEvents(List<Explore> events) {
-    if (AppCollection.isCollectionEmpty(events) || (events.length == 1)) {
+  void sortEvents(List<Explore>? events) {
+    if (AppCollection.isCollectionEmpty(events) || (events!.length == 1)) {
       return;
     }
     events.sort((Explore first, Explore second) => _compareEvents(first, second));
   }
 
-  int _compareEvents(Explore first, Explore second) {
+  int _compareEvents(Explore? first, Explore? second) {
     if (first is Event && second is Event) {
-      int firstScore = first?.convergeScore ?? -1;
-      int secondScore = second?.convergeScore ?? -1;
+      int firstScore = first.convergeScore ?? -1;
+      int secondScore = second.convergeScore ?? -1;
       int comparedScore = secondScore.compareTo(firstScore); //Descending order by score
       if (comparedScore == 0) {
         if (first.startDateGmt == null || second.startDateGmt == null) {
           return 0;
         } else {
-          return (first.startDateGmt.isBefore(second.startDateGmt)) ? -1 : 1;
+          return (first.startDateGmt!.isBefore(second.startDateGmt!)) ? -1 : 1;
         }
       } else {
         return comparedScore;
@@ -347,32 +344,32 @@ class ExploreService with Service implements NotificationsListener {
     }
   }
 
-  String _buildEventsQueryParameters(String searchText, Core.Position locationData, EventTimeFilter eventTimeFilter, Set<String> categories, Set<String> tags, int recurrenceId, int limit) {
+  String _buildEventsQueryParameters(String? searchText, Core.Position? locationData, EventTimeFilter? eventTimeFilter, Set<String?>? categories, Set<String>? tags, int? recurrenceId, int limit) {
 
     String queryParameters = "";
 
     /// Search text
     if(AppString.isStringNotEmpty(searchText)){
-      queryParameters += _constructSearchParams(searchText);
+      queryParameters += _constructSearchParams(searchText!);
     }
 
     ///Location
     if (locationData != null) {
-      double lat = locationData.latitude;
-      double lng =locationData.longitude;
+      double? lat = locationData.latitude;
+      double? lng =locationData.longitude;
       int radius = AppLocation.defaultLocationRadiusInMeters;
       queryParameters += 'latitude=$lat&longitude=$lng&radius=$radius&';
     }
 
     /// Time Filter
-    String timeParams = _constructEventTimeFilterParams(eventTimeFilter);
+    String? timeParams = _constructEventTimeFilterParams(eventTimeFilter);
     if(timeParams != null){
       queryParameters += "$timeParams&";
     }
 
     ///User Roles
     String rolesParameters = '';
-    Set<String> targetAudiences = _targetAudienceFromUserRoles(Auth2().prefs?.roles);
+    Set<String>? targetAudiences = _targetAudienceFromUserRoles(Auth2().prefs?.roles);
     if (targetAudiences != null) {
       for (String targetAudience in targetAudiences) {
         rolesParameters += 'targetAudience=$targetAudience&';
@@ -389,7 +386,7 @@ class ExploreService with Service implements NotificationsListener {
 
     ///Categories
     if (categories != null && categories.length > 0) {
-      for (String category in categories) {
+      for (String? category in categories) {
         if (AppString.isStringNotEmpty(category)) {
           queryParameters += 'category=$category&';
         }
@@ -415,46 +412,47 @@ class ExploreService with Service implements NotificationsListener {
     return queryParameters;
   }
 
-  String _constructEventTimeFilterParams(EventTimeFilter eventFilter){
-    DateTime nowUni = AppDateTime().getUniLocalTimeFromUtcTime(AppDateTime().now.toUtc());
+  String? _constructEventTimeFilterParams(EventTimeFilter? eventFilter){
+    DateTime? nowUni = AppDateTime().getUniLocalTimeFromUtcTime(AppDateTime().now.toUtc());
 
     switch (eventFilter) {
       case EventTimeFilter.today:{
-          DateTime endDate = DateTime(nowUni.year, nowUni.month, nowUni.day, 23, 59, 59);
-          String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
-          String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
+          DateTime endDate = DateTime(nowUni!.year, nowUni.month, nowUni.day, 23, 59, 59);
+          String? formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
+          String? formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
           return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
         }
       case EventTimeFilter.thisWeekend:{
-        int currentWeekDay = nowUni.weekday;
+        int currentWeekDay = nowUni!.weekday;
         DateTime weekendStartDateTime = DateTime(nowUni.year, nowUni.month, nowUni.day, 0, 0, 0).add(Duration(days: (6 - currentWeekDay)));
-        DateTime startDate = nowUni.isBefore(weekendStartDateTime) ? weekendStartDateTime : nowUni;
+        DateTime? startDate = nowUni.isBefore(weekendStartDateTime) ? weekendStartDateTime : nowUni;
         DateTime endDate = DateTime(nowUni.year, nowUni.month, nowUni.day, 23, 59, 59)
             .add(Duration(days: (7 - currentWeekDay)));
-        String formattedStartDate = AppDateTime().formatDateTime(startDate, ignoreTimeZone: true);
-        String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
+        String? formattedStartDate = AppDateTime().formatDateTime(startDate, ignoreTimeZone: true);
+        String? formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
         return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
       }
       case EventTimeFilter.next7Day:{
-        DateTime endDate = nowUni.add(Duration(days: 6));
-        String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
-        String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
+        DateTime endDate = nowUni!.add(Duration(days: 6));
+        String? formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
+        String? formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
         return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
       }
       case EventTimeFilter.next30Days:{
-        DateTime next = nowUni.add(Duration(days: 30));
+        DateTime next = nowUni!.add(Duration(days: 30));
         DateTime endDate = DateTime(next.year, next.month, next.day, 23, 59, 59);
-        String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
-        String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
+        String? formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
+        String? formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
         return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
       }
       case EventTimeFilter.upcoming:{
-        String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
+        String? formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
         return "endDate.gte=$formattedStartDate";
       }
-    }
+      default:
+        return null;
 
-    return null;
+    }
   }
 
   String _constructSearchParams(String searchInput) {
@@ -467,29 +465,29 @@ class ExploreService with Service implements NotificationsListener {
     return param;
   }
 
-  Future<List<Event>> _buildEvents({List<dynamic> eventsJsonList, bool excludeRecurringEvents = true, EventTimeFilter eventFilter}) async {
+  Future<List<Event>?> _buildEvents({List<dynamic>? eventsJsonList, bool excludeRecurringEvents = true, EventTimeFilter? eventFilter}) async {
     if (AppCollection.isCollectionEmpty(eventsJsonList)) {
       return null;
     }
     List<Event> events = [];
     Map<int, int> recurringIdToIndexMap = HashMap();
-    for (dynamic jsonEntry in eventsJsonList) {
-      Event event = Event.fromJson(jsonEntry);
+    for (dynamic jsonEntry in eventsJsonList!) {
+      Event? event = Event.fromJson(jsonEntry);
       if (event != null) {
         bool addEventToList = true;
         bool displayOnlyWithSuperEvent = event.displayOnlyWithSuperEvent ?? false;
-        int recurrenceId = event.recurrenceId;
+        int? recurrenceId = event.recurrenceId;
         int eventIndex = events.length;
-        if (excludeRecurringEvents && event.recurringFlag && (recurrenceId != null)) {
+        if (excludeRecurringEvents && event.recurringFlag! && (recurrenceId != null)) {
           if (!recurringIdToIndexMap.containsKey(recurrenceId)) {
             recurringIdToIndexMap[recurrenceId] = eventIndex;
           } else {
-            int eventIndex = recurringIdToIndexMap[recurrenceId];
+            int eventIndex = recurringIdToIndexMap[recurrenceId]!;
             Event existingEvent = events[eventIndex];
-            if (existingEvent?.isRecurring ?? false) {
+            if (existingEvent.isRecurring) {
               existingEvent.addRecurrentEvent(event);
             } else {
-              Event containerEvent = Event.fromOther(existingEvent);
+              Event containerEvent = Event.fromOther(existingEvent)!;
               containerEvent.recurringFlag = true;
               containerEvent.addRecurrentEvent(existingEvent);
               containerEvent.addRecurrentEvent(event);
@@ -497,7 +495,7 @@ class ExploreService with Service implements NotificationsListener {
             }
             addEventToList = false;
           }
-        } else if(event.isSuperEvent) {
+        } else if(event.isSuperEvent == true) {
           await _buildEventsForSuperEvent(event, eventFilter);
         }
         if (addEventToList && !displayOnlyWithSuperEvent) {
@@ -515,12 +513,12 @@ class ExploreService with Service implements NotificationsListener {
     return events;
   }
 
-  static Set<String> _targetAudienceFromUserRoles(Set<UserRole> roles) {
+  static Set<String>? _targetAudienceFromUserRoles(Set<UserRole>? roles) {
     if (roles == null || roles.isEmpty) {
       return null;
     }
     Set<String> targetAudiences = Set();
-    for (UserRole role in roles) {
+    for (UserRole? role in roles) {
       if (role == UserRole.student) {
         targetAudiences.add('students');
       } else if (role == UserRole.alumni) {
@@ -542,23 +540,23 @@ class ExploreService with Service implements NotificationsListener {
     return targetAudiences;
   }
 
-  Future<void> _buildEventsForSuperEvent(Event superEvent, EventTimeFilter eventFilter) async {
-    List<Map<String, dynamic>> subEventsMap = superEvent.subEventsMap;
+  Future<void> _buildEventsForSuperEvent(Event superEvent, EventTimeFilter? eventFilter) async {
+    List<Map<String, dynamic>>? subEventsMap = superEvent.subEventsMap;
     if (AppCollection.isCollectionEmpty(subEventsMap)) {
       Log.e('Super event does not contain sub events!');
       return;
     }
-    String superEventId = superEvent?.id;
+    String? superEventId = superEvent.id;
     if (AppString.isStringEmpty(superEventId)) {
       Log.e('Super event has no id!');
       return;
     }
     String queryParameters = '?superEventId=$superEventId';
-    String dateTimeQueryParam = _constructEventTimeFilterParams(eventFilter);
+    String? dateTimeQueryParam = _constructEventTimeFilterParams(eventFilter);
     if (AppString.isStringNotEmpty(dateTimeQueryParam)) {
       queryParameters += '&$dateTimeQueryParam';
     }
-    http.Response response;
+    http.Response? response;
     try {
       response = (Config().eventsUrl != null) ? await Network().get(
           '${Config().eventsUrl}$queryParameters', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
@@ -571,16 +569,16 @@ class ExploreService with Service implements NotificationsListener {
       return;
     }
     String responseBody = response.body;
-    List<dynamic> subEventsJsonList = AppJson.decodeList(responseBody);
+    List<dynamic>? subEventsJsonList = AppJson.decodeList(responseBody);
     if (AppCollection.isCollectionNotEmpty(subEventsJsonList)) {
-      for (dynamic eventJson in subEventsJsonList) {
-        String id = eventJson['id'];
-        Map<String, dynamic> subEventJson = subEventsMap.firstWhere((jsonEntry) => (id == jsonEntry['id']), orElse: () {
+      for (dynamic eventJson in subEventsJsonList!) {
+        String? id = eventJson['id'];
+        Map<String, dynamic>? subEventJson = (subEventsMap as List<Map<String, dynamic>?>).firstWhere((jsonEntry) => (id == jsonEntry!['id']), orElse: () {
           print('No matching sub event');
-          return null;
+          return Map();
         });
-        if (subEventJson != null) {
-          Event event = Event.fromJson(eventJson);
+        if ((subEventJson != null) && subEventJson.isNotEmpty) {
+          Event event = Event.fromJson(eventJson)!;
           event.track = subEventJson['track'];
           if (true == subEventJson['isFeatured']) {
             superEvent.addFeaturedEvent(event);
@@ -595,7 +593,7 @@ class ExploreService with Service implements NotificationsListener {
     return _applyStdEventsHeaders(null);
   }
 
-  Map<String, String> _applyStdEventsHeaders(Map<String, String> headers) {
+  Map<String, String> _applyStdEventsHeaders(Map<String, String>? headers) {
     if (headers == null) {
       headers = Map<String, String>();
     }
@@ -617,21 +615,21 @@ class ExploreService with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
-  void _onDeepLinkUri(Uri uri) {
+  void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri eventUri = Uri.tryParse(EVENT_URI);
+      Uri? eventUri = Uri.tryParse(EVENT_URI);
       if ((eventUri != null) &&
           (eventUri.scheme == uri.scheme) &&
           (eventUri.authority == uri.authority) &&
           (eventUri.path == uri.path))
       {
-        try { _handleEventDetail(uri.queryParameters?.cast<String, dynamic>()); }
-        catch (e) { print(e?.toString()); }
+        try { _handleEventDetail(uri.queryParameters.cast<String, dynamic>()); }
+        catch (e) { print(e.toString()); }
       }
     }
   }
 
-  void _handleEventDetail(Map<String, dynamic> params) {
+  void _handleEventDetail(Map<String, dynamic>? params) {
     if ((params != null) && params.isNotEmpty) {
       if (_eventDetailsCache != null) {
         _cacheEventDetail(params);
@@ -652,7 +650,7 @@ class ExploreService with Service implements NotificationsListener {
 
   void _processCachedEventDetails() {
     if (_eventDetailsCache != null) {
-      List<Map<String, dynamic>> eventDetailsCache = _eventDetailsCache;
+      List<Map<String, dynamic>> eventDetailsCache = _eventDetailsCache!;
       _eventDetailsCache = null;
 
       for (Map<String, dynamic> eventDetail in eventDetailsCache) {

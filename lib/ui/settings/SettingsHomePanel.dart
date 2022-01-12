@@ -62,6 +62,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   static BorderRadius _allRounding = BorderRadius.all(Radius.circular(5));
   
   String _versionName = "";
+  bool _connectingNetId = false;
 
   @override
   void initState() {
@@ -161,7 +162,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           Expanded(
             child: SingleChildScrollView(
               child: Container(
-                color: Styles().colors.background,
+                color: Styles().colors!.background,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: contentList,
@@ -171,7 +172,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           ),
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -179,7 +180,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   //Header Bar
   Widget _buildHeaderBarTitle() {
     return _DebugContainer(child:
-      Text(Localization().getStringEx("panel.settings.home.settings.header", "Settings"), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0, ), textAlign: TextAlign.center,),
+      Text(Localization().getStringEx("panel.settings.home.settings.header", "Settings")!, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0, ), textAlign: TextAlign.center,),
     );
   }
 
@@ -200,19 +201,19 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                     color: UiColors.fromHex("9318bb"),
                     //border: Border.all(color: Colors.grey, width: 1),
                     borderRadius: BorderRadius.circular(6),
-                    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+                    boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
                 ),
                 child:  Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Expanded(child:
                     Text(
-                      Localization().getStringEx("panel.browse.button.privacy_center.title","Privacy Center"),
+                      Localization().getStringEx("panel.browse.button.privacy_center.title","Privacy Center")!,
                       textAlign: TextAlign.start,
                       style: TextStyle(
-                          color: Styles().colors.white,
+                          color: Styles().colors!.white,
                           fontSize: 20,
-                          fontFamily: Styles().fontFamilies.bold),
+                          fontFamily: Styles().fontFamilies!.bold),
                     )),
                     Image.asset("images/group-8.png", excludeFromSemantics: true,),
                   ],),
@@ -227,17 +228,17 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     String fullName = Auth2().fullName ?? "";
     bool hasFullName =  AppString.isStringNotEmpty(fullName);
     String welcomeMessage = AppString.isStringNotEmpty(fullName)
-        ? AppDateTime().getDayGreeting() + ","
-        : Localization().getStringEx("panel.settings.home.user_info.title.sufix", "Welcome to Illinois");
+        ? AppDateTime().getDayGreeting()! + ","
+        : Localization().getStringEx("panel.settings.home.user_info.title.sufix", "Welcome to Illinois")!;
     return Container(
         width: double.infinity,
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Text(welcomeMessage, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
+              Text(welcomeMessage, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
               Visibility(
                 visible: hasFullName,
-                  child: Text(fullName, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 28))
+                  child: Text(fullName, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 28))
               ),
             ])));
   }
@@ -250,8 +251,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     contentList.add(Padding(
         padding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 2),
         child: Text(
-          Localization().getStringEx("panel.settings.home.connect.not_logged_in.title", "Connect to Illinois"),
-          style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20),
+          Localization().getStringEx("panel.settings.home.connect.not_logged_in.title", "Connect to Illinois")!,
+          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
         ),
       ),
     );
@@ -263,39 +264,52 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             padding: EdgeInsets.all(10),
             child: new RichText(
               text: new TextSpan(
-                style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16),
+                style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
                 children: <TextSpan>[
                   new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_2", "university student"),
-                      style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
+                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
                   new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_3", " or ")),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_4", "employee"),
-                      style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
+                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_5",
                           "? Log in with your NetID to see Illinois information specific to you, like your Illini Cash and meal plan."))
                 ],
               ),
             )),);
-          contentList.add(RibbonButton(
-            height: null,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
-            borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Connect your NetID"),
-            onTap: _onConnectNetIdClicked),);
+          contentList.add(Stack(children: [
+            RibbonButton(
+              height: null,
+              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+              borderRadius: _allRounding,
+              label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Connect your NetID"),
+              onTap: _onConnectNetIdClicked),
+            Visibility(visible: _connectingNetId == true, child:
+              Container(height: 46, child:
+                Align(alignment: Alignment.centerRight, child:
+                  Padding(padding: EdgeInsets.only(right: 10), child:
+                    SizedBox(height: 24, width: 24, child:
+                      CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                    ),
+                  )
+                ),
+              ),
+            ),
+          ],),);
       }
       else if (code == 'phone_or_email') {
           contentList.add(Padding(
             padding: EdgeInsets.all(10),
             child: new RichText(
               text: new TextSpan(
-                style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16),
+                style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
                 children: <TextSpan>[
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "),
-                      style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
+                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_2",
                           "Verify your phone number or sign in by email to save your preferences and have the same experience on more than one device.")),
@@ -305,7 +319,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           contentList.add(RibbonButton(
             height: null,
             borderRadius: _allRounding,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Proceed"),
             onTap: _onPhoneOrEmailLoginClicked),);
       }
@@ -321,7 +335,17 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   void _onConnectNetIdClicked() {
     Analytics.instance.logSelect(target: "Connect netId");
-    Auth2().authenticateWithOidc();
+    if (_connectingNetId != true) {
+      setState(() { _connectingNetId = true; });
+      Auth2().authenticateWithOidc().then((bool? result) {
+        if (mounted) {
+          setState(() { _connectingNetId = false; });
+          if (result == false) {
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          }
+        }
+      });
+    }
   }
 
   void _onPhoneOrEmailLoginClicked() {
@@ -344,7 +368,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _didLogin(_) {
-    Navigator.of(context)?.popUntil((Route route){
+    Navigator.of(context).popUntil((Route route){
       return AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType;
     });
   }
@@ -363,7 +387,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         customizationOptions.add(RibbonButton(
             height: null,
             borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.customizations.role.title", "Who you are"),
             onTap: _onWhoAreYouClicked));
       }
@@ -371,7 +395,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         customizationOptions.add(RibbonButton(
             height: null,
             borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.customizations.manage_interests.title", "Manage your interests"),
             onTap: _onManageInterestsClicked));
       }
@@ -379,7 +403,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         customizationOptions.add(RibbonButton(
             height: null,
             borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.customizations.food_filters.title", "Food filters"),
             onTap: _onFoodFlitersClicked));
       }
@@ -444,29 +468,42 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       if (code == 'info') {
         contentList.add(Container(
           width: double.infinity,
-          decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 0.5)),
+          decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(Localization().getStringEx("panel.settings.home.net_id.message", "Connected as "),
-                    style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
+                Text(Localization().getStringEx("panel.settings.home.net_id.message", "Connected as ")!,
+                    style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
                 Text(Auth2().fullName ?? "",
-                    style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
+                    style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
               ]))));
       }
       else if (code == 'connect') {
-        contentList.add(RibbonButton(
-            height: null,
-            borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
-            label: Localization().getStringEx("panel.settings.home.net_id.button.connect", "Connect your NetID"),
-            onTap: _onConnectNetIdClicked));
+        contentList.add(Stack(children: [
+            RibbonButton(
+              height: null,
+              borderRadius: borderRadius,
+              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+              label: Localization().getStringEx("panel.settings.home.net_id.button.connect", "Connect your NetID"),
+              onTap: _onConnectNetIdClicked),
+            Visibility(visible: _connectingNetId == true, child:
+              Container(height: 46, child:
+                Align(alignment: Alignment.centerRight, child:
+                  Padding(padding: EdgeInsets.only(right: 10), child:
+                    SizedBox(height: 24, width: 24, child:
+                      CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                    ),
+                  )
+                ),
+              ),
+            ),
+          ],),);
       }
       else if (code == 'disconnect') {
         contentList.add(RibbonButton(
             height: null,
             borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Disconnect your NetID"),
             onTap: _onDisconnectNetIdClicked));
       }
@@ -488,21 +525,21 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       if (code == 'info') {
         contentList.add(Container(
           width: double.infinity,
-          decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 0.5)),
+          decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Verified as "),
-                    style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
-                Visibility(visible: hasFullName, child: Text(fullName ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),),
-                Text(Auth2().account?.authType?.phone ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
+                Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Verified as ")!,
+                    style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
+                Visibility(visible: hasFullName, child: Text(fullName, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
+                Text(Auth2().account?.authType?.phone ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
               ]))));
       }
       else if (code == 'verify') {
         contentList.add(RibbonButton(
             height: null,
             borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Phone Number"),
             onTap: _onPhoneOrEmailLoginClicked));
       }
@@ -510,7 +547,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.add(RibbonButton(
             height: null,
             borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect","Disconnect your Phone",),
             onTap: _onDisconnectNetIdClicked));
       }
@@ -531,21 +568,21 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       if (code == 'info') {
         contentList.add(Container(
           width: double.infinity,
-          decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 0.5)),
+          decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(Localization().getStringEx("panel.settings.home.email_login.message", "Logged in as "),
-                    style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
-                Visibility(visible: hasFullName, child: Text(fullName ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),),
-                Text(Auth2().account?.authType?.email ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
+                Text(Localization().getStringEx("panel.settings.home.email_login.message", "Logged in as ")!,
+                    style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
+                Visibility(visible: hasFullName, child: Text(fullName, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
+                Text(Auth2().account?.authType?.email ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
               ]))));
       }
       else if (code == 'login') {
         contentList.add(RibbonButton(
             height: null,
             borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
             onTap: _onPhoneOrEmailLoginClicked));
       }
@@ -553,7 +590,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.add(RibbonButton(
             height: null,
             borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect","Logout",),
             onTap: _onDisconnectNetIdClicked));
       }
@@ -580,15 +617,15 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx("panel.settings.home.logout.title", "Illinois"),
+              Localization().getStringEx("panel.settings.home.logout.title", "Illinois")!,
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
-                Localization().getStringEx("panel.settings.home.logout.message", "Are you sure you want to sign out?"),
+                Localization().getStringEx("panel.settings.home.logout.message", "Are you sure you want to sign out?")!,
                 textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Colors.black),
+                style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
               ),
             ),
             Row(
@@ -600,13 +637,13 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                       Navigator.pop(context);
                       Auth2().logout();
                     },
-                    child: Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes"))),
+                    child: Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes")!)),
                 TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text: "Sign out", selection: "No");
                       Navigator.pop(context);
                     },
-                    child: Text(Localization().getStringEx("panel.settings.home.logout.no", "No")))
+                    child: Text(Localization().getStringEx("panel.settings.home.logout.no", "No")!))
               ],
             ),
           ],
@@ -657,17 +694,17 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   void _onEventRemindersToggled() {
     Analytics.instance.logSelect(target: "Event Reminders");
-    FirebaseMessaging().notifyEventReminders = !FirebaseMessaging().notifyEventReminders;
+    FirebaseMessaging().notifyEventReminders = !FirebaseMessaging().notifyEventReminders!;
   }
 
   void _onAthleticsUpdatesToggled() {
     Analytics.instance.logSelect(target: "Athletics updates");
-    FirebaseMessaging().notifyAthleticsUpdates = !FirebaseMessaging().notifyAthleticsUpdates;
+    FirebaseMessaging().notifyAthleticsUpdates = !FirebaseMessaging().notifyAthleticsUpdates!;
   }
 
   void _onDiningSpecialsToggled() {
     Analytics.instance.logSelect(target: "Dining Specials");
-    FirebaseMessaging().notifyDiningSpecials = !FirebaseMessaging().notifyDiningSpecials;
+    FirebaseMessaging().notifyDiningSpecials = !FirebaseMessaging().notifyDiningSpecials!;
   }
 
   // Privacy 0
@@ -683,7 +720,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.add(RibbonButton(
           height: null,
           borderRadius: borderRadius,
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
           label: Localization().getStringEx("panel.settings.home.privacy.edit_my_privacy.title", "Edit My Privacy"),
           onTap: _onPrivacyClicked,
         ));
@@ -692,7 +729,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.add(RibbonButton(
           height: null,
           borderRadius: borderRadius,
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
           label: Localization().getStringEx("panel.settings.home.privacy.privacy_statement.title", "Privacy Statement"),
           onTap: _onPrivacyStatementClicked,
         ));
@@ -742,7 +779,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
     List<dynamic> codes = FlexUI()['settings.privacy.buttons'] ?? [];
     for (int index = 0; index < codes.length; index++) {
-      Widget privacyButton = _buildPrivacyButton(codes[index]);
+      Widget? privacyButton = _buildPrivacyButton(codes[index]);
       if (privacyButton != null) {
           if (rowWidgets.isNotEmpty) {
             rowWidgets.add(Container(width: 12),);
@@ -790,7 +827,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     ]));*/
   }
 
-  Widget _buildPrivacyButton(String code) {
+  Widget? _buildPrivacyButton(String code) {
     if (code == 'personal_info') {
       return _PrivacyGridButton(
         title: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.title", "Personal Information"),
@@ -816,10 +853,10 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     return Padding(padding: EdgeInsets.only(top: 12), child:
       Column(children: <Widget>[
         ScalableRoundedButton(
-          backgroundColor: Styles().colors.white,
+          backgroundColor: Styles().colors!.white,
           textColor: UiColors.fromHex("#f54400"),
           fontSize: 16,
-          fontFamily: Styles().fontFamilies.regular,
+          fontFamily: Styles().fontFamilies!.regular,
           label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Forget all of my information"),
           hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
           shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
@@ -847,7 +884,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Forget all of your information?"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
-          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies.bold)),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies!.bold)),
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
           //TBD localization
           TextSpan(text: contributeInGroups?
@@ -860,7 +897,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
         onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
             progressController(loading: true);
-            if(selectedValues?.contains(groupsSwitchTitle) ?? false){
+            if(selectedValues.contains(groupsSwitchTitle)){
               Groups().deleteUserData();
             }
             _deleteUserData().then((_){
@@ -889,7 +926,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
       if (code == 'personal_info') {
         contentList.add(RibbonButton(
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
           borderRadius: borderRadius,
           label: Localization().getStringEx("panel.settings.home.account.personal_info.title", "Personal Info"),
           onTap: _onPersonalInfoClicked));
@@ -918,13 +955,13 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Text(
-                Localization().getStringEx("panel.settings.home.feedback.title", "We need your ideas!"),
-                style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20),
+                Localization().getStringEx("panel.settings.home.feedback.title", "We need your ideas!")!,
+                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
               ),
               Container(height: 5,),
               Text(
-                Localization().getStringEx("panel.settings.home.feedback.description", "Enjoying the app? Missing something? Tap on the bottom to submit your idea."),
-                style: TextStyle(fontFamily: Styles().fontFamilies.regular,color: Styles().colors.textBackground, fontSize: 16),
+                Localization().getStringEx("panel.settings.home.feedback.description", "Enjoying the app? Missing something? Tap on the bottom to submit your idea.")!,
+                style: TextStyle(fontFamily: Styles().fontFamilies!.regular,color: Styles().colors!.textBackground, fontSize: 16),
               ),
             ])
         ),
@@ -933,10 +970,10 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           child: ScalableRoundedButton(
             label: Localization().getStringEx("panel.settings.home.button.feedback.title", "Submit Feedback"),
             hint: Localization().getStringEx("panel.settings.home.button.feedback.hint", ""),
-            backgroundColor: Styles().colors.background,
+            backgroundColor: Styles().colors!.background,
             fontSize: 16.0,
-            textColor: Styles().colors.fillColorPrimary,
-            borderColor: Styles().colors.fillColorSecondary,
+            textColor: Styles().colors!.fillColorPrimary,
+            borderColor: Styles().colors!.fillColorSecondary,
             onTap: _onFeedbackClicked,
           ),
         ),
@@ -944,7 +981,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     );
   }
 
-  String _constructFeedbackParams(String email, String phone, String name) {
+  String _constructFeedbackParams(String? email, String? phone, String? name) {
     Map params = Map();
     params['email'] = Uri.encodeComponent(email != null ? email : "");
     params['phone'] = Uri.encodeComponent(phone != null ? phone : "");
@@ -965,13 +1002,13 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     Analytics.instance.logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String email = Auth2().email;
-      String name =  Auth2().fullName;
-      String phone = Auth2().phone;
+      String? email = Auth2().email;
+      String? name =  Auth2().fullName;
+      String? phone = Auth2().phone;
       String params = _constructFeedbackParams(email, phone, name);
-      String feedbackUrl = Config().feedbackUrl + params;
+      String feedbackUrl = Config().feedbackUrl! + params;
 
-      String panelTitle = Localization().getStringEx('panel.settings.feedback.label.title', 'PROVIDE FEEDBACK');
+      String? panelTitle = Localization().getStringEx('panel.settings.feedback.label.title', 'PROVIDE FEEDBACK');
       Navigator.push(
           context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
     }
@@ -988,10 +1025,10 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       child: ScalableRoundedButton(
         label: Localization().getStringEx("panel.profile_info.button.debug.title", "Debug"),
         hint: Localization().getStringEx("panel.profile_info.button.debug.hint", ""),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         fontSize: 16.0,
-        textColor: Styles().colors.fillColorPrimary,
-        borderColor: Styles().colors.fillColorSecondary,
+        textColor: Styles().colors!.fillColorPrimary,
+        borderColor: Styles().colors!.fillColorSecondary,
         onTap: _onDebugClicked,
       ),
     ); 
@@ -1014,14 +1051,14 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       alignment: Alignment.center,
       child:  Text(
         "Version: $_versionName",
-        style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16),
+        style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
     ));
   }
 
   void _loadVersionInfo() async {
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       setState(() {
-        _versionName = packageInfo?.version;
+        _versionName = packageInfo.version;
       });
     });
   }
@@ -1054,11 +1091,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 }
 
 class _OptionsSection extends StatelessWidget {
-  final List<Widget> widgets;
-  final String title;
-  final String description;
+  final List<Widget>? widgets;
+  final String? title;
+  final String? description;
 
-  const _OptionsSection({Key key, this.widgets, this.title, this.description}) : super(key: key);
+  const _OptionsSection({Key? key, this.widgets, this.title, this.description}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1068,8 +1105,8 @@ class _OptionsSection extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             child: Text(
-              title,
-              style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20),
+              title!,
+              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
             ),
           ),
           AppString.isStringEmpty(description)
@@ -1077,16 +1114,16 @@ class _OptionsSection extends StatelessWidget {
               : Padding(
                   padding: EdgeInsets.only(left: 8, right: 8, bottom: 12),
                   child: Text(
-                    description,
-                    style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16),
+                    description!,
+                    style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
                   )),
           Stack(alignment: Alignment.topCenter, children: [
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Styles().colors.surfaceAccent, width: 0.5),
+                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5),
                 borderRadius: BorderRadius.circular(5.0),
               ),
-              child: Padding(padding: EdgeInsets.all(0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets)),
+              child: Padding(padding: EdgeInsets.all(0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets!)),
             )
           ])
         ]));
@@ -1094,12 +1131,12 @@ class _OptionsSection extends StatelessWidget {
 }
 
 class _PrivacyGridButton extends StatelessWidget {
-  final String title;
-  final String hint;
-  final String iconPath;
-  final Function onTap;
+  final String? title;
+  final String? hint;
+  final String? iconPath;
+  final void Function()? onTap;
 
-  const _PrivacyGridButton({Key key, this.title, this.hint, this.iconPath, this.onTap}) : super(key: key);
+  const _PrivacyGridButton({Key? key, this.title, this.hint, this.iconPath, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1107,17 +1144,17 @@ class _PrivacyGridButton extends StatelessWidget {
       Semantics(label: title, hint: hint, button: true, excludeSemantics: true, child:
         Padding(padding: EdgeInsets.all(2), child:
           Container(
-            decoration: BoxDecoration(color: (Styles().colors.white),
+            decoration: BoxDecoration(color: (Styles().colors!.white),
               borderRadius: BorderRadius.circular(4),
               border: Border.all(color: Colors.white, width: 2),
               boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
             child: Padding(padding: EdgeInsets.only(top: 16, bottom: 16), child:
               Column(mainAxisAlignment: MainAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: <Widget>[
                 Padding(padding: EdgeInsets.only(bottom: 16), child:
-                  Image.asset((iconPath)),
+                  Image.asset(iconPath!),
                 ),
                 Padding(padding: EdgeInsets.only(left: 10, right: 10, top: 10), child:
-                  Text(title, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)))
+                  Text(title!, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)))
               ],),
             ),
           ),
@@ -1131,7 +1168,7 @@ class _DebugContainer extends StatefulWidget {
 
   final Widget _child;
 
-  _DebugContainer({@required Widget child}) : _child = child;
+  _DebugContainer({required Widget child}) : _child = child;
 
   _DebugContainerState createState() => _DebugContainerState();
 }

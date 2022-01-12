@@ -46,13 +46,15 @@ class AppDateTime with Service {
 
   AppDateTime._internal();
 
-  timezone.Location _universityLocation;
-  String _localTimeZone;
+  timezone.Location? _universityLocation;
+  String? _localTimeZone;
 
   @override
   Future<void> initService() async {
 
-    var byteData = await rootBundle.load('assets/timezone2019a.tzf');
+    var byteData;
+    try { byteData = await rootBundle.load('assets/timezone2019a.tzf'); }
+    catch(e) {print(e.toString());}
     var rawData = byteData?.buffer?.asUint8List();
     if (rawData != null) {
       timezone.initializeDatabase(rawData);
@@ -63,13 +65,8 @@ class AppDateTime with Service {
 
     _localTimeZone = await FlutterNativeTimezone.getLocalTimezone();
     if (_localTimeZone != null) {
-      timezone.Location deviceLocation = timezone.getLocation(_localTimeZone);
-      if (deviceLocation != null) {
-        timezone.setLocalLocation(deviceLocation);
-      }
-      else {
-        print('AppDateTime: Failed to initialze Timezone device location.');
-      }
+      timezone.Location deviceLocation = timezone.getLocation(_localTimeZone!);
+      timezone.setLocalLocation(deviceLocation);
     }
     else {
       print('AppDateTime: Failed to retrieve local timezone.');
@@ -84,19 +81,21 @@ class AppDateTime with Service {
   }
 
   DateTime get now {
-    DateTime now = Storage().offsetDate;
+    DateTime? now = Storage().offsetDate;
     return now != null ? now : DateTime.now();
   }
 
-  DateTime dateTimeFromString(String dateTimeString, {String format, bool isUtc = false}) {
+  timezone.Location? get universityLocation => _universityLocation;
+
+  DateTime? dateTimeFromString(String? dateTimeString, {String? format, bool isUtc = false}) {
     if (AppString.isStringEmpty(dateTimeString)) {
       return null;
     }
-    DateTime dateTime;
+    DateTime? dateTime;
     try {
       dateTime = AppString.isStringNotEmpty(format) ?
-        DateFormat(format).parse(dateTimeString, isUtc) :
-        DateTime.tryParse(dateTimeString);
+        DateFormat(format).parse(dateTimeString!, isUtc) :
+        DateTime.tryParse(dateTimeString!);
     }
     on Exception catch (e) {
       Log.e(e.toString());
@@ -104,7 +103,7 @@ class AppDateTime with Service {
     return dateTime;
   }
 
-  DateTime getUtcTimeFromDeviceTime(DateTime dateTime) {
+  DateTime? getUtcTimeFromDeviceTime(DateTime? dateTime) {
     if (dateTime == null) {
       return null;
     }
@@ -112,7 +111,7 @@ class AppDateTime with Service {
     return dtUtc;
   }
 
-  DateTime getDeviceTimeFromUtcTime(DateTime dateTimeUtc) {
+  DateTime? getDeviceTimeFromUtcTime(DateTime? dateTimeUtc) {
     if (dateTimeUtc == null) {
       return null;
     }
@@ -120,63 +119,63 @@ class AppDateTime with Service {
     return deviceDateTime;
   }
 
-  DateTime getUniLocalTimeFromUtcTime(DateTime dateTimeUtc) {
+  DateTime? getUniLocalTimeFromUtcTime(DateTime? dateTimeUtc) {
     if (dateTimeUtc == null) {
       return null;
     }
-    timezone.TZDateTime tzDateTimeUni = timezone.TZDateTime.from(dateTimeUtc, _universityLocation);
+    timezone.TZDateTime tzDateTimeUni = timezone.TZDateTime.from(dateTimeUtc, _universityLocation!);
     return tzDateTimeUni;
   }
 
-  String formatUniLocalTimeFromUtcTime(DateTime dateTimeUtc, String format) {
+  String? formatUniLocalTimeFromUtcTime(DateTime? dateTimeUtc, String? format) {
     if(dateTimeUtc != null && format != null){
-      DateTime uniTime = getUniLocalTimeFromUtcTime(dateTimeUtc);
+      DateTime uniTime = getUniLocalTimeFromUtcTime(dateTimeUtc)!;
       return DateFormat(format).format(uniTime);
     }
     return null;
   }
 
-  String formatDateTime(DateTime dateTime,
-      {String format, String locale, bool ignoreTimeZone = false, bool showTzSuffix = false}) {
+  String? formatDateTime(DateTime? dateTime,
+      {String? format, String? locale, bool? ignoreTimeZone = false, bool showTzSuffix = false}) {
     if (dateTime == null) {
       return null;
     }
     if (AppString.isStringEmpty(format)) {
       format = iso8601DateTimeFormat;
     }
-    bool useDeviceLocalTimeZone = Storage().useDeviceLocalTimeZone;
-    String formattedDateTime;
+    bool? useDeviceLocalTimeZone = Storage().useDeviceLocalTimeZone;
+    String? formattedDateTime;
     DateFormat dateFormat = DateFormat(format, locale);
-    if (ignoreTimeZone || useDeviceLocalTimeZone) {
+    if (ignoreTimeZone! || useDeviceLocalTimeZone!) {
       try { formattedDateTime = dateFormat.format(dateTime); }
-      catch (e) { print(e?.toString()); }
+      catch (e) { print(e.toString()); }
     } else {
       timezone.TZDateTime tzDateTime = timezone.TZDateTime.from(
-          dateTime, _universityLocation);
+          dateTime, _universityLocation!);
       try { formattedDateTime = dateFormat.format(tzDateTime); }
-      catch(e) { print(e?.toString()); } 
+      catch(e) { print(e.toString()); } 
     }
     if (showTzSuffix) {
-      formattedDateTime += ' CT';
+      formattedDateTime = '$formattedDateTime CT';
     }
     return formattedDateTime;
   }
 
-  String getDisplayDateTime(DateTime dateTimeUtc, {bool allDay = false, bool considerSettingsDisplayTime = true}) {
-    String timePrefix = getDisplayDay(dateTimeUtc: dateTimeUtc, allDay: allDay, considerSettingsDisplayTime: considerSettingsDisplayTime, includeAtSuffix: true);
-    String timeSuffix = getDisplayTime(dateTimeUtc: dateTimeUtc, allDay: allDay, considerSettingsDisplayTime: considerSettingsDisplayTime);
+  String getDisplayDateTime(DateTime? dateTimeUtc, {bool? allDay = false, bool considerSettingsDisplayTime = true}) {
+    String? timePrefix = getDisplayDay(dateTimeUtc: dateTimeUtc, allDay: allDay, considerSettingsDisplayTime: considerSettingsDisplayTime, includeAtSuffix: true);
+    String? timeSuffix = getDisplayTime(dateTimeUtc: dateTimeUtc, allDay: allDay, considerSettingsDisplayTime: considerSettingsDisplayTime);
     return '$timePrefix $timeSuffix';
   }
 
-  String getDisplayDay({DateTime dateTimeUtc, bool allDay = false, bool considerSettingsDisplayTime = true, bool includeAtSuffix = false}) {
-    String displayDay = '';
+  String? getDisplayDay({DateTime? dateTimeUtc, bool? allDay = false, bool considerSettingsDisplayTime = true, bool includeAtSuffix = false}) {
+    String? displayDay = '';
     if(dateTimeUtc != null) {
-      bool useDeviceLocalTime = Storage().useDeviceLocalTimeZone;
-      DateTime dateTimeToCompare = _getDateTimeToCompare(dateTimeUtc: dateTimeUtc, considerSettingsDisplayTime: considerSettingsDisplayTime);
+      bool useDeviceLocalTime = Storage().useDeviceLocalTimeZone!;
+      DateTime dateTimeToCompare = _getDateTimeToCompare(dateTimeUtc: dateTimeUtc, considerSettingsDisplayTime: considerSettingsDisplayTime)!;
       DateTime nowDevice = DateTime.now();
       DateTime nowUtc = nowDevice.toUtc();
-      DateTime nowUniLocal = getUniLocalTimeFromUtcTime(nowUtc);
-      DateTime nowToCompare = useDeviceLocalTime ? nowDevice : nowUniLocal;
+      DateTime? nowUniLocal = getUniLocalTimeFromUtcTime(nowUtc);
+      DateTime nowToCompare = useDeviceLocalTime ? nowDevice : nowUniLocal!;
       int calendarDaysDiff = dateTimeToCompare.day - nowToCompare.day;
       int timeDaysDiff = dateTimeToCompare.difference(nowToCompare).inDays;
       if ((calendarDaysDiff != 0) && (calendarDaysDiff > timeDaysDiff)) {
@@ -184,14 +183,14 @@ class AppDateTime with Service {
       }
       if (timeDaysDiff == 0) {
         displayDay = Localization().getStringEx('model.explore.time.today', 'Today');
-        if (!allDay && includeAtSuffix) {
-          displayDay += " ${Localization().getStringEx('model.explore.time.at', 'at')}";
+        if (!allDay! && includeAtSuffix) {
+          displayDay = "$displayDay ${Localization().getStringEx('model.explore.time.at', 'at')}";
         }
       }
       else if (timeDaysDiff == 1) {
         displayDay = Localization().getStringEx('model.explore.time.tomorrow', 'Tomorrow');
-        if (!allDay && includeAtSuffix) {
-          displayDay += " ${Localization().getStringEx('model.explore.time.at', 'at')}";
+        if (!allDay! && includeAtSuffix) {
+          displayDay = "$displayDay ${Localization().getStringEx('model.explore.time.at', 'at')}";
         }
       }
       else {
@@ -201,18 +200,18 @@ class AppDateTime with Service {
     return displayDay;
   }
 
-  String getDisplayTime({DateTime dateTimeUtc, bool allDay = false, bool considerSettingsDisplayTime = true}) {
-    String timeToString = '';
-    if (dateTimeUtc != null && !allDay) {
-      bool useDeviceLocalTime = Storage().useDeviceLocalTimeZone;
-      DateTime dateTimeToCompare = _getDateTimeToCompare(dateTimeUtc: dateTimeUtc, considerSettingsDisplayTime: considerSettingsDisplayTime);
+  String? getDisplayTime({DateTime? dateTimeUtc, bool? allDay = false, bool considerSettingsDisplayTime = true}) {
+    String? timeToString = '';
+    if (dateTimeUtc != null && !allDay!) {
+      bool useDeviceLocalTime = Storage().useDeviceLocalTimeZone!;
+      DateTime dateTimeToCompare = _getDateTimeToCompare(dateTimeUtc: dateTimeUtc, considerSettingsDisplayTime: considerSettingsDisplayTime)!;
       String format = (dateTimeToCompare.minute == 0) ? 'ha' : 'h:mma';
       timeToString = formatDateTime(dateTimeToCompare, format: format, ignoreTimeZone: true, showTzSuffix: !useDeviceLocalTime);
     }
     return timeToString;
   }
 
-  String getDayGreeting() {
+  String? getDayGreeting() {
     int currentHour = DateTime.now().hour;
     if (currentHour > 7 && currentHour < 12) {
       return Localization().getStringEx("logic.date_time.greeting.morning", "Good morning");
@@ -225,12 +224,12 @@ class AppDateTime with Service {
     }
   }
 
-  DateTime _getDateTimeToCompare({DateTime dateTimeUtc, bool considerSettingsDisplayTime = true}) {
+  DateTime? _getDateTimeToCompare({DateTime? dateTimeUtc, bool considerSettingsDisplayTime = true}) {
     if (dateTimeUtc == null) {
       return null;
     }
-    DateTime dateTimeToCompare;
-    bool useDeviceLocalTime = Storage().useDeviceLocalTimeZone;
+    DateTime? dateTimeToCompare;
+    bool useDeviceLocalTime = Storage().useDeviceLocalTimeZone!;
     //workaround for receiving incorrect date times from server for games: http://fightingillini.com/services/schedule_xml_2.aspx
     if (useDeviceLocalTime && considerSettingsDisplayTime) {
       dateTimeToCompare = getDeviceTimeFromUtcTime(dateTimeUtc);
@@ -276,11 +275,11 @@ class AppDateTime with Service {
     }
   }
 
-  static DateTime midnight(DateTime date) {
+  static DateTime? midnight(DateTime? date) {
     return (date != null) ? DateTime(date.year, date.month, date.day) : null;
   }
 
-  timezone.TZDateTime changeTimeZoneToDate(DateTime time, timezone.Location location){
+  timezone.TZDateTime? changeTimeZoneToDate(DateTime time, timezone.Location location){
     try{
      return timezone.TZDateTime(location,time.year,time.month,time.day, time.hour, time.minute);
     } catch(e){
@@ -293,22 +292,22 @@ class AppDateTime with Service {
     return DateTime(date.year, date.month, date.day, date.hour, date.minute, date.second);
   }
 
-  DateTime localEndOfDay(DateTime date){
+  DateTime? localEndOfDay(DateTime? date){
     if(date == null)
       return null;
     try{
-      return timezone.TZDateTime(_universityLocation ,date.year,date.month,date.day,24);
+      return timezone.TZDateTime(_universityLocation! ,date.year,date.month,date.day,24);
     } catch(e){
       print(e);
     }
     return null;
   }
 
-  static DateTime parseDateTime(String dateTimeString, {String format, bool isUtc = false}) {
+  static DateTime? parseDateTime(String dateTimeString, {String? format, bool isUtc = false}) {
     if (AppString.isStringNotEmpty(dateTimeString)) {
       if (AppString.isStringNotEmpty(format)) {
         try { return DateFormat(format).parse(dateTimeString, isUtc); }
-        catch (e) { print(e?.toString()); }
+        catch (e) { print(e.toString()); }
       }
       else {
         return DateTime.tryParse(dateTimeString);
@@ -317,7 +316,7 @@ class AppDateTime with Service {
     return null;
   }
 
-  static String utcDateTimeToString(DateTime dateTime, { String format  = 'yyyy-MM-ddTHH:mm:ss.SSS'  }) {
+  static String? utcDateTimeToString(DateTime? dateTime, { String format  = 'yyyy-MM-ddTHH:mm:ss.SSS'  }) {
     return (dateTime != null) ? (DateFormat(format).format(dateTime.isUtc ? dateTime : dateTime.toUtc()) + 'Z') : null;
   }
 }

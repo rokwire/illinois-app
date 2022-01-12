@@ -33,13 +33,13 @@ class SettingsRolesPanel extends StatefulWidget {
 }
 
 class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
-  Set<UserRole> _selectedRoles;
+  Set<UserRole>? _selectedRoles;
 
-  Timer _saveRolesTimer;
+  Timer? _saveRolesTimer;
 
   @override
   void initState() {
-    _selectedRoles = (Auth2().prefs?.roles != null) ? Set.from(Auth2().prefs.roles) : Set<UserRole>();
+    _selectedRoles = (Auth2().prefs?.roles != null) ? Set.from(Auth2().prefs!.roles!) : Set<UserRole>();
     super.initState();
   }
 
@@ -60,25 +60,24 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO YOU ARE'),
+          Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO YOU ARE')!,
           style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
         ),
         onBackPressed: _onBack,
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
 
   Widget _buildContent() {
-    final double gridSpacing = 5;
     return
       Column (children: <Widget>[
         Expanded(
         child: SingleChildScrollView(
         child: Container(
-          color: Styles().colors.background,
+          color: Styles().colors!.background,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
@@ -86,117 +85,14 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
                 child: Padding(
                   padding: EdgeInsets.only(top: 16),
                   child: Text(
-                    Localization().getStringEx('panel.onboarding.roles.label.description', 'Select all that apply'),
-                    style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),
+                    Localization().getStringEx('panel.onboarding.roles.label.description', 'Select all that apply')!,
+                    style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),
                   ),
                 ),
               ),
               Padding(
                 padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 0),
-                child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Expanded(child: Column(children: <Widget>[
-                    RoleGridButton(
-                      title: Localization().getStringEx('panel.onboarding.roles.button.student.title', 'University Student'),
-                      hint: Localization().getStringEx('panel.onboarding.roles.button.student.hint', ''),
-                      iconPath: 'images/icon-persona-student-normal.png',
-                      selectedIconPath: 'images/icon-persona-student-selected.png',
-                      selectedBackgroundColor: Styles().colors.fillColorSecondary,
-                      selected: (_selectedRoles.contains(UserRole.student)),
-                      data: UserRole.student,
-                      sortOrder: 1,
-                      onTap: _onRoleGridButton,
-                    ),
-                    Container(height: gridSpacing,),
-                    RoleGridButton(
-                      title: Localization().getStringEx('panel.onboarding.roles.button.fan.title', 'Athletics Fan'),
-                      hint: Localization().getStringEx('panel.onboarding.roles.button.fan.hint', ''),
-                      iconPath: 'images/icon-persona-athletics-normal.png',
-                      selectedIconPath: 'images/icon-persona-athletics-selected.png',
-                      selectedBackgroundColor: Styles().colors.accentColor2,
-                      selected: _selectedRoles.contains(UserRole.fan),
-                      data: UserRole.fan,
-                      sortOrder: 3,
-                      onTap: _onRoleGridButton,
-                    ),
-                    Container(height: gridSpacing,),
-                    RoleGridButton(
-                      title: Localization().getStringEx('panel.onboarding.roles.button.alumni.title', 'Alumni'),
-                      hint: Localization().getStringEx('panel.onboarding.roles.button.alumni.hint', ''),
-                      iconPath: 'images/icon-persona-alumni-normal.png',
-                      selectedIconPath: 'images/icon-persona-alumni-selected.png',
-                      selectedBackgroundColor: Styles().colors.fillColorPrimary,
-                      selectedTextColor: Colors.white,
-                      selected:(_selectedRoles.contains(UserRole.alumni)),
-                      data: UserRole.alumni,
-                      sortOrder: 5,
-                      onTap: _onRoleGridButton,
-                    ),
-                    Container(height: gridSpacing,),
-                    /*RoleGridButton(
-                      title: Localization().getStringEx('panel.onboarding.roles.button.gies.title', 'GIES Student'),
-                      hint: Localization().getStringEx('panel.onboarding.roles.button.gies.hint', ''),
-                      iconPath: 'images/icon-persona-alumni-normal.png',
-                      selectedIconPath: 'images/icon-persona-alumni-selected.png',
-                      selectedBackgroundColor: Styles().colors.fillColorPrimary,
-                      selectedTextColor: Colors.white,
-                      selected:(_selectedRoles.contains(UserRole.gies)),
-                      data: UserRole.gies,
-                      sortOrder: 8,
-                      onTap: _onRoleGridButton,
-                    ),*/
-                  ],)),
-                  Container(width: gridSpacing,),
-                  Expanded(child: Column(children: <Widget>[
-                    RoleGridButton(
-                      title: Localization().getStringEx('panel.onboarding.roles.button.visitor.title', 'Visitor'),
-                      hint: Localization().getStringEx('panel.onboarding.roles.button.visitor.hint', ''),
-                      iconPath: 'images/icon-persona-visitor-normal.png',
-                      selectedIconPath: 'images/icon-persona-visitor-selected.png',
-                      selectedBackgroundColor: Styles().colors.fillColorSecondary,
-                      selected: (_selectedRoles.contains(UserRole.visitor)),
-                      data: UserRole.visitor,
-                      sortOrder: 2,
-                      onTap: _onRoleGridButton,
-                    ),
-                    Container(height: gridSpacing,),
-                    RoleGridButton(
-                      title: Localization().getStringEx('panel.onboarding.roles.button.employee.title', 'University Employee'),
-                      hint: Localization().getStringEx('panel.onboarding.roles.button.employee.hint', ''),
-                      iconPath: 'images/icon-persona-employee-normal.png',
-                      selectedIconPath: 'images/icon-persona-employee-selected.png',
-                      selectedBackgroundColor: Styles().colors.accentColor3,
-                      selected: (_selectedRoles.contains(UserRole.employee)),
-                      data: UserRole.employee,
-                      sortOrder: 4,
-                      onTap: _onRoleGridButton,
-                    ),
-                    Container(height: gridSpacing,),
-                    RoleGridButton(
-                      title: Localization().getStringEx('panel.onboarding.roles.button.parent.title', 'Parent'),
-                      hint: Localization().getStringEx('panel.onboarding.roles.button.parent.hint', ''),
-                      iconPath: 'images/icon-persona-parent-normal.png',
-                      selectedIconPath: 'images/icon-persona-parent-selected.png',
-                      selectedBackgroundColor: Styles().colors.fillColorSecondary,
-                      selected: (_selectedRoles.contains(UserRole.parent)),
-                      data: UserRole.parent,
-                      sortOrder: 6,
-                      onTap: _onRoleGridButton,
-                    ),
-                    Container(height: gridSpacing,),
-                    RoleGridButton(
-                      title: Localization().getStringEx('panel.onboarding.roles.button.resident.title', 'Illinois Resident'),
-                      hint: Localization().getStringEx('panel.onboarding.roles.button.resident.hint', ''),
-                      iconPath: 'images/icon-persona-resident-normal.png',
-                      selectedIconPath: 'images/icon-persona-resident-selected.png',
-                      selectedBackgroundColor: Styles().colors.fillColorPrimary,
-                      selectedTextColor: Colors.white,
-                      selected:(_selectedRoles.contains(UserRole.resident)),
-                      data: UserRole.resident,
-                      sortOrder: 7,
-                      onTap: _onRoleGridButton,
-                    ),
-                  ],),),
-                ],)
+                child: RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton),
               ),
 
             ],
@@ -226,21 +122,23 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
          );
   }*/
 
-  void _onRoleGridButton(RoleGridButton button) {
+  void _onRoleGridButton(RoleGridButton? button) {
 
     if (button != null) {
 
-      UserRole role = button.data as UserRole;
+      UserRole? role = (button.data is UserRole) ? (button.data as UserRole) : null;
 
       Analytics.instance.logSelect(target: "Role: " + role.toString());
 
-        if (_selectedRoles.contains(role)) {
-          _selectedRoles.remove(role);
+      if (role != null) {
+        if (_selectedRoles!.contains(role)) {
+          _selectedRoles!.remove(role);
         } else {
-          _selectedRoles.add(role);
+          _selectedRoles!.add(role);
         }
+      }
 
-      AppSemantics.announceCheckBoxStateChange(context, _selectedRoles.contains(role), button.title);
+      AppSemantics.announceCheckBoxStateChange(context, _selectedRoles!.contains(role), button.title);
 
       setState(() {});
 
@@ -265,7 +163,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
 
   void _stopSaveRolesTimer() {
     if (_saveRolesTimer != null) {
-      _saveRolesTimer.cancel();
+      _saveRolesTimer!.cancel();
       _saveRolesTimer = null;
     }
   }

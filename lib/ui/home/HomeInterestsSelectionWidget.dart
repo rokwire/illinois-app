@@ -32,7 +32,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class HomeInterestsSelectionWidget extends StatefulWidget {
-  final StreamController<void> refreshController;
+  final StreamController<void>? refreshController;
 
   HomeInterestsSelectionWidget({this.refreshController});
 
@@ -41,8 +41,8 @@ class HomeInterestsSelectionWidget extends StatefulWidget {
 }
 
 class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWidget> implements NotificationsListener {
-  List<String> _randomInterests;
-  List<String> _allInterests;
+  List<String>? _randomInterests;
+  List<String>? _allInterests;
   int _interestsCount = 3;
 
   @override
@@ -53,7 +53,7 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
     ]);
 
     if (widget.refreshController != null) {
-      widget.refreshController.stream.listen((_) {
+      widget.refreshController!.stream.listen((_) {
         _loadAllInterests();
       });
     }
@@ -76,28 +76,28 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
             borderRadius: BorderRadius.circular(4),
             child: Container(
                 alignment: Alignment.topLeft,
-                color: Styles().colors.white,
+                color: Styles().colors!.white,
                 child: Padding(
                     padding: EdgeInsets.only(left: 16, top: 16, right: 16, bottom: 19),
                     child: Column(children: [
                       Semantics(
-                          label: Localization().getStringEx("widget.home.interest_selection.title", "What are you interested in?") +
-                              Localization().getStringEx("widget.home.interest_selection.description", "See events based on topics you chose"),
+                          label: Localization().getStringEx("widget.home.interest_selection.title", "What are you interested in?")! +
+                              Localization().getStringEx("widget.home.interest_selection.description", "See events based on topics you chose")!,
                           header: true,
                           excludeSemantics: true,
                           child: Column(children: [
                             Container(
                               width: double.infinity,
                               child: Text(
-                                Localization().getStringEx("widget.home.interest_selection.title", "What are you interested in?"),
-                                style: TextStyle(fontSize: 18, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold),
+                                Localization().getStringEx("widget.home.interest_selection.title", "What are you interested in?")!,
+                                style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold),
                               ),
                             ),
                             Container(
                               width: double.infinity,
                               child: Text(
-                                Localization().getStringEx("widget.home.interest_selection.description", "See events based on topics you chose"),
-                                style: TextStyle(fontSize: 14, color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular),
+                                Localization().getStringEx("widget.home.interest_selection.description", "See events based on topics you chose")!,
+                                style: TextStyle(fontSize: 14, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular),
                               ),
                             ),
                           ])),
@@ -122,7 +122,7 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
 
   void _loadAllInterests() async {
     if (Connectivity().isNotOffline) {
-      ExploreService().loadEventTags().then((List<String> tagList) {
+      ExploreService().loadEventTags().then((List<String>? tagList) {
         if (mounted) {
           setState(() {
             _allInterests = tagList;
@@ -141,12 +141,12 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
       print("loadRandomInterests allInterests empty");
       return result;
     }
-    int max = _allInterests.length - 1;
+    int max = _allInterests!.length - 1;
     while (result.length < count) {
-      Random random = Random(DateTime.now()?.millisecondsSinceEpoch);
+      Random random = Random(DateTime.now().millisecondsSinceEpoch);
       int randomIndex = (random.nextInt(max));
-      String interest = _allInterests[randomIndex];
-      bool userContainsInterest = Auth2().prefs?.hasPositiveTag(interest);
+      String interest = _allInterests![randomIndex];
+      bool userContainsInterest = Auth2().prefs?.hasPositiveTag(interest) ?? false;
       bool resultContainsInterest = result.contains(interest);
 
       if (userContainsInterest || resultContainsInterest) {
@@ -160,26 +160,26 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
   }
 
   List<Widget> _buildInterestButtons() {
-    List<String> interests = _randomInterests;
+    List<String>? interests = _randomInterests;
     List<Widget> result =  [];
     if (AppCollection.isCollectionNotEmpty(interests)) {
-      interests.forEach((String interest) {
+      interests!.forEach((String interest) {
         result.add(_buildInterestButton(interest));
       });
     }
     result.add(_buildInterestButton(Localization().getStringEx("widget.home.interest_selection.button.see_all", "See all"),
-        borderColor: Styles().colors.fillColorSecondary, onTap: () {
+        borderColor: Styles().colors!.fillColorSecondary, onTap: () {
           _onSeeAllClicked();
         }));
     return result;
   }
 
-  Widget _buildInterestButton(String interest, {Color borderColor, Function onTap}) {
+  Widget _buildInterestButton(String? interest, {Color? borderColor, Function? onTap}) {
     return Padding(
         padding: EdgeInsets.only(top: 5, bottom: 5, right: 5),
         child: _HomeInterestButton(
           label: interest,
-          borderColor: borderColor ?? Styles().colors.surfaceAccent,
+          borderColor: borderColor ?? Styles().colors!.surfaceAccent,
           onTap: onTap ??
                   () {
                 _onInterestClicked(interest);
@@ -192,7 +192,7 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsManageInterestsPanel()));
   }
 
-  void _onInterestClicked(String interest) {
+  void _onInterestClicked(String? interest) {
     Analytics.instance.logSelect(target: "HomeInterestsSelection interest: $interest");
     Auth2().prefs?.togglePositiveTag(interest);
   }
@@ -216,8 +216,8 @@ class _HomeInterestButton extends RoundedButton {
       : super(
       label: label,
       backgroundColor: Colors.white,
-      borderColor: borderColor ?? Styles().colors.surfaceAccent,
-      textColor: Styles().colors.fillColorPrimary,
+      borderColor: borderColor ?? Styles().colors!.surfaceAccent,
+      textColor: Styles().colors!.fillColorPrimary,
       padding: EdgeInsets.symmetric(horizontal: 5),
       onTap: onTap);
 }

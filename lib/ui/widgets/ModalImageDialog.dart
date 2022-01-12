@@ -19,24 +19,25 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class ModalImageDialog extends StatelessWidget{
-  final String imageUrl;
-  final GestureTapCallback onClose;
+  final String? imageUrl;
+  final GestureTapCallback? onClose;
+  final BoxFit fit;
 
-  ModalImageDialog({this.imageUrl, this.onClose});
+  ModalImageDialog({this.imageUrl, this.onClose, this.fit = BoxFit.cover});
 
   @override
   Widget build(BuildContext context) {
     return  Column(children: <Widget>[
       Expanded(
         child: Container(
-          color: Styles().colors.blackTransparent06,
+          color: Styles().colors!.blackTransparent06,
           child: Dialog(
               //backgroundColor: Color(0x00ffffff),
               child:Container(
                 child: Column(
                   children: <Widget>[
                     Container(
-                      color: Styles().colors.fillColorPrimary,
+                      color: Styles().colors!.fillColorPrimary,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
@@ -47,7 +48,7 @@ class ModalImageDialog extends StatelessWidget{
                               child: Text('\u00D7',
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontFamily: Styles().fontFamilies.medium,
+                                    fontFamily: Styles().fontFamilies!.medium,
                                     fontSize: 50
                                 ),
                               ),
@@ -59,7 +60,7 @@ class ModalImageDialog extends StatelessWidget{
                     Expanded(
                       child: Container(
                         //margin: EdgeInsets.only(right: horizontalMargin + photoMargin, top: photoMargin),
-                        child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.cover,): Container(),
+                        child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: fit,): Container(),
                       ),
                     )
                   ],

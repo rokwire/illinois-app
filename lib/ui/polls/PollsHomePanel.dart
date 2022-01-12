@@ -16,11 +16,13 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Polls.dart';
@@ -44,25 +46,31 @@ class PollsHomePanel extends StatefulWidget {
 
 class _PollsHomePanelState extends State<PollsHomePanel> implements NotificationsListener{
 
-  _PollType _selectedPollType;
+  _PollType? _selectedPollType;
 
-  List<Poll> _myPolls;
-  String _myPollsCursor;
-  String _myPollsError;
+  List<Poll>? _myPolls;
+  String? _myPollsCursor;
+  String? _myPollsError;
   bool _myPollsLoading = false;
   
-  List<Poll> _recentPolls;
-  List<Poll> _recentLocalPolls;
-  String _recentPollsCursor;
-  String _recentPollsError;
+  List<Poll>? _recentPolls;
+  List<Poll>? _recentLocalPolls;
+  String? _recentPollsCursor;
+  String? _recentPollsError;
   bool _recentPollsLoading = false;
+
+  List<Poll>? _groupPolls;
+  String? _groupPollsCursor;
+  String? _groupPollsError;
+  bool _groupPollsLoading = false;
+  List<Group>? _myGroups;
 
   bool _loggingIn = false;
   
   final GlobalKey _keyBleDescriptionText = GlobalKey();
   double _bleDescriptionTextHeight = 0;
 
-  ScrollController _scrollController;
+  ScrollController? _scrollController;
 
   @override
   void initState() {
@@ -73,15 +81,16 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       Polls.notifyResultsChanged,
       GeoFence.notifyCurrentRegionsUpdated,
       FlexUI.notifyChanged,
+      Groups.notifyUserMembershipUpdated
     ]);
 
     _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);
+    _scrollController!.addListener(_scrollListener);
     
     _recentLocalPolls = Polls().localRecentPolls();
     _selectPollType(_couldCreatePoll ? _PollType.values[Storage().selectedPollType ?? 0] : _PollType.recentPolls);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       _evalBleDescriptionHeight();
     });
 
@@ -100,7 +109,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-        Localization().getStringEx("panel.polls_home.text.header.title","Quick Polls"),
+        Localization().getStringEx("panel.polls_home.text.header.title","Quick Polls")!,
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -109,7 +118,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
         ),
       ),
       body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -139,11 +148,11 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Widget _buildDescriptionLayout(){
-    String description = Localization().getStringEx("panel.polls_home.text.pin_description", "Ask the creator of the poll for its 4 Digit Poll #.");
+    String description = Localization().getStringEx("panel.polls_home.text.pin_description", "Ask the creator of the poll for its 4 Digit Poll #.")!;
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-      color: Styles().colors.fillColorPrimary,
+      color: Styles().colors!.fillColorPrimary,
       child: Column(
         children: <Widget>[
           Row(children: <Widget>[
@@ -153,8 +162,8 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
                 key: _keyBleDescriptionText,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Styles().colors.white,
-                    fontFamily: Styles().fontFamilies.regular,
+                    color: Styles().colors!.white,
+                    fontFamily: Styles().fontFamilies!.regular,
                     fontSize: 16
                   ),
                 ),
@@ -167,9 +176,9 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
             child: ScalableRoundedButton(
               label: Localization().getStringEx("panel.polls_home.button.find_poll.title","Find Poll"),
               onTap: ()=>_onFindPollTapped(),
-              backgroundColor: Styles().colors.fillColorPrimary,
-              textColor: Styles().colors.white,
-              borderColor: Styles().colors.fillColorSecondary,
+              backgroundColor: Styles().colors!.fillColorPrimary,
+              textColor: Styles().colors!.white,
+              borderColor: Styles().colors!.fillColorSecondary,
             ),
           ),
         ],
@@ -180,22 +189,30 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   Widget _buildPollsTabbar() {
     return _couldCreatePoll ?
       Container(
-        color: Styles().colors.backgroundVariant,
+        color: Styles().colors!.backgroundVariant,
         padding: EdgeInsets.only(left: 16, top: 16, right: 16),
         child: Row(
           children: <Widget>[
             Expanded(
               child: _PollsHomePanelFilterTab(
                 text: Localization().getStringEx("panel.polls_home.tab.title.recent_polls","Recent Polls"),
-                left: true,
+                tabPosition: _PollFilterTabPosition.left,
                 selected: (_selectedPollType == _PollType.recentPolls),
                 onTap: _onRecentPollsTapped,
               )
             ),
             Expanded(
+                child: _PollsHomePanelFilterTab(
+                  text: Localization().getStringEx("panel.polls_home.tab.title.group_polls","Group Polls"),
+                  tabPosition: _PollFilterTabPosition.center,
+                  selected: (_selectedPollType == _PollType.groupPolls),
+                  onTap: _onGroupPollsTapped,
+                )
+            ),
+            Expanded(
               child: _PollsHomePanelFilterTab(
                 text: Localization().getStringEx("panel.polls_home.tab.title.my_polls","My Polls"),
-                left: false,
+                tabPosition: _PollFilterTabPosition.right,
                 selected: (_selectedPollType == _PollType.myPolls),
                 onTap: _onMyPollsTapped,
               )
@@ -208,10 +225,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   Widget _buildPollsContent(){
 
-    List<Poll> polls;
-    List<Poll> localPolls;
-    bool pollsLoading;
-    String pollsError;
+    List<Poll>? polls;
+    List<Poll>? localPolls;
+    late bool pollsLoading;
+    String? pollsError;
     if (_selectedPollType == _PollType.myPolls) {
       polls = _myPolls;
       pollsLoading = _myPollsLoading;
@@ -223,6 +240,12 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       pollsLoading = _recentPollsLoading;
       pollsError = _recentPollsError;
     }
+    else if (_selectedPollType == _PollType.groupPolls) {
+      polls = _groupPolls;
+      pollsLoading = _groupPollsLoading;
+      pollsError = _groupPollsError;
+    }
+
     int pollsLenght = (polls?.length ?? 0) + (localPolls?.length ?? 0);
 
     Widget pollsContent;
@@ -262,19 +285,20 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   }
 
-  List<Poll> get _polls {
-    if (_selectedPollType == _PollType.myPolls) {
-      return _myPolls;
-    }
-    else if (_selectedPollType == _PollType.recentPolls) {
-      return _recentPolls;
-    }
-    else {
-      return null;
+  List<Poll>? get _polls {
+    switch (_selectedPollType) {
+      case _PollType.myPolls:
+        return _myPolls;
+      case _PollType.recentPolls:
+        return _recentPolls;
+      case _PollType.groupPolls:
+        return _groupPolls;
+      default:
+        return null;
     }
   }
 
-  Widget _buildPolls(List<Poll> polls1, List<Poll> polls2, bool pollsLoading) {
+  Widget _buildPolls(List<Poll>? polls1, List<Poll>? polls2, bool pollsLoading) {
 
     List<Widget> content = [];
 
@@ -286,15 +310,17 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     }
 
     if (0 < pols1Len) {
-      polls1.forEach((poll){
-        content.add(_PollCard(poll: poll));
+      polls1!.forEach((poll){
+        Group? group = _getGroup(poll.groupId);
+        content.add(_PollCard(poll: poll, group: group));
         content.add(_constructListSeparator());
       });
     }
 
     if (0 < pols2Len) {
-      polls2.forEach((poll){
-        content.add(_PollCard(poll: poll));
+      polls2!.forEach((poll){
+        Group? group = _getGroup(poll.groupId);
+        content.add(_PollCard(poll: poll, group: group));
         content.add(_constructListSeparator());
       });
     }
@@ -316,7 +342,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Widget _buildEmptyContent(){
-    String message, description;
+    String? message, description;
     if (_selectedPollType == _PollType.myPolls) {
       message = Localization().getStringEx("panel.polls_home.tab.empty.message.my_pols","Have a question?");
       description = Localization().getStringEx("panel.polls_home.tab.empty.description.my_pols","Pose a question to people near you by creating your first poll");
@@ -324,6 +350,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     else if (_selectedPollType == _PollType.recentPolls) {
       message = Localization().getStringEx("panel.polls_home.tab.empty.message.recent_polls","There’s nothing here…yet");
       description = Localization().getStringEx("panel.polls_home.tab.empty.description.recent_polls","Once you've participated in a poll you can track the results here.");
+    }
+    else if (_selectedPollType == _PollType.groupPolls) {
+      message = Localization().getStringEx("panel.polls_home.tab.empty.message.group_polls","There’s nothing here…yet");
+      description = Localization().getStringEx("panel.polls_home.tab.empty.description.group_polls","You will see the polls for all your groups.");
     }
     else {
       message = description = '';
@@ -333,20 +363,20 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       Column(
         children:[
           Container(height: 100,),
-          Text(message,
+          Text(message!,
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: Styles().colors.fillColorPrimary,
-                fontFamily: Styles().fontFamilies.extraBold,
+                color: Styles().colors!.fillColorPrimary,
+                fontFamily: Styles().fontFamilies!.extraBold,
                 fontSize: 24
             ),
           ),
           Container(height: 16,),
-          Text(description,
+          Text(description!,
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: Styles().colors.textBackground,
-                fontFamily: Styles().fontFamilies.regular,
+                color: Styles().colors!.textBackground,
+                fontFamily: Styles().fontFamilies!.regular,
                 fontSize: 16,
             ),),
         ]
@@ -359,11 +389,11 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       Column(
         children:[
           Container(height: 46,),
-          Text(Localization().getStringEx("panel.polls_home.text.error","Error"),
+          Text(Localization().getStringEx("panel.polls_home.text.error","Error")!,
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: Styles().colors.fillColorPrimary,
-                fontFamily: Styles().fontFamilies.extraBold,
+                color: Styles().colors!.fillColorPrimary,
+                fontFamily: Styles().fontFamilies!.extraBold,
                 fontSize: 24
             ),
           ),
@@ -371,8 +401,8 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           Text(error,
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: Styles().colors.textBackground,
-                fontFamily: Styles().fontFamilies.regular,
+                color: Styles().colors!.textBackground,
+                fontFamily: Styles().fontFamilies!.regular,
                 fontSize: 16,
             ),),
         ]
@@ -387,11 +417,11 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           crossAxisAlignment: CrossAxisAlignment.center,
           children:[
           Container(height: 100,),
-          Text(Localization().getStringEx("panel.polls_home.text.login_description", 'You need to be logged in to create and share polls with people near you.'),
+          Text(Localization().getStringEx("panel.polls_home.text.login_description", 'You need to be logged in to create and share polls with people near you.')!,
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: Styles().colors.fillColorPrimary,
-                fontFamily: Styles().fontFamilies.semiBold,
+                color: Styles().colors!.fillColorPrimary,
+                fontFamily: Styles().fontFamilies!.semiBold,
                 fontSize: 24,
             ),),
       ]),
@@ -400,21 +430,21 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   Widget _buildCreatePollButton() {
     if (_canCreatePoll) {
-      return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors.white,child:
+      return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
         ScalableRoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a poll"),
-            textColor: Styles().colors.fillColorPrimary,
-            borderColor: Styles().colors.fillColorSecondary,
-            backgroundColor: Styles().colors.white,
+            textColor: Styles().colors!.fillColorPrimary,
+            borderColor: Styles().colors!.fillColorSecondary,
+            backgroundColor: Styles().colors!.white,
           onTap:_onCreatePollTapped
       ));
     }
     else if (_couldCreatePoll) {
-      return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors.white,child:
+      return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
         Stack(children: <Widget>[
           RoundedButton(label:Localization().getStringEx("panel.polls_home.text.login","Login"),
-            textColor: Styles().colors.fillColorPrimary,
-            borderColor: Styles().colors.fillColorSecondary,
-            backgroundColor: Styles().colors.white,
+            textColor: Styles().colors!.fillColorPrimary,
+            borderColor: Styles().colors!.fillColorSecondary,
+            backgroundColor: Styles().colors!.white,
             height: 48,
             onTap:_onLoginTapped
           ),
@@ -423,7 +453,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
               height: 48,
               child: Align(alignment: Alignment.center,
                 child: SizedBox(height: 24, width: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
+                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
                 ),
               ),
             ),
@@ -438,7 +468,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   void _evalBleDescriptionHeight() {
     try {
-      final RenderObject renderBox = _keyBleDescriptionText?.currentContext?.findRenderObject();
+      final RenderObject? renderBox = _keyBleDescriptionText.currentContext?.findRenderObject();
       if (renderBox is RenderBox) {
         _bleDescriptionTextHeight = renderBox.size.height;
       }
@@ -464,11 +494,14 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   void _onLoginTapped() {
-    if (!_loggingIn) {
+    if (_loggingIn != true) {
       setState(() { _loggingIn = true; });
-      Auth2().authenticateWithOidc().then((bool result) {
+      Auth2().authenticateWithOidc().then((bool? result) {
         if (mounted) {
           setState(() { _loggingIn = false; });
+          if (result == false) {
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          }
         }
       });
     }
@@ -482,11 +515,15 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     _selectPollType(_PollType.myPolls);
   }
 
+  void _onGroupPollsTapped() {
+    _selectPollType(_PollType.groupPolls);
+  }
+
   void _selectPollType(_PollType pollType) {
     if (_selectedPollType != pollType) {
       setState(() {
         _selectedPollType = pollType;
-        Storage().selectedPollType = _PollType.values.indexOf(_selectedPollType);
+        Storage().selectedPollType = _PollType.values.indexOf(_selectedPollType!);
         if (_polls == null) {
           _loadPolls();
         }
@@ -510,6 +547,9 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     else if (_selectedPollType == _PollType.recentPolls) {
       _loadRecentPolls();
     }
+    else if (_selectedPollType == _PollType.groupPolls) {
+      _loadGroupPolls();
+    }
   }
 
   void _loadMyPolls() {
@@ -517,22 +557,25 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       setState(() {
         _myPollsLoading = true;
       });
-      Polls().getMyPolls(cursor: _myPollsCursor).then((PollsChunk result){
-        setState((){
-          if (result != null) {
-            if (_myPolls == null) {
-              _myPolls = [];
+
+      _loadMyGroupsIfNeeded().then((_) {
+        Polls().getMyPolls(cursor: _myPollsCursor)!.then((PollsChunk? result) {
+          setState(() {
+            if (result != null) {
+              if (_myPolls == null) {
+                _myPolls = [];
+              }
+              _myPolls!.addAll(result.polls!);
+              _myPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
+              _myPollsError = null;
             }
-            _myPolls.addAll(result.polls);
-            _myPollsCursor = (0 < result.polls.length) ? result.cursor : null;
-            _myPollsError = null;
-          }
-        });
-      }).catchError((e){
-        _myPollsError = e?.toString() ?? "Unknown error occured";
-      }).whenComplete((){
-        setState((){
-          _myPollsLoading = false;
+          });
+        }).catchError((e) {
+          _myPollsError = e.toString();
+        }).whenComplete(() {
+          setState(() {
+            _myPollsLoading = false;
+          });
         });
       });
     }
@@ -543,35 +586,105 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       setState(() {
         _recentPollsLoading = true;
       });
-      Polls().getRecentPolls(cursor: _recentPollsCursor).then((PollsChunk result){
-        setState((){
-          if (result != null) {
-            if (_recentPolls == null) {
-              _recentPolls = [];
+
+      _loadMyGroupsIfNeeded().then((_) {
+        Polls().getRecentPolls(cursor: _recentPollsCursor)!.then((PollsChunk? result){
+          setState((){
+            if (result != null) {
+              if (_recentPolls == null) {
+                _recentPolls = [];
+              }
+              _stripRecentLocalPolls(result.polls);
+              _recentPolls!.addAll(result.polls!);
+              _recentPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
+              _recentPollsError = null;
             }
-            _stripRecentLocalPolls(result.polls);
-            _recentPolls.addAll(result.polls);
-            _recentPollsCursor = (0 < result.polls.length) ? result.cursor : null;
-            _recentPollsError = null;
-          }
-        });
-      }).catchError((e){
-        _recentPollsError = e?.toString() ?? "Unknown error occured";
-      }).whenComplete((){
-        setState((){
-          _recentPollsLoading = false;
+          });
+        }).catchError((e){
+          _recentPollsError = e.toString();
+        }).whenComplete((){
+          setState((){
+            _recentPollsLoading = false;
+          });
         });
       });
     }
   }
 
-  void _stripRecentLocalPolls(List<Poll>recentPolls) {
+  void _loadGroupPolls() {
+    if (((_groupPolls == null) || (_groupPollsCursor != null)) && !_groupPollsLoading) {
+      _setGroupPollsLoading(true);
+      _loadMyGroupsIfNeeded().then((_) {
+        List<String>? groupIds = _myGroupIds;
+        if (AppCollection.isCollectionNotEmpty(groupIds)) {
+          Polls().getGroupPolls(groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
+            if (result != null) {
+              if (_groupPolls == null) {
+                _groupPolls = [];
+              }
+              _groupPolls!.addAll(result.polls!);
+              _groupPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
+              _groupPollsError = null;
+            }
+            setState(() {});
+          }).catchError((e) {
+            _groupPollsError = e.toString();
+          }).whenComplete(() {
+            _setGroupPollsLoading(false);
+          });
+        } else {
+          _setGroupPollsLoading(false);
+        }
+      });
+    }
+  }
+
+  Future<void> _loadMyGroupsIfNeeded() async {
+    if (AppCollection.isCollectionEmpty(_myGroups)) {
+      await _reloadMyGroups();
+    }
+  }
+
+  Future<void> _reloadMyGroups() async {
+    _myGroups = await Groups().loadGroups(myGroups: true);
+  }
+
+  List<String>? get _myGroupIds {
+    List<String>? groupIds;
+    if (AppCollection.isCollectionNotEmpty(_myGroups)) {
+      groupIds = [];
+      _myGroups!.forEach((group) {
+        groupIds!.add(group.id!);
+      });
+    }
+    return groupIds;
+  }
+
+  Group? _getGroup(String? groupId) {
+    if (AppString.isStringNotEmpty(groupId) && AppCollection.isCollectionNotEmpty(_myGroups)) {
+      for (Group group in _myGroups!) {
+        if (groupId == group.id) {
+          return group;
+        }
+      }
+    }
+    return null;
+  }
+
+  void _setGroupPollsLoading(bool loading) {
+    _groupPollsLoading = loading;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _stripRecentLocalPolls(List<Poll>?recentPolls) {
     if (recentPolls != null) {
-      for (Poll poll in recentPolls) {
-        for (int index = _recentLocalPolls.length - 1; 0 <= index; index--) {
-          Poll localRecentPoll = _recentLocalPolls[index];
-          if (localRecentPoll.pollId == poll.pollId) {
-            _recentLocalPolls.removeAt(index);
+      for (Poll? poll in recentPolls) {
+        for (int index = _recentLocalPolls!.length - 1; 0 <= index; index--) {
+          Poll localRecentPoll = _recentLocalPolls![index];
+          if (localRecentPoll.pollId == poll!.pollId) {
+            _recentLocalPolls!.removeAt(index);
           }
         }
       }
@@ -589,7 +702,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     _updatePollInList(poll, _recentLocalPolls);
   }
 
-  void _updatePollInList(Poll poll, List<Poll>polls) {
+  void _updatePollInList(Poll? poll, List<Poll>?polls) {
     if ((poll != null) && (polls != null)) {
       for (int index = 0; index < polls.length; index++) {
         if (polls[index].pollId == poll.pollId) {
@@ -598,8 +711,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       }
     }
   }
-  
-  
+
   void _resetMyPolls() {
     _myPolls = null;
     _myPollsCursor = null;
@@ -611,15 +723,15 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
 
-  void _onPollCreated(String pollId) {
+  void _onPollCreated(String? pollId) {
     _resetMyPolls();
     setState(() {
       _updateRecentLocalPolls();  
     });
   }
 
-  void _onPollUpdated(String pollId) {
-    Poll poll = Polls().getPoll(pollId: pollId);
+  void _onPollUpdated(String? pollId) {
+    Poll? poll = Polls().getPoll(pollId: pollId);
     if (poll != null) {
       setState(() {
         _updatePoll(poll);
@@ -628,7 +740,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   void _scrollListener() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent) {
+    if (_scrollController!.offset >= _scrollController!.position.maxScrollExtent) {
       _loadPolls();
     }
   }
@@ -653,17 +765,22 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     else if (name == FlexUI.notifyChanged) {
       setState(() { });
     }
+    else if (name == Groups.notifyUserMembershipUpdated) {
+      _reloadMyGroups().then((_) {
+        _loadPolls();
+      });
+    }
   }
 }
 
 class _PollsHomePanelFilterTab extends StatelessWidget {
-  final String text;
+  final String? text;
   final String hint;
-  final bool left;
+  final _PollFilterTabPosition tabPosition;
   final bool selected;
-  final GestureTapCallback onTap;
+  final GestureTapCallback? onTap;
 
-  _PollsHomePanelFilterTab({Key key, this.text, this.hint = '', this.left = false, this.selected = false, this.onTap}) : super(key: key);
+  _PollsHomePanelFilterTab({Key? key, this.text, this.hint = '', this.tabPosition = _PollFilterTabPosition.left, this.selected = false, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -673,39 +790,53 @@ class _PollsHomePanelFilterTab extends StatelessWidget {
         child: Semantics(label: text, hint:hint, button:true, excludeSemantics: true, child:Container(
           height: 48,
           decoration: BoxDecoration(
-            color: selected ? Colors.white : Styles().colors.lightGray,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 1.5, style: BorderStyle.solid),
-            borderRadius: left ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
+            color: selected ? Colors.white : Styles().colors!.lightGray,
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1.5, style: BorderStyle.solid),
+            borderRadius: _borderRadius,
           ),
-          child:Center(child: Text(text,style:TextStyle(
-              fontFamily: selected ? Styles().fontFamilies.extraBold : Styles().fontFamilies.medium,
+          child:Center(child: Text(text!,style:TextStyle(
+              fontFamily: selected ? Styles().fontFamilies!.extraBold : Styles().fontFamilies!.medium,
               fontSize: 16,
-              color: Styles().colors.fillColorPrimary))),
+              color: Styles().colors!.fillColorPrimary))),
         ),
         ));
+  }
+
+  BorderRadiusGeometry get _borderRadius {
+    switch (tabPosition) {
+      case _PollFilterTabPosition.left:
+        return BorderRadius.horizontal(left: Radius.circular(100.0));
+      case _PollFilterTabPosition.center:
+        return BorderRadius.zero;
+      case _PollFilterTabPosition.right:
+        return BorderRadius.horizontal(right: Radius.circular(100.0));
+    }
   }
 }
 
 
-enum _PollType { myPolls, recentPolls}
+enum _PollType { myPolls, recentPolls, groupPolls }
+
+enum _PollFilterTabPosition { left, center, right }
 
 class _PollCard extends StatefulWidget{
-  final Poll poll;
+  final Poll? poll;
+  final Group? group;
 
-  const _PollCard({Key key, this.poll}) : super(key: key);
+  const _PollCard({Key? key, this.poll, this.group}) : super(key: key);
   _PollCardState createState() => _PollCardState();
 }
 
 class _PollCardState extends State<_PollCard>{
-  List<GlobalKey> _progressKeys;
-  double _progressWidth;
+  List<GlobalKey>? _progressKeys;
+  double? _progressWidth;
 
   bool _showStartPollProgress = false;
   bool _showEndPollProgress = false;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       _evalProgressWidths();
     });
     super.initState();
@@ -718,22 +849,12 @@ class _PollCardState extends State<_PollCard>{
 
   @override
   Widget build(BuildContext context) {
-    Poll poll = widget.poll;
-    int totalVotes = (poll.results?.totalVotes ?? 0);
-    String votesNum;
-    if (1 < totalVotes) {
-      votesNum = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$totalVotes']);
-    }
-    else if (0 < totalVotes) {
-      votesNum = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
-    }
-    else {
-      votesNum = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet');
-    }
+    Poll poll = widget.poll!;
+    String pollVotesStatus = _pollVotesStatus;
 
     List<Widget> footerWidgets = [];
 
-    String pollStatus;
+    String? pollStatus;
     if(poll.status == PollStatus.created) {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.created","Polls created");
       if (poll.isMine) {
@@ -755,34 +876,39 @@ class _PollCardState extends State<_PollCard>{
       pollStatus =  Localization().getStringEx("panel.polls_home.card.state.text.closed","Polls closed");
     }
 
-    String pin = sprintf(Localization().getStringEx('panel.polls_home.card.text.pin', 'Pin: %s'), [
+    String? groupName = widget.group?.title;
+
+    String pin = sprintf(Localization().getStringEx('panel.polls_home.card.text.pin', 'Pin: %s')!, [
       sprintf('%04i', [poll.pinCode ?? 0])
     ]);
 
     Widget cardBody = ((poll.status == PollStatus.opened) && (poll.settings?.hideResultsUntilClosed ?? false)) ?
-      Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 15, fontWeight: FontWeight.w500),) :
+      Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends.")!, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 15, fontWeight: FontWeight.w500),) :
       Column(children: _buildCheckboxOptions(),);
 
     return
       Column(children: <Widget>[ Container(padding: EdgeInsets.symmetric(),
-        decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(5)),
+        decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5)),
         child: Padding(padding: EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:
         <Widget>[
-          Semantics(excludeSemantics: true, label: pollStatus+","+votesNum,
+          Visibility(visible: (widget.group != null), child: Padding(padding: EdgeInsets.only(bottom: 10), child: Row(children: [
+            Padding(padding: EdgeInsets.only(right: 3), child: Text(Localization().getStringEx('panel.polls_home.card.group.label', 'Group:')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14))),
+            Expanded(child: Text(AppString.getDefaultEmptyString(groupName), overflow: TextOverflow.ellipsis, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
+          ]))),
+          Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus",
           child: Padding(padding: EdgeInsets.only(bottom: 12), child: Row(children: <Widget>[
-            Text(votesNum, style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.bold, fontSize: 12,),),
-            Text('  ', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies.regular, fontSize: 12,),),
+            Text(AppString.getDefaultEmptyString(pollVotesStatus), style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),),
+            Text('  ', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12,),),
             Expanded(child:
-            Text(pollStatus ?? '', style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 12, ),),
+            Text(pollStatus ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, ),),
             ),
-            Expanded(child:
-              Text(pin, style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.bold, fontSize: 12, ),),
-            )
+            Expanded(child: Container()),
+            Text(pin, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),)
           ],),),
           ),
           Row(children: <Widget>[Expanded(child: Container(),)],),
           Padding(padding: EdgeInsets.symmetric(vertical: 0),child:
-          Text(poll.title, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, height: 1.2 ),),),
+          Text(poll.title!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, height: 1.2 ),),),
           Container(height:12),
           cardBody,
           Container(height:25),
@@ -793,29 +919,29 @@ class _PollCardState extends State<_PollCard>{
   }
 
   List<Widget> _buildCheckboxOptions() {
-    bool isClosed = widget.poll.status == PollStatus.closed;
+    bool isClosed = widget.poll!.status == PollStatus.closed;
 
     List<Widget> result = [];
     _progressKeys = [];
     int maxValueIndex=-1;
-    if(isClosed  && ((widget.poll.results?.totalVotes ?? 0) > 0)){
+    if(isClosed  && ((widget.poll!.results?.totalVotes ?? 0) > 0)){
       maxValueIndex = 0;
-      for (int optionIndex = 0; optionIndex<widget.poll.options.length ; optionIndex++) {
-        int optionVotes =  widget.poll.results[optionIndex];
-        if(optionVotes!=null &&  optionVotes > widget.poll.results[maxValueIndex])
+      for (int optionIndex = 0; optionIndex<widget.poll!.options!.length ; optionIndex++) {
+        int? optionVotes =  widget.poll!.results![optionIndex];
+        if(optionVotes!=null &&  optionVotes > widget.poll!.results![maxValueIndex]!)
           maxValueIndex = optionIndex;
       }
     }
 
-    int totalVotes = (widget.poll.results?.totalVotes ?? 0);
-    for (int optionIndex = 0; optionIndex<widget.poll.options.length ; optionIndex++) {
+    int totalVotes = (widget.poll!.results?.totalVotes ?? 0);
+    for (int optionIndex = 0; optionIndex<widget.poll!.options!.length ; optionIndex++) {
       bool useCustomColor = isClosed && maxValueIndex == optionIndex;
-      String option = widget.poll.options[optionIndex];
-      bool didVote = ((widget.poll.userVote != null) && (0 < (widget.poll.userVote[optionIndex] ?? 0)));
+      String option = widget.poll!.options![optionIndex];
+      bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
       String checkboxImage = 'images/checkbox-unselected.png'; // 'images/checkbox-selected.png'
 
-      String votesString;
-      int votesCount = (widget.poll.results != null) ? widget.poll.results[optionIndex] : null;
+      String? votesString;
+      int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
       double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
       if ((votesCount == null) || (votesCount == 0)) {
         votesString = '';
@@ -824,15 +950,15 @@ class _PollCardState extends State<_PollCard>{
         votesString = Localization().getStringEx("panel.polls_home.card.text.one_vote","1 vote");
       }
       else {
-        String votes = Localization().getStringEx("panel.polls_home.card.text.votes","votes");
+        String? votes = Localization().getStringEx("panel.polls_home.card.text.votes","votes");
         votesString = '$votesCount $votes';
       }
-      Color votesColor = Styles().colors.textBackground;
+      Color? votesColor = Styles().colors!.textBackground;
 
       GlobalKey progressKey = GlobalKey();
-      _progressKeys.add(progressKey);
+      _progressKeys!.add(progressKey);
 
-      String semanticsText = option +"\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = option +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
       GestureDetector(
@@ -843,14 +969,14 @@ class _PollCardState extends State<_PollCard>{
             Expanded(
               flex: 5,
               key: progressKey, child:
-                Stack(children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.white, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+                Stack(alignment: Alignment.centerLeft, children: <Widget>[
+              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.white, progressColor: useCustomColor ?Styles().colors!.fillColorPrimary:Styles().colors!.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
               Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
                 Padding(padding: EdgeInsets.only(left: 5), child:
                     Row(children: <Widget>[
                       Expanded( child:
                       Padding( padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: Text(option, style: TextStyle(color: useCustomColor?Styles().colors.white:Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16, fontWeight: FontWeight.w500,height: 1.25),),)),
+                        child: Text(option, style: TextStyle(color: useCustomColor?Styles().colors!.white:Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500,height: 1.25),),)),
                         Visibility( visible: didVote,
                         child:Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/checkbox-small.png',),)
                       ),
@@ -860,7 +986,7 @@ class _PollCardState extends State<_PollCard>{
             ),
             Expanded(
               flex: 5,
-              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: TextStyle(color: votesColor, fontFamily: Styles().fontFamilies.regular, fontSize: 14, fontWeight: FontWeight.w500,height: 1.29),),),
+              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: TextStyle(color: votesColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 14, fontWeight: FontWeight.w500,height: 1.29),),),
             )
           ],)
       ))));
@@ -869,16 +995,16 @@ class _PollCardState extends State<_PollCard>{
   }
 
   Widget _createStartPollButton(){
-    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.start_poll","Start Poll"), _onStartPollTapped, loading: _showStartPollProgress);
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.start_poll","Start Poll")!, _onStartPollTapped, loading: _showStartPollProgress);
   }
   Widget _createEndPollButton(){
-    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll"), _onEndPollTapped, loading: _showEndPollProgress);
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll")!, _onEndPollTapped, loading: _showEndPollProgress);
   }
   Widget _createVoteButton(){
-    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.vote","Vote"), _onVoteTapped);
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.vote","Vote")!, _onVoteTapped);
   }
 
-  Widget _createButton(String title, Function onTap, {bool enabled=true, bool loading = false}){
+  Widget _createButton(String title, void Function()? onTap, {bool enabled=true, bool loading = false}){
     return Container( padding: EdgeInsets.symmetric(horizontal: 54,),
           child: Semantics(label: title, button: true, excludeSemantics: true,
           child: InkWell(
@@ -887,9 +1013,9 @@ class _PollCardState extends State<_PollCard>{
               Container(
                 padding: EdgeInsets.symmetric(vertical: 5,horizontal: 16),
                 decoration: BoxDecoration(
-                  color: Styles().colors.white,
+                  color: Styles().colors!.white,
                   border: Border.all(
-                      color: enabled? Styles().colors.fillColorSecondary :Styles().colors.surfaceAccent,
+                      color: enabled? Styles().colors!.fillColorSecondary! :Styles().colors!.surfaceAccent!,
                       width: 2.0),
                   borderRadius: BorderRadius.circular(24.0),
                 ),
@@ -897,10 +1023,10 @@ class _PollCardState extends State<_PollCard>{
                         child: Text(
                           title,
                           style: TextStyle(
-                            fontFamily: Styles().fontFamilies.bold,
+                            fontFamily: Styles().fontFamilies!.bold,
                             fontSize: 16,
                             height: 1.38,
-                            color: Styles().colors.fillColorPrimary,
+                            color: Styles().colors!.fillColorPrimary,
                           ),
                         ),
                       ),
@@ -909,7 +1035,7 @@ class _PollCardState extends State<_PollCard>{
                   child: Container(padding: EdgeInsets.symmetric(vertical: 5),
                     child: Align(alignment: Alignment.center,
                       child: SizedBox(height: 24, width: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
+                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
                       ),
                     ),
                   ),
@@ -921,17 +1047,17 @@ class _PollCardState extends State<_PollCard>{
 
   void _onStartPollTapped(){
     _setStartButtonProgress(true);
-      Polls().open(widget.poll.pollId).then((result) => _setStartButtonProgress(false)).catchError((e){
+      Polls().open(widget.poll!.pollId).then((result) => _setStartButtonProgress(false)).catchError((e){
         _setStartButtonProgress(false);
-        AppAlert.showDialogResult(context, e?.toString() ?? "Unknown error occured");
+        AppAlert.showDialogResult(context, e.toString());
       });
   }
 
   void _onEndPollTapped(){
     _setEndButtonProgress(true);
-      Polls().close(widget.poll.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
+      Polls().close(widget.poll!.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
         _setEndButtonProgress(false);
-        AppAlert.showDialogResult(context, e?.toString() ?? "Unknown error occured");
+        AppAlert.showDialogResult(context, e.toString());
       });
 
   }
@@ -943,8 +1069,8 @@ class _PollCardState extends State<_PollCard>{
   void _evalProgressWidths() {
     if (_progressKeys != null) {
       double progressWidth = -1.0;
-      for (GlobalKey progressKey in _progressKeys) {
-        final RenderObject progressRender = progressKey?.currentContext?.findRenderObject();
+      for (GlobalKey progressKey in _progressKeys!) {
+        final RenderObject? progressRender = progressKey.currentContext?.findRenderObject();
         if ((progressRender is RenderBox) && (0 < progressRender.size.width)) {
           if ((progressWidth < 0.0) || (progressRender.size.width < progressWidth)) {
             progressWidth = progressRender.size.width;
@@ -971,13 +1097,40 @@ class _PollCardState extends State<_PollCard>{
   }
 
   bool get _canVote {
-    return ((widget.poll.status == PollStatus.opened) &&
-        (((widget.poll.userVote?.totalVotes ?? 0) == 0) ||
-          widget.poll.settings.allowMultipleOptions ||
-          widget.poll.settings.allowRepeatOptions
+    return ((widget.poll!.status == PollStatus.opened) &&
+        (((widget.poll!.userVote?.totalVotes ?? 0) == 0) ||
+          widget.poll!.settings!.allowMultipleOptions! ||
+          widget.poll!.settings!.allowRepeatOptions!
         ) &&
-        (!widget.poll.isGeoFenced || GeoFence().currentRegionIds.contains(widget.poll.regionId))
+        (!widget.poll!.isGeoFenced || GeoFence().currentRegionIds.contains(widget.poll!.regionId))
     );
   }
 
+  String get _pollVotesStatus {
+    bool hasGroup = (widget.group != null);
+    int votes = hasGroup ? _uniqueVotersCount : (widget.poll!.results?.totalVotes ?? 0);
+
+    String statusString;
+    if (1 < votes) {
+      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votes']);
+    } else if (0 < votes) {
+      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote')!;
+    } else {
+      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet')!;
+    }
+
+    if (hasGroup && (votes > 0)) {
+      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of')!, _groupMembersCount]);
+    }
+
+    return statusString;
+  }
+
+  int get _uniqueVotersCount {
+    return widget.poll?.uniqueVotersCount ?? 0;
+  }
+
+  int get _groupMembersCount {
+    return widget.group?.membersCount ?? 0;
+  }
 }

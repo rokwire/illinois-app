@@ -15,25 +15,26 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/Styles.dart';
 
 class ImageHolderListItem extends StatelessWidget {
-  final Color placeHolderDividerResource;
+  final Color? placeHolderDividerResource;
   final String placeHolderSlantResource;
 
-  final String imageUrl;
-  final Widget child;
+  final String? imageUrl;
+  final Widget? child;
   final double imageHeight;
   final bool applyHorizontalPadding;
 
   const ImageHolderListItem(
-      {Key key, this.placeHolderSlantResource = 'images/slant-down-right.png', this.placeHolderDividerResource, this.imageUrl, this.child, this.imageHeight = 240, this.applyHorizontalPadding = true})
+      {Key? key, this.placeHolderSlantResource = 'images/slant-down-right.png', this.placeHolderDividerResource, this.imageUrl, this.child, this.imageHeight = 240, this.applyHorizontalPadding = true})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double horizontalPadding = applyHorizontalPadding ? 16 : 0;
-    String _imageUrl = imageUrl;
+    String? _imageUrl = imageUrl;
     return Stack(
       alignment: (_imageUrl != null && _imageUrl.isNotEmpty) ? Alignment
           .bottomCenter : Alignment.topCenter,
@@ -50,10 +51,11 @@ class ImageHolderListItem extends StatelessWidget {
                   children: <Widget>[
                     _showImage() ?
                     Image.network(
-                      _imageUrl,
+                      _imageUrl!,
                       height: imageHeight,
                       width: MediaQuery.of(context).size.width,
                       fit: BoxFit.cover,
+                      headers: Network.authApiKeyHeader,
                       excludeFromSemantics: true,
                     ) : Container(height: 0),
                     Padding(
@@ -67,7 +69,7 @@ class ImageHolderListItem extends StatelessWidget {
                           useDivider() ?
                           Container(
                             height: 72,
-                            color: placeHolderDividerResource ?? Styles().colors.fillColorSecondary,
+                            color: placeHolderDividerResource ?? Styles().colors!.fillColorSecondary,
                           ) : Container(height: 0),
                           useSlantImage() ?
                           Container(
@@ -76,7 +78,7 @@ class ImageHolderListItem extends StatelessWidget {
                             child: Image.asset(
                                 placeHolderSlantResource,
                                 fit: BoxFit.fill,
-                                color: placeHolderDividerResource ?? Styles().colors.fillColorSecondary,
+                                color: placeHolderDividerResource ?? Styles().colors!.fillColorSecondary,
                                 excludeFromSemantics: true,
                             ),
                           ) : Container(height: 0),
@@ -97,7 +99,7 @@ class ImageHolderListItem extends StatelessWidget {
     );
   }
   bool _showImage(){
-    return imageUrl!=null && imageUrl.isNotEmpty;
+    return imageUrl!=null && imageUrl!.isNotEmpty;
   }
 
   bool useDivider() {
@@ -105,7 +107,6 @@ class ImageHolderListItem extends StatelessWidget {
   }
 
   bool useSlantImage() {
-    return placeHolderSlantResource != null &&
-        placeHolderSlantResource.isNotEmpty;
+    return placeHolderSlantResource.isNotEmpty;
   }
 }

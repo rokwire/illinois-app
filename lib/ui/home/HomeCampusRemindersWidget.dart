@@ -19,7 +19,6 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
@@ -35,7 +34,7 @@ import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class HomeCampusRemindersWidget extends StatefulWidget {
-  final StreamController<void> refreshController;
+  final StreamController<void>? refreshController;
 
   HomeCampusRemindersWidget({this.refreshController});
 
@@ -46,7 +45,7 @@ class HomeCampusRemindersWidget extends StatefulWidget {
 class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> implements NotificationsListener {
   static const int _maxItems = 3;
 
-  List<Map<String, dynamic>> _reminderItems;
+  List<Map<String, dynamic>>? _reminderItems;
 
   @override
   void initState() {
@@ -60,7 +59,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     ]);
 
     if (widget.refreshController != null) {
-      widget.refreshController.stream.listen((_) {
+      widget.refreshController!.stream.listen((_) {
         Guide().refresh();
       });
     }
@@ -108,7 +107,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   }
 
   void _updateReminderItems() {
-    List<Map<String, dynamic>> reminderItems = Guide().remindersList;
+    List<Map<String, dynamic>>? reminderItems = Guide().remindersList;
     if (!DeepCollectionEquality().equals(_reminderItems, reminderItems)) {
       setState(() {
         _reminderItems = reminderItems;
@@ -119,22 +118,22 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   List<Widget> _buildRemindersList() {
     List<Widget> contentList = <Widget>[];
     if (_reminderItems != null) {
-      int remindersCount = min(_reminderItems.length, _maxItems);
+      int remindersCount = min(_reminderItems!.length, _maxItems);
       for (int index = 0; index < remindersCount; index++) {
-        Map<String, dynamic> reminderItem = _reminderItems[index];
+        Map<String, dynamic>? reminderItem = _reminderItems![index];
         if (contentList.isNotEmpty) {
           contentList.add(Container(height: 8,));
         }
         contentList.add(GuideEntryCard(reminderItem));
       }
-      if (_maxItems < _reminderItems.length) {
+      if (_maxItems < _reminderItems!.length) {
         contentList.add(Container(height: 16,));
         contentList.add(ScalableRoundedButton(
           label: Localization().getStringEx('widget.home_campus_reminders.button.more.title', 'View All'),
           hint: Localization().getStringEx('widget.home_campus_reminders.button.more.hint', 'Tap to view all reminders'),
-          borderColor: Styles().colors.fillColorSecondary,
-          textColor: Styles().colors.fillColorPrimary,
-          backgroundColor: Styles().colors.white,
+          borderColor: Styles().colors!.fillColorSecondary,
+          textColor: Styles().colors!.fillColorPrimary,
+          backgroundColor: Styles().colors!.white,
           onTap: () => _showAll(),
         ));
       }

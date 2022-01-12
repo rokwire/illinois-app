@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/model/sport/Team.dart';
 import 'package:illinois/service/Sports.dart';
@@ -29,7 +28,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class AthleticsSchedulePanel extends StatefulWidget {
-  final SportDefinition sport;
+  final SportDefinition? sport;
 
   AthleticsSchedulePanel({this.sport});
 
@@ -39,12 +38,12 @@ class AthleticsSchedulePanel extends StatefulWidget {
 
 class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
 
-  TeamSchedule _schedule;
-  String _scheduleYear;
-  List<dynamic> _displayList;
+  TeamSchedule? _schedule;
+  String? _scheduleYear;
+  List<dynamic>? _displayList;
   bool _displayUpcoming = true;
   ScrollController _scrollController = ScrollController();
-  bool _loading;
+  late bool _loading;
 
   @override
   void initState() {
@@ -54,28 +53,28 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
 
   @override
   Widget build(BuildContext context) {
-    String headerLabel = widget.sport?.name ?? Localization().getStringEx('panel.athletics_schedule.header.title', 'SCHEDULE');
-    String scheduleYear = AppString.getDefaultEmptyString(value: _scheduleYear);
-    String scheduleLabel = scheduleYear + " " + Localization().getStringEx("panel.athletics_schedule.label.schedule.title", "Schedule");
+    String headerLabel = widget.sport?.name ?? Localization().getStringEx('panel.athletics_schedule.header.title', 'SCHEDULE')!;
+    String scheduleYear = AppString.getDefaultEmptyString(_scheduleYear);
+    String scheduleLabel = scheduleYear + " " + Localization().getStringEx("panel.athletics_schedule.label.schedule.title", "Schedule")!;
     int itemsCount = _displayList?.length ?? 0;
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
-        context: context, titleWidget: Text(headerLabel, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),),
+        context: context, titleWidget: Text(headerLabel, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),),
       body: _loading ? Center(child: CircularProgressIndicator()) : Column(children: <Widget>[
-        Container(color:Styles().colors.fillColorPrimaryVariant, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(children: <Widget>[
+        Container(color:Styles().colors!.fillColorPrimaryVariant, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(children: <Widget>[
           Row(children: <Widget>[
-            Image.asset(widget.sport.iconPath, excludeFromSemantics: true),
+            Image.asset(widget.sport!.iconPath!, excludeFromSemantics: true),
             Padding(padding: EdgeInsets.only(left: 8)),
-            Text(widget.sport.name, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.whiteTransparent06,)),
+            Text(widget.sport!.name!, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.whiteTransparent06,)),
           ],),
           Padding(padding: EdgeInsets.only(top: 8)),
           Row(children: <Widget>[
-            Expanded(child: Text(scheduleLabel, style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Colors.white ))),
+            Expanded(child: Text(scheduleLabel, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Colors.white ))),
           ],)
         ],)
         ),),
 
-        Container(color:Styles().colors.background, child:
+        Container(color:Styles().colors!.background, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:Row(children: <Widget>[
           Expanded(child:_ScheduleTabButton(
             text: Localization().getStringEx("panel.athletics_schedule.button.upcoming.title", "Upcoming"),
@@ -90,7 +89,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
         ],))
         ),
 
-        Expanded(child: Container(color:Styles().colors.background, child:
+        Expanded(child: Container(color:Styles().colors!.background, child:
         ListView.separated(
           shrinkWrap: true,
           separatorBuilder: (context, index) => Divider(color: Colors.transparent, height: 24,),
@@ -103,7 +102,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
         ))),
         Visibility(visible: (itemsCount > 1), child: Container(height: 48))
       ]),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -113,7 +112,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
     Sports().loadScheduleForCurrentSeason(widget.sport?.shortName).then((schedule) => _onScheduleLoaded(schedule));
   }
 
-  void _onScheduleLoaded(TeamSchedule schedule) {
+  void _onScheduleLoaded(TeamSchedule? schedule) {
     if (schedule != null) {
       _schedule = schedule;
       _scheduleYear = schedule.label;
@@ -126,8 +125,8 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
     List displayList = [];
     if (AppCollection.isCollectionNotEmpty(_schedule?.games)) {
       DateTime now = DateTime.now();
-      for (Game game in _schedule.games) {
-        DateTime gameDateTime = game.dateTimeUniLocal;
+      for (Game? game in _schedule!.games!) {
+        DateTime? gameDateTime = game!.dateTimeUniLocal;
         if (gameDateTime != null) {
           if ((_displayUpcoming && gameDateTime.isAfter(now)) ||
               (!_displayUpcoming && gameDateTime.isBefore(now))) {
@@ -145,8 +144,8 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
   }
 
   int _compareSchedulesAscending(Game a, Game b) {
-    DateTime dateTimeA = a.dateTimeUniLocal;
-    DateTime dateTimeB = b.dateTimeUniLocal;
+    DateTime? dateTimeA = a.dateTimeUniLocal;
+    DateTime? dateTimeB = b.dateTimeUniLocal;
     if ((dateTimeA != null)) {
       return (dateTimeB != null) ? dateTimeA.compareTo(dateTimeB) : -1;
     }
@@ -156,8 +155,8 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
   }
 
   int _compareSchedulesDescending(Game a, Game b) {
-    DateTime dateTimeA = a.dateTimeUniLocal;
-    DateTime dateTimeB = b.dateTimeUniLocal;
+    DateTime? dateTimeA = a.dateTimeUniLocal;
+    DateTime? dateTimeB = b.dateTimeUniLocal;
     if ((dateTimeA != null)) {
       return (dateTimeB != null) ? dateTimeB.compareTo(dateTimeA) : 1;
     }
@@ -167,7 +166,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
   }
 
   Widget _displayItemAtIndex(BuildContext context, int index) {
-    Game game = _displayList[index];
+    Game? game = _displayList![index];
     AthleticsScheduleCard scheduleCard = AthleticsScheduleCard(game: game,);
     return scheduleCard;
   }
@@ -192,19 +191,19 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
 }
 
 class _ScheduleTabButton extends StatelessWidget {
-  final String text;
-  final String hint;
-  final bool left;
-  final bool selected;
-  final GestureTapCallback onTap;
+  final String? text;
+  final String? hint;
+  final bool? left;
+  final bool? selected;
+  final GestureTapCallback? onTap;
   final double buttonHeight;
 
-  _ScheduleTabButton({Key key, this.text, this.hint, this.left, this.selected, this.onTap, this.buttonHeight = 48})
+  _ScheduleTabButton({Key? key, this.text, this.hint, this.left, this.selected, this.onTap, this.buttonHeight = 48})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent, width: 2, style: BorderStyle.solid);
+    BorderSide borderSide = BorderSide(color: Styles().colors!.surfaceAccent!, width: 2, style: BorderStyle.solid);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
@@ -216,20 +215,20 @@ class _ScheduleTabButton extends StatelessWidget {
           child:Container(
             height: 32 + 16*MediaQuery.of(context).textScaleFactor,
             decoration: BoxDecoration(
-              color: selected ? Colors.white : Styles().colors.lightGray,
+              color: selected! ? Colors.white : Styles().colors!.lightGray,
               border: Border.fromBorderSide(borderSide),
-              borderRadius: left ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
+              borderRadius: left! ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
             ),
             child:
             Row( children:[
-            Expanded(child: Text(text,
+            Expanded(child: Text(text!,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontFamily:
-                        selected ? Styles().fontFamilies.extraBold : Styles().fontFamilies.medium,
+                        selected! ? Styles().fontFamilies!.extraBold : Styles().fontFamilies!.medium,
                         fontSize: 16,
-                        color: Styles().colors.fillColorPrimary))),
+                        color: Styles().colors!.fillColorPrimary))),
             ])
           )),
     );
