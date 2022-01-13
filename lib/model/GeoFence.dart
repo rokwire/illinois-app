@@ -87,6 +87,44 @@ class GeoFenceRegion {
     return regions;
   }
 
+  static List<GeoFenceRegion>? listFromJsonList(List<dynamic>? values) {
+    List<GeoFenceRegion>? regions;
+    if (values != null) {
+      regions = <GeoFenceRegion>[];
+      for (dynamic value in values) {
+        GeoFenceRegion? region = GeoFenceRegion.fromJson(value);
+        if (region != null) {
+          regions.add(region);
+        }
+      }
+    }
+    return regions;
+  }
+
+  static List<dynamic>? listToJsonList(Iterable<GeoFenceRegion>? regions, { double? locationRadius }) {
+    List<dynamic>? jsonList;
+    if (regions != null) {
+      jsonList = [];
+      for (GeoFenceRegion region in regions) {
+        jsonList.add(region.toJson(locationRadius: locationRadius));
+      }
+    }
+    return jsonList;
+  }
+
+  static List<GeoFenceRegion>? filterList(Iterable<GeoFenceRegion>? regions, { bool? enabled }) {
+    List<GeoFenceRegion>? result;
+    if (regions != null) {
+      result = <GeoFenceRegion>[];
+      for (GeoFenceRegion region in regions) {
+        if ((enabled == null) || (enabled == region.enabled)) {
+          result.add(region);
+        }
+      }
+    }
+    return result;
+  }
+
   @override
   bool operator==(dynamic obj) {
     return (obj is GeoFenceRegion) &&
