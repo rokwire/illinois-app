@@ -234,6 +234,9 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       for (int position in positions) {
         randomEvents.add(events[position]);
       }
+      // Sort events
+      ExploreService().sortEvents(randomEvents);
+
       return randomEvents;
     }
 
