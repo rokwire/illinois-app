@@ -1877,7 +1877,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
     }
 
     String pollTitle = widget.poll.title ?? '';
-    String semanticsQuestionText =  "$wantsToKnow\n+$pollTitle";
+    String semanticsQuestionText =  "$wantsToKnow,\n $pollTitle";
     String semanticsStatusText = "$pollStatus,$_pollVotesStatus";
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
@@ -2370,7 +2370,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
 
     String? creator = widget.poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');//TBD localize
     String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
-    String semanticsQuestionText =  "$wantsToKnow\n+${poll.title!}";
+    String semanticsQuestionText =  "$wantsToKnow,\n ${poll.title!}";
 
     if(poll.status == PollStatus.created) {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.created","Polls created");
@@ -2465,7 +2465,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = option +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = option + "," +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
       GestureDetector(
