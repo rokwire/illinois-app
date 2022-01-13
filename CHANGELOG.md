@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ## [3.2.0] - ????-??-??
+### Changed
+- Make Geofence monitor standalone plugin [#1208](https://github.com/rokwire/illinois-app/issues/1208).
 
 ## [3.1.12] - 2022-01-13
 ### Fixed

@@ -34,7 +34,6 @@ public class Constants {
     static final String APP_LOCATION_SERVICES_PERMISSION = "location_services_permission";
     static final String APP_TRACKING_AUTHORIZATION = "tracking_authorization";
     static final String FIREBASE_INFO = "firebaseInfo";
-    static final String GEOFENCE_KEY = "geoFence";
     static final String DEVICE_ID_KEY = "deviceId";
     static final String ENCRYPTION_KEY_KEY = "encryptionKey";
     static final String BARCODE_KEY = "barcode";

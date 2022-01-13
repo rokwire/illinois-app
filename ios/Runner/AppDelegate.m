@@ -122,6 +122,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	MapViewFactory *factory = [[MapViewFactory alloc] initWithMessenger:registrar.messenger];
 	[registrar registerViewFactory:factory withId:@"mapview"];
 	
+	// Setup GeoFence plugin
+	[RegionMonitor registerWithRegistrar:[self registrarForPlugin:@"GeoFence"]];
+
 	// Setup supported & preffered orientation
 	_preferredInterfaceOrientation = UIInterfaceOrientationPortrait;
 	_supportedInterfaceOrientations = [NSSet setWithObject:@(_preferredInterfaceOrientation)];
@@ -264,9 +267,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 	else if ([call.method isEqualToString:@"addToWallet"]) {
 		[self handleAddToWalletWithParameters:parameters result:result];
-	}
-	else if ([call.method isEqualToString:@"geoFence"]) {
-		[self handleGeoFenceWithParameters:parameters result:result];
 	}
 	else if ([call.method isEqualToString:@"deviceId"]) {
 		[self handleDeviceIdWithParameters:parameters result:result];
@@ -422,31 +422,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	NSData *cardData = [[NSData alloc] initWithBase64EncodedString:base64CardData options:0];
 	[self addPassToWallet:cardData result:result];
 	result(nil);
-}
-
-- (void)handleGeoFenceWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	NSArray *regions;
-	NSDictionary *beacons;
-	if ((regions = [parameters inaArrayForKey:@"regions"]) != nil) {
-		[RegionMonitor.sharedInstance monitorRegions:regions];
-		result(RegionMonitor.sharedInstance.currentRegionIdsList);
-	}
-	else if ((beacons = [parameters inaDictForKey:@"beacons"]) != nil) {
-		NSString *regionId = [beacons inaStringForKey:@"regionId"];
-		NSString *action = [beacons inaStringForKey:@"action"];
-		if ([action isEqualToString:@"start"]) {
-			result(@([RegionMonitor.sharedInstance startRangingBeaconsInRegionWithId:regionId]));
-		}
-		else if ([action isEqualToString:@"stop"]) {
-			result(@([RegionMonitor.sharedInstance stopRangingBeaconsInRegionWithId:regionId]));
-		}
-		else {
-			result([RegionMonitor.sharedInstance beaconsInRegionWithId:regionId]);
-		}
-	}
-	else {
-		result(nil);
-	}
 }
 
 - (void)handleDeviceIdWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
