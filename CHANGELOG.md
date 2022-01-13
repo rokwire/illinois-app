@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Wrong header bar colors [#1206](https://github.com/rokwire/illinois-app/issues/1206).
+- Android: Soft keyboard does not appear in web view [#1209](https://github.com/rokwire/illinois-app/issues/1209).
 
 ## [3.1.11] - 2022-01-11
 ### Added
