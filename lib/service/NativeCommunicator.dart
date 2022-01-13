@@ -401,6 +401,7 @@ class NativeCommunicator with Service implements NotificationsListener {
       case "geo_fence.beacons.changed":
         _notifyGeoFenceBeaconsChanged(call.arguments);
         break;
+
       case "firebase_message":
         //PS use firebase messaging plugin!
         //FirebaseMessaging().onMessage(call.arguments);

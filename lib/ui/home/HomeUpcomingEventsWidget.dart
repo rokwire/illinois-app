@@ -66,6 +66,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyTagsChanged,
+      Auth2UserPrefs.notifyInterestsChanged,
       ExploreService.notifyEventCreated,
       ExploreService.notifyEventUpdated,
       AppLivecycle.notifyStateChanged,
@@ -93,6 +94,9 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       _loadAvailableCategories();
     }
     else if (name == Auth2UserPrefs.notifyTagsChanged) {
+      _loadEvents();
+    }
+    else if (name == Auth2UserPrefs.notifyInterestsChanged) {
       _loadEvents();
     }
     else if (name == ExploreService.notifyEventCreated) {
@@ -163,7 +167,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       Set<String>? tagsFilter = ((userTags != null) && userTags.isNotEmpty) ? userTags : null;
 
       _loadingEvents = true;
-      ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming, categories: _categoriesFilter, tags: tagsFilter).then((List<Explore>? events) {
+      ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming, categories: categoriesFilter, tags: tagsFilter).then((List<Explore>? events) {
 
         bool haveEvents = (events != null) && events.isNotEmpty;
         bool haveTagsFilters = (tagsFilter != null) && tagsFilter.isNotEmpty;
@@ -230,6 +234,9 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       for (int position in positions) {
         randomEvents.add(events[position]);
       }
+      // Sort events
+      ExploreService().sortEvents(randomEvents);
+
       return randomEvents;
     }
 

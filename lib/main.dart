@@ -207,6 +207,7 @@ class _AppState extends State<App> implements NotificationsListener {
       //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       title: Localization().getStringEx('app.title', 'Illinois')!,
       theme: ThemeData(
+          appBarTheme: AppBarTheme(backgroundColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040)),
           primaryColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040),
           fontFamily: Styles().fontFamilies?.extraBold ?? 'ProximaNovaExtraBold'),
       home: _homePanel,

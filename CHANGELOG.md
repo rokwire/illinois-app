@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ## [3.2.0] - ????-??-??
-Please log changes here until the first 3.2 build. Fill the date of the build as a version date above.
+### Changed
+- Make Geofence monitor standalone plugin [#1208](https://github.com/rokwire/illinois-app/issues/1208).
+
+## [3.1.12] - 2022-01-13
+### Fixed
+- Wrong header bar colors [#1206](https://github.com/rokwire/illinois-app/issues/1206).
+- Android: Soft keyboard does not appear in web view [#1209](https://github.com/rokwire/illinois-app/issues/1209).
+- Crash in Privacy Center.
+- Respect user's category interests and sort random events [#1171](https://github.com/rokwire/illinois-app/issues/1171).
+### Changed
+- Label from "Building Entry" to "Building Access" [#1172](https://github.com/rokwire/illinois-app/issues/1172).
 
 ## [3.1.11] - 2022-01-11
 ### Added
