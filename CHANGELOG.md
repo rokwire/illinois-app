@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Android: Soft keyboard does not appear in web view [#1209](https://github.com/rokwire/illinois-app/issues/1209).
 - Crash in Privacy Center.
 - Respect user's category interests and sort random events [#1171](https://github.com/rokwire/illinois-app/issues/1171).
+### Changed
+- Label from "Building Entry" to "Building Access" [#1172](https://github.com/rokwire/illinois-app/issues/1172).
 
 ## [3.1.11] - 2022-01-11
 ### Added
