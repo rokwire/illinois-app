@@ -64,6 +64,9 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
   void initState() {
     super.initState();
     NotificationService().subscribe(this, AppLivecycle.notifyStateChanged);
+    if (Platform.isAndroid) {
+      FlutterWebView.WebView.platform = FlutterWebView.SurfaceAndroidWebView();
+    }
     _getOnline().then((bool isOnline) {
       setState(() {
         _isOnline = isOnline;
