@@ -287,7 +287,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (code == 'building_status') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Entry'),
+        title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Access'),
         hint: Localization().getStringEx('panel.browse.button.building_status.hint', ''),
         icon: 'images/icon-browse-building-status.png',
         color: Styles().colors!.fillColorPrimary,
