@@ -66,6 +66,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyTagsChanged,
+      Auth2UserPrefs.notifyInterestsChanged,
       ExploreService.notifyEventCreated,
       ExploreService.notifyEventUpdated,
       AppLivecycle.notifyStateChanged,
@@ -93,6 +94,9 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       _loadAvailableCategories();
     }
     else if (name == Auth2UserPrefs.notifyTagsChanged) {
+      _loadEvents();
+    }
+    else if (name == Auth2UserPrefs.notifyInterestsChanged) {
       _loadEvents();
     }
     else if (name == ExploreService.notifyEventCreated) {
