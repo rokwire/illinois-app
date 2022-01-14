@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make Geofence monitor standalone plugin [#1208](https://github.com/rokwire/illinois-app/issues/1208).
 - Improved Accessibility [#1213](https://github.com/rokwire/illinois-app/issues/1213).
 - Update Browse panel layout [#1217](https://github.com/rokwire/illinois-app/issues/1217).
+- Update "Campus Resources" Layout [#1219](https://github.com/rokwire/illinois-app/issues/1219).
 
 ## [3.1.12] - 2022-01-13
 ### Fixed
