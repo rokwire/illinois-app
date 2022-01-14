@@ -21,7 +21,7 @@ import 'dart:ui';
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 

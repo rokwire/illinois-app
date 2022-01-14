@@ -16,7 +16,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 
 typedef AppLifecycleCallback = void Function(AppLifecycleState state);
 

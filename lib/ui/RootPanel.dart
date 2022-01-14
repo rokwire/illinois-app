@@ -29,7 +29,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Polls.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Analytics.dart';

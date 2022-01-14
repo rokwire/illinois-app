@@ -18,7 +18,7 @@ import 'dart:io';
 
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 

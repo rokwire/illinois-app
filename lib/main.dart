@@ -48,7 +48,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Voter.dart';
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
@@ -67,6 +66,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
+import 'package:rokwire_plugin/service/service.dart';
 
 
 final AppExitListener appExitListener = AppExitListener();
@@ -471,7 +471,13 @@ class _IlliniServices extends Services {
       await NativeCommunicator().setLaunchScreenStatus(service.runtimeType.toString());
     }
 
-    ServiceError? error = await super.initService(service);
+    ServiceError? error;
+    try { error = await super.initService(service); }
+    catch(e) { print(e.toString()); }
+
+    if (error != null) {
+      print(error.toString());
+    }
   
     if (kDebugMode) {
       await NativeCommunicator().setLaunchScreenStatus(null);

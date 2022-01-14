@@ -17,7 +17,7 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart' as GoogleFirebase;
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FirebaseService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 
 class FirebaseCrashlytics with Service {
   static final FirebaseCrashlytics _crashlytics = new FirebaseCrashlytics._internal();

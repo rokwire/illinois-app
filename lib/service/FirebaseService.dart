@@ -15,7 +15,7 @@
  */
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 
 class FirebaseService extends Service{
 

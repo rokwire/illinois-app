@@ -26,7 +26,7 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/utils/Crypt.dart';
 import 'package:package_info/package_info.dart';
 import 'package:collection/collection.dart';

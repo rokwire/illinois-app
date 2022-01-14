@@ -106,11 +106,7 @@ class Services {
       await service.initService();
     }
     on ServiceError catch (error) {
-      print(error.toString());
       return error;
-    }
-    catch(e) {
-      print(e.toString());
     }
     return null;
   }
@@ -161,17 +157,20 @@ class ServiceError {
 
   ServiceError({this.title, this.description, this.source, this.severity});
 
+  @override
   String toString() {
     return "ServiceError: ${source?.runtimeType.toString()}: $title\n$description";
   }
 
-  bool operator ==(o) =>
-    (o is ServiceError) &&
-      (o.title == title) &&
-      (o.description == description) &&
-      (o.source == source) &&
-      (o.severity == severity);
+  @override
+  bool operator ==(other) =>
+    (other is ServiceError) &&
+      (other.title == title) &&
+      (other.description == description) &&
+      (other.source == source) &&
+      (other.severity == severity);
 
+  @override
   int get hashCode =>
     (title?.hashCode ?? 0) ^
     (description?.hashCode ?? 0) ^

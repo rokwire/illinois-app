@@ -19,8 +19,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/utils/Utils.dart';
-
-import 'Service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 
 class Voter with Service implements NotificationsListener {
   static final Voter _service = Voter._internal();

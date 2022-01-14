@@ -29,7 +29,7 @@ import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class Groups with Service implements NotificationsListener {
