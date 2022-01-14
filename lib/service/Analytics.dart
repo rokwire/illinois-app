@@ -29,7 +29,7 @@ import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

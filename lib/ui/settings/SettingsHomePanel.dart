@@ -19,7 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';

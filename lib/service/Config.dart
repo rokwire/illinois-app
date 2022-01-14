@@ -21,7 +21,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/log.dart';

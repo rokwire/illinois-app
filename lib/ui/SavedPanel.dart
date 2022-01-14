@@ -26,7 +26,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Inbox.dart';

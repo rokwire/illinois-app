@@ -24,7 +24,6 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/DiningService.dart';
@@ -67,6 +66,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 
 
 final AppExitListener appExitListener = AppExitListener();

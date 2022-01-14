@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/RecentItems.dart';

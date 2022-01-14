@@ -21,7 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';

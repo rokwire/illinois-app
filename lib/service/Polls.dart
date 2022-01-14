@@ -25,7 +25,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Localization.dart';
