@@ -20,15 +20,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppNavigation.dart';
+import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Connectivity.dart';
+import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/DeviceCalendar.dart';
+import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
+import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:illinois/service/FirebaseService.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/GeoFence.dart';
+import 'package:illinois/service/Groups.dart';
+import 'package:illinois/service/Guide.dart';
+import 'package:illinois/service/HttpProxy.dart';
+import 'package:illinois/service/IlliniCash.dart';
+import 'package:illinois/service/Inbox.dart';
+import 'package:illinois/service/LiveStats.dart';
+import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/Polls.dart';
+import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Service.dart';
+import 'package:illinois/service/Sports.dart';
+import 'package:illinois/service/Voter.dart';
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 
@@ -43,7 +65,9 @@ import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContentWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+
 import 'package:rokwire_plugin/rokwire_plugin.dart';
+
 
 final AppExitListener appExitListener = AppExitListener();
 
@@ -57,8 +81,51 @@ void main() async {
 
   NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
 
-  Services().create();
-  ServiceError? serviceError = await Services().init();
+  _IlliniServices().create([
+    // Add highest priority services at top
+
+    FirebaseService(),
+    FirebaseCrashlytics(),
+    AppLivecycle(),
+    AppDateTime(),
+    Connectivity(),
+    LocationServices(),
+    DeepLink(),
+
+    Storage(),
+    HttpProxy(),
+
+    Config(),
+    NativeCommunicator(),
+
+    Auth2(),
+    Localization(),
+    Assets(),
+    Styles(),
+    Analytics(),
+    FirebaseMessaging(),
+    Sports(),
+    LiveStats(),
+    RecentItems(),
+    DiningService(),
+    IlliniCash(),
+    FlexUI(),
+    Onboarding(),
+    Polls(),
+    GeoFence(),
+    Voter(),
+    Guide(),
+    Inbox(),
+    DeviceCalendar(),
+    ExploreService(),
+    Groups(),
+
+    // These do not rely on Service initialization API so they are not registered as services.
+    // LaundryService(),
+    // Content(),
+  ]);
+  
+  ServiceError? serviceError = await _IlliniServices().init();
 
   // do not show the red error widget when release mode
   if (kReleaseMode) {
@@ -81,7 +148,7 @@ class AppExitListener implements NotificationsListener {
     if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
       Future.delayed(Duration(), () {
         NotificationService().unsubscribe(appExitListener);
-        Services().destroy();
+        _IlliniServices().destroy();
       });
     }
   }
@@ -270,7 +337,7 @@ class _AppState extends State<App> implements NotificationsListener {
       return await _retryInitialzeFuture;
     }
     else {
-      _retryInitialzeFuture = Services().init();
+      _retryInitialzeFuture = _IlliniServices().init();
       ServiceError? serviceError = await _retryInitialzeFuture;
       _retryInitialzeFuture = null;
 
@@ -371,4 +438,46 @@ class _AppState extends State<App> implements NotificationsListener {
       }
     }
   }
+}
+
+class _IlliniServices extends Services {
+  @protected
+  _IlliniServices.internal() : super.internal();
+
+  factory _IlliniServices() {
+    return ((Services.instance is _IlliniServices) ? (Services.instance as _IlliniServices) : (Services.instance = _IlliniServices.internal()));
+  }
+
+  bool _offlineChecked = false;
+
+  @override
+  Future<ServiceError?> initService(Service service) async {
+    
+    if ((_offlineChecked != true) && Storage().isInitialized && Connectivity().isInitialized) {
+      if ((Storage().lastRunVersion == null) && Connectivity().isOffline) {
+        return ServiceError(
+          source: null,
+          severity: ServiceErrorSeverity.fatal,
+          title: 'Initialization Failed',
+          description: 'You must be online when you start this product for first time.',
+        );
+      }
+      else {
+        _offlineChecked = true;
+      }
+    }
+
+    if (kDebugMode) {
+      await NativeCommunicator().setLaunchScreenStatus(service.runtimeType.toString());
+    }
+
+    ServiceError? error = await super.initService(service);
+  
+    if (kDebugMode) {
+      await NativeCommunicator().setLaunchScreenStatus(null);
+    }
+
+    return error;
+}
+
 }

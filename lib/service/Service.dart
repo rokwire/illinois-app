@@ -16,38 +16,6 @@
 
 
 import 'package:flutter/foundation.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Connectivity.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
-import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/FirebaseCrashlytics.dart';
-import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/DiningService.dart';
-import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/FirebaseService.dart';
-import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/GeoFence.dart';
-import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/HttpProxy.dart';
-import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/service/Inbox.dart';
-import 'package:illinois/service/LiveStats.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/LocationServices.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Onboarding.dart';
-import 'package:illinois/service/Polls.dart';
-import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/Voter.dart';
 
 abstract class Service {
 
@@ -74,109 +42,54 @@ abstract class Service {
 }
 
 class Services {
-  static final Services _instance = Services._internal();
+  static Services? _instance;
+  
+  @protected
+  Services.internal();
   
   factory Services() {
-    return _instance;
+    return _instance ?? (_instance = Services.internal());
   }
 
-  Services._internal();
+  static Services? get instance => _instance;
   
-  static Services get instance {
-    return _instance;
-  }
+  @protected
+  static set instance(Services? value) => _instance = value;
 
-  List<Service> _services = [
-    // Add highest priority services at top
+  List<Service>? _services;
 
-    FirebaseService(),
-    FirebaseCrashlytics(),
-    AppLivecycle(),
-    AppDateTime(),
-    Connectivity(),
-    LocationServices(),
-    DeepLink(),
-
-    Storage(),
-    HttpProxy(),
-
-    Config(),
-    NativeCommunicator(),
-
-    Auth2(),
-    Localization(),
-    Assets(),
-    Styles(),
-    Analytics(),
-    FirebaseMessaging(),
-    Sports(),
-    LiveStats(),
-    RecentItems(),
-    DiningService(),
-    IlliniCash(),
-    FlexUI(),
-    Onboarding(),
-    Polls(),
-    GeoFence(),
-    Voter(),
-    Guide(),
-    Inbox(),
-    DeviceCalendar(),
-    ExploreService(),
-    Groups()
-    // These do not rely on Service initialization API so they are not registered as services.
-    // LaundryService(),
-    // Content(),
-  ];
-
-  void create() {
-    _sort();
-    for (Service service in _services) {
-      service.createService();
+  void create(List<Service> services) {
+    if (_services == null) {
+      _services = _sort(services);
+      for (Service service in _services!) {
+        service.createService();
+      }
     }
   }
 
   void destroy() {
-    for (Service service in _services) {
-      service.destroyService();
+    if (_services != null) {
+      for (Service service in _services!) {
+        service.destroyService();
+      }
+      _services = null;
     }
   }
 
   Future<ServiceError?> init() async {
-    bool offlineChecked = false;
-    bool showStatus = kDebugMode;
-    for (Service service in _services) {
 
-      if (service.isInitialized != true) {
-        if (showStatus) {
-          await NativeCommunicator().setLaunchScreenStatus(service.runtimeType.toString());
-        }
-  
-        ServiceError? error = await _initService(service);
-  
-        if (showStatus) {
-          await NativeCommunicator().setLaunchScreenStatus(null);
-        }
-  
-        if (error?.severity == ServiceErrorSeverity.fatal) {
-          return error;
-        }
-      }
-
-      if ((offlineChecked != true) && Storage().isInitialized && Connectivity().isInitialized) {
-        if ((Storage().lastRunVersion == null) && Connectivity().isOffline) {
-          return ServiceError(
-            source: null,
-            severity: ServiceErrorSeverity.fatal,
-            title: 'Initialization Failed',
-            description: 'You must be online when you start this product for first time.',
-          );
-        }
-        else {
-          offlineChecked = true;
+    if (_services != null) {
+      for (Service service in _services!) {
+        if (service.isInitialized != true) {
+          ServiceError? error = await initService(service);
+          if (error?.severity == ServiceErrorSeverity.fatal) {
+            return error;
+          }
         }
       }
     }
+
+    return null;
 
     /*TMP:
     return ServiceError(
@@ -185,10 +98,10 @@ class Services {
       title: 'Text Initialization Error',
       description: 'This is a test initialization error.',
     );*/
-    return null;
   }
 
-  Future<ServiceError?> _initService(Service service) async {
+  @protected
+  Future<ServiceError?> initService(Service service) async {
     try {
       await service.initService();
     }
@@ -203,18 +116,21 @@ class Services {
   }
 
   void initUI() {
-    for (Service service in _services) {
-      service.initServiceUI();
+    if (_services != null) {
+      for (Service service in _services!) {
+        service.initServiceUI();
+      }
     }
   }
 
-  void _sort() {
+  static List<Service> _sort(List<Service> inputServices) {
     
     List<Service> queue = [];
-    while (_services.isNotEmpty) {
+    List<Service> services = List.from(inputServices);
+    while (services.isNotEmpty) {
       // start with lowest priority service
-      Service svc = _services.last;
-      _services.removeLast();
+      Service svc = services.last;
+      services.removeLast();
       
       // Move to TBD anyone from Queue that depends on svc
       Set<Service>? svcDependents = svc.serviceDependsOn;
@@ -223,7 +139,7 @@ class Services {
           Service queuedSvc = queue[index];
           if (svcDependents.contains(queuedSvc)) {
             queue.removeAt(index);
-            _services.add(queuedSvc);
+            services.add(queuedSvc);
           }
         }
       }
@@ -232,7 +148,7 @@ class Services {
       queue.add(svc);
     }
     
-    _services = queue.reversed.toList();
+    return queue.reversed.toList();
   }
 
 }
