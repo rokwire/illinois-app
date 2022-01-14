@@ -23,7 +23,7 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeepLink.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
@@ -35,8 +35,6 @@ import 'package:rokwire_plugin/service/log.dart';
 
 
 class ExploreService with Service implements NotificationsListener {
-
-  static const String EVENT_URI = '${DeepLink.ROKWIRE_URL}/event_detail';
 
   static const String notifyEventDetail  = "edu.illinois.rokwire.explore.event.detail";
   static const String notifyEventCreated = "edu.illinois.rokwire.explore.event.created";
@@ -615,9 +613,11 @@ class ExploreService with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
+  String get eventDetailUrl => '${DeepLink().nativeUrl}/event_detail';
+
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri? eventUri = Uri.tryParse(EVENT_URI);
+      Uri? eventUri = Uri.tryParse(eventDetailUrl);
       if ((eventUri != null) &&
           (eventUri.scheme == uri.scheme) &&
           (eventUri.authority == uri.authority) &&

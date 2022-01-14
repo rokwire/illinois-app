@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/DeepLink.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -29,8 +29,6 @@ class HomeGiesWidget extends StatefulWidget {
 }
 
 class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
-
-  static const String GIES_URI = '${DeepLink.ROKWIRE_URL}/gies';
 
   List<dynamic>? _pages;
   List<String>?  _navigationPages;
@@ -195,11 +193,14 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     );
   }
 
+  String get giesUrl => '${DeepLink().nativeUrl}/gies';
+
+
   void _onTapLink(String? url) {
     if (AppString.isStringNotEmpty(url)) {
 
       Uri? uri = Uri.tryParse(url!);
-      Uri? giesUri = Uri.tryParse(GIES_URI);
+      Uri? giesUri = Uri.tryParse(giesUrl);
       if ((giesUri != null) &&
           (giesUri.scheme == uri!.scheme) &&
           (giesUri.authority == uri.authority) &&

@@ -30,7 +30,7 @@ import 'package:illinois/model/Coach.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/model/Roster.dart';
-import 'package:illinois/service/DeepLink.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -41,8 +41,6 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Sports with Service implements NotificationsListener {
-
-  static const String GAME_URI = '${DeepLink.ROKWIRE_URL}/game_detail';
 
   static const String notifyChanged  = "edu.illinois.rokwire.sports.changed";
   static const String notifySocialMediasChanged  = "edu.illinois.rokwire.sports.social.medias.changed";
@@ -785,9 +783,11 @@ class Sports with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
+  String get gameDetailUrl => '${DeepLink().nativeUrl}/game_detail';
+
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri? gameUri = Uri.tryParse(GAME_URI);
+      Uri? gameUri = Uri.tryParse(gameDetailUrl);
       if ((gameUri != null) &&
           (gameUri.scheme == uri.scheme) &&
           (gameUri.authority == uri.authority) &&

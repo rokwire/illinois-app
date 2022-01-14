@@ -24,7 +24,6 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/ExploreService.dart';
@@ -62,6 +61,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -90,7 +90,7 @@ void main() async {
     AppDateTime(),
     Connectivity(),
     LocationServices(),
-    DeepLink(),
+    _IlliniDeepLink(),
 
     Storage(),
     HttpProxy(),
@@ -482,6 +482,22 @@ class _IlliniServices extends Services {
     }
 
     return error;
+  }
+
 }
 
+class _IlliniDeepLink extends DeepLink {
+  
+  @protected
+  _IlliniDeepLink.internal() : super.internal();
+
+  factory _IlliniDeepLink() {
+    return ((DeepLink.instance is _IlliniDeepLink) ? (DeepLink.instance as _IlliniDeepLink) : (DeepLink.instance = _IlliniDeepLink.internal()));
+  }
+
+  @override
+  String? get nativeScheme => 'edu.illinois.rokwire';
+  
+  @override
+  String? get nativeHost => 'rokwire.illinois.edu';
 }

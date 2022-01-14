@@ -53,7 +53,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
   }
 
   Future<Uint8List?> _loadQrImageBytes() async {
-    String deepLink = '${Groups.GROUP_URI}?group_id=${widget.group!.id}';
+    String deepLink = '${Groups().groupDetailUrl}?group_id=${widget.group!.id}';
     String? qrCodeValue = AppUrl.getDeepLinkRedirectUrl(deepLink);
     return await NativeCommunicator().getBarcodeImageData({
       'content': qrCodeValue,

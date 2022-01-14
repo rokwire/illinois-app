@@ -14,25 +14,28 @@
  * limitations under the License.
  */
 
+import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:uni_links/uni_links.dart';
 
 class DeepLink with Service {
   
-  static const String ROKWIRE_SCHEME = 'edu.illinois.rokwire';
-  static const String ROKWIRE_HOST = 'rokwire.illinois.edu';
-  static const String ROKWIRE_URL = '$ROKWIRE_SCHEME://$ROKWIRE_HOST';
-  
   static const String notifyUri  = "edu.illinois.rokwire.deeplink.uri";
 
-  static final DeepLink _deepLink = DeepLink._internal();
+  static DeepLink? _instance;
+
+  @protected
+  DeepLink.internal();
 
   factory DeepLink() {
-    return _deepLink;
+    return _instance ?? (_instance = DeepLink.internal());
   }
 
-  DeepLink._internal();
+  static DeepLink? get instance => _instance;
+  
+  @protected
+  static set instance(DeepLink? value) => _instance = value;
 
   @override
   Future<void> initService() async {
@@ -54,11 +57,24 @@ class DeepLink with Service {
     await super.initService();
   }
 
-  static bool isRokwireUri(Uri? uri) => (uri?.scheme == ROKWIRE_SCHEME) && (uri?.host == ROKWIRE_HOST);
-  static bool isRokwireUrl(String? url) =>  isRokwireUri((url != null) ? Uri.tryParse(url) : null);
-  static void launchUrl(String? url) => launchUri((url != null) ? Uri.tryParse(url) : null);
+  String? get nativeScheme => null;
+  String? get nativeHost => null;
+  String? get nativeUrl {
+    String url = "";
+    if (nativeScheme?.isNotEmpty == true) {
+      url += '$nativeScheme://';
+    }
+    if (nativeHost?.isNotEmpty == true) {
+      url += '$nativeHost';
+    }
+    return url;
+  }
+  
+  bool isNativeUri(Uri? uri) => (uri?.scheme == nativeScheme) && (uri?.host == nativeHost);
+  bool isNativeUrl(String? url) =>  isNativeUri((url != null) ? Uri.tryParse(url) : null);
+  void launchUrl(String? url) => launchUri((url != null) ? Uri.tryParse(url) : null);
 
-  static void launchUri(Uri? uri) {
+  void launchUri(Uri? uri) {
     if (uri != null) {
       NotificationService().notify(notifyUri, uri);
     }

@@ -9,7 +9,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeepLink.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -22,8 +22,6 @@ enum GuideContentSource { Net, Debug }
 
 class Guide with Service implements NotificationsListener {
   
-  static const String GUIDE_URI = '${DeepLink.ROKWIRE_URL}/guide_detail';
-
   static const String notifyChanged  = "edu.illinois.rokwire.guide.changed";
   static const String notifyGuideDetail = "edu.illinois.rokwire.guide.detail";
 
@@ -414,9 +412,11 @@ class Guide with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
+  String get guideDetailUrl => '${DeepLink().nativeUrl}/guide_detail';
+
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri? guideUri = Uri.tryParse(GUIDE_URI);
+      Uri? guideUri = Uri.tryParse(guideDetailUrl);
       if ((guideUri != null) &&
           (guideUri.scheme == uri.scheme) &&
           (guideUri.authority == uri.authority) &&
