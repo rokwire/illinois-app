@@ -2006,6 +2006,8 @@
     "widget.home_campus_tools.button.my_illini.hint": "",
     "widget.home_campus_tools.button.wellness.title": "Wellness",
     "widget.home_campus_tools.button.wellness.hint": "",
+    "widget.home_campus_tools.button.crisis_help.title": "Crisis Help",
+    "widget.home_campus_tools.button.crisis_help.hint": "",
 
     "widget.home_create_poll.heading.title":"Polls",
     "widget.home_create_poll.button.close.label":"Close",
