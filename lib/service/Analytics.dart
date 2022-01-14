@@ -44,7 +44,7 @@ import 'package:notification_permissions/notification_permissions.dart' as Notif
 
 import 'package:illinois/main.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/ui/RootPanel.dart';
 

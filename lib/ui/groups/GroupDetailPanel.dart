@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';

@@ -16,7 +16,7 @@
 
 import 'dart:ui';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Config.dart';

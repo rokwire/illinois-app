@@ -27,7 +27,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class Assets with Service implements NotificationsListener {

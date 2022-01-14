@@ -20,7 +20,7 @@ import 'dart:ui';
 
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/illinicash/Transaction.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';

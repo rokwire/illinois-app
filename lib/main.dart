@@ -55,7 +55,6 @@ import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
@@ -67,6 +66,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 
 
 final AppExitListener appExitListener = AppExitListener();
@@ -230,8 +230,6 @@ class _AppState extends State<App> implements NotificationsListener {
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       AppLivecycle.notifyStateChanged,
     ]);
-
-    AppLivecycle.instance.ensureBinding();
 
     rootPanel = RootPanel();
     _initializeError = widget.initializeError;

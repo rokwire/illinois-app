@@ -21,7 +21,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase_messaging;
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseService.dart';
 import 'package:illinois/service/Inbox.dart';

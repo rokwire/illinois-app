@@ -17,7 +17,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter_html/flutter_html.dart' as FlutterHtml;
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NativeCommunicator.dart';

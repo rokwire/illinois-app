@@ -20,7 +20,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/LiveStats.dart';

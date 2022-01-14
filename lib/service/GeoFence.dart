@@ -22,7 +22,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as Http;
 
 import 'package:illinois/model/GeoFence.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';

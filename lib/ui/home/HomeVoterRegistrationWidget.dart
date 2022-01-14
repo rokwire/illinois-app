@@ -19,7 +19,7 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/model/Voter.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/GeoFence.dart';
