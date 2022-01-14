@@ -783,7 +783,7 @@ class Sports with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
-  String get gameDetailUrl => '${DeepLink().nativeUrl}/game_detail';
+  String get gameDetailUrl => '${DeepLink().appUrl}/game_detail';
 
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {

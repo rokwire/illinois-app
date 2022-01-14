@@ -27,8 +27,8 @@ class IlliniDeepLink extends DeepLink {
   }
 
   @override
-  String? get nativeScheme => 'edu.illinois.rokwire';
+  String? get appScheme => 'edu.illinois.rokwire';
   
   @override
-  String? get nativeHost => 'rokwire.illinois.edu';
+  String? get appHost => 'rokwire.illinois.edu';
 }

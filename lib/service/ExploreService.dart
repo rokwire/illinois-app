@@ -613,7 +613,7 @@ class ExploreService with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
-  String get eventDetailUrl => '${DeepLink().nativeUrl}/event_detail';
+  String get eventDetailUrl => '${DeepLink().appUrl}/event_detail';
 
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {

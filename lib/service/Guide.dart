@@ -412,7 +412,7 @@ class Guide with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
-  String get guideDetailUrl => '${DeepLink().nativeUrl}/guide_detail';
+  String get guideDetailUrl => '${DeepLink().appUrl}/guide_detail';
 
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {

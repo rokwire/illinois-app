@@ -57,21 +57,21 @@ class DeepLink with Service {
     await super.initService();
   }
 
-  String? get nativeScheme => null;
-  String? get nativeHost => null;
-  String? get nativeUrl {
+  String? get appScheme => null;
+  String? get appHost => null;
+  String? get appUrl {
     String url = "";
-    if (nativeScheme?.isNotEmpty == true) {
-      url += '$nativeScheme://';
+    if (appScheme?.isNotEmpty == true) {
+      url += '$appScheme://';
     }
-    if (nativeHost?.isNotEmpty == true) {
-      url += '$nativeHost';
+    if (appHost?.isNotEmpty == true) {
+      url += '$appHost';
     }
     return url;
   }
   
-  bool isNativeUri(Uri? uri) => (uri?.scheme == nativeScheme) && (uri?.host == nativeHost);
-  bool isNativeUrl(String? url) =>  isNativeUri((url != null) ? Uri.tryParse(url) : null);
+  bool isAppUri(Uri? uri) => (uri?.scheme == appScheme) && (uri?.host == appHost);
+  bool isAppUrl(String? url) =>  isAppUri((url != null) ? Uri.tryParse(url) : null);
   void launchUrl(String? url) => launchUri((url != null) ? Uri.tryParse(url) : null);
 
   void launchUri(Uri? uri) {

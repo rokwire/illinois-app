@@ -93,7 +93,7 @@ class NativeCommunicator with Service implements NotificationsListener {
     }
   }
 
-  String get appSettingsUrl => '${DeepLink().nativeUrl}/app_settings';
+  String get appSettingsUrl => '${DeepLink().appUrl}/app_settings';
 
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {

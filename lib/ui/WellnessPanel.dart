@@ -400,7 +400,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
 
   void _launchUrl(String? url) {
     if (AppString.isStringNotEmpty(url)) {
-      if (DeepLink().isNativeUrl(url)) {
+      if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
       else if (AppUrl.launchInternal(url)){

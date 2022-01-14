@@ -193,7 +193,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     );
   }
 
-  String get giesUrl => '${DeepLink().nativeUrl}/gies';
+  String get giesUrl => '${DeepLink().appUrl}/gies';
 
 
   void _onTapLink(String? url) {

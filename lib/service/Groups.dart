@@ -685,7 +685,7 @@ class Groups with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
-  String get groupDetailUrl => '${DeepLink().nativeUrl}/group_detail';
+  String get groupDetailUrl => '${DeepLink().appUrl}/group_detail';
 
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {

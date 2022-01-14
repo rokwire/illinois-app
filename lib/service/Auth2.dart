@@ -175,7 +175,7 @@ class Auth2 with Service implements NotificationsListener {
     }
   }
 
-  String get _oidcRedirectUrl => '${DeepLink().nativeUrl}/oidc-auth';
+  String get _oidcRedirectUrl => '${DeepLink().appUrl}/oidc-auth';
 
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {
