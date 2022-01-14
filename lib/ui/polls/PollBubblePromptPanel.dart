@@ -187,7 +187,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
       footerWidget = (_allowMultipleOptions || _allowRepeatOptions) ? _buildVoteDoneButton(_onVoteDone) : Container();
     }
     String pollTitle = _poll?.title ?? '';
-    String semanticsQuestionText =  "$wantsToKnow\n+$pollTitle";
+    String semanticsQuestionText =  "$wantsToKnow,\n$pollTitle";
     String semanticsStatusText = "$pollStatus,$votesNum";
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
@@ -281,7 +281,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = optionString +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = optionString +",\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
       GestureDetector(
@@ -338,7 +338,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = optionString +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = optionString +",\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
       Semantics(label: semanticsText, excludeSemantics: true, child:
       Row(children: <Widget>[
