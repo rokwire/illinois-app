@@ -191,7 +191,7 @@
     "panel.browse.button.groups.hint":"",
     "panel.browse.button.safer.title": "Illinois más seguro",
     "panel.browse.button.safer.hint": "",
-    "panel.browse.button.building_status.title": "Acceso al edificio",
+    "panel.browse.button.building_status.title": "Building Entry",
     "panel.browse.button.building_status.hint": "",
     "panel.browse.button.add_illini_cash.title": "Añadir Illini Cash",
     "panel.browse.button.add_illini_cash.hint": "",
@@ -199,8 +199,12 @@
     "panel.browse.button.campus_guide.hint":"",
     "panel.browse.button.inbox.title":"Bandeja de entrada",
     "panel.browse.button.inbox.hint":"",
-    "panel.browse.button.privacy_center.title": "Centro de privacidad",
+    "panel.browse.button.privacy_center.title": "Privacy",
     "panel.browse.button.privacy_center.hint":"",
+    "panel.browse.button.crisis_help.title": "Crisis Help",
+    "panel.browse.button.crisis_help.hint": "",
+    "panel.browse.button.faqs.title": "FAQs",
+    "panel.browse.button.faqs.hint": "",
 
     "panel.browse.label.browse_all": "Explorar todo",
     "panel.browse.label.offline.sign_in": "Iniciar sesión no disponible sin conexión.",
@@ -212,6 +216,8 @@
     "panel.browse.label.offline.create_event": "Crear evento no disponible sin conexión.",
     "panel.browse.label.offline.manage_interrest": "Gestionar intereses no disponibles sin conexión.",
     "panel.browse.label.offline.feedback": "Proporcionar un comentario no está disponible sin conexión.",
+    "panel.browse.label.offline.faqs": "FAQs is not available while offline.",
+    "panel.browse.label.offline.crisis_help": "Crisis Help is not available while offline.",
 
     "panel.browse.button.sign_in.title":"Iniciar sesión",
     "panel.browse.button.sign_in.hint":"",
@@ -892,6 +898,8 @@
     "panel.settings.categories.description":"Toque para seguir las categorías que más le interesen",
 
     "panel.settings.feedback.label.title": "Proporcionar comentarios",
+    "panel.settings.faqs.label.title": "FAQs",
+    "panel.settings.crisis_help.label.title": "Crisis Help",
 
     "panel.settings.privacy_statement.label.title": "Declaración de privacidad",
 

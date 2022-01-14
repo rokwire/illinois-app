@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed IdCardPanel layout order [#1201](https://github.com/rokwire/illinois-app/issues/1201).
 - Acknowledge reminder dates in university timezone [#1246](https://github.com/rokwire/illinois-app/issues/1246).
 - Remove margin from Group Post body in GroupPostDetailPanel [#1227](https://github.com/rokwire/illinois-app/issues/1227).
+- Update Browse panel layout [#1217](https://github.com/rokwire/illinois-app/issues/1217).
 
 ## [3.1.12] - 2022-01-13
 ### Fixed
