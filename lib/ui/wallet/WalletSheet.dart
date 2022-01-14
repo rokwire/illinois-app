@@ -21,7 +21,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/wallet/WalletPanel.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';

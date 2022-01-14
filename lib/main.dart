@@ -45,7 +45,6 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Sports.dart';
@@ -67,6 +66,7 @@ import 'package:illinois/service/Styles.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 
 
 final AppExitListener appExitListener = AppExitListener();

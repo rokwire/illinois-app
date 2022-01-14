@@ -20,7 +20,7 @@ import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
 enum LocationServicesStatus {

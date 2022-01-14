@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/utils/Utils.dart';
 
 ////////////////////////////////

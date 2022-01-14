@@ -23,7 +23,7 @@ import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';

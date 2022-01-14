@@ -18,7 +18,7 @@ import 'dart:async';
 
 import 'package:connectivity/connectivity.dart' as ConnectivityPlugin;
 import 'package:illinois/service/Log.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
 enum ConnectivityStatus { wifi, mobile, none }

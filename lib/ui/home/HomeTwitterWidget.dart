@@ -7,7 +7,7 @@ import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/Twitter.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
