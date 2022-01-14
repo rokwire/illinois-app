@@ -24,6 +24,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/ExploreService.dart';
@@ -45,6 +46,7 @@ import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
+import 'package:illinois/service/Services.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Voter.dart';
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
@@ -61,7 +63,6 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
-import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -81,7 +82,7 @@ void main() async {
 
   NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
 
-  _IlliniServices().create([
+  IlliniServices().create([
     // Add highest priority services at top
 
     FirebaseService(),
@@ -90,7 +91,7 @@ void main() async {
     AppDateTime(),
     Connectivity(),
     LocationServices(),
-    _IlliniDeepLink(),
+    IlliniDeepLink(),
 
     Storage(),
     HttpProxy(),
@@ -125,7 +126,7 @@ void main() async {
     // Content(),
   ]);
   
-  ServiceError? serviceError = await _IlliniServices().init();
+  ServiceError? serviceError = await IlliniServices().init();
 
   // do not show the red error widget when release mode
   if (kReleaseMode) {
@@ -148,7 +149,7 @@ class AppExitListener implements NotificationsListener {
     if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
       Future.delayed(Duration(), () {
         NotificationService().unsubscribe(appExitListener);
-        _IlliniServices().destroy();
+        IlliniServices().destroy();
       });
     }
   }
@@ -335,7 +336,7 @@ class _AppState extends State<App> implements NotificationsListener {
       return await _retryInitialzeFuture;
     }
     else {
-      _retryInitialzeFuture = _IlliniServices().init();
+      _retryInitialzeFuture = IlliniServices().init();
       ServiceError? serviceError = await _retryInitialzeFuture;
       _retryInitialzeFuture = null;
 
@@ -438,66 +439,3 @@ class _AppState extends State<App> implements NotificationsListener {
   }
 }
 
-class _IlliniServices extends Services {
-  @protected
-  _IlliniServices.internal() : super.internal();
-
-  factory _IlliniServices() {
-    return ((Services.instance is _IlliniServices) ? (Services.instance as _IlliniServices) : (Services.instance = _IlliniServices.internal()));
-  }
-
-  bool _offlineChecked = false;
-
-  @override
-  Future<ServiceError?> initService(Service service) async {
-    
-    if ((_offlineChecked != true) && Storage().isInitialized && Connectivity().isInitialized) {
-      if ((Storage().lastRunVersion == null) && Connectivity().isOffline) {
-        return ServiceError(
-          source: null,
-          severity: ServiceErrorSeverity.fatal,
-          title: 'Initialization Failed',
-          description: 'You must be online when you start this product for first time.',
-        );
-      }
-      else {
-        _offlineChecked = true;
-      }
-    }
-
-    if (kDebugMode) {
-      await NativeCommunicator().setLaunchScreenStatus(service.runtimeType.toString());
-    }
-
-    ServiceError? error;
-    try { error = await super.initService(service); }
-    catch(e) { print(e.toString()); }
-
-    if (error != null) {
-      print(error.toString());
-    }
-  
-    if (kDebugMode) {
-      await NativeCommunicator().setLaunchScreenStatus(null);
-    }
-
-    return error;
-  }
-
-}
-
-class _IlliniDeepLink extends DeepLink {
-  
-  @protected
-  _IlliniDeepLink.internal() : super.internal();
-
-  factory _IlliniDeepLink() {
-    return ((DeepLink.instance is _IlliniDeepLink) ? (DeepLink.instance as _IlliniDeepLink) : (DeepLink.instance = _IlliniDeepLink.internal()));
-  }
-
-  @override
-  String? get nativeScheme => 'edu.illinois.rokwire';
-  
-  @override
-  String? get nativeHost => 'rokwire.illinois.edu';
-}
