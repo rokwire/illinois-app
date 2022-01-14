@@ -17,11 +17,11 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter_html/flutter_html.dart' as FlutterHtml;
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:flutter/material.dart';
@@ -99,7 +99,7 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
     else if (_isTrackingEnabled == false) {
       contentWidget = _buildStatus(
         title: Localization().getStringEx("panel.web.tracking_disabled.title", "Web Content Blocked"),
-        message: sprintf(Localization().getStringEx("panel.web.tracking_disabled.message", "You have opted to deny cookie usage for web content in this app, therefore we have blocked access to web sites. If you change your mind, change your preference <a href='%s'>here</a>. Your phone Settings may also need to have Privacy > Tracking enabled.")!, [NativeCommunicator.APP_SETTINGS_URI]),
+        message: sprintf(Localization().getStringEx("panel.web.tracking_disabled.message", "You have opted to deny cookie usage for web content in this app, therefore we have blocked access to web sites. If you change your mind, change your preference <a href='%s'>here</a>. Your phone Settings may also need to have Privacy > Tracking enabled.")!, [NativeCommunicator().appSettingsUrl]),
       );
     }
     else if ((_isOnline == true) && (_isTrackingEnabled == true)) {

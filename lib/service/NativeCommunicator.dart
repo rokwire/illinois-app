@@ -20,16 +20,14 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class NativeCommunicator with Service implements NotificationsListener {
   
-  static const String APP_SETTINGS_URI = '${DeepLink.ROKWIRE_URL}/app_settings';
-
   static const String notifyMapSelectExplore  = "edu.illinois.rokwire.nativecommunicator.map.explore.select";
   static const String notifyMapClearExplore   = "edu.illinois.rokwire.nativecommunicator.map.explore.clear";
   
@@ -95,9 +93,11 @@ class NativeCommunicator with Service implements NotificationsListener {
     }
   }
 
+  String get appSettingsUrl => '${DeepLink().appUrl}/app_settings';
+
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri? settingsUri = Uri.tryParse(APP_SETTINGS_URI);
+      Uri? settingsUri = Uri.tryParse(appSettingsUrl);
       if ((settingsUri != null) &&
           (settingsUri.scheme == uri.scheme) &&
           (settingsUri.authority == uri.authority) &&

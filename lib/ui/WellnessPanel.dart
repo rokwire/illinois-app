@@ -19,9 +19,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/DeepLink.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -400,8 +400,8 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
 
   void _launchUrl(String? url) {
     if (AppString.isStringNotEmpty(url)) {
-      if (DeepLink.isRokwireUrl(url)) {
-        DeepLink.launchUrl(url);
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
       }
       else if (AppUrl.launchInternal(url)){
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));

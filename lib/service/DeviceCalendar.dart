@@ -5,8 +5,8 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Guide.dart';
@@ -281,7 +281,7 @@ class _DeviceCalendarEvent {
 
     return _DeviceCalendarEvent(title: event.title, internalEventId: event.id, startDate: event.startDateLocal,
         endDate: event.endDateLocal,
-        deepLinkUrl: "${ExploreService.EVENT_URI}?event_id=${event.id}");
+        deepLinkUrl: "${ExploreService().eventDetailUrl}?event_id=${event.id}");
   }
 
   static _DeviceCalendarEvent? fromGame(Game? game){
@@ -290,7 +290,7 @@ class _DeviceCalendarEvent {
 
     return _DeviceCalendarEvent(title: game.title, internalEventId: game.id, startDate: game.dateTimeUniLocal,
         endDate:  AppDateTime().getUniLocalTimeFromUtcTime(game.endDateTimeUtc),
-        deepLinkUrl: "${Sports.GAME_URI}?game_id=${game.id}%26sport=${game.sport?.shortName}");
+        deepLinkUrl: "${Sports().gameDetailUrl}?game_id=${game.id}%26sport=${game.sport?.shortName}");
   }
 
   static _DeviceCalendarEvent? fromGuide(GuideFavorite? guide){
@@ -303,7 +303,7 @@ class _DeviceCalendarEvent {
         title: guide.title,
         internalEventId: guide.id,
         startDate: Guide().reminderDate(guideEntryData),
-        deepLinkUrl: "${Guide.GUIDE_URI}?guide_id=${guide.id}"
+        deepLinkUrl: "${Guide().guideDetailUrl}?guide_id=${guide.id}"
       );
     }
 

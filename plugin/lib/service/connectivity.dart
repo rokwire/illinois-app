@@ -16,10 +16,10 @@
 
 import 'dart:async';
 
-import 'package:connectivity/connectivity.dart' as ConnectivityPlugin;
-import 'package:illinois/service/Log.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:connectivity/connectivity.dart' as connectivity;
+import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 
 enum ConnectivityStatus { wifi, mobile, none }
 
@@ -47,12 +47,12 @@ class Connectivity with Service {
 
   @override
   void createService() {
-    _connectivitySubscription = ConnectivityPlugin.Connectivity().onConnectivityChanged.listen(_onConnectivityChanged);
+    _connectivitySubscription = connectivity.Connectivity().onConnectivityChanged.listen(_onConnectivityChanged);
   }
 
   @override
   Future<void> initService() async {
-    _connectivityStatus = _statusFromResult(await ConnectivityPlugin.Connectivity().checkConnectivity());
+    _connectivityStatus = _statusFromResult(await connectivity.Connectivity().checkConnectivity());
 
     if (_connectivityStatus != null) {
       await super.initService();
@@ -72,7 +72,7 @@ class Connectivity with Service {
     _connectivitySubscription?.cancel();
   }
 
-  void _onConnectivityChanged(ConnectivityPlugin.ConnectivityResult result) {
+  void _onConnectivityChanged(connectivity.ConnectivityResult result) {
     _setConnectivityStatus(_statusFromResult(result));
   }
 
@@ -84,11 +84,11 @@ class Connectivity with Service {
     }
   }
 
-  ConnectivityStatus? _statusFromResult(ConnectivityPlugin.ConnectivityResult? result) {
+  ConnectivityStatus? _statusFromResult(connectivity.ConnectivityResult? result) {
     switch(result) {
-      case ConnectivityPlugin.ConnectivityResult.wifi: return ConnectivityStatus.wifi;
-      case ConnectivityPlugin.ConnectivityResult.mobile: return ConnectivityStatus.mobile;
-      case ConnectivityPlugin.ConnectivityResult.none: return ConnectivityStatus.none;
+      case connectivity.ConnectivityResult.wifi: return ConnectivityStatus.wifi;
+      case connectivity.ConnectivityResult.mobile: return ConnectivityStatus.mobile;
+      case connectivity.ConnectivityResult.none: return ConnectivityStatus.none;
       default: break;
     }
     return null;

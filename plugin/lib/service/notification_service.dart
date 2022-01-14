@@ -28,7 +28,7 @@ class NotificationService {
     return _instance;
   }
 
-  Map<String, Set<NotificationsListener>> _listeners = Map();
+  final Map<String, Set<NotificationsListener>> _listeners = {};
 
   void subscribe(NotificationsListener listener, names) {
     if (names is List) {
@@ -47,7 +47,7 @@ class NotificationService {
     if ((listener != null) && (name != null)) {
       Set<NotificationsListener>? listenersForName = _listeners[name];
       if (listenersForName == null) {
-        _listeners[name] = listenersForName = Set<NotificationsListener>();
+        _listeners[name] = listenersForName = <NotificationsListener>{};
       }
       listenersForName.add(listener);
     }

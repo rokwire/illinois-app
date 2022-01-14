@@ -24,11 +24,11 @@ import 'package:http/http.dart' as Http;
 import 'package:http_parser/http_parser.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
-import 'package:illinois/service/Log.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/utils/Utils.dart';
 
 enum NetworkAuth {
