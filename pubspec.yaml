@@ -42,7 +42,6 @@ dependencies:
   firebase_crashlytics: ^2.3.0
   # End Firebase
   xml: ^5.1.2
-  logger: ^1.1.0
   flutter_local_notifications: ^9.1.4
   sprintf: ^6.0.0
   sqflite: ^2.0.0+4

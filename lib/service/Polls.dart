@@ -29,7 +29,7 @@ import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Log.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';

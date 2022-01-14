@@ -28,7 +28,7 @@ import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Log.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Polls.dart';

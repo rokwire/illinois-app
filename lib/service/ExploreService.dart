@@ -31,7 +31,7 @@ import 'package:illinois/service/Network.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Log.dart';
+import 'package:rokwire_plugin/service/log.dart';
 
 
 class ExploreService with Service implements NotificationsListener {

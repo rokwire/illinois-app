@@ -52,7 +52,6 @@ import 'package:illinois/service/Voter.dart';
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 
-import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Localization.dart';
@@ -67,6 +66,7 @@ import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/log.dart';
 
 
 final AppExitListener appExitListener = AppExitListener();
