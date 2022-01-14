@@ -452,6 +452,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           wrapContent: true,
           buttonVisible: _editingReply!=null,
           onImageChanged: (String imageUrl) => _replyEditData?.imageUrl = imageUrl,
+          imageSemanticsLabel: "Reply", //TBD localize
         )
      );
   }

@@ -921,7 +921,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             iconPath: 'images/icon-calendar.png',
             rightIconPath: 'images/icon-add-20x18.png',
             rightIconAction: _onTapCreatePoll,
-            rightIconLabel: Localization().getStringEx('panel.group_detail.button.create_event.title', 'Create Poll'),
+            rightIconLabel: Localization().getStringEx('panel.group_detail.button.create_poll.title', 'Create Poll'),//TBD Localization
             children: pollsContentList)
       ]),
       _pollsLoading
