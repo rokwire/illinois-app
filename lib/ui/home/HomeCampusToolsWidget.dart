@@ -23,6 +23,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/WellnessPanel.dart';
@@ -240,11 +241,15 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   }
   void _onTapCrisisHelp() {
     Analytics.instance.logSelect(target: "Crisis Help");
-    String faqsUrl = "http://mhcwellness.illinois.edu/faq"; // TBD from Config after confirmation Config().crisis_help
-
-    String? panelTitle = Localization().getStringEx('panel.settings.crisis_help.label.title', 'Crisis Help');
-    Navigator.push(
-        context, CupertinoPageRoute(builder: (context) => WebPanel(url: faqsUrl, title: panelTitle,)));
+    String? url = Config().crisisHelpUrl;
+    if(AppString.isStringNotEmpty(url)) {
+      String? panelTitle = Localization().getStringEx('panel.settings.crisis_help.label.title', 'Crisis Help');
+      Navigator.push(
+          context, CupertinoPageRoute(
+            builder: (context) => WebPanel(url: url, title: panelTitle,)));
+    } else {
+      Log.e("Missing Config().crisisHelpUrl");
+    }
 
   }
 }

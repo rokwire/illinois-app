@@ -626,8 +626,8 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   void _navigateCrisisHelp() {
     Analytics.instance.logSelect(target: "Crisis Help");
 
-    if (Connectivity().isNotOffline ) {
-      String faqsUrl = "http://mhcwellness.illinois.edu/faq"; // TBD from Config after confirmation Config().crisis_help
+    if (Connectivity().isNotOffline && Config().crisisHelpUrl != null) {
+      String faqsUrl = Config().crisisHelpUrl!;
 
       String? panelTitle = Localization().getStringEx('panel.settings.crisis_help.label.title', 'Crisis Help');
       Navigator.push(
