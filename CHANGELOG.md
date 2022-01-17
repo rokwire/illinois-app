@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Created Rokwire plugin, started services porting [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Update "Campus Resources": Read crisis_url from Config[#1219](https://github.com/rokwire/illinois-app/issues/1219).
 
 ## [3.2.1] - 2022-01-14
 ### Changed
