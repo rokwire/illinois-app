@@ -5,8 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.2.2] - 2022-01-17
 ### Added
 - Created Rokwire plugin, started services porting [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+### Changed  
 - Update "Campus Resources": Read crisis_url from Config[#1219](https://github.com/rokwire/illinois-app/issues/1219).
 - Update Browse panel layout: remove FAQs button [#1217](https://github.com/rokwire/illinois-app/issues/1217).
 
