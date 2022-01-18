@@ -139,7 +139,7 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
   FutureOr<FlutterWebView.NavigationDecision> _processNavigation(FlutterWebView.NavigationRequest navigation) {
     String url = navigation.url;
-    if (AppUrl.launchInternal(url)) {
+    if (UrlUtils.launchInternal(url)) {
       return FlutterWebView.NavigationDecision.navigate;
     }
     else {
@@ -206,7 +206,7 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
   }
 
   void _onTapStatusLink(String? url) {
-    if (AppString.isStringNotEmpty(url)) {
+    if (StringUtils.isNotEmpty(url)) {
       launch(url!);
     }
   }

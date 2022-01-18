@@ -21,6 +21,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -201,13 +202,13 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: <Widget>[
-                Image.asset(AppString.getDefaultEmptyString(
+                Image.asset(StringUtils.ensureNotEmpty(
                     iconSrc, defaultValue: 'images/icon-settings.png')),
                 Expanded(child:
                   Padding(
                     padding: EdgeInsets.only(left: 12),
                     child: Text(
-                      AppString.getDefaultEmptyString(title),
+                      StringUtils.ensureNotEmpty(title),
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   )
@@ -244,7 +245,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       widgets.add(VerticalTitleContentSection(
         title: Localization().getStringEx(
             "panel.settings.meal_plan.label.meal_plan_type.text", "Meal Plan Type"),
-        content: AppString.isStringNotEmpty(IlliniCash().ballance?.mealPlanName) ? IlliniCash().ballance?.mealPlanName : Localization().getStringEx(
+        content: StringUtils.isNotEmpty(IlliniCash().ballance?.mealPlanName) ? IlliniCash().ballance?.mealPlanName : Localization().getStringEx(
             "panel.settings.meal_plan.label.meal_plan_unknown.text", "Unknown"),
       ));
       widgets.add(
@@ -307,7 +308,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             padding: EdgeInsets.only(bottom: 16), child: Row(children: <Widget>[
             _DateLabel(label: Localization().getStringEx('panel.settings.meal_plan.label.start_date', 'Start Date'),),
             Container(width: 8,),
-            Expanded(child: _DateValue(title: AppString.getDefaultEmptyString(
+            Expanded(child: _DateValue(title: StringUtils.ensureNotEmpty(
                 _getFormattedDate(_startDate)),
               label: Localization().getStringEx('panel.settings.meal_plan.button.start_date.title', 'Start Date'),
               hint: Localization().getStringEx('panel.settings.meal_plan.button.start_date.hint', ''),
@@ -318,7 +319,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             _DateLabel(label: Localization().getStringEx('panel.settings.meal_plan.label.end_date', 'End Date'),),
             Container(width: 8,),
             Expanded(child: _DateValue(
-              title: AppString.getDefaultEmptyString(
+              title: StringUtils.ensureNotEmpty(
                   _getFormattedDate(_endDate)),
               label: Localization().getStringEx('panel.settings.meal_plan.button.end_date.title', 'End Date'),
               hint: Localization().getStringEx('panel.settings.meal_plan.button.end_date.hint', ''),

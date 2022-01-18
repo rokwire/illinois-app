@@ -26,10 +26,10 @@ class SportSeasons {
 
   static SportSeasons? fromJson(Map<String, dynamic>? json) {
     return ((json != null) && json.isNotEmpty) ? SportSeasons(
-      code: AppJson.stringValue(json['code']),
-      label: AppJson.stringValue(json['label']),
-      staff: AppJson.stringValue(json['staff']),
-      seasons: SportSeasonSchedule.listFromJson(AppJson.listValue(json['schedules']))
+      code: JsonUtils.stringValue(json['code']),
+      label: JsonUtils.stringValue(json['label']),
+      staff: JsonUtils.stringValue(json['staff']),
+      seasons: SportSeasonSchedule.listFromJson(JsonUtils.listValue(json['schedules']))
     ) : null;
   }
 }
@@ -46,9 +46,9 @@ class SportSeasonSchedule {
       return null;
     }
     return SportSeasonSchedule(
-      year: AppJson.stringValue(json['year']),
-      roster: AppJson.stringValue(json['roster']),
-      schedule: AppJson.stringValue(json['schedule']),
+      year: JsonUtils.stringValue(json['year']),
+      roster: JsonUtils.stringValue(json['roster']),
+      schedule: JsonUtils.stringValue(json['schedule']),
     );
   }
 
@@ -57,7 +57,7 @@ class SportSeasonSchedule {
     if (jsonList != null) {
       result = <SportSeasonSchedule>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, SportSeasonSchedule.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, SportSeasonSchedule.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -77,10 +77,10 @@ class SportSocialMedia {
       return null;
     }
     return SportSocialMedia(
-        shortName: AppJson.stringValue(json['shortname']),
-        twitterName: AppJson.stringValue(json['sport_twitter_name']),
-        instagramName: AppJson.stringValue(json['sport_instagram_name']),
-        facebookPage: AppJson.stringValue(json['sport_facebook_page']));
+        shortName: JsonUtils.stringValue(json['shortname']),
+        twitterName: JsonUtils.stringValue(json['sport_twitter_name']),
+        instagramName: JsonUtils.stringValue(json['sport_instagram_name']),
+        facebookPage: JsonUtils.stringValue(json['sport_facebook_page']));
   }
 
   static List<SportSocialMedia>? listFromJson(List<dynamic>? jsonList) {
@@ -135,18 +135,18 @@ class SportDefinition {
       return null;
     }
     return SportDefinition(
-      name: AppJson.stringValue(json["name"]),
-      customName: AppJson.stringValue(json["custom_name"]),
-      shortName: AppJson.stringValue(json["shortName"]),
-      hasHeight: AppJson.boolValue(json["hasHeight"]),
-      hasWeight: AppJson.boolValue(json["hasWeight"]),
-      hasPosition: AppJson.boolValue(json["hasPosition"]),
-      hasSortByPosition: AppJson.boolValue(json["hasSortByPosition"]),
-      hasSortByNumber: AppJson.boolValue(json["hasSortByNumber"]),
-      hasScores: AppJson.boolValue(json["hasScores"]) ?? false,
-      gender: AppJson.stringValue(json["gender"]),
-      ticketed: AppJson.boolValue(json["ticketed"]),
-      iconPath: AppJson.stringValue(json["icon"]),
+      name: JsonUtils.stringValue(json["name"]),
+      customName: JsonUtils.stringValue(json["custom_name"]),
+      shortName: JsonUtils.stringValue(json["shortName"]),
+      hasHeight: JsonUtils.boolValue(json["hasHeight"]),
+      hasWeight: JsonUtils.boolValue(json["hasWeight"]),
+      hasPosition: JsonUtils.boolValue(json["hasPosition"]),
+      hasSortByPosition: JsonUtils.boolValue(json["hasSortByPosition"]),
+      hasSortByNumber: JsonUtils.boolValue(json["hasSortByNumber"]),
+      hasScores: JsonUtils.boolValue(json["hasScores"]) ?? false,
+      gender: JsonUtils.stringValue(json["gender"]),
+      ticketed: JsonUtils.boolValue(json["ticketed"]),
+      iconPath: JsonUtils.stringValue(json["icon"]),
     );
   }
 
@@ -155,7 +155,7 @@ class SportDefinition {
     if (jsonList != null) {
       result = <SportDefinition>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, SportDefinition.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, SportDefinition.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;

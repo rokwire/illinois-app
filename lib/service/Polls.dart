@@ -119,7 +119,7 @@ class Polls with Service implements NotificationsListener {
     if(_enabled) {
       try {
         String? body;
-        if (AppCollection.isCollectionNotEmpty(groupIds)) {
+        if (CollectionUtils.isNotEmpty(groupIds)) {
           body = json.encode({'group_ids': groupIds});
         }
 
@@ -136,7 +136,7 @@ class Polls with Service implements NotificationsListener {
         int responseCode = response?.statusCode ?? -1;
         String? responseBody = response?.body;
         if ((response != null) && (responseCode == 200)) {
-          Map<String, dynamic>? responseJson = AppJson.decode(responseBody);
+          Map<String, dynamic>? responseJson = JsonUtils.decode(responseBody);
           String? pollsCursor = (responseJson != null) ? responseJson['cursor'] : null;
           List<dynamic>? pollsJson = (responseJson != null) ? responseJson['data'] : null;
           if (pollsJson != null) {
@@ -171,7 +171,7 @@ class Polls with Service implements NotificationsListener {
         int responseCode = response?.statusCode ?? -1;
         String? responseString = response?.body;
         if ((response != null) && (response.statusCode == 200)) {
-          Map<String, dynamic>? responseJson = AppJson.decode(responseString);
+          Map<String, dynamic>? responseJson = JsonUtils.decode(responseString);
           String? pollId = (responseJson != null) ? responseJson['id'] : null;
           if (pollId != null) {
             poll.pollId = pollId;
@@ -313,7 +313,7 @@ class Polls with Service implements NotificationsListener {
           String url = '${Config().quickPollsUrl}/pinpolls/$pollPin';
           Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
           String? responseString = response?.body;
-          Map<String, dynamic>? responseJson = AppJson.decode(responseString);
+          Map<String, dynamic>? responseJson = JsonUtils.decode(responseString);
           List<dynamic>? responseList = (responseJson != null) ? responseJson['data'] : null;
           List<Poll>? polls = (responseList != null) ? Poll.fromJsonList(responseList) : null;
           if (polls == null) {
@@ -465,7 +465,7 @@ class Polls with Service implements NotificationsListener {
           String url = '${Config().quickPollsUrl}/poll/$pollId';
           Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
           String? responseString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
-          Map<String, dynamic>? responseJson = AppJson.decode(responseString);
+          Map<String, dynamic>? responseJson = JsonUtils.decode(responseString);
           Poll? poll = (responseJson != null) ? Poll.fromJson(responseJson) : null;
           if ((poll != null) && (!poll.isGeoFenced || GeoFence().currentRegionIds.contains(poll.regionId))) {
             _addPollToChunks(poll);
@@ -520,7 +520,7 @@ class Polls with Service implements NotificationsListener {
     Log.d('Polls: received event \'$eventName\' from EventStream for poll #$pollId');
     try {
       if (eventName == 'status') {
-        List<dynamic>? jsonList = AppJson.decode(eventData);
+        List<dynamic>? jsonList = JsonUtils.decode(eventData);
         String? statusString = ((jsonList != null) && jsonList.isNotEmpty) ? jsonList.first : null;
         PollStatus? pollStatus = Poll.pollStatusFromString(statusString);
         if (pollStatus != null) {
@@ -528,7 +528,7 @@ class Polls with Service implements NotificationsListener {
         }
       }
       else if (eventName == 'results') {
-        List<dynamic>? jsonList = AppJson.decode(eventData);
+        List<dynamic>? jsonList = JsonUtils.decode(eventData);
         List<int>? results = (jsonList != null) ? jsonList.cast<int>() : null;
         PollVote? pollResults = (results != null) ? PollVote.fromJson(results: results) : null;
         if (pollResults != null) {
@@ -726,7 +726,7 @@ class Polls with Service implements NotificationsListener {
 
   Future<void> _loadPollChunks() async {
     String? pollsJsonString = Storage().activePolls;
-    Map<String, dynamic>? chunksJson = AppJson.decode(pollsJsonString);
+    Map<String, dynamic>? chunksJson = JsonUtils.decode(pollsJsonString);
     
     if ((chunksJson != null) && (chunksJson.isNotEmpty)) {
       String url = '${Config().quickPollsUrl}/polls/${Auth2().accountId}';
@@ -737,7 +737,7 @@ class Polls with Service implements NotificationsListener {
 
       Response? response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
       if ((response != null) && (response.statusCode == 200)) {
-        List<dynamic>? pollsJson = AppJson.decode(response.body);
+        List<dynamic>? pollsJson = JsonUtils.decode(response.body);
         if (pollsJson != null) {
           for (dynamic pollJson in pollsJson) {
             Poll poll = Poll.fromJson(pollJson)!;
@@ -758,7 +758,7 @@ class Polls with Service implements NotificationsListener {
   /////////////////////////
   // Enabled
 
-  bool get _enabled => AppString.isStringNotEmpty(Config().quickPollsUrl);
+  bool get _enabled => StringUtils.isNotEmpty(Config().quickPollsUrl);
 }
 
 class _PollChunk {

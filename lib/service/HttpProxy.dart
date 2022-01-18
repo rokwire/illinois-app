@@ -101,8 +101,8 @@ class HttpProxy extends Service implements NotificationsListener{
 
   void _handleChanged(){
     if(httpProxyEnabled! &&
-        AppString.isStringNotEmpty(httpProxyHost) &&
-        AppString.isStringNotEmpty(httpProxyPort) &&
+        StringUtils.isNotEmpty(httpProxyHost) &&
+        StringUtils.isNotEmpty(httpProxyPort) &&
         Config().configEnvironment == ConfigEnvironment.dev
     ){
       HttpOverrides.global = _MyHttpOverrides(host: httpProxyHost, port: httpProxyPort);

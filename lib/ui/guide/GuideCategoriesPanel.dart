@@ -61,12 +61,12 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
       LinkedHashMap<String, LinkedHashSet<GuideSection>> categoriesMap = LinkedHashMap<String, LinkedHashSet<GuideSection>>();
       
       for (dynamic contentEntry in contentList) {
-        Map<String, dynamic>? guideEntry = AppJson.mapValue(contentEntry);
+        Map<String, dynamic>? guideEntry = JsonUtils.mapValue(contentEntry);
         if (guideEntry != null) {
-          String? category = AppJson.stringValue(Guide().entryValue(guideEntry, 'category'));
+          String? category = JsonUtils.stringValue(Guide().entryValue(guideEntry, 'category'));
           GuideSection? section = GuideSection.fromGuideEntry(guideEntry);
 
-          if (AppString.isStringNotEmpty(category) && (section != null)) {
+          if (StringUtils.isNotEmpty(category) && (section != null)) {
             LinkedHashSet<GuideSection>? categorySections = categoriesMap[category];
             if (categorySections == null) {
               categoriesMap[category!] = categorySections = LinkedHashSet<GuideSection>();

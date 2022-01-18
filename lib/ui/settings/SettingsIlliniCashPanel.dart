@@ -24,6 +24,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -280,11 +281,11 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: <Widget>[
-                Image.asset(AppString.getDefaultEmptyString(iconSrc, defaultValue: 'images/icon-settings.png')),
+                Image.asset(StringUtils.ensureNotEmpty(iconSrc, defaultValue: 'images/icon-settings.png')),
                 Padding(
                   padding: EdgeInsets.only(left: 12),
                   child: Text(
-                    AppString.getDefaultEmptyString(title),
+                    StringUtils.ensureNotEmpty(title),
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 )
@@ -320,7 +321,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             padding: EdgeInsets.only(bottom: 16), child: Row(children: <Widget>[
             _DateLabel(label: Localization().getStringEx('panel.settings.illini_cash.label.start_date', 'Start Date'),),
             Container(width: 8,),
-            Expanded(child: _DateValue(title: AppString.getDefaultEmptyString(
+            Expanded(child: _DateValue(title: StringUtils.ensureNotEmpty(
                 _getFormattedDate(_startDate)),
                 label: Localization().getStringEx('panel.settings.illini_cash.button.start_date.title', 'Start Date'),
                 hint: Localization().getStringEx('panel.settings.illini_cash.button.start_date.hint', ''),
@@ -331,7 +332,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             _DateLabel(label: Localization().getStringEx('panel.settings.illini_cash.label.end_date', 'End Date'),),
             Container(width: 8,),
             Expanded(child: _DateValue(
-              title: AppString.getDefaultEmptyString(
+              title: StringUtils.ensureNotEmpty(
                   _getFormattedDate(_endDate)),
               label: Localization().getStringEx('panel.settings.illini_cash.button.end_date.title', 'End Date'),
               hint: Localization().getStringEx('panel.settings.illini_cash.button.end_date.hint', ''),

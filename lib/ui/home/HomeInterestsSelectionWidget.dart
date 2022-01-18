@@ -137,7 +137,7 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
 
   List<String> _loadRandomInterests(int count) {
     List<String> result =  [];
-    if (!AppCollection.isCollectionNotEmpty(_allInterests)) {
+    if (!CollectionUtils.isNotEmpty(_allInterests)) {
       print("loadRandomInterests allInterests empty");
       return result;
     }
@@ -162,7 +162,7 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
   List<Widget> _buildInterestButtons() {
     List<String>? interests = _randomInterests;
     List<Widget> result =  [];
-    if (AppCollection.isCollectionNotEmpty(interests)) {
+    if (CollectionUtils.isNotEmpty(interests)) {
       interests!.forEach((String interest) {
         result.add(_buildInterestButton(interest));
       });

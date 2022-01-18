@@ -54,7 +54,7 @@ class Voter with Service implements NotificationsListener {
   }
 
   VoterRule? getVoterRuleForToday() {
-    if (AppCollection.isCollectionEmpty(_voterRules)) {
+    if (CollectionUtils.isEmpty(_voterRules)) {
       return null;
     }
     DateTime now = AppDateTime().now;
@@ -79,7 +79,7 @@ class Voter with Service implements NotificationsListener {
   }
 
   void _loadVoterRules() {
-    _voterRules = VoterRule.listFromJson(AppJson.listValue(Assets()['voter.rules']));
+    _voterRules = VoterRule.listFromJson(JsonUtils.listValue(Assets()['voter.rules']));
   }
 
   // NotificationsListener

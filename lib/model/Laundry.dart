@@ -63,7 +63,7 @@ class LaundryRoom implements Favorite {
   }
 
   static LaundryRoomStatus? roomStatusFromString(String? roomStatusString) {
-    if (AppString.isStringEmpty(roomStatusString)) {
+    if (StringUtils.isEmpty(roomStatusString)) {
       return null;
     }
     switch (roomStatusString) {

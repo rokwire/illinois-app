@@ -56,7 +56,7 @@ class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
               padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               child: Row(
                 children: <Widget>[
-                  AppString.isStringNotEmpty(widget.sportDefinition?.iconPath)
+                  StringUtils.isNotEmpty(widget.sportDefinition?.iconPath)
                       ? Image.asset(widget.sportDefinition!.iconPath!, excludeFromSemantics: true)
                       : Container(),
                   Container(

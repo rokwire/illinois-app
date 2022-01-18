@@ -78,7 +78,7 @@ class MapController {
       "LocationThresoldDistance": Storage().debugMapThresholdDistance
     };
     List<dynamic> jsonData = [];
-    if (AppCollection.isCollectionNotEmpty(explores)) {
+    if (CollectionUtils.isNotEmpty(explores)) {
       for (dynamic explore in explores!) {
         jsonData.add(explore.toJson());
       }

@@ -161,11 +161,11 @@ class FlexUI with Service implements NotificationsListener {
   }
 
   Future<Map<String, dynamic>?> _loadContentSourceFromCache() async {
-    return AppJson.decodeMap(await _loadContentSourceStringFromCache());
+    return JsonUtils.decodeMap(await _loadContentSourceStringFromCache());
   }
 
   Future<Map<String, dynamic>?> _loadContentSourceFromAssets() async {
-    try { return AppJson.decodeMap(await rootBundle.loadString('assets/$_flexUIName')); }
+    try { return JsonUtils.decodeMap(await rootBundle.loadString('assets/$_flexUIName')); }
     catch(e) {print(e.toString());}
     return null;
   }
@@ -192,7 +192,7 @@ class FlexUI with Service implements NotificationsListener {
     String? contentSourceString = await _loadContentSourceStringFromNet();
     if (contentSourceString != null) { // request succeeded
       
-      Map<String, dynamic>? contentSource = AppJson.decodeMap(contentSourceString);
+      Map<String, dynamic>? contentSource = JsonUtils.decodeMap(contentSourceString);
       if (!_isValidContentSource(contentSource) && (_cacheFile != null) && await _cacheFile!.exists()) { // empty JSON content
         try { _cacheFile!.delete(); }                          // clear cached content source
         catch(e) { print(e.toString()); }
@@ -319,7 +319,7 @@ class FlexUI with Service implements NotificationsListener {
   }
 
   static bool _localeEvalRoleRule(dynamic roleRule) {
-    return AppBoolExpr.eval(roleRule, (String? argument) {
+    return BoolExpr.eval(roleRule, (String? argument) {
       if (argument != null) {
         bool? not, all, any;
         if (not = argument.startsWith('~')) {

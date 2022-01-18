@@ -95,7 +95,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(visible: AppCollection.isCollectionNotEmpty(_reminderItems), child:
+    return Visibility(visible: CollectionUtils.isNotEmpty(_reminderItems), child:
       Column(children: [
           SectionTitlePrimary(
             title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'CAMPUS REMINDERS'),

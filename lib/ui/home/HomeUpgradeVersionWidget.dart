@@ -85,8 +85,8 @@ class _HomeUpgradeVersionWidgetState extends State<HomeUpgradeVersionWidget> {
   bool _isUpgradeMessageWidgetVisible() {
     String? lastUserLoginVersion = Storage().userLoginVersion;
     String? currentVersion = Config().appVersion;
-    if (AppVersion.matchVersions(currentVersion, '1.2') &&
-        ((lastUserLoginVersion == null) || (AppVersion.compareVersions(lastUserLoginVersion, currentVersion) < 0))) {
+    if (AppVersionUtils.matchVersions(currentVersion, '1.2') &&
+        ((lastUserLoginVersion == null) || (AppVersionUtils.compareVersions(lastUserLoginVersion, currentVersion) < 0))) {
       return true;
     } else {
       return false;

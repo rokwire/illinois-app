@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -224,7 +225,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent>>? eventsMap) {
       if (mounted) {
         setState(() {
-          bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
+          bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
           _allEventsCount = hasEventsMap ? eventsMap!.keys.first : 0;
           _groupEvents = hasEventsMap ? eventsMap!.values.first : null;
           _updatingEvents = false;
@@ -237,7 +238,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent>>? eventsMap) {
       if (mounted) {
         setState(() {
-          bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
+          bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
           _allEventsCount = hasEventsMap ? eventsMap!.keys.first : 0;
           _groupEvents = hasEventsMap ? eventsMap!.values.first : null;
         });
@@ -311,7 +312,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Future<void> _loadPolls() async {
     String? groupId = _group?.id;
-    if (AppString.isStringNotEmpty(groupId) && _group!.currentUserIsMemberOrAdmin) {
+    if (StringUtils.isNotEmpty(groupId) && _group!.currentUserIsMemberOrAdmin) {
       _setPollsLoading(true);
       Polls().getGroupPolls([groupId!])!.then((result) {
         _groupPolls = (result != null) ? result.polls : null;
@@ -536,7 +537,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Network.authApiKeyHeader)) : Container(),
+          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Network.authApiKeyHeader)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false),
             child: Container(
@@ -609,12 +610,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           onTap: _onTapPromote,
         ));
       }
-      if (AppString.isStringNotEmpty(_group?.webURL)) {
+      if (StringUtils.isNotEmpty(_group?.webURL)) {
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
         commands.add(_buildWebsiteLink());
       }
     } else {
-      if (AppString.isStringNotEmpty(_group?.webURL)) {
+      if (StringUtils.isNotEmpty(_group?.webURL)) {
         commands.add(_buildWebsiteLink());
       }
 
@@ -703,7 +704,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 child: Text(members!,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground, ),)
               ),
               Visibility(
-                visible: AppString.isStringNotEmpty(pendingMembers),
+                visible: StringUtils.isNotEmpty(pendingMembers),
                 child: Padding(padding: EdgeInsets.symmetric(vertical: 4),
                     child: Text(pendingMembers!,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground, ),)
                 ),
@@ -785,7 +786,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 //      content.add(_buildAdminEventOptions());
 //    }
 
-    if (AppCollection.isCollectionNotEmpty(_groupEvents)) {
+    if (CollectionUtils.isNotEmpty(_groupEvents)) {
       for (GroupEvent? groupEvent in _groupEvents!) {
         content.add(GroupEventCard(groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
       }
@@ -831,7 +832,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     EdgeInsetsGeometry? listPadding;
 
-    if (AppCollection.isCollectionEmpty(_visibleGroupPosts)) {
+    if (CollectionUtils.isEmpty(_visibleGroupPosts)) {
       if (_isMemberOrAdmin) {
         Column(children: <Widget>[
           SectionTitlePrimary(
@@ -889,7 +890,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildPolls() {
     List<Widget> pollsContentList = [];
 
-    if (AppCollection.isCollectionNotEmpty(_groupPolls)) {
+    if (CollectionUtils.isNotEmpty(_groupPolls)) {
       for (Poll? groupPoll in _groupPolls!) {
         if (groupPoll != null) {
           pollsContentList.add(Container(height: 10));
@@ -955,7 +956,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       description = Localization().getStringEx("panel.group_detail.label.description.public", '\u2022 Only admins can see members.\n\u2022 Only members can see posts.\n\u2022 All users can see group events, unless they are marked private.\n\u2022 All users can see admins.');
     }
     
-    return (AppString.isStringNotEmpty(title) && AppString.isStringNotEmpty(description)) ?
+    return (StringUtils.isNotEmpty(title) && StringUtils.isNotEmpty(description)) ?
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(padding: EdgeInsets.only(bottom: 4), child:
@@ -976,7 +977,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildAdmins() {
-    if (AppCollection.isCollectionEmpty(_groupAdmins)) {
+    if (CollectionUtils.isEmpty(_groupAdmins)) {
       return Container();
     }
     List<Widget> content = [];
@@ -1067,7 +1068,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         textAlign: TextAlign.left, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.white))),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
                   RoundedButton(
-                      label: AppString.getDefaultEmptyString(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")!),
+                      label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")!),
                       fontFamily: "ProximaNovaRegular",
                       textColor: Styles().colors!.fillColorPrimary,
                       borderColor: Styles().colors!.white,
@@ -1245,7 +1246,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
       switch (_currentTab) {
         case _DetailTab.Posts:
-          if (AppCollection.isCollectionNotEmpty(_visibleGroupPosts)) {
+          if (CollectionUtils.isNotEmpty(_visibleGroupPosts)) {
             _scheduleLastPostScroll();
           }
           break;
@@ -1286,7 +1287,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onWebsite() {
     Analytics().logSelect(target: 'Group url');
     String? url = _group?.webURL;
-    if (AppString.isStringNotEmpty(url)) {
+    if (StringUtils.isNotEmpty(url)) {
       launch(url!);
     }
   }
@@ -1308,7 +1309,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onMembershipRequest() {
     Analytics().logSelect(target: "Request to join", attributes: widget.group!.analyticsAttributes);
-    if (AppCollection.isCollectionNotEmpty(_group?.questions)) {
+    if (CollectionUtils.isNotEmpty(_group?.questions)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
     } else {
       _requestMembership();
@@ -1465,7 +1466,7 @@ class _OfficerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ImageProvider<Object> image;
-    if (AppString.isStringNotEmpty(groupMember?.photoURL))
+    if (StringUtils.isNotEmpty(groupMember?.photoURL))
       image = NetworkImage(groupMember!.photoURL!);
     else
       image = AssetImage('images/missing-photo-placeholder.png');

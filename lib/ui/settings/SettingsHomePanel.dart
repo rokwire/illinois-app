@@ -19,6 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -226,8 +227,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   Widget _buildUserInfo() {
     String fullName = Auth2().fullName ?? "";
-    bool hasFullName =  AppString.isStringNotEmpty(fullName);
-    String welcomeMessage = AppString.isStringNotEmpty(fullName)
+    bool hasFullName =  StringUtils.isNotEmpty(fullName);
+    String welcomeMessage = StringUtils.isNotEmpty(fullName)
         ? AppDateTime().getDayGreeting()! + ","
         : Localization().getStringEx("panel.settings.home.user_info.title.sufix", "Welcome to Illinois")!;
     return Container(
@@ -516,7 +517,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     List<Widget> contentList = [];
 
     String fullName = Auth2().fullName ?? "";
-    bool hasFullName = AppString.isStringNotEmpty(fullName);
+    bool hasFullName = StringUtils.isNotEmpty(fullName);
 
     List<dynamic> codes = FlexUI()['settings.connected.phone'] ?? [];
     for (int index = 0; index < codes.length; index++) {
@@ -559,7 +560,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     List<Widget> contentList = [];
 
     String fullName = Auth2().fullName ?? "";
-    bool hasFullName = AppString.isStringNotEmpty(fullName);
+    bool hasFullName = StringUtils.isNotEmpty(fullName);
 
     List<dynamic> codes = FlexUI()['settings.connected.email'] ?? [];
     for (int index = 0; index < codes.length; index++) {
@@ -1109,7 +1110,7 @@ class _OptionsSection extends StatelessWidget {
               style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
             ),
           ),
-          AppString.isStringEmpty(description)
+          StringUtils.isEmpty(description)
               ? Container()
               : Padding(
                   padding: EdgeInsets.only(left: 8, right: 8, bottom: 12),

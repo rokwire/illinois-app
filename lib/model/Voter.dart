@@ -55,15 +55,15 @@ class VoterRule {
         endDate: AppDateTime().dateTimeFromString(json['date_end'], format: AppDateTime.voterDateFormat, isUtc: false),
         nrvTitle: json['NRV_title'],
         nrvText: json['NRV_text'],
-        nrvOptions: RuleOption.listFromJson(AppJson.listValue(json['NRV_options'])),
+        nrvOptions: RuleOption.listFromJson(JsonUtils.listValue(json['NRV_options'])),
         nrvPlaceTitle: json['NRV_place_title'],
-        nrvPlaceOptions: RuleOption.listFromJson(AppJson.listValue(json['NRV_place_options'])),
+        nrvPlaceOptions: RuleOption.listFromJson(JsonUtils.listValue(json['NRV_place_options'])),
         nrvAlert: json['NRV_alert'],
         rvPlaceTitle: json['RV_place_title'],
-        rvPlaceOptions: RuleOption.listFromJson(AppJson.listValue(json['RV_place_options'])),
+        rvPlaceOptions: RuleOption.listFromJson(JsonUtils.listValue(json['RV_place_options'])),
         rvTitle: json['RV_title'],
         rvText: json['RV_text'],
-        rvOptions: RuleOption.listFromJson(AppJson.listValue(json['RV_options'])),
+        rvOptions: RuleOption.listFromJson(JsonUtils.listValue(json['RV_options'])),
         rvUrl: json['RV_url'],
         rvAlert: json['RV_alert'],
         vbmText: json['VBM_text'],
@@ -79,7 +79,7 @@ class VoterRule {
     if (jsonList != null) {
       result = <VoterRule>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, VoterRule.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, VoterRule.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -126,7 +126,7 @@ class RuleOption {
     if (json != null) {
       values = <RuleOption>[];
       for (dynamic entry in json) {
-        AppList.add(values, RuleOption.fromJson(AppJson.mapValue(entry)));
+        ListUtils.add(values, RuleOption.fromJson(JsonUtils.mapValue(entry)));
       }
     }
     return values;

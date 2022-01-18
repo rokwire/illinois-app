@@ -52,7 +52,7 @@ class News implements Favorite {
   }
 
   String? get fillText {
-    return AppString.isStringNotEmpty(fullText) ? fullText : fullTextRaw;
+    return StringUtils.isNotEmpty(fullText) ? fullText : fullTextRaw;
   }
 
   String? get displayTime {

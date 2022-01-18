@@ -245,7 +245,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
 
   @override
   Widget build(BuildContext context) {
-    if (AppCollection.isCollectionEmpty(_events)) {
+    if (CollectionUtils.isEmpty(_events)) {
       return Container();
     }
     return Column(

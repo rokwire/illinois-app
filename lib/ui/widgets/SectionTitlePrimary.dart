@@ -38,8 +38,8 @@ class SectionTitlePrimary extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    bool hasSubTitle = AppString.isStringNotEmpty(subTitle);
-    bool useImageSlant = AppString.isStringNotEmpty(slantImageRes);
+    bool hasSubTitle = StringUtils.isNotEmpty(subTitle);
+    bool useImageSlant = StringUtils.isNotEmpty(slantImageRes);
     return Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
@@ -112,13 +112,13 @@ class SectionTitlePrimary extends StatelessWidget{
             ),
             Visibility(visible: hasSubTitle,
                 child: Semantics(
-                  label: AppString.getDefaultEmptyString(subTitle),
+                  label: StringUtils.ensureNotEmpty(subTitle),
                   header: true,
                   excludeSemantics: true,
                   child: Padding(
                     padding: EdgeInsets.only(left: 50, right: 16),
                     child: Row(children: <Widget>[
-                      Text(AppString.getDefaultEmptyString(subTitle),
+                      Text(StringUtils.ensureNotEmpty(subTitle),
                         style: TextStyle(fontSize: 16,
                             color: Colors.white,
                             fontFamily: Styles().fontFamilies!.regular),),

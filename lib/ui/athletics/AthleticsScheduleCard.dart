@@ -142,7 +142,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   Widget _cardSubTitle() {
-    return AppString.isStringNotEmpty(widget._game!.shortDescription)
+    return StringUtils.isNotEmpty(widget._game!.shortDescription)
         ? Padding(
             padding: EdgeInsets.only(left: 24, right: 24, top: 8),
             child: Row(
@@ -237,10 +237,10 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     if (result == null) {
       return null;
     }
-    String formattedResult = AppString.getDefaultEmptyString(result.status);
-    if (AppString.isStringNotEmpty(result.teamScore)) {
+    String formattedResult = StringUtils.ensureNotEmpty(result.status);
+    if (StringUtils.isNotEmpty(result.teamScore)) {
       formattedResult += ' ' + result.teamScore!;
-      if (AppString.isStringNotEmpty(result.opponentScore)) {
+      if (StringUtils.isNotEmpty(result.opponentScore)) {
         formattedResult += '-' + result.opponentScore!;
       }
     }
@@ -304,7 +304,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     bool homeGame = widget._game!.isHomeGame;
     SportDefinition? sportDefinition = Sports().getSportByShortName(widget._game?.sport?.shortName);
     bool ticketedSport = sportDefinition?.ticketed ?? false;
-    bool hasTicketsUrl = AppString.isStringNotEmpty(widget._game?.links?.tickets);
+    bool hasTicketsUrl = StringUtils.isNotEmpty(widget._game?.links?.tickets);
     return homeGame && ticketedSport && hasTicketsUrl;
   }
 }

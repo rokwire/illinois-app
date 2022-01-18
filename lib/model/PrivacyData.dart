@@ -32,19 +32,19 @@ class PrivacyData{
   static PrivacyData? fromJson(Map<String, dynamic>? json) {
 
     return (json != null) ? PrivacyData(
-      levels: PrivacyLevel.listFromJson(AppJson.listValue(json['levels'])),
-      types: PrivacyType.listFromJson(AppJson.listValue(json['types'])),
-      categories: PrivacyCategory.listFromJson(AppJson.listValue(json['categories'])),
-      features2: PrivacyFeature2.listFromJson(AppJson.listValue(json['features2'])),
-      privacyDescription: PrivacyDescription.listFromJson(AppJson.listValue(json['description'])),
+      levels: PrivacyLevel.listFromJson(JsonUtils.listValue(json['levels'])),
+      types: PrivacyType.listFromJson(JsonUtils.listValue(json['types'])),
+      categories: PrivacyCategory.listFromJson(JsonUtils.listValue(json['categories'])),
+      features2: PrivacyFeature2.listFromJson(JsonUtils.listValue(json['features2'])),
+      privacyDescription: PrivacyDescription.listFromJson(JsonUtils.listValue(json['description'])),
       jsonData: json
     ) : null;
   }
 
   reload() {
     if (jsonData != null) {
-      categories = PrivacyCategory.listFromJson(AppJson.listValue(jsonData!['categories']));
-      types = PrivacyType.listFromJson(AppJson.listValue(jsonData!['types']));
+      categories = PrivacyCategory.listFromJson(JsonUtils.listValue(jsonData!['categories']));
+      types = PrivacyType.listFromJson(JsonUtils.listValue(jsonData!['types']));
     }
   }
 
@@ -66,11 +66,11 @@ class PrivacyCategory{
   static PrivacyCategory? fromJson(Map<String, dynamic>? json) {
 
     return (json != null) ? PrivacyCategory(
-      title:PrivacyData().getLocalizedString(AppJson.stringValue(json["title"])),
-      titleKey:PrivacyData().getLocalizedString(AppJson.stringValue(json["title_key"])),
-      description:AppJson.mapValue(json['description']),
-      entries: PrivacyEntry.listFromJson(AppJson.listValue(json['entries'])),
-      entries2: PrivacyEntry2.listFromJson(AppJson.listValue(json['entries2']))
+      title:PrivacyData().getLocalizedString(JsonUtils.stringValue(json["title"])),
+      titleKey:PrivacyData().getLocalizedString(JsonUtils.stringValue(json["title_key"])),
+      description:JsonUtils.mapValue(json['description']),
+      entries: PrivacyEntry.listFromJson(JsonUtils.listValue(json['entries'])),
+      entries2: PrivacyEntry2.listFromJson(JsonUtils.listValue(json['entries2']))
     ) : null;
   }
 
@@ -79,7 +79,7 @@ class PrivacyCategory{
     if (jsonList != null) {
       result = <PrivacyCategory>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, PrivacyCategory.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, PrivacyCategory.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -108,7 +108,7 @@ class PrivacyEntry{
     if (jsonList != null) {
       result = <PrivacyEntry>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, PrivacyEntry.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, PrivacyEntry.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -158,7 +158,7 @@ class PrivacyEntry2{
     if (jsonList != null) {
       result = <PrivacyEntry2>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, PrivacyEntry2.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, PrivacyEntry2.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -188,7 +188,7 @@ class PrivacyDescription{
     if (jsonList != null) {
       result = <PrivacyDescription>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, PrivacyDescription.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, PrivacyDescription.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -213,7 +213,7 @@ class PrivacyLevel{
     if (jsonList != null) {
       result = <PrivacyLevel>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, PrivacyLevel.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, PrivacyLevel.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -241,7 +241,7 @@ class PrivacyType{
     if (jsonList != null) {
       result = <PrivacyType>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, PrivacyType.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, PrivacyType.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -271,7 +271,7 @@ class PrivacyFeature2{
     if (jsonList != null) {
       result = <PrivacyFeature2>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, PrivacyFeature2.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, PrivacyFeature2.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;

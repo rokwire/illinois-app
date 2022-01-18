@@ -19,6 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Localization.dart';
@@ -595,10 +596,10 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
     bool isTicketedSport = (sport != null) ? sport.ticketed! : false;
     bool isGetTicketsVisible = isTicketedSport && (widget.game.links?.tickets != null);
     bool showImage =
-        (isTicketedSport && !AppString.isStringEmpty(widget.game.imageUrl));
+        (isTicketedSport && !StringUtils.isEmpty(widget.game.imageUrl));
     bool isFavorite = Auth2().isFavorite(widget.game);
     String? interestsLabelValue = _getInterestsLabelValue();
-    bool showInterests = AppString.isStringNotEmpty(interestsLabelValue);
+    bool showInterests = StringUtils.isNotEmpty(interestsLabelValue);
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -757,7 +758,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                                             color: Styles().colors!.textBackground,
                                             fontSize: 12,
                                             fontFamily: Styles().fontFamilies!.bold),),
-                                      Text(AppString.getDefaultEmptyString(interestsLabelValue),
+                                      Text(StringUtils.ensureNotEmpty(interestsLabelValue),
                                         style: TextStyle(
                                             color: Styles().colors!.textBackground,
                                             fontSize: 12,

@@ -212,9 +212,9 @@ class Auth2 with Service implements NotificationsListener {
   String? get uin => _account?.authType?.uiucUser?.uin;
   String? get netId => _account?.authType?.uiucUser?.netId;
 
-  String? get fullName => AppString.getDefaultEmptyString(profile?.fullName, defaultValue: _account?.authType?.uiucUser?.fullName ?? '');
-  String? get email => AppString.getDefaultEmptyString(profile?.email, defaultValue: _account?.authType?.uiucUser?.email ?? '');
-  String? get phone => AppString.getDefaultEmptyString(profile?.phone, defaultValue: _account?.authType?.phone ?? '');
+  String? get fullName => StringUtils.ensureNotEmpty(profile?.fullName, defaultValue: _account?.authType?.uiucUser?.fullName ?? '');
+  String? get email => StringUtils.ensureNotEmpty(profile?.email, defaultValue: _account?.authType?.uiucUser?.email ?? '');
+  String? get phone => StringUtils.ensureNotEmpty(profile?.phone, defaultValue: _account?.authType?.phone ?? '');
 
   bool get isEventEditor => hasRole("event approvers");
   bool get isStadiumPollManager => hasRole("stadium poll manager");
@@ -246,7 +246,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
-      String? post = AppJson.encode({
+      String? post = JsonUtils.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.anonymous),
         'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
@@ -255,11 +255,11 @@ class Auth2 with Service implements NotificationsListener {
       });
       
       Response? response = await Network().post(url, headers: headers, body: post);
-      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
       if (responseJson != null) {
-        Auth2Token? anonymousToken = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
-        Map<String, dynamic>? params = AppJson.mapValue(responseJson['params']);
-        String? anonymousId = (params != null) ? AppJson.stringValue(params['anonymous_id']) : null;
+        Auth2Token? anonymousToken = Auth2Token.fromJson(JsonUtils.mapValue(responseJson['token']));
+        Map<String, dynamic>? params = JsonUtils.mapValue(responseJson['params']);
+        String? anonymousId = (params != null) ? JsonUtils.stringValue(params['anonymous_id']) : null;
         if ((anonymousToken != null) && anonymousToken.isValid && (anonymousId != null) && anonymousId.isNotEmpty) {
           _refreshTonenFailCounts.remove(_anonymousToken?.refreshToken);
           Storage().auth2AnonymousId = _anonymousId = anonymousId;
@@ -323,7 +323,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
-      String? post = AppJson.encode({
+      String? post = JsonUtils.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidcIllinois),
         'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
@@ -337,7 +337,7 @@ class Auth2 with Service implements NotificationsListener {
       _oidcLogin = null;
 
       Response? response = await Network().post(url, headers: headers, body: post);
-      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
       bool result = await _processLoginResponse(responseJson);
       _log(result ? "Auth2: login succeeded: ${response?.statusCode}\n${response?.body}" : "Auth2: login failed: ${response?.statusCode}\n${response?.body}");
       return result;
@@ -347,19 +347,19 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<bool> _processLoginResponse(Map<String, dynamic>? responseJson) async {
     if (responseJson != null) {
-      Auth2Token? token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
-      Auth2Account? account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']),
+      Auth2Token? token = Auth2Token.fromJson(JsonUtils.mapValue(responseJson['token']));
+      Auth2Account? account = Auth2Account.fromJson(JsonUtils.mapValue(responseJson['account']),
         prefs: _anonymousPrefs ?? Auth2UserPrefs.empty(),
         profile: _anonymousProfile ?? Auth2UserProfile.empty());
 
       if ((token != null) && token.isValid && (account != null) && account.isValid) {
         
-        Map<String, dynamic>? params = AppJson.mapValue(responseJson['params']);
-        Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
+        Map<String, dynamic>? params = JsonUtils.mapValue(responseJson['params']);
+        Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(JsonUtils.mapValue(params['oidc_token'])) : null;
 
-        String? authCardString = (AppString.isStringNotEmpty(account.authType?.uiucUser?.uin) && AppString.isStringNotEmpty(uiucToken?.accessToken)) ?
+        String? authCardString = (StringUtils.isNotEmpty(account.authType?.uiucUser?.uin) && StringUtils.isNotEmpty(uiucToken?.accessToken)) ?
           await _loadAuthCardStringFromNet(uin: account.authType?.uiucUser?.uin, accessToken: uiucToken?.accessToken) : null;
-        AuthCard? authCard = AuthCard.fromJson(AppJson.decodeMap(authCardString));
+        AuthCard? authCard = AuthCard.fromJson(JsonUtils.decodeMap(authCardString));
         await _saveAuthCardStringToCache(authCardString);
 
         _refreshTonenFailCounts.remove(_token?.refreshToken);
@@ -400,7 +400,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
-      String? post = AppJson.encode({
+      String? post = JsonUtils.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidcIllinois),
         'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
@@ -408,7 +408,7 @@ class Auth2 with Service implements NotificationsListener {
         'redirect_uri': _oidcRedirectUrl,
       });
       Response? response = await Network().post(url, headers: headers, body: post);
-      return _OidcLogin.fromJson(AppJson.decodeMap(response?.body));
+      return _OidcLogin.fromJson(JsonUtils.decodeMap(response?.body));
     }
     return null;
   }
@@ -462,7 +462,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
-      String? post = AppJson.encode({
+      String? post = JsonUtils.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.phoneTwilio),
         'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
@@ -487,7 +487,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
-      String? post = AppJson.encode({
+      String? post = JsonUtils.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.phoneTwilio),
         'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
@@ -502,7 +502,7 @@ class Auth2 with Service implements NotificationsListener {
       });
 
       Response? response = await Network().post(url, headers: headers, body: post);
-      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
       return await _processLoginResponse(responseJson);
     }
     return false;
@@ -516,7 +516,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
-      String? post = AppJson.encode({
+      String? post = JsonUtils.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
         'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
@@ -532,12 +532,12 @@ class Auth2 with Service implements NotificationsListener {
 
       Response? response = await Network().post(url, headers: headers, body: post);
       if (response?.statusCode == 200) {
-        if (await _processLoginResponse(AppJson.decodeMap(response?.body))) {
+        if (await _processLoginResponse(JsonUtils.decodeMap(response?.body))) {
           return Auth2EmailSignInResult.succeded;
         }
       }
       else {
-        Auth2Error? error = Auth2Error.fromJson(AppJson.decodeMap(response?.body));
+        Auth2Error? error = Auth2Error.fromJson(JsonUtils.decodeMap(response?.body));
         if (error?.status == 'unverified') {
           return Auth2EmailSignInResult.failedNotActivated;
         }
@@ -555,7 +555,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
-      String? post = AppJson.encode({
+      String? post = JsonUtils.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
         'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
@@ -577,7 +577,7 @@ class Auth2 with Service implements NotificationsListener {
       if (response?.statusCode == 200) {
         return Auth2EmailSignUpResult.succeded;
       }
-      else if (Auth2Error.fromJson(AppJson.decodeMap(response?.body))?.status == 'already-exists') {
+      else if (Auth2Error.fromJson(JsonUtils.decodeMap(response?.body))?.status == 'already-exists') {
         return Auth2EmailSignUpResult.failedAccountExist;
       }
     }
@@ -590,7 +590,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
-      String? post = AppJson.encode({
+      String? post = JsonUtils.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
         'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
@@ -601,7 +601,7 @@ class Auth2 with Service implements NotificationsListener {
       Response? response = await Network().post(url, headers: headers, body: post);
       if (response?.statusCode == 200) {
         //TBD: handle Auth2EmailAccountState.unverified
-        return AppJson.boolValue(AppJson.decode(response?.body))! ? Auth2EmailAccountState.verified : Auth2EmailAccountState.nonExistent;
+        return JsonUtils.boolValue(JsonUtils.decode(response?.body))! ? Auth2EmailAccountState.verified : Auth2EmailAccountState.nonExistent;
       }
     }
     return null;
@@ -613,7 +613,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
-      String? post = AppJson.encode({
+      String? post = JsonUtils.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
         'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
@@ -634,7 +634,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
-      String? post = AppJson.encode({
+      String? post = JsonUtils.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
         'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
@@ -723,8 +723,8 @@ class Auth2 with Service implements NotificationsListener {
         if (refreshTokenFuture != null) {
           _log("Auth2: will await refresh token:\nSource Token: ${token.refreshToken}");
           Response? response = await refreshTokenFuture;
-          Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-          Auth2Token? responseToken = (responseJson != null) ? Auth2Token.fromJson(AppJson.mapValue(responseJson['token'])) : null;
+          Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
+          Auth2Token? responseToken = (responseJson != null) ? Auth2Token.fromJson(JsonUtils.mapValue(responseJson['token'])) : null;
           _log("Auth2: did await refresh token: ${responseToken?.isValid}\nSource Token: ${token.refreshToken}");
           return ((responseToken != null) && responseToken.isValid) ? responseToken : null;
         }
@@ -736,8 +736,8 @@ class Auth2 with Service implements NotificationsListener {
           _refreshTokenFutures.remove(token.refreshToken);
 
           if (response?.statusCode == 200) {
-            Map<String, dynamic>? responseJson = AppJson.decodeMap(response?.body);
-            Auth2Token? responseToken = (responseJson != null) ? Auth2Token.fromJson(AppJson.mapValue(responseJson['token'])) : null;
+            Map<String, dynamic>? responseJson = JsonUtils.decodeMap(response?.body);
+            Auth2Token? responseToken = (responseJson != null) ? Auth2Token.fromJson(JsonUtils.mapValue(responseJson['token'])) : null;
             if ((responseToken != null) && responseToken.isValid) {
               _refreshTonenFailCounts.remove(token.refreshToken);
 
@@ -745,8 +745,8 @@ class Auth2 with Service implements NotificationsListener {
               if (token == _token) {
                 Storage().auth2Token = _token = responseToken;
 
-                Map<String, dynamic>? params = (responseJson != null) ? AppJson.mapValue(responseJson['params']) : null;
-                Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
+                Map<String, dynamic>? params = (responseJson != null) ? JsonUtils.mapValue(responseJson['params']) : null;
+                Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(JsonUtils.mapValue(params['oidc_token'])) : null;
                 Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
                 return responseToken;
               }
@@ -787,7 +787,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
-      String? post = AppJson.encode({
+      String? post = JsonUtils.encode({
         'api_key': Config().rokwireApiKey,
         'refresh_token': refreshToken
       });
@@ -832,12 +832,12 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<AuthCard?> _loadAuthCardFromCache() async {
-    return AuthCard.fromJson(AppJson.decodeMap(await _loadAuthCardStringFromCache()));
+    return AuthCard.fromJson(JsonUtils.decodeMap(await _loadAuthCardStringFromCache()));
   }
 
   Future<String?> _loadAuthCardStringFromNet({String? uin, String? accessToken}) async {
     String? url = Config().iCardUrl;
-    if (AppString.isStringNotEmpty(url) &&  AppString.isStringNotEmpty(uin) && AppString.isStringNotEmpty(accessToken)) {
+    if (StringUtils.isNotEmpty(url) &&  StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(accessToken)) {
       Response? response = await Network().post(url, headers: {
         'UIN': uin,
         'access_token': accessToken
@@ -865,7 +865,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<AuthCard?> _refreshAuthCard() async {
     String? authCardString = await _loadAuthCardStringFromNet(uin: _account?.authType?.uiucUser?.uin, accessToken : _uiucToken?.accessToken);
-    AuthCard? authCard = AuthCard.fromJson(AppJson.decodeMap((authCardString)));
+    AuthCard? authCard = AuthCard.fromJson(JsonUtils.decodeMap((authCardString)));
     if ((authCard != null) && (authCard != _authCard)) {
       _authCard = authCard;
       await _saveAuthCardStringToCache(authCardString);
@@ -894,7 +894,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
-      String? post = AppJson.encode(_account!.prefs);
+      String? post = JsonUtils.encode(_account!.prefs);
 
       Client client = Client();
       _updateUserPrefsClient?.close();
@@ -923,7 +923,7 @@ class Auth2 with Service implements NotificationsListener {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account/preferences";
       Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
-      return (response?.statusCode == 200) ? Auth2UserPrefs.fromJson(AppJson.decodeMap(response?.body)) : null;
+      return (response?.statusCode == 200) ? Auth2UserPrefs.fromJson(JsonUtils.decodeMap(response?.body)) : null;
     }
     return null;
   }
@@ -959,7 +959,7 @@ class Auth2 with Service implements NotificationsListener {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account/profile";
       Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
-      return (response?.statusCode == 200) ? Auth2UserProfile.fromJson(AppJson.decodeMap(response?.body)) : null;
+      return (response?.statusCode == 200) ? Auth2UserProfile.fromJson(JsonUtils.decodeMap(response?.body)) : null;
     }
     return null;
   }
@@ -970,7 +970,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
-      String? post = AppJson.encode(profile!.toJson());
+      String? post = JsonUtils.encode(profile!.toJson());
       Response? response = await Network().put(url, auth: NetworkAuth.Auth2, headers: headers, body: post);
       return (response?.statusCode == 200);
     }
@@ -1014,8 +1014,8 @@ class _OidcLogin {
 
   static _OidcLogin? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? _OidcLogin(
-      loginUrl: AppJson.stringValue(json['login_url']),
-      params: AppJson.mapValue(json['params'])
+      loginUrl: JsonUtils.stringValue(json['login_url']),
+      params: JsonUtils.mapValue(json['params'])
     ) : null;
   }
 

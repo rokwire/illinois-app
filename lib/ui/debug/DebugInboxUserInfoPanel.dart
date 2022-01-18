@@ -38,7 +38,7 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
       try {
         Response? response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user",
             auth: NetworkAuth.Auth2) : null;
-        Map<String, dynamic>? jsonData = AppJson.decode(response?.body);
+        Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
         if(jsonData != null){
           setState(() {
             _info = InboxUserInfo.fromJson(jsonData);

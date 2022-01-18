@@ -23,6 +23,7 @@ import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/PrivacyData.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -530,7 +531,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
 
   List<Widget> _buildTypeTabs() {
     List<Widget> tabs =  [];
-    if (_data != null && AppCollection.isCollectionNotEmpty(_data!.types)) {
+    if (_data != null && CollectionUtils.isNotEmpty(_data!.types)) {
       _data!.types!.forEach((PrivacyType? type) {
         tabs.add(Expanded(
             child: _PreferenceTab(
@@ -567,7 +568,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget> {
   List<Widget> _buildCategories() {
     List<Widget> widgets =  [];
     PrivacyData? data = widget.data;
-    if (data != null && AppCollection.isCollectionNotEmpty(data.categories)) {
+    if (data != null && CollectionUtils.isNotEmpty(data.categories)) {
       data.categories!.forEach((PrivacyCategory category) {
         _fillListContent(widgets, category);
       });
@@ -594,7 +595,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget> {
     List<Widget> widgets =  [];
     List<PrivacyEntry>? entries = category.entries;
     widgets.add(_buildCategoryDescriptionWidget(category));
-    if (AppCollection.isCollectionNotEmpty(entries)) {
+    if (CollectionUtils.isNotEmpty(entries)) {
       entries!.forEach((PrivacyEntry? entry) {
         widgets.add(_buildEntryWidget(entry!));
       });
@@ -626,7 +627,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget> {
 
   Widget _buildCategoryDescriptionWidget(PrivacyCategory category) {
     String? categoryStateDescription = PrivacyData().getLocalizedString(category.description != null ? category.description![widget.selectedPrivacyState] : null);
-    bool hasDescription = AppString.isStringNotEmpty(categoryStateDescription);
+    bool hasDescription = StringUtils.isNotEmpty(categoryStateDescription);
     return !hasDescription
         ? Container()
         : Padding(

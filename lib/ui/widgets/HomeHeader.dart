@@ -28,7 +28,7 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool hasSubTitle = AppString.isStringNotEmpty(subTitle);
+    bool hasSubTitle = StringUtils.isNotEmpty(subTitle);
 
     return Container(
       color: Styles().colors!.fillColorPrimary,
@@ -74,13 +74,13 @@ class HomeHeader extends StatelessWidget {
           Visibility(
               visible: hasSubTitle,
               child: Semantics(
-                label: AppString.getDefaultEmptyString(subTitle),
+                label: StringUtils.ensureNotEmpty(subTitle),
                 header: true,
                 excludeSemantics: true,
                 child: Padding(
                   padding: EdgeInsets.only(left: 30),
                   child: Text(
-                    AppString.getDefaultEmptyString(subTitle),
+                    StringUtils.ensureNotEmpty(subTitle),
                     style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,

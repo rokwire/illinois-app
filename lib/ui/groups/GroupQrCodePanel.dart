@@ -27,8 +27,8 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/ImageUtils.dart';
-import 'package:illinois/utils/Utils.dart';
 
 class GroupQrCodePanel extends StatefulWidget {
   final Group? group;

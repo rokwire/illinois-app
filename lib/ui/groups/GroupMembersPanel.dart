@@ -98,7 +98,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       _pendingMembers = _group?.getMembersByStatus(GroupMemberStatus.pending);
       _pendingMembers?.sort((member1, member2) => member1.displayName.compareTo(member2.displayName));
 
-      _members = AppCollection.isCollectionNotEmpty(_group?.members)
+      _members = CollectionUtils.isNotEmpty(_group?.members)
           ? _group!.members!.where((member) => (member.status != GroupMemberStatus.pending)).toList()
           : [];
       _members!.sort((member1, member2){
@@ -120,9 +120,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     if (_allMembersFilter != null) {
       membersFilter.add(_allMembersFilter!);
     }
-    if(AppCollection.isCollectionNotEmpty(_members)){
+    if(CollectionUtils.isNotEmpty(_members)){
       for(Member member in _members!){
-        if(AppString.isStringNotEmpty(member.officerTitle) && !membersFilter.contains(member.officerTitle)){
+        if(StringUtils.isNotEmpty(member.officerTitle) && !membersFilter.contains(member.officerTitle)){
           membersFilter.add(member.officerTitle!);
         }
       }
@@ -296,7 +296,7 @@ class _PendingMemberCard extends StatelessWidget {
         children: <Widget>[
           ClipRRect(
             borderRadius: BorderRadius.circular(65),
-            child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
+            child: Container(width: 65, height: 65 ,child: StringUtils.isNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
           ),
           Expanded(
             child: Padding(
@@ -358,7 +358,7 @@ class _GroupMemberCard extends StatelessWidget{
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(65),
-              child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
+              child: Container(width: 65, height: 65 ,child: StringUtils.isNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
             ),
             Expanded(
               child: Padding(
@@ -369,7 +369,7 @@ class _GroupMemberCard extends StatelessWidget{
                     Row(
                       children: <Widget>[
                         Expanded(child:
-                          Text(AppString.getDefaultEmptyString(member?.displayName),
+                          Text(StringUtils.ensureNotEmpty(member?.displayName),
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies!.bold,
                                 fontSize: 20,

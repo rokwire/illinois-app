@@ -29,7 +29,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
     Groups().loadEvents(widget.group).then((Map<int, List<GroupEvent>>? eventsMap) {
       if (mounted) {
         setState(() {
-          _groupEvents = AppCollection.isCollectionNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
+          _groupEvents = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
         });
       }
     });

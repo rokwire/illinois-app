@@ -293,7 +293,7 @@ class _AppState extends State<App> implements NotificationsListener {
     else if (!Storage().onBoardingPassed!) {
       return Onboarding2GetStartedPanel();
     }
-    else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
+    else if ((Storage().privacyUpdateVersion == null) || (AppVersionUtils.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);
     }
     else if (Auth2().prefs?.privacyLevel == null) {
@@ -323,8 +323,8 @@ class _AppState extends State<App> implements NotificationsListener {
     if ((Storage().onBoardingPassed == true) &&
         (_lastRunVersion != null) &&
         (onboardingRequiredVersion != null) &&
-        (AppVersion.compareVersions(_lastRunVersion, onboardingRequiredVersion) < 0) &&
-        (AppVersion.compareVersions(onboardingRequiredVersion, Config().appVersion) <= 0)) {
+        (AppVersionUtils.compareVersions(_lastRunVersion, onboardingRequiredVersion) < 0) &&
+        (AppVersionUtils.compareVersions(onboardingRequiredVersion, Config().appVersion) <= 0)) {
       Storage().onBoardingPassed = false;
       return true;
     }

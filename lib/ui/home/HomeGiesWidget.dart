@@ -58,7 +58,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
     AppBundle.loadString('assets/gies.json').then((String? assetsContentString) {
       setState(() {
-        _pages = AppJson.decodeList(assetsContentString);
+        _pages = JsonUtils.decodeList(assetsContentString);
         _buildProgressSteps();
         _ensureNavigationPages();
       });
@@ -197,7 +197,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
 
   void _onTapLink(String? url) {
-    if (AppString.isStringNotEmpty(url)) {
+    if (StringUtils.isNotEmpty(url)) {
 
       Uri? uri = Uri.tryParse(url!);
       Uri? giesUri = Uri.tryParse(giesUrl);
@@ -206,10 +206,10 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
           (giesUri.authority == uri.authority) &&
           (giesUri.path == uri.path))
       {
-        String? pageId = AppJson.stringValue(uri.queryParameters['page_id']);
+        String? pageId = JsonUtils.stringValue(uri.queryParameters['page_id']);
         _pushPage(_getPage(id: pageId));
       }
-      else if (AppUrl.launchInternal(url)) {
+      else if (UrlUtils.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         launch(url);
@@ -224,7 +224,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   Future<void> _processButtonPopup(Map<String, dynamic> button) async {
-    String? popupId = AppJson.stringValue(button['popup']);
+    String? popupId = JsonUtils.stringValue(button['popup']);
     if (popupId != null) {
       await _showPopup(popupId);
     }
@@ -241,7 +241,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
       }
     }
 
-    String? pushPageId = AppJson.stringValue(button['page']);
+    String? pushPageId = JsonUtils.stringValue(button['page']);
     if ((pushPageId != null) && pushPageId.isNotEmpty) {
       int? currentPageProgress = getPageProgress(_currentPage);
       
@@ -252,7 +252,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         while (_progressStepCompleted(pushPageProgress)) {
           int nextPushPageProgress = pushPageProgress! + 1;
           Map<String, dynamic>? nextPushPage = _getPage(progress: nextPushPageProgress);
-          String? nextPushPageId = (nextPushPage != null) ? AppJson.stringValue(nextPushPage['id']) : null;
+          String? nextPushPageId = (nextPushPage != null) ? JsonUtils.stringValue(nextPushPage['id']) : null;
           if ((nextPushPageId != null) && nextPushPageId.isNotEmpty) {
             pushPage = nextPushPage;
             pushPageId = nextPushPageId;
@@ -297,11 +297,11 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   static int? getPageProgress(Map<String, dynamic>? page) {
-    return (page != null) ? (AppJson.intValue(page['progress']) ?? AppJson.intValue(page['progress-possition'])) : null;
+    return (page != null) ? (JsonUtils.intValue(page['progress']) ?? JsonUtils.intValue(page['progress-possition'])) : null;
   }
 
   void _pushPage(Map<String, dynamic>? pushPage) {
-    String? pushPageId = (pushPage != null) ? AppJson.stringValue(pushPage['id']) : null;
+    String? pushPageId = (pushPage != null) ? JsonUtils.stringValue(pushPage['id']) : null;
     if ((pushPageId != null) && pushPageId.isNotEmpty && _hasPage(id: pushPageId)) {
       int? currentPageProgress = getPageProgress(_currentPage);
       int? pushPageProgress = getPageProgress(pushPage);
@@ -336,8 +336,8 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     if (_pages != null) {
       for (dynamic page in _pages!) {
         if (page is Map) {
-          if (((id == null) || (id == AppJson.stringValue(page['id']))) &&
-              ((progress == null) || (progress == (AppJson.intValue(page['progress']) ?? AppJson.intValue(page['progress-possition'])))))
+          if (((id == null) || (id == JsonUtils.stringValue(page['id']))) &&
+              ((progress == null) || (progress == (JsonUtils.intValue(page['progress']) ?? JsonUtils.intValue(page['progress-possition'])))))
           {
             try { return page.cast<String, dynamic>(); }
             catch(e) { print(e.toString()); }
@@ -352,7 +352,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     if ((_pages != null) && _pages!.isNotEmpty) {
       for (dynamic page in _pages!) {
         if (page is Map) {
-          String? pageId = AppJson.stringValue(page['id']);
+          String? pageId = JsonUtils.stringValue(page['id']);
           if (pageId != null) {
             return pageId;
           }
@@ -383,9 +383,9 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     if ((_pages != null) && _pages!.isNotEmpty) {
       for (dynamic page in _pages!) {
         if (page is Map) {
-          int? pageProgress = AppJson.intValue(page['progress']);
+          int? pageProgress = JsonUtils.intValue(page['progress']);
           if (pageProgress != null) {
-            String? pageId = AppJson.stringValue(page['id']);
+            String? pageId = JsonUtils.stringValue(page['id']);
             if ((pageId != null) && pageId.isNotEmpty && _pageCanComplete(page)) {
               Set<String>? progressPages = _progressPages[pageProgress];
               if (progressPages == null) {
@@ -407,7 +407,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   static bool _pageCanComplete(Map? page) {
-    List<dynamic>? buttons = (page != null) ? AppJson.listValue(page['buttons']) : null;
+    List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
     if (buttons != null) {
       for (dynamic button in buttons) {
         if ((button is Map) && _pageButtonCompletes(button)) {
@@ -419,11 +419,11 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   static bool _pageButtonCompletes(Map button) {
-    return AppJson.boolValue(button['completes']) == true;
+    return JsonUtils.boolValue(button['completes']) == true;
   }
 
   static String? _pagePopup(Map? page) {
-    List<dynamic>? buttons = (page != null) ? AppJson.listValue(page['buttons']) : null;
+    List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
     if (buttons != null) {
       String? popup;
       for (dynamic button in buttons) {
@@ -436,7 +436,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   static String? _pageButtonPopup(Map button) {
-    return AppJson.stringValue(button['popup']);
+    return JsonUtils.stringValue(button['popup']);
   }
 
   bool _progressStepCompleted(int? progressStep) {
@@ -447,11 +447,11 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   String? _currentNotes(List<dynamic>? notes) {
 
     Map<String, dynamic>? currentPage = _currentPage;
-    String? currentPageId = (currentPage != null) ? AppJson.stringValue(currentPage['id']) : null;
+    String? currentPageId = (currentPage != null) ? JsonUtils.stringValue(currentPage['id']) : null;
     if ((notes != null) && (currentPageId != null)) {
       for (dynamic note in notes) {
         if (note is Map) {
-          String? noteId = AppJson.stringValue(note['id']);
+          String? noteId = JsonUtils.stringValue(note['id']);
           if (noteId == currentPageId) {
             return currentPageId;
           }
@@ -460,7 +460,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
       notes.add({
         'id': currentPageId,
-        'title': AppJson.stringValue(currentPage!['title']),
+        'title': JsonUtils.stringValue(currentPage!['title']),
       });
     }
 
@@ -474,10 +474,10 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   Future<void> _showPopup(String popupId) async {
     return showDialog(context: context, builder: (BuildContext context) {
       if (popupId == 'notes') {
-        return _GiesNotesWidget(notes: AppJson.decodeList(Storage().giesNotes) ?? []);
+        return _GiesNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
       }
       else if (popupId == 'current-notes') {
-        List<dynamic> notes = AppJson.decodeList(Storage().giesNotes) ?? [];
+        List<dynamic> notes = JsonUtils.decodeList(Storage().giesNotes) ?? [];
         String? focusNodeId =  _currentNotes(notes); 
         return _GiesNotesWidget(notes: notes, focusNoteId: focusNodeId,);
       }
@@ -502,8 +502,8 @@ class _GiesPageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
 
-    String? titleHtml = (page != null) ? AppJson.stringValue(page!['title']) : null;
-    if (AppString.isStringNotEmpty(titleHtml)) {
+    String? titleHtml = (page != null) ? JsonUtils.stringValue(page!['title']) : null;
+    if (StringUtils.isNotEmpty(titleHtml)) {
       contentList.add(
         
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -535,8 +535,8 @@ class _GiesPageWidget extends StatelessWidget {
         ],));
     }
 
-    String? textHtml = (page != null) ? AppJson.stringValue(page!['text']) : null;
-    if (AppString.isStringNotEmpty(textHtml)) {
+    String? textHtml = (page != null) ? JsonUtils.stringValue(page!['text']) : null;
+    if (StringUtils.isNotEmpty(textHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
           Html(data: textHtml,
@@ -548,7 +548,7 @@ class _GiesPageWidget extends StatelessWidget {
       ),);
     }
 
-    List<dynamic>? steps = (page != null) ? AppJson.listValue(page!['steps']) : null;
+    List<dynamic>? steps = (page != null) ? JsonUtils.listValue(page!['steps']) : null;
     if (steps != null) {
       List<Widget> stepWidgets = <Widget>[];
       double stepTopPadding = 4, stepBottomPadding = 2;
@@ -578,14 +578,14 @@ class _GiesPageWidget extends StatelessWidget {
       }
     }
 
-    List<dynamic>? content = (page != null) ? AppJson.listValue(page!['content']) : null;
+    List<dynamic>? content = (page != null) ? JsonUtils.listValue(page!['content']) : null;
     if (content != null) {
       for (dynamic contentEntry in content) {
         if (contentEntry is Map) {
           List<Widget> contentEntryWidgets = <Widget>[];
           
-          String? headingHtml = AppJson.stringValue(contentEntry['heading']);
-          if (AppString.isStringNotEmpty(headingHtml)) {
+          String? headingHtml = JsonUtils.stringValue(contentEntry['heading']);
+          if (StringUtils.isNotEmpty(headingHtml)) {
             contentEntryWidgets.add(
               Padding(padding: EdgeInsets.only(top: 4, bottom: 4), child:
                 Html(data: headingHtml,
@@ -598,7 +598,7 @@ class _GiesPageWidget extends StatelessWidget {
             );
           }
 
-          List<dynamic>? bullets = AppJson.listValue(contentEntry['bullets']);
+          List<dynamic>? bullets = JsonUtils.listValue(contentEntry['bullets']);
           if (bullets != null) {
             String bulletText = '\u2022';
             Color? bulletColor = Styles().colors!.textBackground;
@@ -628,7 +628,7 @@ class _GiesPageWidget extends StatelessWidget {
             }
           }
           
-          List<dynamic>? numbers = AppJson.listValue(contentEntry['numbers']);
+          List<dynamic>? numbers = JsonUtils.listValue(contentEntry['numbers']);
           if (numbers != null) {
             Color? numberColor = Styles().colors!.textBackground;
             List<Widget> numberWidgets = <Widget>[];
@@ -668,12 +668,12 @@ class _GiesPageWidget extends StatelessWidget {
       }
     }
 
-    List<dynamic>? buttons = (page != null) ? AppJson.listValue(page!['buttons']) : null;
+    List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page!['buttons']) : null;
     if (buttons != null) {
       List<Widget> buttonWidgets = <Widget>[];
       for (dynamic button in buttons) {
         if (button is Map) {
-          String? title = AppJson.stringValue(button['title']);
+          String? title = JsonUtils.stringValue(button['title']);
           buttonWidgets.add(
             Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
               RoundedButton(label: title,
@@ -760,9 +760,9 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
       //Text(Localization().getStringEx('widget.gies.notes.label.add', 'Add to Notes:'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
       for (dynamic note in widget.notes!) {
         if (note is Map) {
-          String? noteId = AppJson.stringValue(note['id']);
-          String title = AppJson.stringValue(note['title'])!;
-          String? text = AppJson.stringValue(note['text']);
+          String? noteId = JsonUtils.stringValue(note['id']);
+          String title = JsonUtils.stringValue(note['title'])!;
+          String? text = JsonUtils.stringValue(note['text']);
 
           TextEditingController? controller = _textEditingControllers[noteId];
           if ((controller == null) && (noteId != null)) {
@@ -859,13 +859,13 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
     if (widget.notes != null) {
       for (dynamic note in widget.notes!) {
         if (note is Map) {
-          String? noteId = AppJson.stringValue(note['id']);
+          String? noteId = JsonUtils.stringValue(note['id']);
           note['text'] = _textEditingControllers[noteId]?.text;
         }
       }
     }
 
-    Storage().giesNotes = AppJson.encode(widget.notes);
+    Storage().giesNotes = JsonUtils.encode(widget.notes);
     Navigator.of(context).pop();
   }
 

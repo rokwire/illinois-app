@@ -80,11 +80,11 @@ class Roster {
   }
 
   bool get hasPosition {
-    return AppString.isStringNotEmpty(position);
+    return StringUtils.isNotEmpty(position);
   }
 
   bool get hasNumber {
-    return AppString.isStringNotEmpty(numberString);
+    return StringUtils.isNotEmpty(numberString);
   }
 
   int get number {

@@ -26,6 +26,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/debug/DebugCreateInboxMessagePanel.dart';
@@ -108,7 +109,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   String? get _userDebugData{
-    String? userData = AppJson.encode(Auth2().account?.toJson(), prettify: true);
+    String? userData = JsonUtils.encode(Auth2().account?.toJson(), prettify: true);
     return userData;
   }
 
@@ -136,11 +137,11 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: Text(AppString.isStringNotEmpty(userUuid) ? 'Uuid: $userUuid' : "unknown uuid"),
+                      child: Text(StringUtils.isNotEmpty(userUuid) ? 'Uuid: $userUuid' : "unknown uuid"),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: Text(AppString.isStringNotEmpty(pid) ? 'PID: $pid' : "unknown pid"),
+                      child: Text(StringUtils.isNotEmpty(pid) ? 'PID: $pid' : "unknown pid"),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -548,8 +549,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onUserCardInfoClicked() {
-    String? cardInfo = AppJson.encode(Auth2().authCard?.toShortJson(), prettify: true);
-    if (AppString.isStringNotEmpty(cardInfo)) {
+    String? cardInfo = JsonUtils.encode(Auth2().authCard?.toShortJson(), prettify: true);
+    if (StringUtils.isNotEmpty(cardInfo)) {
       showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(cardInfo) );
     }
     else {
@@ -582,7 +583,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
           ),
           Expanded(child:
             SingleChildScrollView(child:
-              Padding(padding: EdgeInsets.all(8), child: Text(AppString.getDefaultEmptyString(textContent), style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
+              Padding(padding: EdgeInsets.all(8), child: Text(StringUtils.ensureNotEmpty(textContent), style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
             )
           ),
         ])

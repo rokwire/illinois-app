@@ -35,7 +35,7 @@ class ImageUtils {
   /// returns true if save operation succeed and false otherwise
   ///
   static Future<bool?> saveToFs(Uint8List? imageBytes, String fileName) async {
-    if ((imageBytes == null) || AppString.isStringEmpty(fileName)) {
+    if ((imageBytes == null) || StringUtils.isEmpty(fileName)) {
       return false;
     }
     final String dir = (await getApplicationDocumentsDirectory()).path;

@@ -79,7 +79,7 @@ class RecentItems with Service implements NotificationsListener {
     if (jsonListData != null) {
       List<RecentItem> recentItemsList = [];
       for (dynamic jsonData in jsonListData) {
-        AppList.add(recentItemsList, RecentItem.fromJson(AppJson.mapValue(jsonData) ));
+        ListUtils.add(recentItemsList, RecentItem.fromJson(JsonUtils.mapValue(jsonData) ));
       }
       _recentItems = Queue.from(recentItemsList);
       _notifyRecentItemsChanged();

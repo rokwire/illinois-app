@@ -159,7 +159,7 @@ class Config with Service implements NotificationsListener {
     try {
       String configsStrEnc = await rootBundle.loadString('assets/$_configsAsset');
       String? configsStr = AESCrypt.decrypt(configsStrEnc, key: encryptionKey, iv: encryptionIV);
-      Map<String, dynamic>? configs = AppJson.decode(configsStr);
+      Map<String, dynamic>? configs = JsonUtils.decode(configsStr);
       String? configTarget = configEnvToString(_configEnvironment);
       return (configs != null) ? configs[configTarget] : null;
     } catch (e) {
@@ -179,17 +179,17 @@ class Config with Service implements NotificationsListener {
   }
 
   Map<String, dynamic>? _configFromJsonString(String? configJsonString) {
-    dynamic configJson =  AppJson.decode(configJsonString);
+    dynamic configJson =  JsonUtils.decode(configJsonString);
     List<dynamic>? jsonList = (configJson is List) ? configJson : null;
     if (jsonList != null) {
       
       jsonList.sort((dynamic cfg1, dynamic cfg2) {
-        return ((cfg1 is Map) && (cfg2 is Map)) ? AppVersion.compareVersions(cfg1['mobileAppVersion'], cfg2['mobileAppVersion']) : 0;
+        return ((cfg1 is Map) && (cfg2 is Map)) ? AppVersionUtils.compareVersions(cfg1['mobileAppVersion'], cfg2['mobileAppVersion']) : 0;
       });
 
       for (int index = jsonList.length - 1; index >= 0; index--) {
         Map<String, dynamic> cfg = jsonList[index];
-        if (AppVersion.compareVersions(cfg['mobileAppVersion'], _packageInfo!.version) <= 0) {
+        if (AppVersionUtils.compareVersions(cfg['mobileAppVersion'], _packageInfo!.version) <= 0) {
           _decryptSecretKeys(cfg);
           return cfg;
         }
@@ -202,13 +202,13 @@ class Config with Service implements NotificationsListener {
   void _decryptSecretKeys(Map<String, dynamic>? config) {
     dynamic secretKeys = (config != null) ? config['secretKeys'] : null;
     if (secretKeys is String) {
-      config!['secretKeys'] = AppJson.decodeMap(AESCrypt.decrypt(secretKeys, key: encryptionKey, iv: encryptionIV));
+      config!['secretKeys'] = JsonUtils.decodeMap(AESCrypt.decrypt(secretKeys, key: encryptionKey, iv: encryptionIV));
     }
   }
 
   Future<Map<String, dynamic>?> _loadEncryptionKeysFromAssets() async {
     try {
-      return AppJson.decode(await rootBundle.loadString('assets/$_configKeysAsset'));
+      return JsonUtils.decode(await rootBundle.loadString('assets/$_configKeysAsset'));
     } catch (e) {
       print(e.toString());
     }
@@ -261,7 +261,7 @@ class Config with Service implements NotificationsListener {
   void _updateFromNet() {
     _loadAsStringFromNet().then((String? configString) {
       Map<String, dynamic>? config = _configFromJsonString(configString);
-      if ((config != null) && (AppVersion.compareVersions(_config!['mobileAppVersion'], config['mobileAppVersion']) <= 0) && !DeepCollectionEquality().equals(_config, config))  {
+      if ((config != null) && (AppVersionUtils.compareVersions(_config!['mobileAppVersion'], config['mobileAppVersion']) <= 0) && !DeepCollectionEquality().equals(_config, config))  {
         _config = config;
         _configFile.writeAsString(configString!, flush: true);
         NotificationService().notify(notifyConfigChanged, null);
@@ -448,9 +448,9 @@ class Config with Service implements NotificationsListener {
   }
 
   String? deepLinkRedirectUrl(String? deepLink) {
-    Uri? assetsUri = AppString.isStringNotEmpty(assetsUrl) ? Uri.tryParse(assetsUrl!) : null;
+    Uri? assetsUri = StringUtils.isNotEmpty(assetsUrl) ? Uri.tryParse(assetsUrl!) : null;
     String? redirectUrl = (assetsUri != null) ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
-    return AppString.isStringNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
+    return StringUtils.isNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
   }
 
   int get refreshTimeout {
@@ -469,7 +469,7 @@ class Config with Service implements NotificationsListener {
 
   String? get upgradeRequiredVersion {
     dynamic requiredVersion = _upgradeStringEntry('required_version');
-    if ((requiredVersion is String) && (AppVersion.compareVersions(_packageInfo!.version, requiredVersion) < 0)) {
+    if ((requiredVersion is String) && (AppVersionUtils.compareVersions(_packageInfo!.version, requiredVersion) < 0)) {
       return requiredVersion;
     }
     return null;
@@ -478,7 +478,7 @@ class Config with Service implements NotificationsListener {
   String? get upgradeAvailableVersion {
     dynamic availableVersion = _upgradeStringEntry('available_version');
     bool upgradeAvailable = (availableVersion is String) &&
-        (AppVersion.compareVersions(_packageInfo!.version, availableVersion) < 0) &&
+        (AppVersionUtils.compareVersions(_packageInfo!.version, availableVersion) < 0) &&
         !Storage().reportedUpgradeVersions.contains(availableVersion) &&
         !_reportedUpgradeVersions.contains(availableVersion);
     return upgradeAvailable ? availableVersion : null;
@@ -525,7 +525,7 @@ class Config with Service implements NotificationsListener {
 
   String? get onboardingRequiredVersion {
     dynamic requiredVersion = onboardingInfo['required_version'];
-    if ((requiredVersion is String) && (AppVersion.compareVersions(requiredVersion, appVersion) <= 0)) {
+    if ((requiredVersion is String) && (AppVersionUtils.compareVersions(requiredVersion, appVersion) <= 0)) {
       return requiredVersion;
     }
     return null;

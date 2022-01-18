@@ -18,6 +18,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
@@ -516,7 +517,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     }
-    else if (AppString.isStringNotEmpty(Config().myIlliniUrl)) {
+    else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
       url_launcher.launch(Config().myIlliniUrl!);
     }
   }

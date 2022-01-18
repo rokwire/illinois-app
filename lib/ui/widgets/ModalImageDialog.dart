@@ -60,7 +60,7 @@ class ModalImageDialog extends StatelessWidget{
                     Expanded(
                       child: Container(
                         //margin: EdgeInsets.only(right: horizontalMargin + photoMargin, top: photoMargin),
-                        child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: fit,): Container(),
+                        child: StringUtils.isNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: fit,): Container(),
                       ),
                     )
                   ],

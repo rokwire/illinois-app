@@ -226,7 +226,7 @@ class Styles extends Service implements NotificationsListener{
 
   Future<void> _applyContent(String? stylesContent, {bool cacheContent = false, bool notifyUpdate = false}) async {
     try {
-      Map<String, dynamic>? styles = (stylesContent != null) ? AppJson.decode(stylesContent) : null;
+      Map<String, dynamic>? styles = (stylesContent != null) ? JsonUtils.decode(stylesContent) : null;
       if ((styles != null) && styles.isNotEmpty && ((_stylesData == null) || !DeepCollectionEquality().equals(_stylesData, styles))) {
         _stylesData = styles;
         _buildData();
@@ -259,7 +259,7 @@ class Styles extends Service implements NotificationsListener{
             if(value.startsWith("#")){
               color = UiColors.fromHex(value);
             } else if(value.contains(".")){
-              color = UiColors.fromHex(AppMapPathKey.entry(_stylesData, value));
+              color = UiColors.fromHex(MapPathKey.entry(_stylesData, value));
             }
             if (color != null) {
               colors[key] = color;

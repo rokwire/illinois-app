@@ -20,6 +20,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -229,7 +230,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
           ));
         }
 
-        String? categoryName = AppString.isStringNotEmpty(category['category']) ? category['category'] : "";
+        String? categoryName = StringUtils.isNotEmpty(category['category']) ? category['category'] : "";
         categoryWidgets.add(_SelectionItemWidget(
             label: categoryName,
             selected: _preferredCategories!.contains(categoryName),
@@ -261,7 +262,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
     return Column(
       children: <Widget>[
         _buildSearchField(),
-        _tagSearchMode || !AppCollection.isCollectionNotEmpty(_followingTags)
+        _tagSearchMode || !CollectionUtils.isNotEmpty(_followingTags)
             ? Container()
             : Text(Localization().getStringEx('panel.settings.manage_interests.list.following', "FOLLOWING")!),
         _tagSearchMode ? Container() : _buildTagsList(_followingTags),
@@ -356,9 +357,9 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   List<String>? _filterTags(String key) {
     List<String> result =  [];
-    if (AppString.isStringEmpty(key)) {
+    if (StringUtils.isEmpty(key)) {
       return _tags;
-    } else if (AppCollection.isCollectionNotEmpty(_tags)) {
+    } else if (CollectionUtils.isNotEmpty(_tags)) {
       result = _tags!.where((String tag) => tag.startsWith(key)).toList();
     }
 
@@ -367,7 +368,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   void _onTextChanged(String text) {
     setState(() {
-      _tagSearchMode = AppString.isStringNotEmpty(text);
+      _tagSearchMode = StringUtils.isNotEmpty(text);
     });
   }
 

@@ -348,7 +348,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if (onlineOrderPlatformDetails == null) {
       return null;
     }
-    if (AppString.isStringEmpty(onlineOrderPlatformDetails['deep_link'])) {
+    if (StringUtils.isEmpty(onlineOrderPlatformDetails['deep_link'])) {
       return null;
     }
     return Align(
@@ -366,7 +366,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   String paymentsToString(List<PaymentType>? payments){
     String result = "";
     final String paymentTypePrefix = "PaymentType.";
-    if(AppCollection.isCollectionNotEmpty(payments)) {
+    if(CollectionUtils.isNotEmpty(payments)) {
       payments!.forEach((payment) {
         String paymentType = payment.toString();
         if (paymentType.startsWith(paymentTypePrefix) && (paymentTypePrefix.length < paymentType.length)) {
@@ -535,7 +535,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
   Widget _exploreSubTitle() {
     String? subTitle = dining!.exploreSubTitle;
-    if (AppString.isStringEmpty(subTitle)) {
+    if (StringUtils.isEmpty(subTitle)) {
       return Container();
     }
     return Padding(
@@ -550,7 +550,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
   Widget _exploreDescription() {
     String? longDescription = dining!.exploreLongDescription;
-    bool showDescription = AppString.isStringNotEmpty(longDescription);
+    bool showDescription = StringUtils.isNotEmpty(longDescription);
     if (!showDescription) {
       return Container();
     }
@@ -598,7 +598,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
   void _onTapOrderOnline(Map<String, dynamic>? orderOnlineDetails) async {
     String? deepLink = (orderOnlineDetails != null) ? orderOnlineDetails['deep_link'] : null;
-    if (AppString.isStringEmpty(deepLink)) {
+    if (StringUtils.isEmpty(deepLink)) {
       return;
     }
     bool? appLaunched = await NativeCommunicator().launchApp({"deep_link": deepLink});
@@ -609,8 +609,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   void _launchUrl(String? url, {BuildContext? context}) {
-    if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         launch(url!);

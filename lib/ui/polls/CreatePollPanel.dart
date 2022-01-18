@@ -20,6 +20,7 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -481,8 +482,8 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   bool _isValid(){
-    return AppString.isStringNotEmpty(_questionController.text);//Question validation: Not empty Question
-//           && (_optionsControllers?.where((controller)=>AppUtils.isStringNotEmpty(controller?.text))?.toList()?.isNotEmpty??false); //Options validation: At least one option
+    return StringUtils.isNotEmpty(_questionController.text);//Question validation: Not empty Question
+//           && (_optionsControllers?.where((controller)=>AppUtils.isNotEmpty(controller?.text))?.toList()?.isNotEmpty??false); //Options validation: At least one option
   }
 }
 

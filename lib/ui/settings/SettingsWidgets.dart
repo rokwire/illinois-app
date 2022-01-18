@@ -17,7 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
 
 typedef OnContinueCallback(List<String> selectedOptions, OnContinueProgressController progressController);
 typedef OnContinueProgressController({bool? loading});

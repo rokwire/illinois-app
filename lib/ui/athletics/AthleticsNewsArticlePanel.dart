@@ -176,7 +176,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
                                           children: _buildContentWidgets(context),
                                         ),
                                       )),
-                                  AppString.isStringNotEmpty(_article?.link)?
+                                  StringUtils.isNotEmpty(_article?.link)?
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: 20, right: 20, bottom: 48),
@@ -209,14 +209,14 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
 
   _shareArticle(){
     Analytics.instance.logSelect(target: "Share Article");
-    if (AppString.isStringNotEmpty(_article?.link)) {
+    if (StringUtils.isNotEmpty(_article?.link)) {
       Share.share(_article!.link!);
     }
   }
 
   List<Widget> _buildContentWidgets(BuildContext context) {
     List<Widget> widgets = [];
-    if (!AppString.isStringEmpty(_article?.description)) {
+    if (!StringUtils.isEmpty(_article?.description)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 10),
         child: Html(
@@ -228,7 +228,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
       ));
     }
     String? fullText = _article?.fillText;
-    if (!AppString.isStringEmpty(fullText)) {
+    if (!StringUtils.isEmpty(fullText)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 24),
         child: Html(

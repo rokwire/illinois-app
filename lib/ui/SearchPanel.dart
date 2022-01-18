@@ -241,7 +241,7 @@ class _SearchPanelState extends State<SearchPanel> {
           AthleticsGameDetailPanel(gameId: event!.speaker, sportName: event.registrationLabel,)));
     }
     else {
-      String? groupId = AppJson.stringValue(widget.searchData!= null ? widget.searchData!["group_id"] : null);
+      String? groupId = JsonUtils.stringValue(widget.searchData!= null ? widget.searchData!["group_id"] : null);
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
           ExploreDetailPanel(explore: explore, browseGroupId: groupId,))).
             then(
@@ -259,7 +259,7 @@ class _SearchPanelState extends State<SearchPanel> {
       return;
     }
     keyword = keyword.trim();
-    if (AppString.isStringEmpty(keyword)) {
+    if (StringUtils.isEmpty(keyword)) {
       return;
     }
     ExploreService().loadEvents(searchText: keyword, eventFilter: EventTimeFilter.upcoming,).then((events) => _onEventsSearchFinished(events));
@@ -282,7 +282,7 @@ class _SearchPanelState extends State<SearchPanel> {
 
   void _onTapClear() {
     Analytics.instance.logSelect(target: "Clear");
-    if (AppString.isStringEmpty(_textEditingController.text)) {
+    if (StringUtils.isEmpty(_textEditingController.text)) {
       Navigator.pop(context);
       return;
     }
@@ -299,7 +299,7 @@ class _SearchPanelState extends State<SearchPanel> {
     FocusScope.of(context).requestFocus(new FocusNode());
     _setLoading(true);
     String searchValue = _textEditingController.text;
-    if (AppString.isStringEmpty(searchValue)) {
+    if (StringUtils.isEmpty(searchValue)) {
       return;
     }
     _searchEvents(searchValue);

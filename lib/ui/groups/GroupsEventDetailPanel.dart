@@ -11,6 +11,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
@@ -150,7 +151,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          AppString.isStringNotEmpty(_event?.exploreImageURL) ?  Positioned.fill(child:Image.network(widget.event!.exploreImageURL!, fit: BoxFit.cover, headers: Network.authApiKeyHeader, excludeFromSemantics: true)) : Container(),
+          StringUtils.isNotEmpty(_event?.exploreImageURL) ?  Positioned.fill(child:Image.network(widget.event!.exploreImageURL!, fit: BoxFit.cover, headers: Network.authApiKeyHeader, excludeFromSemantics: true)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false),
             child: Container(
@@ -196,7 +197,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   Widget _eventTimeDetail() {
     String? displayTime = _event?.displayDateTime;
     //Newly created groups pass time in the string
-    if(AppString.isStringEmpty(displayTime?.trim())){
+    if(StringUtils.isEmpty(displayTime?.trim())){
       if(_event?.startDateString !=null || _event?.endDateString != null){
         DateTime? startDate = AppDateTime().dateTimeFromString(_event?.startDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
         DateTime? endDate = AppDateTime().dateTimeFromString(_event?.endDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
@@ -207,7 +208,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         }
       }
     }
-    if (AppString.isStringNotEmpty(displayTime)) {
+    if (StringUtils.isNotEmpty(displayTime)) {
       return Semantics(
           label: displayTime,
           excludeSemantics: true,
@@ -237,14 +238,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     String? locationText = ExploreHelper.getLongDisplayLocation(_event, null); //TBD decide if we need distance calculation - pass _locationData
     bool isVirtual = _event?.isVirtual ?? false;
     String eventType = isVirtual? Localization().getStringEx('panel.groups_event_detail.label.online_event', "Online event")! : Localization().getStringEx('panel.groups_event_detail.label.in_person_event', "In-person event")!;
-    bool hasEventUrl = AppString.isStringNotEmpty(_event?.location?.description);
+    bool hasEventUrl = StringUtils.isNotEmpty(_event?.location?.description);
     bool isOnlineUnderlined = isVirtual && hasEventUrl;
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
     String iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
-    String locationId = AppString.getDefaultEmptyString(_event?.location?.locationId);
+    String locationId = StringUtils.ensureNotEmpty(_event?.location?.locationId);
     bool isLocationIdUrl = Uri.tryParse(locationId)?.isAbsolute ?? false;
     String? value = isVirtual ? locationId : locationText;
-    bool isValueVisible = AppString.isStringNotEmpty(value) && (!isVirtual || !isLocationIdUrl);
+    bool isValueVisible = StringUtils.isNotEmpty(value) && (!isVirtual || !isLocationIdUrl);
     return GestureDetector(
       onTap: _onLocationDetailTapped,
       child: Semantics(
@@ -295,7 +296,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     bool isFree = _event?.isEventFree ?? false;
     String priceText =isFree? "Free" : (_event?.cost ?? "Free");
     String? additionalDescription = isFree? _event?.cost : null;
-    bool hasAdditionalDescription = AppString.isStringNotEmpty(additionalDescription);
+    bool hasAdditionalDescription = StringUtils.isNotEmpty(additionalDescription);
     if (priceText.isNotEmpty) {
       return Semantics(
           label: Localization().getStringEx("panel.explore_detail.label.price.title","Price"),
@@ -359,7 +360,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventContacts() {
-    if (AppCollection.isCollectionEmpty(widget.event?.contacts)) {
+    if (CollectionUtils.isEmpty(widget.event?.contacts)) {
       return Container();
     }
     List<Widget> contactList = [];
@@ -367,26 +368,26 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:')!)));
     for (Contact? contact in widget.event!.contacts!) {
       String contactDetails = '';
-      if (AppString.isStringNotEmpty(contact!.firstName)) {
+      if (StringUtils.isNotEmpty(contact!.firstName)) {
         contactDetails += contact.firstName!;
       }
-      if (AppString.isStringNotEmpty(contact.lastName)) {
-        if (AppString.isStringNotEmpty(contactDetails)) {
+      if (StringUtils.isNotEmpty(contact.lastName)) {
+        if (StringUtils.isNotEmpty(contactDetails)) {
           contactDetails += ' ';
         }
         contactDetails += contact.lastName!;
       }
-      if (AppString.isStringNotEmpty(contact.organization)) {
+      if (StringUtils.isNotEmpty(contact.organization)) {
         contactDetails += ' (${contact.organization})';
       }
-      if (AppString.isStringNotEmpty(contact.email)) {
-        if (AppString.isStringNotEmpty(contactDetails)) {
+      if (StringUtils.isNotEmpty(contact.email)) {
+        if (StringUtils.isNotEmpty(contactDetails)) {
           contactDetails += ', ';
         }
         contactDetails += contact.email!;
       }
-      if (AppString.isStringNotEmpty(contact.phone)) {
-        if (AppString.isStringNotEmpty(contactDetails)) {
+      if (StringUtils.isNotEmpty(contact.phone)) {
+        if (StringUtils.isNotEmpty(contactDetails)) {
           contactDetails += ', ';
         }
         contactDetails += contact.phone!;
@@ -398,7 +399,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   Widget _eventDescription() {
     String? longDescription = _event!.exploreLongDescription;
-    bool showDescription = AppString.isStringNotEmpty(longDescription);
+    bool showDescription = StringUtils.isNotEmpty(longDescription);
     if (!showDescription) {
       return Container();
     }
@@ -415,10 +416,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     List<Widget> buttons = <Widget>[];
     
     String? titleUrl = _event?.titleUrl;
-    bool hasTitleUrl = AppString.isStringNotEmpty(titleUrl);
+    bool hasTitleUrl = StringUtils.isNotEmpty(titleUrl);
 
     String? registrationUrl = _event?.registrationUrl;
-    bool hasRegistrationUrl = AppString.isStringNotEmpty(registrationUrl);
+    bool hasRegistrationUrl = StringUtils.isNotEmpty(registrationUrl);
 
     if (hasTitleUrl) {
       buttons.add(Row(children:<Widget>[
@@ -516,7 +517,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     Analytics().logSelect(target: 'Edit Event');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: _event, onEditTap: (BuildContext context, Event event) {
       Groups().updateGroupEvents(event).then((String? id) {
-        if (AppString.isStringNotEmpty(id)) {
+        if (StringUtils.isNotEmpty(id)) {
           Navigator.pop(context);
         }
         else {
@@ -545,7 +546,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     if (analyticsName != null) {
       Analytics.instance.logSelect(target: analyticsName);
     }
-    if(AppString.isStringNotEmpty(url)){
+    if(StringUtils.isNotEmpty(url)){
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsName: "WebPanel($analyticsName)",)));
     }
   }
@@ -565,7 +566,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     Analytics().logSelect(target: 'Event location/url');
     if((_event?.isVirtual?? false) == true){
       String? url = _event?.location?.description;
-      if(AppString.isStringNotEmpty(url)) {
+      if(StringUtils.isNotEmpty(url)) {
         _onTapWebButton(url, analyticsName: "Event Link");
       }
     } else if(_event?.location?.latitude != null && _event?.location?.longitude != null) {
@@ -664,8 +665,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _launchUrl(String? url, {BuildContext? context}) {
-    if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         launch(url!);

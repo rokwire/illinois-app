@@ -203,7 +203,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   static Future<List<SportDefinition>?> _loadSportsFromCache() async {
-    return SportDefinition.listFromJson(AppJson.decodeList(await _loadContentStringFromCache(_sportsCacheFileName)));
+    return SportDefinition.listFromJson(JsonUtils.decodeList(await _loadContentStringFromCache(_sportsCacheFileName)));
   }
 
   void _applySports(List<SportDefinition>? sports) {
@@ -215,9 +215,9 @@ class Sports with Service implements NotificationsListener {
 
   Future<bool> _applySportsFromNet() async {
     String? serviceUrl = Config().sportsServiceUrl;
-    if (AppString.isStringNotEmpty(serviceUrl)) {
+    if (StringUtils.isNotEmpty(serviceUrl)) {
       String? contentString = await _loadContentStringFromNet("$serviceUrl/api/v2/sports");
-      List<SportDefinition>? sports = SportDefinition.listFromJson(AppJson.decodeList(contentString));
+      List<SportDefinition>? sports = SportDefinition.listFromJson(JsonUtils.decodeList(contentString));
       if (sports != null) {
         _lastCheckSportsTime = DateTime.now().millisecondsSinceEpoch;
         if (!DeepCollectionEquality().equals(_sports, sports)) {
@@ -242,7 +242,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   void _sortSports() {
-    if (AppCollection.isCollectionNotEmpty(_menSports)) {
+    if (CollectionUtils.isNotEmpty(_menSports)) {
       SportDefinition? firstExplicitItem;
       try {
         firstExplicitItem = (_menSports as List<SportDefinition?>).firstWhere((SportDefinition? sportType) {
@@ -274,7 +274,7 @@ class Sports with Service implements NotificationsListener {
       }
     }
 
-    if (AppCollection.isCollectionNotEmpty(_womenSports)) {
+    if (CollectionUtils.isNotEmpty(_womenSports)) {
       SportDefinition? firstExplicitItem;
       try {
         firstExplicitItem = (_womenSports as List<SportDefinition?>).firstWhere((SportDefinition? sportType) {
@@ -330,14 +330,14 @@ class Sports with Service implements NotificationsListener {
   }
 
   static Future<List<SportSocialMedia>?> _loadSportSocialMediaFromCache() async {
-    return SportSocialMedia.listFromJson(AppJson.decodeList(await _loadContentStringFromCache(_sportsSocialMediaCacheFileName)));
+    return SportSocialMedia.listFromJson(JsonUtils.decodeList(await _loadContentStringFromCache(_sportsSocialMediaCacheFileName)));
   }
 
   Future<bool> _applySportSocialMediaFromNet() async {
     String? serviceUrl = Config().sportsServiceUrl;
-    if (AppString.isStringNotEmpty(serviceUrl)) {
+    if (StringUtils.isNotEmpty(serviceUrl)) {
       String? contentString = await _loadContentStringFromNet("$serviceUrl/api/v2/social");
-      List<SportSocialMedia>? socialMedias = SportSocialMedia.listFromJson(AppJson.decodeList(contentString));
+      List<SportSocialMedia>? socialMedias = SportSocialMedia.listFromJson(JsonUtils.decodeList(contentString));
       if (socialMedias != null) {
         _lastCheckSocialMediasTime = DateTime.now().millisecondsSinceEpoch;
         if (!DeepCollectionEquality().equals(_socialMedias, socialMedias)) {
@@ -364,7 +364,7 @@ class Sports with Service implements NotificationsListener {
   // Getters
 
   SportDefinition? getSportByShortName(String? sportShortName) {
-    if (AppCollection.isCollectionNotEmpty(_sports) && AppString.isStringNotEmpty(sportShortName)) {
+    if (CollectionUtils.isNotEmpty(_sports) && StringUtils.isNotEmpty(sportShortName)) {
       for (SportDefinition sport in _sports!) {
         if (sportShortName == sport.shortName) {
           return sport;
@@ -376,7 +376,7 @@ class Sports with Service implements NotificationsListener {
 
 
   SportSocialMedia? getSocialMediaForSport(String? shortName) {
-    if (AppString.isStringNotEmpty(shortName) && AppCollection.isCollectionNotEmpty(_socialMedias)) {
+    if (StringUtils.isNotEmpty(shortName) && CollectionUtils.isNotEmpty(_socialMedias)) {
       try {
         return (_socialMedias as List<SportSocialMedia?>).firstWhere((socialMedia) => shortName == socialMedia?.shortName, orElse: () => null);
       }
@@ -418,17 +418,17 @@ class Sports with Service implements NotificationsListener {
   // APIs
 
   Future<List<Roster>?> loadRosters(String? sportKey) async {
-    if (AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
+    if (StringUtils.isNotEmpty(Config().sportsServiceUrl) && StringUtils.isNotEmpty(sportKey)) {
       final rostersUrl = "${Config().sportsServiceUrl}/api/v2/players?sport=$sportKey";
       final response = await Network().get(rostersUrl, auth: NetworkAuth.Auth2);
       String? responseBody = response?.body;
       int responseCode = response?.statusCode ?? -1;
       if (responseCode == 200) {
-        List<dynamic>? jsonData = AppJson.decode(responseBody);
-        if (AppCollection.isCollectionNotEmpty(jsonData)) {
+        List<dynamic>? jsonData = JsonUtils.decode(responseBody);
+        if (CollectionUtils.isNotEmpty(jsonData)) {
           List<Roster> rosters = [];
           for (dynamic jsonEntry in jsonData!) {
-            Roster? roster = Roster.fromJson(AppJson.mapValue(jsonEntry));
+            Roster? roster = Roster.fromJson(JsonUtils.mapValue(jsonEntry));
             if (roster != null) {
               rosters.add(roster);
             }
@@ -444,17 +444,17 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<List<Coach>?> loadCoaches(String? sportKey) async {
-    if (AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
+    if (StringUtils.isNotEmpty(Config().sportsServiceUrl) && StringUtils.isNotEmpty(sportKey)) {
       final coachesUrl = "${Config().sportsServiceUrl}/api/v2/coaches?sport=$sportKey";
       final response = await Network().get(coachesUrl, auth: NetworkAuth.Auth2);
       String? responseBody = response?.body;
       int? responseCode = response?.statusCode;
       if (responseCode == 200) {
-        List<dynamic>? jsonList = AppJson.decode(responseBody);
-        if (AppCollection.isCollectionNotEmpty(jsonList)) {
+        List<dynamic>? jsonList = JsonUtils.decode(responseBody);
+        if (CollectionUtils.isNotEmpty(jsonList)) {
           List<Coach> coaches = [];
           for (dynamic jsonEntry in jsonList!) {
-            Coach? coach = Coach.fromJson(AppJson.mapValue(jsonEntry));
+            Coach? coach = Coach.fromJson(JsonUtils.mapValue(jsonEntry));
             if (coach != null) {
               coaches.add(coach);
             }
@@ -470,7 +470,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<TeamSchedule?> loadScheduleForCurrentSeason(String? sportKey) async {
-    if (AppString.isStringEmpty(Config().sportsServiceUrl) || AppString.isStringEmpty(sportKey)) {
+    if (StringUtils.isEmpty(Config().sportsServiceUrl) || StringUtils.isEmpty(sportKey)) {
       return null;
     }
     String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-schedule?sport=$sportKey';
@@ -478,7 +478,7 @@ class Sports with Service implements NotificationsListener {
     int responseCode = response?.statusCode ?? -1;
     String? responseBody = response?.body;
     if (responseCode == 200) {
-      Map<String, dynamic>? jsonData = AppJson.decode(responseBody);
+      Map<String, dynamic>? jsonData = JsonUtils.decode(responseBody);
       TeamSchedule? schedule = TeamSchedule.fromJson(jsonData);
       return schedule;
     } else {
@@ -488,7 +488,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<TeamRecord?> loadRecordForCurrentSeason(String? sportKey) async {
-    if (AppString.isStringEmpty(Config().sportsServiceUrl) && AppString.isStringEmpty(sportKey)) {
+    if (StringUtils.isEmpty(Config().sportsServiceUrl) && StringUtils.isEmpty(sportKey)) {
       return null;
     }
     String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-record?sport=$sportKey';
@@ -496,7 +496,7 @@ class Sports with Service implements NotificationsListener {
     int responseCode = response?.statusCode ?? -1;
     String? responseBody = response?.body;
     if (responseCode == 200) {
-      Map<String, dynamic>? jsonData = AppJson.decode(responseBody);
+      Map<String, dynamic>? jsonData = JsonUtils.decode(responseBody);
       TeamRecord? record = TeamRecord.fromJson(jsonData);
       return record;
     } else {
@@ -511,7 +511,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   List<Game>? getTopScheduleGamesFromList(List<Game>? gamesList) {
-    if (AppCollection.isCollectionEmpty(gamesList)) {
+    if (CollectionUtils.isEmpty(gamesList)) {
       return null;
     }
 
@@ -576,7 +576,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<Game?> loadGame(String? sportKey, String? gameId) async {
-    if (AppString.isStringEmpty(gameId)) {
+    if (StringUtils.isEmpty(gameId)) {
       Log.d('Missing game id to load.');
       return null;
     }
@@ -585,13 +585,13 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<List<Game>?> loadGames({String? id, List<String?>? sports, DateTime? startDate, DateTime? endDate, int? limit}) async {
-    if (AppString.isStringEmpty(Config().sportsServiceUrl)) {
+    if (StringUtils.isEmpty(Config().sportsServiceUrl)) {
       return null;
     }
 
     String queryParams = '';
 
-    if (AppString.isStringNotEmpty(id)) {
+    if (StringUtils.isNotEmpty(id)) {
       queryParams += '?id=$id';
     } else if (startDate == null) {
       startDate = AppDateTime().now;
@@ -609,9 +609,9 @@ class Sports with Service implements NotificationsListener {
       queryParams += '&end=$endDateFormatted';
     }
 
-    if (AppCollection.isCollectionNotEmpty(sports)) {
+    if (CollectionUtils.isNotEmpty(sports)) {
       for (String? sport in sports!) {
-        if (AppString.isStringNotEmpty(sport)) {
+        if (StringUtils.isNotEmpty(sport)) {
           queryParams += '&sport=$sport';
         }
       }
@@ -621,7 +621,7 @@ class Sports with Service implements NotificationsListener {
     }
     String gamesUrl = '${Config().sportsServiceUrl}/api/v2/games';
 
-    if (AppString.isStringNotEmpty(queryParams)) {
+    if (StringUtils.isNotEmpty(queryParams)) {
       if (queryParams.startsWith('&')) {
         queryParams = queryParams.replaceFirst('&', '?');
       }
@@ -633,8 +633,8 @@ class Sports with Service implements NotificationsListener {
     String? responseBody = response?.body;
 
     if (responseCode == 200) {
-      List<dynamic>? jsonData = AppJson.decode(responseBody);
-      if (AppCollection.isCollectionNotEmpty(jsonData)) {
+      List<dynamic>? jsonData = JsonUtils.decode(responseBody);
+      if (CollectionUtils.isNotEmpty(jsonData)) {
         List<Game> gamesList = [];
         for (dynamic entry in jsonData!) {
           Game? game = Game.fromJson(entry);
@@ -651,13 +651,13 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<News?> loadNewsArticle(String? id) async {
-    if (AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(id)) {
+    if (StringUtils.isNotEmpty(Config().sportsServiceUrl) && StringUtils.isNotEmpty(id)) {
       String newsUrl = Config().sportsServiceUrl! + '/api/v2/news?id=$id';
       final response = await Network().get(newsUrl, auth: NetworkAuth.Auth2);
       String? responseBody = response?.body;
       if (response?.statusCode == 200) {
-        List<dynamic>? jsonData = AppJson.decode(responseBody);
-        if (AppCollection.isCollectionNotEmpty(jsonData)) {
+        List<dynamic>? jsonData = JsonUtils.decode(responseBody);
+        if (CollectionUtils.isNotEmpty(jsonData)) {
           return News.fromJson(jsonData!.first);
         }
       } else {
@@ -671,7 +671,7 @@ class Sports with Service implements NotificationsListener {
   Future<List<News>?> loadNews(String? sportKey, int? count) async {
     if (Config().sportsServiceUrl != null) {
       String newsUrl = Config().sportsServiceUrl! + '/api/v2/news';
-      bool hasSportParam = AppString.isStringNotEmpty(sportKey);
+      bool hasSportParam = StringUtils.isNotEmpty(sportKey);
       if (hasSportParam) {
         newsUrl += '?sport=$sportKey';
       }
@@ -687,11 +687,11 @@ class Sports with Service implements NotificationsListener {
       final response = await Network().get(newsUrl, auth: NetworkAuth.Auth2);
       String? responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
-        List<dynamic>? jsonData = AppJson.decode(responseBody);
-        if (AppCollection.isCollectionNotEmpty(jsonData)) {
+        List<dynamic>? jsonData = JsonUtils.decode(responseBody);
+        if (CollectionUtils.isNotEmpty(jsonData)) {
           List<News> newsList = [];
           for (dynamic jsonEntry in jsonData!) {
-            News? news = News.fromJson(AppJson.mapValue(jsonEntry));
+            News? news = News.fromJson(JsonUtils.mapValue(jsonEntry));
             if (news != null) {
               newsList.add(news);
             }
@@ -709,7 +709,7 @@ class Sports with Service implements NotificationsListener {
   ///Game Helpers
 
   Game? getFirstUpcomingGame(List<Game> games) {
-    if (AppCollection.isCollectionNotEmpty(games)) {
+    if (CollectionUtils.isNotEmpty(games)) {
       return games.first;
     } else {
       return null;
@@ -717,7 +717,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   List<Game>? getTodayGames(List<Game>? games) {
-    if (AppCollection.isCollectionEmpty(games)) {
+    if (CollectionUtils.isEmpty(games)) {
       return null;
     }
     List<Game> todayGames = [];
@@ -726,7 +726,7 @@ class Sports with Service implements NotificationsListener {
         todayGames.add(game);
       }
     }
-    if (AppCollection.isCollectionEmpty(todayGames)) {
+    if (CollectionUtils.isEmpty(todayGames)) {
       return null;
     }
     _sortTodayGames(todayGames);
@@ -734,7 +734,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   void _sortTodayGames(List<Game> todayGames) {
-    if (AppCollection.isCollectionEmpty(todayGames)) {
+    if (CollectionUtils.isEmpty(todayGames)) {
       return;
     }
     final List<String?> gameDaySortOrder = [

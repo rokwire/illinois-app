@@ -86,7 +86,7 @@ class ExploreConvergeDetailItem extends StatelessWidget{
   }
 
   bool hasConvergeUrl(){
-    return !AppString.isStringEmpty(eventConvergeUrl);
+    return !StringUtils.isEmpty(eventConvergeUrl);
   }
 
   bool hasConvergeScore(){

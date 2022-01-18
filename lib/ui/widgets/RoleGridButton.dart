@@ -20,6 +20,7 @@ import 'package:flutter/semantics.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -214,7 +215,7 @@ class RoleGridButton extends StatelessWidget {
 
   static Widget gridFromFlexUI({ Set<UserRole>? selectedRoles, double gridSpacing = 5, Function? onTap }) {
     List<Widget> roleButtons1 = <Widget>[], roleButtons2 = <Widget>[];
-    List<String> codes = AppJson.listStringsValue(FlexUI()['roles']) ?? [];
+    List<String> codes = JsonUtils.listStringsValue(FlexUI()['roles']) ?? [];
     int index = 1;
     for (String code in codes) {
       

@@ -25,6 +25,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -173,11 +174,11 @@ class _OnboardingLoginPhoneVerifyPanelState
                     ],
                   ),
                   Visibility(
-                    visible: AppString.isStringNotEmpty(_validationErrorMsg),
+                    visible: StringUtils.isNotEmpty(_validationErrorMsg),
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
                       child: Text(
-                        AppString.getDefaultEmptyString(_validationErrorMsg),
+                        StringUtils.ensureNotEmpty(_validationErrorMsg),
                         style: TextStyle(
                             color: Colors.red,
                             fontSize: 14,
@@ -225,15 +226,15 @@ class _OnboardingLoginPhoneVerifyPanelState
     Analytics.instance.logSelect(target: "Next");
     _clearErrorMsg();
     _validateUserInput();
-    if (AppString.isStringNotEmpty(_validationErrorMsg)) {
+    if (StringUtils.isNotEmpty(_validationErrorMsg)) {
       return;
     }
 
     String? phoneNumber = _phoneNumberController.text;
     if(kReleaseMode) {
-      if (AppString.isUsPhoneValid(phoneNumber)) {
-        phoneNumber = AppString.constructUsPhone(phoneNumber);
-        if (AppString.isUsPhoneNotValid(phoneNumber)) {
+      if (StringUtils.isUsPhoneValid(phoneNumber)) {
+        phoneNumber = StringUtils.constructUsPhone(phoneNumber);
+        if (StringUtils.isUsPhoneNotValid(phoneNumber)) {
           AppAlert.showDialogResult(context, Localization().getStringEx("panel.onboarding.verify_phone.validation.server_error.text", "Please enter a valid phone number"));
           return;
         }
@@ -281,7 +282,7 @@ class _OnboardingLoginPhoneVerifyPanelState
 
   void _validateUserInput() {
     String phoneNumberValue = _phoneNumberController.text;
-    if (AppString.isStringEmpty(phoneNumberValue)) {
+    if (StringUtils.isEmpty(phoneNumberValue)) {
       setState(() {
         _validationErrorMsg = Localization().getStringEx(
             'panel.onboarding.verify_phone.validation.phone_number.text',

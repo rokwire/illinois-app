@@ -81,7 +81,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(visible: AppCollection.isCollectionNotEmpty(_promotedItems), child:
+    return Visibility(visible: CollectionUtils.isNotEmpty(_promotedItems), child:
       Column(children: [
           SectionTitlePrimary(
             title: Localization().getStringEx('widget.home_campus_guide_highlights.label.heading', 'Campus Guide Highlights'),

@@ -125,7 +125,7 @@ class DeviceCalendar with Service implements NotificationsListener{
 
     String? eventId = event.internalEventId != null && _calendarEventIdTable!= null ? _calendarEventIdTable![event.internalEventId] : null;
     _debugMessage("Try delete eventId: ${event.internalEventId} stored with calendarId: $eventId from calendarId ${calendar!.id}");
-    if(AppString.isStringEmpty(eventId)){
+    if(StringUtils.isEmpty(eventId)){
       return false;
     }
 
@@ -154,7 +154,7 @@ class DeviceCalendar with Service implements NotificationsListener{
     final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
     List<Calendar>? calendars = calendarsResult.data;
     _deviceCalendars = calendars!=null && calendars.isNotEmpty? calendars.where((Calendar calendar) => calendar.isReadOnly == false).toList() : null;
-    if(AppCollection.isCollectionNotEmpty(_deviceCalendars)) {
+    if(CollectionUtils.isNotEmpty(_deviceCalendars)) {
       _defaultCalendar = (_deviceCalendars as List<Calendar?>).firstWhere((element) => (element?.isDefault == true), orElse: () => null);
       return true;
     }

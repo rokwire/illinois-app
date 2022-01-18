@@ -6,6 +6,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class DebugCreateInboxMessagePanel extends StatefulWidget {
@@ -27,7 +28,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
   void initState() {
     super.initState();
 
-    InboxMessage? lastMessage = InboxMessage.fromJson(AppJson.decodeMap(Storage().debugLastInboxMessage));
+    InboxMessage? lastMessage = InboxMessage.fromJson(JsonUtils.decodeMap(Storage().debugLastInboxMessage));
 
     String recepients = "";
     if (lastMessage?.recepients != null) {
@@ -45,7 +46,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
     _recepientsController = TextEditingController(text: recepients);
     _subjectController = TextEditingController(text: lastMessage?.subject ?? 'Lorem ipsum');
     _bodyController = TextEditingController(text: lastMessage?.body ?? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec blandit dapibus accumsan. Aenean luctus eu eros et tempor.');
-    _dataController = TextEditingController(text: AppJson.encode(lastMessage?.data)  ?? '');
+    _dataController = TextEditingController(text: JsonUtils.encode(lastMessage?.data)  ?? '');
   }
 
   @override
@@ -247,7 +248,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
       recepients: recepients,
       subject: _subjectController!.text,
       body: _bodyController!.text,
-      data: AppJson.decodeMap(_dataController!.text)
+      data: JsonUtils.decodeMap(_dataController!.text)
     );
 
     setState(() {
@@ -259,7 +260,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
         _sending = false;
       });
       if (result) {
-        Storage().debugLastInboxMessage = AppJson.encode(message.toJson());
+        Storage().debugLastInboxMessage = JsonUtils.encode(message.toJson());
         Navigator.of(context).pop();
       }
       else {

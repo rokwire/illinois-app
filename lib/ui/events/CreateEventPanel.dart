@@ -39,6 +39,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:intl/intl.dart';
@@ -181,7 +182,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           child: Stack(
                             alignment: Alignment.bottomCenter,
                             children: <Widget>[
-                              AppString.isStringNotEmpty(_imageUrl)
+                              StringUtils.isNotEmpty(_imageUrl)
                                   ? Positioned.fill(child: Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Network.authApiKeyHeader))
                                   : Container(),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
@@ -1583,7 +1584,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         context: context,
         builder: (_) => AddImageWidget()
     );
-    if (AppString.isStringNotEmpty(imageUrl) && (_imageUrl != imageUrl)) {
+    if (StringUtils.isNotEmpty(imageUrl) && (_imageUrl != imageUrl)) {
       setState(() {
         _imageUrl = imageUrl;
         _modified = true;
@@ -1657,7 +1658,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       _location!.name = locationName;
       _eventLocationController.text = locationName!;
 
-      if(AppString.isStringNotEmpty(_location!.description)){
+      if(StringUtils.isNotEmpty(_location!.description)){
         if (_isOnline) {
           _eventCallUrlController.text = _location!.description!;
         }
@@ -1788,14 +1789,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
       if (hasGroup) {
         List<Group>? otherGroups = await _loadOtherAdminUserGroups();
-        if (AppCollection.isCollectionNotEmpty(otherGroups)) {
+        if (CollectionUtils.isNotEmpty(otherGroups)) {
           otherGroupsToSave = await showDialog(context: context, barrierDismissible: false, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
         }
       }
 
       // Save the initial event and link it to group if it's part of such one.
       String? mainEventId = await ExploreService().postNewEvent(mainEvent);
-      if (AppString.isStringNotEmpty(mainEventId)) {
+      if (StringUtils.isNotEmpty(mainEventId)) {
         // Succeeded to create the main event
         if (hasGroup) {
           bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: mainEvent.createdByGroupId, eventId: mainEventId);
@@ -1805,23 +1806,23 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
             groupToDisplay = widget.group;
           } else {
             // Failed to link event to group
-            AppList.add(createEventFailedForGroupNames, widget.group?.title);
+            ListUtils.add(createEventFailedForGroupNames, widget.group?.title);
           }
         } else {
           // Succeeded to create event that has no group
           eventToDisplay = mainEvent;
         }
       } else if (hasGroup) {
-        AppList.add(createEventFailedForGroupNames, widget.group?.title);
+        ListUtils.add(createEventFailedForGroupNames, widget.group?.title);
       }
 
       // Save the event to the other selected groups that the user is admin.
-      if (hasGroup && AppCollection.isCollectionNotEmpty(otherGroupsToSave)) {
+      if (hasGroup && CollectionUtils.isNotEmpty(otherGroupsToSave)) {
         for (Group group in otherGroupsToSave!) {
           Event? groupEvent = Event.fromOther(mainEvent);
           groupEvent?.createdByGroupId = group.id;
           String? groupEventId = await ExploreService().postNewEvent(groupEvent);
-          if (AppString.isStringNotEmpty(groupEventId)) {
+          if (StringUtils.isNotEmpty(groupEventId)) {
             bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent?.createdByGroupId, eventId: groupEventId);
             if (eventLinkedToGroup) {
               // Succeeded to link event to group
@@ -1831,20 +1832,20 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
               }
             } else {
               // Failed to link event to group
-              AppList.add(createEventFailedForGroupNames, group.title);
+              ListUtils.add(createEventFailedForGroupNames, group.title);
             }
           } else {
             // Failed to create event for group
-            AppList.add(createEventFailedForGroupNames, group.title);
+            ListUtils.add(createEventFailedForGroupNames, group.title);
           }
         }
       }
 
       String failedMsg;
-      if (AppCollection.isCollectionNotEmpty(createEventFailedForGroupNames)) {
+      if (CollectionUtils.isNotEmpty(createEventFailedForGroupNames)) {
         failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error creating this event for the following groups: ') ?? '';
         failedMsg += createEventFailedForGroupNames.join(', ');
-      } else if (AppString.isStringEmpty(mainEventId)) {
+      } else if (StringUtils.isEmpty(mainEventId)) {
         failedMsg = Localization().getStringEx('panel.create_event.failed.msg', 'There was an error creating this event.') ?? '';
       }
       else {
@@ -1852,7 +1853,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       }
 
       _setLoading(false);
-      if (AppString.isStringNotEmpty(failedMsg)) {
+      if (StringUtils.isNotEmpty(failedMsg)) {
         AppAlert.showDialogResult(context, failedMsg);
       }
 
@@ -1869,7 +1870,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   Future<List<Group>?> _loadOtherAdminUserGroups() async {
     List<Group>? userGroups = await Groups().loadGroups(myGroups: true);
     List<Group>? userAdminGroups;
-    if (AppCollection.isCollectionNotEmpty(userGroups)) {
+    if (CollectionUtils.isNotEmpty(userGroups)) {
       userAdminGroups = [];
       String? currentGroupId = widget.group?.id;
       for (Group? group in userGroups!) {
@@ -1915,7 +1916,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.allDay = _allDay;
     event.location = _location;
     event.longDescription = _eventDescriptionController.text;
-    event.registrationUrl = AppString.isStringNotEmpty(_eventPurchaseUrlController.text)?_eventPurchaseUrlController.text : null;
+    event.registrationUrl = StringUtils.isNotEmpty(_eventPurchaseUrlController.text)?_eventPurchaseUrlController.text : null;
     event.titleUrl = _eventWebsiteController.text;
     event.isVirtual = _isOnline;
     event.recurringFlag = false;//decide do we need it
@@ -2035,7 +2036,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   bool _isFormValid() {
     bool _categoryValidation = _selectedCategory != null;
-    bool _titleValidation = AppString.isStringNotEmpty(_eventTitleController.text);
+    bool _titleValidation = StringUtils.isNotEmpty(_eventTitleController.text);
     bool _startDateValidation = _startDate != null;
     bool _startTimeValidation = _startTime != null || _allDay;
     bool _endDateValidation = _endDate != null;
@@ -2048,7 +2049,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   bool _validateWithResult() {
     bool _categoryValidation = _selectedCategory != null;
     bool _titleValidation =
-        AppString.isStringNotEmpty(_eventTitleController.text);
+        StringUtils.isNotEmpty(_eventTitleController.text);
     bool _startDateValidation = _startDate != null;
     bool _startTimeValidation = _startTime != null || _allDay;
     bool _endDateValidation = _endDate != null;
@@ -2120,7 +2121,7 @@ class _EventDateDisplayView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              AppString.getDefaultEmptyString(label, defaultValue: '-'),
+              StringUtils.ensureNotEmpty(label, defaultValue: '-'),
               style: TextStyle(
                   color: Styles().colors!.fillColorPrimary,
                   fontSize: 16,
@@ -2353,9 +2354,9 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
   @override
   void initState() {
     super.initState();
-    if (AppCollection.isCollectionNotEmpty(widget.groups)) {
+    if (CollectionUtils.isNotEmpty(widget.groups)) {
       for (Group group in widget.groups!) {
-        AppList.add(_selectedGroupIds, group.id);
+        ListUtils.add(_selectedGroupIds, group.id);
       }
     }
   }
@@ -2379,7 +2380,7 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
           ])),
       Padding(
           padding: EdgeInsets.all(10),
-          child: AppCollection.isCollectionNotEmpty(widget.groups)
+          child: CollectionUtils.isNotEmpty(widget.groups)
               ? ListView.builder(
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) => ToggleRibbonButton(
@@ -2418,7 +2419,7 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
   }
 
   bool _isGroupSelected(int index) {
-    if ((widget.groups != null) && (index >= 0) && (index < widget.groups!.length) && AppCollection.isCollectionNotEmpty(_selectedGroupIds)) {
+    if ((widget.groups != null) && (index >= 0) && (index < widget.groups!.length) && CollectionUtils.isNotEmpty(_selectedGroupIds)) {
       Group group = widget.groups![index];
       for (String groupId in _selectedGroupIds) {
         if (groupId == group.id) {
@@ -2431,7 +2432,7 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
 
   void _onTapSelect() {
     List<Group>? selectedGroups;
-    if (AppCollection.isCollectionNotEmpty(_selectedGroupIds)) {
+    if (CollectionUtils.isNotEmpty(_selectedGroupIds)) {
       selectedGroups = [];
       if (widget.groups != null) {
         for (Group group in widget.groups!) {

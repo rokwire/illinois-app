@@ -54,7 +54,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
   @override
   Widget build(BuildContext context) {
     String headerLabel = widget.sport?.name ?? Localization().getStringEx('panel.athletics_schedule.header.title', 'SCHEDULE')!;
-    String scheduleYear = AppString.getDefaultEmptyString(_scheduleYear);
+    String scheduleYear = StringUtils.ensureNotEmpty(_scheduleYear);
     String scheduleLabel = scheduleYear + " " + Localization().getStringEx("panel.athletics_schedule.label.schedule.title", "Schedule")!;
     int itemsCount = _displayList?.length ?? 0;
     return Scaffold(
@@ -123,7 +123,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
 
   List _buildDisplayList() {
     List displayList = [];
-    if (AppCollection.isCollectionNotEmpty(_schedule?.games)) {
+    if (CollectionUtils.isNotEmpty(_schedule?.games)) {
       DateTime now = DateTime.now();
       for (Game? game in _schedule!.games!) {
         DateTime? gameDateTime = game!.dateTimeUniLocal;

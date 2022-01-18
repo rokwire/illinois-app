@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
@@ -38,7 +39,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
       }
     }
 
-      if (AppCollection.isCollectionNotEmpty(contentList)) {
+      if (CollectionUtils.isNotEmpty(contentList)) {
       List<Widget> content = <Widget>[];
       for (Widget entry in contentList) {
         if (content.isNotEmpty) {

@@ -131,10 +131,10 @@ class Event with Explore implements Favorite {
     outlookUrl = json['outlookUrl'];
     speaker = json['speaker'];
     registrationLabel = json['registrationLabel'];
-    if (AppString.isStringNotEmpty(json['registrationUrl'])) {
+    if (StringUtils.isNotEmpty(json['registrationUrl'])) {
       registrationUrl = json['registrationUrl'];
     }
-    else if (AppString.isStringNotEmpty(json['registrationURL'])) {
+    else if (StringUtils.isNotEmpty(json['registrationURL'])) {
       registrationUrl = json['registrationURL'];
     }
     cost = json['cost'];
@@ -401,7 +401,7 @@ class Event with Explore implements Favorite {
     if(recurrenceId!=null) {
       result["recurrenceId"] = recurrenceId;
     }
-    if(isRecurring && AppCollection.isCollectionNotEmpty(recurringEvents)) {
+    if(isRecurring && CollectionUtils.isNotEmpty(recurringEvents)) {
       result["recurringEvents"] = _encodeRecurringEvents();
     }
     if(convergeScore!=null) {
@@ -447,7 +447,7 @@ class Event with Explore implements Favorite {
     if (jsonList != null) {
       result = <Event>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, Event.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, Event.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -492,8 +492,8 @@ class Event with Explore implements Favorite {
 
   bool get isGameEvent {
     bool isAthletics = (category == "Athletics" || category == "Recreation");
-    bool hasGameId = AppString.isStringNotEmpty(speaker);
-    bool hasRegistrationFlag = AppString.isStringNotEmpty(registrationLabel);
+    bool hasGameId = StringUtils.isNotEmpty(speaker);
+    bool hasRegistrationFlag = StringUtils.isNotEmpty(registrationLabel);
     return isAthletics && hasGameId && hasRegistrationFlag;
   }
 
@@ -660,7 +660,7 @@ class Event with Explore implements Favorite {
     String? startTime = AppDateTime().getDisplayTime(dateTimeUtc: startDateGmt, allDay: allDay);
     String? endTime = AppDateTime().getDisplayTime(dateTimeUtc: endDateGmt, allDay: allDay);
     String displayTime = '$startTime';
-    if (AppString.isStringNotEmpty(endTime)) {
+    if (StringUtils.isNotEmpty(endTime)) {
       displayTime += '-$endTime';
     }
     return displayTime;
@@ -725,7 +725,7 @@ class Event with Explore implements Favorite {
 
   String get displayInterests {
     String interests = "";
-    if(AppCollection.isCollectionNotEmpty(tags)) {
+    if(CollectionUtils.isNotEmpty(tags)) {
       tags!.forEach((String tag){
           if(Auth2().prefs?.hasPositiveTag(tag) ?? false) {
             if (interests.isNotEmpty) {
@@ -790,7 +790,7 @@ class Contact {
     if (jsonList != null) {
       result = <Contact>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, Contact.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, Contact.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;

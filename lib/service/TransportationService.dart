@@ -37,14 +37,14 @@ class TransportationService /* with Service */ {
   Future<List<ParkingEvent>?> loadParkingEvents() async {
     final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/events" : null;
     final response = await Network().get(url, auth: NetworkAuth.Auth2);
-    return (response?.statusCode == 200) ? ParkingEvent.listFromJson(AppJson.decodeList(response?.body)) : null;
+    return (response?.statusCode == 200) ? ParkingEvent.listFromJson(JsonUtils.decodeList(response?.body)) : null;
   }
 
   Future<List<ParkingLot>?> loadParkingEventInventory(String? eventId) async {
-    if (AppString.isStringNotEmpty(eventId)) {
+    if (StringUtils.isNotEmpty(eventId)) {
       final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/v2/inventory?event-id=$eventId" : null;
       final response = await Network().get(url, auth: NetworkAuth.Auth2);
-      return (response?.statusCode == 200) ? ParkingLot.listFromJson(AppJson.decodeList(response?.body)) : null;
+      return (response?.statusCode == 200) ? ParkingLot.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
     return null;
   }
@@ -62,9 +62,9 @@ class TransportationService /* with Service */ {
       final response = await Network().get(url, auth: NetworkAuth.Auth2, body:body);
 
       if ((response != null) && (response.statusCode == 200)) {
-        Map<String, dynamic>? jsonData = AppJson.decodeMap(response.body);
+        Map<String, dynamic>? jsonData = JsonUtils.decodeMap(response.body);
         String? colorHex = (jsonData != null) ? jsonData["color"] : null;
-        return AppString.isStringNotEmpty(colorHex) ? UiColors.fromHex(colorHex) : null;
+        return StringUtils.isNotEmpty(colorHex) ? UiColors.fromHex(colorHex) : null;
       } else {
         Log.e('Failed to load bus color');
         Log.e(response?.body);
@@ -86,7 +86,7 @@ class TransportationService /* with Service */ {
       if (response != null) {
         if (response.statusCode == 200) {
           String responseBody = response.body;
-          return AppJson.decode(responseBody);
+          return JsonUtils.decode(responseBody);
         } else {
           return response.statusCode;
         }

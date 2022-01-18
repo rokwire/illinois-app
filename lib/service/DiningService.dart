@@ -65,13 +65,13 @@ class DiningService  with Service {
         _lastDiningLocationsRequestTime = DateTime.now();
       }
 
-      Map<String, dynamic>? jsonData = AppJson.decode(_diningLocationsResponse);
+      Map<String, dynamic>? jsonData = JsonUtils.decode(_diningLocationsResponse);
       if (jsonData != null) {
         // 1.2.2 Load Menu Schedules
         List<dynamic>? diningLocations = jsonData["DiningOptions"];
         if (diningLocations != null && diningLocations.isNotEmpty) {
           for (dynamic diningLocation in diningLocations) {
-            AppList.add(dinings, Dining.fromJson(AppJson.mapValue(diningLocation)));
+            ListUtils.add(dinings, Dining.fromJson(JsonUtils.mapValue(diningLocation)));
           }
         }
       }
@@ -130,11 +130,11 @@ class DiningService  with Service {
         final url = (Config().illiniCashBaseUrl != null) ? "${Config().illiniCashBaseUrl}/Menu/$diningId/$filterDateString" : null;
         final response = await Network().get(url);
         if ((response != null) && (response.statusCode == 200)) {
-          List<dynamic>? jsonList = AppJson.decode(response.body);
+          List<dynamic>? jsonList = JsonUtils.decode(response.body);
           List<DiningProductItem> productList = [];
-          if (AppCollection.isCollectionNotEmpty(jsonList)) {
+          if (CollectionUtils.isNotEmpty(jsonList)) {
             for (dynamic jsonEntry in jsonList!) {
-              DiningProductItem? item = DiningProductItem.fromJson(AppJson.mapValue(jsonEntry));
+              DiningProductItem? item = DiningProductItem.fromJson(JsonUtils.mapValue(jsonEntry));
               if (item != null) {
                 productList.add(item);
               }
@@ -160,8 +160,8 @@ class DiningService  with Service {
       if ((response != null) && (response.statusCode == 200)) {
         responseBody = response.body;
 
-        if (AppString.isStringNotEmpty(responseBody)) {
-          Map<String, dynamic>? jsonData = AppJson.decode(responseBody);
+        if (StringUtils.isNotEmpty(responseBody)) {
+          Map<String, dynamic>? jsonData = JsonUtils.decode(responseBody);
           return DiningNutritionItem.fromJson(jsonData);
         }
       } else {
@@ -199,12 +199,12 @@ class DiningService  with Service {
       }
 
       if (responseBody != null) {
-        List<dynamic>? jsonList = AppJson.decode(responseBody);
-        if (AppCollection.isCollectionNotEmpty(jsonList)) {
+        List<dynamic>? jsonList = JsonUtils.decode(responseBody);
+        if (CollectionUtils.isNotEmpty(jsonList)) {
           List<DiningSpecial> list = [];
 
           for (dynamic jsonEntry in jsonList!) {
-            AppList.add(list, DiningSpecial.fromJson(AppJson.mapValue(jsonEntry) ));
+            ListUtils.add(list, DiningSpecial.fromJson(JsonUtils.mapValue(jsonEntry) ));
           }
 
           return list;
@@ -234,11 +234,11 @@ class DiningService  with Service {
     explores.sort((Explore explore1, Explore explore2) {
       double? lat1 = explore1.exploreLocation?.latitude?.toDouble();
       double? lng1 = explore1.exploreLocation?.longitude?.toDouble();
-      double distance1 = ((lat1 != null) && (lng1 != null)) ? AppLocation.distance(lat1, lng1, locationData.latitude, locationData.longitude) : double.infinity;
+      double distance1 = ((lat1 != null) && (lng1 != null)) ? LocationUtils.distance(lat1, lng1, locationData.latitude, locationData.longitude) : double.infinity;
       
       double? lat2 = explore2.exploreLocation?.latitude?.toDouble();
       double? lng2 = explore2.exploreLocation?.longitude?.toDouble();
-      double distance2 = ((lat2 != null) && (lng2 != null)) ? AppLocation.distance(lat2, lng2, locationData.latitude, locationData.longitude) : double.infinity;
+      double distance2 = ((lat2 != null) && (lng2 != null)) ? LocationUtils.distance(lat2, lng2, locationData.latitude, locationData.longitude) : double.infinity;
       
       if (distance1 < distance2) {
         return -1;
@@ -261,7 +261,7 @@ class DiningService  with Service {
   /////////////////////////
   // Enabled
 
-  bool get _enabled => AppString.isStringNotEmpty(Config().illiniCashBaseUrl);
+  bool get _enabled => StringUtils.isNotEmpty(Config().illiniCashBaseUrl);
 }
 
 class DiningUtils{

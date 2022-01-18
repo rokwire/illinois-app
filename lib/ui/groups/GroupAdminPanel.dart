@@ -31,6 +31,7 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
@@ -177,7 +178,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
 
   Widget _buildEventsSection(){
     Widget eventsWidget;
-    if(AppCollection.isCollectionNotEmpty(widget.groupEvents)){
+    if(CollectionUtils.isNotEmpty(widget.groupEvents)){
       eventsWidget = Column(
         children: widget.groupEvents!.map((event){
           return Padding(
@@ -477,7 +478,7 @@ class _EventCard extends StatelessWidget {
                             Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: event, onEditTap: (Event event){
                               //TBD notify service for Event Update
                               Groups().updateGroupEvents(event).then((String? id) {
-                                if (AppString.isStringNotEmpty(id)) {
+                                if (StringUtils.isNotEmpty(id)) {
                                   Navigator.pop(context);
                                 }
                                 else {

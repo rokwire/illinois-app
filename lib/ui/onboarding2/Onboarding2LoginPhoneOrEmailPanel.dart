@@ -108,9 +108,9 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                         ),
                       ),
                     ),
-                    Visibility(visible: AppString.isStringNotEmpty(_validationErrorMsg), child:
+                    Visibility(visible: StringUtils.isNotEmpty(_validationErrorMsg), child:
                       Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
-                        Text(AppString.getDefaultEmptyString(_validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+                        Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
                       ),
                     ),
                   ],),
@@ -150,12 +150,12 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
 
       String phoneOrEmailValue = _phoneOrEmailController!.text;
       String? phone = _validatePhoneNumber(phoneOrEmailValue);
-      String? email = AppString.isEmailValid(phoneOrEmailValue) ? phoneOrEmailValue : null;
+      String? email = StringUtils.isEmailValid(phoneOrEmailValue) ? phoneOrEmailValue : null;
 
-      if (AppString.isStringNotEmpty(phone)) {
+      if (StringUtils.isNotEmpty(phone)) {
         _loginByPhone(phone);
       }
-      else if (AppString.isStringNotEmpty(email)) {
+      else if (StringUtils.isNotEmpty(email)) {
         _loginByEmail(email);
       }
       else {
@@ -206,7 +206,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
       _validationErrorMsg = msg;
     });
 
-    if (AppString.isStringNotEmpty(msg)) {
+    if (StringUtils.isNotEmpty(msg)) {
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         if (_validationErrorKey.currentContext != null) {
           Scrollable.ensureVisible(_validationErrorKey.currentContext!, duration: Duration(milliseconds: 300)).then((_) {
@@ -224,15 +224,15 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
 
   static String? _validatePhoneNumber(String? phoneNumber) {
     if (kReleaseMode) {
-      if (AppString.isUsPhoneValid(phoneNumber)) {
-        phoneNumber = AppString.constructUsPhone(phoneNumber);
-        if (AppString.isUsPhoneValid(phoneNumber)) {
+      if (StringUtils.isUsPhoneValid(phoneNumber)) {
+        phoneNumber = StringUtils.constructUsPhone(phoneNumber);
+        if (StringUtils.isUsPhoneValid(phoneNumber)) {
           return phoneNumber;
         }
       }
     }
     else {
-      if (AppString.isPhoneValid(phoneNumber)) {
+      if (StringUtils.isPhoneValid(phoneNumber)) {
         return phoneNumber;
       }
     }

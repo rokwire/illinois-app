@@ -24,6 +24,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/Storage.dart';
@@ -616,7 +617,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       _setGroupPollsLoading(true);
       _loadMyGroupsIfNeeded().then((_) {
         List<String>? groupIds = _myGroupIds;
-        if (AppCollection.isCollectionNotEmpty(groupIds)) {
+        if (CollectionUtils.isNotEmpty(groupIds)) {
           Polls().getGroupPolls(groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
             if (result != null) {
               if (_groupPolls == null) {
@@ -640,7 +641,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Future<void> _loadMyGroupsIfNeeded() async {
-    if (AppCollection.isCollectionEmpty(_myGroups)) {
+    if (CollectionUtils.isEmpty(_myGroups)) {
       await _reloadMyGroups();
     }
   }
@@ -651,7 +652,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   List<String>? get _myGroupIds {
     List<String>? groupIds;
-    if (AppCollection.isCollectionNotEmpty(_myGroups)) {
+    if (CollectionUtils.isNotEmpty(_myGroups)) {
       groupIds = [];
       _myGroups!.forEach((group) {
         groupIds!.add(group.id!);
@@ -661,7 +662,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Group? _getGroup(String? groupId) {
-    if (AppString.isStringNotEmpty(groupId) && AppCollection.isCollectionNotEmpty(_myGroups)) {
+    if (StringUtils.isNotEmpty(groupId) && CollectionUtils.isNotEmpty(_myGroups)) {
       for (Group group in _myGroups!) {
         if (groupId == group.id) {
           return group;
@@ -895,11 +896,11 @@ class _PollCardState extends State<_PollCard>{
           <Widget>[
             Visibility(visible: (widget.group != null), child: Padding(padding: EdgeInsets.only(bottom: 10), child: Row(children: [
               Padding(padding: EdgeInsets.only(right: 3), child: Text(Localization().getStringEx('panel.polls_home.card.group.label', 'Group:')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14))),
-              Expanded(child: Text(AppString.getDefaultEmptyString(groupName), overflow: TextOverflow.ellipsis, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
+              Expanded(child: Text(StringUtils.ensureNotEmpty(groupName), overflow: TextOverflow.ellipsis, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
             ]))),
             Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus",
             child: Padding(padding: EdgeInsets.only(bottom: 12), child: Row(children: <Widget>[
-              Text(AppString.getDefaultEmptyString(pollVotesStatus), style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),),
+              Text(StringUtils.ensureNotEmpty(pollVotesStatus), style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),),
               Text('  ', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12,),),
               Expanded(child:
               Text(pollStatus ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, ),),

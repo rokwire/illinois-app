@@ -125,7 +125,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
               ),
               Image.asset('images/chevron-right.png', excludeFromSemantics: true,),
             ],),
-            AppString.isStringNotEmpty(description) ?
+            StringUtils.isNotEmpty(description) ?
               Padding(padding: EdgeInsets.only(top: 5), child:
                 Text(description!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface),),
               ) :
@@ -160,7 +160,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   void _onMyMcKinley() {
     Analytics().logSelect(target: 'MyMcKinley');
-    if (AppString.isStringNotEmpty(Config().saferMcKinley['url'])) {
+    if (StringUtils.isNotEmpty(Config().saferMcKinley['url'])) {
       launch(Config().saferMcKinley['url']);
     }
   }

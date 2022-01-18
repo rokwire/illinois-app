@@ -82,10 +82,10 @@ class Group {
     try { dateUpdatedUtc    = groupUtcDateTimeFromString(json['date_updated']); } catch(e) { print(e.toString()); }
     try { imageURL          = json['image_url'];     } catch(e) { print(e.toString()); }
     try { webURL            = json['web_url'];       } catch(e) { print(e.toString()); }
-    try { tags              = AppJson.listStringsValue(json['tags']); } catch(e) { print(e.toString()); }
+    try { tags              = JsonUtils.listStringsValue(json['tags']); } catch(e) { print(e.toString()); }
     try { membershipQuest   = GroupMembershipQuest.fromJson(json['membershipQuest']); } catch(e) { print(e.toString()); }
     try { members           = Member.listFromJson(json['members']); } catch(e) { print(e.toString()); }
-    try { questions         = GroupMembershipQuestion.listFromStringList(AppJson.stringListValue(json['membership_questions'])); } catch(e) { print(e.toString()); }
+    try { questions         = GroupMembershipQuestion.listFromStringList(JsonUtils.stringListValue(json['membership_questions'])); } catch(e) { print(e.toString()); }
   }
 
   Map<String, dynamic> toJson({bool withId = true}) {
@@ -140,14 +140,14 @@ class Group {
   }
 
   List<Member> getMembersByStatus(GroupMemberStatus? status){
-    if(AppCollection.isCollectionNotEmpty(members) && status != null){
+    if(CollectionUtils.isNotEmpty(members) && status != null){
       return members!.where((member) => member.status == status).toList();
     }
     return [];
   }
 
   Member? getMembersById(String? id){
-    if(AppCollection.isCollectionNotEmpty(members) && AppString.isStringNotEmpty(id)){
+    if(CollectionUtils.isNotEmpty(members) && StringUtils.isNotEmpty(id)){
       for(Member? member in members!){
         if(member!.id == id){
           return member;
@@ -158,7 +158,7 @@ class Group {
   }
 
   Member? get currentUserAsMember{
-    if(Auth2().isOidcLoggedIn && AppCollection.isCollectionNotEmpty(members)) {
+    if(Auth2().isOidcLoggedIn && CollectionUtils.isNotEmpty(members)) {
       for (Member? member in members!) {
         if (member!.userId == Auth2().accountId) {
           return member;
@@ -208,7 +208,7 @@ class Group {
 
   int get adminsCount{
     int adminsCount = 0;
-    if(AppCollection.isCollectionNotEmpty(members)){
+    if(CollectionUtils.isNotEmpty(members)){
       for(Member? member in members!){
         if(member!.isAdmin){
           adminsCount++;
@@ -220,7 +220,7 @@ class Group {
 
   int get membersCount{
     int membersCount = 0;
-    if(AppCollection.isCollectionNotEmpty(members)){
+    if(CollectionUtils.isNotEmpty(members)){
       for(Member? member in members!){
         if(member!.isAdmin || member.isMember){
           membersCount++;
@@ -232,7 +232,7 @@ class Group {
 
   int get pendingCount{
     int membersCount = 0;
-    if(AppCollection.isCollectionNotEmpty(members)){
+    if(CollectionUtils.isNotEmpty(members)){
       for(Member? member in members!){
         if(member!.isPendingMember){
           membersCount++;
@@ -293,7 +293,7 @@ class Group {
     if (json != null) {
       values = <Group>[];
       for (dynamic entry in json) {
-        AppList.add(values, Group.fromJson(AppJson.mapValue(entry)));
+        ListUtils.add(values, Group.fromJson(JsonUtils.mapValue(entry)));
       }
     }
     return values;
@@ -413,7 +413,7 @@ class Member {
     json['photo_url']           = photoURL;
     json['status']              = groupMemberStatusToString(status);
     json['officerTitle']        = officerTitle;
-    json['answers']             = AppCollection.isCollectionNotEmpty(answers) ? answers!.map((answer) => answer.toJson()).toList() : null;
+    json['answers']             = CollectionUtils.isNotEmpty(answers) ? answers!.map((answer) => answer.toJson()).toList() : null;
     json['date_created']        = groupUtcDateTimeToString(dateCreatedUtc);
     json['date_updated']        = groupUtcDateTimeToString(dateUpdatedUtc);
 
@@ -422,11 +422,11 @@ class Member {
 
   String get displayName {
     String displayName = '';
-    if (AppString.isStringNotEmpty(name)) {
+    if (StringUtils.isNotEmpty(name)) {
       displayName += name!;
     }
-    if (AppString.isStringNotEmpty(email)) {
-      if (AppString.isStringNotEmpty(displayName)) {
+    if (StringUtils.isNotEmpty(email)) {
+      if (StringUtils.isNotEmpty(displayName)) {
         displayName += ' ';
       }
       displayName += email!;
@@ -471,7 +471,7 @@ class Member {
     if (json != null) {
       values = <Member>[];
       for (dynamic entry in json) {
-        AppList.add(values, Member.fromJson(AppJson.mapValue(entry)));
+        ListUtils.add(values, Member.fromJson(JsonUtils.mapValue(entry)));
       }
     }
     return values;
@@ -607,7 +607,7 @@ class GroupMembershipStep {
 
   void _initFromJson(Map<String, dynamic> json) {
     try { description = json['description'];   } catch(e) { print(e.toString()); }
-    try { eventIds    = AppJson.stringListValue(json['eventIds']); } catch(e) { print(e.toString()); }
+    try { eventIds    = JsonUtils.stringListValue(json['eventIds']); } catch(e) { print(e.toString()); }
   }
 
   void _initFromOther(GroupMembershipStep? other) {
@@ -636,7 +636,7 @@ class GroupMembershipStep {
     if (json != null) {
       values = [];
       for (dynamic entry in json) {
-        AppList.add(values, GroupMembershipStep.fromJson(AppJson.mapValue(entry)));
+        ListUtils.add(values, GroupMembershipStep.fromJson(JsonUtils.mapValue(entry)));
       }
     }
     return values;
@@ -658,7 +658,7 @@ class GroupMembershipStep {
     if (others != null) {
       values = [];
       for (GroupMembershipStep? other in others) {
-          AppList.add(values, GroupMembershipStep.fromOther(other));
+          ListUtils.add(values, GroupMembershipStep.fromOther(other));
       }
     }
     return values;
@@ -686,7 +686,7 @@ class GroupMembershipQuestion {
     if (others != null) {
       values = [];
       for (GroupMembershipQuestion? other in others) {
-        AppList.add(values, GroupMembershipQuestion.fromString(other!.question));
+        ListUtils.add(values, GroupMembershipQuestion.fromString(other!.question));
       }
     }
     return values;
@@ -697,7 +697,7 @@ class GroupMembershipQuestion {
     if (strings != null) {
       values = <GroupMembershipQuestion>[];
       for (String string in strings) {
-        AppList.add(values, GroupMembershipQuestion.fromString(string));
+        ListUtils.add(values, GroupMembershipQuestion.fromString(string));
       }
     }
     return values;
@@ -708,7 +708,7 @@ class GroupMembershipQuestion {
     if (values != null) {
       strings = <String>[];
       for (GroupMembershipQuestion value in values) {
-        AppList.add(strings, value.question);
+        ListUtils.add(strings, value.question);
       }
     }
     return strings;
@@ -741,7 +741,7 @@ class GroupMembershipAnswer {
     if (json != null) {
       values = [];
       for (dynamic entry in json) {
-        AppList.add(values, GroupMembershipAnswer.fromJson(AppJson.mapValue(entry)));
+        ListUtils.add(values, GroupMembershipAnswer.fromJson(JsonUtils.mapValue(entry)));
       }
     }
     return values;
@@ -823,7 +823,7 @@ class GroupEventComment {
     if (json != null) {
       values = [];
       for (dynamic entry in json) {
-        AppList.add(values, GroupEventComment.fromJson(AppJson.mapValue(entry)));
+        ListUtils.add(values, GroupEventComment.fromJson(JsonUtils.mapValue(entry)));
       }
     }
     return values;
@@ -868,7 +868,7 @@ class GroupPost {
         dateCreatedUtc: groupUtcDateTimeFromString(json['date_created']),
         dateUpdatedUtc: groupUtcDateTimeFromString(json['date_updated']),
         private: json['private'],
-        imageUrl: AppJson.stringValue(json["image_url"]),
+        imageUrl: JsonUtils.stringValue(json["image_url"]),
         replies: GroupPost.fromJsonList(json['replies'])) : null;
   }
 
@@ -934,7 +934,7 @@ class GroupPost {
     if (jsonList != null) {
       posts = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(posts, GroupPost.fromJson(jsonEntry));
+        ListUtils.add(posts, GroupPost.fromJson(jsonEntry));
       }
     }
     return posts;
@@ -961,8 +961,8 @@ class GroupError {
 
   static GroupError? fromJson(Map<String, dynamic>? json){
     return json != null ? GroupError(
-      code: AppJson.intValue(json['code']),
-      text: AppJson.stringValue(json['text'])
+      code: JsonUtils.intValue(json['code']),
+      text: JsonUtils.stringValue(json['text'])
     ) : null;
   }
 

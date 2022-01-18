@@ -6,6 +6,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 
 import 'GroupWidgets.dart';
@@ -130,17 +131,17 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     String? body = _postData.body;
     String? imageUrl = _postData.imageUrl;
     String? subject = _postData.subject;
-    if (AppString.isStringEmpty(subject)) {
+    if (StringUtils.isEmpty(subject)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.subject.msg', "Post subject required"));
       return;
     }
 
-    if (AppString.isStringEmpty(body)) {
+    if (StringUtils.isEmpty(body)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required"));
       return;
     }
 
-    String htmlModifiedBody = AppHtml.replaceNewLineSymbols(body);
+    String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _setLoading(true);
 
     GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl); // if no parentId then this is a new post for the group.

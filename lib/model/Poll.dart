@@ -113,7 +113,7 @@ class Poll {
   }
 
   bool get hasGroup {
-    return AppString.isStringNotEmpty(groupId);
+    return StringUtils.isNotEmpty(groupId);
   }
 
   static int get randomPin {
@@ -145,7 +145,7 @@ class Poll {
     List<Poll> polls = [];
     if (jsonList != null) {
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(polls, Poll.fromJson(jsonEntry));
+        ListUtils.add(polls, Poll.fromJson(jsonEntry));
       }
     }
     return polls;

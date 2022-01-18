@@ -50,7 +50,7 @@ class TeamSchedule {
 
   static TeamSchedule? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TeamSchedule(
-      games: Game.listFromJson(AppJson.listValue(json['games'])),
-      label: AppJson.stringValue(json['label'])) : null;
+      games: Game.listFromJson(JsonUtils.listValue(json['games'])),
+      label: JsonUtils.stringValue(json['label'])) : null;
   }
 }
