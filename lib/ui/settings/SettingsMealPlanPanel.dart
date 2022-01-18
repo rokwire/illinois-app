@@ -649,7 +649,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
 
   String? _getFormattedDate(DateTime? date) {
     return AppDateTime().formatDateTime(
-        date, format: AppDateTime.scheduleServerQueryDateTimeFormat);
+        date, format: 'MM/dd/yyyy');
   }
 
   // NotificationsListener

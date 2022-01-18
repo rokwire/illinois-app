@@ -29,16 +29,6 @@ class AppDateTime with Service {
   static final AppDateTime _instance = new AppDateTime._internal();
 
   static final iso8601DateTimeFormat = 'yyyy-MM-ddTHH:mm:ss';
-  static final eventsServerCreateDateTimeFormat =  'yyyy/MM/ddTHH:mm:ss';
-  static final scheduleServerQueryDateTimeFormat = 'MM/dd/yyyy';
-  static final serverResponseDateTimeFormat = 'E, dd MMM yyyy HH:mm:ss v';
-  static final gameResponseDateTimeFormat = 'yyyy-MM-ddTHH:mm:ssZ';
-  static final gameResponseDateTimeFormat2 = 'MM/dd/yyyy HH:mm:ss a';
-  static final illiniCashTransactionHistoryDateFormat = 'MM-dd-yyyy';
-  static final eventFilterDisplayDateFormat = 'MM/dd';
-  static final voterDateFormat = "yyyy/MM/dd";
-  static final parkingEventDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
-  static final groupPostDateTimeFormat = "MMM dd, HH:mm a";
 
   factory AppDateTime() {
     return _instance;

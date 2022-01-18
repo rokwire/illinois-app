@@ -630,7 +630,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
 
   String? _getFormattedDate(DateTime? date) {
     return AppDateTime().formatDateTime(
-        date, format: AppDateTime.scheduleServerQueryDateTimeFormat);
+        date, format: 'MM/dd/yyyy');
   }
 
   // NotificationsListener

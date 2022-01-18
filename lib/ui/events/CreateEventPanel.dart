@@ -1480,12 +1480,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       if(event.startDateGmt!=null) {
         _startDate =  timezone.TZDateTime.from(event.startDateGmt!, timezone.getLocation(_selectedTimeZone!));
         _startTime = TimeOfDay.fromDateTime(_startDate!);
-//      _endDate = AppDateTime().dateTimeFromString(event.endDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
       }
-//      _endDate = event.endDateGmt;
-//      if(_endDate==null && event.endDateString!=null){
-//        _endDate = AppDateTime().dateTimeFromString(event.endDateString, format: AppDateTime.serverResponseDateTimeFormat);
-//      }
       if(event.endDateGmt!=null) {
         _endDate = timezone.TZDateTime.from(event.endDateGmt!, timezone.getLocation(_selectedTimeZone!));
         _endTime = TimeOfDay.fromDateTime(_endDate!);
@@ -1903,14 +1898,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       timezone.TZDateTime? startTime = AppDateTime().changeTimeZoneToDate(_startDate!, timezone.getLocation(_selectedTimeZone!));
       timezone.TZDateTime? utcTTime = startTime?.toUtc();
       event.startDateString = AppDateTime().formatDateTime(
-          utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
+          utcTTime?.toUtc(), format: Event.serverRequestDateTimeFormat, ignoreTimeZone: true);
       event.startDateGmt = utcTTime?.toUtc();
     }
     if(_endDate!=null) {
       timezone.TZDateTime? startTime = AppDateTime().changeTimeZoneToDate(_endDate!, timezone.getLocation(_selectedTimeZone!));
       timezone.TZDateTime? utcTTime = startTime?.toUtc();
       event.endDateString = AppDateTime().formatDateTime(
-          utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
+          utcTTime?.toUtc(), format: Event.serverRequestDateTimeFormat, ignoreTimeZone: true);
       event.endDateGmt = utcTTime?.toUtc();
     }
     event.allDay = _allDay;

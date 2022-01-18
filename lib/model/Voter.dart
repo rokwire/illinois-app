@@ -43,6 +43,8 @@ class VoterRule {
   bool? hideForPeriod;
   bool? electionPeriod;
 
+  static final String dateFormat = "yyyy/MM/dd";
+
   VoterRule({this.startDate, this.endDate,
     this.nrvTitle, this.nrvText, this.nrvOptions, this.nrvPlaceTitle, this.nrvPlaceOptions, this.nrvAlert,
     this.rvPlaceTitle, this.rvPlaceOptions, this.rvTitle, this.rvText, this.rvOptions, this.rvUrl, this.rvAlert,
@@ -51,8 +53,8 @@ class VoterRule {
 
   static VoterRule? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? VoterRule(
-        startDate: AppDateTime().dateTimeFromString(json['date_start'], format: AppDateTime.voterDateFormat, isUtc: false),
-        endDate: AppDateTime().dateTimeFromString(json['date_end'], format: AppDateTime.voterDateFormat, isUtc: false),
+        startDate: AppDateTime().dateTimeFromString(json['date_start'], format: dateFormat, isUtc: false),
+        endDate: AppDateTime().dateTimeFromString(json['date_end'], format: dateFormat, isUtc: false),
         nrvTitle: json['NRV_title'],
         nrvText: json['NRV_text'],
         nrvOptions: RuleOption.listFromJson(JsonUtils.listValue(json['NRV_options'])),

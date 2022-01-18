@@ -383,7 +383,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   List<String?> _buildFilterEventDateSubLabels() {
-    String dateFormat = AppDateTime.eventFilterDisplayDateFormat;
+    String dateFormat = 'MM/dd';
     DateTime now = DateTime.now();
     String? todayDateLabel = AppDateTime()
         .formatDateTime(now, format: dateFormat,

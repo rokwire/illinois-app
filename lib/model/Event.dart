@@ -86,6 +86,10 @@ class Event with Explore implements Favorite {
 
   bool? isEventFree;
 
+  static final String dateTimeFormat = 'E, dd MMM yyyy HH:mm:ss v';
+  static final String serverRequestDateTimeFormat =  'yyyy/MM/ddTHH:mm:ss';
+
+
   Event({Map<String, dynamic>? json, Event? other}) {
     if (json != null) {
       _initFromJson(json);
@@ -120,8 +124,8 @@ class Event with Explore implements Favorite {
     eventId = json['eventId'];
     startDateString = json['startDate'];
     endDateString = json['endDate'];
-    startDateGmt = AppDateTime().dateTimeFromString(json['startDate'], format: AppDateTime.serverResponseDateTimeFormat, isUtc: true);
-    endDateGmt = AppDateTime().dateTimeFromString(json['endDate'], format: AppDateTime.serverResponseDateTimeFormat, isUtc: true);
+    startDateGmt = AppDateTime().dateTimeFromString(json['startDate'], format: dateTimeFormat, isUtc: true);
+    endDateGmt = AppDateTime().dateTimeFromString(json['endDate'], format: dateTimeFormat, isUtc: true);
     category = json['category'];
     subCategory = json['subCategory'];
     sponsor = json['sponsor'];

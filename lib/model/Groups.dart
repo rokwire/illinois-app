@@ -244,7 +244,6 @@ class Group {
 
   String? get displayUpdateTime {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateUpdatedUtc);
-    //return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
     if (deviceDateTime != null) {
       DateTime now = DateTime.now();
       if (deviceDateTime.compareTo(now) < 0) {
@@ -900,7 +899,6 @@ class GroupPost {
 
   String? getDisplayDateTime(){
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
-    //return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
     if (deviceDateTime != null) {
       DateTime now = DateTime.now();
       if (deviceDateTime.compareTo(now) < 0) {

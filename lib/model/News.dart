@@ -32,6 +32,8 @@ class News implements Favorite {
 
   final Map<String, dynamic>? json;
 
+  static final String dateTimeFormat = 'E, dd MMM yyyy HH:mm:ss v';
+
   News({this.id, this.title, this.link, this.category, this.description, this.fullText, this.fullTextRaw, this.imageUrl, this.pubDateUtc, this.json});
 
   static News? fromJson(Map<String, dynamic>? json) {
@@ -47,7 +49,7 @@ class News implements Favorite {
         fullText: json['fulltext'],
         fullTextRaw: json['fulltext_raw'],
         imageUrl: json['image_url'],
-        pubDateUtc: AppDateTime().dateTimeFromString(json['pub_date_utc'], format: AppDateTime.serverResponseDateTimeFormat, isUtc: true),
+        pubDateUtc: AppDateTime().dateTimeFromString(json['pub_date_utc'], format: dateTimeFormat, isUtc: true),
         json: json);
   }
 

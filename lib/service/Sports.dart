@@ -599,13 +599,13 @@ class Sports with Service implements NotificationsListener {
 
     if (startDate != null) {
       startDate = startDate.toUtc();
-      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
+      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: 'MM/dd/yyyy', ignoreTimeZone: true);
       queryParams += '&start=$startDateFormatted';
     }
 
     if (endDate != null) {
       endDate = endDate.toUtc();
-      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
+      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: 'MM/dd/yyyy', ignoreTimeZone: true);
       queryParams += '&end=$endDateFormatted';
     }
 

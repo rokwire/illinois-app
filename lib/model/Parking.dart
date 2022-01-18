@@ -37,6 +37,9 @@ class ParkingEvent {
 
   List<ParkingLot>? lots;
 
+  static final String dateTimeFormat = "yyyy-MM-ddTHH:mm:ssZ";
+
+
   ParkingEvent({this.id, this.name,
     this.fromDateString, this.toDateString, this.parkingFromDateString, this.parkingToDateString,
     this.fromDateUtc, this.toDateUtc, this.parkingFromDateUtc, this.parkingToDateUtc,
@@ -62,10 +65,10 @@ class ParkingEvent {
       toDateString: json['to'],
       parkingFromDateString: json['parking_from'],
       parkingToDateString: json['parking_to'],
-      fromDateUtc: AppDateTime().dateTimeFromString(json['from'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
-      toDateUtc: AppDateTime().dateTimeFromString(json['to'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
-      parkingFromDateUtc: AppDateTime().dateTimeFromString(json['parking_from'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
-      parkingToDateUtc: AppDateTime().dateTimeFromString(json['parking_to'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
+      fromDateUtc: AppDateTime().dateTimeFromString(json['from'], format: dateTimeFormat, isUtc: true),
+      toDateUtc: AppDateTime().dateTimeFromString(json['to'], format: dateTimeFormat, isUtc: true),
+      parkingFromDateUtc: AppDateTime().dateTimeFromString(json['parking_from'], format: dateTimeFormat, isUtc: true),
+      parkingToDateUtc: AppDateTime().dateTimeFromString(json['parking_to'], format: dateTimeFormat, isUtc: true),
       landMarkId: json['landmark_id'],
       slug: json['slug'],
       live: json['live'],

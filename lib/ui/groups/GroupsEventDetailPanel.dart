@@ -199,8 +199,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     //Newly created groups pass time in the string
     if(StringUtils.isEmpty(displayTime?.trim())){
       if(_event?.startDateString !=null || _event?.endDateString != null){
-        DateTime? startDate = AppDateTime().dateTimeFromString(_event?.startDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
-        DateTime? endDate = AppDateTime().dateTimeFromString(_event?.endDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
+        DateTime? startDate = AppDateTime().dateTimeFromString(_event?.startDateString, format: Event.serverRequestDateTimeFormat);
+        DateTime? endDate = AppDateTime().dateTimeFromString(_event?.endDateString, format: Event.serverRequestDateTimeFormat);
         if(startDate !=null){
           displayTime = AppDateTime().formatDateTime(startDate, format: "MMM dd, yyyy");
         } else if(endDate != null){

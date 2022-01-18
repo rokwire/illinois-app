@@ -219,7 +219,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                         Expanded(
                             child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                          child: Text(_offsetDate != null ? AppDateTime().formatDateTime(_offsetDate, format: AppDateTime.gameResponseDateTimeFormat2)! : "None",
+                          child: Text(_offsetDate != null ? AppDateTime().formatDateTime(_offsetDate, format: 'MM/dd/yyyy HH:mm:ss a')! : "None",
                               textAlign: TextAlign.end),
                         ))
                       ],

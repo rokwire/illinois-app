@@ -188,8 +188,8 @@ class IlliniCash with Service implements NotificationsListener {
     }
     
     String uin = Auth2().uin ?? "";
-    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
-    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
+    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
     String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
 
@@ -218,8 +218,8 @@ class IlliniCash with Service implements NotificationsListener {
       return null;
     }
     String uin = Auth2().uin ?? "";
-    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
-    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
+    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
     String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
     final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.UIUC_Access, analyticsUrl: analyticsUrl);
@@ -251,8 +251,8 @@ class IlliniCash with Service implements NotificationsListener {
       return null;
     }
     String uin = Auth2().uin ?? "";
-    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
-    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
+    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
     String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
 

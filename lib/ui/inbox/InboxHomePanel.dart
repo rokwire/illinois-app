@@ -340,11 +340,11 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       _DateInterval? interval = intervals[timeEntry.value];
       if (interval != null) {
         DateTime startDate = interval.startDate!;
-        String? startStr = AppDateTime().formatDateTime(interval.startDate, format: AppDateTime.eventFilterDisplayDateFormat, ignoreTimeZone: true);
+        String? startStr = AppDateTime().formatDateTime(interval.startDate, format: 'MM/dd', ignoreTimeZone: true);
 
         DateTime endDate = interval.endDate ?? today;
         if (1 < endDate.difference(startDate).inDays) {
-          String? endStr = AppDateTime().formatDateTime(endDate, format: AppDateTime.eventFilterDisplayDateFormat, ignoreTimeZone: true);  
+          String? endStr = AppDateTime().formatDateTime(endDate, format: 'MM/dd', ignoreTimeZone: true);  
           timeDate = "$startStr - $endStr";
         }
         else {
