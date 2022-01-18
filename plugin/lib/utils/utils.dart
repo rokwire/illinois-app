@@ -17,7 +17,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'package:path/path.dart' as Path;
+import 'package:flutter/foundation.dart';
+import 'package:path/path.dart' as path_package;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -59,7 +60,7 @@ class StringUtils {
   }
 
   static String capitalize(String value) {
-    if (value.length == 0) {
+    if (value.isEmpty) {
       return '';
     }
     else if (value.length == 1) {
@@ -77,9 +78,9 @@ class StringUtils {
   static String? fullName(List<String?> names) {
     String? fullName;
     for (String? name in names) {
-      if ((name != null) && (0 < name.length)) {
+      if ((name != null) && name.isNotEmpty) {
         if (fullName == null) {
-          fullName = '$name';
+          fullName = name;
         }
         else {
           fullName += ' $name';
@@ -93,7 +94,7 @@ class StringUtils {
 
   static const String _usPhonePattern1 = "^[2-9][0-9]{9}\$";          // Valid:   23456789120
   static const String _usPhonePattern2 = "^[1][2-9][0-9]{9}\$";       // Valid:  123456789120
-  static const String _usPhonePattern3 = "^\\\+[1][2-9][0-9]{9}\$";   // Valid: +123456789120
+  static const String _usPhonePattern3 = "^\\+[1][2-9][0-9]{9}\$";   // Valid: +123456789120
 
   static const String _phonePattern = "^((\\+?\\d{1,3})?[\\(\\- ]?\\d{3,5}[\\)\\- ]?)?(\\d[.\\- ]?\\d)+\$";   // Valid: +123456789120
 
@@ -134,7 +135,7 @@ class StringUtils {
 
   /// Email validation  https://github.com/rokwire/illinois-app/issues/47
 
-  static const String _emailPattern = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*\$" ;
+  static const String _emailPattern = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*\$" ;
 
   static bool isEmailValid(String email){
     return isNotEmpty(email) && RegExp(_emailPattern).hasMatch(email);
@@ -262,7 +263,11 @@ class UrlUtils {
     try {
       Uri? uri = (url != null) ? Uri.parse(url) : null;
       return (uri != null) ? uri.scheme : null;
-    } catch(e) {}
+    } catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 
@@ -270,8 +275,12 @@ class UrlUtils {
     try {
       Uri? uri = (url != null) ? Uri.parse(url) : null;
       String? path = (uri != null) ? uri.path : null;
-      return (path != null) ? Path.extension(path) : null;
-    } catch(e) {}
+      return (path != null) ? path_package.extension(path) : null;
+    } catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 
@@ -318,9 +327,9 @@ class JsonUtils {
   static List<dynamic> encodeList(List items) {
     List<dynamic> result =  [];
     if (items.isNotEmpty) {
-      items.forEach((item) {
+      for (dynamic item in items) {
         result.add(item.toJson());
-      });
+      }
     }
 
     return result;
@@ -331,13 +340,15 @@ class JsonUtils {
     if (value != null) {
       try {
         if (prettify == true) {
-          result = JsonEncoder.withIndent("  ").convert(value);
+          result = const JsonEncoder.withIndent("  ").convert(value);
         }
         else {
           result = json.encode(value);
         }
       } catch (e) {
-        print(e.toString());
+        if (kDebugMode) {
+          print(e.toString());
+        }
       }
     }
     return result;
@@ -350,7 +361,9 @@ class JsonUtils {
       try {
         jsonContent = json.decode(jsonString!);
       } catch (e) {
-        print(e.toString());
+        if (kDebugMode) {
+          print(e.toString());
+        }
       }
     }
     return jsonContent;
@@ -360,7 +373,9 @@ class JsonUtils {
     try {
       return (decode(jsonString) as List?)?.cast<dynamic>();
     } catch (e) {
-      print(e.toString());
+        if (kDebugMode) {
+          print(e.toString());
+        }
       return null;
     }
   }
@@ -369,7 +384,9 @@ class JsonUtils {
     try {
       return (decode(jsonString) as Map?)?.cast<String, dynamic>();
     } catch (e) {
-      print(e.toString());
+        if (kDebugMode) {
+          print(e.toString());
+        }
       return null;
     }
   }
@@ -379,8 +396,14 @@ class JsonUtils {
       return value;
     }
     else if (value != null) {
-      try { return value.toString(); }
-      catch(e) { print(e.toString()); }
+      try {
+        return value.toString();
+      }
+      catch(e) {
+        if (kDebugMode) {
+          print(e.toString());
+        }
+      }
     }
     return null;
   }
@@ -409,14 +432,26 @@ class JsonUtils {
   }
 
   static Map<String, dynamic>? mapValue(dynamic value) {
-    try { return (value is Map) ? value.cast<String, dynamic>() : null; }
-    catch(e) { print(e.toString()); }
+    try {
+      return (value is Map) ? value.cast<String, dynamic>() : null;
+    }
+    catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 
   static List<dynamic>? listValue(dynamic value) {
-    try { return (value is List) ? value.cast<dynamic>() : null; }
-    catch(e) { print(e.toString()); }
+    try {
+      return (value is List) ? value.cast<dynamic>() : null;
+    }
+    catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 
@@ -434,7 +469,7 @@ class JsonUtils {
   static Set<String>? stringSetValue(dynamic value) {
     Set<String>? result;
     if (value is List) {
-      result = Set<String>();
+      result = <String>{};
       for (dynamic entry in value) {
         result.add(entry.toString());
       }
@@ -443,14 +478,26 @@ class JsonUtils {
   }
   
   static List<String>? listStringsValue(dynamic value) {
-    try { return (value is List) ? value.cast<String>() : null; }
-    catch(e) { print(e.toString()); }
+    try {
+      return (value is List) ? value.cast<String>() : null;
+    }
+    catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 
   static Set<String>? setStringsValue(dynamic value) {
-    try { return (value is List) ? Set.from(value.cast<String>()) : null; }
-    catch(e) { print(e.toString()); }
+    try {
+      return (value is List) ? Set.from(value.cast<String>()) : null;
+    }
+    catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 }
@@ -463,7 +510,7 @@ class AppToast {
       toastLength: Toast.LENGTH_LONG,
       timeInSecForIosWeb: 3,
       gravity: ToastGravity.BOTTOM,
-      backgroundColor: Color(0x99000000),
+      backgroundColor: const Color(0x99000000),
     );
   }
 }
@@ -570,10 +617,12 @@ class GeometryUtils {
     double fitH = boundsSize.height;
     double ratioW = (0.0 < boundsSize.width) ? (size.width / boundsSize.width) : double.maxFinite;
     double ratioH = (0.0 < boundsSize.height) ? (size.height / boundsSize.height) : double.maxFinite;
-    if(ratioW < ratioH)
+    if(ratioW < ratioH) {
       fitW = (0.0 < size.height) ? (size.width * boundsSize.height / size.height) : boundsSize.width;
-    else if(ratioH < ratioW)
+    }
+    else if(ratioH < ratioW) {
       fitH = (0.0 < size.width) ? (size.height * boundsSize.width / size.width) : boundsSize.height;
+    }
     return Size(fitW, fitH);
   }
 
@@ -582,10 +631,12 @@ class GeometryUtils {
     double fitH = boundsSize.height;
     double ratioW = (0.0 < boundsSize.width) ? (size.width / boundsSize.width) : double.maxFinite;
     double ratioH = (0.0 < boundsSize.height) ? (size.height / boundsSize.height) : double.maxFinite;
-    if(ratioW < ratioH)
+    if(ratioW < ratioH) {
   		fitH = (0.0 < size.width) ? (size.height * boundsSize.width / size.width) : boundsSize.height;
-    else if(ratioH < ratioW)
+    }
+    else if(ratioH < ratioW) {
   		fitW = (0.0 < size.height) ? (size.width * boundsSize.height / size.height) : boundsSize.width;
+    }
     return Size(fitW, fitH);
   }
 }
@@ -647,8 +698,14 @@ class BoolExpr {
 
 class AppBundle {
   static Future<String?> loadString(String key, {bool cache = true}) async {
-    try { return rootBundle.loadString(key, cache: cache); }
-    catch(e) { print(e.toString()); }
+    try {
+      return rootBundle.loadString(key, cache: cache);
+    }
+    catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 }

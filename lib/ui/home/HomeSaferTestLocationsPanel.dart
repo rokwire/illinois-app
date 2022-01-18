@@ -13,7 +13,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 /////////////////////////////////////////////
 // HomeSaferTestLocationsPanel

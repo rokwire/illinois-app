@@ -24,7 +24,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembershipQuestionsPanel extends StatefulWidget {

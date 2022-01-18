@@ -21,7 +21,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupTagsPanel extends StatefulWidget {

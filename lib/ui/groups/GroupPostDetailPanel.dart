@@ -32,7 +32,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final GroupPost? post;

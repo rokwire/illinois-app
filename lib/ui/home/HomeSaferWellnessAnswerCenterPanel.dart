@@ -5,7 +5,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{

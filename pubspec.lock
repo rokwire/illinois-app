@@ -428,7 +428,7 @@ packages:
     source: hosted
     version: "0.8.4"
   fluttertoast:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: fluttertoast
       url: "https://pub.dartlang.org"

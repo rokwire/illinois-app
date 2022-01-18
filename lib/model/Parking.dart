@@ -18,7 +18,7 @@ import 'dart:math';
 
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class ParkingEvent {
   final String? id;

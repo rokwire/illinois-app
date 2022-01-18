@@ -21,7 +21,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 
 import 'package:illinois/model/RecentItem.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class RecentItems with Service implements NotificationsListener {
   

@@ -34,7 +34,7 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Event.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'package:illinois/ui/widgets/HeaderBar.dart';

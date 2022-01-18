@@ -12,7 +12,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideEntryCard extends StatefulWidget {

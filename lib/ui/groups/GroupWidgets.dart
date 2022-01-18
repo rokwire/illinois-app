@@ -44,7 +44,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:sprintf/sprintf.dart';
 

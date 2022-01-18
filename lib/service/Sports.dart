@@ -34,7 +34,7 @@ import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 import 'package:illinois/service/Network.dart';
 import 'package:path/path.dart';

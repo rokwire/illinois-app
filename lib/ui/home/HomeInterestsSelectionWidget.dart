@@ -28,7 +28,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class HomeInterestsSelectionWidget extends StatefulWidget {

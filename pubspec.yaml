@@ -34,7 +34,6 @@ dependencies:
   flutter_widget_from_html: ^0.8.3
   geolocator: ^8.0.0
   url_launcher: ^6.0.10
-  fluttertoast: ^8.0.8
   #Firebase
   firebase_messaging: ^11.1.0
   #End Firebase

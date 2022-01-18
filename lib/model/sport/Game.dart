@@ -24,7 +24,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class Game with Explore implements Favorite {
   final String? id;

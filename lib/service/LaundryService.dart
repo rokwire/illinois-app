@@ -21,7 +21,7 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/Laundry.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:xml/xml.dart' as xml;
 
 // LaundryService does rely on Service initialization API so it does not override service interfaces and is not registered in Services..

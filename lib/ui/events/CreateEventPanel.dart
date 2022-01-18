@@ -40,7 +40,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as timezone;

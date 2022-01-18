@@ -35,7 +35,7 @@ import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:xml/xml.dart';
 
 class IlliniCash with Service implements NotificationsListener {

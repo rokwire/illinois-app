@@ -13,7 +13,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeGiesWidget extends StatefulWidget {

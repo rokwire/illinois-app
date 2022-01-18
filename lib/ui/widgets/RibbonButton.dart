@@ -17,7 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class RibbonButton extends StatelessWidget {

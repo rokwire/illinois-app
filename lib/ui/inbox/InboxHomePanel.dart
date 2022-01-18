@@ -18,7 +18,7 @@ import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class InboxHomePanel extends StatefulWidget {
   InboxHomePanel();

@@ -10,7 +10,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class HomeLoginWidget extends StatefulWidget {
 

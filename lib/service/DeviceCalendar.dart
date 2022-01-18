@@ -11,7 +11,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/model/Event.dart' as ExploreEvent;
 import 'package:timezone/timezone.dart' as timezone;
 

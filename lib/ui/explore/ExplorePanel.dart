@@ -49,7 +49,7 @@ import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 

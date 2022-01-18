@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class Roster {
   final String? id;

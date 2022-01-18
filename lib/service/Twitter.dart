@@ -4,7 +4,7 @@ import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class Twitter  /* with Service */ {
 

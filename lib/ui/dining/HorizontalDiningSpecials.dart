@@ -21,7 +21,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/dining/LocationsWithSpecialPanel.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class HorizontalDiningSpecials extends StatelessWidget {

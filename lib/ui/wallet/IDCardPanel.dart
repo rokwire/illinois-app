@@ -28,7 +28,7 @@ import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 

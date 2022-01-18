@@ -29,7 +29,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsSportItemWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class HomePreferredSportsWidget extends StatefulWidget {

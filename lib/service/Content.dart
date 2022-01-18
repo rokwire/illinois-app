@@ -18,7 +18,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:path/path.dart';

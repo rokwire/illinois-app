@@ -23,7 +23,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 

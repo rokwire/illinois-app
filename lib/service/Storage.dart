@@ -23,7 +23,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/utils/Crypt.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Storage with Service {

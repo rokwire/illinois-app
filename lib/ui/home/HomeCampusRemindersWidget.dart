@@ -31,7 +31,7 @@ import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class HomeCampusRemindersWidget extends StatefulWidget {
   final StreamController<void>? refreshController;

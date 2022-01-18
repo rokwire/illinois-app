@@ -7,7 +7,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class DebugCreateInboxMessagePanel extends StatefulWidget {
   DebugCreateInboxMessagePanel();

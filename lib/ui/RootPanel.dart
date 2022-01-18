@@ -53,7 +53,7 @@ import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/PopupDialog.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 enum RootTab { Home, Athletics, Explore, Wallet, Browse }

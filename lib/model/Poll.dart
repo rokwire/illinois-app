@@ -17,7 +17,7 @@
 import 'dart:math';
 
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 
 class Poll {

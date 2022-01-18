@@ -11,7 +11,7 @@ import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeSaferWidget extends StatefulWidget {
