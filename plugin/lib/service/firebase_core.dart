@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:firebase_core/firebase_core.dart' as google;
+import 'package:rokwire_plugin/service/service.dart';
 
-class FirebaseService extends Service{
+class FirebaseCore extends Service {
 
-  static final FirebaseService _service = FirebaseService._internal();
-  FirebaseService._internal();
-  factory FirebaseService() {
+  static final FirebaseCore _service = FirebaseCore._internal();
+  FirebaseCore._internal();
+  factory FirebaseCore() {
     return _service;
   }
 
-  FirebaseApp? _firebaseApp;
+  google.FirebaseApp? _firebaseApp;
 
   @override
   Future<void> initService() async{
@@ -45,8 +45,6 @@ class FirebaseService extends Service{
   }
 
   Future<void> initFirebase() async{
-    if(_firebaseApp == null) {
-      _firebaseApp = await Firebase.initializeApp();
-    }
+    _firebaseApp ??= await google.Firebase.initializeApp();
   }
 }

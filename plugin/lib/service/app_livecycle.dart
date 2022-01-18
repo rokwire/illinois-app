@@ -15,8 +15,8 @@
  */
 
 import 'package:flutter/widgets.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 
 typedef AppLifecycleCallback = void Function(AppLifecycleState state);
 
@@ -25,7 +25,7 @@ class AppLivecycleWidgetsBindingObserver extends WidgetsBindingObserver {
   AppLivecycleWidgetsBindingObserver({this.onAppLivecycleChange});
 
   @override
-  Future<Null> didChangeAppLifecycleState(AppLifecycleState state) async {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     if (onAppLivecycleChange != null) {
       onAppLivecycleChange!(state);
     }
@@ -68,19 +68,20 @@ class AppLivecycle with Service {
     _closeBinding();
   }
 
-  void ensureBinding() {
+  @override
+  void initServiceUI() {
     _initBinding();
   }
 
   void _initBinding() {
     if ((WidgetsBinding.instance != null) && (_bindingObserver == null)) {
-      _bindingObserver = new AppLivecycleWidgetsBindingObserver(onAppLivecycleChange:_onAppLivecycleChangeState);
+      _bindingObserver = AppLivecycleWidgetsBindingObserver(onAppLivecycleChange:_onAppLivecycleChangeState);
       WidgetsBinding.instance!.addObserver(_bindingObserver!);
     }
   }
 
   void _closeBinding() {
-    if (_bindingObserver != null) {
+    if ((WidgetsBinding.instance != null) && (_bindingObserver != null)) {
       WidgetsBinding.instance!.removeObserver(_bindingObserver!);
       _bindingObserver = null;
     }

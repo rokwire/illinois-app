@@ -24,17 +24,15 @@ import 'package:illinois/service/Analytics.dart';
 //import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeepLink.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Log.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class Groups with Service implements NotificationsListener {
-
-  static const String GROUP_URI = '${DeepLink.ROKWIRE_URL}/group_detail';
 
   static const String notifyUserMembershipUpdated   = "edu.illinois.rokwire.groups.membership.updated";
   static const String notifyGroupEventsUpdated      = "edu.illinois.rokwire.groups.events.updated";
@@ -687,9 +685,11 @@ class Groups with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
+  String get groupDetailUrl => '${DeepLink().appUrl}/group_detail';
+
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri? eventUri = Uri.tryParse(GROUP_URI);
+      Uri? eventUri = Uri.tryParse(groupDetailUrl);
       if ((eventUri != null) &&
           (eventUri.scheme == uri.scheme) &&
           (eventUri.authority == uri.authority) &&

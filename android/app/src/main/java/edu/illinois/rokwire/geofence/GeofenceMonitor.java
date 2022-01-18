@@ -54,12 +54,20 @@ import androidx.core.content.ContextCompat;
 import edu.illinois.rokwire.MainActivity;
 import edu.illinois.rokwire.Utils;
 
-public class GeofenceMonitor implements BeaconConsumer {
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
+
+public class GeofenceMonitor implements BeaconConsumer, MethodChannel.MethodCallHandler, FlutterPlugin {
 
     private static final String TAG = GeofenceMonitor.class.getCanonicalName();
     private static final int BEACON_INVALID_VALUE = -420000;
 
     private static GeofenceMonitor instance = null;
+
+    private MethodChannel methodChannel;
 
     private GeofencingClient geofencingClient;
     private PendingIntent geofencePendingIntent;
@@ -357,15 +365,21 @@ public class GeofenceMonitor implements BeaconConsumer {
     }
 
     private void notifyCurrentGeofencesUpdated() {
-        MainActivity.invokeFlutterMethod("geo_fence.regions.changed", getCurrentIds());
+        if (methodChannel != null) {
+            MainActivity.getInstance().runOnUiThread(() -> methodChannel.invokeMethod("onCurrentRegionsChanged", getCurrentIds()));
+        }
     }
 
     private void notifyRegionEnter(String regionId) {
-        MainActivity.invokeFlutterMethod("geo_fence.regions.enter", regionId);
+        if (methodChannel != null) {
+            MainActivity.getInstance().runOnUiThread(() -> methodChannel.invokeMethod("onEnterRegion", regionId));
+        }
     }
 
     private void notifyRegionExit(String regionId) {
-        MainActivity.invokeFlutterMethod("geo_fence.regions.exit", regionId);
+        if (methodChannel != null) {
+            MainActivity.getInstance().runOnUiThread(() -> methodChannel.invokeMethod("onExitRegion", regionId));
+        }
     }
 
     //region Add Geofences Listeners
@@ -506,7 +520,9 @@ public class GeofenceMonitor implements BeaconConsumer {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("regionId", regionId);
         parameters.put("beacons", beaconsList);
-        MainActivity.invokeFlutterMethod("geo_fence.beacons.changed", parameters);
+        if (methodChannel != null) {
+            MainActivity.getInstance().runOnUiThread(() -> methodChannel.invokeMethod("onBeaconsInRegionChanged", parameters));
+        }
     }
 
     @Override
@@ -595,6 +611,60 @@ public class GeofenceMonitor implements BeaconConsumer {
         Log.i(TAG, "BeaconScanner.bindService");
         return false;
     }
+
+    //endregion
+
+    //region Flutter Plugin
+
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+        if (methodChannel == null) {
+            methodChannel = new MethodChannel(binding.getBinaryMessenger(), "edu.illinois.rokwire/geoFence");
+            methodChannel.setMethodCallHandler(this);
+        }
+    }
+
+    @Override
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+        if (methodChannel != null) {
+            methodChannel.setMethodCallHandler(null);
+            methodChannel = null;
+        }
+    }
+
+    @Override
+    public void onMethodCall(MethodCall call, @NonNull MethodChannel.Result result) {
+        try {
+            if ("currentRegions".equals(call.method)) {
+                result.success(getCurrentIds());
+            }
+            else if ("monitorRegions".equals(call.method)) {
+                List<Map<String, Object>> geoFencesList = (call.arguments instanceof List) ? (List<Map<String, Object>>) call.arguments : null;
+                monitorRegions(geoFencesList);
+                result.success(null);
+            }
+            else if ("startRangingBeaconsInRegion".equals(call.method)) {
+                String regionId = (call.arguments instanceof String) ? (String) call.arguments : null;
+                result.success(startRangingBeaconsInRegion(regionId));
+            }
+            else if ("stopRangingBeaconsInRegion".equals(call.method)) {
+                String regionId = (call.arguments instanceof String) ? (String) call.arguments : null;
+                result.success(stopRangingBeaconsInRegion(regionId));
+            }
+            else if("beaconsInRegion".equals(call.method)) {
+                String regionId = (call.arguments instanceof String) ? (String) call.arguments : null;
+                result.success(getBeaconsInRegion(regionId));
+            }
+            else {
+                result.success(null);
+            }
+        } catch (IllegalStateException exception) {
+            String errorMsg = String.format("Ignoring exception '%s'. See https://github.com/flutter/flutter/issues/29092 for details.", exception.toString());
+            Log.e(TAG, errorMsg);
+            exception.printStackTrace();
+        }
+    }
+
 
     //endregion
 

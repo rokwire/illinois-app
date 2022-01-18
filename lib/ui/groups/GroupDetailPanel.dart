@@ -20,13 +20,13 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -921,7 +921,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             iconPath: 'images/icon-calendar.png',
             rightIconPath: 'images/icon-add-20x18.png',
             rightIconAction: _onTapCreatePoll,
-            rightIconLabel: Localization().getStringEx('panel.group_detail.button.create_event.title', 'Create Poll'),
+            rightIconLabel: Localization().getStringEx('panel.group_detail.button.create_poll.title', 'Create Poll'),//TBD Localization
             children: pollsContentList)
       ]),
       _pollsLoading

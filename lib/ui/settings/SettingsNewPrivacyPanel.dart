@@ -24,7 +24,7 @@ import 'package:illinois/service/Auth2.dart';
 import "package:illinois/service/Config.dart";
 import "package:illinois/service/FlexUI.dart";
 import "package:illinois/service/Localization.dart";
-import "package:illinois/service/NotificationService.dart";
+import "package:rokwire_plugin/service/notification_service.dart";
 import "package:illinois/service/Onboarding.dart";
 import "package:illinois/service/Storage.dart";
 import "package:illinois/ui/onboarding/OnboardingBackButton.dart";
@@ -567,7 +567,15 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
 
   Widget _descriptionLayout() {
     int level = _sliderValue?.round() ?? _privacyLevel.truncate();
-    PrivacyDescription? description = (_data?.privacyDescription != null) ? (_data?.privacyDescription as List<PrivacyDescription?>).firstWhere((element) => (element?.level == level), orElse: () => null) : null;
+    PrivacyDescription? description;
+    if (AppCollection.isCollectionNotEmpty(_data?.privacyDescription)) {
+      for (PrivacyDescription desc in _data!.privacyDescription!) {
+        if (desc.level == level) {
+          description = desc;
+          break;
+        }
+      }
+    }
     if(description == null){
       return Container(); //empty
     }

@@ -29,11 +29,11 @@ import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -44,7 +44,7 @@ import 'package:notification_permissions/notification_permissions.dart' as Notif
 
 import 'package:illinois/main.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/ui/RootPanel.dart';
 

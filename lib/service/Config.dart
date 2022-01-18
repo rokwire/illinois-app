@@ -20,13 +20,13 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Log.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/utils/Crypt.dart';
 import 'package:package_info/package_info.dart';
 import 'package:collection/collection.dart';
@@ -381,6 +381,7 @@ class Config with Service implements NotificationsListener {
   String? get illiniCashTosUrl       { return otherUniversityServices['illini_cash_tos_url']; }        // "https://housing.illinois.edu/resources/illini-cash/terms"
   String? get myIlliniUrl            { return otherUniversityServices['myillini_url']; }               // "https://myillini.illinois.edu/Dashboard"
   String? get feedbackUrl            { return otherUniversityServices['feedback_url']; }               // "https://forms.illinois.edu/sec/1971889"
+  String? get crisisHelpUrl          { return otherUniversityServices['crisis_help_url']; }            // "https://wellness.web.illinois.edu/help/im-not-sure-where-to-start/"
   String? get iCardUrl               { return otherUniversityServices['icard_url']; }                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
   String? get privacyPolicyUrl       { return otherUniversityServices['privacy_policy_url']; }         // "https://go.illinois.edu/illinois-app-privacy"
   String? get padaapiUrl             { return otherUniversityServices['padaapi_url']; }                // "https://api-test.test-compliance.rokwire.illinois.edu/padaapi"

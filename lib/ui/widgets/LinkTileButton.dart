@@ -93,7 +93,7 @@ class LinkTileSmallButton extends StatelessWidget {
       child: Semantics(label: label, hint:hint, button:true, excludeSemantics: true, child:Stack(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(2),
+            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6),
             child: Container(
               decoration: BoxDecoration(color: (Styles().colors!.white),
                   borderRadius: BorderRadius.circular(4),

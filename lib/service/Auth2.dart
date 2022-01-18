@@ -6,15 +6,15 @@ import 'package:http/http.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeepLink.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/Log.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:path/path.dart';
@@ -23,8 +23,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 class Auth2 with Service implements NotificationsListener {
   
-  static const String REDIRECT_URI            = '${DeepLink.ROKWIRE_URL}/oidc-auth';
-
   static const String notifyLoginStarted      = "edu.illinois.rokwire.auth2.login.started";
   static const String notifyLoginSucceeded    = "edu.illinois.rokwire.auth2.login.succeeded";
   static const String notifyLoginFailed       = "edu.illinois.rokwire.auth2.login.failed";
@@ -177,9 +175,11 @@ class Auth2 with Service implements NotificationsListener {
     }
   }
 
+  String get _oidcRedirectUrl => '${DeepLink().appUrl}/oidc-auth';
+
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri? redirectUri = Uri.tryParse(REDIRECT_URI);
+      Uri? redirectUri = Uri.tryParse(_oidcRedirectUrl);
       if ((redirectUri != null) &&
           (redirectUri.scheme == uri.scheme) &&
           (redirectUri.authority == uri.authority) &&
@@ -405,7 +405,7 @@ class Auth2 with Service implements NotificationsListener {
         'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
-        'redirect_uri': REDIRECT_URI,
+        'redirect_uri': _oidcRedirectUrl,
       });
       Response? response = await Network().post(url, headers: headers, body: post);
       return _OidcLogin.fromJson(AppJson.decodeMap(response?.body));

@@ -11,7 +11,9 @@ description: Illinois client application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 3.2.0+1200
+version: 3.2.2+1202
+
+publish_to: none
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
@@ -31,16 +33,12 @@ dependencies:
   mime_type: ^1.0.0
   flutter_widget_from_html: ^0.8.3
   geolocator: ^8.0.0
-  uni_links: ^0.5.1
   url_launcher: ^6.0.10
   fluttertoast: ^8.0.8
   #Firebase
-  firebase_core: ^1.10.0
   firebase_messaging: ^11.1.0
-  firebase_crashlytics: ^2.3.0
-  # End Firebase
+  #End Firebase
   xml: ^5.1.2
-  logger: ^1.1.0
   flutter_local_notifications: ^9.1.4
   sprintf: ^6.0.0
   sqflite: ^2.0.0+4
@@ -48,7 +46,6 @@ dependencies:
   encrypt: ^5.0.1
   package_info: ^2.0.2
   device_info: ^2.0.3
-  connectivity: ^3.0.6
   collection: ^1.15.0
   convert: ^3.0.1
   uuid: ^3.0.5
@@ -69,6 +66,14 @@ dependencies:
   device_calendar: ^4.0.1
   gallery_saver: ^2.3.2
   pinch_zoom: ^1.0.0
+
+  rokwire_plugin:
+    # When depending on this package from a real application you should use:
+    #   rokwire_plugin: ^x.y.z
+    # See https://dart.dev/tools/pub/dependencies#version-constraints
+    # The example app is bundled with the plugin so we use a path dependency on
+    # the parent directory to use the current plugin's version.
+    path: plugin
 
 dev_dependencies:
   flutter_test:

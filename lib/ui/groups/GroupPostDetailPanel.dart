@@ -24,7 +24,7 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -296,7 +296,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                     "body": Style(
                                         color: Styles().colors!.fillColorPrimary,
                                         fontFamily: Styles().fontFamilies!.regular,
-                                        fontSize: FontSize(20))
+                                        fontSize: FontSize(20),
+                                        margin: EdgeInsets.zero,
+                                    ),
                                   },
                                   onLinkTap: (url, context, attributes, element) =>
                                       _onTapPostLink(url)))),
@@ -452,6 +454,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           wrapContent: true,
           buttonVisible: _editingReply!=null,
           onImageChanged: (String imageUrl) => _replyEditData?.imageUrl = imageUrl,
+          imageSemanticsLabel: "Reply", //TBD localize
         )
      );
   }

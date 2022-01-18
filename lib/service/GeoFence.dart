@@ -18,17 +18,17 @@ import 'dart:collection';
 import 'dart:core';
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as Http;
 
 import 'package:illinois/model/GeoFence.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:path/path.dart';
@@ -41,6 +41,20 @@ class GeoFence with Service implements NotificationsListener {
   
   static const String _geoFenceName   = "geoFence.json";
 
+  static const String _currentRegionsName = "currentRegions";
+  static const String _monitorRegionsName = "monitorRegions";
+
+  static const String _startRangingBeaconsInRegionName = "startRangingBeaconsInRegion";
+  static const String _stopRangingBeaconsInRegionName = "stopRangingBeaconsInRegion";
+  static const String _beaconsInRegionName = "beaconsInRegion";
+
+  static const String _enterRegionName = "onEnterRegion";
+  static const String _exitRegionName = "onExitRegion";
+  static const String _currentRegionsChangedName = "onCurrentRegionsChanged";
+  static const String _beaconsInRegionChangedName = "onBeaconsInRegionChanged";
+
+  static const MethodChannel _channel = const MethodChannel('edu.illinois.rokwire/geoFence');
+
   static const bool _useAssets = false;
 
   LinkedHashMap<String, GeoFenceRegion>? _regions;
@@ -51,7 +65,9 @@ class GeoFence with Service implements NotificationsListener {
   DateTime? _pausedDateTime;
 
   static final GeoFence _service = GeoFence._internal();
-  GeoFence._internal();
+  GeoFence._internal() {
+    _channel.setMethodCallHandler(this._handleChannelCall);
+  }
 
   factory GeoFence() {
     return _service;
@@ -62,8 +78,6 @@ class GeoFence with Service implements NotificationsListener {
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      NativeCommunicator.notifyGeoFenceRegionsChanged,
-      NativeCommunicator.notifyGeoFenceBeaconsChanged,
       Storage.notifySettingChanged,
       AppLivecycle.notifyStateChanged,
     ]);
@@ -96,26 +110,34 @@ class GeoFence with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), NativeCommunicator(), Auth2(), Assets()]);
+    return Set.from([Config(), Auth2(), Assets()]);
   }
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == NativeCommunicator.notifyGeoFenceRegionsChanged) {
-      _updateCurrentRegions(param);
-    }
-    else if (name == NativeCommunicator.notifyGeoFenceBeaconsChanged) {
-      _updateCurrentBeacons(param);
-    }
-    else if (name == Storage.notifySettingChanged) {
+    if (name == Storage.notifySettingChanged) {
       if (param == Storage.debugGeoFenceRegionRadiusKey) {
         _monitorRegions();
       }
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _updateRegions();
+        }
+      }
     }
   }
 
@@ -151,19 +173,15 @@ class GeoFence with Service implements NotificationsListener {
   }
 
   Future<bool?> startRangingBeaconsInRegion(String regionId) async {
-    dynamic result = await NativeCommunicator().geoFence(beacons:{
-      'regionId': regionId,
-      'action': 'start',
-    });
-    return (result is bool) ? result : null;
+    return AppJson.boolValue(await _channel.invokeMethod(_startRangingBeaconsInRegionName, regionId));
   }
 
   Future<bool?> stopRangingBeaconsInRegion(String regionId) async {
-    dynamic result = await NativeCommunicator().geoFence(beacons:{
-      'regionId': regionId,
-      'action': 'stop',
-    });
-    return (result is bool) ? result : null;
+    return AppJson.boolValue(await _channel.invokeMethod(_stopRangingBeaconsInRegionName, regionId));
+  }
+
+  Future<List<GeoFenceBeacon>?> beaconsInRegion(String regionId) async {
+    return GeoFenceBeacon.listFromJsonList(AppJson.listValue( await _channel.invokeMethod(_beaconsInRegionName, regionId)));
   }
 
   // Implementation
@@ -243,37 +261,28 @@ class GeoFence with Service implements NotificationsListener {
     return false;
   }
 
-  List<dynamic> get _regionsForMonitor {
-    List<dynamic> regionsForMonitor = [];
-    int? debugRadius = Storage().debugGeoFenceRegionRadius;
-    if (_regions != null) {
-      _regions!.forEach((String? regionId, GeoFenceRegion? region){
-        if (region?.enabled ?? false) {
-          regionsForMonitor.add(region!.toJson(locationRadius: debugRadius?.toDouble()));
-        }
-      });
-    }
-    return regionsForMonitor;
+  // ignore: unused_element
+  static Future<List<String>?> _currentRegionIds() async {
+    return AppJson.listStringsValue(await _channel.invokeMethod(_currentRegionsName));
   }
 
-  void _monitorRegions() {
-    NativeCommunicator().geoFence(regions: _regionsForMonitor);
+  Future<void> _monitorRegions() async {
+    await _channel.invokeMethod(_monitorRegionsName, GeoFenceRegion.listToJsonList(GeoFenceRegion.filterList(_regions?.values, enabled: true), locationRadius: Storage().debugGeoFenceRegionRadius?.toDouble()));
   }
 
-  void _updateCurrentRegions(dynamic param) {
-    Set<String> currentRegions = (param != null) ? Set.from(param).cast<String>() : Set();
-    if (_currentRegions != currentRegions) {
-      _currentRegions = currentRegions;
-      NotificationService().notify(notifyCurrentRegionsUpdated, null);
+  void _updateCurrentRegions(List<String>? regionIds) {
+    if (regionIds != null) {
+      Set<String> currentRegions = Set.from(regionIds);
+      if (_currentRegions != currentRegions) {
+        _currentRegions = currentRegions;
+        NotificationService().notify(notifyCurrentRegionsUpdated, null);
+      }
     }
   }
 
-  void _updateCurrentBeacons(dynamic param) {
+  void _updateCurrentBeacons({String? regionId, List<GeoFenceBeacon>? beacons}) {
     try {
-      Map<String, dynamic>? data = (param is Map) ? param.cast<String, dynamic>() : null;
-      String? regionId = (data != null) ? data['regionId'] : null;
       if (regionId != null) {
-        List<GeoFenceBeacon>? beacons = GeoFenceBeacon.listFromJsonList(data!['beacons']);
         if (beacons != null) {
           _currentBeacons[regionId] = beacons;
         }
@@ -288,17 +297,31 @@ class GeoFence with Service implements NotificationsListener {
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
-    if (state == AppLifecycleState.paused) {
-      _pausedDateTime = DateTime.now();
+  // Plugin
+
+  Future<dynamic> _handleChannelCall(MethodCall call) async {
+    if (call.method == _enterRegionName) {
+      print("GeoFence didEnterRegion: ${AppJson.stringValue(call.arguments)}");
+      return null;
     }
-    else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
-        if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _updateRegions();
-        }
-      }
+    else if (call.method == _exitRegionName) {
+      print("GeoFence didExitRegion: ${AppJson.stringValue(call.arguments)}");
+      return null;
+    }
+    else if (call.method == _currentRegionsChangedName) {
+      _updateCurrentRegions(AppJson.listStringsValue(call.arguments));
+      return null;
+    }
+    else if (call.method == _beaconsInRegionChangedName) {
+      Map<String, dynamic>? params = AppJson.mapValue(call.arguments);
+      String? regionId = (params != null) ? AppJson.stringValue(params['regionId']) : null;
+      List<GeoFenceBeacon>? beacons = (params != null) ? GeoFenceBeacon.listFromJsonList(params['beacons']) : null;
+      _updateCurrentBeacons(regionId: regionId, beacons: beacons);
+      return null;
+    }
+    else {
+      return null;
     }
   }
+
 }

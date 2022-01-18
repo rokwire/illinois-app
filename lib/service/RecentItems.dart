@@ -16,8 +16,8 @@
 
 import 'dart:collection';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 
 import 'package:illinois/model/RecentItem.dart';

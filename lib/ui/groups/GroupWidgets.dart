@@ -28,9 +28,9 @@ import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Log.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -765,6 +765,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                       padding: EdgeInsets.only(right: 10, top: 10),
                       child: Text(
                         '\u00D7',
+                        semanticsLabel: "Close Button", //TBD localization
                         style: TextStyle(
                             color: Colors.white,
                             fontFamily: Styles().fontFamilies!.medium,
@@ -1125,19 +1126,23 @@ class _GroupPostCardState extends State<GroupPostCard> {
                         AppString.isStringEmpty(imageUrl)? Container() :
                         Expanded(
                           flex: 1,
-                          child: GestureDetector(
-                            onTap: (){
-                              if(widget.onImageTap!=null){
-                                widget.onImageTap!();
-                              }
-                            },
-                            child: Container(
-                              padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
-                              child: SizedBox(
-                                width: _smallImageSize,
-                                height: _smallImageSize,
-                                child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),))
-                          )
+                          child: Semantics(
+                            label: "post image",
+                            button: true,
+                            hint: "Double tap to zoom the image",
+                            child:GestureDetector(
+                              onTap: (){
+                                if(widget.onImageTap!=null){
+                                  widget.onImageTap!();
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
+                                child: SizedBox(
+                                  width: _smallImageSize,
+                                  height: _smallImageSize,
+                                  child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),))
+                            ))
                     ],),
                     Container(
                       child: Row(
@@ -1375,57 +1380,67 @@ class ModalImageDialog extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Expanded(child: PinchZoom(
-        child: GestureDetector(
-        onTap: onClose, //dismiss
-        child: Container(
-            color: Styles().colors!.blackTransparent06,
-            child:Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                    child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 24),
-                        child: GestureDetector(
-                            onTap: (){}, //Do not dismiss when tap the dialog
-                            child: Container(
-                                child: Column(
-                                  children: <Widget>[
-                                    Container(
-                                      color: Styles().colors!.fillColorPrimary,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: <Widget>[
-                                          GestureDetector(
-                                            onTap: onClose,
-                                            child: Padding(
-                                              padding: EdgeInsets.only(right: 10, top: 10),
-                                              child: Text('\u00D7',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontFamily: Styles().fontFamilies!.medium,
-                                                    fontSize: 50
+    return Semantics(
+        container: true,
+        explicitChildNodes: true,
+        scopesRoute: true,
+        child:Column(children: [
+        Expanded(child: PinchZoom(
+          child: GestureDetector(
+            onTap: onClose, //dismiss
+            child: Container(
+              color: Styles().colors!.blackTransparent06,
+              child:Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                      child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          child: GestureDetector(
+                              onTap: (){}, //Do not dismiss when tap the dialog
+                              child: Container(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                        color: Styles().colors!.fillColorPrimary,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: <Widget>[
+                                            Semantics(
+                                              button: true,
+                                              focusable: true,
+                                              focused: true,
+                                              child:GestureDetector(
+                                                onTap: onClose,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(right: 10, top: 10),
+                                                  child: Text('\u00D7',
+                                                    semanticsLabel: "Close Button",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontFamily: Styles().fontFamilies!.medium,
+                                                        fontSize: 50
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
-                                          )
-                                        ],
+                                              )
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Container(
-                                      child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fitWidth, headers: Network.authApiKeyHeader): Container(),
-                                    )
-                                  ],
-                                ))
-                        )
-                    )
-                ),
-              ],
-            )))
-    ))
-    ],);
+                                      Container(
+                                        child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fitWidth, headers: Network.authApiKeyHeader): Container(),
+                                      )
+                                    ],
+                                  ))
+                          )
+                      )
+                  ),
+                ],
+              )))
+      ))
+      ],));
   }
 }
 
@@ -1699,8 +1714,9 @@ class ImageChooserWidget extends StatefulWidget{ //TBD Localize properly
   final bool showSlant;
   final bool buttonVisible;
   final OnImageChangedListener? onImageChanged;
+  final String? imageSemanticsLabel;
 
-  const ImageChooserWidget({Key? key, this.imageUrl, this.onImageChanged, this.wrapContent = false, this.showSlant = true, this.buttonVisible = false}) : super(key: key);
+  const ImageChooserWidget({Key? key, this.imageUrl, this.onImageChanged, this.wrapContent = false, this.showSlant = true, this.buttonVisible = false, this.imageSemanticsLabel}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ImageChooserState();
@@ -1730,7 +1746,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
         color: Styles().colors!.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           AppString.isStringNotEmpty(imageUrl)
-              ? Positioned.fill(child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover))
+              ? Positioned.fill(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover))
               : Container(),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false), child: Container(height: 53))),
@@ -1877,7 +1893,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
     }
 
     String pollTitle = widget.poll.title ?? '';
-    String semanticsQuestionText =  "$wantsToKnow\n+$pollTitle";
+    String semanticsQuestionText =  "$wantsToKnow,\n $pollTitle";
     String semanticsStatusText = "$pollStatus,$_pollVotesStatus";
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
@@ -2370,7 +2386,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
 
     String? creator = widget.poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');//TBD localize
     String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
-    String semanticsQuestionText =  "$wantsToKnow\n+${poll.title!}";
+    String semanticsQuestionText =  "$wantsToKnow,\n ${poll.title!}";
 
     if(poll.status == PollStatus.created) {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.created","Polls created");
@@ -2465,7 +2481,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = option +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = option + "," +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
       GestureDetector(

@@ -21,16 +21,16 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase_messaging;
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/FirebaseService.dart';
 import 'package:illinois/service/Inbox.dart';
 
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Log.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/firebase_core.dart';
+import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -230,7 +230,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([FirebaseService(), Storage(), NativeCommunicator(), Auth2()]);
+    return Set.from([FirebaseCore(), Storage(), NativeCommunicator(), Auth2()]);
   }
 
   // NotificationsListener

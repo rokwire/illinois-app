@@ -28,7 +28,7 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';

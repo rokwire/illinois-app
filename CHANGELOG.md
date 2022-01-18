@@ -5,9 +5,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed  
+- FirebaseCore and FirebaseCrashlytics moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 
-## [3.2.0] - ????-??-??
-Please log changes here until the first 3.2 build. Fill the date of the build as a version date above.
+## [3.2.2] - 2022-01-17
+### Added
+- Created Rokwire plugin, started services porting [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+### Changed  
+- Update "Campus Resources": Read crisis_url from Config[#1219](https://github.com/rokwire/illinois-app/issues/1219).
+- Update Browse panel layout: remove FAQs button [#1217](https://github.com/rokwire/illinois-app/issues/1217).
+
+## [3.2.1] - 2022-01-14
+### Changed
+- Make Geofence monitor standalone plugin [#1208](https://github.com/rokwire/illinois-app/issues/1208).
+- Improved Accessibility [#1213](https://github.com/rokwire/illinois-app/issues/1213).
+- Update Browse panel layout [#1217](https://github.com/rokwire/illinois-app/issues/1217).
+- Update "Campus Resources" Layout [#1219](https://github.com/rokwire/illinois-app/issues/1219).
+- Remove margin from Group Post body in GroupPostDetailPanel [#1227](https://github.com/rokwire/illinois-app/issues/1227).
+
+## [3.1.12] - 2022-01-13
+### Fixed
+- Wrong header bar colors [#1206](https://github.com/rokwire/illinois-app/issues/1206).
+- Android: Soft keyboard does not appear in web view [#1209](https://github.com/rokwire/illinois-app/issues/1209).
+- Crash in Privacy Center.
+- Respect user's category interests and sort random events [#1171](https://github.com/rokwire/illinois-app/issues/1171).
+### Changed
+- Label from "Building Entry" to "Building Access" [#1172](https://github.com/rokwire/illinois-app/issues/1172).
 
 ## [3.1.11] - 2022-01-11
 ### Added

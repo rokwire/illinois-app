@@ -20,22 +20,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppNavigation.dart';
+import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/FirebaseCrashlytics.dart';
+import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/DeviceCalendar.dart';
+import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/GeoFence.dart';
+import 'package:illinois/service/Groups.dart';
+import 'package:illinois/service/Guide.dart';
+import 'package:illinois/service/HttpProxy.dart';
+import 'package:illinois/service/IlliniCash.dart';
+import 'package:illinois/service/Inbox.dart';
+import 'package:illinois/service/LiveStats.dart';
+import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:illinois/service/Polls.dart';
+import 'package:illinois/service/RecentItems.dart';
+import 'package:illinois/service/Services.dart';
+import 'package:illinois/service/Sports.dart';
+import 'package:illinois/service/Voter.dart';
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 
-import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
@@ -44,6 +60,16 @@ import 'package:illinois/ui/widgets/FlexContentWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
+import 'package:rokwire_plugin/rokwire_plugin.dart';
+import 'package:rokwire_plugin/service/firebase_core.dart';
+import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
+import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
+
+
 final AppExitListener appExitListener = AppExitListener();
 
 void main() async {
@@ -51,10 +77,56 @@ void main() async {
   // https://stackoverflow.com/questions/57689492/flutter-unhandled-exception-servicesbinding-defaultbinarymessenger-was-accesse
   WidgetsFlutterBinding.ensureInitialized();
 
+  String? platformVersion = await RokwirePlugin.platformVersion;
+  Log.d("RokwirePlugin.platformVersion: $platformVersion");
+
   NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
 
-  Services().create();
-  ServiceError? serviceError = await Services().init();
+  IlliniServices().create([
+    // Add highest priority services at top
+
+    FirebaseCore(),
+    FirebaseCrashlytics(),
+    AppLivecycle(),
+    AppDateTime(),
+    Connectivity(),
+    LocationServices(),
+    IlliniDeepLink(),
+
+    Storage(),
+    HttpProxy(),
+
+    Config(),
+    NativeCommunicator(),
+
+    Auth2(),
+    Localization(),
+    Assets(),
+    Styles(),
+    Analytics(),
+    FirebaseMessaging(),
+    Sports(),
+    LiveStats(),
+    RecentItems(),
+    DiningService(),
+    IlliniCash(),
+    FlexUI(),
+    Onboarding(),
+    Polls(),
+    GeoFence(),
+    Voter(),
+    Guide(),
+    Inbox(),
+    DeviceCalendar(),
+    ExploreService(),
+    Groups(),
+
+    // These do not rely on Service initialization API so they are not registered as services.
+    // LaundryService(),
+    // Content(),
+  ]);
+  
+  ServiceError? serviceError = await IlliniServices().init();
 
   // do not show the red error widget when release mode
   if (kReleaseMode) {
@@ -77,7 +149,7 @@ class AppExitListener implements NotificationsListener {
     if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
       Future.delayed(Duration(), () {
         NotificationService().unsubscribe(appExitListener);
-        Services().destroy();
+        IlliniServices().destroy();
       });
     }
   }
@@ -160,8 +232,6 @@ class _AppState extends State<App> implements NotificationsListener {
       AppLivecycle.notifyStateChanged,
     ]);
 
-    AppLivecycle.instance.ensureBinding();
-
     rootPanel = RootPanel();
     _initializeError = widget.initializeError;
 
@@ -203,6 +273,7 @@ class _AppState extends State<App> implements NotificationsListener {
       //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       title: Localization().getStringEx('app.title', 'Illinois')!,
       theme: ThemeData(
+          appBarTheme: AppBarTheme(backgroundColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040)),
           primaryColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040),
           fontFamily: Styles().fontFamilies?.extraBold ?? 'ProximaNovaExtraBold'),
       home: _homePanel,
@@ -265,7 +336,7 @@ class _AppState extends State<App> implements NotificationsListener {
       return await _retryInitialzeFuture;
     }
     else {
-      _retryInitialzeFuture = Services().init();
+      _retryInitialzeFuture = IlliniServices().init();
       ServiceError? serviceError = await _retryInitialzeFuture;
       _retryInitialzeFuture = null;
 
@@ -367,3 +438,4 @@ class _AppState extends State<App> implements NotificationsListener {
     }
   }
 }
+

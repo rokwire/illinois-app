@@ -88,6 +88,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private Toast statusToast;
 
+    private GeofenceMonitor geofenceMonitor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +101,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        GeofenceMonitor.getInstance().unInit();
+        if (geofenceMonitor != null) {
+            geofenceMonitor.unInit();
+        }
     }
 
     public static MainActivity getInstance() {
@@ -152,6 +156,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 .getPlatformViewsController()
                 .getRegistry()
                 .registerViewFactory("mapview", new MapViewFactory(this, flutterEngine.getDartExecutor().getBinaryMessenger()));
+
+        flutterEngine.getPlugins().add(geofenceMonitor = new GeofenceMonitor());
     }
 
     private void initScreenOrientation() {
@@ -202,8 +208,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             Log.d(TAG, "Failed to generate uuid");
         }
 
-        // Geofence
-        GeofenceMonitor.getInstance().init();
+        if (geofenceMonitor != null) {
+            geofenceMonitor.init();
+        }
     }
 
     private void launchMapsDirections(Object explore, Object options) {
@@ -267,7 +274,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     if (granted) {
                         result.success("allowed");
 
-                        GeofenceMonitor.getInstance().onLocationPermissionGranted();
+                        if (geofenceMonitor != null) {
+                            geofenceMonitor.onLocationPermissionGranted();
+                        }
+
                     } else {
                         result.success("denied");
                     }
@@ -279,7 +289,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     REQUEST_LOCATION_PERMISSION_CODE);
         } else {
             Log.d(TAG, "already granted");
-            GeofenceMonitor.getInstance().onLocationPermissionGranted();
+            if (geofenceMonitor != null) {
+                geofenceMonitor.onLocationPermissionGranted();
+            }
             result.success("allowed");
         }
     }
@@ -347,30 +359,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             }
         }
         return resultList;
-    }
-
-    private Object handleGeofence(Object params) {
-        HashMap paramsMap = (params instanceof HashMap) ? (HashMap) params : null;
-        Object regions = (paramsMap != null) ? paramsMap.get("regions") : null;
-        Object beacons = (paramsMap != null) ? paramsMap.get("beacons") : null;
-        if (regions != null) {
-            List<Map<String, Object>> geoFencesList = (regions instanceof List) ? (List<Map<String, Object>>) regions : null;
-            GeofenceMonitor.getInstance().monitorRegions(geoFencesList);
-            return GeofenceMonitor.getInstance().getCurrentIds();
-        } else if (beacons != null) {
-            HashMap beaconMap = (beacons instanceof HashMap) ? (HashMap) beacons : null;
-            String regionId = Utils.Map.getValueFromPath(beaconMap, "regionId", null);
-            String action = Utils.Map.getValueFromPath(beaconMap, "action", null);
-            if ("start".equals(action)) {
-                return GeofenceMonitor.getInstance().startRangingBeaconsInRegion(regionId);
-            } else if ("stop".equals(action)) {
-                return GeofenceMonitor.getInstance().stopRangingBeaconsInRegion(regionId);
-            } else {
-                return GeofenceMonitor.getInstance().getBeaconsInRegion(regionId);
-            }
-        } else {
-            return null;
-        }
     }
 
     private String getScreenOrientationToString(int orientationValue) {
@@ -653,10 +641,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 case Constants.FIREBASE_INFO:
                     String projectId = FirebaseApp.getInstance().getOptions().getProjectId();
                     result.success(projectId);
-                    break;
-                case Constants.GEOFENCE_KEY:
-                    Object resultParams = handleGeofence(methodCall.arguments);
-                    result.success(resultParams);
                     break;
                 case Constants.DEVICE_ID_KEY:
                     String deviceId = getDeviceId();
