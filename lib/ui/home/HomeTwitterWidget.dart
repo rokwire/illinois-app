@@ -11,7 +11,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/Twitter.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeTwitterWidget extends StatefulWidget {

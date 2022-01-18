@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class VoterRule {
   DateTime? startDate;
@@ -53,8 +52,8 @@ class VoterRule {
 
   static VoterRule? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? VoterRule(
-        startDate: AppDateTime().dateTimeFromString(json['date_start'], format: dateFormat, isUtc: false),
-        endDate: AppDateTime().dateTimeFromString(json['date_end'], format: dateFormat, isUtc: false),
+        startDate: DateTimeUtils.dateTimeFromString(json['date_start'], format: dateFormat, isUtc: false),
+        endDate: DateTimeUtils.dateTimeFromString(json['date_end'], format: dateFormat, isUtc: false),
         nrvTitle: json['NRV_title'],
         nrvText: json['NRV_text'],
         nrvOptions: RuleOption.listFromJson(JsonUtils.listValue(json['NRV_options'])),

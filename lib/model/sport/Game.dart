@@ -20,11 +20,12 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Game with Explore implements Favorite {
   final String? id;
@@ -87,11 +88,11 @@ class Game with Explore implements Favorite {
       dateToString: json['date'],
       timeToString: json['time'],
       dateTimeUtcString: json['datetime_utc'],
-      dateTimeUtc: AppDateTime().dateTimeFromString(json['datetime_utc'], format: utcDateTimeFormat, isUtc: true),
+      dateTimeUtc: DateTimeUtils.dateTimeFromString(json['datetime_utc'], format: utcDateTimeFormat, isUtc: true),
       endDateTimeUtcString: json['end_datetime_utc'],
-      endDateTimeUtc: AppDateTime().dateTimeFromString(json['end_datetime_utc'], format: utcDateTimeFormat, isUtc: true),
+      endDateTimeUtc: DateTimeUtils.dateTimeFromString(json['end_datetime_utc'], format: utcDateTimeFormat, isUtc: true),
       endDateTimeString: json['end_datetime'],
-      endDateTime: AppDateTime().dateTimeFromString(json['end_datetime'], format: dateTimeFormat),
+      endDateTime: DateTimeUtils.dateTimeFromString(json['end_datetime'], format: dateTimeFormat),
       allDay: json['all_day'],
       status: json['status'],
       description: json['description'],
@@ -151,7 +152,7 @@ class Game with Explore implements Favorite {
   }
 
   DateTime? get date {
-    return AppDateTime().dateTimeFromString(dateToString, format: dateFormat);
+    return DateTimeUtils.dateTimeFromString(dateToString, format: dateFormat);
   }
 
   ///
@@ -192,7 +193,7 @@ class Game with Explore implements Favorite {
       dateFormatted += ' ${StringUtils.ensureNotEmpty(timeToString)}';
       return dateFormatted;
     } else {
-      return AppDateTime().getDisplayDateTime(dateTimeUtc, allDay: allDay ?? false);
+      return AppDateTimeUtils.getDisplayDateTime(dateTimeUtc, allDay: allDay ?? false);
     }
   }
 

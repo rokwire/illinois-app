@@ -21,7 +21,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'package:sprintf/sprintf.dart';

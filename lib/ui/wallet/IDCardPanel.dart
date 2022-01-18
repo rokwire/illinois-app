@@ -20,7 +20,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -28,7 +28,7 @@ import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 

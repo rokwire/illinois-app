@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class SportSeasons {
   String? code;

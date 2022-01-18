@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -16,7 +15,7 @@ import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -850,10 +849,10 @@ class Auth2 with Service implements NotificationsListener {
   Future<void> _refreshAuthCardIfNeeded() async {
     int? lastCheckTime = Storage().auth2CardTime;
     DateTime? lastCheckDate = (lastCheckTime != null) ? DateTime.fromMillisecondsSinceEpoch(lastCheckTime) : null;
-    DateTime? lastCheckMidnight = AppDateTime.midnight(lastCheckDate);
+    DateTime? lastCheckMidnight = DateTimeUtils.midnight(lastCheckDate);
 
     DateTime now = DateTime.now();
-    DateTime? todayMidnight = AppDateTime.midnight(now);
+    DateTime? todayMidnight = DateTimeUtils.midnight(now);
 
     // Do it one per day
     if ((lastCheckMidnight == null) || (lastCheckMidnight.compareTo(todayMidnight!) < 0)) {

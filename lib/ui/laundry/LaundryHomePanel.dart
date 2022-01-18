@@ -33,7 +33,7 @@ import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryListPanel.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 

@@ -18,7 +18,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/illinicash/Transaction.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -35,7 +35,7 @@ import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart';
 
 class IlliniCash with Service implements NotificationsListener {

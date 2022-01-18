@@ -6,7 +6,7 @@ import 'package:flutter/semantics.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Inbox.dart';
@@ -18,7 +18,7 @@ import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class InboxHomePanel extends StatefulWidget {
   InboxHomePanel();

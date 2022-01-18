@@ -6,7 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 ////////////////////////////////
 // Auth2Token

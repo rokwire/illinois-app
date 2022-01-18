@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -35,9 +35,9 @@ class InboxMessage with Favorite {
       topic: JsonUtils.stringValue(json['topic']),
       category: JsonUtils.stringValue(json['category']),
 
-      dateCreatedUtc: AppDateTime().dateTimeFromString(JsonUtils.stringValue(json['date_created'])),
-      dateUpdatedUtc: AppDateTime().dateTimeFromString(JsonUtils.stringValue(json['date_updated'])),
-      dateSentUtc: AppDateTime().dateTimeFromString(JsonUtils.stringValue(json['date_sent'])),
+      dateCreatedUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_created'])),
+      dateUpdatedUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_updated'])),
+      dateSentUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_sent'])),
 
       subject: JsonUtils.stringValue(json['subject']),
       body: JsonUtils.stringValue(json['body']),
@@ -54,9 +54,9 @@ class InboxMessage with Favorite {
       'priority': priority,
       'topic': topic,
 
-      'date_created': AppDateTime.utcDateTimeToString(dateCreatedUtc),
-      'date_updated': AppDateTime.utcDateTimeToString(dateUpdatedUtc),
-      'date_sent': AppDateTime.utcDateTimeToString(dateSentUtc),
+      'date_created': DateTimeUtils.utcDateTimeToString(dateCreatedUtc),
+      'date_updated': DateTimeUtils.utcDateTimeToString(dateUpdatedUtc),
+      'date_sent': DateTimeUtils.utcDateTimeToString(dateSentUtc),
 
       'subject': subject,
       'body': body,

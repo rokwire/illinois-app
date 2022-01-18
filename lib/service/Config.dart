@@ -31,7 +31,7 @@ import 'package:package_info/package_info.dart';
 import 'package:collection/collection.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/utils/crypt.dart';

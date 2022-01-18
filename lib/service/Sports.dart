@@ -20,7 +20,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/sport/Team.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/News.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -34,7 +34,7 @@ import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'package:illinois/service/Network.dart';
 import 'package:path/path.dart';
@@ -232,8 +232,8 @@ class Sports with Service implements NotificationsListener {
 
   Future<void> _updateSportsFromNet() async {
     // Update once daily
-    DateTime today = AppDateTime.midnight(DateTime.now())!;
-    DateTime lastCheck = AppDateTime.midnight(DateTime.fromMillisecondsSinceEpoch(_lastCheckSportsTime ?? 0))!;
+    DateTime today = DateTimeUtils.midnight(DateTime.now())!;
+    DateTime lastCheck = DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(_lastCheckSportsTime ?? 0))!;
     if (lastCheck.compareTo(today) < 0) {
       if (await _applySportsFromNet()) {
         NotificationService().notify(notifyChanged, null);
@@ -352,8 +352,8 @@ class Sports with Service implements NotificationsListener {
 
   Future<void> _updateSportSocialMediaFromNet() async {
     // Update once daily
-    DateTime today = AppDateTime.midnight(DateTime.now())!;
-    DateTime lastCheck = AppDateTime.midnight(DateTime.fromMillisecondsSinceEpoch(_lastCheckSocialMediasTime ?? 0))!;
+    DateTime today = DateTimeUtils.midnight(DateTime.now())!;
+    DateTime lastCheck = DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(_lastCheckSocialMediasTime ?? 0))!;
     if (lastCheck.compareTo(today) < 0) {
       if (await _applySportSocialMediaFromNet()) {
         NotificationService().notify(notifyChanged, null);

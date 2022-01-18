@@ -50,8 +50,6 @@ dependencies:
   uuid: ^3.0.5
   image_picker: ^0.8.4+1
   roundcheckbox: ^2.0.4+1
-  timezone: ^0.8.0
-  flutter_native_timezone: ^2.0.0
   path_provider: ^2.0.4
   cookie_jar: ^3.0.1
   share: ^2.0.4
@@ -64,6 +62,9 @@ dependencies:
   flutter_multi_formatter: ^2.4.1
   device_calendar: ^4.0.1
   pinch_zoom: ^1.0.0
+
+  timezone: ^0.8.0
+  flutter_native_timezone: ^2.0.0
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:

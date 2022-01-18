@@ -21,7 +21,7 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Localization.dart';
@@ -38,7 +38,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -275,7 +275,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   //Event utils
   String getEventDate(Event event) {
-    return AppDateTime().getDisplayDay(dateTimeUtc: event.startDateGmt, allDay: event.allDay)!;
+    return AppDateTimeUtils.getDisplayDay(dateTimeUtc: event.startDateGmt, allDay: event.allDay)!;
   }
 
   Widget _buildEmpty() {

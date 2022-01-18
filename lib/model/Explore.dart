@@ -26,7 +26,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
 
 import 'package:illinois/model/Location.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 //////////////////////////////
 /// Explore

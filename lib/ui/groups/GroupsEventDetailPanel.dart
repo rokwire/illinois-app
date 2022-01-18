@@ -6,7 +6,7 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
@@ -25,7 +25,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -199,8 +199,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     //Newly created groups pass time in the string
     if(StringUtils.isEmpty(displayTime?.trim())){
       if(_event?.startDateString !=null || _event?.endDateString != null){
-        DateTime? startDate = AppDateTime().dateTimeFromString(_event?.startDateString, format: Event.serverRequestDateTimeFormat);
-        DateTime? endDate = AppDateTime().dateTimeFromString(_event?.endDateString, format: Event.serverRequestDateTimeFormat);
+        DateTime? startDate = DateTimeUtils.dateTimeFromString(_event?.startDateString, format: Event.serverRequestDateTimeFormat);
+        DateTime? endDate = DateTimeUtils.dateTimeFromString(_event?.endDateString, format: Event.serverRequestDateTimeFormat);
         if(startDate !=null){
           displayTime = AppDateTime().formatDateTime(startDate, format: "MMM dd, yyyy");
         } else if(endDate != null){

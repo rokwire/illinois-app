@@ -5,7 +5,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -14,7 +13,7 @@ import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -255,7 +254,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   DateTime? reminderDate(Map<String, dynamic>? entry) {
-    return AppDateTime().dateTimeFromString(JsonUtils.stringValue(entryValue(entry, 'date')), format: "yyyy-MM-dd", isUtc: true);
+    return DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(entryValue(entry, 'date')), format: "yyyy-MM-dd", isUtc: true);
   }
 
   DateTime? reminderSectionDate(Map<String, dynamic> entry) {

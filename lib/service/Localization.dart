@@ -25,7 +25,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:path/path.dart';
 
 class Localization with Service implements NotificationsListener {
