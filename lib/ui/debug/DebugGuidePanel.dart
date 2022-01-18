@@ -6,7 +6,7 @@ import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class DebugGuidePanel extends StatefulWidget {
   DebugGuidePanel();

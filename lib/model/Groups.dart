@@ -19,12 +19,12 @@ import 'dart:ui';
 import 'package:collection/collection.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 //////////////////////////////
@@ -244,7 +244,6 @@ class Group {
 
   String? get displayUpdateTime {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateUpdatedUtc);
-    //return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
     if (deviceDateTime != null) {
       DateTime now = DateTime.now();
       if (deviceDateTime.compareTo(now) < 0) {
@@ -802,7 +801,7 @@ class GroupEventComment {
 
   void _initFromJson(Map<String, dynamic> json) {
     try { member      = Member.fromJson(json['member']); } catch(e) { print(e.toString()); }
-    try { dateCreated = AppDateTime().dateTimeFromString(json['dateCreated'], format: AppDateTime.iso8601DateTimeFormat); } catch(e) { print(e.toString()); }
+    try { dateCreated = DateTimeUtils.dateTimeFromString(json['dateCreated'], format: AppDateTime.iso8601DateTimeFormat); } catch(e) { print(e.toString()); }
     try { text         = json['text']; } catch(e) { print(e.toString()); }
   }
 
@@ -900,7 +899,6 @@ class GroupPost {
 
   String? getDisplayDateTime(){
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
-    //return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
     if (deviceDateTime != null) {
       DateTime now = DateTime.now();
       if (deviceDateTime.compareTo(now) < 0) {
@@ -975,7 +973,7 @@ class GroupError {
 }
 
 DateTime? groupUtcDateTimeFromString(String? dateTimeString) {
-  return AppDateTime().dateTimeFromString(dateTimeString, format: "yyyy-MM-ddTHH:mm:ssZ", isUtc: true);
+  return DateTimeUtils.dateTimeFromString(dateTimeString, format: "yyyy-MM-ddTHH:mm:ssZ", isUtc: true);
 }
 
 String? groupUtcDateTimeToString(DateTime? dateTime) {

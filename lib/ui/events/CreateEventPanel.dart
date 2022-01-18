@@ -20,7 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
@@ -40,7 +40,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as timezone;
@@ -1480,12 +1480,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       if(event.startDateGmt!=null) {
         _startDate =  timezone.TZDateTime.from(event.startDateGmt!, timezone.getLocation(_selectedTimeZone!));
         _startTime = TimeOfDay.fromDateTime(_startDate!);
-//      _endDate = AppDateTime().dateTimeFromString(event.endDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
       }
-//      _endDate = event.endDateGmt;
-//      if(_endDate==null && event.endDateString!=null){
-//        _endDate = AppDateTime().dateTimeFromString(event.endDateString, format: AppDateTime.serverResponseDateTimeFormat);
-//      }
       if(event.endDateGmt!=null) {
         _endDate = timezone.TZDateTime.from(event.endDateGmt!, timezone.getLocation(_selectedTimeZone!));
         _endTime = TimeOfDay.fromDateTime(_endDate!);
@@ -1900,17 +1895,17 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.category = _selectedCategory != null ? _selectedCategory["category"] : "";
     event.title = _eventTitleController.text;
     if(_startDate!=null) {
-      timezone.TZDateTime? startTime = AppDateTime().changeTimeZoneToDate(_startDate!, timezone.getLocation(_selectedTimeZone!));
+      timezone.TZDateTime? startTime = DateTimeUtils.changeTimeZoneToDate(_startDate!, timezone.getLocation(_selectedTimeZone!));
       timezone.TZDateTime? utcTTime = startTime?.toUtc();
       event.startDateString = AppDateTime().formatDateTime(
-          utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
+          utcTTime?.toUtc(), format: Event.serverRequestDateTimeFormat, ignoreTimeZone: true);
       event.startDateGmt = utcTTime?.toUtc();
     }
     if(_endDate!=null) {
-      timezone.TZDateTime? startTime = AppDateTime().changeTimeZoneToDate(_endDate!, timezone.getLocation(_selectedTimeZone!));
+      timezone.TZDateTime? startTime = DateTimeUtils.changeTimeZoneToDate(_endDate!, timezone.getLocation(_selectedTimeZone!));
       timezone.TZDateTime? utcTTime = startTime?.toUtc();
       event.endDateString = AppDateTime().formatDateTime(
-          utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
+          utcTTime?.toUtc(), format: Event.serverRequestDateTimeFormat, ignoreTimeZone: true);
       event.endDateGmt = utcTTime?.toUtc();
     }
     event.allDay = _allDay;
@@ -2015,7 +2010,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       },
     );
 
-    return (resultDate != null) ? AppDateTime().changeTimeZoneToDate(resultDate, timezone.getLocation(_selectedTimeZone!)) : null;
+    return (resultDate != null) ? DateTimeUtils.changeTimeZoneToDate(resultDate, timezone.getLocation(_selectedTimeZone!)) : null;
   }
 
   Future<TimeOfDay?> _pickTime(TimeOfDay initialTime) async {

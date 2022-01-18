@@ -18,11 +18,11 @@ import 'dart:convert';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/utils/crypt.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -376,8 +376,7 @@ class Storage with Service {
 
   DateTime? get offsetDate {
     String? dateString = _getStringWithName(offsetDateKey);
-    return StringUtils.isNotEmpty(dateString) ? AppDateTime()
-        .dateTimeFromString(dateString) : null;
+    return StringUtils.isNotEmpty(dateString) ? DateTimeUtils.dateTimeFromString(dateString) : null;
   }
 
   /////////////////

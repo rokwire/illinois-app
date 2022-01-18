@@ -17,7 +17,7 @@
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
 enum LaundryRoomStatus { online, offline }

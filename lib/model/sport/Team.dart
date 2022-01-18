@@ -15,7 +15,7 @@
  */
 
 import 'package:illinois/model/sport/Game.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class TeamRecord {
   final String? overallRecordUnformatted;

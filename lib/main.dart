@@ -57,7 +57,6 @@ import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContentWidget.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
@@ -68,6 +67,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
 final AppExitListener appExitListener = AppExitListener();
@@ -88,7 +88,7 @@ void main() async {
     FirebaseCore(),
     FirebaseCrashlytics(),
     AppLivecycle(),
-    AppDateTime(),
+    IlliniAppDateTime(),
     Connectivity(),
     LocationServices(),
     IlliniDeepLink(),

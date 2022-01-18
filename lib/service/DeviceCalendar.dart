@@ -2,7 +2,7 @@
 import 'package:device_calendar/device_calendar.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';
@@ -11,7 +11,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/model/Event.dart' as ExploreEvent;
 import 'package:timezone/timezone.dart' as timezone;
 

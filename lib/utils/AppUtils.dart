@@ -18,7 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class AppAlert {
   
@@ -102,3 +103,105 @@ class AppSemantics {
     }
 }
 
+class AppDateTimeUtils {
+
+
+  static String getDisplayDateTime(DateTime? dateTimeUtc, {bool? allDay = false, bool considerSettingsDisplayTime = true}) {
+    String? timePrefix = getDisplayDay(dateTimeUtc: dateTimeUtc, allDay: allDay, considerSettingsDisplayTime: considerSettingsDisplayTime, includeAtSuffix: true);
+    String? timeSuffix = getDisplayTime(dateTimeUtc: dateTimeUtc, allDay: allDay, considerSettingsDisplayTime: considerSettingsDisplayTime);
+    return '$timePrefix $timeSuffix';
+  }
+
+  static String? getDisplayDay({DateTime? dateTimeUtc, bool? allDay = false, bool considerSettingsDisplayTime = true, bool includeAtSuffix = false}) {
+    String? displayDay = '';
+    if(dateTimeUtc != null) {
+      DateTime dateTimeToCompare = _getDateTimeToCompare(dateTimeUtc: dateTimeUtc, considerSettingsDisplayTime: considerSettingsDisplayTime)!;
+      DateTime nowDevice = DateTime.now();
+      DateTime nowUtc = nowDevice.toUtc();
+      DateTime? nowUniLocal = AppDateTime().getUniLocalTimeFromUtcTime(nowUtc);
+      DateTime nowToCompare = AppDateTime().useDeviceLocalTimeZone ? nowDevice : nowUniLocal!;
+      int calendarDaysDiff = dateTimeToCompare.day - nowToCompare.day;
+      int timeDaysDiff = dateTimeToCompare.difference(nowToCompare).inDays;
+      if ((calendarDaysDiff != 0) && (calendarDaysDiff > timeDaysDiff)) {
+        timeDaysDiff += 1;
+      }
+      if (timeDaysDiff == 0) {
+        displayDay = Localization().getStringEx('model.explore.time.today', 'Today');
+        if (!allDay! && includeAtSuffix) {
+          displayDay = "$displayDay ${Localization().getStringEx('model.explore.time.at', 'at')}";
+        }
+      }
+      else if (timeDaysDiff == 1) {
+        displayDay = Localization().getStringEx('model.explore.time.tomorrow', 'Tomorrow');
+        if (!allDay! && includeAtSuffix) {
+          displayDay = "$displayDay ${Localization().getStringEx('model.explore.time.at', 'at')}";
+        }
+      }
+      else {
+        displayDay = AppDateTime().formatDateTime(dateTimeToCompare, format: "MMM dd", ignoreTimeZone: true, showTzSuffix: false);
+      }
+    }
+    return displayDay;
+  }
+
+  static String? getDisplayTime({DateTime? dateTimeUtc, bool? allDay = false, bool considerSettingsDisplayTime = true}) {
+    String? timeToString = '';
+    if (dateTimeUtc != null && !allDay!) {
+      DateTime dateTimeToCompare = _getDateTimeToCompare(dateTimeUtc: dateTimeUtc, considerSettingsDisplayTime: considerSettingsDisplayTime)!;
+      String format = (dateTimeToCompare.minute == 0) ? 'ha' : 'h:mma';
+      timeToString = AppDateTime().formatDateTime(dateTimeToCompare, format: format, ignoreTimeZone: true, showTzSuffix: !AppDateTime().useDeviceLocalTimeZone);
+    }
+    return timeToString;
+  }
+
+  static DateTime? _getDateTimeToCompare({DateTime? dateTimeUtc, bool considerSettingsDisplayTime = true}) {
+    if (dateTimeUtc == null) {
+      return null;
+    }
+    DateTime? dateTimeToCompare;
+    //workaround for receiving incorrect date times from server for games: http://fightingillini.com/services/schedule_xml_2.aspx
+    if (AppDateTime().useDeviceLocalTimeZone && considerSettingsDisplayTime) {
+      dateTimeToCompare = AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc);
+    } else {
+      dateTimeToCompare = AppDateTime().getUniLocalTimeFromUtcTime(dateTimeUtc);
+    }
+    return dateTimeToCompare;
+  }
+
+  static String getDayGreeting() {
+    int currentHour = DateTime.now().hour;
+    if (currentHour > 7 && currentHour < 12) {
+      return Localization().getStringEx("logic.date_time.greeting.morning", "Good morning")!;
+    }
+    else if (currentHour >= 12 && currentHour < 19) {
+      return Localization().getStringEx("logic.date_time.greeting.afternoon", "Good afternoon")!;
+    }
+    else {
+      return Localization().getStringEx("logic.date_time.greeting.evening", "Good evening")!;
+    }
+  }
+
+  static String timeAgoSinceDate(DateTime date, {bool numericDates = true}) {
+    final date2 = DateTime.now();
+    final difference = date2.difference(date);
+
+    if (difference.inDays >= 2) {
+      return '${difference.inDays} days ago';
+    } else if (difference.inDays >= 1) {
+      return (numericDates) ? '1 day ago' : 'Yesterday';
+    } else if (difference.inHours >= 2) {
+      return '${difference.inHours} hours ago';
+    } else if (difference.inHours >= 1) {
+      return (numericDates) ? '1 hour ago' : 'An hour ago';
+    } else if (difference.inMinutes >= 2) {
+      return '${difference.inMinutes} minutes ago';
+    } else if (difference.inMinutes >= 1) {
+      return (numericDates) ? '1 minute ago' : 'A minute ago';
+    } else if (difference.inSeconds >= 3) {
+      return '${difference.inSeconds} seconds ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
+}

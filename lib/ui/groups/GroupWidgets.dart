@@ -22,7 +22,6 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/GeoFence.dart';
@@ -44,7 +43,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -443,7 +442,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
 
   Widget _buildComment(GroupEventComment comment){
     String? memberName = comment.member!.name;
-    String postDate = AppDateTime.timeAgoSinceDate(comment.dateCreated!);
+    String postDate = AppDateTimeUtils.timeAgoSinceDate(comment.dateCreated!);
     return
       Semantics(
           label: "$memberName posted, $postDate: ${comment.text}",

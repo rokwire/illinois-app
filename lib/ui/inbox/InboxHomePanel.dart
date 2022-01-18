@@ -6,7 +6,7 @@ import 'package:flutter/semantics.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Inbox.dart';
@@ -18,7 +18,7 @@ import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class InboxHomePanel extends StatefulWidget {
   InboxHomePanel();
@@ -340,11 +340,11 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       _DateInterval? interval = intervals[timeEntry.value];
       if (interval != null) {
         DateTime startDate = interval.startDate!;
-        String? startStr = AppDateTime().formatDateTime(interval.startDate, format: AppDateTime.eventFilterDisplayDateFormat, ignoreTimeZone: true);
+        String? startStr = AppDateTime().formatDateTime(interval.startDate, format: 'MM/dd', ignoreTimeZone: true);
 
         DateTime endDate = interval.endDate ?? today;
         if (1 < endDate.difference(startDate).inDays) {
-          String? endStr = AppDateTime().formatDateTime(endDate, format: AppDateTime.eventFilterDisplayDateFormat, ignoreTimeZone: true);  
+          String? endStr = AppDateTime().formatDateTime(endDate, format: 'MM/dd', ignoreTimeZone: true);  
           timeDate = "$startStr - $endStr";
         }
         else {

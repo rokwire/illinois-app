@@ -20,7 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/GeoFence.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -40,7 +40,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class DebugHomePanel extends StatefulWidget {
@@ -219,7 +219,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                         Expanded(
                             child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                          child: Text(_offsetDate != null ? AppDateTime().formatDateTime(_offsetDate, format: AppDateTime.gameResponseDateTimeFormat2)! : "None",
+                          child: Text(_offsetDate != null ? AppDateTime().formatDateTime(_offsetDate, format: 'MM/dd/yyyy HH:mm:ss a')! : "None",
                               textAlign: TextAlign.end),
                         ))
                       ],

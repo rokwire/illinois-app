@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class SectionTitlePrimary extends StatelessWidget{

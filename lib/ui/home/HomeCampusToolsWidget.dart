@@ -34,7 +34,7 @@ import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/widgets/LinkTileButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeCampusToolsWidget extends StatefulWidget {
