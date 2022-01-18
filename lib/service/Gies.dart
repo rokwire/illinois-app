@@ -1,9 +1,9 @@
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Giess with Service implements NotificationsListener{
 
@@ -38,7 +38,7 @@ class Giess with Service implements NotificationsListener{
     _completedPages = Storage().giesCompletedPages ?? Set<String>();
 
     AppBundle.loadString('assets/gies.json').then((String? assetsContentString) {
-        _pages = AppJson.decodeList(assetsContentString);
+        _pages = JsonUtils.decodeList(assetsContentString);
     });
   }
 
