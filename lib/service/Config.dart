@@ -447,6 +447,12 @@ class Config with Service implements NotificationsListener {
     return ((convergeURL != null) && convergeURL.isNotEmpty) ? convergeURL : eventsUrl;
   }
 
+  String? deepLinkRedirectUrl(String? deepLink) {
+    Uri? assetsUri = AppString.isStringNotEmpty(assetsUrl) ? Uri.tryParse(assetsUrl!) : null;
+    String? redirectUrl = (assetsUri != null) ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
+    return AppString.isStringNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
+  }
+
   int get refreshTimeout {
     return kReleaseMode ? (settings['refreshTimeout'] ?? 0) : 0;
   }

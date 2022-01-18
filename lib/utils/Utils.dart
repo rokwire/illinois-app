@@ -24,7 +24,6 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -292,42 +291,6 @@ class AppUrl {
 
   static bool launchInternal(String? url) {
     return AppUrl.isWebScheme(url) && !(Platform.isAndroid && AppUrl.isPdf(url));
-  }
-
-  static String? getGameDayGuideUrl(String? sportKey) {
-    if (sportKey == "football") {
-      return Config().gameDayFootballUrl;
-    } else if ((sportKey == "mbball") || (sportKey == "wbball")) {
-      return Config().gameDayBasketballUrl;
-    } else if ((sportKey == "mten") || (sportKey == "wten")) {
-      return Config().gameDayTennisUrl;
-    } else if (sportKey == "wvball") {
-      return Config().gameDayVolleyballUrl;
-    } else if (sportKey == "softball") {
-      return Config().gameDaySoftballUrl;
-    } else if (sportKey == "wswim") {
-      return Config().gameDaySwimDiveUrl;
-    } else if ((sportKey == "mcross") || (sportKey == "wcross")) {
-      return Config().gameDayCrossCountryUrl;
-    } else if (sportKey == "baseball") {
-      return Config().gameDayBaseballUrl;
-    } else if ((sportKey == "mgym") || (sportKey == "wgym")) {
-      return Config().gameDayGymnasticsUrl;
-    } else if (sportKey == "wrestling") {
-      return Config().gameDayWrestlingUrl;
-    } else if (sportKey == "wsoc") {
-      return Config().gameDaySoccerUrl;
-    } else if ((sportKey == "mtrack") || (sportKey == "wtrack")) {
-      return Config().gameDayTrackFieldUrl;
-    } else {
-      return Config().gameDayAllUrl;
-    }
-  }
-
-  static String? getDeepLinkRedirectUrl(String? deepLink) {
-    Uri? assetsUri = AppString.isStringNotEmpty(Config().assetsUrl) ? Uri.tryParse(Config().assetsUrl!) : null;
-    String? redirectUrl = assetsUri != null ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
-    return AppString.isStringNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
   }
 }
 

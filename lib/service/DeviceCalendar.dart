@@ -4,6 +4,7 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -324,7 +325,7 @@ class _DeviceCalendarEvent {
       calendarEvent.end = timezone.TZDateTime(AppDateTime().universityLocation!, startDate!.year, startDate!.month, startDate!.day, 24);
     }
 
-    calendarEvent.description = AppUrl.getDeepLinkRedirectUrl(deepLinkUrl);
+    calendarEvent.description = Config().deepLinkRedirectUrl(deepLinkUrl);
 
     return calendarEvent;
   }

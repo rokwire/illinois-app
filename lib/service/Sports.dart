@@ -385,6 +385,36 @@ class Sports with Service implements NotificationsListener {
     return null;
   }
 
+  static String? getGameDayGuideUrl(String? sportKey) {
+    if (sportKey == "football") {
+      return Config().gameDayFootballUrl;
+    } else if ((sportKey == "mbball") || (sportKey == "wbball")) {
+      return Config().gameDayBasketballUrl;
+    } else if ((sportKey == "mten") || (sportKey == "wten")) {
+      return Config().gameDayTennisUrl;
+    } else if (sportKey == "wvball") {
+      return Config().gameDayVolleyballUrl;
+    } else if (sportKey == "softball") {
+      return Config().gameDaySoftballUrl;
+    } else if (sportKey == "wswim") {
+      return Config().gameDaySwimDiveUrl;
+    } else if ((sportKey == "mcross") || (sportKey == "wcross")) {
+      return Config().gameDayCrossCountryUrl;
+    } else if (sportKey == "baseball") {
+      return Config().gameDayBaseballUrl;
+    } else if ((sportKey == "mgym") || (sportKey == "wgym")) {
+      return Config().gameDayGymnasticsUrl;
+    } else if (sportKey == "wrestling") {
+      return Config().gameDayWrestlingUrl;
+    } else if (sportKey == "wsoc") {
+      return Config().gameDaySoccerUrl;
+    } else if ((sportKey == "mtrack") || (sportKey == "wtrack")) {
+      return Config().gameDayTrackFieldUrl;
+    } else {
+      return Config().gameDayAllUrl;
+    }
+  }
+
   // APIs
 
   Future<List<Roster>?> loadRosters(String? sportKey) async {

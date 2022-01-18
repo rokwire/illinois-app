@@ -457,7 +457,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   void _onTapGameDayGuide() {
     Analytics.instance.logSelect(target: "Game Day");
     String? sportKey = widget.game?.sport?.shortName;
-    String? url = AppUrl.getGameDayGuideUrl(sportKey);
+    String? url = Sports.getGameDayGuideUrl(sportKey);
     if (url != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
     }

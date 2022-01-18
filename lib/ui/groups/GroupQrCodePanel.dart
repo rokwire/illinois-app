@@ -20,6 +20,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -54,7 +55,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
 
   Future<Uint8List?> _loadQrImageBytes() async {
     String deepLink = '${Groups().groupDetailUrl}?group_id=${widget.group!.id}';
-    String? qrCodeValue = AppUrl.getDeepLinkRedirectUrl(deepLink);
+    String? qrCodeValue = Config().deepLinkRedirectUrl(deepLink);
     return await NativeCommunicator().getBarcodeImageData({
       'content': qrCodeValue,
       'format': 'qrCode',
