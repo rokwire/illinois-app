@@ -71,7 +71,13 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_qr_code.alert.no_qr_code.msg", "There is no QR Code"));
     } else {
       final String? groupName = widget.group?.title;
-      Uint8List? updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, groupName, width: _imageSize.toDouble(), height: _imageSize.toDouble());
+      Uint8List? updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, groupName,
+        width: _imageSize.toDouble(),
+        height: _imageSize.toDouble(),
+        fontFamily: Styles().fontFamilies!.bold,
+        fontSize: 54,
+        textColor: Styles().colors!.textSurface!,
+      );
       bool result = (updatedImageBytes != null);
       if (result) {
         final String fileName = 'Group - $groupName';
