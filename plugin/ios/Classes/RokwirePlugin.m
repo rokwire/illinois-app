@@ -3,7 +3,7 @@
 @implementation RokwirePlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"rokwire_plugin"
+      methodChannelWithName:@"edu.illinois.rokwire/plugin"
             binaryMessenger:[registrar messenger]];
   RokwirePlugin* instance = [[RokwirePlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];
