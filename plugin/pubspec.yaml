@@ -16,6 +16,8 @@ dependencies:
   uni_links: ^0.5.1
   fluttertoast: ^8.0.8
   path: ^1.8.0
+  gallery_saver: ^2.3.2
+  path_provider: ^2.0.4
 
   #Firebase
   firebase_core: ^1.10.0

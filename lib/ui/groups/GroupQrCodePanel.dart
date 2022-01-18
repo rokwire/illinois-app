@@ -28,7 +28,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/utils/ImageUtils.dart';
+import 'package:rokwire_plugin/utils/image_utils.dart';
 
 class GroupQrCodePanel extends StatefulWidget {
   final Group? group;
