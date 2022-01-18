@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart' as google;
 import 'package:rokwire_plugin/service/service.dart';
 
 class FirebaseCore extends Service {
@@ -25,7 +25,7 @@ class FirebaseCore extends Service {
     return _service;
   }
 
-  FirebaseApp? _firebaseApp;
+  google.FirebaseApp? _firebaseApp;
 
   @override
   Future<void> initService() async{
@@ -45,6 +45,6 @@ class FirebaseCore extends Service {
   }
 
   Future<void> initFirebase() async{
-    _firebaseApp ??= await Firebase.initializeApp();
+    _firebaseApp ??= await google.Firebase.initializeApp();
   }
 }
