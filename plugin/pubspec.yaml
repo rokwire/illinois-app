@@ -11,9 +11,14 @@ dependencies:
   flutter:
     sdk: flutter
 
+
   logger: ^1.1.0
   connectivity: ^3.0.6
   uni_links: ^0.5.1
+
+  #Firebase
+  firebase_core: ^1.10.0
+  #End Firebase
 
 dev_dependencies:
   flutter_test:

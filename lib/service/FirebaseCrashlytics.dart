@@ -16,7 +16,7 @@
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart' as GoogleFirebase;
 import 'package:flutter/material.dart';
-import 'package:illinois/service/FirebaseService.dart';
+import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
 class FirebaseCrashlytics with Service {
@@ -60,5 +60,5 @@ class FirebaseCrashlytics with Service {
   }
 
   @override
-  Set<Service> get serviceDependsOn =>  Set.from([FirebaseService()]);
+  Set<Service> get serviceDependsOn =>  Set.from([FirebaseCore()]);
 }

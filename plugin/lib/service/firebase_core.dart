@@ -17,11 +17,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
-class FirebaseService extends Service{
+class FirebaseCore extends Service {
 
-  static final FirebaseService _service = FirebaseService._internal();
-  FirebaseService._internal();
-  factory FirebaseService() {
+  static final FirebaseCore _service = FirebaseCore._internal();
+  FirebaseCore._internal();
+  factory FirebaseCore() {
     return _service;
   }
 
@@ -45,8 +45,6 @@ class FirebaseService extends Service{
   }
 
   Future<void> initFirebase() async{
-    if(_firebaseApp == null) {
-      _firebaseApp = await Firebase.initializeApp();
-    }
+    _firebaseApp ??= await Firebase.initializeApp();
   }
 }
