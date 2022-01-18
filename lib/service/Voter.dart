@@ -18,7 +18,7 @@ import 'package:illinois/model/Voter.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
 class Voter with Service implements NotificationsListener {
@@ -54,7 +54,7 @@ class Voter with Service implements NotificationsListener {
   }
 
   VoterRule? getVoterRuleForToday() {
-    if (AppCollection.isCollectionEmpty(_voterRules)) {
+    if (CollectionUtils.isEmpty(_voterRules)) {
       return null;
     }
     DateTime now = AppDateTime().now;
@@ -79,7 +79,7 @@ class Voter with Service implements NotificationsListener {
   }
 
   void _loadVoterRules() {
-    _voterRules = VoterRule.listFromJson(AppJson.listValue(Assets()['voter.rules']));
+    _voterRules = VoterRule.listFromJson(JsonUtils.listValue(Assets()['voter.rules']));
   }
 
   // NotificationsListener

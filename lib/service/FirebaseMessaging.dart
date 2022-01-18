@@ -23,17 +23,17 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/FirebaseService.dart';
 import 'package:illinois/service/Inbox.dart';
 
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 const String _channelId = "Notifications_Channel_ID";
 
@@ -161,7 +161,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   String? get token => _token;
   String? get projectID => _projectID;
-  bool get hasToken => AppString.isStringNotEmpty(_token);
+  bool get hasToken => StringUtils.isNotEmpty(_token);
 
   // Service
 
@@ -230,7 +230,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([FirebaseService(), Storage(), NativeCommunicator(), Auth2()]);
+    return Set.from([FirebaseCore(), Storage(), NativeCommunicator(), Auth2()]);
   }
 
   // NotificationsListener
@@ -296,7 +296,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     if (message?.data != null) {
       try {
         if(AppLivecycle.instance.state == AppLifecycleState.resumed &&
-          AppString.isStringNotEmpty(message?.notification?.body)
+          StringUtils.isNotEmpty(message?.notification?.body)
         ){
           NotificationService().notify(notifyForegroundMessage, {
             "body": message?.notification?.body,
@@ -355,7 +355,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
       }
     }
     else {
-      Log.d("FCM: undefined message type: ${AppJson.encode(data)}");
+      Log.d("FCM: undefined message type: ${JsonUtils.encode(data)}");
     }
   }
 
@@ -379,7 +379,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
       String? gameId = data['GameId'];
       dynamic hasStarted = data['HasStarted'];
       // Handle 'Game Started / Ended' notification which does not contain key 'HasStarted'
-      if (AppString.isStringNotEmpty(gameId) && (hasStarted == null)) {
+      if (StringUtils.isNotEmpty(gameId) && (hasStarted == null)) {
         return 'athletics_game_started';
       } else {
         return path;
@@ -575,7 +575,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   void _processAthleticsSingleSubscription(String athleticsKey) {
     List<SportDefinition>? sports = Sports().sports;
-    if (AppCollection.isCollectionNotEmpty(sports)) {
+    if (CollectionUtils.isNotEmpty(sports)) {
       Set<String?>? subscribedTopics = currentTopics;
       for (SportDefinition sport in sports!) {
         _processAthleticsSubscriptionForSport(notifyAllowed: true, athleticsKey: athleticsKey, sport: sport.shortName, subscribedTopics: subscribedTopics);
@@ -584,7 +584,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   }
 
   void _processAthleticsSubscriptionForSport({bool? notifyAllowed, String? athleticsKey, String? sport, Set<String?>? subscribedTopics}) {
-    if (AppString.isStringNotEmpty(sport)) {
+    if (StringUtils.isNotEmpty(sport)) {
       bool notify = notifyAllowed! && _getNotifySetting('$_athleticsUpdatesNotificationKey.$athleticsKey')!;
       bool sportSelected = Auth2().prefs?.sportsInterests?.contains(sport) ?? false;
       bool subscriptionValue = notify && sportSelected;

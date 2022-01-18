@@ -39,7 +39,7 @@ import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class HomeUpcomingEventsWidget extends StatefulWidget {
@@ -245,7 +245,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
 
   @override
   Widget build(BuildContext context) {
-    if (AppCollection.isCollectionEmpty(_events)) {
+    if (CollectionUtils.isEmpty(_events)) {
       return Container();
     }
     return Column(

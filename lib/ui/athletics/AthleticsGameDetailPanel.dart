@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
@@ -35,7 +36,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/OptionSelectionCell.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -280,7 +281,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
 
   List<Widget> _buildNewsWidgets() {
     List<Widget> widgets = [];
-    if (!AppString.isStringEmpty(game?.newsImageUrl)) {
+    if (!StringUtils.isEmpty(game?.newsImageUrl)) {
       widgets.add(Container(
         height: 200,
         child: SizedBox.expand(
@@ -292,7 +293,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         ),
       ));
     }
-    if (!AppString.isStringEmpty(game?.newsTitle)) {
+    if (!StringUtils.isEmpty(game?.newsTitle)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 16),
         child: Text(
@@ -302,7 +303,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         ),
       ));
     }
-    if (!AppString.isStringEmpty(game?.newsContent)) {
+    if (!StringUtils.isEmpty(game?.newsContent)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 16),
         child: Column(

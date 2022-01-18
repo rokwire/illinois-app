@@ -20,14 +20,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/utils/ImageUtils.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/image_utils.dart';
 
 class GroupQrCodePanel extends StatefulWidget {
   final Group? group;
@@ -54,7 +55,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
 
   Future<Uint8List?> _loadQrImageBytes() async {
     String deepLink = '${Groups().groupDetailUrl}?group_id=${widget.group!.id}';
-    String? qrCodeValue = AppUrl.getDeepLinkRedirectUrl(deepLink);
+    String? qrCodeValue = Config().deepLinkRedirectUrl(deepLink);
     return await NativeCommunicator().getBarcodeImageData({
       'content': qrCodeValue,
       'format': 'qrCode',
@@ -70,7 +71,13 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_qr_code.alert.no_qr_code.msg", "There is no QR Code"));
     } else {
       final String? groupName = widget.group?.title;
-      Uint8List? updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, groupName, width: _imageSize.toDouble(), height: _imageSize.toDouble());
+      Uint8List? updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, groupName,
+        width: _imageSize.toDouble(),
+        height: _imageSize.toDouble(),
+        fontFamily: Styles().fontFamilies!.bold,
+        fontSize: 54,
+        textColor: Styles().colors!.textSurface!,
+      );
       bool result = (updatedImageBytes != null);
       if (result) {
         final String fileName = 'Group - $groupName';

@@ -29,7 +29,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'AthleticsNewsArticlePanel.dart';
@@ -128,9 +128,9 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
    _filters.add(Localization().getStringEx("panel.athletics_news_list.label.all_news.title", "All Athletics News")!);
     List<SportDefinition> sportTypes = Sports().sports!;
    sportTypes.forEach((SportDefinition type){
-      AppList.add(_filters, type.name);
+      ListUtils.add(_filters, type.name);
    });
-    if (AppString.isStringNotEmpty(widget.sportName)) {
+    if (StringUtils.isNotEmpty(widget.sportName)) {
       int initialSelectedFilterIndex = (widget.sportName != null) ? _filters.indexOf(widget.sportName!) : -1;
       if (initialSelectedFilterIndex >= 0 &&
           initialSelectedFilterIndex < _filters.length) {

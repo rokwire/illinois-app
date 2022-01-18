@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class ModalImageDialog extends StatelessWidget{
@@ -60,7 +60,7 @@ class ModalImageDialog extends StatelessWidget{
                     Expanded(
                       child: Container(
                         //margin: EdgeInsets.only(right: horizontalMargin + photoMargin, top: photoMargin),
-                        child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: fit,): Container(),
+                        child: StringUtils.isNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: fit,): Container(),
                       ),
                     )
                   ],

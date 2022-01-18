@@ -24,7 +24,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupsSearchPanel extends StatefulWidget {
@@ -182,7 +182,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
         ),
       );
     }
-    int groupsCount = AppCollection.isCollectionNotEmpty(_groups) ? _groups!.length : 0;
+    int groupsCount = CollectionUtils.isNotEmpty(_groups) ? _groups!.length : 0;
     Widget? groupsContent;
     if (groupsCount > 0) {
       groupsContent = ListView.separated(
@@ -219,11 +219,11 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     FocusScope.of(context).requestFocus(new FocusNode());
     _setLoading(true);
     String searchValue = _searchController.text;
-    if (AppString.isStringEmpty(searchValue)) {
+    if (StringUtils.isEmpty(searchValue)) {
       return;
     }
     searchValue = searchValue.trim();
-    if (AppString.isStringEmpty(searchValue)) {
+    if (StringUtils.isEmpty(searchValue)) {
       return;
     }
     _setLoading(true);
@@ -239,7 +239,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
 
   void _onTapClear() {
     Analytics.instance.logSelect(target: "Clear Search");
-    if (AppString.isStringEmpty(_searchController.text)) {
+    if (StringUtils.isEmpty(_searchController.text)) {
       Navigator.pop(context);
       return;
     }

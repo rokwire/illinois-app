@@ -26,10 +26,11 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class MTDBusPassPanel extends StatefulWidget {
@@ -82,7 +83,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
 
   Future<MemoryImage?> _loadAsyncPhotoImage() async{
     Uint8List? photoBytes = await  Auth2().authCard?.photoBytes;
-    return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
+    return CollectionUtils.isNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
   }
 
   // NotificationsListener
@@ -254,7 +255,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Widget _buildBusNumberContent() {
-    bool busNumberVisible = FlexUI().hasFeature('mtd_bus_number') && AppString.isStringNotEmpty(_busNumber);
+    bool busNumberVisible = FlexUI().hasFeature('mtd_bus_number') && StringUtils.isNotEmpty(_busNumber);
     return Visibility(visible: busNumberVisible, child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -382,7 +383,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   String? get _busNumber {
-    return AppString.getDefaultEmptyString(_activeBusNumber, defaultValue: '');
+    return StringUtils.ensureNotEmpty(_activeBusNumber, defaultValue: '');
   }
 }
 

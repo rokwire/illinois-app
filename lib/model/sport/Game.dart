@@ -24,7 +24,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class Game with Explore implements Favorite {
   final String? id;
@@ -99,7 +99,7 @@ class Game with Explore implements Favorite {
       links: Links.fromJson(json['links']),
       opponent: Opponent.fromJson(json['opponent']),
       sponsor: json['sponsor'],
-      results: GameResult.listFromJson(AppJson.listValue(json['results'])),
+      results: GameResult.listFromJson(JsonUtils.listValue(json['results'])),
       jsonData: json,
     ) : null;
   }
@@ -185,7 +185,7 @@ class Game with Explore implements Favorite {
       return '$startDateFormatted - $endDateFormatted';
     } else if (useStringDateTimes) {
       String dateFormatted = AppDateTime().formatDateTime(date, format: dateFormat, ignoreTimeZone: true, showTzSuffix: false)!; //another workaround
-      dateFormatted += ' ${AppString.getDefaultEmptyString(timeToString)}';
+      dateFormatted += ' ${StringUtils.ensureNotEmpty(timeToString)}';
       return dateFormatted;
     } else {
       return AppDateTime().getDisplayDateTime(dateTimeUtc, allDay: allDay ?? false);
@@ -326,7 +326,7 @@ class Game with Explore implements Favorite {
     if (jsonList != null) {
       result = <Game>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, Game.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, Game.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -457,7 +457,7 @@ class GameResult {
     if (jsonList != null) {
       result = <GameResult>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, GameResult.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, GameResult.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -465,7 +465,7 @@ class GameResult {
 
   static List<dynamic>? listToJson(List<GameResult?>? results) {
     List<dynamic>? jsonList;
-    if (AppCollection.isCollectionNotEmpty(results)) {
+    if (CollectionUtils.isNotEmpty(results)) {
       jsonList = [];
       for (GameResult? result in results!) {
         jsonList.add(result?.toJson());

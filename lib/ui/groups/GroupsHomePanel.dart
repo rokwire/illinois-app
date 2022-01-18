@@ -29,7 +29,7 @@ import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupsHomePanel extends StatefulWidget{
@@ -58,19 +58,19 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   //TBD: this filtering has to be done on the server side.
   List<Group>? _getFilteredAllGroupsContent() {
-    if (AppCollection.isCollectionEmpty(_allGroups)) {
+    if (CollectionUtils.isEmpty(_allGroups)) {
       return _allGroups;
     }
     // Filter By Category
     String? selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
     List<Group>? filteredGroups = _allGroups;
-    if (AppString.isStringNotEmpty(selectedCategory)) {
+    if (StringUtils.isNotEmpty(selectedCategory)) {
       filteredGroups = _allGroups!.where((group) => (selectedCategory == group.category)).toList();
     }
     // Filter by User Tags
     if (_selectedTagFilter == _TagFilter.my) {
       Set<String>? userTags = Auth2().prefs?.positiveTags;
-      if (AppCollection.isCollectionNotEmpty(userTags) && AppCollection.isCollectionNotEmpty(filteredGroups)) {
+      if (CollectionUtils.isNotEmpty(userTags) && CollectionUtils.isNotEmpty(filteredGroups)) {
         filteredGroups = filteredGroups!.where((group) => group.tags?.any((tag) => userTags!.contains(tag)) ?? false).toList();
       }
     }
@@ -245,7 +245,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     List<String> categories = [];
     categories.add(_allCategoriesValue);
     List<String>? groupCategories = await Groups().loadCategories();
-    if (AppCollection.isCollectionNotEmpty(groupCategories)) {
+    if (CollectionUtils.isNotEmpty(groupCategories)) {
       categories.addAll(groupCategories!);
     }
     _categories = categories;
@@ -257,7 +257,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   List<Group>? _sortGroups(List<Group>? groups) {
-    if (AppCollection.isCollectionEmpty(groups)) {
+    if (CollectionUtils.isEmpty(groups)) {
       return groups;
     }
     groups!.sort((group1, group2) {
@@ -359,7 +359,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildFilterButtons() {
-    bool hasCategories = AppCollection.isCollectionNotEmpty(_categories);
+    bool hasCategories = CollectionUtils.isNotEmpty(_categories);
     return _isFilterLoading || _myGroupsSelected
       ? Container()
       : Container(
@@ -385,7 +385,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                 )),
                 Visibility(visible: hasCategories, child: Container(width: 8)),
                 FilterSelectorWidget(
-                  label: AppString.getDefaultEmptyString(_tagFilterToDisplayString(_selectedTagFilter)),
+                  label: StringUtils.ensureNotEmpty(_tagFilterToDisplayString(_selectedTagFilter)),
                   hint: "",
                   active: (_activeFilterType == _FilterType.tags),
                   visible: true,
@@ -425,7 +425,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         itemCount: _activeFilterList!.length,
         itemBuilder: (context, index) {
           return FilterListItemWidget(
-            label: AppString.getDefaultEmptyString(_getFilterItemLabel(index)),
+            label: StringUtils.ensureNotEmpty(_getFilterItemLabel(index)),
             selected: _isFilterItemSelected(index),
             onTap: ()=> _onTapFilterEntry(_activeFilterList![index]),
             selectedIconRes: "images/checkbox-selected.png",
@@ -436,7 +436,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   bool _isFilterItemSelected(int filterListIndex) {
-    if (AppCollection.isCollectionEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
+    if (CollectionUtils.isEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
       return false;
     }
     switch (_activeFilterType) {
@@ -450,7 +450,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   String? _getFilterItemLabel(int filterListIndex) {
-    if (AppCollection.isCollectionEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
+    if (CollectionUtils.isEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
       return null;
     }
     switch (_activeFilterType) {
@@ -502,7 +502,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildMyGroupsContent(){
-    if (AppCollection.isCollectionEmpty(_myGroups) && AppCollection.isCollectionEmpty(_myPendingGroups)) {
+    if (CollectionUtils.isEmpty(_myGroups) && CollectionUtils.isEmpty(_myPendingGroups)) {
       String text = ((_myGroups != null) && (_myPendingGroups != null)) ?
         Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet")! :
         Localization().getStringEx("panel.groups_home.label.my_groups.failed", "Failed to load groups")!;
@@ -527,7 +527,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildMyGroupsSection() {
     List<Widget> widgets = [];
-    if(AppCollection.isCollectionNotEmpty(_myGroups)) {
+    if(CollectionUtils.isNotEmpty(_myGroups)) {
       widgets.add(Container(height: 8,));
       for (Group? group in _myGroups!) {
         widgets.add(Padding(
@@ -541,7 +541,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildMyPendingGroupsSection(){
-    if(AppCollection.isCollectionNotEmpty(_myPendingGroups)) {
+    if(CollectionUtils.isNotEmpty(_myPendingGroups)) {
       List<Widget> widgets = [];
       widgets.add(Container(height: 16,));
       widgets.add(
@@ -589,8 +589,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildAllGroupsContent(){
-    List<Group>? filteredGroups = AppCollection.isCollectionNotEmpty(_allGroups) ? _getFilteredAllGroupsContent() : null;
-    if(AppCollection.isCollectionNotEmpty(filteredGroups)){
+    List<Group>? filteredGroups = CollectionUtils.isNotEmpty(_allGroups) ? _getFilteredAllGroupsContent() : null;
+    if(CollectionUtils.isNotEmpty(filteredGroups)){
       List<Widget> widgets = [];
       widgets.add(Container(height: 8,));
       for(Group? group in filteredGroups!){

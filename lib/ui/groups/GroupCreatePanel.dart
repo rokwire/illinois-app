@@ -20,6 +20,7 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';
@@ -29,7 +30,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupCreatePanel extends StatefulWidget {
@@ -50,9 +51,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool _creating = false;
 
   bool get _canSave {
-    return AppString.isStringNotEmpty(_group?.title) &&
-        AppString.isStringNotEmpty(_group?.category) &&
-        (!(_group?.authManEnabled ?? false) || (AppString.isStringNotEmpty(_group?.authManGroupName)));
+    return StringUtils.isNotEmpty(_group?.title) &&
+        StringUtils.isNotEmpty(_group?.category) &&
+        (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName)));
   }
 
   bool get _loading => _groupCategoeriesLoading;
@@ -171,7 +172,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         height: _imageHeight,
         color: Styles().colors!.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          AppString.isStringNotEmpty(_group?.imageURL)
+          StringUtils.isNotEmpty(_group?.imageURL)
               ? Positioned.fill(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Network.authApiKeyHeader))
               : Container(),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
@@ -363,7 +364,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   List<Widget> _buildTagsButtons(){
     List<String>? tags = _group?.tags;
     List<Widget> result =  [];
-    if (AppCollection.isCollectionNotEmpty(tags)) {
+    if (CollectionUtils.isNotEmpty(tags)) {
       tags!.forEach((String tag) {
         result.add(_buildTagButton(tag));
       });

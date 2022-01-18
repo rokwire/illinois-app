@@ -7,7 +7,7 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class DebugInboxUserInfoPanel extends StatefulWidget{
   DebugInboxUserInfoPanel();
@@ -38,7 +38,7 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
       try {
         Response? response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user",
             auth: NetworkAuth.Auth2) : null;
-        Map<String, dynamic>? jsonData = AppJson.decode(response?.body);
+        Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
         if(jsonData != null){
           setState(() {
             _info = InboxUserInfo.fromJson(jsonData);

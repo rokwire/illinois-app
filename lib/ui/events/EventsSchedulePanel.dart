@@ -38,7 +38,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -234,7 +234,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
         Map? categoryEvents = _sortedEvents![date];
         if (categoryEvents != null && categoryEvents.isNotEmpty) {
           for (String? category in categoryEvents.keys) {
-            if (AppString.isStringNotEmpty(category)) {
+            if (StringUtils.isNotEmpty(category)) {
               content.add(_buildCategoryTitle(category!));
             }
             List<Event> events = categoryEvents[category];
@@ -308,7 +308,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   Widget _buildFilterValuesContainer() {
     
     _EventFilter? selectedFilter;
-    if (AppCollection.isCollectionNotEmpty(_tabFilters)) {
+    if (CollectionUtils.isNotEmpty(_tabFilters)) {
       for (_EventFilter filter in _tabFilters!) {
         if (filter.active) {
           selectedFilter = filter;
@@ -419,7 +419,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     Analytics.instance.logSelect(target: "Search");
     FocusScope.of(context).requestFocus(new FocusNode());
     String searchValue = _textEditingController.text;
-    if (AppString.isStringEmpty(searchValue)) {
+    if (StringUtils.isEmpty(searchValue)) {
       return;
     }
     _refreshVisibleSearchTags();
@@ -480,7 +480,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   List<String>? _getFilterCategoriesValues() {
-    if (AppCollection.isCollectionEmpty(_eventCategories)) {
+    if (CollectionUtils.isEmpty(_eventCategories)) {
       return null;
     }
     List<String> categoriesValues = [];
@@ -505,7 +505,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   List<Widget> _buildFilterWidgets() {
     List<Widget> filterTypeWidgets = [];
-    if (AppCollection.isCollectionEmpty(_tabFilters) || _eventCategories == null) {
+    if (CollectionUtils.isEmpty(_tabFilters) || _eventCategories == null) {
       filterTypeWidgets.add(Container());
       return filterTypeWidgets;
     }
@@ -521,7 +521,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
         _initialSelectedFilter = null;
       }
       List<String>? filterValues = _getFilterValuesByType(selectedFilter.type);
-      if (AppCollection.isCollectionEmpty(filterValues)) {
+      if (CollectionUtils.isEmpty(filterValues)) {
         continue;
       }
       int filterValueIndex = selectedFilter.firstSelectedIndex;
@@ -804,7 +804,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   //Utils Sorting
   void _sortEvents() {
-    if (AppCollection.isCollectionEmpty(_events)) {
+    if (CollectionUtils.isEmpty(_events)) {
       return;
     }
     _sortedEvents = Map();
@@ -860,10 +860,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   void _initEventsCategories() {
     _eventCategories = [];
-    if (AppCollection.isCollectionNotEmpty(_events)) {
+    if (CollectionUtils.isNotEmpty(_events)) {
       for (Event event in _events!) {
         String? track = event.track;
-        if (AppString.isStringNotEmpty(track) && !_eventCategories!.contains(track))
+        if (StringUtils.isNotEmpty(track) && !_eventCategories!.contains(track))
           _eventCategories!.add(track);
       }
     }
@@ -887,7 +887,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   _refreshVisibleSearchTags(){
     _visibleTags = _eventTags;
     String searchPattern = _textEditingController.text;
-    if( AppString.isStringNotEmpty(searchPattern)){
+    if( StringUtils.isNotEmpty(searchPattern)){
       _visibleTags = _eventTags!.where((String tag){
           return tag.startsWith(searchPattern);
       }).toList();

@@ -20,6 +20,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
@@ -33,7 +34,7 @@ import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/widgets/LinkTileButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeCampusToolsWidget extends StatefulWidget {
@@ -210,7 +211,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     }
-    else if (AppString.isStringNotEmpty(Config().myIlliniUrl)) {
+    else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
 
       // Please make this use an external browser
       // Ref: https://github.com/rokwire/illinois-app/issues/1110
@@ -242,7 +243,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   void _onTapCrisisHelp() {
     Analytics.instance.logSelect(target: "Crisis Help");
     String? url = Config().crisisHelpUrl;
-    if(AppString.isStringNotEmpty(url)) {
+    if(StringUtils.isNotEmpty(url)) {
       String? panelTitle = Localization().getStringEx('panel.settings.crisis_help.label.title', 'Crisis Help');
       Navigator.push(
           context, CupertinoPageRoute(

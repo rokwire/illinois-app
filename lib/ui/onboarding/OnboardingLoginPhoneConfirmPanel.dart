@@ -21,7 +21,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'package:sprintf/sprintf.dart';
@@ -52,7 +52,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
   @override
   Widget build(BuildContext context) {
     String? phoneNumber = (widget.onboardingContext != null) ? widget.onboardingContext!["phone"] : widget.phoneNumber;
-    String maskedPhoneNumber = AppString.getMaskedPhoneNumber(phoneNumber);
+    String maskedPhoneNumber = StringUtils.getMaskedPhoneNumber(phoneNumber);
     String description = sprintf(
         Localization().getStringEx(
             'panel.onboarding.confirm_phone.description.send', 'A one time code has been sent to %s. Enter your code below to continue.')!,
@@ -142,11 +142,11 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                       ),
                     )),
                 Visibility(
-                  visible: AppString.isStringNotEmpty(_verificationErrorMsg),
+                  visible: StringUtils.isNotEmpty(_verificationErrorMsg),
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                     child: Text(
-                      AppString.getDefaultEmptyString(
+                      StringUtils.ensureNotEmpty(
                           _verificationErrorMsg),
                       style: TextStyle(
                           color: Colors.red,
@@ -197,7 +197,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
     Analytics.instance.logSelect(target: "Confirm phone number");
     _clearErrorMsg();
     _validateCode();
-    if (AppString.isStringNotEmpty(_verificationErrorMsg)) {
+    if (StringUtils.isNotEmpty(_verificationErrorMsg)) {
       return;
     }
     String? phoneNumber = ((widget.onboardingContext != null) ? widget.onboardingContext!["phone"] : null) ?? widget.phoneNumber;
@@ -239,7 +239,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
 
   void _validateCode() {
     String phoneNumberValue = _codeController.text;
-    if (AppString.isStringEmpty(phoneNumberValue)) {
+    if (StringUtils.isEmpty(phoneNumberValue)) {
       setState(() {
         _verificationErrorMsg = Localization().getStringEx(
             "panel.onboarding.confirm_phone.validation.phone_number.text",

@@ -4,13 +4,14 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/model/Event.dart' as ExploreEvent;
 import 'package:timezone/timezone.dart' as timezone;
 
@@ -124,7 +125,7 @@ class DeviceCalendar with Service implements NotificationsListener{
 
     String? eventId = event.internalEventId != null && _calendarEventIdTable!= null ? _calendarEventIdTable![event.internalEventId] : null;
     _debugMessage("Try delete eventId: ${event.internalEventId} stored with calendarId: $eventId from calendarId ${calendar!.id}");
-    if(AppString.isStringEmpty(eventId)){
+    if(StringUtils.isEmpty(eventId)){
       return false;
     }
 
@@ -153,7 +154,7 @@ class DeviceCalendar with Service implements NotificationsListener{
     final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
     List<Calendar>? calendars = calendarsResult.data;
     _deviceCalendars = calendars!=null && calendars.isNotEmpty? calendars.where((Calendar calendar) => calendar.isReadOnly == false).toList() : null;
-    if(AppCollection.isCollectionNotEmpty(_deviceCalendars)) {
+    if(CollectionUtils.isNotEmpty(_deviceCalendars)) {
       _defaultCalendar = (_deviceCalendars as List<Calendar?>).firstWhere((element) => (element?.isDefault == true), orElse: () => null);
       return true;
     }
@@ -324,7 +325,7 @@ class _DeviceCalendarEvent {
       calendarEvent.end = timezone.TZDateTime(AppDateTime().universityLocation!, startDate!.year, startDate!.month, startDate!.day, 24);
     }
 
-    calendarEvent.description = AppUrl.getDeepLinkRedirectUrl(deepLinkUrl);
+    calendarEvent.description = Config().deepLinkRedirectUrl(deepLinkUrl);
 
     return calendarEvent;
   }

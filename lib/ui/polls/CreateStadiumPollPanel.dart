@@ -20,13 +20,14 @@ import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 
@@ -85,7 +86,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
 
   void _initGeoFenceValues() {
     _geoFenceRegions = GeoFence().regionsList(type: 'stadium');
-    _selectedGeofence = !AppCollection.isCollectionEmpty(_geoFenceRegions)?_geoFenceRegions![0] : null; //Default value;
+    _selectedGeofence = !CollectionUtils.isEmpty(_geoFenceRegions)?_geoFenceRegions![0] : null; //Default value;
   }
 
   _initDefaultOptionsControllers() {
@@ -469,7 +470,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
 
   void _onCreatePoll({PollStatus? status}) {
     String? validationErrorMsg = _getValidationErrorMsg();
-    if (AppString.isStringNotEmpty(validationErrorMsg)) {
+    if (StringUtils.isNotEmpty(validationErrorMsg)) {
       AppAlert.showDialogResult(context, validationErrorMsg);
       return;
     }
@@ -521,12 +522,12 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     if (_selectedGeofence == null) {
       return Localization().getStringEx('panel.create_stadium_poll.not_valid.geofence.msg', "Please, select value for Geofence!");
     }
-    if (AppString.isStringEmpty(_questionController.text)) {
+    if (StringUtils.isEmpty(_questionController.text)) {
       return Localization().getStringEx('panel.create_stadium_poll.not_valid.question.msg', "Please, fill value for 'Question'!");
     }
-    if (AppCollection.isCollectionNotEmpty(_optionsControllers)) {
+    if (CollectionUtils.isNotEmpty(_optionsControllers)) {
       for (TextEditingController optionController in _optionsControllers!) {
-        if (AppString.isStringEmpty(optionController.text)) {
+        if (StringUtils.isEmpty(optionController.text)) {
           return Localization().getStringEx('panel.create_stadium_poll.not_valid.option.msg', "Please, provide value for each option!");
         }
       }

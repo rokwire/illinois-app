@@ -254,7 +254,7 @@ packages:
     source: hosted
     version: "6.1.2"
   firebase_core:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: firebase_core
       url: "https://pub.dartlang.org"
@@ -275,7 +275,7 @@ packages:
     source: hosted
     version: "1.5.3"
   firebase_crashlytics:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: firebase_crashlytics
       url: "https://pub.dartlang.org"
@@ -428,7 +428,7 @@ packages:
     source: hosted
     version: "0.8.4"
   fluttertoast:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: fluttertoast
       url: "https://pub.dartlang.org"
@@ -491,7 +491,7 @@ packages:
     source: hosted
     version: "0.6.2+1"
   gallery_saver:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: gallery_saver
       url: "https://pub.dartlang.org"

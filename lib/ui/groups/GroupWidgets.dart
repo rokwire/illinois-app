@@ -28,6 +28,7 @@ import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -43,7 +44,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -459,7 +460,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Container(height: 32, width: 32,
-                      decoration: AppString.isStringNotEmpty(comment.member?.photoURL)
+                      decoration: StringUtils.isNotEmpty(comment.member?.photoURL)
                           ? BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(image:NetworkImage(comment.member!.photoURL!), fit: BoxFit.cover))
@@ -611,7 +612,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
               )
             ],),
             Visibility(visible:
-                AppString.isStringNotEmpty(widget.event?.exploreImageURL),
+                StringUtils.isNotEmpty(widget.event?.exploreImageURL),
                 child: Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 8),
                   child: SizedBox(
@@ -690,7 +691,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     Navigator.pop(context);
     Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event, onEditTap: (BuildContext context, Event event) {
       Groups().updateGroupEvents(event).then((String? id) {
-        if (AppString.isStringNotEmpty(id)) {
+        if (StringUtils.isNotEmpty(id)) {
           Navigator.pop(context);
         }
         else {
@@ -701,7 +702,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   }
 
   bool get _canEdit {
-    return widget.isAdmin && AppString.isStringNotEmpty(widget.event?.createdByGroupId);
+    return widget.isAdmin && StringUtils.isNotEmpty(widget.event?.createdByGroupId);
   }
 
   bool get _canDelete{
@@ -917,7 +918,7 @@ class GroupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s")!, [AppString.getDefaultEmptyString(group!.pendingCount.toString())]);
+    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s")!, [StringUtils.ensureNotEmpty(group!.pendingCount.toString())]);
     return GestureDetector(
         onTap: () => _onTapCard(context),
         child: Padding(
@@ -975,8 +976,8 @@ class GroupCard extends StatelessWidget {
       );
     }
 
-    String? groupCategory = AppString.getDefaultEmptyString(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")!);
-    if (AppString.isStringNotEmpty(groupCategory)) {
+    String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")!);
+    if (StringUtils.isNotEmpty(groupCategory)) {
       if (leftContent.isNotEmpty) {
         leftContent.add(Container(height: 6,));
       }
@@ -1090,7 +1091,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
                       Expanded(
-                          child: Text(AppString.getDefaultEmptyString(widget.post!.subject),
+                          child: Text(StringUtils.ensureNotEmpty(widget.post!.subject),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 18, color: Styles().colors!.fillColorPrimary))),
@@ -1099,11 +1100,11 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
-                                child: Text(AppString.getDefaultEmptyString(visibleRepliesCount.toString()),
+                                child: Text(StringUtils.ensureNotEmpty(visibleRepliesCount.toString()),
                                     style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14))),
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
-                                child: Text(AppString.getDefaultEmptyString(repliesLabel),
+                                child: Text(StringUtils.ensureNotEmpty(repliesLabel),
                                     style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14)))
                           ])),
                     ]),
@@ -1123,7 +1124,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                   margin: EdgeInsets.zero,
                               ),
                             }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))),
-                        AppString.isStringEmpty(imageUrl)? Container() :
+                        StringUtils.isEmpty(imageUrl)? Container() :
                         Expanded(
                           flex: 1,
                           child: Semantics(
@@ -1152,7 +1153,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             flex: 3,
                             child:Container(
                               padding: EdgeInsets.only(right: 6),
-                              child:Text(AppString.getDefaultEmptyString(memberName),
+                              child:Text(StringUtils.ensureNotEmpty(memberName),
                                 textAlign: TextAlign.left,
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary)),
                           )),
@@ -1160,7 +1161,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             flex: 2,
                             child: Semantics(child: Container(
                               padding: EdgeInsets.only(left: 6),
-                              child: Text(AppString.getDefaultEmptyString(widget.post?.displayDateTime),
+                              child: Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime),
                                 semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
                                 textAlign: TextAlign.right,
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),
@@ -1179,7 +1180,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   void _onLinkTap(String? url) {
     Analytics.instance.logSelect(target: url);
-    if (AppString.isStringNotEmpty(url)) {
+    if (StringUtils.isNotEmpty(url)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
     }
   }
@@ -1241,7 +1242,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     String? repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
         : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
-    String? bodyText = AppString.getDefaultEmptyString(widget.reply?.body);
+    String? bodyText = StringUtils.ensureNotEmpty(widget.reply?.body);
     if (widget.reply?.isUpdated ?? false) {
       bodyText +=
           ' <span>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
@@ -1257,18 +1258,18 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Semantics( child:
-                  Text(AppString.getDefaultEmptyString(widget.reply?.member?.name),
+                  Text(StringUtils.ensureNotEmpty(widget.reply?.member?.name),
                     style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
                 ),
                 Visibility(
-                    visible: AppString.isStringNotEmpty(widget.iconPath),
+                    visible: StringUtils.isNotEmpty(widget.iconPath),
                     child: Semantics( child:Container(
                     child: Semantics(label: widget.semanticsLabel??"", button: true,
                     child: GestureDetector(
                         onTap: widget.onIconTap,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10, top: 3),
-                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath!, excludeFromSemantics: true,) : Container())))))))
+                            child: (StringUtils.isNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath!, excludeFromSemantics: true,) : Container())))))))
               ]),
               Row(
                 children: [
@@ -1297,7 +1298,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                                     textOverflow: TextOverflow.ellipsis)
                                 },
                                 onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))))),
-                  AppString.isStringEmpty(widget.reply?.imageUrl)? Container() :
+                  StringUtils.isEmpty(widget.reply?.imageUrl)? Container() :
                   Expanded(
                       flex: 1,
                       child:
@@ -1323,7 +1324,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     child: Row(children: [
                       Expanded(
                           child: Container(
-                            child: Semantics(child: Text(AppString.getDefaultEmptyString(widget.reply?.displayDateTime),
+                            child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
                                 semanticsLabel: "Updated ${widget.reply?.getDisplayDateTime() ?? ""} ago",
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),)),
                       Visibility(
@@ -1340,7 +1341,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   void _onLinkTap(String? url) {
     Analytics.instance.logSelect(target: url);
-    if (AppString.isStringNotEmpty(url)) {
+    if (StringUtils.isNotEmpty(url)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
     }
   }
@@ -1430,7 +1431,7 @@ class ModalImageDialog extends StatelessWidget{
                                         ),
                                       ),
                                       Container(
-                                        child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fitWidth, headers: Network.authApiKeyHeader): Container(),
+                                        child: StringUtils.isNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fitWidth, headers: Network.authApiKeyHeader): Container(),
                                       )
                                     ],
                                   ))
@@ -1572,7 +1573,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
     Analytics().logSelect(target: 'Edit Link');
     int linkStartPosition = _bodyController.selection.start;
     int linkEndPosition = _bodyController.selection.end;
-    _linkTextController.text = AppString.getDefaultEmptyString(_bodyController.selection.textInside(_bodyController.text));
+    _linkTextController.text = StringUtils.ensureNotEmpty(_bodyController.selection.textInside(_bodyController.text));
     AppAlert.showCustomDialog(
         context: context,
         contentWidget: _buildLinkDialog(),
@@ -1622,7 +1623,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
   void _wrapBody(String firstValue, String secondValue, int startPosition,
       int endPosition) {
     String currentText = _bodyController.text;
-    String result = AppString.wrapRange(
+    String result = StringUtils.wrapRange(
         currentText, firstValue, secondValue, startPosition, endPosition);
     _bodyController.text = result;
     _bodyController.selection = TextSelection.fromPosition(
@@ -1745,14 +1746,14 @@ class _ImageChooserState extends State<ImageChooserWidget>{
         ),
         color: Styles().colors!.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          AppString.isStringNotEmpty(imageUrl)
+          StringUtils.isNotEmpty(imageUrl)
               ? Positioned.fill(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover))
               : Container(),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false), child: Container(height: 53))),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background), child: Container(height: 30))),
-          AppString.isStringEmpty(imageUrl) || explicitlyShowAddButton
+          StringUtils.isEmpty(imageUrl) || explicitlyShowAddButton
               ? Container(
               child: Center(
                   child: Semantics(
@@ -1762,7 +1763,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
                       excludeSemantics: true,
                       child: ScalableSmallRoundedButton(
                           maxLines: 2,
-                          label:AppString.isStringEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
+                          label:StringUtils.isEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
                           textColor: Styles().colors!.fillColorPrimary,
                           onTap: (){ _onTapAddImage();}
                       )))):
@@ -1773,7 +1774,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
   void _onTapAddImage() async {
     Analytics.instance.logSelect(target: "Add Image");
     String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
-    if (AppString.isStringNotEmpty(imageUrl) && (widget.onImageChanged != null)) {
+    if (StringUtils.isNotEmpty(imageUrl) && (widget.onImageChanged != null)) {
       widget.onImageChanged!(imageUrl);
       if (mounted) {
         setState(() {
