@@ -204,7 +204,7 @@ class ColorUtils {
   }
 }
 
-class AppVersionUtils {
+class AppVersion {
 
   static int compareVersions(String? versionString1, String? versionString2) {
     List<String> versionList1 = (versionString1 is String) ? versionString1.split('.') : [];

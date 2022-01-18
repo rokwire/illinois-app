@@ -184,12 +184,12 @@ class Config with Service implements NotificationsListener {
     if (jsonList != null) {
       
       jsonList.sort((dynamic cfg1, dynamic cfg2) {
-        return ((cfg1 is Map) && (cfg2 is Map)) ? AppVersionUtils.compareVersions(cfg1['mobileAppVersion'], cfg2['mobileAppVersion']) : 0;
+        return ((cfg1 is Map) && (cfg2 is Map)) ? AppVersion.compareVersions(cfg1['mobileAppVersion'], cfg2['mobileAppVersion']) : 0;
       });
 
       for (int index = jsonList.length - 1; index >= 0; index--) {
         Map<String, dynamic> cfg = jsonList[index];
-        if (AppVersionUtils.compareVersions(cfg['mobileAppVersion'], _packageInfo!.version) <= 0) {
+        if (AppVersion.compareVersions(cfg['mobileAppVersion'], _packageInfo!.version) <= 0) {
           _decryptSecretKeys(cfg);
           return cfg;
         }
@@ -261,7 +261,7 @@ class Config with Service implements NotificationsListener {
   void _updateFromNet() {
     _loadAsStringFromNet().then((String? configString) {
       Map<String, dynamic>? config = _configFromJsonString(configString);
-      if ((config != null) && (AppVersionUtils.compareVersions(_config!['mobileAppVersion'], config['mobileAppVersion']) <= 0) && !DeepCollectionEquality().equals(_config, config))  {
+      if ((config != null) && (AppVersion.compareVersions(_config!['mobileAppVersion'], config['mobileAppVersion']) <= 0) && !DeepCollectionEquality().equals(_config, config))  {
         _config = config;
         _configFile.writeAsString(configString!, flush: true);
         NotificationService().notify(notifyConfigChanged, null);
@@ -469,7 +469,7 @@ class Config with Service implements NotificationsListener {
 
   String? get upgradeRequiredVersion {
     dynamic requiredVersion = _upgradeStringEntry('required_version');
-    if ((requiredVersion is String) && (AppVersionUtils.compareVersions(_packageInfo!.version, requiredVersion) < 0)) {
+    if ((requiredVersion is String) && (AppVersion.compareVersions(_packageInfo!.version, requiredVersion) < 0)) {
       return requiredVersion;
     }
     return null;
@@ -478,7 +478,7 @@ class Config with Service implements NotificationsListener {
   String? get upgradeAvailableVersion {
     dynamic availableVersion = _upgradeStringEntry('available_version');
     bool upgradeAvailable = (availableVersion is String) &&
-        (AppVersionUtils.compareVersions(_packageInfo!.version, availableVersion) < 0) &&
+        (AppVersion.compareVersions(_packageInfo!.version, availableVersion) < 0) &&
         !Storage().reportedUpgradeVersions.contains(availableVersion) &&
         !_reportedUpgradeVersions.contains(availableVersion);
     return upgradeAvailable ? availableVersion : null;
@@ -525,7 +525,7 @@ class Config with Service implements NotificationsListener {
 
   String? get onboardingRequiredVersion {
     dynamic requiredVersion = onboardingInfo['required_version'];
-    if ((requiredVersion is String) && (AppVersionUtils.compareVersions(requiredVersion, appVersion) <= 0)) {
+    if ((requiredVersion is String) && (AppVersion.compareVersions(requiredVersion, appVersion) <= 0)) {
       return requiredVersion;
     }
     return null;
