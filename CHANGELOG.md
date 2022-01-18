@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed  
 - FirebaseCore and FirebaseCrashlytics moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Utils moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 
 ## [3.2.2] - 2022-01-17
 ### Added
