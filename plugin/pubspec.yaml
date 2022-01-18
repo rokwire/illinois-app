@@ -18,6 +18,9 @@ dependencies:
   path: ^1.8.0
   gallery_saver: ^2.3.2
   path_provider: ^2.0.4
+  asn1lib: ^1.0.3
+  pointycastle: ^3.5.0
+  encrypt: ^5.0.1
 
   #Firebase
   firebase_core: ^1.10.0
