@@ -27,7 +27,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FirebaseCrashlytics.dart';
+import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/utils/Utils.dart';
 
