@@ -26,7 +26,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -279,7 +279,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
     }
     String? locationText = laundryLocationDetails.getDisplayAddress();
     String? semanticText =sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location: %s "')!, [locationText]);
-    if (AppString.isStringEmpty(locationText)) {
+    if (StringUtils.isEmpty(locationText)) {
       double? latitude = laundryLocationDetails.latitude?.toDouble();
       double? longitude = laundryLocationDetails.longitude?.toDouble();
       locationText = '$latitude, $longitude';
@@ -292,7 +292,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Visibility(
-          visible: AppString.isStringNotEmpty(locationText),
+          visible: StringUtils.isNotEmpty(locationText),
           child:Semantics(label:semanticText, excludeSemantics: true,child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -446,7 +446,7 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
 
   String _getImageAssetPath(String? applianceType) {
     String defaultAssetPath = 'images/icon-washer-small.png';
-    if (AppString.isStringEmpty(applianceType)) {
+    if (StringUtils.isEmpty(applianceType)) {
       return defaultAssetPath;
     }
     switch (applianceType) {
@@ -460,7 +460,7 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
   }
 
   String? _getDeviceName(String? applianceType) {
-    if (AppString.isStringEmpty(applianceType)) {
+    if (StringUtils.isEmpty(applianceType)) {
       return Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER');
     }
     switch (applianceType) {

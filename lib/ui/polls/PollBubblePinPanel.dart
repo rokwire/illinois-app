@@ -20,7 +20,7 @@ import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class PollBubblePinPanel extends StatefulWidget {

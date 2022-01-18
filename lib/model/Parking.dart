@@ -18,7 +18,7 @@ import 'dart:math';
 
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class ParkingEvent {
   final String? id;
@@ -48,10 +48,10 @@ class ParkingEvent {
     }
     List<dynamic>? lotsJson = json.containsKey('lots') ? json['lots'] : null;
     List<ParkingLot>? lots;
-    if (AppCollection.isCollectionNotEmpty(lotsJson)) {
+    if (CollectionUtils.isNotEmpty(lotsJson)) {
       lots = [];
       for (dynamic lotEntry in lotsJson!) {
-        AppList.add(lots, ParkingLot.fromJson(AppJson.mapValue(lotEntry)));
+        ListUtils.add(lots, ParkingLot.fromJson(JsonUtils.mapValue(lotEntry)));
       }
     }
 
@@ -75,7 +75,7 @@ class ParkingEvent {
 
   Map<String, dynamic> toJson() {
     List<dynamic>? lotsJsonList;
-    if (AppCollection.isCollectionNotEmpty(lots)) {
+    if (CollectionUtils.isNotEmpty(lots)) {
       lotsJsonList = [];
       for (ParkingLot lot in lots!) {
         lotsJsonList.add(lot.toJson());
@@ -101,7 +101,7 @@ class ParkingEvent {
     if (jsonList != null) {
       result = <ParkingEvent>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, ParkingEvent.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, ParkingEvent.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -151,25 +151,25 @@ class ParkingLot {
     if (json == null) {
       return null;
     }
-    Map<String, dynamic>? lotJson = AppJson.mapValue(json['lot']);
+    Map<String, dynamic>? lotJson = JsonUtils.mapValue(json['lot']);
     if (lotJson == null) {
       // For Parking events
       // Example: {"id": "c9c6842c-9cb6-4c10-89c5-aec9ba4e430b", "name": "Lot Illinois"}
       return ParkingLot(lotId:
-        AppJson.stringValue(json['id']),
-        lotName: AppJson.stringValue(json['name']));
+        JsonUtils.stringValue(json['id']),
+        lotName: JsonUtils.stringValue(json['name']));
     }
     else {
       // For Inventory
       // Example: {"lot": {"id": "12e8g939-b210-4019-de3b-19a00a31f58f", "name": "Lot - Illinois", "address1": "1800 S. First Street, Champaign, IL 61820", "total_spots": "483", "entrance": {"latitude": 40.094582, "longitude": -88.236374}, "polygon": [{"latitude": 40.094513, "longitude": -88.238494}, {"latitude": 40.095654, "longitude": -88.238505}, {"latitude": 40.095434, "longitude": -88.236751}, {"latitude": 40.09525, "longitude": -88.23655}, {"latitude": 40.246545, "longitude": -88.234361}]}, "spots_sold": 0, "spots_pre_sold": 0}
 
       return ParkingLot(
-        lotId: AppJson.stringValue(lotJson['id']),
-        lotName: AppJson.stringValue(lotJson['name']),
-        lotAddress: AppJson.stringValue(lotJson['address1']),
-        totalSpots: int.tryParse(AppJson.stringValue(lotJson['total_spots']) ?? '') ?? 0,
-        entrance: LatLng.fromJson(AppJson.mapValue(lotJson['entrance'])),
-        polygon: LatLng.listFromJson(AppJson.listValue(lotJson['polygon'])),
+        lotId: JsonUtils.stringValue(lotJson['id']),
+        lotName: JsonUtils.stringValue(lotJson['name']),
+        lotAddress: JsonUtils.stringValue(lotJson['address1']),
+        totalSpots: int.tryParse(JsonUtils.stringValue(lotJson['total_spots']) ?? '') ?? 0,
+        entrance: LatLng.fromJson(JsonUtils.mapValue(lotJson['entrance'])),
+        polygon: LatLng.listFromJson(JsonUtils.listValue(lotJson['polygon'])),
         spotsSold: json['spots_sold'],
         spotsPreSold: json['spots_pre_sold'],
       );
@@ -202,7 +202,7 @@ class ParkingLot {
     if (jsonList != null) {
       result = <ParkingLot>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, ParkingLot.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, ParkingLot.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;

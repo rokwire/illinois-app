@@ -29,7 +29,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 enum NetworkAuth {
   ApiKey,      // Config.rokwireApiKey
@@ -524,7 +524,7 @@ class Network  {
     Map<String, String?> responseHeaders = response.headers;
 
     String? setCookie = responseHeaders["set-cookie"];
-    if (AppString.isStringEmpty(setCookie))
+    if (StringUtils.isEmpty(setCookie))
       return;
 
     //Split format like this "AWSALB2=12342; Path=/; Expires=Mon, 21 Oct 2019 12:48:37 GMT,AWSALB=1234; Path=/; Expires=Mon, 21 Oct 2019 12:48:37 GMT"

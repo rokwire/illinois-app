@@ -36,7 +36,7 @@ import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Event.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -231,7 +231,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   Widget _eventSponsor() {
     String eventSponsorText = widget.parentEvent?.sponsor ?? '';
-    bool sponsorVisible = AppString.isStringNotEmpty(eventSponsorText);
+    bool sponsorVisible = StringUtils.isNotEmpty(eventSponsorText);
     return Visibility(visible: sponsorVisible, child: Padding(
         padding: EdgeInsets.only(bottom: 16),
         child: Row(
@@ -428,7 +428,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   Widget _exploreSubTitle() {
     String? subTitle = widget.parentEvent?.exploreSubTitle;
-    if (AppString.isStringEmpty(subTitle)) {
+    if (StringUtils.isEmpty(subTitle)) {
       return Container();
     }
     return Padding(
@@ -443,7 +443,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   Widget _exploreDescription() {
     String? longDescription = widget.parentEvent!.exploreLongDescription;
-    bool showDescription = AppString.isStringNotEmpty(longDescription);
+    bool showDescription = StringUtils.isNotEmpty(longDescription);
     if (!showDescription) {
       return Container();
     }
@@ -462,9 +462,9 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   Widget _buildUrlButtons() {
     Widget buttonsDivider = Container(height: 12);
     String? titleUrl = widget.parentEvent?.titleUrl;
-    bool visitWebsiteVisible = AppString.isStringNotEmpty(titleUrl);
+    bool visitWebsiteVisible = StringUtils.isNotEmpty(titleUrl);
     String? ticketsUrl = widget.parentEvent?.registrationUrl;
-    bool getTicketsVisible = AppString.isStringNotEmpty(ticketsUrl);
+    bool getTicketsVisible = StringUtils.isNotEmpty(ticketsUrl);
 
     String? websiteLabel = Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website');
     String? websiteHint = Localization().getStringEx('panel.explore_detail.button.visit_website.hint', '');
@@ -513,7 +513,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     int? eventConvergeScore = (widget.parentEvent != null) ? widget.parentEvent?.convergeScore : null;
     String? eventConvergeUrl = (widget.parentEvent != null) ? widget.parentEvent?.convergeUrl : null;
     bool hasConvergeScore = (eventConvergeScore != null) && eventConvergeScore>0;
-    bool hasConvergeUrl = !AppString.isStringEmpty(eventConvergeUrl);
+    bool hasConvergeUrl = !StringUtils.isEmpty(eventConvergeUrl);
     bool hasConvergeContent = hasConvergeScore || hasConvergeUrl;
 
     return !hasConvergeContent? Container():
@@ -544,7 +544,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _onTapWebButton(String? url, String analyticsName){
-    if(AppString.isStringNotEmpty(url)){
+    if(StringUtils.isNotEmpty(url)){
       Navigator.push(
           context,
           CupertinoPageRoute(
@@ -568,7 +568,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   Widget _buildGroupButtons(){
-    return AppString.isStringEmpty(widget.browseGroupId)? Container():
+    return StringUtils.isEmpty(widget.browseGroupId)? Container():
     Container(
         padding: EdgeInsets.symmetric(vertical: 10),
         child:
@@ -611,8 +611,8 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _launchUrl(String? url, {BuildContext? context}) {
-    if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         launch(url!);
@@ -668,7 +668,7 @@ class _EventsListState extends State<_EventsList>{
   List<Widget> _buildListItems() {
     List<Widget> listItems = [];
     bool? isParentSuper = widget.parentEvent!.isSuperEvent;
-    if (AppCollection.isCollectionNotEmpty(widget.events)) {
+    if (CollectionUtils.isNotEmpty(widget.events)) {
       for (Event? event in widget.events!) {
         listItems.add(_EventEntry(event: event, parentEvent: widget.parentEvent,));
         if (isParentSuper! && (listItems.length >= _minVisibleItems)) {

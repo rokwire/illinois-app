@@ -22,7 +22,7 @@ import 'package:illinois/model/sport/Game.dart';
 
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class AthleticsGameDayWidget extends StatefulWidget {
@@ -56,7 +56,7 @@ class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
               padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               child: Row(
                 children: <Widget>[
-                  AppString.isStringNotEmpty(widget.sportDefinition?.iconPath)
+                  StringUtils.isNotEmpty(widget.sportDefinition?.iconPath)
                       ? Image.asset(widget.sportDefinition!.iconPath!, excludeFromSemantics: true)
                       : Container(),
                   Container(

@@ -24,7 +24,7 @@ import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 
 
@@ -235,7 +235,7 @@ class Dining with Explore implements Favorite {
   }
 
   bool get hasDiningSchedules {
-    return AppCollection.isCollectionNotEmpty(diningSchedules);
+    return CollectionUtils.isNotEmpty(diningSchedules);
   }
 
   // Dinings support
@@ -740,7 +740,7 @@ class DiningSchedule {
       diningSchedules = [];
       for (dynamic jsonEntry in json) {
         if (jsonEntry is Map) {
-          DiningSchedule? diningSchedule = DiningSchedule.fromJson(AppJson.mapValue(jsonEntry));
+          DiningSchedule? diningSchedule = DiningSchedule.fromJson(JsonUtils.mapValue(jsonEntry));
           if (diningSchedule != null) {
             diningSchedules.add(diningSchedule);
           }

@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Localization.dart';
@@ -28,7 +29,7 @@ import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupEventsContext {
@@ -144,9 +145,9 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
       ExploreService().loadEventCategoriesEx().then((List<ExploreCategory>? result) {
         _eventCategories = [];
         _eventCategories.add(_allCategoriesConst);
-        if(AppCollection.isCollectionNotEmpty(result)){
+        if(CollectionUtils.isNotEmpty(result)){
           for (ExploreCategory category in result!) {
-            AppList.add(_eventCategories, category.name);
+            ListUtils.add(_eventCategories, category.name);
           }
         }
         setState(() {_isCategoryLoading = false;});
@@ -466,7 +467,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
 
   Widget _buildCardsContent(){
     if(!_isLoading) {
-      return AppCollection.isCollectionNotEmpty(_filteredEvents)
+      return CollectionUtils.isNotEmpty(_filteredEvents)
         ? ListView.builder(
             controller: _scrollController,
             itemBuilder: (BuildContext context, int index) => _EventCard(
@@ -488,7 +489,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   void _onTapSearch() {
     Analytics.instance.logSelect(target: "Search");
     _textFocusNode.unfocus();
-    if (AppString.isStringNotEmpty(_textEditingController.text)) {
+    if (StringUtils.isNotEmpty(_textEditingController.text)) {
       _loadEvents();
     }
   }
@@ -496,7 +497,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   void _onTapClear(){
     Analytics.instance.logSelect(target: "Clear");
     _textFocusNode.unfocus();
-    if(AppString.isStringNotEmpty(_textEditingController.text)){
+    if(StringUtils.isNotEmpty(_textEditingController.text)){
       _textEditingController.text = "";
       _loadEvents();
     }
@@ -588,7 +589,7 @@ class _EventCardState extends State<_EventCard>{
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(AppString.isStringNotEmpty(widget.event.exploreTitle) ? widget.event.exploreTitle! : "",
+                          Text(StringUtils.isNotEmpty(widget.event.exploreTitle) ? widget.event.exploreTitle! : "",
                             style: TextStyle(
                               fontFamily: Styles().fontFamilies!.extraBold,
                               fontSize: 20,
@@ -612,7 +613,7 @@ class _EventCardState extends State<_EventCard>{
 
   Widget _exploreTimeDetail() {
     String? displayTime = widget.event.timeDisplayString;
-    if (AppString.isStringEmpty(displayTime)) {
+    if (StringUtils.isEmpty(displayTime)) {
       return Container();
     }
     return Semantics(label: displayTime, child: Row(

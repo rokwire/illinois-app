@@ -25,7 +25,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:path/path.dart';
 
 class Localization with Service implements NotificationsListener {
@@ -148,7 +148,7 @@ class Localization with Service implements NotificationsListener {
 
   Future<Map<String,dynamic>?> _loadAssetsStrings(String language) async {
     dynamic jsonData;
-    try {jsonData = AppJson.decode(await rootBundle.loadString('assets/strings.$language.json')); }
+    try {jsonData = JsonUtils.decode(await rootBundle.loadString('assets/strings.$language.json')); }
     catch (e) { print(e.toString()); }
     return ((jsonData != null) && (jsonData is Map<String,dynamic>)) ? jsonData : null;
   }
@@ -160,7 +160,7 @@ class Localization with Service implements NotificationsListener {
       File? cacheFile = (cacheFilePath != null) ? File(cacheFilePath) : null;
       
       String? jsonString = ((cacheFile != null) && await cacheFile.exists()) ? await cacheFile.readAsString() : null;
-      jsonData = AppJson.decode(jsonString);
+      jsonData = JsonUtils.decode(jsonString);
     } catch (e) { print(e.toString()); }
     return ((jsonData != null) && (jsonData is Map<String,dynamic>)) ? jsonData : null;
   }
@@ -193,7 +193,7 @@ class Localization with Service implements NotificationsListener {
       String assetName = 'strings.$language.json';
       http.Response? response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$assetName") : null;
       String? jsonString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
-      jsonData = (jsonString != null) ? AppJson.decode(jsonString) : null;
+      jsonData = (jsonString != null) ? JsonUtils.decode(jsonString) : null;
       if ((jsonData != null) && ((cache == null) || !DeepCollectionEquality().equals(jsonData, cache))) {
         String? cacheFilePath = (_assetsDir != null) ? join(_assetsDir!.path, assetName) : null;
         File? cacheFile = (cacheFilePath != null) ? File(cacheFilePath) : null;
@@ -274,15 +274,15 @@ class Localization with Service implements NotificationsListener {
 
   String? getStringFromKeyMapping(String? key, Map<String, dynamic>? stringsMap, {String defaults = ''}) {
     String? text;
-    if (AppString.isStringNotEmpty(key)) {
+    if (StringUtils.isNotEmpty(key)) {
       //1. Get text value from assets
       text = Localization().getStringFromMapping(key, stringsMap); // returns 'key' if text is not found
       //2. If there is no text for this key then get text value from strings
-      if (AppString.isStringEmpty(text) || text == key) {
+      if (StringUtils.isEmpty(text) || text == key) {
         text = Localization().getStringEx(key, defaults);
       }
     }
-    return AppString.getDefaultEmptyString(text, defaultValue: defaults);
+    return StringUtils.ensureNotEmpty(text, defaultValue: defaults);
   }
 
   static String? _getStringFromLanguageMapping(String text, Map<String, dynamic>? languageMap) {

@@ -6,7 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 ////////////////////////////////
 // Auth2Token
@@ -30,10 +30,10 @@ class Auth2Token {
 
   static Auth2Token? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2Token(
-      idToken: AppJson.stringValue(json['id_token']),
-      accessToken: AppJson.stringValue(json['access_token']),
-      refreshToken: AppJson.stringValue(json['refresh_token']),
-      tokenType: AppJson.stringValue(json['token_type']),
+      idToken: JsonUtils.stringValue(json['id_token']),
+      accessToken: JsonUtils.stringValue(json['access_token']),
+      refreshToken: JsonUtils.stringValue(json['refresh_token']),
+      tokenType: JsonUtils.stringValue(json['token_type']),
     ) : null;
   }
 
@@ -60,11 +60,11 @@ class Auth2Token {
     (tokenType?.hashCode ?? 0);
 
   bool get isValid {
-    return AppString.isStringNotEmpty(accessToken) && AppString.isStringNotEmpty(refreshToken) && AppString.isStringNotEmpty(tokenType);
+    return StringUtils.isNotEmpty(accessToken) && StringUtils.isNotEmpty(refreshToken) && StringUtils.isNotEmpty(tokenType);
   }
 
   bool get isValidUiuc {
-    return AppString.isStringNotEmpty(accessToken) && AppString.isStringNotEmpty(idToken) && AppString.isStringNotEmpty(tokenType);
+    return StringUtils.isNotEmpty(accessToken) && StringUtils.isNotEmpty(idToken) && StringUtils.isNotEmpty(tokenType);
   }
 }
 
@@ -123,13 +123,13 @@ class Auth2Account {
 
   static Auth2Account? fromJson(Map<String, dynamic>? json, { Auth2UserPrefs? prefs, Auth2UserProfile? profile }) {
     return (json != null) ? Auth2Account(
-      id: AppJson.stringValue(json['id']),
-      profile: Auth2UserProfile.fromJson(AppJson.mapValue(json['profile'])) ?? profile,
-      prefs: Auth2UserPrefs.fromJson(AppJson.mapValue(json['preferences'])) ?? prefs, //TBD Auth2
-      permissions: Auth2StringEntry.listFromJson(AppJson.listValue(json['permissions'])),
-      roles: Auth2StringEntry.listFromJson(AppJson.listValue(json['roles'])),
-      groups: Auth2StringEntry.listFromJson(AppJson.listValue(json['groups'])),
-      authTypes: Auth2Type.listFromJson(AppJson.listValue(json['auth_types'])),
+      id: JsonUtils.stringValue(json['id']),
+      profile: Auth2UserProfile.fromJson(JsonUtils.mapValue(json['profile'])) ?? profile,
+      prefs: Auth2UserPrefs.fromJson(JsonUtils.mapValue(json['preferences'])) ?? prefs, //TBD Auth2
+      permissions: Auth2StringEntry.listFromJson(JsonUtils.listValue(json['permissions'])),
+      roles: Auth2StringEntry.listFromJson(JsonUtils.listValue(json['roles'])),
+      groups: Auth2StringEntry.listFromJson(JsonUtils.listValue(json['groups'])),
+      authTypes: Auth2Type.listFromJson(JsonUtils.listValue(json['auth_types'])),
     ) : null;
   }
 
@@ -216,20 +216,20 @@ class Auth2UserProfile {
 
   static Auth2UserProfile? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2UserProfile(
-      id: AppJson.stringValue(json['id']),
-      firstName: AppJson.stringValue(json['first_name']),
-      middleName: AppJson.stringValue(json['middle_name']),
-      lastName: AppJson.stringValue(json['last_name']),
-      birthYear: AppJson.intValue(json['birth_year']),
-      photoUrl: AppJson.stringValue(json['photo_url']),
+      id: JsonUtils.stringValue(json['id']),
+      firstName: JsonUtils.stringValue(json['first_name']),
+      middleName: JsonUtils.stringValue(json['middle_name']),
+      lastName: JsonUtils.stringValue(json['last_name']),
+      birthYear: JsonUtils.intValue(json['birth_year']),
+      photoUrl: JsonUtils.stringValue(json['photo_url']),
 
-      email: AppJson.stringValue(json['email']),
-      phone: AppJson.stringValue(json['phone']),
+      email: JsonUtils.stringValue(json['email']),
+      phone: JsonUtils.stringValue(json['phone']),
   
-      address: AppJson.stringValue(json['address']),
-      state: AppJson.stringValue(json['state']),
-      zip: AppJson.stringValue(json['zip']),
-      country: AppJson.stringValue(json['country']),
+      address: JsonUtils.stringValue(json['address']),
+      state: JsonUtils.stringValue(json['state']),
+      zip: JsonUtils.stringValue(json['zip']),
+      country: JsonUtils.stringValue(json['country']),
     ) : null;
   }
 
@@ -384,8 +384,8 @@ class Auth2UserProfile {
   String? get zip => _zip;
   String? get country => _country;
 
-  bool   get isValid => AppString.isStringNotEmpty(id);
-  String? get fullName => AppString.fullName([firstName, lastName]);
+  bool   get isValid => StringUtils.isNotEmpty(id);
+  String? get fullName => StringUtils.fullName([firstName, lastName]);
 }
 
 ////////////////////////////////
@@ -399,8 +399,8 @@ class Auth2StringEntry {
 
   static Auth2StringEntry? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2StringEntry(
-      id: AppJson.stringValue(json['id']),
-      name: AppJson.stringValue(json['name']),
+      id: JsonUtils.stringValue(json['id']),
+      name: JsonUtils.stringValue(json['name']),
     ) : null;
   }
 
@@ -425,7 +425,7 @@ class Auth2StringEntry {
     if (jsonList != null) {
       result = <Auth2StringEntry>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, Auth2StringEntry.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, Auth2StringEntry.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -469,17 +469,17 @@ class Auth2Type {
   final Auth2LoginType? loginType;
   
   Auth2Type({this.id, this.identifier, this.active, this.active2fa, this.code, this.params}) :
-    uiucUser = (params != null) ? Auth2UiucUser.fromJson(AppJson.mapValue(params['user'])) : null,
+    uiucUser = (params != null) ? Auth2UiucUser.fromJson(JsonUtils.mapValue(params['user'])) : null,
     loginType = auth2LoginTypeFromString(code);
 
   static Auth2Type? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2Type(
-      id: AppJson.stringValue(json['id']),
-      identifier: AppJson.stringValue(json['identifier']),
-      active: AppJson.boolValue(json['active']),
-      active2fa: AppJson.boolValue(json['active_2fa']),
-      code: AppJson.stringValue(json['code']),
-      params: AppJson.mapValue(json['params']),
+      id: JsonUtils.stringValue(json['id']),
+      identifier: JsonUtils.stringValue(json['identifier']),
+      active: JsonUtils.boolValue(json['active']),
+      active2fa: JsonUtils.boolValue(json['active_2fa']),
+      code: JsonUtils.stringValue(json['code']),
+      params: JsonUtils.mapValue(json['params']),
     ) : null;
   }
 
@@ -528,7 +528,7 @@ class Auth2Type {
     if (jsonList != null) {
       result = <Auth2Type>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, Auth2Type.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, Auth2Type.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -557,8 +557,8 @@ class Auth2Error {
 
   static Auth2Error? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2Error(
-      status: AppJson.stringValue(json['status']),
-      message: AppJson.stringValue(json['message']),
+      status: JsonUtils.stringValue(json['status']),
+      message: JsonUtils.stringValue(json['message']),
     ) : null;
   }
 
@@ -598,13 +598,13 @@ class Auth2UiucUser {
 
   static Auth2UiucUser? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2UiucUser(
-      email: AppJson.stringValue(json['email']),
-      firstName: AppJson.stringValue(json['first_name']),
-      lastName: AppJson.stringValue(json['last_name']),
-      middleName: AppJson.stringValue(json['middle_name']),
-      identifier: AppJson.stringValue(json['identifier']),
-      groups: AppJson.stringListValue(json['groups']),
-      systemSpecific: AppJson.mapValue(json['system_specific']),
+      email: JsonUtils.stringValue(json['email']),
+      firstName: JsonUtils.stringValue(json['first_name']),
+      lastName: JsonUtils.stringValue(json['last_name']),
+      middleName: JsonUtils.stringValue(json['middle_name']),
+      identifier: JsonUtils.stringValue(json['identifier']),
+      groups: JsonUtils.stringListValue(json['groups']),
+      systemSpecific: JsonUtils.mapValue(json['system_specific']),
     ) : null;
   }
 
@@ -640,15 +640,15 @@ class Auth2UiucUser {
     (DeepCollectionEquality().hash(systemSpecific));
 
   String? get uin {
-    return ((systemSpecific != null) ? AppJson.stringValue(systemSpecific!['uiucedu_uin']) : null) ?? identifier;
+    return ((systemSpecific != null) ? JsonUtils.stringValue(systemSpecific!['uiucedu_uin']) : null) ?? identifier;
   }
 
   String? get netId {
-    return (systemSpecific != null) ? AppJson.stringValue(systemSpecific!['preferred_username']) : null;
+    return (systemSpecific != null) ? JsonUtils.stringValue(systemSpecific!['preferred_username']) : null;
   }
 
   String? get fullName {
-    return AppString.fullName([firstName, middleName, lastName]);
+    return StringUtils.fullName([firstName, middleName, lastName]);
   }
 
   static List<Auth2UiucUser>? listFromJson(List<dynamic>? jsonList) {
@@ -656,7 +656,7 @@ class Auth2UiucUser {
     if (jsonList != null) {
       result = <Auth2UiucUser>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, Auth2UiucUser.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, Auth2UiucUser.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -715,14 +715,14 @@ class Auth2UserPrefs {
 
   static Auth2UserPrefs? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2UserPrefs(
-      privacyLevel: AppJson.intValue(json['privacy_level']),
-      roles: UserRole.setFromJson(AppJson.listValue(json['roles'])),
-      favorites: _mapOfStringSetsFromJson(AppJson.mapValue(json['favorites'])),
-      interests: _mapOfStringSetsFromJson(AppJson.mapValue(json['interests'])),
-      foodFilters: _mapOfStringSetsFromJson(AppJson.mapValue(json['food'])),
-      tags: _tagsFromJson(AppJson.mapValue(json['tags'])),
-      settings: AppJson.mapValue(json['settings']),
-      voter: Auth2VoterPrefs.fromJson(AppJson.mapValue(json['voter'])),
+      privacyLevel: JsonUtils.intValue(json['privacy_level']),
+      roles: UserRole.setFromJson(JsonUtils.listValue(json['roles'])),
+      favorites: _mapOfStringSetsFromJson(JsonUtils.mapValue(json['favorites'])),
+      interests: _mapOfStringSetsFromJson(JsonUtils.mapValue(json['interests'])),
+      foodFilters: _mapOfStringSetsFromJson(JsonUtils.mapValue(json['food'])),
+      tags: _tagsFromJson(JsonUtils.mapValue(json['tags'])),
+      settings: JsonUtils.mapValue(json['settings']),
+      voter: Auth2VoterPrefs.fromJson(JsonUtils.mapValue(json['voter'])),
     ) : null;
   }
 
@@ -743,12 +743,12 @@ class Auth2UserPrefs {
   }
 
   factory Auth2UserPrefs.fromStorage({Map<String, dynamic>? profile, Set<String>? includedFoodTypes, Set<String>? excludedFoodIngredients, Map<String, dynamic>? settings}) {
-    Map<String, dynamic>? privacy = (profile != null) ? AppJson.mapValue(profile['privacySettings']) : null;
-    int? privacyLevel = (privacy != null) ? AppJson.intValue(privacy['level']) : null;
-    Set<UserRole>? roles = (profile != null) ? UserRole.setFromJson(AppJson.listValue(profile['roles'])) : null;
-    Map<String, Set<String>>? favorites = (profile != null) ? _mapOfStringSetsFromJson(AppJson.mapValue(profile['favorites'])) : null;
-    Map<String, Set<String>>? interests = (profile != null) ? _interestsFromProfileList(AppJson.listValue(profile['interests'])) : null;
-    Map<String, bool>? tags = (profile != null) ? _tagsFromProfileLists(positive: AppJson.listValue(profile['positiveInterestTags']), negative: AppJson.listValue(profile['negativeInterestTags'])) : null;
+    Map<String, dynamic>? privacy = (profile != null) ? JsonUtils.mapValue(profile['privacySettings']) : null;
+    int? privacyLevel = (privacy != null) ? JsonUtils.intValue(privacy['level']) : null;
+    Set<UserRole>? roles = (profile != null) ? UserRole.setFromJson(JsonUtils.listValue(profile['roles'])) : null;
+    Map<String, Set<String>>? favorites = (profile != null) ? _mapOfStringSetsFromJson(JsonUtils.mapValue(profile['favorites'])) : null;
+    Map<String, Set<String>>? interests = (profile != null) ? _interestsFromProfileList(JsonUtils.listValue(profile['interests'])) : null;
+    Map<String, bool>? tags = (profile != null) ? _tagsFromProfileLists(positive: JsonUtils.listValue(profile['positiveInterestTags']), negative: JsonUtils.listValue(profile['negativeInterestTags'])) : null;
     Auth2VoterPrefs? voter = (profile != null) ? Auth2VoterPrefs.fromJson(profile) : null;
 
     return Auth2UserPrefs(
@@ -923,7 +923,7 @@ class Auth2UserPrefs {
         if (favoriteIdsForKey == null) {
           _favorites![favorite.favoriteKey] = favoriteIdsForKey = Set<String>();
         }
-        AppSet.add(favoriteIdsForKey, favorite.favoriteId);
+        SetUtils.add(favoriteIdsForKey, favorite.favoriteId);
       }
       else {
         favoriteIdsForKey.remove(favorite.favoriteId);
@@ -970,7 +970,7 @@ class Auth2UserPrefs {
           if (favoriteIdsForKey == null) {
             _favorites![favorite.favoriteKey] = favoriteIdsForKey = Set<String>();
           }
-          AppSet.add(favoriteIdsForKey, favorite.favoriteId);
+          SetUtils.add(favoriteIdsForKey, favorite.favoriteId);
         }
         //DeviceCalendar().onFavoriteUpdated(favorite, shouldFavorite);
         NotificationService().notify(notifyFavoriteChanged, favorite);
@@ -1307,7 +1307,7 @@ class Auth2UserPrefs {
   // Settings
 
   bool? getBoolSetting({String? settingName, bool? defaultValue}){
-    return AppJson.boolValue(getSetting(settingName: settingName)) ?? defaultValue;
+    return JsonUtils.boolValue(getSetting(settingName: settingName)) ?? defaultValue;
   }
 
   dynamic getSetting({String? settingName}){
@@ -1343,7 +1343,7 @@ class Auth2UserPrefs {
     if (jsonMap != null) {
       result = Map<String, Set<String>>();
       for (String key in jsonMap.keys) {
-        AppMap.set(result, key, AppJson.setStringsValue(jsonMap[key]));
+        MapUtils.set(result, key, JsonUtils.setStringsValue(jsonMap[key]));
       }
     }
     return result;
@@ -1394,9 +1394,9 @@ class Auth2UserPrefs {
       result = Map<String, Set<String>>();
       for (dynamic jsonEntry in jsonList) {
         if (jsonEntry is Map) {
-          String? category = AppJson.stringValue(jsonEntry['category']);
+          String? category = JsonUtils.stringValue(jsonEntry['category']);
           if (category != null) {
-            result[category] = AppJson.setStringsValue(jsonEntry['subcategories']) ?? Set<String>();
+            result[category] = JsonUtils.setStringsValue(jsonEntry['subcategories']) ?? Set<String>();
           }
         }
       }
@@ -1421,10 +1421,10 @@ class Auth2VoterPrefs {
 
   static Auth2VoterPrefs? fromJson(Map<String, dynamic>? json, { Function? onChanged }) {
     return (json != null) ? Auth2VoterPrefs(
-      registeredVoter: AppJson.boolValue(json['registered_voter']),
-      votePlace: AppJson.stringValue(json['vote_place']),
-      voterByMail: AppJson.boolValue(json['voter_by_mail']),
-      voted: AppJson.boolValue(json['voted']),
+      registeredVoter: JsonUtils.boolValue(json['registered_voter']),
+      votePlace: JsonUtils.stringValue(json['vote_place']),
+      voterByMail: JsonUtils.boolValue(json['voter_by_mail']),
+      voted: JsonUtils.boolValue(json['voted']),
     ) : null;
   }
 
@@ -1583,7 +1583,7 @@ class UserRole {
     if (jsonList != null) {
       result = <UserRole>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, UserRole.fromString(AppJson.stringValue(jsonEntry)));
+        ListUtils.add(result, UserRole.fromString(JsonUtils.stringValue(jsonEntry)));
       }
     }
     return result;
@@ -1605,7 +1605,7 @@ class UserRole {
     if (jsonList != null) {
       result = Set<UserRole>();
       for (dynamic jsonEntry in jsonList) {
-        AppSet.add(result, (jsonEntry is String) ? UserRole.fromString(jsonEntry) : null);
+        SetUtils.add(result, (jsonEntry is String) ? UserRole.fromString(jsonEntry) : null);
       }
     }
     return result;

@@ -15,11 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class DebugStylesPanel extends StatefulWidget {
   _DebugStylesPanelState createState() => _DebugStylesPanelState();
@@ -34,7 +35,7 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
     NotificationService().subscribe(this, [
       Styles.notifyChanged
     ]);
-    _stylesContentController = TextEditingController(text: AppJson.encode(Styles().content, prettify: true) ?? '');
+    _stylesContentController = TextEditingController(text: JsonUtils.encode(Styles().content, prettify: true) ?? '');
     super.initState();
   }
 
@@ -48,7 +49,7 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
   @override
   void onNotification(String name, dynamic param) {
     if (name == Styles.notifyChanged) {
-      _stylesContentController!.text = AppJson.encode(Styles().content, prettify: true) ?? '';
+      _stylesContentController!.text = JsonUtils.encode(Styles().content, prettify: true) ?? '';
       setState(() {});
     }
   }
@@ -79,7 +80,7 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
               Wrap(runSpacing: 8, spacing: 16, children: <Widget>[
                 Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                   RoundedButton(
-                    label: AppString.getDefaultEmptyString('Debug'),
+                    label: StringUtils.ensureNotEmpty('Debug'),
                     padding: EdgeInsets.symmetric(horizontal: 14),
                     textStyle: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary, decoration: (Styles().contentMode == StylesContentMode.debug) ? TextDecoration.underline : null),
                     borderColor: Styles().colors!.fillColorSecondary,
@@ -89,7 +90,7 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
                 ],),
                 Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                   RoundedButton(
-                    label: AppString.getDefaultEmptyString('Auto'),
+                    label: StringUtils.ensureNotEmpty('Auto'),
                     padding: EdgeInsets.symmetric(horizontal: 14),
                     textStyle: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary, decoration: (Styles().contentMode == StylesContentMode.auto) ? TextDecoration.underline : null),
                     borderColor: Styles().colors!.fillColorSecondary,
@@ -99,7 +100,7 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
                 ],),
                 Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                   RoundedButton(
-                    label: AppString.getDefaultEmptyString('Assets'),
+                    label: StringUtils.ensureNotEmpty('Assets'),
                     padding: EdgeInsets.symmetric(horizontal: 14),
                     textStyle: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary, decoration: (Styles().contentMode == StylesContentMode.assets) ? TextDecoration.underline : null),
                     borderColor: Styles().colors!.fillColorSecondary,
@@ -119,7 +120,7 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
 
   void _onTapDebug() {
     String stylesContent = _stylesContentController!.text;
-    if (AppJson.decode(stylesContent) is Map) {
+    if (JsonUtils.decode(stylesContent) is Map) {
       Styles().setContentMode(StylesContentMode.debug, _stylesContentController!.text);
     }
     else {

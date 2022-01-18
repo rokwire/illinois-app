@@ -30,7 +30,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 
 
@@ -39,6 +39,8 @@ class ExploreService with Service implements NotificationsListener {
   static const String notifyEventDetail  = "edu.illinois.rokwire.explore.event.detail";
   static const String notifyEventCreated = "edu.illinois.rokwire.explore.event.created";
   static const String notifyEventUpdated = "edu.illinois.rokwire.explore.event.updated";
+
+  static final int _defaultLocationRadiusInMeters = 1000;
 
   List<Map<String, dynamic>>? _eventDetailsCache;
   
@@ -112,7 +114,7 @@ class ExploreService with Service implements NotificationsListener {
         //String cacheFilePath = join(appDocDir.path, 'events.json');
         //File cacheFile = File(cacheFilePath);
         //cacheFile.writeAsString(responseBody, flush: true);
-        List<dynamic>? jsonList = AppJson.decode(responseBody);
+        List<dynamic>? jsonList = JsonUtils.decode(responseBody);
         List<Event>? events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: excludeRecurring, eventFilter: eventFilter);
         return events;
       } else {
@@ -125,7 +127,7 @@ class ExploreService with Service implements NotificationsListener {
 
   Future<Event?> getEventById(String? eventId) async {
     if(_enabled) {
-      if (AppString.isStringEmpty(eventId)) {
+      if (StringUtils.isEmpty(eventId)) {
         return null;
       }
       http.Response? response;
@@ -139,7 +141,7 @@ class ExploreService with Service implements NotificationsListener {
       int responseCode = response?.statusCode ?? -1;
       String? responseBody = response?.body;
       if ((response != null) && (responseCode >= 200 && responseCode <= 300)) {
-        Map<String, dynamic>? jsonData = AppJson.decode(responseBody);
+        Map<String, dynamic>? jsonData = JsonUtils.decode(responseBody);
         Event? event = Event.fromJson(jsonData);
         return event;
       } else {
@@ -158,8 +160,8 @@ class ExploreService with Service implements NotificationsListener {
         response = (Config().eventsUrl != null) ? await Network().post(Config().eventsUrl, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
             auth: NetworkAuth.Auth2) : null;
-        Map<String, dynamic>? jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? AppJson.decode(response?.body) : null;
-        String? eventId = (jsonData != null) ? AppJson.stringValue(jsonData["id"]) : null;
+        Map<String, dynamic>? jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? JsonUtils.decode(response?.body) : null;
+        String? eventId = (jsonData != null) ? JsonUtils.stringValue(jsonData["id"]) : null;
         if (eventId != null) {
           NotificationService().notify(notifyEventCreated, eventId);
         }
@@ -181,8 +183,8 @@ class ExploreService with Service implements NotificationsListener {
         response = (Config().eventsUrl != null) ? await Network().put(url, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
             auth: NetworkAuth.Auth2) : null;
-        Map<String, dynamic>? jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? AppJson.decode(response?.body) : null;
-        String? eventId = (jsonData != null) ? AppJson.stringValue(jsonData["id"]) : null;
+        Map<String, dynamic>? jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? JsonUtils.decode(response?.body) : null;
+        String? eventId = (jsonData != null) ? JsonUtils.stringValue(jsonData["id"]) : null;
         if (eventId != null) {
           NotificationService().notify(notifyEventUpdated, eventId);
         }
@@ -203,7 +205,7 @@ class ExploreService with Service implements NotificationsListener {
         response = (Config().eventsUrl != null) ? await Network().delete(url,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
             auth: NetworkAuth.Auth2) : null;
-    Map<String, dynamic>? jsonData = AppJson.decode(response?.body);
+    Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
     return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201|| response.statusCode == 202));
     } catch (e) {
     Log.e('Failed to delete event $eventId');
@@ -215,7 +217,7 @@ class ExploreService with Service implements NotificationsListener {
 
   Future<List<Event>?> loadEventsByIds(Set<String?>? eventIds) async {
     if(_enabled) {
-      if (AppCollection.isCollectionEmpty(eventIds)) {
+      if (CollectionUtils.isEmpty(eventIds)) {
         Log.i('Missing event ids param');
         return null;
       }
@@ -237,7 +239,7 @@ class ExploreService with Service implements NotificationsListener {
       }
       String? responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
-        List<dynamic>? jsonList = AppJson.decode(responseBody);
+        List<dynamic>? jsonList = JsonUtils.decode(responseBody);
         List<Event>? events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: false, eventFilter: upcomingFilter);
         return events;
       } else {
@@ -260,7 +262,7 @@ class ExploreService with Service implements NotificationsListener {
       }
       String? responseBody = response?.body;
       if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
-        return ExploreCategory.listFromJson(AppJson.decodeList(responseBody));
+        return ExploreCategory.listFromJson(JsonUtils.decodeList(responseBody));
       } else {
         Log.e('Failed to load event categories');
         Log.e(responseBody);
@@ -283,7 +285,7 @@ class ExploreService with Service implements NotificationsListener {
       }
       String? responseBody = response?.body;
       if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
-        List<dynamic>? categories = AppJson.decode(responseBody);
+        List<dynamic>? categories = JsonUtils.decode(responseBody);
         return categories;
       } else {
         Log.e('Failed to load event categories');
@@ -306,7 +308,7 @@ class ExploreService with Service implements NotificationsListener {
       int responseCode = response?.statusCode ?? -1;
       String? responseBody = response?.body;
       if ((response != null) && (responseCode >= 200) && (responseCode <= 301)) {
-        List<dynamic>? tagsList = AppJson.decode(responseBody);
+        List<dynamic>? tagsList = JsonUtils.decode(responseBody);
         return (tagsList != null) ? List.from(tagsList) : null;
       } else {
         Log.e(responseBody);
@@ -317,7 +319,7 @@ class ExploreService with Service implements NotificationsListener {
   }
 
   void sortEvents(List<Explore>? events) {
-    if (AppCollection.isCollectionEmpty(events) || (events!.length == 1)) {
+    if (CollectionUtils.isEmpty(events) || (events!.length == 1)) {
       return;
     }
     events.sort((Explore first, Explore second) => _compareEvents(first, second));
@@ -347,7 +349,7 @@ class ExploreService with Service implements NotificationsListener {
     String queryParameters = "";
 
     /// Search text
-    if(AppString.isStringNotEmpty(searchText)){
+    if(StringUtils.isNotEmpty(searchText)){
       queryParameters += _constructSearchParams(searchText!);
     }
 
@@ -355,7 +357,7 @@ class ExploreService with Service implements NotificationsListener {
     if (locationData != null) {
       double? lat = locationData.latitude;
       double? lng =locationData.longitude;
-      int radius = AppLocation.defaultLocationRadiusInMeters;
+      int radius = _defaultLocationRadiusInMeters;
       queryParameters += 'latitude=$lat&longitude=$lng&radius=$radius&';
     }
 
@@ -373,7 +375,7 @@ class ExploreService with Service implements NotificationsListener {
         rolesParameters += 'targetAudience=$targetAudience&';
       }
     }
-    if (AppString.isStringNotEmpty(rolesParameters)) {
+    if (StringUtils.isNotEmpty(rolesParameters)) {
       queryParameters += rolesParameters;
     }
 
@@ -385,7 +387,7 @@ class ExploreService with Service implements NotificationsListener {
     ///Categories
     if (categories != null && categories.length > 0) {
       for (String? category in categories) {
-        if (AppString.isStringNotEmpty(category)) {
+        if (StringUtils.isNotEmpty(category)) {
           queryParameters += 'category=$category&';
         }
       }
@@ -399,7 +401,7 @@ class ExploreService with Service implements NotificationsListener {
     ///Tags
     if (tags != null && tags.length > 0) {
       for (String tag in tags) {
-        if (AppString.isStringNotEmpty(tag)) {
+        if (StringUtils.isNotEmpty(tag)) {
           queryParameters += 'tags=$tag&';
         }
       }
@@ -464,7 +466,7 @@ class ExploreService with Service implements NotificationsListener {
   }
 
   Future<List<Event>?> _buildEvents({List<dynamic>? eventsJsonList, bool excludeRecurringEvents = true, EventTimeFilter? eventFilter}) async {
-    if (AppCollection.isCollectionEmpty(eventsJsonList)) {
+    if (CollectionUtils.isEmpty(eventsJsonList)) {
       return null;
     }
     List<Event> events = [];
@@ -540,18 +542,18 @@ class ExploreService with Service implements NotificationsListener {
 
   Future<void> _buildEventsForSuperEvent(Event superEvent, EventTimeFilter? eventFilter) async {
     List<Map<String, dynamic>>? subEventsMap = superEvent.subEventsMap;
-    if (AppCollection.isCollectionEmpty(subEventsMap)) {
+    if (CollectionUtils.isEmpty(subEventsMap)) {
       Log.e('Super event does not contain sub events!');
       return;
     }
     String? superEventId = superEvent.id;
-    if (AppString.isStringEmpty(superEventId)) {
+    if (StringUtils.isEmpty(superEventId)) {
       Log.e('Super event has no id!');
       return;
     }
     String queryParameters = '?superEventId=$superEventId';
     String? dateTimeQueryParam = _constructEventTimeFilterParams(eventFilter);
-    if (AppString.isStringNotEmpty(dateTimeQueryParam)) {
+    if (StringUtils.isNotEmpty(dateTimeQueryParam)) {
       queryParameters += '&$dateTimeQueryParam';
     }
     http.Response? response;
@@ -567,8 +569,8 @@ class ExploreService with Service implements NotificationsListener {
       return;
     }
     String responseBody = response.body;
-    List<dynamic>? subEventsJsonList = AppJson.decodeList(responseBody);
-    if (AppCollection.isCollectionNotEmpty(subEventsJsonList)) {
+    List<dynamic>? subEventsJsonList = JsonUtils.decodeList(responseBody);
+    if (CollectionUtils.isNotEmpty(subEventsJsonList)) {
       for (dynamic eventJson in subEventsJsonList!) {
         String? id = eventJson['id'];
         Map<String, dynamic>? subEventJson = (subEventsMap as List<Map<String, dynamic>?>).firstWhere((jsonEntry) => (id == jsonEntry!['id']), orElse: () {
@@ -603,8 +605,8 @@ class ExploreService with Service implements NotificationsListener {
   /////////////////////////
   // Enabled
 
-  bool get _enabled => AppString.isStringNotEmpty(Config().eventsOrConvergeUrl)
-      && AppString.isStringNotEmpty(Config().eventsUrl);
+  bool get _enabled => StringUtils.isNotEmpty(Config().eventsOrConvergeUrl)
+      && StringUtils.isNotEmpty(Config().eventsUrl);
 
   NetworkAuth get _userOrAppAuth{
     return NetworkAuth.Auth2;

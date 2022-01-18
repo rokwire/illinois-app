@@ -18,7 +18,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:path/path.dart';
@@ -80,22 +80,22 @@ class Content /* with Service */ {
 
   Future<ImagesResult> _uploadImage({List<int>? imageBytes, String? fileName, String? storagePath, int? width, String? mediaType}) async {
     String? serviceUrl = Config().contentUrl;
-    if (AppString.isStringEmpty(serviceUrl)) {
+    if (StringUtils.isEmpty(serviceUrl)) {
       return ImagesResult.error('Missing images BB url.');
     }
-    if (AppCollection.isCollectionEmpty(imageBytes)) {
+    if (CollectionUtils.isEmpty(imageBytes)) {
       return ImagesResult.error('No file bytes.');
     }
-    if (AppString.isStringEmpty(fileName)) {
+    if (StringUtils.isEmpty(fileName)) {
       return ImagesResult.error('Missing file name.');
     }
-    if (AppString.isStringEmpty(storagePath)) {
+    if (StringUtils.isEmpty(storagePath)) {
       return ImagesResult.error('Missing storage path.');
     }
     if ((width == null) || (width <= 0)) {
       return ImagesResult.error('Invalid image width. Please, provide positive number.');
     }
-    if (AppString.isStringEmpty(mediaType)) {
+    if (StringUtils.isEmpty(mediaType)) {
       return ImagesResult.error('Missing media type.');
     }
     String url = "$serviceUrl/image";
@@ -109,7 +109,7 @@ class Content /* with Service */ {
     int responseCode = response?.statusCode ?? -1;
     String responseString = (await response?.stream.bytesToString())!;
     if (responseCode == 200) {
-      Map<String, dynamic>? json = AppJson.decode(responseString);
+      Map<String, dynamic>? json = JsonUtils.decode(responseString);
       String? imageUrl = (json != null) ? json['url'] : null;
       return ImagesResult.succeed(imageUrl);
     } else {

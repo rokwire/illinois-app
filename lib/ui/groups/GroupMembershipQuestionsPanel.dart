@@ -23,7 +23,8 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembershipQuestionsPanel extends StatefulWidget {
@@ -43,7 +44,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
 
   bool get _addButtonEnabled{
     for(TextEditingController textEditingController in _controllers!){
-      if(AppString.isStringEmpty(textEditingController.text)){
+      if(StringUtils.isEmpty(textEditingController.text)){
         return false;
       }
     }

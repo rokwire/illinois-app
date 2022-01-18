@@ -4,7 +4,7 @@ import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class Twitter  /* with Service */ {
 
@@ -46,7 +46,7 @@ class Twitter  /* with Service */ {
       Response? response = await Network().get(url, auth: NetworkAuth.Auth2, headers: headers);
       String? responseString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
       print("Twitter Page Load: ${response?.statusCode}\n${response?.body}");
-      return TweetsPage.fromJson(AppJson.decodeMap(responseString));
+      return TweetsPage.fromJson(JsonUtils.decodeMap(responseString));
     }
     return null;
   }
@@ -72,7 +72,7 @@ class Twitter  /* with Service */ {
       Response response = await Network().get(url, headers: headers);
       String responseString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
       print("Twitter Page Load: ${response?.statusCode}\n${response?.body}");
-      return TweetsPage.fromJson(AppJson.decodeMap(responseString));
+      return TweetsPage.fromJson(JsonUtils.decodeMap(responseString));
     }
     return null;
   }*/

@@ -18,7 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 typedef void MapWidgetCreatedCallback(MapController controller);
 
@@ -78,7 +78,7 @@ class MapController {
       "LocationThresoldDistance": Storage().debugMapThresholdDistance
     };
     List<dynamic> jsonData = [];
-    if (AppCollection.isCollectionNotEmpty(explores)) {
+    if (CollectionUtils.isNotEmpty(explores)) {
       for (dynamic explore in explores!) {
         jsonData.add(explore.toJson());
       }

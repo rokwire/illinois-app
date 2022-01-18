@@ -28,7 +28,8 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembershipStepsPanel extends StatefulWidget {
@@ -79,8 +80,8 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
         }
       });
       Groups().loadEvents(null).then((Map<int, List<GroupEvent>>? eventsMap) {
-        List<GroupEvent>? events = AppCollection.isCollectionNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
-        if (AppCollection.isCollectionNotEmpty(events)) {
+        List<GroupEvent>? events = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
+        if (CollectionUtils.isNotEmpty(events)) {
           for (Event event in events!) {
             if (event.id != null) {
               _events[event.id!] = event;

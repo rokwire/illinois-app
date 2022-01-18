@@ -38,7 +38,7 @@ import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class HomeRecentItemsWidget extends StatefulWidget {
@@ -130,7 +130,7 @@ class _RecentItemsList extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     bool showMoreButton =showMoreButtonExplicitly ||( tapMore!=null && limit<(items?.length??0));
-    String? moreLabel = AppString.isStringEmpty(moreButtonLabel)? Localization().getStringEx('widget.home_recent_items.button.more.title', 'View All'): moreButtonLabel;
+    String? moreLabel = StringUtils.isEmpty(moreButtonLabel)? Localization().getStringEx('widget.home_recent_items.button.more.title', 'View All'): moreButtonLabel;
     return items!=null && items!.isNotEmpty? Column(
       children: <Widget>[
         SectionTitlePrimary(
@@ -189,7 +189,7 @@ class _RecentItemsList extends StatelessWidget{
       return ExploreDetailPanel(explore: originalObject,);
     }
     else if ((item.recentItemType == RecentItemType.guide) && (originalObject is Map)) {
-      return GuideDetailPanel(guideEntryId: Guide().entryId(AppJson.mapValue(originalObject)));
+      return GuideDetailPanel(guideEntryId: Guide().entryId(JsonUtils.mapValue(originalObject)));
     }
 
     return Container();
@@ -235,7 +235,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
       isFavorite = Auth2().isFavorite(originalItem);
     }
     else if ((widget.item!.recentItemType == RecentItemType.guide) && (originalItem is Map)) {
-      isFavorite = Auth2().isFavorite(GuideFavorite(id: Guide().entryId(AppJson.mapValue(originalItem))));
+      isFavorite = Auth2().isFavorite(GuideFavorite(id: Guide().entryId(JsonUtils.mapValue(originalItem))));
     }
     else {
       isFavorite = false;
@@ -284,7 +284,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
 
   List<Widget> _buildDetails() {
     List<Widget> details =  [];
-    if(AppString.isStringNotEmpty(widget.item!.recentTime)) {
+    if(StringUtils.isNotEmpty(widget.item!.recentTime)) {
       Widget? dateDetail = widget.showDate ? _dateDetail() : null;
       if (dateDetail != null) {
         details.add(dateDetail);
@@ -297,7 +297,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
         details.add(timeDetail);
       }
     }
-    Widget? descriptionDetail = ((widget.item!.recentItemType == RecentItemType.guide) && AppString.isStringNotEmpty(widget.item!.recentDescripton)) ? _descriptionDetail() : null;
+    Widget? descriptionDetail = ((widget.item!.recentItemType == RecentItemType.guide) && StringUtils.isNotEmpty(widget.item!.recentDescripton)) ? _descriptionDetail() : null;
     if (descriptionDetail != null) {
       if (details.isNotEmpty) {
         details.add(Container(height: 8,));
@@ -368,8 +368,8 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     }
     else if ((widget.item!.recentItemType == RecentItemType.guide) && (originalItem is Map)) {
       Auth2().prefs?.toggleFavorite(GuideFavorite(
-        id: Guide().entryId(AppJson.mapValue(originalItem)),
-        title: Guide().entryTitle(AppJson.mapValue(originalItem))
+        id: Guide().entryId(JsonUtils.mapValue(originalItem)),
+        title: Guide().entryTitle(JsonUtils.mapValue(originalItem))
       ));
     }
   }

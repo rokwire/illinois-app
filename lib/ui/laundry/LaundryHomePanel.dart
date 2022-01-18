@@ -33,7 +33,7 @@ import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryListPanel.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 
@@ -140,7 +140,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     if (_nativeMapController!.mapId == mapID) {
       dynamic laundry;
       if (laundryJson is Map) {
-        laundry = LaundryRoom.fromJson(AppJson.mapValue(laundryJson));
+        laundry = LaundryRoom.fromJson(JsonUtils.mapValue(laundryJson));
       }
       else if (laundryJson is List) {
         laundry = [];

@@ -30,7 +30,7 @@ import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -173,15 +173,15 @@ class GeoFence with Service implements NotificationsListener {
   }
 
   Future<bool?> startRangingBeaconsInRegion(String regionId) async {
-    return AppJson.boolValue(await _channel.invokeMethod(_startRangingBeaconsInRegionName, regionId));
+    return JsonUtils.boolValue(await _channel.invokeMethod(_startRangingBeaconsInRegionName, regionId));
   }
 
   Future<bool?> stopRangingBeaconsInRegion(String regionId) async {
-    return AppJson.boolValue(await _channel.invokeMethod(_stopRangingBeaconsInRegionName, regionId));
+    return JsonUtils.boolValue(await _channel.invokeMethod(_stopRangingBeaconsInRegionName, regionId));
   }
 
   Future<List<GeoFenceBeacon>?> beaconsInRegion(String regionId) async {
-    return GeoFenceBeacon.listFromJsonList(AppJson.listValue( await _channel.invokeMethod(_beaconsInRegionName, regionId)));
+    return GeoFenceBeacon.listFromJsonList(JsonUtils.listValue( await _channel.invokeMethod(_beaconsInRegionName, regionId)));
   }
 
   // Implementation
@@ -235,7 +235,7 @@ class GeoFence with Service implements NotificationsListener {
   }
 
   static LinkedHashMap<String, GeoFenceRegion>? _regionsFromJsonString(String? jsonString) {
-    List<dynamic>? jsonList = AppJson.decode(jsonString);
+    List<dynamic>? jsonList = JsonUtils.decode(jsonString);
     return (jsonList != null) ? GeoFenceRegion.mapFromJsonList(jsonList) : null;
   }
 
@@ -263,7 +263,7 @@ class GeoFence with Service implements NotificationsListener {
 
   // ignore: unused_element
   static Future<List<String>?> _currentRegionIds() async {
-    return AppJson.listStringsValue(await _channel.invokeMethod(_currentRegionsName));
+    return JsonUtils.listStringsValue(await _channel.invokeMethod(_currentRegionsName));
   }
 
   Future<void> _monitorRegions() async {
@@ -301,20 +301,20 @@ class GeoFence with Service implements NotificationsListener {
 
   Future<dynamic> _handleChannelCall(MethodCall call) async {
     if (call.method == _enterRegionName) {
-      print("GeoFence didEnterRegion: ${AppJson.stringValue(call.arguments)}");
+      print("GeoFence didEnterRegion: ${JsonUtils.stringValue(call.arguments)}");
       return null;
     }
     else if (call.method == _exitRegionName) {
-      print("GeoFence didExitRegion: ${AppJson.stringValue(call.arguments)}");
+      print("GeoFence didExitRegion: ${JsonUtils.stringValue(call.arguments)}");
       return null;
     }
     else if (call.method == _currentRegionsChangedName) {
-      _updateCurrentRegions(AppJson.listStringsValue(call.arguments));
+      _updateCurrentRegions(JsonUtils.listStringsValue(call.arguments));
       return null;
     }
     else if (call.method == _beaconsInRegionChangedName) {
-      Map<String, dynamic>? params = AppJson.mapValue(call.arguments);
-      String? regionId = (params != null) ? AppJson.stringValue(params['regionId']) : null;
+      Map<String, dynamic>? params = JsonUtils.mapValue(call.arguments);
+      String? regionId = (params != null) ? JsonUtils.stringValue(params['regionId']) : null;
       List<GeoFenceBeacon>? beacons = (params != null) ? GeoFenceBeacon.listFromJsonList(params['beacons']) : null;
       _updateCurrentBeacons(regionId: regionId, beacons: beacons);
       return null;

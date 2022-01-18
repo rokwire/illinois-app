@@ -11,13 +11,14 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 
 class InboxHomePanel extends StatefulWidget {
   InboxHomePanel();
@@ -933,21 +934,21 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
                 
                 Expanded(child:
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    AppString.isStringNotEmpty(widget.message?.category) ?
+                    StringUtils.isNotEmpty(widget.message?.category) ?
                       Padding(padding: EdgeInsets.only(bottom: 3), child:
                         Row(children: [
                           Expanded(child:
                             Text(widget.message?.category ?? '', semanticsLabel: "Category: ${widget.message?.category ?? ''}, ",style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))
                       )])) : Container(),
                     
-                    AppString.isStringNotEmpty(widget.message?.subject) ?
+                    StringUtils.isNotEmpty(widget.message?.subject) ?
                       Padding(padding: EdgeInsets.only(bottom: 4), child:
                         Row(children: [
                           Expanded(child:
                             Text(widget.message?.subject ?? '', semanticsLabel: "Subject: ${widget.message?.subject ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
                       )])) : Container(),
 
-                    AppString.isStringNotEmpty(widget.message?.body) ?
+                    StringUtils.isNotEmpty(widget.message?.body) ?
                       Padding(padding: EdgeInsets.only(bottom: 6), child:
                         Row(children: [
                           Expanded(child:

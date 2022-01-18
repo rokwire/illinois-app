@@ -21,7 +21,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/dining/LocationsWithSpecialPanel.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class HorizontalDiningSpecials extends StatelessWidget {
@@ -68,11 +68,11 @@ class HorizontalDiningSpecials extends StatelessWidget {
     List<Widget> offers = [];
 
     List<DiningSpecial>? limitedOffers = specials;
-    if (AppString.isStringNotEmpty(locationId) && AppCollection.isCollectionNotEmpty(specials)) {
+    if (StringUtils.isNotEmpty(locationId) && CollectionUtils.isNotEmpty(specials)) {
       limitedOffers = specials!.where((entry) => entry.locationIds!.contains(locationId)).toList();
     }
 
-    if (AppCollection.isCollectionNotEmpty(limitedOffers)) {
+    if (CollectionUtils.isNotEmpty(limitedOffers)) {
       for (DiningSpecial offer in limitedOffers!) {
         if (offers.isNotEmpty) {
           offers.add(Container(
@@ -168,7 +168,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
   }
 
   bool get _hasImage {
-    return AppString.isStringNotEmpty(widget.special!.imageUrl);
+    return StringUtils.isNotEmpty(widget.special!.imageUrl);
   }
 
   void _evalImageHeight() {

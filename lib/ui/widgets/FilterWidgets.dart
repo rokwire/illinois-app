@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class FilterListItemWidget extends StatelessWidget {
@@ -32,7 +32,7 @@ class FilterListItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextStyle labelsStyle = TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: (selected ? Styles().fontFamilies!.bold : Styles().fontFamilies!.medium));
-    bool hasSubLabel = AppString.isStringNotEmpty(subLabel);
+    bool hasSubLabel = StringUtils.isNotEmpty(subLabel);
     return Semantics(
         label: label,
         button: true,
