@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
@@ -34,7 +33,7 @@ class _AthleticsTeamsPanelState extends State<AthleticsTeamsPanel> {
         appBar: SimpleHeaderBarWithBack(
           context: context,
           titleWidget: Text(
-            Localization().getStringEx('panel.athletics_teams.header.title', 'Teams'),
+            Localization().getStringEx('panel.athletics_teams.header.title', 'Teams')!,
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -57,7 +56,7 @@ class _AthleticsTeamsPanelState extends State<AthleticsTeamsPanel> {
             ),
           ]),
         ),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         bottomNavigationBar: TabBarWidget(),
         );
   }

@@ -1,49 +1,49 @@
-#Common
-/build
-/.idea
-/.dart_tool
-/.vscode
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
 
-#Flutter
-.packages
-.project
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code related
+.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
 
-#Android
-/android/local.properties
-/android/.gradle
-/android/.idea
-/android/.settings
-/android/android.iml
-/android/illinois-client-android.iml
-/android/app/app.iml
-/android/app/android-app.iml
-/android/app/.externalNativeBuild
-/android/app/bin
-/android/app/.idea
-/android/app/.classpath
-/android/app/.settings
-/android/app/gradlew
-/android/app/gradlew.bat
-/android/app/local.properties
-/android/app/gradle
+# Web related
+lib/generated_plugin_registrant.dart
 
-#iOS
-DerivedData
-xcuserdata
-/ios/.symlinks
-/ios/Pods
-/ios/Podfile.lock
-/ios/Flutter/App.framework
-/ios/Flutter/Flutter.podspec
-/ios/Flutter/Flutter.framework
-/ios/Flutter/Generated.xcconfig
-/ios/Flutter/.last_build_id
-/ios/Flutter/flutter_assets/*
-/ios/Flutter/flutter_export_environment.sh
+# Symbolication related
+app.*.symbols
 
-#Secret/Private files
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Secret/Private files
 /.travis.yml
 /secrets.tar.enc
 

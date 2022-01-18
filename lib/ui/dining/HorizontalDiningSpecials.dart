@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/dining/LocationsWithSpecialPanel.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class HorizontalDiningSpecials extends StatelessWidget {
-  final String locationId;
-  final List<DiningSpecial> specials;
+  final String? locationId;
+  final List<DiningSpecial>? specials;
 
   HorizontalDiningSpecials({this.specials, this.locationId});
 
   @override
   Widget build(BuildContext context) {
     List<Widget> offerWidgets = _createOffers();
-    bool hasOffers = offerWidgets != null && offerWidgets.isNotEmpty;
+    bool hasOffers = offerWidgets.isNotEmpty;
 
     return hasOffers
         ? Padding(
@@ -47,11 +45,11 @@ class HorizontalDiningSpecials extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  Localization().getStringEx("panel.explore.label.spcial_offers.title", "Special Offers"),
+                  Localization().getStringEx("panel.explore.label.spcial_offers.title", "Special Offers")!,
                   style: TextStyle(
-                    fontFamily: Styles().fontFamilies.extraBold,
+                    fontFamily: Styles().fontFamilies!.extraBold,
                     fontSize: 16,
-                    color: Styles().colors.textBackground,
+                    color: Styles().colors!.textBackground,
                   ),
                 ),
                 SingleChildScrollView(
@@ -69,13 +67,13 @@ class HorizontalDiningSpecials extends StatelessWidget {
   List<Widget> _createOffers() {
     List<Widget> offers = [];
 
-    List<DiningSpecial> limitedOffers = specials;
-    if (AppString.isStringNotEmpty(locationId) && AppCollection.isCollectionNotEmpty(specials)) {
-      limitedOffers = specials.where((entry) => entry.locationIds.contains(locationId)).toList();
+    List<DiningSpecial>? limitedOffers = specials;
+    if (StringUtils.isNotEmpty(locationId) && CollectionUtils.isNotEmpty(specials)) {
+      limitedOffers = specials!.where((entry) => entry.locationIds!.contains(locationId)).toList();
     }
 
-    if (AppCollection.isCollectionNotEmpty(limitedOffers)) {
-      for (DiningSpecial offer in limitedOffers) {
+    if (CollectionUtils.isNotEmpty(limitedOffers)) {
+      for (DiningSpecial offer in limitedOffers!) {
         if (offers.isNotEmpty) {
           offers.add(Container(
             width: 10,
@@ -91,7 +89,7 @@ class HorizontalDiningSpecials extends StatelessWidget {
 }
 
 class _SpecialOffer extends StatefulWidget {
-  final DiningSpecial special;
+  final DiningSpecial? special;
 
   _SpecialOffer({this.special});
 
@@ -102,7 +100,7 @@ class _SpecialOffer extends StatefulWidget {
 class _SpecialOfferState extends State<_SpecialOffer> {
 
   GlobalKey _keyHtml = GlobalKey();
-  double _imageHeight;
+  double? _imageHeight;
 
   final EdgeInsets _textPadding = EdgeInsets.all(16.0);
 
@@ -111,7 +109,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
     super.initState();
     
     if (_hasImage) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
         _evalImageHeight();
       });
     }
@@ -132,7 +130,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
     //List<TextBox> boxes = renderObject.getBoxesForSelection(TextSelection(baseOffset: 0, extentOffset: special.title.length));
     //double _imageHeight = (boxes.last.bottom - boxes.first.top) + _textPadding.top + _textPadding.bottom;
 
-    Html html = Html(key:_keyHtml, data: widget.special.title);
+    Html html = Html(key:_keyHtml, data: widget.special!.title);
 
     return GestureDetector(
       onTap: () => _onOfferTap(context),
@@ -142,13 +140,14 @@ class _SpecialOfferState extends State<_SpecialOffer> {
           borderRadius: BorderRadius.all(Radius.circular(6)),
           child: Container(
             width: width,
-            color: Styles().colors.white,
+            color: Styles().colors!.white,
             child: Row(
               //crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 _hasImage
                     ? Image.network(
-                      widget.special.imageUrl,
+                      widget.special!.imageUrl!,
+                      excludeFromSemantics: true,
                       width: imageWidth,
                       height: _imageHeight,
                       fit: BoxFit.cover,
@@ -169,12 +168,12 @@ class _SpecialOfferState extends State<_SpecialOffer> {
   }
 
   bool get _hasImage {
-    return AppString.isStringNotEmpty(widget.special.imageUrl);
+    return StringUtils.isNotEmpty(widget.special!.imageUrl);
   }
 
   void _evalImageHeight() {
     try {
-      final RenderObject renderBoxHtml = _keyHtml?.currentContext?.findRenderObject();
+      final RenderObject? renderBoxHtml = _keyHtml.currentContext?.findRenderObject();
       if (renderBoxHtml is RenderBox) {
         setState(() {
           _imageHeight = renderBoxHtml.size.height + _textPadding.top + _textPadding.bottom;
@@ -186,7 +185,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
   }
 
   void _onOfferTap(BuildContext context) {
-    Analytics.instance.logSelect(target: "Special Offer: ${widget.special.text}");
+    Analytics.instance.logSelect(target: "Special Offer: ${widget.special!.text}");
 
     Navigator.push(
         context,

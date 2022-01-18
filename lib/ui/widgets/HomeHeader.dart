@@ -15,76 +15,76 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class HomeHeader extends StatelessWidget {
-  final String title;
+  final String? title;
   final subTitle;
-  final String imageRes;
-  final Function onSettingsTap;
+  final String? imageRes;
+  final void Function()? onSettingsTap;
 
   HomeHeader({this.title, this.subTitle, this.imageRes, this.onSettingsTap});
 
   @override
   Widget build(BuildContext context) {
-    bool hasSubTitle = AppString.isStringNotEmpty(subTitle);
+    bool hasSubTitle = StringUtils.isNotEmpty(subTitle);
 
     return Container(
-      color: Styles().colors.fillColorPrimary,
+      color: Styles().colors!.fillColorPrimary,
       padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Semantics(
-            label: title,
-            header: true,
-            excludeSemantics: true,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 12),
-                  child: ((imageRes != null) && imageRes.isNotEmpty)
-                      ? Image.asset(
-                          imageRes,
-                          excludeFromSemantics: true,
-                        )
-                      : Container(),
-                ),
-                Expanded(child:
-                Text(
-                  title,
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                ),
-                (onSettingsTap == null) ? Container() :
-                  GestureDetector(
-                      onTap: onSettingsTap,
-                      child: Container(
-                        padding: EdgeInsets.only(right: 20),
-                          alignment: Alignment.centerRight,
-                          child: Image.asset(
-                                'images/settings-white.png',
-                                excludeFromSemantics: true,
-                              )))
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(right: 12),
+                child: ((imageRes != null) && imageRes!.isNotEmpty)
+                    ? Image.asset(
+                        imageRes!,
+                        excludeFromSemantics: true,
+                      )
+                    : Container(),
+              ),
+              Expanded(child:
+                Semantics(
+                  label: title,
+                  header: true,
+                  excludeSemantics: true,
+                  child: Text(
+                    title ?? '',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  )),
+              ),
+              (onSettingsTap == null) ? Container() :
+                Semantics(label: "Settings", button: true,
+                  child: GestureDetector(
+                    onTap: onSettingsTap,
+                    child: Container(
+                      padding: EdgeInsets.only(right: 20),
+                        alignment: Alignment.centerRight,
+                        child: Image.asset(
+                              'images/settings-white.png',
+                              excludeFromSemantics: true,
+                            ))))
+            ],
           ),
           Visibility(
               visible: hasSubTitle,
               child: Semantics(
-                label: AppString.getDefaultEmptyString(value: subTitle),
+                label: StringUtils.ensureNotEmpty(subTitle),
                 header: true,
                 excludeSemantics: true,
                 child: Padding(
                   padding: EdgeInsets.only(left: 30),
                   child: Text(
-                    AppString.getDefaultEmptyString(value: subTitle),
+                    StringUtils.ensureNotEmpty(subTitle),
                     style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
-                        fontFamily: Styles().fontFamilies.regular),
+                        fontFamily: Styles().fontFamilies!.regular),
                   ),
                 ),
               ))

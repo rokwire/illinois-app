@@ -18,13 +18,14 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/SavedPanel.dart';
@@ -46,7 +47,7 @@ import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
@@ -109,7 +110,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
                   slivers: <Widget>[
                     SliverAppBar(pinned: true, floating: true, primary: true, forceElevated: true, centerTitle: true,
                       title: Text(
-                        Localization().getStringEx('panel.browse.label.title','Browse'),
+                        Localization().getStringEx('panel.browse.label.title','Browse')!,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -139,7 +140,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
             ),
           ],
         ),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
       );
   }
 
@@ -156,7 +157,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     const int gridWidth = 2;
     List<dynamic> codes = FlexUI()['browse.all'] ?? [];
     for (String code in codes) {
-      Widget entry = _buildBrowseAllEntry(code);
+      Widget? entry = _buildBrowseAllEntry(code);
       if (entry != null) {
         
         if (0 < rowEntries) {
@@ -199,13 +200,13 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(children: list),);
   }
   
-  Widget _buildBrowseAllEntry(String code) {
+  Widget? _buildBrowseAllEntry(String code) {
     if (code == 'athletics') {
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.athletics.title', 'Athletics'),
         hint: Localization().getStringEx('panel.browse.button.athletics.hint', ''),
         icon: 'images/icon-browse-athletics.png',
-        color: Styles().colors.fillColorPrimary,
+        textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateToAthletics(),
       );
     }
@@ -214,7 +215,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.events.title', 'Events'),
         hint: Localization().getStringEx('panel.browse.button.events.hint', ''),
         icon: 'images/icon-browse-events.png',
-        color: Styles().colors.fillColorSecondary,
+        textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateToExploreEvents(),
       );
     }
@@ -223,7 +224,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.dining.title', 'Dining'),
         hint: Localization().getStringEx('panel.browse.button.dining.hint', ''),
         icon: 'images/icon-browse-dinings.png',
-        color: Styles().colors.mango,
+        textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateToExploreDining(),
       );
     }
@@ -232,7 +233,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.wellness.title', 'Wellness'),
         hint: Localization().getStringEx('panel.browse.button.wellness.hint', ''),
         icon: 'images/icon-browse-wellness.png',
-        color: Styles().colors.accentColor3,
+        textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateToWellness(),
       );
     }
@@ -241,8 +242,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.saved.title', 'Saved'),
         hint: Localization().getStringEx('panel.browse.button.saved.hint', ''),
         icon: 'images/icon-browse-saved.png',
-        color: Colors.white,
-        textColor: Styles().colors.fillColorPrimary,
+        textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateSaved(),
       );
     }
@@ -251,7 +251,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.quick_polls.title', 'Quick polls'),
         hint: Localization().getStringEx('panel.browse.button.quick_polls.hint', ''),
         icon: 'images/icon-browse-quick-polls.png',
-        color: Styles().colors.accentColor2,
+        textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateQuickPolls(),
       );
     }
@@ -263,14 +263,14 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
             title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
             hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
             icon: 'images/icon-browse-gropus.png',
-            color: Styles().colors.accentColor2,
+            textColor: Styles().colors!.fillColorPrimary,
             onTap: () => _navigateGroups(),
           ),
           Visibility(
             visible: _groupsLogin,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.white)
+              valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white)
             ),
           )
         ],
@@ -281,7 +281,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.safer.title', 'Safer Illinois'),
         hint: Localization().getStringEx('panel.browse.button.safer.hint', ''),
         icon: 'images/icon-browse-safer.png',
-        color: Styles().colors.fillColorPrimary,
+        textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateToSaferIllinois(),
       );
     }
@@ -290,7 +290,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Entry'),
         hint: Localization().getStringEx('panel.browse.button.building_status.hint', ''),
         icon: 'images/icon-browse-building-status.png',
-        color: Styles().colors.fillColorPrimary,
+        textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateToBuildingStatus(),
       );
     }
@@ -299,7 +299,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.campus_guide.title', 'Campus Guide'),
         hint: Localization().getStringEx('panel.browse.button.campus_guide.hint', ''),
         icon: 'images/icon-browse-student-guide.png',
-        color: Styles().colors.accentColor3,
+        textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateCampusGuide(),
       );
     }
@@ -308,17 +308,26 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.inbox.title', 'Inbox'),
         hint: Localization().getStringEx('panel.browse.button.inbox.hint', ''),
         icon: 'images/icon-browse-inbox.png',
-        color: Styles().colors.fillColorSecondary,
+        textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateInbox(),
       );
     }
     else if (code == 'privacy_center') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.privacy_center.title', 'Privacy Center'),
+        title: Localization().getStringEx('panel.browse.button.privacy_center.title', 'Privacy'),
         hint: Localization().getStringEx('panel.browse.button.privacy_center.hint', ''),
         icon: 'images/icon-browse-privacy-center.png',
-        color: Styles().colors.accentColor4,
+        textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigatePrivacyCenter(),
+      );
+    }
+    else if (code == 'crisis_help') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.crisis_help.title', 'Crisis Help'),
+        hint: Localization().getStringEx('panel.browse.button.crisis_help.hint', ''),
+        icon: 'images/icon-browse-crisis-help.png',
+        textColor: Styles().colors!.fillColorPrimary,
+        onTap: () => _navigateCrisisHelp(),
       );
     }
     else {
@@ -332,17 +341,17 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     ];
     List<dynamic> codes = FlexUI()['browse.content'] ?? [];
     for (String code in codes) {
-      Widget entry = _buildBrowseContentEntry(code);
+      Widget? entry = _buildBrowseContentEntry(code);
       if (entry != null) {
         list.add(entry);
-        list.add(Padding(padding: _ribbonButtonPadding, child: Container(height: 1, color: Styles().colors.surfaceAccent,),));
+        list.add(Padding(padding: _ribbonButtonPadding, child: Container(height: 1, color: Styles().colors!.surfaceAccent,),));
       }
     }
 
     return list;
   }
 
-  Widget _buildBrowseContentEntry(String code) {
+  Widget? _buildBrowseContentEntry(String code) {
     if (code == 'settings') {
       return _RibbonButton(
         icon: Image.asset('images/icon-settings.png'),
@@ -462,7 +471,17 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _onFeedbackTap(),
       );
     }
-    
+    else if (code == 'faqs') {
+      return _RibbonButton(
+        icon: Image.asset('images/icon-faqs.png'),
+        accessoryIcon: Image.asset('images/link-out.png'),
+        title: Localization().getStringEx('panel.browse.button.faqs.title', 'FAQs'),
+        hint: Localization().getStringEx('panel.browse.button.faqs.hint', ''),
+        padding: _ribbonButtonPadding,
+        onTap: () => _onFAQsTap(),
+      );
+    }
+
     else {
       return null;
     }
@@ -495,14 +514,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateMyIllini() {
     Analytics.instance.logSelect(target: "My Illini");
-    if (Connectivity().isNotOffline && (Config().myIlliniUrl != null)) {
-      String myIlliniPanelTitle = Localization().getStringEx(
-          'panel.browse.web_panel.header.schedule_grades_more.title', 'My Illini');
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: myIlliniPanelTitle,)));
-    }
-    else {
+    if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
+      url_launcher.launch(Config().myIlliniUrl!);
     }
   }
 
@@ -577,26 +593,19 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   void _navigateGroups() {
     Analytics.instance.logSelect(target: "Groups");
     if(Auth2().isOidcLoggedIn) {
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
-    } else {
-      if (!_groupsLogin) {
-        setState(() {
-          _groupsLogin = true;
-        });
-        Auth2().authenticateWithOidc().then((success) {
-          setState(() {
-            _groupsLogin = false;
-          });
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+    } else if (_groupsLogin != true) {
+      setState(() { _groupsLogin = true; });
+      Auth2().authenticateWithOidc().then((bool? success) {
+        if (mounted) {
+          setState(() { _groupsLogin = false; });
           if (success == true) {
-            Navigator.push(
-                context,
-                CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
           } else if (success == false) {
-            AppAlert.showDialogResult(context, Localization().getStringEx("panel.browse.button.groups.login.error", "Unable to login"));
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
-        });
-      }
+        }
+      });
     }
   }
 
@@ -615,17 +624,32 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
   }
 
+  void _navigateCrisisHelp() {
+    Analytics.instance.logSelect(target: "Crisis Help");
+
+    if (Connectivity().isNotOffline && Config().crisisHelpUrl != null) {
+      String faqsUrl = Config().crisisHelpUrl!;
+
+      String? panelTitle = Localization().getStringEx('panel.settings.crisis_help.label.title', 'Crisis Help');
+      Navigator.push(
+          context, CupertinoPageRoute(builder: (context) => WebPanel(url: faqsUrl, title: panelTitle,)));
+    }
+    else {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
+    }
+  }
+
   void _onFeedbackTap() {
     Analytics.instance.logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String email = Auth2().email;
-      String name =  Auth2().fullName;
-      String phone = Auth2().phone;
+      String? email = Auth2().email;
+      String? name =  Auth2().fullName;
+      String? phone = Auth2().phone;
       String params = _constructFeedbackParams(email, phone, name);
-      String feedbackUrl = Config().feedbackUrl + params;
+      String feedbackUrl = Config().feedbackUrl! + params;
 
-      String panelTitle = Localization().getStringEx('panel.settings.feedback.label.title', 'PROVIDE FEEDBACK');
+      String? panelTitle = Localization().getStringEx('panel.settings.feedback.label.title', 'PROVIDE FEEDBACK');
       Navigator.push(
           context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
     }
@@ -634,7 +658,23 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
-  String _constructFeedbackParams(String email, String phone, String name) {
+
+  void _onFAQsTap() {
+    Analytics.instance.logSelect(target: "FAQs");
+
+    if (Connectivity().isNotOffline ) {
+      String faqsUrl = "http://mhcwellness.illinois.edu/faq"; // TBD from Config after confirmation Config().faqsUrl
+
+      String? panelTitle = Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs');
+      Navigator.push(
+          context, CupertinoPageRoute(builder: (context) => WebPanel(url: faqsUrl, title: panelTitle,)));
+    }
+    else {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.faqs', 'FAQs is not available while offline.'));
+    }
+  }
+
+  String _constructFeedbackParams(String? email, String? phone, String? name) {
     Map params = Map();
     params['email'] = Uri.encodeComponent(email != null ? email : "");
     params['phone'] = Uri.encodeComponent(phone != null ? phone : "");
@@ -715,15 +755,15 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
 class _RibbonButton extends StatelessWidget {
   final Image icon;
-  final Image accessoryIcon;
-  final String title;
-  final String hint;
-  final GestureTapCallback onTap;
+  final Image? accessoryIcon;
+  final String? title;
+  final String? hint;
+  final GestureTapCallback? onTap;
   final EdgeInsets padding;
 
-  _RibbonButton({@required this.icon,
-    @required this.title,
-    @required this.hint,
+  _RibbonButton({required this.icon,
+    required this.title,
+    required this.hint,
     this.onTap,
     this.padding = const EdgeInsets.symmetric(horizontal: 0),
     this.accessoryIcon,
@@ -752,12 +792,12 @@ class _RibbonButton extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
-                      title,
+                      title!,
                       textAlign: TextAlign.start,
                       style: TextStyle(
-                          color: Styles().colors.fillColorPrimary,
+                          color: Styles().colors!.fillColorPrimary,
                           fontSize: 16,
-                          fontFamily: Styles().fontFamilies.bold),
+                          fontFamily: Styles().fontFamilies!.bold),
                     ),
                   ),
                 ),
@@ -774,14 +814,14 @@ class _RibbonButton extends StatelessWidget {
 // _GridSquareButton
 
 class _GridSquareButton extends StatelessWidget {
-  final String title;
-  final String hint;
-  final String icon;
-  final Color color;
-  final Color textColor;
-  final GestureTapCallback onTap;
+  final String? title;
+  final String? hint;
+  final String? icon;
+  final Color? color;
+  final Color? textColor;
+  final GestureTapCallback? onTap;
 
-  _GridSquareButton({this.title, this.hint = '', this.icon, this.color, this.textColor = Colors.white, this.onTap});
+  _GridSquareButton({this.title, this.hint = '', this.icon, this.color = Colors.white, this.textColor = Colors.white, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -801,17 +841,17 @@ class _GridSquareButton extends StatelessWidget {
                           color: color,
                           //border: Border.all(color: Colors.grey, width: 1),
                           borderRadius: BorderRadius.circular(6),
-                          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+                          boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
             ),
             child: Padding(padding: EdgeInsets.all(12), child: Stack(children: <Widget>[
-              Align(alignment: Alignment.topLeft, child: Text(title,
+              Align(alignment: Alignment.topLeft, child: Text(title!,
                 style: TextStyle(
-                    fontFamily: Styles().fontFamilies.bold,
+                    fontFamily: Styles().fontFamilies!.bold,
                     color: textColor,
                     fontSize: 20,),
               ),),
               Align(alignment: Alignment.bottomRight, child:
-                Image.asset(icon, color: color, colorBlendMode:BlendMode.multiply),
+                Image.asset(icon!, color: color, colorBlendMode:BlendMode.multiply),
               ),
               
             ],),)

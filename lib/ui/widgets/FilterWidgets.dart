@@ -15,24 +15,24 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class FilterListItemWidget extends StatelessWidget {
-  final String label;
-  final String subLabel;
+  final String? label;
+  final String? subLabel;
   final GestureTapCallback onTap;
   final bool selected;
   final String selectedIconRes;
   final String unselectedIconRes;
 
-  FilterListItemWidget({@required this.label, this.subLabel, @required this.onTap, this.selected = false,
+  FilterListItemWidget({required this.label, this.subLabel, required this.onTap, this.selected = false,
     this.selectedIconRes = 'images/icon-selected.png', this.unselectedIconRes = 'images/icon-unselected.png', });
 
   @override
   Widget build(BuildContext context) {
-    TextStyle labelsStyle = TextStyle(fontSize: 16, color: Styles().colors.fillColorPrimary, fontFamily: (selected ? Styles().fontFamilies.bold : Styles().fontFamilies.medium));
-    bool hasSubLabel = AppString.isStringNotEmpty(subLabel);
+    TextStyle labelsStyle = TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: (selected ? Styles().fontFamilies!.bold : Styles().fontFamilies!.medium));
+    bool hasSubLabel = StringUtils.isNotEmpty(subLabel);
     return Semantics(
         label: label,
         button: true,
@@ -41,7 +41,7 @@ class FilterListItemWidget extends StatelessWidget {
         child: InkWell(
             onTap: onTap,
             child: Container(
-              color: (selected ? Styles().colors.background : Colors.white),
+              color: (selected ? Styles().colors!.background : Colors.white),
               child: Padding(
                 padding: EdgeInsets.all(16),
                 child: Row(
@@ -49,7 +49,7 @@ class FilterListItemWidget extends StatelessWidget {
                   children: <Widget>[
                     Expanded(child:
                       Text(
-                        label,
+                        label!,
 //                        maxLines: 1,
 //                        overflow: TextOverflow.ellipsis,
                         style: labelsStyle,
@@ -57,7 +57,7 @@ class FilterListItemWidget extends StatelessWidget {
                     ),
                     hasSubLabel
                         ? Text(
-                            subLabel,
+                            subLabel!,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: labelsStyle,
@@ -65,7 +65,7 @@ class FilterListItemWidget extends StatelessWidget {
                         : Container(),
                     Padding(
                       padding: EdgeInsets.only(left: 10),
-                      child: Image.asset((selected ? selectedIconRes:unselectedIconRes)),
+                      child: Image.asset(selected ? selectedIconRes:unselectedIconRes, excludeFromSemantics: true),
                     )
                   ],
                 ),
@@ -75,17 +75,17 @@ class FilterListItemWidget extends StatelessWidget {
 }
 
 class FilterSelectorWidget extends StatelessWidget {
-  final String label;
-  final String hint;
-  final String labelFontFamily;
+  final String? label;
+  final String? hint;
+  final String? labelFontFamily;
   final double labelFontSize;
   final bool active;
   final EdgeInsets padding;
   final bool visible;
-  final GestureTapCallback onTap;
+  final GestureTapCallback? onTap;
 
   FilterSelectorWidget(
-      {@required this.label,
+      {required this.label,
         this.hint,
         this.labelFontFamily,
         this.labelFontSize = 16,
@@ -113,13 +113,13 @@ class FilterSelectorWidget extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text(
-                          label,
+                          label!,
                           style: TextStyle(
-                              fontSize: labelFontSize, color: (active ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary), fontFamily: labelFontFamily ?? Styles().fontFamilies.bold),
+                              fontSize: labelFontSize, color: (active ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary), fontFamily: labelFontFamily ?? Styles().fontFamilies!.bold),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4),
-                          child: Image.asset(active ? 'images/icon-up.png' : 'images/icon-down.png'),
+                          child: Image.asset(active ? 'images/icon-up.png' : 'images/icon-down.png', excludeFromSemantics: true),
                         )
                       ],
                     ),

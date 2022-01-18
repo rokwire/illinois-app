@@ -17,19 +17,18 @@
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -49,15 +48,15 @@ class _IDCardPanelState extends State<IDCardPanel>
   final double _illiniIconSize = 64;
   final double _buildingAccessIconSize = 84;
 
-  Color _activeColor;
-  Color get _activeBorderColor{ return _activeColor ?? Styles().colors.fillColorSecondary; }
-  Color get _activeHeadingColor{ return _activeColor ?? Styles().colors.fillColorPrimary; }
+  Color? _activeColor;
+  Color get _activeBorderColor{ return _activeColor ?? Styles().colors!.fillColorSecondary!; }
+  Color get _activeHeadingColor{ return _activeColor ?? Styles().colors!.fillColorPrimary!; }
 
-  MemoryImage _photoImage;
-  bool _buildingAccess;
-  DateTime _buildingAccessTime;
-  bool _loadingBuildingAccess;
-  AnimationController _animationController;
+  MemoryImage? _photoImage;
+  bool? _buildingAccess;
+  DateTime? _buildingAccessTime;
+  late bool _loadingBuildingAccess;
+  late AnimationController _animationController;
 
 
   @override
@@ -73,7 +72,7 @@ class _IDCardPanelState extends State<IDCardPanel>
     });
     _animationController.repeat();
 
-    _loadActiveColor().then((Color color){
+    _loadActiveColor().then((Color? color){
       if (mounted) {
         setState(() {
           _activeColor = color;
@@ -81,7 +80,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       }
     });
     
-    _loadAsyncPhotoImage().then((MemoryImage photoImage){
+    _loadAsyncPhotoImage().then((MemoryImage? photoImage){
       if (mounted) {
         setState(() {
           _photoImage = photoImage;
@@ -90,7 +89,7 @@ class _IDCardPanelState extends State<IDCardPanel>
     });
 
     _loadingBuildingAccess = true;
-    _loadBuildingAccess().then((bool buildingAccess) {
+    _loadBuildingAccess().then((bool? buildingAccess) {
       if (mounted) {
         setState(() {
           _buildingAccess = buildingAccess;
@@ -103,26 +102,26 @@ class _IDCardPanelState extends State<IDCardPanel>
     // Auth2().updateAuthCard();
   }
 
-  Future<MemoryImage> _loadAsyncPhotoImage() async{
-    Uint8List photoBytes = await  Auth2().authCard?.photoBytes;
-    return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes) : null;
+  Future<MemoryImage?> _loadAsyncPhotoImage() async{
+    Uint8List? photoBytes = await  Auth2().authCard?.photoBytes;
+    return CollectionUtils.isNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
   }
 
-  Future<Color> _loadActiveColor() async{
-    String deviceId = await NativeCommunicator().getDeviceId();
+  Future<Color?> _loadActiveColor() async{
+    String? deviceId = await NativeCommunicator().getDeviceId();
     return await TransportationService().loadBusColor(deviceId: deviceId, userId: Auth2().accountId);
   }
 
-  Future<bool> _loadBuildingAccess() async {
-    if (AppString.isStringNotEmpty(Config().padaapiUrl) && AppString.isStringNotEmpty(Config().padaapiApiKey) && AppString.isStringNotEmpty(Auth2().authCard?.uin)) {
+  Future<bool?> _loadBuildingAccess() async {
+    if (StringUtils.isNotEmpty(Config().padaapiUrl) && StringUtils.isNotEmpty(Config().padaapiApiKey) && StringUtils.isNotEmpty(Auth2().authCard?.uin)) {
       String url = "${Config().padaapiUrl}/access/${Auth2().authCard?.uin}";
       Map<String, String> headers = {
         HttpHeaders.acceptHeader : 'application/json',
-        Network.RokwirePadaapiKey: Config().padaapiApiKey
+        Network.RokwirePadaapiKey: Config().padaapiApiKey!
       };
-      Response response = await Network().get(url, headers: headers);
-      Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      return (responseJson != null) ? AppJson.boolValue(responseJson['allowAccess']) : null;
+      Response? response = await Network().get(url, headers: headers);
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
+      return (responseJson != null) ? JsonUtils.boolValue(responseJson['allowAccess']) : null;
     }
     return null;
   }
@@ -139,7 +138,7 @@ class _IDCardPanelState extends State<IDCardPanel>
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyCardChanged) {
-      _loadAsyncPhotoImage().then((MemoryImage photoImage){
+      _loadAsyncPhotoImage().then((MemoryImage? photoImage){
         if (mounted) {
           setState(() {
             _photoImage = photoImage;
@@ -171,7 +170,7 @@ class _IDCardPanelState extends State<IDCardPanel>
                       Align(alignment: Alignment.center, child:
                         Padding(padding: EdgeInsets.only(top: 2), child:
                           Semantics(excludeSemantics: true, child:
-                          Text('\u00D7', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.light, fontSize: 48),), )),
+                          Text('\u00D7', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.light, fontSize: 48),), )),
                         ),
                     ),
                   ),
@@ -182,7 +181,7 @@ class _IDCardPanelState extends State<IDCardPanel>
           SafeArea(child: Stack(children: <Widget>[
             Padding(padding: EdgeInsets.all(16), child:
                 Semantics(header:true, child:
-                  Text(Localization().getStringEx('widget.id_card.header.title', 'Illini ID'), style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20),),)),
+                  Text(Localization().getStringEx('widget.id_card.header.title', 'Illini ID')!, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),),)),
             Align(alignment: Alignment.topRight, child:
                 Semantics(button: true, label: Localization().getStringEx('widget.id_card.header.button.close.title', "close"), child:
                   InkWell(
@@ -197,14 +196,14 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   Widget _buildCardContent() {
     
-    String cardExpires = Localization().getStringEx('widget.card.label.expires.title', 'Card Expires');
-    String expirationDate = Auth2().authCard?.expirationDate;
+    String? cardExpires = Localization().getStringEx('widget.card.label.expires.title', 'Card Expires');
+    String? expirationDate = Auth2().authCard?.expirationDate;
     String cardExpiresText = (0 < (expirationDate?.length ?? 0)) ? "$cardExpires $expirationDate" : "";
-    String roleDisplayString = (Auth2().authCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your i-card") : (Auth2().authCard?.role ?? "");
+    String? roleDisplayString = (Auth2().authCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your i-card") : (Auth2().authCard?.role ?? "");
 
-    Widget buildingAccessIcon;
-    String buildingAccessStatus;
-    String buildingAccessTime = AppDateTime().formatDateTime(_buildingAccessTime, format: 'MMM dd, yyyy HH:mm a');
+    Widget? buildingAccessIcon;
+    String? buildingAccessStatus;
+    String? buildingAccessTime = AppDateTime().formatDateTime(_buildingAccessTime, format: 'MMM dd, yyyy HH:mm a');
     double buildingAccessStatusHeight = 24;
     double qrCodeImageSize = _buildingAccessIconSize + buildingAccessStatusHeight - 2;
 
@@ -212,18 +211,18 @@ class _IDCardPanelState extends State<IDCardPanel>
       buildingAccessIcon = Container(width: _buildingAccessIconSize, height: _buildingAccessIconSize, child:
         Align(alignment: Alignment.center, child: 
           SizedBox(height: 42, width: 42, child:
-            CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), )
+            CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
           )
         ,),);
     }
     else if (_buildingAccess != null) {
 
       buildingAccessIcon = Image.asset((_buildingAccess == true) ? 'images/group-20.png' : 'images/group-28.png', width: _buildingAccessIconSize, height: _buildingAccessIconSize, semanticLabel: "building access",);
-      buildingAccessStatus = (_buildingAccess == true) ? Localization().getStringEx('widget.id_card.label.building_access.granted', 'GRANTED') : Localization().getStringEx('widget.id_card.label.building_access.denied', 'DENIED');
+      buildingAccessStatus = (_buildingAccess == true) ? Localization().getString('widget.id_card.label.building_access.granted', defaults: 'GRANTED', language: 'en') : Localization().getString('widget.id_card.label.building_access.denied', defaults: 'DENIED', language: 'en');
     }
     else {
       buildingAccessIcon = Container(height: (qrCodeImageSize / 2 - buildingAccessStatusHeight - 6));
-      buildingAccessStatus = Localization().getStringEx('widget.id_card.label.building_access.not_available', 'NOT\nAVAILABLE');
+      buildingAccessStatus = Localization().getString('widget.id_card.label.building_access.not_available', defaults: 'NOT\nAVAILABLE', language: 'en');
     }
     
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
@@ -238,11 +237,11 @@ class _IDCardPanelState extends State<IDCardPanel>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
-                        colors: [ Styles().colors.fillColorSecondary, _activeBorderColor],
+                        colors: [ Styles().colors!.fillColorSecondary!, _activeBorderColor],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         stops: [0.0, 1.0],),
-                      color: Styles().colors.fillColorSecondary,),
+                      color: Styles().colors!.fillColorSecondary,),
                   ),
                 ),
                 _buildPhotoImage()
@@ -277,43 +276,43 @@ class _IDCardPanelState extends State<IDCardPanel>
       ),
       Container(height: 10,),
       
-      Text(Auth2().authCard?.fullName ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 24)),
-      Text(roleDisplayString ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 20)),
+      Text(Auth2().authCard?.fullName ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24)),
+      Text(roleDisplayString ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 20)),
       
       Container(height: 30,),
 
       Semantics( container: true,
         child: Column(children: <Widget>[
-          Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
-          Text(Auth2().authCard?.uin ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 28)),
+          Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN')! : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
+          Text(Auth2().authCard?.uin ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 28)),
         ],),
       ),
-      Text(cardExpiresText, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
+      Text(cardExpiresText, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
       
       Container(height: 30,),
 
       Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
         
-        Visibility(visible: (0 < (Auth2().authCard.cardNumber?.length ?? 0)), child: Column(children: [
-          Text(Auth2().authCard.cardNumber ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
+        Visibility(visible: (0 < (Auth2().authCard?.cardNumber?.length ?? 0)), child: Column(children: [
+          Text(Auth2().authCard!.cardNumber ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
           Container(height: 8),
-          QrImage(data: Auth2().authCard.magTrack2 ?? '', size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ),
+          QrImage(data: Auth2().authCard!.magTrack2 ?? '', size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ),
         ],),),
 
         Container(width: 20),
 
-        Visibility(visible: (0 < (Auth2().authCard.cardNumber?.length ?? 0)), child: Column(children: [
-          Text(Localization().getStringEx('widget.id_card.label.building_access', 'Building Access'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
+        Visibility(visible: (0 < (Auth2().authCard?.uin?.length ?? 0)), child: Column(children: [
+          Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
           Container(height: 8),
-          buildingAccessIcon ?? Container(),
-          Text(buildingAccessStatus ?? '', textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: buildingAccessStatusHeight),),
+          buildingAccessIcon,
+          Text(buildingAccessStatus ?? '', textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: buildingAccessStatusHeight),),
         ],),),
 
       ],),
 
       Container(height: 15),
       
-      Text(buildingAccessTime ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: 20)),
+      Text(buildingAccessTime ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20)),
     ],)    );
   }
 
@@ -324,7 +323,7 @@ class _IDCardPanelState extends State<IDCardPanel>
             ? Container(decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
-                image: DecorationImage(fit: BoxFit.cover, image:_photoImage ,),
+                image: DecorationImage(fit: BoxFit.cover, image:_photoImage! ,),
               ))
             : Container(decoration: BoxDecoration(
               shape: BoxShape.circle,

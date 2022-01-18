@@ -20,7 +20,9 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Log.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/log.dart';
+import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -28,12 +30,12 @@ import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupSettingsPanel extends StatefulWidget implements AnalyticsPageAttributes {
-  final Group group;
+  final Group? group;
   
   GroupSettingsPanel({this.group});
 
@@ -41,20 +43,22 @@ class GroupSettingsPanel extends StatefulWidget implements AnalyticsPageAttribut
   _GroupSettingsPanelState createState() => _GroupSettingsPanelState();
 
   @override
-  Map<String, dynamic> get analyticsPageAttributes => group?.analyticsAttributes;
+  Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
 class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   final _eventTitleController = TextEditingController();
   final _eventDescriptionController = TextEditingController();
   final _linkController = TextEditingController();
-  List<GroupPrivacy> _groupPrivacyOptions;
-  List<String> _groupCategories;
+  final _authManGroupNameController = TextEditingController();
+
+  List<GroupPrivacy>? _groupPrivacyOptions;
+  List<String>? _groupCategories;
 
   bool _nameIsValid = true;
   bool _loading = false;
 
-  Group _group; // edit settings here until submit
+  Group? _group; // edit settings here until submit
 
   @override
   void initState() {
@@ -80,36 +84,39 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       context: context,
                       backIconRes: "images/close-white.png",
                       titleWidget: Text(
-                        Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),
+                        Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings")!,
                         style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
                       ),
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate([
                         Container(
-                          color: Styles().colors.white,
+                          color: Styles().colors!.white,
                           child: Column(children: <Widget>[
                             _buildImageSection(),
                             Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"), "images/icon-schedule.png"),
+                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information")!, "images/icon-schedule.png"),
                             ),
                             _buildNameField(),
                             _buildDescriptionField(),
                             _buildLinkField(),
-                            Container(height: 1, color: Styles().colors.surfaceAccent,),
+                            Container(height: 1, color: Styles().colors!.surfaceAccent,),
                             Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"), "images/icon-schedule.png"),
+                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability")!, "images/icon-schedule.png"),
                             ),
                             _buildCategoryDropDown(),
                             _buildTagsLayout(),
-                            Container(color: Styles().colors.background, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.privacy.title", "Privacy"), "images/icon-privacy.png"),
+                            Container(color: Styles().colors!.background, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.privacy.title", "Privacy")!, "images/icon-privacy.png"),
                               //_buildInfoHeader(Localization().getStringEx("panel.groups_settings.privacy.title.description", "SELECT PRIVACY"), null)
                             ]))),
-                            Container(height: 12, color: Styles().colors.background),
+                            Container(height: 12, color: Styles().colors!.background),
                             _buildPrivacyDropDown(),
-                            _buildMembershipLayout(),
-                            Container(height: 24,  color: Styles().colors.background,),
+                            _buildAuthManLayout(),
+                            Visibility(
+                              visible: !_isAuthManGroup,
+                              child: _buildMembershipLayout()),
+                            Container(height: 24,  color: Styles().colors!.background,),
                           ],),)
                       ]),
                     ),
@@ -120,7 +127,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             _buildButtonsLayout(),
           ],
         ),
-        backgroundColor: Styles().colors.background);
+        backgroundColor: Styles().colors!.background);
   }
 
   //Init
@@ -139,12 +146,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   void _fillGroups(){
     if(_group!=null){
       //textFields
-      if(_group.title!=null)
-        _eventTitleController.text=_group.title;
-      if(_group.description!=null)
-        _eventDescriptionController.text=_group.description;
-      if(_group.webURL!=null)
-        _linkController.text = _group.webURL;
+      if(_group!.title!=null)
+        _eventTitleController.text=_group!.title!;
+      if(_group!.description!=null)
+        _eventDescriptionController.text=_group!.description!;
+      if(_group!.webURL!=null)
+        _linkController.text = _group!.webURL!;
+      if (_group!.authManGroupName != null) {
+        _authManGroupNameController.text = _group!.authManGroupName!;
+      }
     }
   }
 
@@ -155,19 +165,19 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
     return Container(
       height: _imageHeight,
-      color: Styles().colors.background,
+      color: Styles().colors!.background,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, fit: BoxFit.cover,)) : Container(),
+          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Network.authApiKeyHeader)) : Container(),
           CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false),
+            painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false),
             child: Container(
               height: 53,
             ),
           ),
           CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors.white),
+            painter: TrianglePainter(painterColor: Styles().colors!.white),
             child: Container(
               height: 30,
             ),
@@ -176,13 +186,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             height: _imageHeight,
             child: Center(
               child:
-              Semantics(label: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
-                  hint: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image.hint","") : Localization().getStringEx("panel.groups_settings.add_image.hint",""),
+              Semantics(label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
+                  hint: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image.hint","") : Localization().getStringEx("panel.groups_settings.add_image.hint",""),
                   button: true, excludeSemantics: true, child:
                   ScalableSmallRoundedButton(
                     maxLines: 2,
-                    label: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
-                    textColor: Styles().colors.fillColorPrimary,
+                    label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
+                    textColor: Styles().colors!.fillColorPrimary,
                     onTap: _onTapAddImage,)
               ),
             ),
@@ -194,7 +204,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   void _onTapAddImage() async {
     Analytics.instance.logSelect(target: "Add Image");
-    String _imageUrl = await showDialog(
+    String? _imageUrl = await showDialog(
         context: context,
         builder: (_) => Material(
           type: MaterialType.transparency,
@@ -203,7 +213,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     );
     if(_imageUrl!=null){
       setState(() {
-        _group.imageURL = _imageUrl;
+        _group!.imageURL = _imageUrl;
       });
     }
     Log.d("Image Url: $_imageUrl");
@@ -211,9 +221,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Name
   Widget _buildNameField() {
-    String title = Localization().getStringEx("panel.groups_settings.name.title", "GROUP NAME");
-    String fieldTitle = Localization().getStringEx("panel.groups_settings.name.field", "NAME FIELD");
-    String fieldHint = Localization().getStringEx("panel.groups_settings.name.field.hint", "");
+    String title = Localization().getStringEx("panel.groups_settings.name.title", "GROUP NAME")!;
+    String? fieldTitle = Localization().getStringEx("panel.groups_settings.name.field", "NAME FIELD");
+    String? fieldHint = Localization().getStringEx("panel.groups_settings.name.field.hint", "");
 
     return
       Column(children: <Widget>[
@@ -224,7 +234,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           children: <Widget>[
             _buildInfoHeader(title,null),
             Container(
-              decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+              decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1),color: Styles().colors!.white),
               child: Semantics(
                   label: fieldTitle,
                   hint: fieldHint,
@@ -235,7 +245,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     onChanged: onNameChanged,
                     maxLines: 1,
                     decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
-                    style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                    style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
                   )),
             ),
           ],
@@ -247,16 +257,16 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   Widget _buildNameError(){
-    String errorMessage = Localization().getStringEx("panel.groups_settings.name.error.message", "A group with this name already exists. Please try a different name.");
+    String errorMessage = Localization().getStringEx("panel.groups_settings.name.error.message", "A group with this name already exists. Please try a different name.")!;
 
     return Visibility(visible: !_nameIsValid,
         child: Container( padding: EdgeInsets.only(left:16, right:16,top: 6),
             child:Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               decoration: BoxDecoration(
-                  color: Styles().colors.fillColorSecondaryVariant,
+                  color: Styles().colors!.fillColorSecondaryVariant,
                   border: Border.all(
-                      color: Styles().colors.fillColorSecondary,
+                      color: Styles().colors!.fillColorSecondary!,
                       width: 1),
                   borderRadius:
                   BorderRadius.all(Radius.circular(4))),
@@ -267,7 +277,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   Container(
                       padding: EdgeInsets.only(left: 12, right: 4),
                       child:Text(errorMessage,
-                          style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular))
+                          style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular))
                   ))
                 ],
               ),
@@ -277,9 +287,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Description
   Widget _buildDescriptionField() {
-    String title = Localization().getStringEx("panel.groups_settings.description.title", "GROUP DESCRIPTION");
-    String fieldTitle = Localization().getStringEx("panel.groups_settings.description.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
-    String fieldHint = Localization().getStringEx("panel.groups_settings.description.field.hint", "");
+    String title = Localization().getStringEx("panel.groups_settings.description.title", "GROUP DESCRIPTION")!;
+    String? fieldTitle = Localization().getStringEx("panel.groups_settings.description.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
+    String? fieldHint = Localization().getStringEx("panel.groups_settings.description.field.hint", "");
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
@@ -288,7 +298,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         children: <Widget>[
           _buildInfoHeader(title,fieldTitle),
           Container(
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+            decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1),color: Styles().colors!.white),
             child: Semantics(
                 label: title,
                 hint: fieldHint,
@@ -296,12 +306,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 excludeSemantics: true,
                 child: TextField(
                   controller: _eventDescriptionController,
-                  onChanged: (description){ _group.description = description;},
+                  onChanged: (description){ _group!.description = description;},
                   maxLines: 8,
                   decoration: InputDecoration(
                     hintText: fieldHint,
                     border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                  style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                  style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
                 )),
           ),
         ],
@@ -325,11 +335,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   Padding(
                     padding: EdgeInsets.only(bottom: 8, top:24),
                     child: Text(
-                      Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK"),
+                      Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK")!,
                       style: TextStyle(
-                          color: Styles().colors.fillColorPrimary,
+                          color: Styles().colors!.fillColorPrimary,
                           fontSize: 14,
-                          fontFamily: Styles().fontFamilies.bold,
+                          fontFamily: Styles().fontFamilies!.bold,
                           letterSpacing: 1),
                     ),
                   ),
@@ -339,7 +349,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(
-                              color: Styles().colors.fillColorPrimary,
+                              color: Styles().colors!.fillColorPrimary!,
                               width: 1)),
                       child: TextField(
                         controller: _linkController,
@@ -348,10 +358,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                         style: TextStyle(
-                            color: Styles().colors.textBackground,
+                            color: Styles().colors!.textBackground,
                             fontSize: 16,
-                            fontFamily: Styles().fontFamilies.regular),
-                        onChanged: (link){ _group.webURL = link;},
+                            fontFamily: Styles().fontFamilies!.regular),
+                        onChanged: (link){ _group!.webURL = link;},
                         maxLines: 1,
                       ),
                     ),
@@ -364,15 +374,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             GestureDetector(
               onTap: _onTapConfirmLinkUrl,
               child: Text(
-                Localization().getStringEx("panel.groups_settings.link.button.confirm.link.title",'Confirm URL'),
+                Localization().getStringEx("panel.groups_settings.link.button.confirm.link.title",'Confirm URL')!,
                 style: TextStyle(
-                    color: Styles().colors.fillColorPrimary,
+                    color: Styles().colors!.fillColorPrimary,
                     fontSize: 16,
-                    fontFamily: Styles().fontFamilies.medium,
+                    fontFamily: Styles().fontFamilies!.medium,
                     decoration: TextDecoration.underline,
                     decorationThickness: 1,
                     decorationColor:
-                    Styles().colors.fillColorSecondary),
+                    Styles().colors!.fillColorSecondary),
               ),
             )
         ),
@@ -395,7 +405,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildInfoHeader(Localization().getStringEx("panel.groups_settings.category.title", "CATEGORY"),
+            _buildInfoHeader(Localization().getStringEx("panel.groups_settings.category.title", "CATEGORY")!,
               Localization().getStringEx("panel.groups_settings.category.description", "Choose the category your group can be filtered by."),),
             Semantics(
             explicitChildNodes: true,
@@ -404,7 +414,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 buttonHint: Localization().getStringEx("panel.groups_settings.category.hint", "Double tap to show categories options"),
                 initialSelectedValue: _group?.category,
                 items: _groupCategories,
-                constructTitle: (item) => item,
+                constructTitle: (dynamic item) => item,
                 onValueChanged: (value) {
                   setState(() {
                     _group?.category = value;
@@ -418,8 +428,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Tags
   Widget _buildTagsLayout(){
-    String title = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
-    String description = Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group.");
+    String title = Localization().getStringEx("panel.groups_create.tags.title", "TAGS")!;
+    String? description = Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group.");
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child:Column(
@@ -435,9 +445,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     ScalableRoundedButton(
                       label: Localization().getStringEx("panel.groups_settings.button.tags.title", "Tags"),
                       hint: Localization().getStringEx("panel.groups_settings.button.tags.hint", ""),
-                      backgroundColor: Styles().colors.white,
-                      textColor: Styles().colors.fillColorPrimary,
-                      borderColor: Styles().colors.fillColorSecondary,
+                      backgroundColor: Styles().colors!.white,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorSecondary,
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       onTap: _onTapTags,
                     )
@@ -452,11 +462,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   Widget _constructTagButtonsContent(){
     List<Widget> buttons = _buildTagsButtons();
-    if(buttons?.isEmpty??true)
+    if(buttons.isEmpty)
       return Container();
 
     List<Widget> rows = [];
-    List<Widget> lastRowChildren;
+    List<Widget>? lastRowChildren;
     for(int i=0; i<buttons.length;i++){
       if(i%2==0){
         lastRowChildren =  [];
@@ -465,7 +475,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       } else {
         lastRowChildren?.add(Container(width: 13,));
       }
-      lastRowChildren.add(buttons[i]);
+      lastRowChildren!.add(buttons[i]);
     }
     rows.add(Container(height: 24,));
 
@@ -476,10 +486,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   List<Widget> _buildTagsButtons(){
-    List<String> tags = _group?.tags;
+    List<String>? tags = _group?.tags;
     List<Widget> result =  [];
-    if (AppCollection.isCollectionNotEmpty(tags)) {
-      tags.forEach((String tag) {
+    if (CollectionUtils.isNotEmpty(tags)) {
+      tags!.forEach((String tag) {
         result.add(_buildTagButton(tag));
       });
     }
@@ -489,21 +499,21 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildTagButton(String tag){
     return
       Semantics(
-        label: tag + Localization().getStringEx("panel.groups_create.tags.label.tag", " tag, "),
+        label: tag + Localization().getStringEx("panel.groups_create.tags.label.tag", " tag, ")!,
         hint: Localization().getStringEx("panel.groups_create.tags.label.tag.hint", "double tab to remove tag"),
         button: true,
         excludeSemantics: true,
         child:InkWell(
           child: Container(
               decoration: BoxDecoration(
-                  color: Styles().colors.fillColorPrimary,
+                  color: Styles().colors!.fillColorPrimary,
                   borderRadius: BorderRadius.all(Radius.circular(4))),
               child: Row(children: <Widget>[
                 Semantics(excludeSemantics: true, child:
                   Container(
                       padding: EdgeInsets.only(top:4,bottom: 4,left: 8),
                       child: Text(tag,
-                        style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.bold, fontSize: 12,),
+                        style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),
                       )),
                   ),
                 Container (
@@ -520,14 +530,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   void onTagTap(String tag){
     Analytics().logSelect(target: "Group tag: $tag");
     if(_group!=null) {
-      if (_group.tags == null) {
-        _group.tags =  [];
+      if (_group!.tags == null) {
+        _group!.tags =  [];
       }
 
-      if (_group.tags.contains(tag)) {
-        _group.tags.remove(tag);
+      if (_group!.tags!.contains(tag)) {
+        _group!.tags!.remove(tag);
       } else {
-        _group.tags.add(tag);
+        _group!.tags!.add(tag);
       }
     }
     setState(() {});
@@ -535,11 +545,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   void _onTapTags(){
     Analytics.instance.logSelect(target: "Tags");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupTagsPanel(selectedTags: _group.tags))).then((tags) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupTagsPanel(selectedTags: _group!.tags))).then((tags) {
       // (tags == null) means that the user hit the back button
       if (tags != null) {
         setState(() {
-          _group.tags = tags;
+          _group!.tags = tags;
         });
       }
     });
@@ -548,15 +558,16 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //Privacy
   Widget _buildPrivacyDropDown() {
 
-    String longDescription;
+    String? longDescription;
     switch(_group?.privacy) {
       case GroupPrivacy.private: longDescription = Localization().getStringEx("panel.groups.common.privacy.description.long.private", "Anyone who uses the app can find this group if they search and match the full name. Only admins can see who is in the group."); break;
       case GroupPrivacy.public: longDescription = Localization().getStringEx("panel.groups.common.privacy.description.long.public", "Anyone who uses the app will see this group. Only admins can see who is in the group."); break;
+      default: break;
     }
 
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
-        color: Styles().colors.background,
+        color: Styles().colors!.background,
         child:Column(children: <Widget>[
           Semantics(
           explicitChildNodes: true,
@@ -565,13 +576,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   emptySelectionText: Localization().getStringEx("panel.groups_settings.privacy.hint.default","Select privacy setting.."),
                   buttonHint: Localization().getStringEx("panel.groups_settings.privacy.hint", "Double tap to show privacy oprions"),
                   items: _groupPrivacyOptions,
-                  initialSelectedValue: _group?.privacy ?? (_groupPrivacyOptions!=null?_groupPrivacyOptions[0] : null),
+                  initialSelectedValue: _group?.privacy ?? (_groupPrivacyOptions!=null?_groupPrivacyOptions![0] : null),
                   constructTitle:
-                      (item) => item == GroupPrivacy.private?
+                      (dynamic item) => item == GroupPrivacy.private?
                         Localization().getStringEx("panel.groups.common.privacy.title.private", "Private") :
                         Localization().getStringEx("panel.groups.common.privacy.title.public",  "Public"),
                   constructDropdownDescription:
-                      (item) => item == GroupPrivacy.private?
+                      (dynamic item) => item == GroupPrivacy.private?
                         Localization().getStringEx("panel.groups.common.privacy.description.short.private", "Only members can see group events and posts, unless an event is marked public.") :
                         Localization().getStringEx("panel.groups.common.privacy.description.short.public",  "Only members can see group events and posts, unless an event is marked public."),
                   onValueChanged: (value) => _onPrivacyChanged(value)
@@ -582,7 +593,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8,vertical: 12),
               child:Text(longDescription ?? '',
-                style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular, letterSpacing: 1),
+                style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular, letterSpacing: 1),
             ),)),
           Container(height: 8,)
       ],));
@@ -600,34 +611,34 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildMembershipLayout(){
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
-      (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_settings.tags.label.question","Question(s)")) :
-      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
+      (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_settings.tags.label.question","Question(s)")!) :
+      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question")!;
 
     return
       Container(
-        color: Styles().colors.background,
+        color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column( children: <Widget>[
-          _buildSectionTitle( Localization().getStringEx("panel.groups_settings.membership.title", "Membership"),"images/icon-member.png"),
+          _buildSectionTitle( Localization().getStringEx("panel.groups_settings.membership.title", "Membership")!,"images/icon-member.png"),
           Container(height: 12,),
           Semantics(
             explicitChildNodes: true,
-            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions"),
+            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions")!,
               description: questionsDescription,
               onTap: _onTapMembershipQuestion)),
-          Container(height: 40,),
+          Container(height: 20,),
     ]),);
   }
 
-  Widget _buildMembershipButton({String title, String description, Function onTap}){
+  Widget _buildMembershipButton({required String title, required String description, void onTap()?}){
     return
       InkWell(onTap: onTap,
       child:
         Container (
           decoration: BoxDecoration(
-              color: Styles().colors.white,
+              color: Styles().colors!.white,
               border: Border.all(
-                  color: Styles().colors.surfaceAccent,
+                  color: Styles().colors!.surfaceAccent!,
                   width: 1),
               borderRadius:
               BorderRadius.all(Radius.circular(4))),
@@ -643,9 +654,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       Text(
                         title,
                         style: TextStyle(
-                            fontFamily: Styles().fontFamilies.bold,
+                            fontFamily: Styles().fontFamilies!.bold,
                             fontSize: 16,
-                            color: Styles().colors.fillColorPrimary),
+                            color: Styles().colors!.fillColorPrimary),
                       ),
                     ),
                     Padding(
@@ -656,7 +667,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 Container(
                   padding: EdgeInsets.only(right: 42,top: 4),
                   child: Text(description,
-                    style: TextStyle(color: Styles().colors.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                    style: TextStyle(color: Styles().colors!.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
                   ),
                 )
               ]
@@ -667,20 +678,90 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   void _onTapMembershipQuestion(){
     Analytics.instance.logSelect(target: "Membership Question");
-    if (_group.questions == null) {
-      _group.questions = [];
+    if (_group!.questions == null) {
+      _group!.questions = [];
     }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _group.questions,))).then((dynamic questions){
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _group!.questions,))).then((dynamic questions){
       if(questions is List<GroupMembershipQuestion>){
-        _group.questions = questions;
+        _group!.questions = questions;
       }
       setState(() {});
     });
   }
 
+  // AuthMan Group
+  Widget _buildAuthManLayout() {
+    bool isAuthManGroup = _isAuthManGroup;
+
+    return Container(
+        color: Styles().colors!.background,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Column(children: <Widget>[
+          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "University managed membership")!, "images/icon-member.png"),
+          Container(height: 12),
+          Padding(
+              padding: EdgeInsets.only(top: 12),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Container(
+                    decoration: BoxDecoration(
+                        color: Styles().colors!.white,
+                        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                        borderRadius: BorderRadius.all(Radius.circular(4))),
+                    padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                        Expanded( child:
+                        Text(Localization().getStringEx("panel.groups_settings.authman.enabled.label", "Is this a managed membership group?")!,
+                            style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
+                        GestureDetector(
+                            onTap: _onTapAuthMan,
+                            child: Padding(
+                                padding: EdgeInsets.only(left: 10), child: Image.asset(isAuthManGroup ? 'images/switch-on.png' : 'images/switch-off.png')))
+                      ])
+                    ])),
+                Visibility(
+                    visible: isAuthManGroup,
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Row(children: [
+                        _buildInfoHeader(Localization().getStringEx("panel.groups_settings.authman.group.name.label", "Membership name")!, null),
+                        Padding(padding: EdgeInsets.only(top: 14), child: Text('*', style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)))
+                      ]),
+                      Container(
+                          decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white!),
+                          child: TextField(
+                            onChanged: _onAuthManGroupNameChanged,
+                            controller: _authManGroupNameController,
+                            maxLines: 5,
+                            decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
+                            style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                          ))
+                    ]))
+              ])),
+        ]));
+  }
+
+  void _onTapAuthMan() {
+    Analytics.instance.logSelect(target: "AuthMan Group");
+    if (_group != null) {
+      _group!.authManEnabled = (_group!.authManEnabled != true);
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  void _onAuthManGroupNameChanged(String name) {
+    if (_group != null) {
+      _group!.authManGroupName = name;
+    }
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   //Buttons
   Widget _buildButtonsLayout() {
-    return SafeArea(child: Container( color: Styles().colors.white,
+    return SafeArea(child: Container( color: Styles().colors!.white,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Center(
         child:
@@ -688,8 +769,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           ScalableRoundedButton(
             label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
             backgroundColor: Colors.white,
-            borderColor: Styles().colors.fillColorSecondary,
-            textColor: Styles().colors.fillColorPrimary,
+            borderColor: Styles().colors!.fillColorSecondary,
+            textColor: Styles().colors!.fillColorPrimary,
             onTap: _onUpdateTap,
           ),
           Visibility(visible: _loading,
@@ -697,7 +778,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               height: 48,
               child: Align(alignment: Alignment.center,
                 child: SizedBox(height: 24, width: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
+                    child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
                 ),
               ),
             ),
@@ -712,7 +793,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {
       _loading = true;
     });
-    Groups().updateGroup(_group).then((GroupError error){
+
+    // if the group is not authman then clear authman group name
+    if ((_group != null) && (_group!.authManEnabled != true)) {
+      _group!.authManGroupName = null;
+    }
+
+    Groups().updateGroup(_group).then((GroupError? error){
       if (mounted) {
         setState(() {
           _loading = false;
@@ -720,11 +807,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         if (error == null) { //ok
           Navigator.pop(context);
         } else { //not ok
-          String message;
+          String? message;
           switch (error.code) {
             case 1: message = Localization().getStringEx("panel.groups_create.permission.error.message", "You do not have permission to perform this operation."); break;
             case 5: message = Localization().getStringEx("panel.groups_create.name.error.message", "A group with this name already exists. Please try a different name."); break;
-            default: message = sprintf(Localization().getStringEx("panel.groups_update.failed.msg", "Failed to update group: %s."), [error.text ?? Localization().getStringEx('panel.groups_create.unknown.error.message', 'Unknown error occurred')]); break;
+            default: message = sprintf(Localization().getStringEx("panel.groups_update.failed.msg", "Failed to update group: %s.")!, [error.text ?? Localization().getStringEx('panel.groups_create.unknown.error.message', 'Unknown error occurred')]); break;
           }
           AppAlert.showDialogResult(context, message);
         }
@@ -733,7 +820,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
   //
   // Common
-  Widget _buildInfoHeader(String title, String description,{double topPadding = 24}){
+  Widget _buildInfoHeader(String title, String? description,{double topPadding = 24}){
     return Container(
         padding: EdgeInsets.only(bottom: 8, top:topPadding),
         child:
@@ -749,7 +836,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               child:
               Text(
                 title,
-                style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies.bold),
+                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),
               ),
             ),
             description==null? Container():
@@ -757,7 +844,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               padding: EdgeInsets.only(top: 2),
               child: Text(
                 description,
-                style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular),
+                style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
               ),
             )
           ],))
@@ -771,7 +858,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            iconRes==null? Container() :
               Container(
                 padding: EdgeInsets.only(right: 10),
                 child: Image.asset(iconRes, excludeFromSemantics: true,)
@@ -784,7 +870,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 child:
                 Text(
                   title,
-                  style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),
+                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
                 ),
               ),
             )
@@ -793,7 +879,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void onNameChanged(String name){
-    _group.title = name;
+    _group!.title = name.trim();
     validateName(name);
   }
 
@@ -801,8 +887,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     //TBD name validation hook
     List<String> takenNames = ["test","test1"];
     setState(() {
-      _nameIsValid = !(takenNames?.contains(name)??false);
+      _nameIsValid = !takenNames.contains(name);
     });
+  }
+
+  bool get _isAuthManGroup{
+    return _group?.authManEnabled ?? false;
   }
 }
 

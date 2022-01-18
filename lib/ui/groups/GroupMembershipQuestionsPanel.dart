@@ -23,11 +23,12 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembershipQuestionsPanel extends StatefulWidget {
-  final List<GroupMembershipQuestion> questions;
+  final List<GroupMembershipQuestion>? questions;
 
   GroupMembershipQuestionsPanel({this.questions});
 
@@ -37,13 +38,13 @@ class GroupMembershipQuestionsPanel extends StatefulWidget {
 }
 
 class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestionsPanel> {
-  List<GroupMembershipQuestion> _questions;
-  List<FocusNode> _focusNodes;
-  List<TextEditingController> _controllers;
+  List<GroupMembershipQuestion>? _questions;
+  List<FocusNode>? _focusNodes;
+  List<TextEditingController>? _controllers;
 
   bool get _addButtonEnabled{
-    for(TextEditingController textEditingController in _controllers){
-      if(AppString.isStringEmpty(textEditingController.text)){
+    for(TextEditingController textEditingController in _controllers!){
+      if(StringUtils.isEmpty(textEditingController.text)){
         return false;
       }
     }
@@ -53,14 +54,14 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   @override
   void initState() {
     _questions = GroupMembershipQuestion.listFromOthers(widget.questions) ?? [];
-    if (_questions.isEmpty) {
-      _questions.add(GroupMembershipQuestion());
+    if (_questions!.isEmpty) {
+      _questions!.add(GroupMembershipQuestion());
     }
     _focusNodes = [];
     _controllers = [];
-    for (GroupMembershipQuestion question in _questions) {
-      _controllers.add(TextEditingController(text: question.question ?? ''));
-      _focusNodes.add(FocusNode());
+    for (GroupMembershipQuestion? question in _questions!) {
+      _controllers!.add(TextEditingController(text: question!.question ?? ''));
+      _focusNodes!.add(FocusNode());
     }
 
     super.initState();
@@ -68,12 +69,12 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
 
   @override
   void dispose() {
-    for (TextEditingController controller in _controllers) {
+    for (TextEditingController controller in _controllers!) {
       controller.dispose();
     }
     _controllers = null;
 
-    for (FocusNode focusNode in _focusNodes) {
+    for (FocusNode focusNode in _focusNodes!) {
       focusNode.dispose();
     }
     _focusNodes = null;
@@ -87,11 +88,11 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
       appBar: SimpleHeaderBarWithBack(
         context: context,
         backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.membership_questions.label.title", 'Membership Question'),
+        titleWidget: Text(Localization().getStringEx("panel.membership_questions.label.title", 'Membership Question')!,
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
-              fontFamily: Styles().fontFamilies.extraBold,
+              fontFamily: Styles().fontFamilies!.extraBold,
               letterSpacing: 1.0),
         ),
       ),
@@ -111,7 +112,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
           _buildSubmit(),
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
     );
   }
 
@@ -121,10 +122,10 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
         child: Column(crossAxisAlignment: CrossAxisAlignment.start,
           children:<Widget>[
             Row(children: <Widget>[
-              Text(Localization().getStringEx("panel.membership_questions.label.edit", 'Edit Questions'), style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+              Text(Localization().getStringEx("panel.membership_questions.label.edit", 'Edit Questions')!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
-              Text(Localization().getStringEx("panel.membership_questions.label.description", 'Learn more about people who want to join your group by asking them some questions. Only the admins of your group will see the answers.'), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Color(0xff494949))),
+              Text(Localization().getStringEx("panel.membership_questions.label.description", 'Learn more about people who want to join your group by asking them some questions. Only the admins of your group will see the answers.')!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949))),
             ),
           ]),
       ),
@@ -133,7 +134,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
 
   Widget _buildQuestions() {
     List<Widget> content = [];
-    for (int index = 0; index < _questions.length; index++) {
+    for (int index = 0; index < _questions!.length; index++) {
       content.add(_buildQuestion(index: index));
     }
 
@@ -152,22 +153,22 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
     );
   }
 
-  Widget _buildQuestion({int index}) {
+  Widget _buildQuestion({required int index}) {
     return Padding(padding: EdgeInsets.symmetric(vertical: 8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4),
-          child: Text(Localization().getStringEx("panel.membership_questions.label.question", 'QUESTION #')+(index+1).toString(), style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
+          child: Text(Localization().getStringEx("panel.membership_questions.label.question", 'QUESTION #')!+(index+1).toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Container(color: Styles().colors.white,
+          Container(color: Styles().colors!.white,
             child: TextField(
               maxLines: 2,
-              controller: _controllers[index],
-              focusNode: _focusNodes[index],
+              controller: _controllers![index],
+              focusNode: _focusNodes![index],
               onChanged: _onTextChanged,
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
+              style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground,),
             ),
           ),
           Align(alignment: Alignment.topRight,
@@ -178,7 +179,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
                     label: Localization().getStringEx("panel.membership_questions.button.clear.hint", "clear"),
                     button: true,
                     excludeSemantics: true,
-                    child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.fillColorPrimary,),),
+                    child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
                 )),
               ),
             ),
@@ -194,12 +195,12 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
           Expanded(flex: 1,child: Container(),),
           Expanded(flex: 5,
           child: ScalableRoundedButton(label: Localization().getStringEx("panel.membership_questions.button.update_question.title", 'Update questions'),
-            backgroundColor: Styles().colors.white,
-            textColor: Styles().colors.fillColorPrimary,
-            fontFamily: Styles().fontFamilies.bold,
+            backgroundColor: Styles().colors!.white,
+            textColor: Styles().colors!.fillColorPrimary,
+            fontFamily: Styles().fontFamilies!.bold,
             fontSize: 16,
             padding: EdgeInsets.symmetric(horizontal: 32, ),
-            borderColor: Styles().colors.fillColorSecondary,
+            borderColor: Styles().colors!.fillColorSecondary,
             borderWidth: 2,
             onTap:() { _onSubmit();  }
             )
@@ -213,34 +214,34 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   void _addQuestion() {
     Analytics().logSelect(target: 'Add question');
     setState(() {
-      _questions.add(GroupMembershipQuestion());
-      _controllers.add(TextEditingController());
-      _focusNodes.add(FocusNode());
+      _questions!.add(GroupMembershipQuestion());
+      _controllers!.add(TextEditingController());
+      _focusNodes!.add(FocusNode());
     });
     Timer(Duration(milliseconds: 100), () {
-      _focusNodes.last.requestFocus();
+      _focusNodes!.last.requestFocus();
     });
   }
 
-  void _removeQuestion({int index}) {
+  void _removeQuestion({int? index}) {
     Analytics().logSelect(target: 'Remove question');
     setState(() {
-      _questions.removeAt(index);
-      _controllers.removeAt(index);
-      _focusNodes.removeAt(index);
+      _questions!.removeAt(index!);
+      _controllers!.removeAt(index);
+      _focusNodes!.removeAt(index);
     });
   }
 
   void _onSubmit() {
     Analytics().logSelect(target: 'Update questions');
-    for (int index = 0; index < _questions.length; index++) {
-      String question = _controllers[index].text;
-      if ((question != null) && (0 < question.length)) {
-        _questions[index].question = question;
+    for (int index = 0; index < _questions!.length; index++) {
+      String question = _controllers![index].text;
+      if ((0 < question.length)) {
+        _questions![index].question = question;
       }
       else {
-        AppAlert.showDialogResult(context, Localization().getStringEx("panel.membership_questions.label.question.alert", 'Please input question #')+(index+1).toString()).then((_){
-          _focusNodes[index].requestFocus();
+        AppAlert.showDialogResult(context, Localization().getStringEx("panel.membership_questions.label.question.alert", 'Please input question #')!+(index+1).toString()).then((_){
+          _focusNodes![index].requestFocus();
         });
         return;
       }

@@ -1,9 +1,8 @@
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
@@ -27,11 +26,15 @@ class Onboarding2 with Service{
   }
 
   void finalize(BuildContext context) {
+    _proceedToNotificationsAuthIfNeeded(context);
+  }
+
+  void _proceedToNotificationsAuthIfNeeded(BuildContext context) {
     Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
     if (codes.contains('notifications_auth')) {
       OnboardingAuthNotificationsPanel authNotificationsPanel = OnboardingAuthNotificationsPanel(onboardingContext:{
         'onContinueAction':  () {
-          _proceedToLogin(context);
+          _didProceedNotificationsAuth(context);
         }
       });
       authNotificationsPanel.onboardingCanDisplayAsync.then((bool result) {
@@ -39,13 +42,17 @@ class Onboarding2 with Service{
           Navigator.push(context, CupertinoPageRoute(builder: (context) => authNotificationsPanel));
         }
         else {
-          _proceedToLogin(context);
+          _didProceedNotificationsAuth(context);
         }
       });
     }
     else {
-      _proceedToLogin(context);
+      _didProceedNotificationsAuth(context);
     }
+  }
+
+  void _didProceedNotificationsAuth(BuildContext context) {
+    _proceedToLogin(context);
   }
 
   void _proceedToLogin(BuildContext context){
@@ -73,28 +80,28 @@ class Onboarding2 with Service{
     NotificationService().notify(notifyFinished, context);
   }
   
-  void storeExploreCampusChoice(bool choice){
+  void storeExploreCampusChoice(bool? choice){
     Storage().onBoardingExploreCampus = choice;
   }
 
-  void storePersonalizeChoice(bool choice){
+  void storePersonalizeChoice(bool? choice){
     Storage().onBoardingPersonalizeChoice = choice;
   }
 
-  void storeImproveChoice(bool choice){
+  void storeImproveChoice(bool? choice){
     Storage().onBoardingImproveChoice = choice;
   }
 
   bool get getExploreCampusChoice{
-    return Storage().onBoardingExploreCampus;
+    return Storage().onBoardingExploreCampus ?? false;
   }
 
   bool get getPersonalizeChoice{
-    return Storage().onBoardingPersonalizeChoice;
+    return Storage().onBoardingPersonalizeChoice ?? false;
   }
 
   bool get getImproveChoice{
-    return Storage().onBoardingImproveChoice;
+    return Storage().onBoardingImproveChoice ?? false;
   }
 
   int get getPrivacyLevel{

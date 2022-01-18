@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 
 enum AppNavigationEvent { push, pop, remove, replace }
 
@@ -42,7 +42,7 @@ class AppNavigation extends NavigatorObserver {
   }
 
   @override
-  void didPush(Route route, Route previousRoute) {
+  void didPush(Route route, Route? previousRoute) {
     NotificationService().notify(notifyEvent, {
       notifyParamEvent: AppNavigationEvent.push,
       notifyParamRoute : route,
@@ -51,7 +51,7 @@ class AppNavigation extends NavigatorObserver {
   }
 
   @override
-  void didPop(Route route, Route previousRoute) {
+  void didPop(Route route, Route? previousRoute) {
     NotificationService().notify(notifyEvent, {
       notifyParamEvent: AppNavigationEvent.pop,
       notifyParamRoute: route,
@@ -60,7 +60,7 @@ class AppNavigation extends NavigatorObserver {
   }
 
   @override
-  void didRemove(Route route, Route previousRoute) {
+  void didRemove(Route route, Route? previousRoute) {
       NotificationService().notify(notifyEvent, {
       notifyParamEvent: AppNavigationEvent.remove,
       notifyParamRoute : route,
@@ -69,7 +69,7 @@ class AppNavigation extends NavigatorObserver {
 }
 
   @override
-  void didReplace({Route newRoute, Route oldRoute }) {
+  void didReplace({Route? newRoute, Route? oldRoute }) {
       NotificationService().notify(notifyEvent, {
       notifyParamEvent: AppNavigationEvent.replace,
       notifyParamRoute : newRoute,
@@ -77,14 +77,14 @@ class AppNavigation extends NavigatorObserver {
     });
   }
 
-  static Widget routeRootWidget(Route route, {BuildContext context}) {
-    WidgetBuilder builder;
+  static Widget? routeRootWidget(Route route, {BuildContext? context}) {
+    WidgetBuilder? builder;
     if (route is CupertinoPageRoute) {
       builder = route.builder;
     }
     else if (route is MaterialPageRoute) {
       builder = route.builder;
     }
-    return (builder != null) ? builder(context) : null;
+    return (builder != null) ? builder(context!) : null;
   }
 }

@@ -21,20 +21,20 @@ import 'package:illinois/service/Styles.dart';
 class OptionSelectionCell extends StatelessWidget {
   final String iconPath;
   final String selectedIconPath;
-  final Color selectedBackgroundColor;
-  final Color selectedTextColor;
-  final String label;
-  final String hint;
+  final Color? selectedBackgroundColor;
+  final Color? selectedTextColor;
+  final String? label;
+  final String? hint;
   final bool selected;
 
   final bool isButton;
   final bool isCustomToggle;
-  static final Color defaultTextColor = Styles().colors.fillColorPrimary;
+  static final Color? defaultTextColor = Styles().colors!.fillColorPrimary;
 
   OptionSelectionCell(
-      {@required this.iconPath,
-      @required this.selectedIconPath,
-      @required this.label,
+      {required this.iconPath,
+      required this.selectedIconPath,
+      required this.label,
       this.hint = '',
       this.selected = false,
       this.selectedBackgroundColor,
@@ -44,10 +44,10 @@ class OptionSelectionCell extends StatelessWidget {
   Widget build(BuildContext context) {
     String hint = "";
     if(isCustomToggle){
-      hint = this.hint + (selected?Localization().getStringEx("toggle_button.status.checked", "checked",) :
-                                  Localization().getStringEx("toggle_button.status.unchecked", "unchecked"));
+      hint = this.hint! + (selected?Localization().getStringEx("toggle_button.status.checked", "checked",)! :
+                                  Localization().getStringEx("toggle_button.status.unchecked", "unchecked")!);
 
-      hint += ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox");
+      hint += ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!;
     }
     return  Semantics(label: label /*+", "+hint,*/, /*hint: hint,*/button: isButton, /*checked: selected,*/ excludeSemantics: true, value: hint,child:
         Stack(
@@ -60,7 +60,7 @@ class OptionSelectionCell extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(
                     color:
-                        (selected ? Styles().colors.fillColorPrimary : Colors.white),
+                        (selected ? Styles().colors!.fillColorPrimary! : Colors.white),
                     width: 2)),
             width: 140,
             child:Padding(
@@ -72,16 +72,16 @@ class OptionSelectionCell extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(bottom: 16),
                     child:
-                        Image.asset((selected ? selectedIconPath : iconPath)),
+                        Image.asset(selected ? selectedIconPath : iconPath, excludeFromSemantics: true),
                   ),
                   Text(
-                    label,
+                    label!,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontFamily: Styles().fontFamilies.bold,
+                        fontFamily: Styles().fontFamilies!.bold,
                         fontSize: 17,
                         color: (selected
-                            ? selectedTextColor ?? Styles().colors.fillColorPrimary
+                            ? selectedTextColor ?? Styles().colors!.fillColorPrimary
                             : OptionSelectionCell.defaultTextColor)),
                   )
                 ],
@@ -95,7 +95,7 @@ class OptionSelectionCell extends StatelessWidget {
               visible: selected,
               child: Align(
                 alignment: Alignment.topRight,
-                child: Image.asset('images/icon-check.png'),
+                child: Image.asset('images/icon-check.png', excludeFromSemantics: true),
               )),
         )
       ],

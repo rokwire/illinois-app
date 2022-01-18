@@ -16,38 +16,39 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
-import 'package:location/location.dart' as Core;
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class ExploreCard extends StatefulWidget {
-  final GestureTapCallback onTap;
-  final Explore explore;
-  final Core.LocationData locationData;
+  final GestureTapCallback? onTap;
+  final Explore? explore;
+  final Core.Position? locationData;
   final bool showTopBorder;
   final bool hideInterests;
-  final bool showSmallImage;
-  final String source;
+  final bool? showSmallImage;
+  final String? source;
   final double horizontalPadding;
-  final BoxBorder border;
+  final BoxBorder? border;
 
   ExploreCard(
-      {Key key, this.onTap, this.explore, this.locationData, this.showTopBorder = false, this.showSmallImage = true, this.hideInterests = false, this.source, this.horizontalPadding=16, this.border})
+      {Key? key, this.onTap, this.explore, this.locationData, this.showTopBorder = false, this.showSmallImage = true, this.hideInterests = false, this.source, this.horizontalPadding=16, this.border})
       : super(key: key);
 
   @override
@@ -73,20 +74,20 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   String get semanticLabel {
-    String category = _exploreCategory;
-    String sportName = _gameSportName;
-    if (AppString.isStringNotEmpty(sportName)) {
-      category += ' - $sportName';
+    String? category = _exploreCategory;
+    String? sportName = _gameSportName;
+    if (StringUtils.isNotEmpty(category) && StringUtils.isNotEmpty(sportName)) {
+      category = '$category - $sportName';
     }
     dynamic explore = widget.explore;
-    String title = widget?.explore?.exploreTitle ?? "";
-    String time = _getExploreTimeDisplayString();
+    String title = widget.explore?.exploreTitle ?? "";
+    String? time = _getExploreTimeDisplayString();
     String locationText = ExploreHelper.getShortDisplayLocation(widget.explore, widget.locationData) ?? "";
     String workTime = ((explore is Dining) ? explore.displayWorkTime : null) ?? "";
-    int eventConvergeScore = (explore is Event) ? explore.convergeScore : null;
+    int? eventConvergeScore = (explore is Event) ? explore.convergeScore : null;
     String convergeScore = ((eventConvergeScore != null) ? (eventConvergeScore.toString() + '%') : null) ?? "";
     String interests = ((explore is Event) ? _getInterestsLabelValue() : null) ?? "";
-    interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')) : "";
+    interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')!) : "";
     String eventType = ExploreHelper.getExploreTypeText(explore)??"";
 
     return "$category, $title, $time, $locationText, $workTime, $convergeScore, $interests, $eventType";
@@ -96,115 +97,119 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   Widget build(BuildContext context) {
     bool isEvent = (widget.explore is Event);
     bool isGame = (widget.explore is Game);
-    Event event = isEvent ? widget.explore as Event : null;
+    Event? event = isEvent ? widget.explore as Event : null;
     bool isCompositeEvent = event?.isComposite ?? false;
-    String imageUrl = AppString.getDefaultEmptyString(value: widget.explore.exploreImageURL);
+    String imageUrl = StringUtils.ensureNotEmpty(widget.explore!.exploreImageURL);
     String interestsLabelValue = _getInterestsLabelValue();
 
-    return GestureDetector(
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: widget.onTap,
-        child: Semantics(
-          label: semanticLabel,
-//          excludeSemantics: true,
-          child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),child: Stack(
-              alignment: Alignment.topCenter,
-              children: [
-                ExcludeSemantics(
-                  child:Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                        border: widget.border,
-                        boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        _exploreTop(),
-                        Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                          Expanded(child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Visibility(
-                                visible: (isEvent || isGame),
-                                child: _exploreName(),
-                              ),
-                              _exploreDetails(),
-                            ],)),
-                          Visibility(visible: (widget.showSmallImage &&
-                              AppString.isStringNotEmpty(imageUrl)),
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
-                                child: SizedBox(
-                                  width: _smallImageSize,
-                                  height: _smallImageSize,
-                                  child: Image.network(
-                                    imageUrl, fit: BoxFit.fill,),),)),
-                        ],),
-                        _explorePaymentTypes(),
-                        _buildConvergeButton(),
-                        Visibility(visible: _showInterests(),
-                            child: Column(
+        child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),child: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  border: widget.border,
+                  boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  _exploreTop(),
+                  Container(
+                    child: Semantics(excludeSemantics: true,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                            Expanded(child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Container(
-                                  height: 1, color: Styles().colors.surfaceAccent,),
-                                Padding(padding: EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Flexible(flex: 8,
-                                          child: Container(width: double.infinity, child:
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Text(Localization().getStringEx(
-                                                  'widget.card.label.interests',
-                                                  'Because of your interest in:'),
-                                                style: TextStyle(
-                                                    color: Styles().colors.textBackground,
-                                                    fontSize: 12,
-                                                    fontFamily: Styles().fontFamilies.bold),),
-                                              Text(AppString.getDefaultEmptyString(
-                                                  value: interestsLabelValue), style: TextStyle(
-                                                  color: Styles().colors.textBackground,
-                                                  fontSize: 12,
-                                                  fontFamily: Styles().fontFamilies.medium),)
-                                            ],)),
-                                        ),
-                                        Flexible(flex: 2,
-                                          child: Container(width: double.infinity, alignment: Alignment.centerRight,
-                                              child: ExploreConvergeDetailItem(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
-
-                                          ),
-                                        )
-                                      ],
-                                    ))
+                                Visibility(
+                                  visible: (isEvent || isGame),
+                                  child: _exploreName(),
+                                ),
+                                _exploreDetails(),
                               ],)),
-                        Visibility(visible: isCompositeEvent, child: Container(height: _EventSmallCard._getScaledCardHeight(context),),)
-                      ],
-                    ),
-                  ),
-                ),
-                _topBorder(),
-              ]),),
-            _buildCompositeEventsContent(isCompositeEvent)
-          ],),
-        ));
+                            Visibility(visible: ((widget.showSmallImage ?? false) &&
+                                StringUtils.isNotEmpty(imageUrl)),
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
+                                  child: SizedBox(
+                                    width: _smallImageSize,
+                                    height: _smallImageSize,
+                                    child: Image.network(
+                                      imageUrl, excludeFromSemantics: true, fit: BoxFit.fill, headers: Network.authApiKeyHeader),),)),
+                          ],),
+                          _explorePaymentTypes(),
+                          _buildConvergeButton(),
+                          Visibility(visible: _showInterests(),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    height: 1, color: Styles().colors!.surfaceAccent,),
+                                  Padding(padding: EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Flexible(flex: 8,
+                                            child: Container(width: double.infinity, child:
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(Localization().getStringEx(
+                                                    'widget.card.label.interests',
+                                                    'Because of your interest in:')!,
+                                                  style: TextStyle(
+                                                      color: Styles().colors!.textBackground,
+                                                      fontSize: 12,
+                                                      fontFamily: Styles().fontFamilies!.bold),),
+                                                Text(StringUtils.ensureNotEmpty(
+                                                    interestsLabelValue), style: TextStyle(
+                                                    color: Styles().colors!.textBackground,
+                                                    fontSize: 12,
+                                                    fontFamily: Styles().fontFamilies!.medium),)
+                                              ],)),
+                                          ),
+                                          Flexible(flex: 2,
+                                            child: Container(width: double.infinity, alignment: Alignment.centerRight,
+                                                child: ExploreConvergeDetailItem(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
+
+                                            ),
+                                          )
+                                        ],
+                                      ))
+                              ],)),
+                  Visibility(visible: isCompositeEvent, child: Container(height: _EventSmallCard._getScaledCardHeight(context),),)
+                  ])))
+                ],
+              ),
+            ),
+          _topBorder(),
+          ]),),
+        _buildCompositeEventsContent(isCompositeEvent)
+      ],),
+    ));
   }
 
   bool _showInterests() {
     String interestsLabelValue = _getInterestsLabelValue();
-    return (widget.explore is Event) && AppString.isStringNotEmpty(interestsLabelValue);
+    return (widget.explore is Event) && StringUtils.isNotEmpty(interestsLabelValue);
   }
 
   bool _hasConvergeUrl() {
-    return AppString.isStringNotEmpty(_getConvergeUrl());
+    return StringUtils.isNotEmpty(_getConvergeUrl());
   }
 
   bool _hasConvergeScore() {
-    return (_getConvergeScore() != null) && (_getConvergeScore() > 0);
+    return (_getConvergeScore() != null) && (_getConvergeScore()! > 0);
   }
 
   bool _hasConvergeContent() {
@@ -225,35 +230,35 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     ));
   }
 
-  int _getConvergeScore() {
-    Event event = (widget.explore is Event) ? (widget.explore as Event) : null;
-    int eventConvergeScore = (event != null) ? event.convergeScore : null;
+  int? _getConvergeScore() {
+    Event? event = (widget.explore is Event) ? (widget.explore as Event) : null;
+    int? eventConvergeScore = (event != null) ? event.convergeScore : null;
     return eventConvergeScore;
   }
 
-  String _getConvergeUrl() {
-    Event event = (widget.explore is Event) ? (widget.explore as Event) : null;
-    String eventConvergeUrl = (event != null) ? event.convergeUrl : null;
+  String? _getConvergeUrl() {
+    Event? event = (widget.explore is Event) ? (widget.explore as Event) : null;
+    String? eventConvergeUrl = (event != null) ? event.convergeUrl : null;
     return eventConvergeUrl;
   }
 
   Widget _exploreTop() {
 
-    String category = _exploreCategory;
-    bool isFavorite = widget.explore.isFavorite;
+    String? category = _exploreCategory;
+    bool isFavorite = widget.explore!.isFavorite;
     bool starVisible = Auth2().canFavorite;
     String leftLabel = "";
     TextStyle leftLabelStyle;
-    if (AppString.isStringNotEmpty(category)) {
-      leftLabel = category.toUpperCase();
-      String sportName = _gameSportName;
-      if (AppString.isStringNotEmpty(sportName)) {
+    if (StringUtils.isNotEmpty(category)) {
+      leftLabel = category!.toUpperCase();
+      String? sportName = _gameSportName;
+      if (StringUtils.isNotEmpty(sportName)) {
         leftLabel += ' - $sportName';
       }
-      leftLabelStyle = TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, letterSpacing: 0.86, color: Styles().colors.fillColorPrimary);
+      leftLabelStyle = TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, letterSpacing: 0.86, color: Styles().colors!.fillColorPrimary);
     } else {
-      leftLabel = widget.explore.exploreTitle ?? "";
-      leftLabelStyle = TextStyle(fontSize: 18, color: Styles().colors.fillColorPrimary);
+      leftLabel = widget.explore!.exploreTitle ?? "";
+      leftLabelStyle = TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimary);
     }
 
     return Row(
@@ -264,13 +269,14 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
               child: Text(
                 leftLabel,
                 style: leftLabelStyle,
+                semanticsLabel: "",
               )
             ),
           ),
-          Visibility(visible: starVisible, child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: _onTapExploreCardStar,
-              child: Semantics(
+          Visibility(visible: starVisible, child:
+            Semantics(container: true, child:
+              Container( child:
+                Semantics(
                   label: isFavorite ? Localization().getStringEx(
                       'widget.card.button.favorite.off.title',
                       'Remove From Favorites') : Localization().getStringEx(
@@ -280,14 +286,17 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                       'widget.card.button.favorite.off.hint', '') : Localization()
                       .getStringEx('widget.card.button.favorite.on.hint', ''),
                   button: true,
-                  excludeSemantics: true,
-                  child: Container(child: Padding(padding: EdgeInsets.only(
+                  child:  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: _onTapExploreCardStar,
+                    child:Container(child: Padding(padding: EdgeInsets.only(
                       right: 16, top: 12, left: 24, bottom: 5),
                       child: Image.asset(isFavorite
                           ? 'images/icon-star-selected.png'
-                          : 'images/icon-star.png')
-                  ))
-              )),)
+                          : 'images/icon-star.png',
+                        excludeFromSemantics: true,)
+                      ))
+                  )),)))
         ],
     );
   }
@@ -295,24 +304,24 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   Widget _exploreName() {
     return Padding(
         padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
-        child: Text(AppString.getDefaultEmptyString(value: widget.explore?.exploreTitle),
-            style: TextStyle(fontSize: 20, color: Styles().colors.fillColorPrimary)));
+        child: Text(StringUtils.ensureNotEmpty(widget.explore?.exploreTitle),
+            style: TextStyle(fontSize: 20, color: Styles().colors!.fillColorPrimary)));
   }
 
   Widget _exploreDetails() {
     List<Widget> details = [];
 
-    Widget time = _exploreTimeDetail();
+    Widget? time = _exploreTimeDetail();
     if (time != null) {
       details.add(time);
     }
 
-    Widget location = _exploreLocationDetail();
+    Widget? location = _exploreLocationDetail();
     if (location != null) {
       details.add(location);
     }
 
-    Widget workTime = _exploreWorkTimeDetail();
+    Widget? workTime = _exploreWorkTimeDetail();
     if (workTime != null) {
       details.add(workTime);
     }
@@ -327,39 +336,39 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         : Container();
   }
 
-  Widget _exploreTimeDetail() {
-    String displayTime = _getExploreTimeDisplayString();
-    if (AppString.isStringEmpty(displayTime)) {
+  Widget? _exploreTimeDetail() {
+    String? displayTime = _getExploreTimeDisplayString();
+    if (StringUtils.isEmpty(displayTime)) {
       return null;
     }
     return Semantics(label: displayTime, child: Padding(
       padding: _detailPadding,
       child: Row(
         children: <Widget>[
-          Image.asset('images/icon-calendar.png'),
+          Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
           Padding(
             padding: _iconPadding,
           ),
-          Flexible(child: Text(displayTime, overflow: TextOverflow.ellipsis,
+          Flexible(child: Text(displayTime!, overflow: TextOverflow.ellipsis,
               maxLines: 1,
               style: TextStyle(
-                  fontFamily: Styles().fontFamilies.medium,
+                  fontFamily: Styles().fontFamilies!.medium,
                   fontSize: 14,
-                  color: Styles().colors.textBackground)),)
+                  color: Styles().colors!.textBackground)),)
         ],
       ),
     ));
   }
 
-  Widget _exploreLocationDetail() {
+  Widget? _exploreLocationDetail() {
     String iconRes = 'images/icon-location.png';
-    String eventType;
+    String? eventType;
     if(widget.explore!=null && widget.explore is Event) {
       bool isVirtual = (widget.explore as Event).isVirtual ?? false;
       eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
       iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
     }
-    String locationText = eventType ?? ExploreHelper.getShortDisplayLocation(widget.explore, widget.locationData);
+    String? locationText = eventType ?? ExploreHelper.getShortDisplayLocation(widget.explore, widget.locationData);
     if ((locationText != null) && locationText.isNotEmpty) {
       return Semantics(label: locationText, child:Padding(
         padding: _detailPadding,
@@ -372,9 +381,9 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
             ),
             Expanded(child: Text(locationText,
                 style: TextStyle(
-                    fontFamily: Styles().fontFamilies.medium,
+                    fontFamily: Styles().fontFamilies!.medium,
                     fontSize: 14,
-                    color: Styles().colors.textBackground))),
+                    color: Styles().colors!.textBackground))),
           ],
         ),
       ));
@@ -383,25 +392,25 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     }
   }
 
-  Widget _exploreWorkTimeDetail() {
-    Dining dining = (widget.explore is Dining) ? (widget.explore as Dining) : null;
-    String displayTime = dining?.displayWorkTime;
+  Widget? _exploreWorkTimeDetail() {
+    Dining? dining = (widget.explore is Dining) ? (widget.explore as Dining) : null;
+    String? displayTime = dining?.displayWorkTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Semantics(label: displayTime, child:Padding(
         padding: _detailPadding,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Image.asset('images/icon-time.png'),
+            Image.asset('images/icon-time.png', excludeFromSemantics: true),
             Padding(
               padding: _iconPadding,
             ),
             Expanded(
               child: Text(displayTime,
                   style: TextStyle(
-                      fontFamily: Styles().fontFamilies.medium,
+                      fontFamily: Styles().fontFamilies!.medium,
                       fontSize: 14,
-                      color: Styles().colors.textBackground)),
+                      color: Styles().colors!.textBackground)),
             ),
           ],
         ),
@@ -412,13 +421,13 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget _explorePaymentTypes() {
-    List<Widget> details;
-    Dining dining = (widget.explore is Dining) ? (widget.explore as Dining) : null;
-    List<PaymentType> paymentTypes = dining?.paymentTypes;
+    List<Widget>? details;
+    Dining? dining = (widget.explore is Dining) ? (widget.explore as Dining) : null;
+    List<PaymentType>? paymentTypes = dining?.paymentTypes;
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
       details = [];
-      for (PaymentType paymentType in paymentTypes) {
-        Image image = PaymentTypeHelper.paymentTypeIcon(paymentType);
+      for (PaymentType? paymentType in paymentTypes) {
+        Image? image = PaymentTypeHelper.paymentTypeIcon(paymentType);
         if (image != null) {
           details.add(Padding(padding: EdgeInsets.only(right: 6) ,child:image) );
         }
@@ -441,8 +450,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         : Container();
   }
 
-  String _getExploreTimeDisplayString() {
-    Explore explore = widget.explore;
+  String? _getExploreTimeDisplayString() {
+    Explore? explore = widget.explore;
     if (explore is Event) {
       return explore.timeDisplayString;
     } else if (explore is Game) {
@@ -457,13 +466,13 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Container(
         height: 1,
-        color: Styles().colors.fillColorPrimaryTransparent015,
+        color: Styles().colors!.fillColorPrimaryTransparent015,
       ),
     );
   }
 
   Widget _topBorder() {
-    return widget.showTopBorder? Container(height: 7,color: widget.explore.uiColor) : Container();
+    return widget.showTopBorder? Container(height: 7,color: widget.explore!.uiColor) : Container();
   }
 
   String _getInterestsLabelValue() {
@@ -474,13 +483,13 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     if (!isCompositeEvent) {
       return Container();
     }
-    Event parentEvent = widget.explore as Event;
-    List<Event> subEvents = parentEvent.recurringEvents ?? parentEvent.featuredEvents;
-    bool showViewMoreCard = AppCollection.isCollectionNotEmpty(subEvents);
+    Event? parentEvent = (widget.explore is Event) ? (widget.explore as Event) : null;
+    List<Event>? subEvents = parentEvent?.recurringEvents ?? parentEvent?.featuredEvents;
+    bool showViewMoreCard = CollectionUtils.isNotEmpty(subEvents);
     if (showViewMoreCard && (subEvents != null) && (subEvents.length > 5)) {
       subEvents = subEvents.sublist(0, 5);
     }
-    _EventCardType type = parentEvent.isSuperEvent ? _EventCardType.sup : _EventCardType.rec;
+    _EventCardType type = (parentEvent?.isSuperEvent == true) ? _EventCardType.sup : _EventCardType.rec;
     int eventsCount = (subEvents != null) ? subEvents.length : 0;
     int itemsCount = eventsCount + (showViewMoreCard ? 3 : 2);
     return Column(
@@ -500,7 +509,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
               return _EventSmallCard(
                 type: _EventCardType.more, onTap: () => _onTapSmallExploreCard(context: context, parentEvent: parentEvent, cardType: _EventCardType.more),);
             }
-            Event subEvent = subEvents[index - 1];
+            Event? subEvent = subEvents![index - 1];
             return _EventSmallCard(event: subEvent,
               type: type,
               onTap: () => _onTapSmallExploreCard(context: context, parentEvent: parentEvent, subEvent: subEvent, cardType: type),);
@@ -511,22 +520,22 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   void _onTapExploreCardStar() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.explore?.exploreTitle}");
-    widget.explore.toggleFavorite();
+    widget.explore!.toggleFavorite();
   }
 
-  void _onTapSmallExploreCard({BuildContext context, _EventCardType cardType, Event parentEvent, Event subEvent}) {
+  void _onTapSmallExploreCard({BuildContext? context, _EventCardType? cardType, Event? parentEvent, Event? subEvent}) {
     if (cardType == _EventCardType.more) {
-      if (parentEvent.isSuperEvent == true) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => EventsSchedulePanel(superEvent: parentEvent)));
+      if (parentEvent!.isSuperEvent == true) {
+        Navigator.push(context!, CupertinoPageRoute(builder: (context) => EventsSchedulePanel(superEvent: parentEvent)));
       } else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: parentEvent,)));
+        Navigator.push(context!, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: parentEvent,)));
       }
     } else {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: subEvent, superEventTitle: parentEvent.title)));
+      Navigator.push(context!, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: subEvent, superEventTitle: parentEvent!.title)));
     }
   }
 
-  String get _exploreCategory {
+  String? get _exploreCategory {
     if (widget.explore is Event) {
       return (widget.explore as Event).category;
     } else if (widget.explore is Game) {
@@ -536,12 +545,12 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     }
   }
 
-  String get _gameSportName {
+  String? get _gameSportName {
     if (!(widget.explore is Game)) {
       return null;
     }
-    Game game = widget.explore as Game;
-    SportDefinition sport = Sports().getSportByShortName(game.sport?.shortName);
+    Game? game = (widget.explore is Game) ? (widget.explore as Game) : null;
+    SportDefinition? sport = Sports().getSportByShortName(game?.sport?.shortName);
     return sport?.customName;
   }
 
@@ -560,9 +569,9 @@ class _EventSmallCard extends StatelessWidget {
   static final double _cardHeight = 144;
   static final double _cardTitleHeight = 60; // Two lines title
 
-  final Event event;
-  final _EventCardType type;
-  final GestureTapCallback onTap;
+  final Event? event;
+  final _EventCardType? type;
+  final GestureTapCallback? onTap;
 
   _EventSmallCard({this.event, this.type, this.onTap});
 
@@ -574,7 +583,7 @@ class _EventSmallCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double scaledHeight = _getScaledCardHeight(context);
     bool isMoreCardType = (type == _EventCardType.more);
-    Favorite favorite = event is Favorite ? event : null;
+    Favorite? favorite = event is Favorite ? event : null;
     bool isFavorite = Auth2().isFavorite(favorite);
     bool starVisible = Auth2().canFavorite && !isMoreCardType;
     double borderWidth = 1.0;
@@ -589,18 +598,18 @@ class _EventSmallCard extends StatelessWidget {
           width: _cardWidth,
           height: scaledHeight,
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(
-              color: Styles().colors.surfaceAccent, width: borderWidth)),
+              color: Styles().colors!.surfaceAccent!, width: borderWidth)),
           child: Column(children: <Widget>[
-            Container(height: topBorderHeight, color: Styles().colors.fillColorSecondary),
+            Container(height: topBorderHeight, color: Styles().colors!.fillColorSecondary),
             Padding(padding: EdgeInsets.all(internalPadding),
               child: SizedBox(height: internalHeight, width: internalWidth, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Expanded(child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    Expanded(child: Text(_title, overflow: TextOverflow.ellipsis,
+                    Expanded(child: Text(_title!, overflow: TextOverflow.ellipsis,
                       maxLines: 2,
-                      style: TextStyle(fontSize: 20, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold),),),
+                      style: TextStyle(fontSize: 20, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold),),),
                     Visibility(
                       visible: starVisible, child: GestureDetector(
                         behavior: HitTestBehavior.opaque,
@@ -616,34 +625,34 @@ class _EventSmallCard extends StatelessWidget {
                             button: true,
                             excludeSemantics: true,
                             child: Container(child: Padding(padding: EdgeInsets.only(left: 24, bottom: 5), child: Image.asset(
-                                isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
+                                isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true)
                             ))
                         )),),
                     Visibility(visible: isMoreCardType, child: Padding(
-                      padding: EdgeInsets.only(left: 24, top: 4), child: Image.asset('images/chevron-right.png'),),)
+                      padding: EdgeInsets.only(left: 24, top: 4), child: Image.asset('images/chevron-right.png', excludeFromSemantics: true),),)
                   ],),),
                 Visibility(visible: !isMoreCardType, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
                   Padding(padding: EdgeInsets.only(right: 10),
-                    child: Image.asset('images/icon-time.png'),),
-                  Expanded(child: Text(_subTitle, overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(
-                      fontSize: 16, color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.medium),),)
+                    child: Image.asset('images/icon-time.png', excludeFromSemantics: true),),
+                  Expanded(child: Text(_subTitle ?? '', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(
+                      fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.medium),),)
                 ],),)
               ],),),),
           ],),)),);
   }
 
   String get _semanticLabel {
-    String title = _title;
-    String subTitle = _subTitle;
+    String? title = _title;
+    String? subTitle = _subTitle;
     return "$title, $subTitle";
   }
 
-  String get _title {
+  String? get _title {
     switch (type) {
       case _EventCardType.sup:
-        return event.title;
+        return event!.title;
       case _EventCardType.rec:
-        return event.displayDate;
+        return event!.displayDate;
       case _EventCardType.more:
         return Localization().getStringEx('widget.explore_card.small.view_all.title', 'View all events');
       default:
@@ -651,12 +660,12 @@ class _EventSmallCard extends StatelessWidget {
     }
   }
 
-  String get _subTitle {
+  String? get _subTitle {
     switch (type) {
       case _EventCardType.sup:
-        return event.displaySuperTime;
+        return event!.displaySuperTime;
       case _EventCardType.rec:
-        return event.displayStartEndTime;
+        return event!.displayStartEndTime;
       default:
         return '';
     }

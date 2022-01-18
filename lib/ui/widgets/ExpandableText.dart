@@ -21,17 +21,16 @@ import 'package:illinois/service/Styles.dart';
 class ExpandableText extends StatefulWidget {
   const ExpandableText(
       this.text, {
-        Key key,
+        Key? key,
         this.trimLines = 3,
         this.style,
         this.iconColor,
-      })  : assert(text != null),
-        super(key: key);
+      })  : super(key: key);
 
   final String text;
   final int trimLines;
-  final TextStyle style;
-  final Color iconColor;
+  final TextStyle? style;
+  final Color? iconColor;
 
   @override
   ExpandableTextState createState() => ExpandableTextState();
@@ -62,7 +61,7 @@ class ExpandableTextState extends State<ExpandableText> {
         );
         textPainter.layout(minWidth: constraints.minWidth, maxWidth: constraints.maxWidth);
         final textSize = textPainter.size;
-        int endIndex;
+        int? endIndex;
         final pos = textPainter.getPositionForOffset(Offset(
           textSize.width - elipsisSize.width,
           textSize.height,
@@ -82,7 +81,7 @@ class ExpandableTextState extends State<ExpandableText> {
                   style: widget.style,
                 ),
               ),
-              _collapsed ? Container(color: Styles().colors.fillColorSecondary,height: 1,margin: EdgeInsets.only(top:5, bottom: 5),) : Container(),
+              _collapsed ? Container(color: Styles().colors!.fillColorSecondary,height: 1,margin: EdgeInsets.only(top:5, bottom: 5),) : Container(),
               _collapsed ? Semantics(
                 button: true,
                 label: Localization().getStringEx( "app.common.label.read_more", "Read more"),
@@ -92,11 +91,11 @@ class ExpandableTextState extends State<ExpandableText> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Text(Localization().getStringEx( "app.common.label.read_more", "Read more"), style: TextStyle(fontSize: 16,
-                          fontFamily: Styles().fontFamilies.bold,
-                          color: Styles().colors.fillColorPrimary),),
+                      Text(Localization().getStringEx( "app.common.label.read_more", "Read more")!, style: TextStyle(fontSize: 16,
+                          fontFamily: Styles().fontFamilies!.bold,
+                          color: Styles().colors!.fillColorPrimary),),
                       Padding(
-                        padding: EdgeInsets.only(left: 7), child: Image.asset('images/icon-down-orange.png', color: widget.iconColor,),),
+                        padding: EdgeInsets.only(left: 7), child: Image.asset('images/icon-down-orange.png', color: widget.iconColor, excludeFromSemantics: true),),
                     ],),
                   ),
                 ),

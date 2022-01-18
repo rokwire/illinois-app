@@ -15,37 +15,38 @@
  */
 
 import 'dart:ui';
+import 'package:geolocator/geolocator.dart' as Core;
+
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:location/location.dart' as Core;
 
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
 
 import 'package:illinois/model/Location.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 //////////////////////////////
 /// Explore
 
 abstract class Explore {
 
-  String   get exploreId;
-  String   get exploreTitle;
-  String   get exploreSubTitle;
-  String   get exploreShortDescription;
-  String   get exploreLongDescription;
-  DateTime get exploreStartDateUtc;
-  String   get exploreImageURL;
-  String   get explorePlaceId;
-  Location get exploreLocation;
-  Color    get uiColor;
+  String?   get exploreId;
+  String?   get exploreTitle;
+  String?   get exploreSubTitle;
+  String?   get exploreShortDescription;
+  String?   get exploreLongDescription;
+  DateTime? get exploreStartDateUtc;
+  String?   get exploreImageURL;
+  String?   get explorePlaceId;
+  Location? get exploreLocation;
+  Color?    get uiColor;
   Map<String, dynamic> get analyticsAttributes;
   Map<String, dynamic> toJson();
 
-  Map<String, dynamic> get analyticsSharedExploreAttributes {
+  Map<String, dynamic>? get analyticsSharedExploreAttributes {
     return exploreLocation?.analyticsAttributes;
   }
 
@@ -63,7 +64,7 @@ abstract class Explore {
     return false;
   }
 
-  static Explore fromJson(Map<String, dynamic> json) {
+  static Explore? fromJson(Map<String, dynamic>? json) {
     if (Event.canJson(json)) {
       return Event.fromJson(json);
     }
@@ -73,11 +74,12 @@ abstract class Explore {
     return null;
   }
 
-  static List<Explore> listFromJson(List<dynamic> jsonList) {
-    List<Explore> explores = [];
+  static List<Explore>? listFromJson(List<dynamic>? jsonList) {
+    List<Explore>? explores;
     if (jsonList is List) {
+      explores = [];
       for (dynamic jsonEntry in jsonList) {
-        Explore explore = Explore.fromJson(jsonEntry);
+        Explore? explore = Explore.fromJson(jsonEntry);
         if (explore != null) {
           explores.add(explore);
         }
@@ -86,8 +88,8 @@ abstract class Explore {
     return explores;
   }
 
-  static List<dynamic> listToJson(List<Explore> explores) {
-    List<dynamic> result;
+  static List<dynamic>? listToJson(List<Explore>? explores) {
+    List<dynamic>? result;
     if (explores != null) {
       result = [];
       for (Explore explore in explores) {
@@ -104,18 +106,16 @@ abstract class Explore {
 
 class ExploreCategory {
 
-  final String name;
-  final List<String> subCategories;
+  final String? name;
+  final List<String>? subCategories;
 
   ExploreCategory({this.name, this.subCategories});
 
-  factory ExploreCategory.fromJson(Map<String, dynamic> json) {
-    List<dynamic> subCategoriesData = json['subcategories'];
-    List<String> subCategoriesList = AppCollection.isCollectionNotEmpty(subCategoriesData) ? subCategoriesData.cast() : [];
-    return ExploreCategory(
+  static ExploreCategory? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? ExploreCategory(
       name: json['category'],
-      subCategories: subCategoriesList
-    );
+      subCategories: JsonUtils.listStringsValue(json['subcategories'])
+    ) : null;
   }
 
   toJson(){
@@ -125,6 +125,17 @@ class ExploreCategory {
     };
   }
 
+  static List<ExploreCategory>? listFromJson(List<dynamic>? jsonList) {
+    List<ExploreCategory>? result;
+    if (jsonList is List) {
+      result = <ExploreCategory>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, ExploreCategory.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
 }
 
 //////////////////////////////
@@ -132,30 +143,30 @@ class ExploreCategory {
 
 class ExploreHelper {
 
-  static String getShortDisplayLocation(Explore explore, Core.LocationData locationData) {
+  static String? getShortDisplayLocation(Explore? explore, Core.Position? locationData) {
     if (explore != null) {
-      Location location = explore.exploreLocation;
+      Location? location = explore.exploreLocation;
       if (location != null) {
         if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
-          double distance = AppLocation.distance(location.latitude, location.longitude, locationData.latitude, locationData.longitude);
+          double distance = LocationUtils.distance(location.latitude!.toDouble(), location.longitude!.toDouble(), locationData.latitude, locationData.longitude);
           return distance.toStringAsFixed(1) + " mi away";
         }
-        if ((location.description != null) && location.description.isNotEmpty) {
+        if ((location.description != null) && location.description!.isNotEmpty) {
           return location.description;
         }
         if ((location.name != null) && (explore.exploreTitle != null) && (location.name == explore.exploreTitle)) {
-          if ((location.building != null) && location.building.isNotEmpty) {
+          if ((location.building != null) && location.building!.isNotEmpty) {
             return location.building;
           }
         }
         else {
           String displayName = location.getDisplayName();
-          if ((displayName != null) && displayName.isNotEmpty) {
+          if (displayName.isNotEmpty) {
             return displayName;
           }
         }
         String displayAddress = location.getDisplayAddress();
-        if ((displayAddress != null) && displayAddress.isNotEmpty) {
+        if (displayAddress.isNotEmpty) {
           return displayAddress;
         }
       }
@@ -163,31 +174,31 @@ class ExploreHelper {
     return null;
   }
 
-  static String getLongDisplayLocation(Explore explore, Core.LocationData locationData) {
+  static String? getLongDisplayLocation(Explore? explore, Core.Position? locationData) {
     if (explore != null) {
       String displayText = "";
-      Location location = explore.exploreLocation;
+      Location? location = explore.exploreLocation;
       if (location != null) {
         if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
-          double distance = AppLocation.distance(location.latitude, location.longitude, locationData.latitude, locationData.longitude);
+          double distance = LocationUtils.distance(location.latitude!.toDouble(), location.longitude!.toDouble(), locationData.latitude, locationData.longitude);
           displayText = distance.toStringAsFixed(1) + " mi away";
         }
-        if ((location.description != null) && location.description.isNotEmpty) {
-          return displayText += (displayText.isNotEmpty ? ", " : "")  + location.description;
+        if ((location.description != null) && location.description!.isNotEmpty) {
+          return displayText += (displayText.isNotEmpty ? ", " : "")  + location.description!;
         }
         if ((location.name != null) && (explore.exploreTitle != null) && (location.name == explore.exploreTitle)) {
-          if ((location.building != null) && location.building.isNotEmpty) {
-            return displayText += (displayText.isNotEmpty ? ", " : "")  + location.building;
+          if ((location.building != null) && location.building!.isNotEmpty) {
+            return displayText += (displayText.isNotEmpty ? ", " : "")  + location.building!;
           }
         }
         else {
           String displayName = location.getDisplayName();
-          if ((displayName != null) && displayName.isNotEmpty) {
+          if (displayName.isNotEmpty) {
             return displayText += (displayText.isNotEmpty ? ", " : "")  + displayName;
           }
         }
         String displayAddress = location.getDisplayAddress();
-        if ((displayAddress != null) && displayAddress.isNotEmpty) {
+        if ( displayAddress.isNotEmpty) {
           return displayText += (displayText.isNotEmpty ? ", " : "")  + displayAddress;
         }
       }
@@ -195,8 +206,8 @@ class ExploreHelper {
     return null;
   }
 
-  static String getExploresListDisplayTitle(List<Explore> exploresList) {
-    String exploresType;
+  static String? getExploresListDisplayTitle(List<Explore>? exploresList) {
+    String? exploresType;
     if (exploresList != null) {
       for (Explore explore in exploresList) {
         String exploreType = explore.runtimeType.toString().toLowerCase();
@@ -224,7 +235,7 @@ class ExploreHelper {
     }
   }
 
-  static String getExploreTypeText(Explore explore) {
+  static String? getExploreTypeText(Explore? explore) {
     if (explore != null) {
       if (explore is Event) {
         bool isVirtual = explore.isVirtual ?? false;

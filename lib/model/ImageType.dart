@@ -15,15 +15,15 @@
  */
 
 class ImageType {
-  String identifier;
-  int width;
+  String? identifier;
+  int? width;
 
   ImageType({this.identifier, this.width});
 
-  factory ImageType.fromJson(Map<String, dynamic> json) {
-    return ImageType(
+  static ImageType? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? ImageType(
         identifier: json['identifier'],
         width: json['width']
-    );
+    ) : null;
   }
 }

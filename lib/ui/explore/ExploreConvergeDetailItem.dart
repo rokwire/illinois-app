@@ -17,14 +17,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class ExploreConvergeDetailItem extends StatelessWidget{
-  final String eventConvergeUrl;
-  final int eventConvergeScore;
+  final String? eventConvergeUrl;
+  final int? eventConvergeScore;
 
-  const ExploreConvergeDetailItem({Key key, this.eventConvergeUrl, this.eventConvergeScore}) : super(key: key);
+  const ExploreConvergeDetailItem({Key? key, this.eventConvergeUrl, this.eventConvergeScore}) : super(key: key);
 
 
   @override
@@ -69,7 +69,7 @@ class ExploreConvergeDetailItem extends StatelessWidget{
         visible: hasConvergeUrl(),
         child:  Padding(
           padding: EdgeInsets.only(left: 3),
-          child: Image.asset('images/icon-more-info.png'),
+          child: Image.asset('images/icon-more-info.png', excludeFromSemantics: true),
         ),
       );
   }
@@ -79,18 +79,18 @@ class ExploreConvergeDetailItem extends StatelessWidget{
         eventConvergeScore.toString() + "% ",
 //           + Localization().getString("widget.card.label.converge"),
         style: TextStyle(
-            fontFamily: Styles().fontFamilies.medium,
+            fontFamily: Styles().fontFamilies!.medium,
             fontSize: 14,
-            color: Styles().colors.mediumGray)
+            color: Styles().colors!.mediumGray)
     );
   }
 
   bool hasConvergeUrl(){
-    return !AppString.isStringEmpty(eventConvergeUrl);
+    return !StringUtils.isEmpty(eventConvergeUrl);
   }
 
   bool hasConvergeScore(){
-    return (eventConvergeScore != null) && eventConvergeScore>0;
+    return (eventConvergeScore != null) && eventConvergeScore!>0;
   }
 
   bool hasConvergeContent(){
@@ -104,10 +104,10 @@ class ExploreConvergeDetailItem extends StatelessWidget{
 }
 
 class ExploreConvergeDetailButton extends ExploreConvergeDetailItem{
-  final String eventConvergeUrl;
-  final int eventConvergeScore;
+  final String? eventConvergeUrl;
+  final int? eventConvergeScore;
 
-  const ExploreConvergeDetailButton({Key key, this.eventConvergeUrl, this.eventConvergeScore}) : 
+  const ExploreConvergeDetailButton({Key? key, this.eventConvergeUrl, this.eventConvergeScore}) : 
         super(eventConvergeScore: eventConvergeScore, eventConvergeUrl: eventConvergeUrl);
 
   @override
@@ -121,7 +121,7 @@ class ExploreConvergeDetailButton extends ExploreConvergeDetailItem{
 
         ),
       ),
-      Text( Localization().getString("widget.card.label.converge")),
+      Text( Localization().getString("widget.card.label.converge")!),
       Container(width: 5,),
 //      Image.asset('images/chevron-right.png')
 

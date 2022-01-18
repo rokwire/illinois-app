@@ -16,31 +16,34 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:flutter_html/flutter_html.dart' as FlutterHtml;
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter/webview_flutter.dart' as FlutterWebView;
 
 class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPageAttributes{
-  final String url;
-  final String analyticsName;
-  final String title;
+  final String? url;
+  final String? analyticsName;
+  final String? title;
   final bool hideToolBar;
 
-  WebPanel({@required this.url, this.analyticsName, this.title = "", this.hideToolBar = false});
+  WebPanel({required this.url, this.analyticsName, this.title = "", this.hideToolBar = false});
 
   @override
   _WebPanelState createState() => _WebPanelState();
 
   @override
-  String get analyticsPageName {
+  String? get analyticsPageName {
     return analyticsName;
   }
 
@@ -52,16 +55,30 @@ class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPag
 
 class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
-  _OnlineStatus _onlineStatus;
-  bool _pageLoaded = false;
-
+  bool? _isOnline;
+  bool? _isTrackingEnabled;
+  bool _isPageLoading = true;
   bool _isForeground = true;
 
   @override
   void initState() {
     super.initState();
-    _checkOnlineStatus();
     NotificationService().subscribe(this, AppLivecycle.notifyStateChanged);
+    if (Platform.isAndroid) {
+      FlutterWebView.WebView.platform = FlutterWebView.SurfaceAndroidWebView();
+    }
+    _getOnline().then((bool isOnline) {
+      setState(() {
+        _isOnline = isOnline;
+      });
+      if (isOnline) {
+        _getTrackingEnabled().then((bool trackingEnabled) {
+          setState(() {
+            _isTrackingEnabled = trackingEnabled;
+          });
+        });
+      }
+    });
   }
 
   @override
@@ -72,96 +89,130 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
-          appBar: _getHeaderBar(),
-          backgroundColor: Styles().colors.background,
-          body: Column(
-            children: <Widget>[
-              Expanded(
-                  child: (_onlineStatus == _OnlineStatus.offline)
-                      ? _buildError()
-                      : Stack(
-                    children: _buildWebView(),
-                  )
-              ),
-              widget.hideToolBar? Container() :TabBarWidget()
-            ],
-          ));
+    Widget contentWidget;
+    if (_isOnline == false) {
+      contentWidget = _buildStatus(
+        title: Localization().getStringEx("panel.web.offline.title", "Web Content Not Available"),
+        message: Localization().getStringEx("panel.web.offline.message", "You need to be online in order to access web content. Please check your Internet connection."),
+      );
+    }
+    else if (_isTrackingEnabled == false) {
+      contentWidget = _buildStatus(
+        title: Localization().getStringEx("panel.web.tracking_disabled.title", "Web Content Blocked"),
+        message: sprintf(Localization().getStringEx("panel.web.tracking_disabled.message", "You have opted to deny cookie usage for web content in this app, therefore we have blocked access to web sites. If you change your mind, change your preference <a href='%s'>here</a>. Your phone Settings may also need to have Privacy > Tracking enabled.")!, [NativeCommunicator().appSettingsUrl]),
+      );
+    }
+    else if ((_isOnline == true) && (_isTrackingEnabled == true)) {
+      contentWidget = _buildWebView();
+    }
+    else {
+      contentWidget = _buildInitializing();
+    }
+
+    return Scaffold(
+      appBar: _getHeaderBar(),
+      backgroundColor: Styles().colors!.background,
+      body: Column(children: <Widget>[
+        Expanded(child: contentWidget),
+        widget.hideToolBar ? Container() : TabBarWidget()
+      ],),);
   }
 
-  List<Widget> _buildWebView() {
-    List<Widget> list = [];
-    list.add(Visibility(
-      visible: _isForeground,
-      child: WebView(
+  Widget _buildWebView() {
+    return Stack(children: [
+      Visibility(visible: _isForeground,
+        child: FlutterWebView.WebView(
         initialUrl: widget.url,
-        javascriptMode: JavascriptMode.unrestricted,
+        javascriptMode: FlutterWebView.JavascriptMode.unrestricted,
         navigationDelegate: _processNavigation,
         onPageFinished: (url) {
           setState(() {
-            _pageLoaded = true;
+            _isPageLoading = false;
           });
-        },
-        ),
-    ));
-
-    if (!_pageLoaded) {
-      list.add(Center(child: CircularProgressIndicator()));
-    }
-
-    return list;
+        },),),
+      Visibility(visible: _isPageLoading,
+        child: Center(
+          child: CircularProgressIndicator(),
+      )),
+    ],);
   }
 
-  FutureOr<NavigationDecision> _processNavigation(NavigationRequest navigation) {
+  FutureOr<FlutterWebView.NavigationDecision> _processNavigation(FlutterWebView.NavigationRequest navigation) {
     String url = navigation.url;
-    if (AppUrl.launchInternal(url)) {
-      return NavigationDecision.navigate;
+    if (UrlUtils.launchInternal(url)) {
+      return FlutterWebView.NavigationDecision.navigate;
     }
     else {
       launch(url);
-      return NavigationDecision.prevent;
+      return FlutterWebView.NavigationDecision.prevent;
     }
   }
 
-  Widget _buildError(){
-    return Center(
-      child: Container(
-          width: 280,
-          child: Text(
-            Localization().getStringEx(
-                'panel.web.offline.message', 'You need to be online in order to perform this operation. Please check your Internet connection.'),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 18,
-              color: Styles().colors.fillColorPrimary,
-            ),
-          )),
+  Widget _buildStatus({String? title, String? message}) {
+    List<Widget> contentList = <Widget>[];
+    contentList.add(Expanded(flex: 1, child: Container()));
+    
+    if (title != null) {
+      contentList.add(FlutterHtml.Html(data: title,
+          onLinkTap: (url, context, attributes, element) => _onTapStatusLink(url),
+          style: { "body": FlutterHtml.Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: FlutterHtml.FontSize(32), textAlign: TextAlign.center, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+      );
+    }
+
+    if ((title != null) && (message != null)) {
+      contentList.add(Container(height: 48));
+    }
+
+    if ((message != null)) {
+      contentList.add(FlutterHtml.Html(data: message,
+        onLinkTap: (url, context, attributes, element) => _onTapStatusLink(url),
+        style: { "body": FlutterHtml.Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FlutterHtml.FontSize(20), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+      );
+    }
+
+    contentList.add(Expanded(flex: 3, child: Container()));
+
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+      Column(mainAxisSize: MainAxisSize.max, crossAxisAlignment: CrossAxisAlignment.center, children: contentList,)
     );
   }
 
+  Widget _buildInitializing(){
+    return Center(child:
+      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors!.fillColorPrimary!),),
+    );
+  }
 
-  void _checkOnlineStatus() async {
+  static Future<bool> _getOnline() async {
+    List<InternetAddress>? result;
     try {
-      final result = await InternetAddress.lookup('www.example.com');
-      setState(() {
-        _onlineStatus = (result.isNotEmpty && result[0].rawAddress.isNotEmpty)
-            ? _OnlineStatus.online
-            : _OnlineStatus.offline;
-      });
+      result = await InternetAddress.lookup('www.example.com');
     } on SocketException catch (_) {
-      setState(() {
-        _onlineStatus = _OnlineStatus.offline;
-      });
+    }
+    return ((result != null) && result.isNotEmpty && result.first.rawAddress.isNotEmpty);
+  }
+
+  static Future<bool> _getTrackingEnabled() async {
+    AuthorizationStatus? status = await NativeCommunicator().queryTrackingAuthorization('query');
+    if (status == AuthorizationStatus.NotDetermined) {
+      status = await NativeCommunicator().queryTrackingAuthorization('request');
+    }
+    return (status == AuthorizationStatus.Allowed);
+  }
+
+  PreferredSizeWidget _getHeaderBar() {
+    return SimpleHeaderBarWithBack(context: context,
+      titleWidget: Text(widget.title!, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+  }
+
+  void _onTapStatusLink(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      launch(url!);
     }
   }
 
-  Widget _getHeaderBar() {
-    return SimpleHeaderBarWithBack(context: context,
-      titleWidget: Text(widget.title, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
-  }
-
   void onNotification(String name, dynamic param){
-    if(name == AppLivecycle.notifyStateChanged) {
+    if (name == AppLivecycle.notifyStateChanged) {
       setState(() {
         _isForeground = (param == AppLifecycleState.resumed);
       });
@@ -170,4 +221,3 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
 }
 
-enum _OnlineStatus { online, offline }

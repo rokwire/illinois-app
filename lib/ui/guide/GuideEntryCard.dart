@@ -1,23 +1,22 @@
 
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideEntryCard extends StatefulWidget {
-  final Map<String, dynamic> guideEntry;
+  final Map<String, dynamic>? guideEntry;
   GuideEntryCard(this.guideEntry);
 
   _GuideEntryCardState createState() => _GuideEntryCardState();
@@ -25,7 +24,7 @@ class GuideEntryCard extends StatefulWidget {
 
 class _GuideEntryCardState extends State<GuideEntryCard> implements NotificationsListener {
 
-  bool _isFavorite;
+  late bool _isFavorite;
 
   @override
   void initState() {
@@ -55,14 +54,14 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
 
   @override
   Widget build(BuildContext context) {
-    String titleHtml = Guide().entryListTitle(widget.guideEntry);
-    String descriptionHtml = Guide().entryListDescription(widget.guideEntry);
+    String? titleHtml = Guide().entryListTitle(widget.guideEntry);
+    String? descriptionHtml = Guide().entryListDescription(widget.guideEntry);
     bool isReminder = Guide().isEntryReminder(widget.guideEntry);
-    String reminderDate = isReminder ? AppDateTime().formatDateTime(Guide().reminderDate(widget.guideEntry), format: 'MMM dd', ignoreTimeZone: true) : null;
+    String? reminderDate = isReminder ? AppDateTime().formatDateTime(Guide().reminderDate(widget.guideEntry), format: 'MMM dd', ignoreTimeZone: true) : null;
     return Container(
       decoration: BoxDecoration(
-          color: Styles().colors.white,
-          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+          color: Styles().colors!.white,
+          boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
       ),
       clipBehavior: Clip.none,
@@ -74,17 +73,17 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
                 Padding(padding: EdgeInsets.only(right: 12), child:
                 Html(data: titleHtml ?? '',
                   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                  style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),),
+                  style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),),
                 Container(height: isReminder ? 4 : 8,),
                 isReminder ?
                   Text(reminderDate ?? '',
-                    style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.medium),) :
+                    style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),) :
                   Html(data: descriptionHtml ?? '',
                     onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                    style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+                    style: { "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
               ],),
           ),)),
-        Container(color: Styles().colors.accentColor3, height: 4),
+        Container(color: Styles().colors!.accentColor3, height: 4),
         Visibility(visible: Auth2().canFavorite, child:
           Align(alignment: Alignment.topRight, child:
           Semantics(
@@ -97,26 +96,26 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
             button: true,
             child:
             GestureDetector(onTap: _onTapFavorite, child:
-              Container(padding: EdgeInsets.all(9), child:
+              Container(padding: EdgeInsets.only(top:9, right:9, left: 20, bottom: 20), child:
                 Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
           ),)),),),
       ],),
     );
   }
 
-  void _onTapLink(String url) {
+  void _onTapLink(String? url) {
     Analytics.instance.logSelect(target: 'Link: $url');
-    if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
-        launch(url);
+        launch(url!);
       }
     }
   }
 
   void _onTapFavorite() {
-    String title = Guide().entryTitle(widget.guideEntry, stripHtmlTags: true);
+    String? title = Guide().entryTitle(widget.guideEntry, stripHtmlTags: true);
     Analytics.instance.logSelect(target: "Favorite: $title");
     Auth2().prefs?.toggleFavorite(GuideFavorite(id: guideEntryId, title: title,));
   }
@@ -126,7 +125,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideEntryId,)));
   }
 
-  String get guideEntryId {
+  String? get guideEntryId {
     return Guide().entryId(widget.guideEntry);
   } 
 }

@@ -5,35 +5,35 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 ////////////////////////////////
 // Auth2Token
 
 class Auth2Token {
-  final String idToken;
-  final String accessToken;
-  final String refreshToken;
-  final String tokenType;
+  final String? idToken;
+  final String? accessToken;
+  final String? refreshToken;
+  final String? tokenType;
   
   Auth2Token({this.accessToken, this.refreshToken, this.idToken, this.tokenType});
 
-  factory Auth2Token.fromOther(Auth2Token value, {String idToken, String accessToken, String refreshToken, String tokenType }) {
+  static Auth2Token? fromOther(Auth2Token? value, {String? idToken, String? accessToken, String? refreshToken, String? tokenType }) {
     return (value != null) ? Auth2Token(
-      idToken: idToken ?? value?.idToken,
-      accessToken: accessToken ?? value?.accessToken,
-      refreshToken: refreshToken ?? value?.refreshToken,
-      tokenType: tokenType ?? value?.tokenType,
+      idToken: idToken ?? value.idToken,
+      accessToken: accessToken ?? value.accessToken,
+      refreshToken: refreshToken ?? value.refreshToken,
+      tokenType: tokenType ?? value.tokenType,
     ) : null;
   }
 
-  factory Auth2Token.fromJson(Map<String, dynamic> json) {
+  static Auth2Token? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2Token(
-      idToken: AppJson.stringValue(json['id_token']),
-      accessToken: AppJson.stringValue(json['access_token']),
-      refreshToken: AppJson.stringValue(json['refresh_token']),
-      tokenType: AppJson.stringValue(json['token_type']),
+      idToken: JsonUtils.stringValue(json['id_token']),
+      accessToken: JsonUtils.stringValue(json['access_token']),
+      refreshToken: JsonUtils.stringValue(json['refresh_token']),
+      tokenType: JsonUtils.stringValue(json['token_type']),
     ) : null;
   }
 
@@ -46,12 +46,25 @@ class Auth2Token {
     };
   }
 
+  bool operator ==(o) =>
+    (o is Auth2Token) &&
+      (o.idToken == idToken) &&
+      (o.accessToken == accessToken) &&
+      (o.refreshToken == refreshToken) &&
+      (o.tokenType == tokenType);
+
+  int get hashCode =>
+    (idToken?.hashCode ?? 0) ^
+    (accessToken?.hashCode ?? 0) ^
+    (refreshToken?.hashCode ?? 0) ^
+    (tokenType?.hashCode ?? 0);
+
   bool get isValid {
-    return AppString.isStringNotEmpty(accessToken) && AppString.isStringNotEmpty(refreshToken) && AppString.isStringNotEmpty(tokenType);
+    return StringUtils.isNotEmpty(accessToken) && StringUtils.isNotEmpty(refreshToken) && StringUtils.isNotEmpty(tokenType);
   }
 
   bool get isValidUiuc {
-    return AppString.isStringNotEmpty(accessToken) && AppString.isStringNotEmpty(idToken) && AppString.isStringNotEmpty(tokenType);
+    return StringUtils.isNotEmpty(accessToken) && StringUtils.isNotEmpty(idToken) && StringUtils.isNotEmpty(tokenType);
   }
 }
 
@@ -60,7 +73,7 @@ class Auth2Token {
 
 enum Auth2LoginType { anonymous, email, phone, phoneTwilio, oidc, oidcIllinois }
 
-String auth2LoginTypeToString(Auth2LoginType value) {
+String? auth2LoginTypeToString(Auth2LoginType value) {
   switch (value) {
     case Auth2LoginType.anonymous: return 'anonymous';
     case Auth2LoginType.email: return 'email';
@@ -69,10 +82,9 @@ String auth2LoginTypeToString(Auth2LoginType value) {
     case Auth2LoginType.oidc: return 'oidc';
     case Auth2LoginType.oidcIllinois: return 'illinois_oidc';
   }
-  return null;
 }
 
-Auth2LoginType auth2LoginTypeFromString(String value) {
+Auth2LoginType? auth2LoginTypeFromString(String? value) {
   if (value == 'anonymous') {
     return Auth2LoginType.anonymous;
   } 
@@ -98,26 +110,26 @@ Auth2LoginType auth2LoginTypeFromString(String value) {
 // Auth2Account
 
 class Auth2Account {
-  final String id;
-  final Auth2UserProfile profile;
-  final Auth2UserPrefs prefs;
-  final List<Auth2StringEntry> permissions;
-  final List<Auth2StringEntry> roles;
-  final List<Auth2StringEntry> groups;
-  final List<Auth2Type> authTypes;
+  final String? id;
+  final Auth2UserProfile? profile;
+  final Auth2UserPrefs? prefs;
+  final List<Auth2StringEntry>? permissions;
+  final List<Auth2StringEntry>? roles;
+  final List<Auth2StringEntry>? groups;
+  final List<Auth2Type>? authTypes;
   
   
   Auth2Account({this.id, this.profile, this.prefs, this.permissions, this.roles, this.groups, this.authTypes});
 
-  factory Auth2Account.fromJson(Map<String, dynamic> json, { Auth2UserPrefs prefs, Auth2UserProfile profile }) {
+  static Auth2Account? fromJson(Map<String, dynamic>? json, { Auth2UserPrefs? prefs, Auth2UserProfile? profile }) {
     return (json != null) ? Auth2Account(
-      id: AppJson.stringValue(json['id']),
-      profile: Auth2UserProfile.fromJson(AppJson.mapValue(json['profile'])) ?? profile,
-      prefs: Auth2UserPrefs.fromJson(AppJson.mapValue(json['preferences'])) ?? prefs, //TBD Auth2
-      permissions: Auth2StringEntry.listFromJson(AppJson.listValue(json['permissions'])),
-      roles: Auth2StringEntry.listFromJson(AppJson.listValue(json['roles'])),
-      groups: Auth2StringEntry.listFromJson(AppJson.listValue(json['groups'])),
-      authTypes: Auth2Type.listFromJson(AppJson.listValue(json['auth_types'])),
+      id: JsonUtils.stringValue(json['id']),
+      profile: Auth2UserProfile.fromJson(JsonUtils.mapValue(json['profile'])) ?? profile,
+      prefs: Auth2UserPrefs.fromJson(JsonUtils.mapValue(json['preferences'])) ?? prefs, //TBD Auth2
+      permissions: Auth2StringEntry.listFromJson(JsonUtils.listValue(json['permissions'])),
+      roles: Auth2StringEntry.listFromJson(JsonUtils.listValue(json['roles'])),
+      groups: Auth2StringEntry.listFromJson(JsonUtils.listValue(json['groups'])),
+      authTypes: Auth2Type.listFromJson(JsonUtils.listValue(json['auth_types'])),
     ) : null;
   }
 
@@ -145,17 +157,17 @@ class Auth2Account {
   int get hashCode =>
     (id?.hashCode ?? 0) ^
     (profile?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(permissions) ?? 0) ^
-    (DeepCollectionEquality().hash(roles) ?? 0) ^
-    (DeepCollectionEquality().hash(groups) ?? 0) ^
-    (DeepCollectionEquality().hash(authTypes) ?? 0);
+    (DeepCollectionEquality().hash(permissions)) ^
+    (DeepCollectionEquality().hash(roles)) ^
+    (DeepCollectionEquality().hash(groups)) ^
+    (DeepCollectionEquality().hash(authTypes));
 
   bool get isValid {
-    return (id != null) && id.isNotEmpty /* && (profile != null) && profile.isValid*/;
+    return (id != null) && id!.isNotEmpty /* && (profile != null) && profile.isValid*/;
   }
 
-  Auth2Type get authType {
-    return ((authTypes != null) && (0 < authTypes.length)) ? authTypes?.first : null;
+  Auth2Type? get authType {
+    return ((authTypes != null) && (0 < authTypes!.length)) ? authTypes?.first : null;
   }
 
   bool hasRole(String role) => (Auth2StringEntry.findInList(roles, name: role) != null);
@@ -167,24 +179,24 @@ class Auth2Account {
 // Auth2UserProfile
 
 class Auth2UserProfile {
-  String _id;
-  String _firstName;
-  String _middleName;
-  String _lastName;
-  int    _birthYear;
-  String _photoUrl;
+  String? _id;
+  String? _firstName;
+  String? _middleName;
+  String? _lastName;
+  int?    _birthYear;
+  String? _photoUrl;
 
-  String _email;
-  String _phone;
+  String? _email;
+  String? _phone;
   
-  String _address;
-  String _state;
-  String _zip;
-  String _country;
+  String? _address;
+  String? _state;
+  String? _zip;
+  String? _country;
   
-  Auth2UserProfile({String id, String firstName, String middleName, String lastName, int birthYear, String photoUrl,
-    String email, String phone,
-    String address, String state, String zip, String country
+  Auth2UserProfile({String? id, String? firstName, String? middleName, String? lastName, int? birthYear, String? photoUrl,
+    String? email, String? phone,
+    String? address, String? state, String? zip, String? country
   }):
     _id = id,
     _firstName = firstName,
@@ -202,22 +214,22 @@ class Auth2UserProfile {
     _country = country;
   
 
-  factory Auth2UserProfile.fromJson(Map<String, dynamic> json) {
+  static Auth2UserProfile? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2UserProfile(
-      id: AppJson.stringValue(json['id']),
-      firstName: AppJson.stringValue(json['first_name']),
-      middleName: AppJson.stringValue(json['middle_name']),
-      lastName: AppJson.stringValue(json['last_name']),
-      birthYear: AppJson.intValue(json['birth_year']),
-      photoUrl: AppJson.stringValue(json['photo_url']),
+      id: JsonUtils.stringValue(json['id']),
+      firstName: JsonUtils.stringValue(json['first_name']),
+      middleName: JsonUtils.stringValue(json['middle_name']),
+      lastName: JsonUtils.stringValue(json['last_name']),
+      birthYear: JsonUtils.intValue(json['birth_year']),
+      photoUrl: JsonUtils.stringValue(json['photo_url']),
 
-      email: AppJson.stringValue(json['email']),
-      phone: AppJson.stringValue(json['phone']),
+      email: JsonUtils.stringValue(json['email']),
+      phone: JsonUtils.stringValue(json['phone']),
   
-      address: AppJson.stringValue(json['address']),
-      state: AppJson.stringValue(json['state']),
-      zip: AppJson.stringValue(json['zip']),
-      country: AppJson.stringValue(json['country']),
+      address: JsonUtils.stringValue(json['address']),
+      state: JsonUtils.stringValue(json['state']),
+      zip: JsonUtils.stringValue(json['zip']),
+      country: JsonUtils.stringValue(json['country']),
     ) : null;
   }
 
@@ -225,10 +237,10 @@ class Auth2UserProfile {
     return Auth2UserProfile();
   }
 
-  factory Auth2UserProfile.fromOther(Auth2UserProfile other, {
-    String id, String firstName, String middleName, String lastName, int birthYear, String photoUrl,
-    String email, String phone,
-    String address, String state, String zip, String country}) {
+  static Auth2UserProfile? fromOther(Auth2UserProfile? other, {
+    String? id, String? firstName, String? middleName, String? lastName, int? birthYear, String? photoUrl,
+    String? email, String? phone,
+    String? address, String? state, String? zip, String? country}) {
 
     return (other != null) ? Auth2UserProfile(
       id: id ?? other._id,
@@ -300,7 +312,7 @@ class Auth2UserProfile {
     (_zip?.hashCode ?? 0) ^
     (_country?.hashCode ?? 0);
 
-  bool apply(Auth2UserProfile profile) {
+  bool apply(Auth2UserProfile? profile) {
     bool modified = false;
     if (profile != null) {
       if ((profile._id != null) && (profile._id != _id)) {
@@ -357,38 +369,38 @@ class Auth2UserProfile {
     return modified;
   }
   
-  String get id => _id;
-  String get firstName => _firstName;
-  String get middleName => _middleName;
-  String get lastName => _lastName;
-  int    get birthYear => _birthYear;
-  String get photoUrl => _photoUrl;
+  String? get id => _id;
+  String? get firstName => _firstName;
+  String? get middleName => _middleName;
+  String? get lastName => _lastName;
+  int?    get birthYear => _birthYear;
+  String? get photoUrl => _photoUrl;
 
-  String get email => _email;
-  String get phone => _phone;
+  String? get email => _email;
+  String? get phone => _phone;
   
-  String get address => _address;
-  String get state => _state;
-  String get zip => _zip;
-  String get country => _country;
+  String? get address => _address;
+  String? get state => _state;
+  String? get zip => _zip;
+  String? get country => _country;
 
-  bool   get isValid => AppString.isStringNotEmpty(id);
-  String get fullName => AppString.fullName([firstName, lastName]);
+  bool   get isValid => StringUtils.isNotEmpty(id);
+  String? get fullName => StringUtils.fullName([firstName, lastName]);
 }
 
 ////////////////////////////////
 // Auth2StringEntry
 
 class Auth2StringEntry {
-  final String id;
-  final String name;
+  final String? id;
+  final String? name;
   
   Auth2StringEntry({this.id, this.name});
 
-  factory Auth2StringEntry.fromJson(Map<String, dynamic> json) {
+  static Auth2StringEntry? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2StringEntry(
-      id: AppJson.stringValue(json['id']),
-      name: AppJson.stringValue(json['name']),
+      id: JsonUtils.stringValue(json['id']),
+      name: JsonUtils.stringValue(json['name']),
     ) : null;
   }
 
@@ -408,19 +420,19 @@ class Auth2StringEntry {
     (id?.hashCode ?? 0) ^
     (name?.hashCode ?? 0);
 
-  static List<Auth2StringEntry> listFromJson(List<dynamic> jsonList) {
-    List<Auth2StringEntry> result;
+  static List<Auth2StringEntry>? listFromJson(List<dynamic>? jsonList) {
+    List<Auth2StringEntry>? result;
     if (jsonList != null) {
       result = <Auth2StringEntry>[];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? Auth2StringEntry.fromJson(jsonEntry) : null);
+        ListUtils.add(result, Auth2StringEntry.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<Auth2StringEntry> contentList) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<Auth2StringEntry>? contentList) {
+    List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = <dynamic>[];
       for (dynamic contentEntry in contentList) {
@@ -430,10 +442,10 @@ class Auth2StringEntry {
     return jsonList;
   }
 
-  static Auth2StringEntry findInList(List<Auth2StringEntry> contentList, { String name }) {
+  static Auth2StringEntry? findInList(List<Auth2StringEntry>? contentList, { String? name }) {
     if (contentList != null) {
-      for (Auth2StringEntry contentEntry in contentList) {
-        if (contentEntry.name == name) {
+      for (Auth2StringEntry? contentEntry in contentList) {
+        if (contentEntry!.name == name) {
           return contentEntry;
         }
       }
@@ -446,28 +458,28 @@ class Auth2StringEntry {
 // Auth2Type
 
 class Auth2Type {
-  final String id;
-  final String identifier;
-  final bool active;
-  final bool active2fa;
-  final String code;
-  final Map<String, dynamic> params;
+  final String? id;
+  final String? identifier;
+  final bool? active;
+  final bool? active2fa;
+  final String? code;
+  final Map<String, dynamic>? params;
   
-  final Auth2UiucUser uiucUser;
-  final Auth2LoginType loginType;
+  final Auth2UiucUser? uiucUser;
+  final Auth2LoginType? loginType;
   
   Auth2Type({this.id, this.identifier, this.active, this.active2fa, this.code, this.params}) :
-    uiucUser = (params != null) ? Auth2UiucUser.fromJson(AppJson.mapValue(params['user'])) : null,
+    uiucUser = (params != null) ? Auth2UiucUser.fromJson(JsonUtils.mapValue(params['user'])) : null,
     loginType = auth2LoginTypeFromString(code);
 
-  factory Auth2Type.fromJson(Map<String, dynamic> json) {
+  static Auth2Type? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2Type(
-      id: AppJson.stringValue(json['id']),
-      identifier: AppJson.stringValue(json['identifier']),
-      active: AppJson.boolValue(json['active']),
-      active2fa: AppJson.boolValue(json['active_2fa']),
-      code: AppJson.stringValue(json['code']),
-      params: AppJson.mapValue(json['params']),
+      id: JsonUtils.stringValue(json['id']),
+      identifier: JsonUtils.stringValue(json['identifier']),
+      active: JsonUtils.boolValue(json['active']),
+      active2fa: JsonUtils.boolValue(json['active_2fa']),
+      code: JsonUtils.stringValue(json['code']),
+      params: JsonUtils.mapValue(json['params']),
     ) : null;
   }
 
@@ -497,33 +509,33 @@ class Auth2Type {
     (active?.hashCode ?? 0) ^
     (active2fa?.hashCode ?? 0) ^
     (code?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(params) ?? 0);
+    (DeepCollectionEquality().hash(params));
 
-  String get uin {
+  String? get uin {
     return (loginType == Auth2LoginType.oidcIllinois) ? identifier : null;
   }
 
-  String get phone {
+  String? get phone {
     return (loginType == Auth2LoginType.phoneTwilio) ? identifier : null;
   }
 
-  String get email {
+  String? get email {
     return (loginType == Auth2LoginType.email) ? identifier : null;
   }
 
-  static List<Auth2Type> listFromJson(List<dynamic> jsonList) {
-    List<Auth2Type> result;
+  static List<Auth2Type>? listFromJson(List<dynamic>? jsonList) {
+    List<Auth2Type>? result;
     if (jsonList != null) {
       result = <Auth2Type>[];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? Auth2Type.fromJson(jsonEntry) : null);
+        ListUtils.add(result, Auth2Type.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<Auth2Type> contentList) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<Auth2Type>? contentList) {
+    List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = <dynamic>[];
       for (dynamic contentEntry in contentList) {
@@ -538,15 +550,15 @@ class Auth2Type {
 // Auth2Error
 
 class Auth2Error {
-  final String status;
-  final String message;
+  final String? status;
+  final String? message;
   
   Auth2Error({this.status, this.message});
 
-  factory Auth2Error.fromJson(Map<String, dynamic> json) {
+  static Auth2Error? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2Error(
-      status: AppJson.stringValue(json['status']),
-      message: AppJson.stringValue(json['message']),
+      status: JsonUtils.stringValue(json['status']),
+      message: JsonUtils.stringValue(json['message']),
     ) : null;
   }
 
@@ -572,27 +584,27 @@ class Auth2Error {
 // Auth2UiucUser
 
 class Auth2UiucUser {
-  final String email;
-  final String firstName;
-  final String lastName;
-  final String middleName;
-  final String identifier;
-  final List<String> groups;
-  final Map<String, dynamic> systemSpecific;
-  final Set<String> groupsMembership;
+  final String? email;
+  final String? firstName;
+  final String? lastName;
+  final String? middleName;
+  final String? identifier;
+  final List<String>? groups;
+  final Map<String, dynamic>? systemSpecific;
+  final Set<String>? groupsMembership;
   
   Auth2UiucUser({this.email, this.firstName, this.lastName, this.middleName, this.identifier, this.groups, this.systemSpecific}) :
     groupsMembership = (groups != null) ? Set.from(groups) : null;
 
-  factory Auth2UiucUser.fromJson(Map<String, dynamic> json) {
+  static Auth2UiucUser? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2UiucUser(
-      email: AppJson.stringValue(json['email']),
-      firstName: AppJson.stringValue(json['first_name']),
-      lastName: AppJson.stringValue(json['last_name']),
-      middleName: AppJson.stringValue(json['middle_name']),
-      identifier: AppJson.stringValue(json['identifier']),
-      groups: AppJson.stringListValue(json['groups']),
-      systemSpecific: AppJson.mapValue(json['system_specific']),
+      email: JsonUtils.stringValue(json['email']),
+      firstName: JsonUtils.stringValue(json['first_name']),
+      lastName: JsonUtils.stringValue(json['last_name']),
+      middleName: JsonUtils.stringValue(json['middle_name']),
+      identifier: JsonUtils.stringValue(json['identifier']),
+      groups: JsonUtils.stringListValue(json['groups']),
+      systemSpecific: JsonUtils.mapValue(json['system_specific']),
     ) : null;
   }
 
@@ -624,34 +636,34 @@ class Auth2UiucUser {
     (lastName?.hashCode ?? 0) ^
     (middleName?.hashCode ?? 0) ^
     (identifier?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(groups) ?? 0) ^
-    (DeepCollectionEquality().hash(systemSpecific) ?? 0);
+    (DeepCollectionEquality().hash(groups)) ^
+    (DeepCollectionEquality().hash(systemSpecific));
 
-  String get uin {
-    return ((systemSpecific != null) ? AppJson.stringValue(systemSpecific['uiucedu_uin']) : null) ?? identifier;
+  String? get uin {
+    return ((systemSpecific != null) ? JsonUtils.stringValue(systemSpecific!['uiucedu_uin']) : null) ?? identifier;
   }
 
-  String get netId {
-    return (systemSpecific != null) ? AppJson.stringValue(systemSpecific['preferred_username']) : null;
+  String? get netId {
+    return (systemSpecific != null) ? JsonUtils.stringValue(systemSpecific!['preferred_username']) : null;
   }
 
-  String get fullName {
-    return AppString.fullName([firstName, middleName, lastName]);
+  String? get fullName {
+    return StringUtils.fullName([firstName, middleName, lastName]);
   }
 
-  static List<Auth2UiucUser> listFromJson(List<dynamic> jsonList) {
-    List<Auth2UiucUser> result;
+  static List<Auth2UiucUser>? listFromJson(List<dynamic>? jsonList) {
+    List<Auth2UiucUser>? result;
     if (jsonList != null) {
       result = <Auth2UiucUser>[];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? Auth2UiucUser.fromJson(jsonEntry) : null);
+        ListUtils.add(result, Auth2UiucUser.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<Auth2UiucUser> contentList) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<Auth2UiucUser>? contentList) {
+    List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = <dynamic>[];
       for (dynamic contentEntry in contentList) {
@@ -668,42 +680,49 @@ class Auth2UiucUser {
 class Auth2UserPrefs {
 
   static const String notifyPrivacyLevelChanged  = "edu.illinois.rokwire.user.prefs.privacy.level.changed";
-  static const String notifyInterestsChanged  = "edu.illinois.rokwire.user.prefs.interests.changed";
-  static const String notifyFavoritesChanged  = "edu.illinois.rokwire.user.prefs.favorites.changed";
-  static const String notifyFavoriteChanged  = "edu.illinois.rokwire.user.prefs.favorite.changed";
-  static const String notifyRolesChanged  = "edu.illinois.rokwire.user.prefs.roles.changed";
-  static const String notifyVoterChanged  = "edu.illinois.rokwire.user.prefs.voter.changed";
-  static const String notifyTagsChanged  = "edu.illinois.rokwire.user.prefs.tags.changed";
-  static const String notifySettingsChanged  = "edu.illinois.rokwire.user.prefs.settings.changed";
-  static const String notifyChanged  = "edu.illinois.rokwire.user.prefs.changed";
+  static const String notifyRolesChanged         = "edu.illinois.rokwire.user.prefs.roles.changed";
+  static const String notifyFavoriteChanged      = "edu.illinois.rokwire.user.prefs.favorite.changed";
+  static const String notifyFavoritesChanged     = "edu.illinois.rokwire.user.prefs.favorites.changed";
+  static const String notifyInterestsChanged     = "edu.illinois.rokwire.user.prefs.interests.changed";
+  static const String notifyFoodChanged          = "edu.illinois.rokwire.user.prefs.food.changed";
+  static const String notifyTagsChanged          = "edu.illinois.rokwire.user.prefs.tags.changed";
+  static const String notifySettingsChanged      = "edu.illinois.rokwire.user.prefs.settings.changed";
+  static const String notifyVoterChanged         = "edu.illinois.rokwire.user.prefs.voter.changed";
+  static const String notifyChanged              = "edu.illinois.rokwire.user.prefs.changed";
 
-  int _privacyLevel;
-  Set<UserRole> _roles;
-  Map<String, Set<String>>  _favorites;
-  Map<String, Set<String>>  _interests;
-  Map<String, bool> _tags;
-  Map<String, dynamic> _settings;
-  Auth2VoterPrefs _voter;
+  static const String _foodIncludedTypes         = "included_types";
+  static const String _foodExcludedIngredients   = "excluded_ingredients";
+  
+  int? _privacyLevel;
+  Set<UserRole>? _roles;
+  Map<String, Set<String>>?  _favorites;
+  Map<String, Set<String>>?  _interests;
+  Map<String, Set<String>>?  _foodFilters;
+  Map<String, bool>? _tags;
+  Map<String, dynamic>? _settings;
+  Auth2VoterPrefs? _voter;
 
-  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites, Map<String, Set<String>> interests, Map<String, bool> tags, Map<String, dynamic> settings, Auth2VoterPrefs voter}) {
+  Auth2UserPrefs({int? privacyLevel, Set<UserRole>? roles, Map<String, Set<String>>? favorites, Map<String, Set<String>>? interests, Map<String, Set<String>>? foodFilters, Map<String, bool>? tags, Map<String, dynamic>? settings, Auth2VoterPrefs? voter}) {
     _privacyLevel = privacyLevel;
     _roles = roles;
     _favorites = favorites;
     _interests = interests;
+    _foodFilters = foodFilters;
     _tags = tags;
     _settings = settings;
     _voter = Auth2VoterPrefs.fromOther(voter, onChanged: _onVoterChanged);
   }
 
-  factory Auth2UserPrefs.fromJson(Map<String, dynamic> json) {
+  static Auth2UserPrefs? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Auth2UserPrefs(
-      privacyLevel: AppJson.intValue(json['privacy_level']),
-      roles: UserRole.setFromJson(AppJson.listValue(json['roles'])),
-      favorites: mapOfStringSetsFromJson(AppJson.mapValue(json['favorites'])),
-      interests: mapOfStringSetsFromJson(AppJson.mapValue(json['interests'])),
-      tags: _tagsFromJson(AppJson.mapValue(json['tags'])),
-      settings: _settingsFromJson(AppJson.mapValue(json['settings'])),
-      voter: Auth2VoterPrefs.fromJson(AppJson.mapValue(json['voter'])),
+      privacyLevel: JsonUtils.intValue(json['privacy_level']),
+      roles: UserRole.setFromJson(JsonUtils.listValue(json['roles'])),
+      favorites: _mapOfStringSetsFromJson(JsonUtils.mapValue(json['favorites'])),
+      interests: _mapOfStringSetsFromJson(JsonUtils.mapValue(json['interests'])),
+      foodFilters: _mapOfStringSetsFromJson(JsonUtils.mapValue(json['food'])),
+      tags: _tagsFromJson(JsonUtils.mapValue(json['tags'])),
+      settings: JsonUtils.mapValue(json['settings']),
+      voter: Auth2VoterPrefs.fromJson(JsonUtils.mapValue(json['voter'])),
     ) : null;
   }
 
@@ -713,9 +732,37 @@ class Auth2UserPrefs {
       roles: Set<UserRole>(),
       favorites: Map<String, Set<String>>(),
       interests: Map<String, Set<String>>(),
+      foodFilters: {
+        _foodIncludedTypes : Set<String>(),
+        _foodExcludedIngredients : Set<String>(),
+      },
       tags: Map<String, bool>(),
-      settings: Map<String, bool>(),
+      settings: Map<String, dynamic>(),
       voter: Auth2VoterPrefs(),
+    );
+  }
+
+  factory Auth2UserPrefs.fromStorage({Map<String, dynamic>? profile, Set<String>? includedFoodTypes, Set<String>? excludedFoodIngredients, Map<String, dynamic>? settings}) {
+    Map<String, dynamic>? privacy = (profile != null) ? JsonUtils.mapValue(profile['privacySettings']) : null;
+    int? privacyLevel = (privacy != null) ? JsonUtils.intValue(privacy['level']) : null;
+    Set<UserRole>? roles = (profile != null) ? UserRole.setFromJson(JsonUtils.listValue(profile['roles'])) : null;
+    Map<String, Set<String>>? favorites = (profile != null) ? _mapOfStringSetsFromJson(JsonUtils.mapValue(profile['favorites'])) : null;
+    Map<String, Set<String>>? interests = (profile != null) ? _interestsFromProfileList(JsonUtils.listValue(profile['interests'])) : null;
+    Map<String, bool>? tags = (profile != null) ? _tagsFromProfileLists(positive: JsonUtils.listValue(profile['positiveInterestTags']), negative: JsonUtils.listValue(profile['negativeInterestTags'])) : null;
+    Auth2VoterPrefs? voter = (profile != null) ? Auth2VoterPrefs.fromJson(profile) : null;
+
+    return Auth2UserPrefs(
+      privacyLevel: privacyLevel,
+      roles: roles ?? Set<UserRole>(),
+      favorites: favorites ?? Map<String, Set<String>>(),
+      interests: interests ?? Map<String, Set<String>>(),
+      foodFilters: {
+        _foodIncludedTypes : includedFoodTypes ?? Set<String>(),
+        _foodExcludedIngredients : excludedFoodIngredients ?? Set<String>(),
+      },
+      tags: tags ?? Map<String, bool>(),
+      settings: settings ?? Map<String, dynamic>(),
+      voter: voter ?? Auth2VoterPrefs(),
     );
   }
 
@@ -723,8 +770,9 @@ class Auth2UserPrefs {
     return {
       'privacy_level' : privacyLevel,
       'roles': UserRole.setToJson(roles),
-      'favorites': mapOfStringSetsToJson(_favorites),
-      'interests': mapOfStringSetsToJson(_interests),
+      'favorites': _mapOfStringSetsToJson(_favorites),
+      'interests': _mapOfStringSetsToJson(_interests),
+      'food': _mapOfStringSetsToJson(_foodFilters),
       'tags': _tags,
       'settings': _settings,
       'voter': _voter
@@ -737,66 +785,83 @@ class Auth2UserPrefs {
       DeepCollectionEquality().equals(o._roles, _roles) &&
       DeepCollectionEquality().equals(o._favorites, _favorites) &&
       DeepCollectionEquality().equals(o._interests, _interests) &&
+      DeepCollectionEquality().equals(o._foodFilters, _foodFilters) &&
       DeepCollectionEquality().equals(o._tags, _tags) &&
       DeepCollectionEquality().equals(o._settings, _settings) &&
       (o._voter == _voter);
 
   int get hashCode =>
     (_privacyLevel?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(_roles) ?? 0) ^
-    (DeepCollectionEquality().hash(_favorites) ?? 0) ^
-    (DeepCollectionEquality().hash(_interests) ?? 0) ^
-    (DeepCollectionEquality().hash(_tags) ?? 0) ^
-    (DeepCollectionEquality().hash(_settings) ?? 0) ^
+    (DeepCollectionEquality().hash(_roles)) ^
+    (DeepCollectionEquality().hash(_favorites)) ^
+    (DeepCollectionEquality().hash(_interests)) ^
+    (DeepCollectionEquality().hash(_foodFilters)) ^
+    (DeepCollectionEquality().hash(_tags)) ^
+    (DeepCollectionEquality().hash(_settings)) ^
     (_voter?.hashCode ?? 0);
 
-  bool apply(Auth2UserPrefs prefs, { bool notify }) {
+  bool apply(Auth2UserPrefs? prefs, { bool? notify }) {
     bool modified = false;
 
     if (prefs != null) {
-      if ((prefs.privacyLevel != null) && (prefs.privacyLevel > 0) && (prefs.privacyLevel != _privacyLevel)) {
+      
+      if ((prefs.privacyLevel != null) && (prefs.privacyLevel! > 0) && (prefs.privacyLevel != _privacyLevel)) {
         _privacyLevel = prefs._privacyLevel;
         if (notify == true) {
           NotificationService().notify(notifyPrivacyLevelChanged);
         }
         modified = true;
       }
-      if ((prefs.roles != null) && prefs.roles.isNotEmpty && !DeepCollectionEquality().equals(prefs.roles, _roles)) {
+      
+      if ((prefs.roles != null) && prefs.roles!.isNotEmpty && !DeepCollectionEquality().equals(prefs.roles, _roles)) {
         _roles = prefs._roles;
         if (notify == true) {
           NotificationService().notify(notifyRolesChanged);
         }
         modified = true;
       }
-      if ((prefs._favorites != null) && prefs._favorites.isNotEmpty && !DeepCollectionEquality().equals(prefs._favorites, _favorites)) {
+      
+      if ((prefs._favorites != null) && prefs.hasFavorites && !DeepCollectionEquality().equals(prefs._favorites, _favorites)) {
         _favorites = prefs._favorites;
         if (notify == true) {
           NotificationService().notify(notifyFavoritesChanged);
         }
         modified = true;
       }
-      if ((prefs._interests != null) && prefs._interests.isNotEmpty && !DeepCollectionEquality().equals(prefs._interests, _interests)) {
+      
+      if ((prefs._interests != null) && prefs._interests!.isNotEmpty && !DeepCollectionEquality().equals(prefs._interests, _interests)) {
         _interests = prefs._interests;
         if (notify == true) {
           NotificationService().notify(notifyInterestsChanged);
         }
         modified = true;
       }
-      if ((prefs._tags != null) && prefs._tags.isNotEmpty && !DeepCollectionEquality().equals(prefs._tags, _tags)) {
+      
+      if ((prefs._foodFilters != null) && prefs.hasFoodFilters && !DeepCollectionEquality().equals(prefs._foodFilters, _foodFilters)) {
+        _foodFilters = prefs._foodFilters;
+        if (notify == true) {
+          NotificationService().notify(notifyInterestsChanged);
+        }
+        modified = true;
+      }
+
+      if ((prefs._tags != null) && prefs._tags!.isNotEmpty && !DeepCollectionEquality().equals(prefs._tags, _tags)) {
         _tags = prefs._tags;
         if (notify == true) {
           NotificationService().notify(notifyTagsChanged);
         }
         modified = true;
       }
-      if ((prefs._settings != null) && prefs._settings.isNotEmpty && !DeepCollectionEquality().equals(prefs._settings, _settings)) {
+      
+      if ((prefs._settings != null) && prefs._settings!.isNotEmpty && !DeepCollectionEquality().equals(prefs._settings, _settings)) {
         _settings = prefs._settings;
         if (notify == true) {
           NotificationService().notify(notifySettingsChanged);
         }
         modified = true;
       }
-      if ((prefs._voter != null) && prefs._voter.isNotEmpty && (prefs._voter != _voter)) {
+      
+      if ((prefs._voter != null) && prefs._voter!.isNotEmpty && (prefs._voter != _voter)) {
         _voter = Auth2VoterPrefs.fromOther(prefs._voter, onChanged: _onVoterChanged);
         if (notify == true) {
           NotificationService().notify(notifyVoterChanged);
@@ -806,14 +871,14 @@ class Auth2UserPrefs {
     }
     return modified;
   }
-  
+
   // Privacy
 
-  int get privacyLevel {
+  int? get privacyLevel {
     return _privacyLevel;
   }
   
-  set privacyLevel(int value) {
+  set privacyLevel(int? value) {
     if (_privacyLevel != value) {
       _privacyLevel = value;
       NotificationService().notify(notifyPrivacyLevelChanged);
@@ -823,11 +888,11 @@ class Auth2UserPrefs {
 
   // Roles
 
-  Set<UserRole> get roles {
+  Set<UserRole>? get roles {
     return _roles;
   } 
   
-  set roles(Set<UserRole> value) {
+  set roles(Set<UserRole>? value) {
     if (_roles != value) {
       _roles = (value != null) ? Set.from(value) : null;
       NotificationService().notify(notifyRolesChanged);
@@ -837,29 +902,33 @@ class Auth2UserPrefs {
 
   // Favorites
 
-  Set<String> getFavorites(String favoriteKey) {
-    return (_favorites != null) ? _favorites[favoriteKey] : null;
+  Set<String>? getFavorites(String favoriteKey) {
+    return (_favorites != null) ? _favorites![favoriteKey] : null;
   }
 
-  bool isFavorite(Favorite favorite) {
-    Set<String> favoriteIdsForKey = (_favorites != null) ? _favorites[favorite?.favoriteKey] : null;
+  bool isFavorite(Favorite? favorite) {
+    Set<String>? favoriteIdsForKey = (_favorites != null) ? _favorites![favorite?.favoriteKey] : null;
     return (favoriteIdsForKey != null) && favoriteIdsForKey.contains(favorite?.favoriteId);
   }
 
-  void toggleFavorite(Favorite favorite) {
+  void toggleFavorite(Favorite? favorite) {
+    if(_favorites == null){
+      _favorites = Map<String, Set<String>>();
+    }
+
     if ((favorite != null) && (_favorites != null)) {
-      Set<String> favoriteIdsForKey = _favorites[favorite?.favoriteKey];
-      bool shouldFavorite = (favoriteIdsForKey == null) || !favoriteIdsForKey.contains(favorite?.favoriteId);
+      Set<String>? favoriteIdsForKey = _favorites![favorite.favoriteKey];
+      bool shouldFavorite = (favoriteIdsForKey == null) || !favoriteIdsForKey.contains(favorite.favoriteId);
       if (shouldFavorite) {
         if (favoriteIdsForKey == null) {
-          _favorites[favorite.favoriteKey] = favoriteIdsForKey = Set<String>();
+          _favorites![favorite.favoriteKey] = favoriteIdsForKey = Set<String>();
         }
-        favoriteIdsForKey.add(favorite.favoriteId);
+        SetUtils.add(favoriteIdsForKey, favorite.favoriteId);
       }
       else {
-        favoriteIdsForKey.remove(favorite?.favoriteId);
+        favoriteIdsForKey.remove(favorite.favoriteId);
         if (favoriteIdsForKey.isEmpty) {
-          _favorites.remove(favorite?.favoriteKey);
+          _favorites!.remove(favorite.favoriteKey);
         }
       }
 
@@ -870,7 +939,7 @@ class Auth2UserPrefs {
     }
   }
 
-  bool isListFavorite(List<Favorite> favorites) {
+  bool isListFavorite(List<Favorite>? favorites) {
     if ((favorites != null) && (_favorites != null)) {
       for (Favorite favorite in favorites) {
         if (!isFavorite(favorite)) {
@@ -882,22 +951,26 @@ class Auth2UserPrefs {
     return false;
   }
 
-  void setListFavorite(List<Favorite> favorites, bool shouldFavorite, {Favorite sourceFavorite}) {
+  void setListFavorite(List<Favorite>? favorites, bool shouldFavorite, {Favorite? sourceFavorite}) {
+    if(_favorites == null){
+      _favorites = Map<String, Set<String>>();
+    }
+
     if ((favorites != null) && (_favorites != null)) {
       for (Favorite favorite in favorites) {
-        Set<String> favoriteIdsForKey = _favorites[favorite?.favoriteKey];
-        bool isFavorite = (favoriteIdsForKey != null) && favoriteIdsForKey.contains(favorite?.favoriteId);
+        Set<String>? favoriteIdsForKey = _favorites![favorite.favoriteKey];
+        bool isFavorite = (favoriteIdsForKey != null) && favoriteIdsForKey.contains(favorite.favoriteId);
         if (isFavorite && !shouldFavorite) {
-          favoriteIdsForKey.remove(favorite?.favoriteId);
+          favoriteIdsForKey.remove(favorite.favoriteId);
           if (favoriteIdsForKey.isEmpty) {
-            _favorites.remove(favorite?.favoriteKey);
+            _favorites!.remove(favorite.favoriteKey);
           }
         }
         else if (!isFavorite && shouldFavorite) {
           if (favoriteIdsForKey == null) {
-            _favorites[favorite.favoriteKey] = favoriteIdsForKey = Set<String>();
+            _favorites![favorite.favoriteKey] = favoriteIdsForKey = Set<String>();
           }
-          favoriteIdsForKey.add(favorite.favoriteId);
+          SetUtils.add(favoriteIdsForKey, favorite.favoriteId);
         }
         //DeviceCalendar().onFavoriteUpdated(favorite, shouldFavorite);
         NotificationService().notify(notifyFavoriteChanged, favorite);
@@ -910,19 +983,33 @@ class Auth2UserPrefs {
     }
   }
 
+  bool get hasFavorites {
+    bool result = false;
+    _favorites?.forEach((String key, Set<String> values) {
+      if (values.isNotEmpty) {
+        result = true;
+      }
+    });
+    return result;
+  }
+
   // Interests
 
-  Iterable<String> get interestCategories {
+  Iterable<String>? get interestCategories {
     return _interests?.keys;
   }
 
-  void toggleInterestCategory(String category) {
+  void toggleInterestCategory(String? category) {
+    if(_interests == null){
+      _interests = Map<String, Set<String>>();
+    }
+
     if ((category != null) && (_interests != null)) {
-      if (_interests.containsKey(category)) {
-        _interests.remove(category);
+      if (_interests!.containsKey(category)) {
+        _interests!.remove(category);
       }
       else {
-        _interests[category] = Set<String>();
+        _interests![category] = Set<String>();
       }
 
       NotificationService().notify(notifyInterestsChanged);
@@ -930,12 +1017,16 @@ class Auth2UserPrefs {
     }
   }
 
-  void applyInterestCategories(Set<String> categories) {
+  void applyInterestCategories(Set<String>? categories) {
+    if(_interests == null){
+      _interests = Map<String, Set<String>>();
+    }
+
     if ((categories != null) && (_interests != null)) {
 
       bool modified = false;
-      Set<String> categoriesToRemove;
-      for (String category in _interests.keys) {
+      Set<String>? categoriesToRemove;
+      for (String category in _interests!.keys) {
         if (!categories.contains(category)) {
           if (categoriesToRemove == null) {
             categoriesToRemove = Set<String>();
@@ -945,15 +1036,15 @@ class Auth2UserPrefs {
       }
 
       for (String category in categories) {
-        if (!_interests.containsKey(category)) {
-          _interests[category] = Set<String>();
+        if (!_interests!.containsKey(category)) {
+          _interests![category] = Set<String>();
           modified = true;
         }
       }
 
       if (categoriesToRemove != null) {
         for (String category in categoriesToRemove) {
-          _interests.remove(category);
+          _interests!.remove(category);
           modified = true;
         }
       }
@@ -965,20 +1056,24 @@ class Auth2UserPrefs {
     }
   }
 
-  Set<String> getInterestsFromCategory(String category) {
-    return ((_interests != null) && (category != null)) ? _interests[category] : null;
+  Set<String>? getInterestsFromCategory(String? category) {
+    return ((_interests != null) && (category != null)) ? _interests![category] : null;
   }
 
-  bool hasInterest(String category, String interest) {
-    Set<String> interests = ((category != null) && (_interests != null)) ? _interests[category] : null;
+  bool? hasInterest(String? category, String? interest) {
+    Set<String>? interests = ((category != null) && (_interests != null)) ? _interests![category] : null;
     return ((interests != null) && (interest != null)) ? interests.contains(interest) : null;
   }
 
-  void toggleInterest(String category, String interest) {
+  void toggleInterest(String? category, String? interest) {
+    if(_interests == null){
+      _interests = Map<String, Set<String>>();
+    }
+
     if ((category != null) && (interest != null) && (_interests != null)) {
-      Set<String> categories = _interests[category];
+      Set<String>? categories = _interests![category];
       if (categories == null) {
-        _interests[category] = categories = Set<String>();
+        _interests![category] = categories = Set<String>();
       }
       if (categories.contains(interest)) {
         categories.remove(interest);
@@ -992,11 +1087,15 @@ class Auth2UserPrefs {
     }
   }
 
-  void toggleInterests(String category, Iterable<String> interests) {
+  void toggleInterests(String? category, Iterable<String>? interests) {
+    if(_interests == null){
+      _interests = Map<String, Set<String>>();
+    }
+
     if ((category != null) && (interests != null) && interests.isNotEmpty && (_interests != null)) {
-      Set<String> categories = _interests[category];
+      Set<String>? categories = _interests![category];
       if (categories == null) {
-        _interests[category] = categories = Set<String>();
+        _interests![category] = categories = Set<String>();
       }
       for (String interest in interests) {
         if (categories.contains(interest)) {
@@ -1012,15 +1111,19 @@ class Auth2UserPrefs {
     }
   }
 
-  void applyInterests(String category, Iterable<String> interests) {
+  void applyInterests(String? category, Iterable<String>? interests) {
+    if(_interests == null){
+      _interests = Map<String, Set<String>>();
+    }
+
     if ((category != null) && (_interests != null)) {
       bool modified = false;
-      if ((interests != null) && !DeepCollectionEquality().equals(_interests[category], interests)) {
-        _interests[category] = Set<String>.from(interests);
+      if ((interests != null) && !DeepCollectionEquality().equals(_interests![category], interests)) {
+        _interests![category] = Set<String>.from(interests);
         modified = true;
       }
-      else if (_interests.containsKey(category)) {
-        _interests.remove(category);
+      else if (_interests!.containsKey(category)) {
+        _interests!.remove(category);
         modified = true;
       }
 
@@ -1034,13 +1137,13 @@ class Auth2UserPrefs {
   void clearInterestsAndTags() {
     bool modified = false;
 
-    if ((_interests == null) || _interests.isNotEmpty) {
+    if ((_interests == null) || _interests!.isNotEmpty) {
       _interests = Map<String, Set<String>>();
       modified = true;
       NotificationService().notify(notifyInterestsChanged);
     }
 
-    if ((_tags == null) || _tags.isNotEmpty) {
+    if ((_tags == null) || _tags!.isNotEmpty) {
       _tags = Map<String, bool>();
       modified = true;
       NotificationService().notify(notifyTagsChanged);
@@ -1055,23 +1158,81 @@ class Auth2UserPrefs {
 
   static const String sportsInterestsCategory = "sports";  
 
-  Set<String> get sportsInterests => getInterestsFromCategory(sportsInterestsCategory);
-  bool hasSportInterest(String sport) => hasInterest(sportsInterestsCategory, sport);
-  void toggleSportInterest(String sport) => toggleInterest(sportsInterestsCategory, sport);
-  void toggleSportInterests(Iterable<String> sports) => toggleInterests(sportsInterestsCategory, sports);
+  Set<String>? get sportsInterests => getInterestsFromCategory(sportsInterestsCategory);
+  bool? hasSportInterest(String? sport) => hasInterest(sportsInterestsCategory, sport);
+  void toggleSportInterest(String? sport) => toggleInterest(sportsInterestsCategory, sport);
+  void toggleSportInterests(Iterable<String>? sports) => toggleInterests(sportsInterestsCategory, sports);
+
+  // Food
+
+  Set<String>? get excludedFoodIngredients {
+    return (_foodFilters != null) ? _foodFilters![_foodExcludedIngredients] : null;
+  }
+
+  set excludedFoodIngredients(Set<String>? value) {
+    if (!SetEquality().equals(excludedFoodIngredients, value)) {
+      if (value != null) {
+        if (_foodFilters != null) {
+          _foodFilters![_foodExcludedIngredients] = value;
+        }
+        else {
+          _foodFilters = { _foodExcludedIngredients : value };
+        }
+      }
+      else if (_foodFilters != null) {
+        _foodFilters!.remove(_foodExcludedIngredients);
+      }
+      NotificationService().notify(notifyFoodChanged);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
+
+  Set<String>? get includedFoodTypes {
+    return (_foodFilters != null) ? _foodFilters![_foodIncludedTypes] : null;
+  }
+
+  set includedFoodTypes(Set<String>? value) {
+    if (!SetEquality().equals(includedFoodTypes, value)) {
+      if (value != null) {
+        if (_foodFilters != null) {
+          _foodFilters![_foodIncludedTypes] = value;
+        }
+        else {
+          _foodFilters = { _foodIncludedTypes : value };
+        }
+      }
+      else if (_foodFilters != null) {
+        _foodFilters!.remove(_foodIncludedTypes);
+      }
+      NotificationService().notify(notifyFoodChanged);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
+
+  bool get hasFoodFilters {
+    return (includedFoodTypes?.isNotEmpty ?? false) || (excludedFoodIngredients?.isNotEmpty ?? false);
+  }
+
+  void clearFoodFilters() {
+    if (hasFoodFilters) {
+      _foodFilters = Map<String, Set<String>>();
+      NotificationService().notify(notifyFoodChanged);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
 
   // Tags
 
-  Set<String> get positiveTags => getTags(positive: true);
+  Set<String>? get positiveTags => getTags(positive: true);
   bool hasPositiveTag(String tag) => hasTag(tag, positive: true);
-  void togglePositiveTag(String tag) => toggleTag(tag, positive: true);
+  void togglePositiveTag(String? tag) => toggleTag(tag, positive: true);
 
-  Set<String> getTags({ bool positive }) {
-    Set<String> tags;
+  Set<String>? getTags({ bool? positive }) {
+    Set<String>? tags;
     if (_tags != null) {
       tags = Set<String>();
-      for (String tag in _tags.keys) {
-        if ((positive == null) || (_tags[tag] == positive)) {
+      for (String tag in _tags!.keys) {
+        if ((positive == null) || (_tags![tag] == positive)) {
           tags.add(tag);
         }
       }
@@ -1079,49 +1240,61 @@ class Auth2UserPrefs {
     return tags;
   }
 
-  bool hasTag(String tag, { bool positive}) {
+  bool hasTag(String? tag, { bool? positive}) {
     if ((_tags != null) && (tag != null)) {
-      bool value = _tags[tag];
+      bool? value = _tags![tag];
       return (value != null) && ((positive == null) || (value == positive));
     }
     return false;
   }
 
-  void toggleTag(String tag, { bool positive = true}) {
+  void toggleTag(String? tag, { bool positive = true}) {
+    if(_tags == null){
+      _tags = Map<String, bool>();
+    }
+
     if ((_tags != null) && (tag != null)) {
-      if (_tags.containsKey(tag)) {
-        _tags.remove(tag);
+      if (_tags!.containsKey(tag)) {
+        _tags!.remove(tag);
       }
       else {
-        _tags[tag] = positive;
+        _tags![tag] = positive;
       }
     }
     NotificationService().notify(notifyTagsChanged);
     NotificationService().notify(notifyChanged, this);
   }
 
-  void addTag(String tag, { bool positive }) {
-    if ((_tags != null) && (tag != null) && (_tags[tag] != positive)) {
-      _tags[tag] = positive;
+  void addTag(String? tag, { bool? positive }) {
+    if(_tags == null){
+      _tags = Map<String, bool>();
+    }
+
+    if ((_tags != null) && (tag != null) && (_tags![tag] != positive)) {
+      _tags![tag] = positive ?? false;
       NotificationService().notify(notifyTagsChanged);
       NotificationService().notify(notifyChanged, this);
     }
   }
 
-  void removeTag(String tag) {
-    if ((_tags != null) && (tag != null) && _tags.containsKey(tag)) {
-      _tags.remove(tag);
+  void removeTag(String? tag) {
+    if ((_tags != null) && (tag != null) && _tags!.containsKey(tag)) {
+      _tags!.remove(tag);
       NotificationService().notify(notifyTagsChanged);
       NotificationService().notify(notifyChanged, this);
     }
   }
 
-  void applyTags(Iterable<String> tags, { bool positive = true }) {
+  void applyTags(Iterable<String>? tags, { bool positive = true }) {
+    if(_tags == null){
+      _tags = Map<String, bool>();
+    }
+
     if ((_tags != null) && (tags != null)) {
       bool modified = false;
       for (String tag in tags) {
-        if (_tags[tag] != positive) {
-          _tags[tag] = positive;
+        if (_tags![tag] != positive) {
+          _tags![tag] = positive;
           modified = true;
         }
       }
@@ -1133,13 +1306,13 @@ class Auth2UserPrefs {
   }
   // Settings
 
-  bool getBoolSetting({String settingName, bool defaultValue}){
-    return AppJson.boolValue(getSetting(settingName: settingName)) ?? defaultValue;
+  bool? getBoolSetting({String? settingName, bool? defaultValue}){
+    return JsonUtils.boolValue(getSetting(settingName: settingName)) ?? defaultValue;
   }
 
-  dynamic getSetting({String settingName}){
+  dynamic getSetting({String? settingName}){
     if(_settings?.isNotEmpty ?? false){
-      return _settings[settingName];
+      return _settings![settingName];
     }
 
     return null;//consider default TBD
@@ -1148,7 +1321,7 @@ class Auth2UserPrefs {
   void applySetting(String settingName, dynamic settingValue){
     if(_settings == null)
       _settings = Map<String, dynamic>();
-    _settings[settingName] = settingValue;
+    _settings![settingName] = settingValue;
 
     NotificationService().notify(notifySettingsChanged);
     NotificationService().notify(notifyChanged, this);
@@ -1156,7 +1329,7 @@ class Auth2UserPrefs {
 
   // Voter
 
-  Auth2VoterPrefs get voter => _voter;
+  Auth2VoterPrefs? get voter => _voter;
 
   void _onVoterChanged() {
     NotificationService().notify(notifyVoterChanged);
@@ -1165,59 +1338,93 @@ class Auth2UserPrefs {
 
   // Helpers
 
-  static Map<String, Set<String>> mapOfStringSetsFromJson(Map<String, dynamic> jsonMap) {
-    Map<String, Set<String>> result;
+  static Map<String, Set<String>>? _mapOfStringSetsFromJson(Map<String, dynamic>? jsonMap) {
+    Map<String, Set<String>>? result;
     if (jsonMap != null) {
       result = Map<String, Set<String>>();
       for (String key in jsonMap.keys) {
-        result[key] = AppJson.setStringsValue(jsonMap[key]);
+        MapUtils.set(result, key, JsonUtils.setStringsValue(jsonMap[key]));
       }
     }
     return result;
   }
 
-  static Map<String, dynamic> mapOfStringSetsToJson(Map<String, Set<String>> contentMap) {
-    Map<String, dynamic> jsonMap;
+  static Map<String, dynamic>? _mapOfStringSetsToJson(Map<String, Set<String>>? contentMap) {
+    Map<String, dynamic>? jsonMap;
     if (contentMap != null) {
       jsonMap = Map<String, dynamic>();
       for (String key in contentMap.keys) {
-        jsonMap[key] = List.from(contentMap[key]);
+        jsonMap[key] = List.from(contentMap[key]!);
       }
     }
     return jsonMap;
   }
 
-  static _tagsFromJson(Map<String, dynamic> json) {
+  static Map<String, bool>? _tagsFromJson(Map<String, dynamic>? json) {
     try { return json?.cast<String, bool>(); }
-    catch(e) { print(e?.toString()); }
+    catch(e) { print(e.toString()); }
+    return null;
   }
 
-  static _settingsFromJson(Map<String, dynamic> json) {
-    try { return json?.cast<String, dynamic>(); }
-    catch(e) { print(e?.toString()); }
+  static Map<String, bool>? _tagsFromProfileLists({List<dynamic>? positive, List<dynamic>? negative}) {
+    Map<String, bool>? result = ((positive != null) || (negative != null)) ? Map<String, bool>() : null;
+
+    if (negative != null) {
+      for (dynamic negativeEntry in negative) {
+        if (negativeEntry is String) {
+          result![negativeEntry] = false;
+        }
+      }
+    }
+
+    if (positive != null) {
+      for (dynamic positiveEntry in positive) {
+        if (positiveEntry is String) {
+          result![positiveEntry] = true;
+        }
+      }
+    }
+    
+    return result;
+  }
+
+  static Map<String, Set<String>>? _interestsFromProfileList(List<dynamic>? jsonList) {
+    Map<String, Set<String>>? result;
+    if (jsonList != null) {
+      result = Map<String, Set<String>>();
+      for (dynamic jsonEntry in jsonList) {
+        if (jsonEntry is Map) {
+          String? category = JsonUtils.stringValue(jsonEntry['category']);
+          if (category != null) {
+            result[category] = JsonUtils.setStringsValue(jsonEntry['subcategories']) ?? Set<String>();
+          }
+        }
+      }
+    }
+    return result;
   }
 }
 
 class Auth2VoterPrefs {
-  bool _registeredVoter;
-  String _votePlace;
-  bool _voterByMail;
-  bool _voted;
+  bool? _registeredVoter;
+  String? _votePlace;
+  bool? _voterByMail;
+  bool? _voted;
   
-  Function onChanged;
+  Function? onChanged;
   
-  Auth2VoterPrefs({bool registeredVoter, String votePlace, bool voterByMail, bool voted, this.onChanged}) :
+  Auth2VoterPrefs({bool? registeredVoter, String? votePlace, bool? voterByMail, bool? voted, this.onChanged}) :
     _registeredVoter = registeredVoter,
     _votePlace = votePlace,
     _voterByMail = voterByMail,
     _voted = voted;
 
-  factory Auth2VoterPrefs.fromJson(Map<String, dynamic> json, { Function onChanged }) {
+  static Auth2VoterPrefs? fromJson(Map<String, dynamic>? json, { Function? onChanged }) {
     return (json != null) ? Auth2VoterPrefs(
-      registeredVoter: AppJson.boolValue(json['registered_voter']),
-      votePlace: AppJson.stringValue(json['vote_place']),
-      voterByMail: AppJson.boolValue(json['voter_by_mail']),
-      voted: AppJson.boolValue(json['voted']),
+      registeredVoter: JsonUtils.boolValue(json['registered_voter']),
+      votePlace: JsonUtils.stringValue(json['vote_place']),
+      voterByMail: JsonUtils.boolValue(json['voter_by_mail']),
+      voted: JsonUtils.boolValue(json['voted']),
     ) : null;
   }
 
@@ -1230,7 +1437,7 @@ class Auth2VoterPrefs {
     };
   }
 
-  factory Auth2VoterPrefs.fromOther(Auth2VoterPrefs other, { Function onChanged }) {
+  static Auth2VoterPrefs? fromOther(Auth2VoterPrefs? other, { Function? onChanged }) {
     return (other != null) ? Auth2VoterPrefs(
       registeredVoter: other.registeredVoter,
       votePlace: other.votePlace,
@@ -1289,32 +1496,32 @@ class Auth2VoterPrefs {
     }
   }
 
-  bool get registeredVoter => _registeredVoter;
-  set registeredVoter(bool value) {
+  bool? get registeredVoter => _registeredVoter;
+  set registeredVoter(bool? value) {
     if (_registeredVoter != value) {
       _registeredVoter = value;
       _notifyChanged();
     }
   }
 
-  String get votePlace => _votePlace;
-  set votePlace(String value) {
+  String? get votePlace => _votePlace;
+  set votePlace(String? value) {
     if (_votePlace != value) {
       _votePlace = value;
       _notifyChanged();
     }
   }
   
-  bool get voterByMail => _voterByMail;
-  set voterByMail(bool value) {
+  bool? get voterByMail => _voterByMail;
+  set voterByMail(bool? value) {
     if (_voterByMail != value) {
       _voterByMail = value;
       _notifyChanged();
     }
   }
 
-  bool get voted => _voted;
-  set voted(bool value) {
+  bool? get voted => _voted;
+  set voted(bool? value) {
     if (_voted != value) {
       _voted = value;
       _notifyChanged();
@@ -1323,7 +1530,7 @@ class Auth2VoterPrefs {
 
   void _notifyChanged() {
     if (onChanged != null) {
-      onChanged();
+      onChanged!();
     }
   }
 }
@@ -1349,11 +1556,11 @@ class UserRole {
 
   const UserRole._internal(this._value);
 
-  factory UserRole.fromString(String value) {
+  static UserRole? fromString(String? value) {
     return (value != null) ? UserRole._internal(value) : null;
   }
 
-  factory UserRole.fromJson(dynamic value) {
+  static UserRole? fromJson(dynamic value) {
     return (value is String) ? UserRole._internal(value) : null;
   }
 
@@ -1371,44 +1578,44 @@ class UserRole {
   @override
   int get hashCode => _value.hashCode;
 
-  static List<UserRole> listFromJson(List<dynamic> jsonList) {
-    List<UserRole> result;
+  static List<UserRole>? listFromJson(List<dynamic>? jsonList) {
+    List<UserRole>? result;
     if (jsonList != null) {
       result = <UserRole>[];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is String) ? UserRole.fromString(jsonEntry) : null);
+        ListUtils.add(result, UserRole.fromString(JsonUtils.stringValue(jsonEntry)));
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<UserRole> contentList) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<UserRole>? contentList) {
+    List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = <dynamic>[];
       for (UserRole contentEntry in contentList) {
-        jsonList.add(contentEntry?.toString());
+        jsonList.add(contentEntry.toString());
       }
     }
     return jsonList;
   }
 
-  static Set<UserRole> setFromJson(List<dynamic> jsonList) {
-    Set<UserRole> result;
+  static Set<UserRole>? setFromJson(List<dynamic>? jsonList) {
+    Set<UserRole>? result;
     if (jsonList != null) {
       result = Set<UserRole>();
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is String) ? UserRole.fromString(jsonEntry) : null);
+        SetUtils.add(result, (jsonEntry is String) ? UserRole.fromString(jsonEntry) : null);
       }
     }
     return result;
   }
 
-  static List<dynamic> setToJson(Set<UserRole> contentSet) {
-    List<dynamic> jsonList;
+  static List<dynamic>? setToJson(Set<UserRole>? contentSet) {
+    List<dynamic>? jsonList;
     if (contentSet != null) {
       jsonList = <dynamic>[];
-      for (UserRole contentEntry in contentSet) {
+      for (UserRole? contentEntry in contentSet) {
         jsonList.add(contentEntry?.toString());
       }
     }
@@ -1421,8 +1628,8 @@ class UserRole {
 // Favorite
 
 abstract class Favorite {
-  String get favoriteId;
-  String get favoriteTitle;
+  String? get favoriteId;
+  String? get favoriteTitle;
   String get favoriteKey;
 }
 
@@ -1436,19 +1643,19 @@ enum Auth2PhoneVerificationMethod { call, sms }
 
 class AuthCard {
 
-  final String uin;
-  final String fullName;
-  final String role;
-  final String studentLevel;
-  final String cardNumber;
-  final String expirationDate;
-  final String libraryNumber;
-  final String magTrack2;
-  final String photoBase64;
+  final String? uin;
+  final String? fullName;
+  final String? role;
+  final String? studentLevel;
+  final String? cardNumber;
+  final String? expirationDate;
+  final String? libraryNumber;
+  final String? magTrack2;
+  final String? photoBase64;
 
   AuthCard({this.uin, this.cardNumber, this.libraryNumber, this.expirationDate, this.fullName, this.role, this.studentLevel, this.magTrack2, this.photoBase64});
 
-  factory AuthCard.fromJson(Map<String, dynamic> json) {
+  static AuthCard? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? AuthCard(
       uin: json['UIN'],
       fullName: json['full_name'],
@@ -1513,8 +1720,8 @@ class AuthCard {
       magTrack2.hashCode ^
       photoBase64.hashCode;
 
-  Future<Uint8List> get photoBytes async {
-    return (photoBase64 != null) ? await compute(base64Decode, photoBase64) : null;
+  Future<Uint8List?>? get photoBytes async {
+    return (photoBase64 != null) ? await compute(base64Decode, photoBase64!) : null;
   }
 
   bool get needsUpdate {

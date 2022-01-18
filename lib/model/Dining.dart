@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Localization.dart';
@@ -24,7 +24,7 @@ import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
 
@@ -32,19 +32,19 @@ import 'package:illinois/utils/Utils.dart';
 /// Dining
 
 class Dining with Explore implements Favorite {
-  String id;
-  String title;
-  String subTitle;
-  String diningType;
-  String shortDescription;
-  String longDescription;
-  String imageURL;
-  Map<String, dynamic> onlineOrder;
-  String placeID;
+  String? id;
+  String? title;
+  String? subTitle;
+  String? diningType;
+  String? shortDescription;
+  String? longDescription;
+  String? imageURL;
+  Map<String, dynamic>? onlineOrder;
+  String? placeID;
 
-  Location location;
-  List<PaymentType> paymentTypes;
-  List<DiningSchedule> diningSchedules;
+  Location? location;
+  List<PaymentType>? paymentTypes;
+  List<DiningSchedule>? diningSchedules;
 
   Dining(
       {this.id,
@@ -60,21 +60,25 @@ class Dining with Explore implements Favorite {
       this.paymentTypes,
       this.diningSchedules});
 
-  factory Dining.fromJson(Map<String, dynamic> json) {
+  static Dining? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
     String id = json['DiningOptionID'].toString();
-    String addressInfo = json["Address"];
+    String? addressInfo = json["Address"];
     List<DiningSchedule> diningSchedules = [];
 
     if(json['DiningSchedules'] != null) {
       List<dynamic> menuSchedules = json['DiningSchedules'];
       for (Map<String, dynamic> menuScheduleData in menuSchedules) {
-        DiningSchedule schedule = DiningSchedule.fromJson(menuScheduleData);
-
-        diningSchedules.add(schedule);
+        DiningSchedule? schedule = DiningSchedule.fromJson(menuScheduleData);
+        if (schedule != null) {
+          diningSchedules.add(schedule);
+        }
       }
 
       diningSchedules.sort((schedule1, schedule2){
-        return schedule1.startTimeUtc.compareTo(schedule2.startTimeUtc);
+        return schedule1.startTimeUtc!.compareTo(schedule2.startTimeUtc!);
       });
     }
 
@@ -116,28 +120,28 @@ class Dining with Explore implements Favorite {
       'MoreInfo': shortDescription,
       'ImageUrl': imageURL,
       'OnLineOrder': onlineOrder,
-      'Address': location.description,
-      'Lat': location.latitude,
-      'Long': location.longitude,
+      'Address': location!.description,
+      'Lat': location!.latitude,
+      'Long': location!.longitude,
       'PaymentTypes': PaymentTypeHelper.paymentTypesToList(paymentTypes),
     };
   }
 
-  static bool canJson(Map<String, dynamic> json) {
+  static bool canJson(Map<String, dynamic>? json) {
     return (json != null) && (json['DiningOptionID'] != null);
   }
 
   // Explore
-  @override String   get exploreId               { return id; }
-  @override String   get exploreTitle            { return title; }
-  @override String   get exploreSubTitle         { return subTitle; }
-  @override String   get exploreShortDescription { return shortDescription; }
-  @override String   get exploreLongDescription  { return longDescription; }
-  @override DateTime get exploreStartDateUtc     { return null; }
-  @override String   get exploreImageURL         { return imageURL; }
-  @override String   get explorePlaceId          { return null; }
-  @override Location get exploreLocation         { return location; }
-  @override Color    get uiColor                 { return Styles().colors.diningColor; }
+  @override String?   get exploreId               { return id; }
+  @override String?   get exploreTitle            { return title; }
+  @override String?   get exploreSubTitle         { return subTitle; }
+  @override String?   get exploreShortDescription { return shortDescription; }
+  @override String?   get exploreLongDescription  { return longDescription; }
+  @override DateTime? get exploreStartDateUtc     { return null; }
+  @override String?   get exploreImageURL         { return imageURL; }
+  @override String?   get explorePlaceId          { return null; }
+  @override Location? get exploreLocation         { return location; }
+  @override Color?    get uiColor                 { return Styles().colors!.diningColor; }
 
   @override
   Map<String, dynamic> get analyticsAttributes {
@@ -151,55 +155,55 @@ class Dining with Explore implements Favorite {
 
 
   static String favoriteKeyName = "diningPlaceIds";
-  @override String get favoriteId => exploreId;
-  @override String get favoriteTitle => title;
+  @override String? get favoriteId => exploreId;
+  @override String? get favoriteTitle => title;
   @override String get favoriteKey => favoriteKeyName;
 
-  String get displayWorkTime {
-    if(diningSchedules != null && diningSchedules.isNotEmpty) {
-      bool useDeviceLocalTime = Storage().useDeviceLocalTimeZone;
-      for(DiningSchedule schedule in diningSchedules){
+  String? get displayWorkTime {
+    if(diningSchedules != null && diningSchedules!.isNotEmpty) {
+      bool? useDeviceLocalTime = Storage().useDeviceLocalTimeZone;
+      for(DiningSchedule schedule in diningSchedules!){
         if((schedule.isOpen) && schedule.isToday){
-          DateTime endDateTime = useDeviceLocalTime ? AppDateTime()
+          DateTime? endDateTime = useDeviceLocalTime! ? AppDateTime()
               .getDeviceTimeFromUtcTime(schedule.endTimeUtc) : schedule
               .endTimeUtc;
           String timeFormat = "h:mma";
           String formattedEndTime = AppDateTime().formatDateTime(
               endDateTime, format: timeFormat,
               ignoreTimeZone: useDeviceLocalTime,
-              showTzSuffix: !useDeviceLocalTime);
+              showTzSuffix: !useDeviceLocalTime)!;
 
-          return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")
-              + schedule.meal.toLowerCase()
-              + Localization().getStringEx("model.dining.schedule.label.until", " until ")
+          return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")!
+              + schedule.meal!.toLowerCase()
+              + Localization().getStringEx("model.dining.schedule.label.until", " until ")!
               + formattedEndTime;
         }
         else if(schedule.isFuture && schedule.isToday){
-          DateTime startDateTime = useDeviceLocalTime ? AppDateTime()
+          DateTime? startDateTime = useDeviceLocalTime! ? AppDateTime()
               .getDeviceTimeFromUtcTime(schedule.startTimeUtc) : schedule
               .startTimeUtc;
           String timeFormat = "h:mma";
           String formattedStartTime = AppDateTime().formatDateTime(
               startDateTime, format: timeFormat,
               ignoreTimeZone: useDeviceLocalTime,
-              showTzSuffix: !useDeviceLocalTime);
+              showTzSuffix: !useDeviceLocalTime)!;
 
-          return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")
-              + schedule.meal.toLowerCase()
-              + Localization().getStringEx("model.dining.schedule.label.from", " from ")
+          return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")!
+              + schedule.meal!.toLowerCase()
+              + Localization().getStringEx("model.dining.schedule.label.from", " from ")!
               + formattedStartTime;
         }
         else if(schedule.isFuture && schedule.isNextTwoWeeks){
-          DateTime startDateTime = useDeviceLocalTime ? AppDateTime()
+          DateTime? startDateTime = useDeviceLocalTime! ? AppDateTime()
               .getDeviceTimeFromUtcTime(schedule.startTimeUtc) : schedule
               .startTimeUtc;
           String timeFormat = 'MMM d h:mm a';
           String formattedStartTime = AppDateTime().formatDateTime(
               startDateTime, format: timeFormat,
               ignoreTimeZone: useDeviceLocalTime,
-              showTzSuffix: !useDeviceLocalTime);
+              showTzSuffix: !useDeviceLocalTime)!;
 
-          return Localization().getStringEx("model.dining.schedule.label.open_on", "Opening on ")
+          return Localization().getStringEx("model.dining.schedule.label.open_on", "Opening on ")!
               + formattedStartTime;
         }
       }
@@ -209,8 +213,8 @@ class Dining with Explore implements Favorite {
   }
 
   bool get isWorkingToday {
-    if(diningSchedules != null && diningSchedules.isNotEmpty){
-      for(DiningSchedule schedule in diningSchedules){
+    if(diningSchedules != null && diningSchedules!.isNotEmpty){
+      for(DiningSchedule schedule in diningSchedules!){
         if((schedule.isOpen || schedule.isFuture) && schedule.isToday){
           return true;
         }
@@ -220,8 +224,8 @@ class Dining with Explore implements Favorite {
   }
 
   bool  get isOpen {
-    if(diningSchedules != null && diningSchedules.isNotEmpty){
-      for(DiningSchedule schedule in diningSchedules){
+    if(diningSchedules != null && diningSchedules!.isNotEmpty){
+      for(DiningSchedule schedule in diningSchedules!){
         if(schedule.isOpen){
           return true;
         }
@@ -231,7 +235,7 @@ class Dining with Explore implements Favorite {
   }
 
   bool get hasDiningSchedules {
-    return AppCollection.isCollectionNotEmpty(diningSchedules);
+    return CollectionUtils.isNotEmpty(diningSchedules);
   }
 
   // Dinings support
@@ -245,14 +249,14 @@ class Dining with Explore implements Favorite {
 
       List<dynamic> menuSchedules = json['DiningSchedules'];
       for (Map<String, dynamic> menuScheduleData in menuSchedules) {
-        DiningSchedule schedule = DiningSchedule.fromJson(
-            menuScheduleData);
-
-        diningSchedules.add(schedule);
+        DiningSchedule? schedule = DiningSchedule.fromJson(menuScheduleData);
+        if (schedule != null) {
+          diningSchedules!.add(schedule);
+        }
       }
 
-      diningSchedules.sort((schedule1, schedule2){
-        return schedule1.startTimeUtc.compareTo(schedule2.startTimeUtc);
+      diningSchedules!.sort((schedule1, schedule2){
+        return schedule1.startTimeUtc!.compareTo(schedule2.startTimeUtc!);
       });
     }
   }
@@ -260,9 +264,12 @@ class Dining with Explore implements Favorite {
   List<String> get displayScheduleDates{
     Set<String> displayScheduleDates = Set<String>();
     if (diningSchedules != null) {
-    for(DiningSchedule schedule in diningSchedules){
-      displayScheduleDates.add(_dateToLongDisplayDate(schedule.eventDateUtc));
-    }
+      for(DiningSchedule schedule in diningSchedules!){
+        String? displayDate = _dateToLongDisplayDate(schedule.eventDateUtc);
+        if (displayDate != null) {
+          displayScheduleDates.add(displayDate);
+        }
+      }
     }
     return displayScheduleDates.toList();
   }
@@ -270,9 +277,11 @@ class Dining with Explore implements Favorite {
   List<DateTime> get filterScheduleDates{
     Set<DateTime> filterScheduleDates = Set<DateTime>();
     if (diningSchedules != null) {
-    for(DiningSchedule schedule in diningSchedules){
-      filterScheduleDates.add(schedule.eventDateUtc);
-    }
+      for(DiningSchedule schedule in diningSchedules!){
+        if (schedule.eventDateUtc != null) {
+          filterScheduleDates.add(schedule.eventDateUtc!);
+        }
+      }
     }
 
     return filterScheduleDates.toList();
@@ -282,13 +291,13 @@ class Dining with Explore implements Favorite {
     Map<String,List<DiningSchedule>> displayDateScheduleMapping = Map<String,List<DiningSchedule>>();
 
     if (diningSchedules != null) {
-      for(DiningSchedule schedule in diningSchedules){
-        String displayDate = _dateToLongDisplayDate(schedule.eventDateUtc);
-        if(!displayDateScheduleMapping.containsKey(displayDate)){
+      for(DiningSchedule schedule in diningSchedules!){
+        String? displayDate = _dateToLongDisplayDate(schedule.eventDateUtc);
+        if((displayDate != null) && !displayDateScheduleMapping.containsKey(displayDate)){
           displayDateScheduleMapping[displayDate] = [];
         }
 
-        displayDateScheduleMapping[displayDate].add(schedule);
+        displayDateScheduleMapping[displayDate]!.add(schedule);
       }
     }
 
@@ -299,14 +308,14 @@ class Dining with Explore implements Favorite {
     List<DiningSchedule> firstOpeningDateSchedules = [];
     List<String> displayDates = displayScheduleDates;
 
-    if(displayDates != null && displayDates.isNotEmpty){
-      for(String displayDate in displayDates){
+    if(displayDates.isNotEmpty){
+      for(String? displayDate in displayDates){
 
         if(firstOpeningDateSchedules.isNotEmpty){
           break;
         }
 
-        List<DiningSchedule> schedules = displayDateScheduleMapping[displayDate];
+        List<DiningSchedule>? schedules = displayDateScheduleMapping[displayDate];
         if(schedules != null && schedules.isNotEmpty){
           for(DiningSchedule schedule in schedules){
             if(schedule.isOpen || (schedule.isFuture && schedule.isNextTwoWeeks)) {
@@ -320,8 +329,19 @@ class Dining with Explore implements Favorite {
     return firstOpeningDateSchedules;
   }
 
-  String _dateToLongDisplayDate(DateTime dateUtc) {
+  String? _dateToLongDisplayDate(DateTime? dateUtc) {
     return AppDateTime().formatDateTime(dateUtc, format: 'EEEE, MMM d');
+  }
+
+  static Dining? entryInList(List<Dining>? dinings, { String? id}) {
+    if (dinings != null) {
+      for (Dining dining in dinings) {
+        if (dining.id == id) {
+          return dining;
+        }
+      }
+    }
+    return null;
   }
 }
 
@@ -331,7 +351,7 @@ class Dining with Explore implements Favorite {
 enum PaymentType { ClassicMeal, DiningDollars, IlliniCash, CreditCard, Cash, GooglePay, ApplePay  }
 
 class PaymentTypeHelper {
-  static String paymentTypeToString(PaymentType paymentType) {
+  static String? paymentTypeToString(PaymentType? paymentType) {
     switch(paymentType) {
       case PaymentType.ClassicMeal: return 'ClassicMeal';
       case PaymentType.DiningDollars: return 'Dining Dollars';
@@ -344,7 +364,7 @@ class PaymentTypeHelper {
     }
   }
 
-  static PaymentType paymentTypeFromString(String paymentTypeString) {
+  static PaymentType? paymentTypeFromString(String? paymentTypeString) {
     if (paymentTypeString != null) {
       if (paymentTypeString == 'ClassicMeal') {
         return PaymentType.ClassicMeal;
@@ -372,7 +392,7 @@ class PaymentTypeHelper {
   }
   
 
-  static String paymentTypeToDisplayString(PaymentType paymentType) {
+  static String? paymentTypeToDisplayString(PaymentType? paymentType) {
     if (paymentType != null) {
       switch (paymentType) {
         case PaymentType.ClassicMeal:
@@ -394,7 +414,7 @@ class PaymentTypeHelper {
     return '';
   }
 
-  static String paymentTypeToImageAsset(PaymentType paymentType) {
+  static String? paymentTypeToImageAsset(PaymentType? paymentType) {
     if (paymentType == null) {
       return null;
     }
@@ -418,31 +438,37 @@ class PaymentTypeHelper {
     }
   }
 
-  static Image paymentTypeIcon(PaymentType paymentType) {
-    return (paymentType != null) ? Image.asset(paymentTypeToImageAsset(paymentType), semanticLabel: paymentTypeToDisplayString(paymentType)) : null;
+  static Image? paymentTypeIcon(PaymentType? paymentType) {
+    return (paymentType != null) ? Image.asset(paymentTypeToImageAsset(paymentType)!, semanticLabel: paymentTypeToDisplayString(paymentType)) : null;
   }
 
-  static List<PaymentType> paymentTypesFromList(List<dynamic> paymentTypesList) {
+  static List<PaymentType>? paymentTypesFromList(List<dynamic>? paymentTypesList) {
     if (paymentTypesList == null) {
       return null;
     }
     else {
       List<PaymentType> paymentTypes = [];
-      for (String paymentType in paymentTypesList) {
-        paymentTypes.add(PaymentTypeHelper.paymentTypeFromString(paymentType));
+      for (String paymentTypeString in paymentTypesList) {
+        PaymentType? paymentType = PaymentTypeHelper.paymentTypeFromString(paymentTypeString);
+        if (paymentType != null) {
+          paymentTypes.add(paymentType);
+        }
       }
       return paymentTypes;
     }
   }
 
-  static List<dynamic> paymentTypesToList(List<PaymentType> paymentTypes) {
+  static List<dynamic>? paymentTypesToList(List<PaymentType>? paymentTypes) {
     if (paymentTypes == null) {
       return null;
     }
     else {
       List<String> paymentTypesList = [];
       for (PaymentType paymentType in paymentTypes) {
-        paymentTypesList.add(PaymentTypeHelper.paymentTypeToString(paymentType));
+        String? paymentTypeString = PaymentTypeHelper.paymentTypeToString(paymentType);
+        if (paymentTypeString != null) {
+          paymentTypesList.add(paymentTypeString);
+        }
       }
       return paymentTypesList;
     }
@@ -453,22 +479,25 @@ class PaymentTypeHelper {
 /// DiningNutritionItem
 
 class DiningNutritionItem {
-  String itemID;
-  String name;
-  String serving;
-  List<NutritionNameValuePair> nutritionList;
+  String? itemID;
+  String? name;
+  String? serving;
+  List<NutritionNameValuePair>? nutritionList;
 
 
   DiningNutritionItem({this.itemID, this.name, this.serving, this.nutritionList});
 
-  factory DiningNutritionItem.fromJson(Map<String, dynamic> json) {
+  static DiningNutritionItem? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
     List<NutritionNameValuePair> nutritionsList = [];
     if(json.containsKey("NutritionList")) {
       for (Map<String, dynamic> nutritionEntry in json["NutritionList"]) {
-        nutritionsList.add(NutritionNameValuePair.fromJson(nutritionEntry));
+        NutritionNameValuePair? pair = NutritionNameValuePair.fromJson(nutritionEntry);
+        if (pair != null) {
+          nutritionsList.add(pair);
+        }
       }
     }
 
@@ -485,14 +514,17 @@ class DiningNutritionItem {
 /// NutritionNameValuePair
 
 class NutritionNameValuePair{
-  String name;
-  String value;
+  String? name;
+  String? value;
 
   NutritionNameValuePair({this.name, this.value});
 
-  factory NutritionNameValuePair.fromJson(Map<String,dynamic>json){
-    String name = json["Name"];
-    String value = json["Value"];
+  static NutritionNameValuePair? fromJson(Map<String,dynamic>? json){
+    if (json == null) {
+      return null;
+    }
+    String? name = json["Name"];
+    String? value = json["Value"];
 
     name = Localization().getStringEx("com.illinois.nutrition_type.entry.$name", name);
 
@@ -507,21 +539,21 @@ class NutritionNameValuePair{
 /// DiningProductItem
 
 class DiningProductItem {
-  String itemID;
-  String scheduleId;
-  String name;
-  String servingUnit;
-  String course;
-  String traits;
-  String category;
-  int courseSort;
-  String meal;
+  String? itemID;
+  String? scheduleId;
+  String? name;
+  String? servingUnit;
+  String? course;
+  String? traits;
+  String? category;
+  int? courseSort;
+  String? meal;
 
   List<String> get traitList{
     List<String> traitList = [];
     for (String entry in (traits ?? "").split(',')) {
       entry = entry.trim();
-      if(entry != null && entry.isNotEmpty) {
+      if(entry.isNotEmpty) {
         traitList.add(entry);
       }
     }
@@ -529,27 +561,27 @@ class DiningProductItem {
   }
 
   List<String> get ingredients{
-    List<String> foodTypes = DiningService().foodTypes;
-    return traitList.where((entry)=>!foodTypes.contains(entry)).toList();
+    List<String>? foodTypes = DiningService().foodTypes;
+    return traitList.where((entry)=>!foodTypes!.contains(entry)).toList();
   }
 
   List<String> get dietaryPreferences{
-    List<String> foodTypes = DiningService().foodTypes;
-    return traitList.where((entry)=>foodTypes.contains(entry)).toList();
+    List<String>? foodTypes = DiningService().foodTypes;
+    return traitList.where((entry)=>foodTypes!.contains(entry)).toList();
   }
 
 
   DiningProductItem({this.itemID, this.name, this.scheduleId, this.servingUnit, this.course, this.traits, this.category, this.courseSort, this.meal});
 
-  bool containsFoodType(List<String> foodTypePrefs){
+  bool containsFoodType(Set<String>? foodTypePrefs){
     if ((foodTypePrefs == null) || foodTypePrefs.isEmpty) {
       return false;
     }
-    else if ((traits != null) && traits.isNotEmpty){
+    else if ((traits != null) && traits!.isNotEmpty){
 
       // Reversed logic. Use case:
       // Selected Halal & Kosher -> Show only if the product is marked both as Kosher & Halal -> (not either!)
-      String lowerCaseTraits = traits.toLowerCase();
+      String lowerCaseTraits = traits!.toLowerCase();
       for (String foodTypePref in foodTypePrefs){
         if (!lowerCaseTraits.contains(foodTypePref.toLowerCase())) {
           return false;
@@ -561,12 +593,12 @@ class DiningProductItem {
     return false;
   }
 
-  bool containsFoodIngredient(List<String> foodIngredientPrefs){
+  bool containsFoodIngredient(Set<String>? foodIngredientPrefs){
     if ((foodIngredientPrefs == null) || foodIngredientPrefs.isEmpty) {
       return false;
     }
-    else if ((traits != null) && traits.isNotEmpty) {
-      String smallTraits = traits.toLowerCase();
+    else if ((traits != null) && traits!.isNotEmpty) {
+      String smallTraits = traits!.toLowerCase();
       for (String foodIngredientPref in foodIngredientPrefs) {
         if (smallTraits.contains(foodIngredientPref.toLowerCase())){
           return true;
@@ -577,8 +609,8 @@ class DiningProductItem {
     return false;
   }
 
-  factory DiningProductItem.fromJson(Map<String, dynamic> json) {
-    return DiningProductItem(
+  static DiningProductItem? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? DiningProductItem(
       itemID: json['ItemID'].toString(),
       scheduleId: json['ScheduleID'].toString(),
       name: json['FormalName'],
@@ -588,7 +620,7 @@ class DiningProductItem {
       course: json['Course'],
       courseSort: json['CourseSort'],
       meal: json['Meal'],
-    );
+    ) : null;
   }
 }
 
@@ -596,19 +628,22 @@ class DiningProductItem {
 /// DiningSchedule
 
 class DiningSchedule {
-  String scheduleId;
-  String diningLocationId;
-  DateTime eventDateUtc;
-  DateTime startTimeUtc;
-  DateTime endTimeUtc;
-  String meal;
+  String? scheduleId;
+  String? diningLocationId;
+  DateTime? eventDateUtc;
+  DateTime? startTimeUtc;
+  DateTime? endTimeUtc;
+  String? meal;
 
   DiningSchedule({this.scheduleId, this.diningLocationId, this.eventDateUtc, this.startTimeUtc, this.endTimeUtc, this.meal,});
 
-  factory DiningSchedule.fromJson(Map<String, dynamic> json) {
-    int timestampInSeconds = json['EventDateUTC'];
-    int startTimeStampInSeconds = json['StartTimeUTC'];
-    int endTimeStampInSeconds = json['EndTimeUTC'];
+  static DiningSchedule? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    int? timestampInSeconds = json['EventDateUTC'];
+    int? startTimeStampInSeconds = json['StartTimeUTC'];
+    int? endTimeStampInSeconds = json['EndTimeUTC'];
 
     return DiningSchedule(
       scheduleId:       json['ScheduleID']?.toString(),
@@ -622,11 +657,11 @@ class DiningSchedule {
 
   Map<String, dynamic> toJson() {
     return {
-      'ScheduleID':     (scheduleId != null) ? int.tryParse(scheduleId) : null,
-      'DiningOptionID': (diningLocationId != null) ? int.tryParse(diningLocationId) : null,
-      'EventDateUTC':   (eventDateUtc != null) ? eventDateUtc.millisecondsSinceEpoch : null,
-      'StartTimeUTC':   (startTimeUtc != null) ? startTimeUtc.millisecondsSinceEpoch : null,
-      'EndTimeUTC':     (endTimeUtc != null)   ? endTimeUtc.millisecondsSinceEpoch   : null,
+      'ScheduleID':     (scheduleId != null) ? int.tryParse(scheduleId!) : null,
+      'DiningOptionID': (diningLocationId != null) ? int.tryParse(diningLocationId!) : null,
+      'EventDateUTC':   (eventDateUtc != null) ? eventDateUtc!.millisecondsSinceEpoch : null,
+      'StartTimeUTC':   (startTimeUtc != null) ? startTimeUtc!.millisecondsSinceEpoch : null,
+      'EndTimeUTC':     (endTimeUtc != null)   ? endTimeUtc!.millisecondsSinceEpoch   : null,
       'TimePeriod':     meal,
     };
   }
@@ -634,7 +669,7 @@ class DiningSchedule {
   bool get isOpen {
     if (startTimeUtc != null && endTimeUtc != null) {
       DateTime nowUtc = DateTime.now().toUtc();
-      return nowUtc.isAfter(startTimeUtc) && nowUtc.isBefore(endTimeUtc);
+      return nowUtc.isAfter(startTimeUtc!) && nowUtc.isBefore(endTimeUtc!);
     }
     return false;
   }
@@ -642,7 +677,7 @@ class DiningSchedule {
   bool get isFuture {
     if (startTimeUtc != null && endTimeUtc != null) {
       DateTime nowUtc = DateTime.now().toUtc();
-      return nowUtc.isBefore(startTimeUtc) && nowUtc.isBefore(endTimeUtc);
+      return nowUtc.isBefore(startTimeUtc!) && nowUtc.isBefore(endTimeUtc!);
     }
     return false;
   }
@@ -650,15 +685,15 @@ class DiningSchedule {
   bool get isPast {
     if (startTimeUtc != null && endTimeUtc != null) {
       DateTime nowUtc = DateTime.now().toUtc();
-      return nowUtc.isAfter(startTimeUtc) && nowUtc.isAfter(endTimeUtc);
+      return nowUtc.isAfter(startTimeUtc!) && nowUtc.isAfter(endTimeUtc!);
     }
     return false;
   }
 
   bool get isToday {
     if (eventDateUtc != null && eventDateUtc != null) {
-      DateTime nowUniTime = AppDateTime().getUniLocalTimeFromUtcTime(DateTime.now().toUtc());
-      DateTime scheduleUniTime = AppDateTime().getUniLocalTimeFromUtcTime(eventDateUtc.toUtc());
+      DateTime nowUniTime = AppDateTime().getUniLocalTimeFromUtcTime(DateTime.now().toUtc())!;
+      DateTime scheduleUniTime = AppDateTime().getUniLocalTimeFromUtcTime(eventDateUtc!.toUtc())!;
       return nowUniTime.year == scheduleUniTime.year &&
           nowUniTime.month == scheduleUniTime.month && nowUniTime.day == scheduleUniTime.day;
     }
@@ -669,8 +704,8 @@ class DiningSchedule {
     // two weeks + 1 day in order to ensure and cover the whole 14th day roughly
     int twoWeeksDeltaInSeconds = 15 * 24 * 60 * 60;
     DateTime utcNow = DateTime.now().toUtc();
-    int secondsStartDelta = startTimeUtc.difference(utcNow).inSeconds;
-    int secondsEndDelta = endTimeUtc.difference(utcNow).inSeconds;
+    int secondsStartDelta = startTimeUtc!.difference(utcNow).inSeconds;
+    int secondsEndDelta = endTimeUtc!.difference(utcNow).inSeconds;
     return (secondsStartDelta >= 0 && secondsStartDelta < twoWeeksDeltaInSeconds)
         || (secondsEndDelta >= 0 && secondsEndDelta < twoWeeksDeltaInSeconds);
   }
@@ -682,9 +717,9 @@ class DiningSchedule {
   String getDisplayTime(String separator){
     if(startTimeUtc != null && endTimeUtc != null) {
       String timeFormat = 'h:mm a';
-      bool useDeviceLocalTime = Storage().useDeviceLocalTimeZone;
-      DateTime startDateTime;
-      DateTime endDateTime;
+      bool useDeviceLocalTime = Storage().useDeviceLocalTimeZone!;
+      DateTime? startDateTime;
+      DateTime? endDateTime;
       if(useDeviceLocalTime) {
         startDateTime = AppDateTime().getDeviceTimeFromUtcTime(startTimeUtc);
         endDateTime = AppDateTime().getDeviceTimeFromUtcTime(endTimeUtc);
@@ -692,20 +727,20 @@ class DiningSchedule {
         startDateTime = startTimeUtc;
         endDateTime = endTimeUtc;
       }
-      return AppDateTime().formatDateTime(startDateTime, format: timeFormat, ignoreTimeZone: useDeviceLocalTime, showTzSuffix: !useDeviceLocalTime) +
+      return AppDateTime().formatDateTime(startDateTime, format: timeFormat, ignoreTimeZone: useDeviceLocalTime, showTzSuffix: !useDeviceLocalTime)! +
           separator +
-          AppDateTime().formatDateTime(endDateTime, format: timeFormat, ignoreTimeZone: useDeviceLocalTime, showTzSuffix: !useDeviceLocalTime);
+          AppDateTime().formatDateTime(endDateTime, format: timeFormat, ignoreTimeZone: useDeviceLocalTime, showTzSuffix: !useDeviceLocalTime)!;
     }
     return "";
   }
 
-  static List<DiningSchedule> listFromJson(dynamic json) {
-    List<DiningSchedule> diningSchedules;
+  static List<DiningSchedule>? listFromJson(dynamic json) {
+    List<DiningSchedule>? diningSchedules;
     if (json is List) {
       diningSchedules = [];
       for (dynamic jsonEntry in json) {
         if (jsonEntry is Map) {
-          DiningSchedule diningSchedule = DiningSchedule.fromJson(jsonEntry);
+          DiningSchedule? diningSchedule = DiningSchedule.fromJson(JsonUtils.mapValue(jsonEntry));
           if (diningSchedule != null) {
             diningSchedules.add(diningSchedule);
           }
@@ -715,15 +750,12 @@ class DiningSchedule {
     return diningSchedules;
   }
 
-  static List<dynamic> listToJson(List<DiningSchedule> diningSchedules) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<DiningSchedule>? diningSchedules) {
+    List<dynamic>? jsonList;
     if (diningSchedules != null) {
       jsonList = [];
       for (DiningSchedule diningSchedule in diningSchedules) {
-        Map<String, dynamic> jsonEntry = diningSchedule.toJson();
-        if (jsonEntry != null) {
-          jsonList.add(jsonEntry);
-        }
+        jsonList.add(diningSchedule.toJson());
       }
     }
     return jsonList;
@@ -734,23 +766,26 @@ class DiningSchedule {
 /// DiningSpecial
 
 class DiningSpecial {
-  String id;
-  String title;
-  String text;
-  String startDateString;
-  String endDateString;
-  String imageUrl;
-  Set<int> locationIds;
+  String? id;
+  String? title;
+  String? text;
+  String? startDateString;
+  String? endDateString;
+  String? imageUrl;
+  Set<int>? locationIds;
 
   bool get hasLocationIds{
-    return locationIds != null && locationIds.isNotEmpty;
+    return locationIds != null && locationIds!.isNotEmpty;
   }
 
   DiningSpecial({this.id, this.title, this.text, this.startDateString, this.endDateString, this.imageUrl, this.locationIds});
 
-  factory DiningSpecial.fromJson(Map<String, dynamic>json){
-    List<dynamic> _locationIds = json['DiningOptionIDs'];
-    List<String> _castedIds = _locationIds != null ? _locationIds.map((entry)=>entry.toString()).toList() : null;
+  static DiningSpecial? fromJson(Map<String, dynamic>?json){
+    if (json == null) {
+      return null;
+    }
+    List<dynamic>? _locationIds = json['DiningOptionIDs'];
+    List<String>? _castedIds = _locationIds != null ? _locationIds.map((entry)=>entry.toString()).toList() : null;
     return DiningSpecial(
       id: (json['OfferID'] ?? "").toString(),
       title: json['Title'],
@@ -770,7 +805,7 @@ class DiningSpecial {
       "StartDate": startDateString,
       "EndDate": endDateString,
       "ImageUrl": imageUrl,
-      "DiningOptionIDs": locationIds != null ? locationIds.toList() : [],
+      "DiningOptionIDs": locationIds != null ? locationIds!.toList() : [],
     };
   }
 }

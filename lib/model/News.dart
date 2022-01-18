@@ -15,26 +15,28 @@
  */
 
 import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class News implements Favorite {
-  final String id;
-  final String title;
-  final String link;
-  final String category;
-  final String description;
-  final String fullText;
-  final String fullTextRaw;
-  final String imageUrl;
-  final DateTime pubDateUtc;
+  final String? id;
+  final String? title;
+  final String? link;
+  final String? category;
+  final String? description;
+  final String? fullText;
+  final String? fullTextRaw;
+  final String? imageUrl;
+  final DateTime? pubDateUtc;
 
-  final Map<String, dynamic> json;
+  final Map<String, dynamic>? json;
+
+  static final String dateTimeFormat = 'E, dd MMM yyyy HH:mm:ss v';
 
   News({this.id, this.title, this.link, this.category, this.description, this.fullText, this.fullTextRaw, this.imageUrl, this.pubDateUtc, this.json});
 
-  factory News.fromJson(Map<String, dynamic> json) {
+  static News? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -47,28 +49,28 @@ class News implements Favorite {
         fullText: json['fulltext'],
         fullTextRaw: json['fulltext_raw'],
         imageUrl: json['image_url'],
-        pubDateUtc: AppDateTime().dateTimeFromString(json['pub_date_utc'], format: AppDateTime.serverResponseDateTimeFormat, isUtc: true),
+        pubDateUtc: DateTimeUtils.dateTimeFromString(json['pub_date_utc'], format: dateTimeFormat, isUtc: true),
         json: json);
   }
 
-  String get fillText {
-    return AppString.isStringNotEmpty(fullText) ? fullText : fullTextRaw;
+  String? get fillText {
+    return StringUtils.isNotEmpty(fullText) ? fullText : fullTextRaw;
   }
 
-  String get displayTime {
+  String? get displayTime {
     if (pubDateUtc == null) {
       return "";
     }
-    bool useDeviceLocalTimeZone = Storage().useDeviceLocalTimeZone;
-    DateTime pubDateTime = useDeviceLocalTimeZone ? AppDateTime().getDeviceTimeFromUtcTime(pubDateUtc) : pubDateUtc;
+    bool useDeviceLocalTimeZone = Storage().useDeviceLocalTimeZone!;
+    DateTime? pubDateTime = useDeviceLocalTimeZone ? AppDateTime().getDeviceTimeFromUtcTime(pubDateUtc) : pubDateUtc;
     return AppDateTime().formatDateTime(pubDateTime, format: "MMM dd ", ignoreTimeZone: useDeviceLocalTimeZone);
   }
 
   @override
-  String get favoriteId => id;
+  String? get favoriteId => id;
 
   @override
-  String get favoriteTitle => title;
+  String? get favoriteTitle => title;
 
   @override
   String get favoriteKey => favoriteKeyName;

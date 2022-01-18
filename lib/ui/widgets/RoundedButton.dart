@@ -18,25 +18,25 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Styles.dart';
 
 class RoundedButton extends StatelessWidget {
-  final String label;
-  final String hint;
-  final Color backgroundColor;
-  final Function onTap;
-  final Color textColor;
+  final String? label;
+  final String? hint;
+  final Color? backgroundColor;
+  final void Function()? onTap;
+  final Color? textColor;
   final TextAlign textAlign;
-  final String fontFamily;
+  final String? fontFamily;
   final double fontSize;
-  final TextStyle textStyle;
-  final Color borderColor;
+  final TextStyle? textStyle;
+  final Color? borderColor;
   final double borderWidth;
-  final Color secondaryBorderColor;
-  final List<BoxShadow> shadow;
+  final Color? secondaryBorderColor;
+  final List<BoxShadow>? shadow;
   final EdgeInsetsGeometry padding;
   final bool enabled;
   final double height;
-  final double width;
-  final Image leftIcon;
-  final Image rightIcon;
+  final double? width;
+  final Image? leftIcon;
+  final Image? rightIcon;
 
   RoundedButton(
       {this.label = '',
@@ -73,9 +73,9 @@ class RoundedButton extends StatelessWidget {
             height: height,
             width: width,
             decoration: BoxDecoration(
-              color: (backgroundColor ?? Styles().colors.fillColorPrimary),
+              color: (backgroundColor ?? Styles().colors!.fillColorPrimary),
               border: Border.all(
-                  color: (borderColor != null) ? borderColor : (backgroundColor ?? Styles().colors.fillColorPrimary),
+                  color: (borderColor != null) ? borderColor! : (backgroundColor ?? Styles().colors!.fillColorPrimary!),
                   width: borderWidth),
               borderRadius: BorderRadius.circular(height / 2),
               boxShadow: this.shadow
@@ -83,11 +83,11 @@ class RoundedButton extends StatelessWidget {
             child: Container(
               height: (height - 2),
               decoration: BoxDecoration(
-                  color: (backgroundColor ?? Styles().colors.fillColorPrimary),
+                  color: (backgroundColor ?? Styles().colors!.fillColorPrimary),
                   border: Border.all(
                       color: (secondaryBorderColor != null)
-                          ? secondaryBorderColor
-                          : (backgroundColor ?? Styles().colors.fillColorPrimary),
+                          ? secondaryBorderColor!
+                          : (backgroundColor ?? Styles().colors!.fillColorPrimary!),
                       width: borderWidth),
                   borderRadius: BorderRadius.circular(height / 2)),
               child: Padding(
@@ -95,9 +95,9 @@ class RoundedButton extends StatelessWidget {
                   child: Semantics( excludeSemantics: true,
                   child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                     (leftIcon != null) ? Padding(padding: EdgeInsets.only(right: 5), child: leftIcon,) : Container(height: 0, width: 0),
-                    Text(label, textAlign: textAlign,
+                    Text(label!, textAlign: textAlign,
                       style: textStyle ?? TextStyle(
-                        fontFamily: fontFamily ?? Styles().fontFamilies.bold,
+                        fontFamily: fontFamily ?? Styles().fontFamilies!.bold,
                         fontSize: fontSize,
                         color: textColor,
                       ),
@@ -115,13 +115,13 @@ class RoundedButton extends StatelessWidget {
 }
 
 class SmallRoundedButton extends StatelessWidget {
-  final String label;
-  final String hint;
-  final GestureTapCallback onTap;
+  final String? label;
+  final String? hint;
+  final GestureTapCallback? onTap;
   final bool showChevron;
-  final Color borderColor;
+  final Color? borderColor;
 
-  SmallRoundedButton({@required this.label, this.hint = '', this.onTap, this.showChevron = true, this.borderColor});
+  SmallRoundedButton({required this.label, this.hint = '', this.onTap, this.showChevron = true, this.borderColor});
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +135,7 @@ class SmallRoundedButton extends StatelessWidget {
           child: Container(
             height: 32,
             decoration: BoxDecoration(
-              border: Border.all(color: borderColor ?? Styles().colors.fillColorSecondary, width: 2.0),
+              border: Border.all(color: borderColor ?? Styles().colors!.fillColorSecondary!, width: 2.0),
               borderRadius: BorderRadius.circular(24.0),
             ),
             child: Padding(
@@ -145,17 +145,17 @@ class SmallRoundedButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    label,
+                    label!,
                     style: TextStyle(
-                        fontFamily: Styles().fontFamilies.bold,
+                        fontFamily: Styles().fontFamilies!.bold,
                         fontSize: 16,
-                        color: Styles().colors.fillColorPrimary),
+                        color: Styles().colors!.fillColorPrimary),
                   ),
                   Visibility(
                       visible: showChevron,
                       child: Padding(
                         padding: EdgeInsets.only(left: 5),
-                        child: Image.asset('images/chevron-right.png'),
+                        child: Image.asset('images/chevron-right.png', excludeFromSemantics: true),
                       ))
                 ],
               ),

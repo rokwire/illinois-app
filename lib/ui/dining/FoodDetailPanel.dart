@@ -25,7 +25,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 
@@ -33,7 +33,7 @@ class FoodDetailPanel extends StatefulWidget {
 
   final DiningProductItem productItem;
   
-  FoodDetailPanel({@required this.productItem});
+  FoodDetailPanel({required this.productItem});
 
   _FoodDetailPanelState createState() => _FoodDetailPanelState();
 }
@@ -42,7 +42,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
 
   bool _isLoading = false;
 
-  DiningNutritionItem _nutritionItem;
+  DiningNutritionItem? _nutritionItem;
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
     setState(() {
       _isLoading = true;
     });
-    DiningService().loadNutritionItemWithId(widget?.productItem?.itemID).then((item){
+    DiningService().loadNutritionItemWithId(widget.productItem.itemID).then((item){
       _nutritionItem = item;
       setState(() {
         _isLoading = false;
@@ -67,9 +67,9 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(AppString.isStringNotEmpty(widget.productItem?.name) ? widget.productItem?.name : "",
+        titleWidget: Text(widget.productItem.name ?? "",
           style: TextStyle(
-            fontFamily: Styles().fontFamilies.extraBold,
+            fontFamily: Styles().fontFamilies!.extraBold,
             fontSize: 16
           ),
         ),
@@ -83,7 +83,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
           ),
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -104,17 +104,17 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
             Container(height: 20,),
             _nutritionItem == null ? Container(
               child: Center(
-                child: Text(Localization().getStringEx("panel.food_details.label.nutrition_fatcts_not_available.title", "Nutrition information not available"),
+                child: Text(Localization().getStringEx("panel.food_details.label.nutrition_fatcts_not_available.title", "Nutrition information not available")!,
                   style: TextStyle(
-                      color: Styles().colors.fillColorPrimary,
+                      color: Styles().colors!.fillColorPrimary,
                       fontSize: 14,
-                      fontFamily: Styles().fontFamilies.medium),
+                      fontFamily: Styles().fontFamilies!.medium),
                 ),
               ),
             ):
             Container(
               decoration: BoxDecoration(
-                  color: Styles().colors.fillColorPrimary,
+                  color: Styles().colors!.fillColorPrimary,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(4),
                       topRight: Radius.circular(4))),
@@ -131,10 +131,10 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
                     children: <Widget>[
                       Expanded(child:
                         Text(
-                          Localization().getStringEx("panel.food_details.label.nutrition_fatcts.title", "NUTRITION FACTS"),
+                          Localization().getStringEx("panel.food_details.label.nutrition_fatcts.title", "NUTRITION FACTS")!,
                           textAlign: TextAlign.left,
                           style: TextStyle(
-                              fontFamily: Styles().fontFamilies.bold,
+                              fontFamily: Styles().fontFamilies!.bold,
                               color: Colors.white,
                               fontSize: 14,
                               letterSpacing: 1.0),
@@ -155,7 +155,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
                 height: null,
                 label: Localization().getStringEx("panel.food_details.button.view_full_list_of_ingredients.title", "View full list of ingredients"),
                 borderRadius: BorderRadius.all(Radius.circular(4)),
-                border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
                 onTap: (){_onEatSmartTapped(context);},
               ),
             ),
@@ -171,10 +171,10 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
   Widget _buildNutritionFacts(){
     List<Widget> list = [];
     if(_nutritionItem!=null) {
-      list.add(_FactItem(label: Localization().getStringEx('com.illinois.nutrition_type.entry.Serving', 'Serving'), value: _nutritionItem.serving));
+      list.add(_FactItem(label: Localization().getStringEx('com.illinois.nutrition_type.entry.Serving', 'Serving'), value: _nutritionItem!.serving));
 
-      for(NutritionNameValuePair nutritionEntry in _nutritionItem.nutritionList){
-        String foodTypeLabel = DiningService().getLocalizedString(nutritionEntry.name);
+      for(NutritionNameValuePair nutritionEntry in _nutritionItem!.nutritionList!){
+        String? foodTypeLabel = DiningService().getLocalizedString(nutritionEntry.name);
         list.add(_FactItem(label: foodTypeLabel, value: nutritionEntry.value));
       }
     }
@@ -186,11 +186,11 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
   Widget _buildIncludedIngedients(){
     List<Widget> list = [];
     List<String> ingredients = widget.productItem.ingredients;
-    if(ingredients != null && ingredients.isNotEmpty) {
+    if(ingredients.isNotEmpty) {
       list.add(Container(height: 20,));
       list.add(Container(
         decoration: BoxDecoration(
-            color: Styles().colors.fillColorPrimary,
+            color: Styles().colors!.fillColorPrimary,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(4),
                 topRight: Radius.circular(4))),
@@ -207,10 +207,10 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
               children: <Widget>[
                 Expanded(
                   child:Text(
-                    Localization().getStringEx("panel.food_details.label.include_ingredients.title", "INCLUDES THESE INGREDIENTS"),
+                    Localization().getStringEx("panel.food_details.label.include_ingredients.title", "INCLUDES THESE INGREDIENTS")!,
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        fontFamily: Styles().fontFamilies.bold,
+                        fontFamily: Styles().fontFamilies!.bold,
                         color: Colors.white,
                         fontSize: 14,
                         letterSpacing: 1.0),
@@ -223,8 +223,8 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       ));
       for (String entry in ingredients) {
         entry = entry.trim();
-        if(entry != null && entry.isNotEmpty) {
-          String ingredientLabel = DiningService().getLocalizedString(entry);
+        if(entry.isNotEmpty) {
+          String? ingredientLabel = DiningService().getLocalizedString(entry);
           list.add(_IngredientItem(label: ingredientLabel));
         }
       }
@@ -238,11 +238,11 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
   Widget _buildDietaryPreference(){
     List<Widget> list = [];
     List<String> preferences = widget.productItem.dietaryPreferences;
-    if(preferences != null && preferences.isNotEmpty) {
+    if(preferences.isNotEmpty) {
       list.add(Container(height: 20,));
       list.add(Container(
         decoration: BoxDecoration(
-            color: Styles().colors.fillColorPrimary,
+            color: Styles().colors!.fillColorPrimary,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(4),
                 topRight: Radius.circular(4))),
@@ -258,10 +258,10 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
               children: <Widget>[
                 Expanded(child:
                 Text(
-                  Localization().getStringEx("panel.food_details.label.dietary_preferences.title", "DIETARY PREFERENCES"),
+                  Localization().getStringEx("panel.food_details.label.dietary_preferences.title", "DIETARY PREFERENCES")!,
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                      fontFamily: Styles().fontFamilies.bold,
+                      fontFamily: Styles().fontFamilies!.bold,
                       color: Colors.white,
                       fontSize: 14,
                       letterSpacing: 1.0),
@@ -273,8 +273,8 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       ));
       for (String entry in preferences) {
         entry = entry.trim();
-        if(entry != null && entry.isNotEmpty) {
-          String ingredientLabel = DiningService().getLocalizedString(entry);
+        if(entry.isNotEmpty) {
+          String? ingredientLabel = DiningService().getLocalizedString(entry);
           list.add(_IngredientItem(label: ingredientLabel));
         }
       }
@@ -296,10 +296,10 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
 }
 
 class _FactItem extends StatelessWidget {
-  final String label;
-  final String value;
+  final String? label;
+  final String? value;
 
-  _FactItem({@required this.label, this.value});
+  _FactItem({required this.label, this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -311,9 +311,9 @@ class _FactItem extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border(
-            left: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
-            right: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
-            bottom: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
+            left: BorderSide(width: 1, color: Styles().colors!.surfaceAccent!),
+            right: BorderSide(width: 1, color: Styles().colors!.surfaceAccent!),
+            bottom: BorderSide(width: 1, color: Styles().colors!.surfaceAccent!),
           ),
           color: Colors.white,
         ),
@@ -326,23 +326,23 @@ class _FactItem extends StatelessWidget {
               Expanded(
                 flex: 5,
                 child: Text(
-                  AppString.isStringNotEmpty(label) ? label : "",
+                  StringUtils.isNotEmpty(label) ? label! : "",
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                      color: Styles().colors.fillColorPrimary,
+                      color: Styles().colors!.fillColorPrimary,
                       fontSize: 16,
-                      fontFamily: Styles().fontFamilies.bold),
+                      fontFamily: Styles().fontFamilies!.bold),
                 ),
               ),
               Expanded(
                 flex: 3,
                 child: Text(
-                AppString.isStringNotEmpty(value) ? value : "",
+                StringUtils.isNotEmpty(value) ? value! : "",
                 textAlign: TextAlign.right,
                 style: TextStyle(
-                    color: Styles().colors.mediumGray,
+                    color: Styles().colors!.mediumGray,
                     fontSize: 14,
-                    fontFamily: Styles().fontFamilies.medium),
+                    fontFamily: Styles().fontFamilies!.medium),
               )),
             ],
           ),
@@ -353,9 +353,9 @@ class _FactItem extends StatelessWidget {
 }
 
 class _IngredientItem extends StatelessWidget {
-  final String label;
+  final String? label;
 
-  _IngredientItem({@required this.label});
+  _IngredientItem({required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -366,9 +366,9 @@ class _IngredientItem extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border(
-            left: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
-            right: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
-            bottom: BorderSide(width: 1, color: Styles().colors.surfaceAccent),
+            left: BorderSide(width: 1, color: Styles().colors!.surfaceAccent!),
+            right: BorderSide(width: 1, color: Styles().colors!.surfaceAccent!),
+            bottom: BorderSide(width: 1, color: Styles().colors!.surfaceAccent!),
           ),
           color: Colors.white,
         ),
@@ -379,11 +379,11 @@ class _IngredientItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                AppString.isStringNotEmpty(label) ? label : "",
+                StringUtils.isNotEmpty(label) ? label! : "",
                 style: TextStyle(
-                    color: Styles().colors.fillColorPrimary,
+                    color: Styles().colors!.fillColorPrimary,
                     fontSize: 16,
-                    fontFamily: Styles().fontFamilies.medium),
+                    fontFamily: Styles().fontFamilies!.medium),
               ),
             ],
           ),

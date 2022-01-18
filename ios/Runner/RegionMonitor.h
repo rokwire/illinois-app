@@ -19,18 +19,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Flutter/Flutter.h>
 
-@interface RegionMonitor : NSObject
+@interface RegionMonitor : NSObject<FlutterPlugin>
 
-+ (instancetype)sharedInstance;
-
-- (void)monitorRegions:(NSArray*)regionsList;
-
-@property (nonatomic, strong, readonly) NSArray* currentRegionIdsList;
-
-- (NSArray*)beaconsInRegionWithId:(NSString*)regionId;
-- (bool)startRangingBeaconsInRegionWithId:(NSString*)regionId;
-- (bool)stopRangingBeaconsInRegionWithId:(NSString*)regionId;
-
-
+- (instancetype)initWithChannel:(FlutterMethodChannel*)_channel;
 @end

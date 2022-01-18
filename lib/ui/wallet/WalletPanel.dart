@@ -18,7 +18,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -26,7 +25,8 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
@@ -40,8 +40,8 @@ import 'package:illinois/service/Styles.dart';
 
 class WalletPanel extends StatefulWidget{
 
-  final ScrollController scrollController;
-  final String ensureVisibleCard;
+  final ScrollController? scrollController;
+  final String? ensureVisibleCard;
 
   WalletPanel({this.scrollController, this.ensureVisibleCard});
 
@@ -51,8 +51,8 @@ class WalletPanel extends StatefulWidget{
 class _WalletPanelState extends State<WalletPanel> implements NotificationsListener{
 
   bool _authLoading = false;
-  String        _libraryCode;
-  MemoryImage   _libraryBarcode;
+  String?        _libraryCode;
+  MemoryImage?   _libraryBarcode;
   GlobalKey     _mtdCardKey = GlobalKey();
   GlobalKey     _illiniIdCardKey = GlobalKey();
   GlobalKey     _libraryCardKey = GlobalKey();
@@ -68,7 +68,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     _loadLibraryBarcode();
 
     if (widget.ensureVisibleCard != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
         _ensureVisibleCard(widget.ensureVisibleCard);
       });
     }
@@ -85,7 +85,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   Widget build(BuildContext context) {
     
     return Scaffold(
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       body: CustomScrollView(
         slivers: <Widget>[
           SliverHeaderBar(
@@ -95,12 +95,12 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               Analytics().logSelect(target: 'Close');
               Navigator.pop(context);
             } ,
-            backgroundColor: Styles().colors.surface,
+            backgroundColor: Styles().colors!.surface,
             titleWidget: Text(
-              Localization().getStringEx( "panel.wallet.label.title", "Wallet"),
+              Localization().getStringEx( "panel.wallet.label.title", "Wallet")!,
               style: TextStyle(
-                  fontFamily: Styles().fontFamilies.extraBold,
-                  color: Styles().colors.fillColorPrimary,
+                  fontFamily: Styles().fontFamilies!.extraBold,
+                  color: Styles().colors!.fillColorPrimary,
                   fontSize: 20,
                   letterSpacing: 1.0),
             ),
@@ -175,7 +175,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['wallet.connect'] ?? [];
     for (String code in codes) {
-      Widget widget;
+      Widget? widget;
       if (code == 'netid') {
         widget = _buildLoginNetIdButton();
       }
@@ -198,19 +198,24 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     return RoundedButton(
       label: Localization().getStringEx('panel.wallet.button.connect.netid.title', 'Connect NetID'),
       hint: Localization().getStringEx('panel.wallet.button.connect.netid.hint', ''),
-      backgroundColor: Styles().colors.surface,
+      backgroundColor: Styles().colors!.surface,
       fontSize: 16.0,
-      textColor: Styles().colors.fillColorPrimary,
+      textColor: Styles().colors!.fillColorPrimary,
       textAlign: TextAlign.center,
-      borderColor: Styles().colors.fillColorSecondary,
+      borderColor: Styles().colors!.fillColorSecondary,
       onTap: () {
         Analytics.instance.logSelect(target: "Log in");
-        setState(() { _authLoading = true; });
-        Auth2().authenticateWithOidc().then((bool result) {
-          if (mounted) {
-            setState(() { _authLoading = false; });
-          }
-        });
+        if (_authLoading != true) {
+          setState(() { _authLoading = true; });
+          Auth2().authenticateWithOidc().then((bool? result) {
+            if (mounted) {
+              setState(() { _authLoading = false; });
+              if (result == false) {
+                AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+              }
+            }
+          });
+        }
       },
     );
   }
@@ -219,11 +224,11 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     return RoundedButton(
         label: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.title', 'Login By Email or Phone'),
         hint: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.hint', ''),
-        backgroundColor: Styles().colors.surface,
+        backgroundColor: Styles().colors!.surface,
         fontSize: 16.0,
-        textColor: Styles().colors.fillColorPrimary,
+        textColor: Styles().colors!.fillColorPrimary,
         textAlign: TextAlign.center,
-        borderColor: Styles().colors.fillColorSecondary,
+        borderColor: Styles().colors!.fillColorSecondary,
         onTap: () {
           Analytics.instance.logSelect(target: "Log in");
           Navigator.push(context, CupertinoPageRoute(
@@ -241,9 +246,9 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   }
 
   void _didLogin(_) {
-    Navigator.of(context)?.popUntil((Route route){
-      Widget _widget = AppNavigation.routeRootWidget(route, context: context);
-      return _widget == null || _widget?.runtimeType == widget.runtimeType;
+    Navigator.of(context).popUntil((Route route){
+      Widget? _widget = AppNavigation.routeRootWidget(route, context: context);
+      return _widget == null || _widget.runtimeType == widget.runtimeType;
     });
   }
 
@@ -252,7 +257,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['wallet.content'] ?? [];
     for (String code in codes) {
-      Widget widget;
+      Widget? widget;
       if (code == 'illini_cash') {
         widget = _buildIlliniCash();
       }
@@ -301,7 +306,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               excludeSemantics: true,
               child:
               IconButton(
-                color: Styles().colors.fillColorPrimary,
+                color: Styles().colors!.fillColorPrimary,
                 icon: Image.asset('images/button-plus-orange.png', excludeFromSemantics: true,),
                 onPressed: (){
                   Analytics.instance.logSelect(target: "Add Illini Cash");
@@ -357,7 +362,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     List<dynamic> codes = FlexUI()['wallet.cards'] ?? [];
     contentList.add(Container(width: 8,));
     for (String code in codes) {
-      Widget widget;
+      Widget? widget;
       if (code == 'bus_pass') {
         widget = _buildMTDBusCard();
       }
@@ -384,8 +389,8 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     );
   }
 
-  void _ensureVisibleCard(String code) {
-    GlobalKey cardKey;
+  void _ensureVisibleCard(String? code) {
+    GlobalKey? cardKey;
     if (code == 'mtd') {
       cardKey = _mtdCardKey;
     }
@@ -396,14 +401,14 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       cardKey = _libraryCardKey;
     }
 
-    BuildContext buildContext = cardKey?.currentContext;
+    BuildContext? buildContext = cardKey?.currentContext;
     if (buildContext != null) {
       Scrollable.ensureVisible(buildContext, duration: Duration(milliseconds: 10));
     }
   }
 
   Widget _buildMTDBusCard(){
-    String expires = Auth2()?.authCard?.expirationDate ?? "";
+    String expires = Auth2().authCard?.expirationDate ?? "";
     return _Card(
       key: _mtdCardKey,
       title: Localization().getStringEx("panel.wallet.label.mtd.title", "MTD",),
@@ -414,18 +419,18 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              Auth2()?.authCard?.role ?? "",
+              Auth2().authCard?.role ?? "",
               style: TextStyle(
-                color: Styles().colors.fillColorPrimary,
-                fontFamily: Styles().fontFamilies.extraBold,
+                color: Styles().colors!.fillColorPrimary,
+                fontFamily: Styles().fontFamilies!.extraBold,
                 fontSize: 24,
               ),
             ),
             Text(
-              Localization().getStringEx("panel.wallet.label.expires.title", "Card expires") + " $expires",
+              Localization().getStringEx("panel.wallet.label.expires.title", "Card expires")! + " $expires",
               style: TextStyle(
-                color: Styles().colors.fillColorPrimary,
-                fontFamily: Styles().fontFamilies.medium,
+                color: Styles().colors!.fillColorPrimary,
+                fontFamily: Styles().fontFamilies!.medium,
                 fontSize: 12,
               ),
             ),
@@ -434,9 +439,9 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               RoundedButton(
                 label: Localization().getStringEx("panel.wallet.button.use_bus_pass.title", "Use bus pass"),
                 hint: Localization().getStringEx("panel.wallet.button.use_bus_pass.hint", ""),
-                textColor: Styles().colors.fillColorPrimary,
-                backgroundColor: Styles().colors.white,
-                borderColor: Styles().colors.fillColorSecondary,
+                textColor: Styles().colors!.fillColorPrimary,
+                backgroundColor: Styles().colors!.white,
+                borderColor: Styles().colors!.fillColorSecondary,
                 onTap: (){
                   Analytics.instance.logSelect(target: "MTD Bus Pass");
                   Navigator.push(context, CupertinoPageRoute(
@@ -462,18 +467,18 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              Localization().getStringEx("panel.wallet.label.uin.title", "UIN",),
+              Localization().getStringEx("panel.wallet.label.uin.title", "UIN",)!,
               style: TextStyle(
-                color: Styles().colors.fillColorPrimary,
-                fontFamily: Styles().fontFamilies.medium,
+                color: Styles().colors!.fillColorPrimary,
+                fontFamily: Styles().fontFamilies!.medium,
                 fontSize: 14,
               ),
             ),
             Text(
-              Auth2()?.authCard?.uin ?? "",
+              Auth2().authCard?.uin ?? "",
               style: TextStyle(
-                color: Styles().colors.fillColorPrimary,
-                fontFamily: Styles().fontFamilies.extraBold,
+                color: Styles().colors!.fillColorPrimary,
+                fontFamily: Styles().fontFamilies!.extraBold,
                 fontSize: 24,
               ),
             ),
@@ -482,9 +487,9 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               RoundedButton(
                 label: Localization().getStringEx("panel.wallet.button.use_id.title", "Use ID"),
                 hint: Localization().getStringEx("panel.wallet.button.use_id.hint", ""),
-                textColor: Styles().colors.fillColorPrimary,
-                backgroundColor: Styles().colors.white,
-                borderColor: Styles().colors.fillColorSecondary,
+                textColor: Styles().colors!.fillColorPrimary,
+                backgroundColor: Styles().colors!.white,
+                borderColor: Styles().colors!.fillColorSecondary,
                 onTap: (){
                   Analytics.instance.logSelect(target: "Use ID");
                   Navigator.push(context, CupertinoPageRoute(
@@ -514,16 +519,16 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.rectangle,
-                image: (_libraryBarcode != null) ? DecorationImage(fit: BoxFit.fill, image:_libraryBarcode ,) : null,    
+                image: (_libraryBarcode != null) ? DecorationImage(fit: BoxFit.fill, image:_libraryBarcode! ,) : null,    
               )),
             
             Container(height: 5,),
             Text(
-              Auth2()?.authCard?.libraryNumber ?? "",
+              Auth2().authCard?.libraryNumber ?? "",
               style: TextStyle(
-                  fontFamily: Styles().fontFamilies.light,
+                  fontFamily: Styles().fontFamilies!.light,
                   fontSize: 12,
-                  color: Styles().colors.fillColorPrimaryVariant,
+                  color: Styles().colors!.fillColorPrimaryVariant,
                   letterSpacing: 1
               ),
             ),
@@ -535,14 +540,14 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   }
 
   void _loadLibraryBarcode() {
-    String libraryCode = Auth2().authCard?.libraryNumber;
+    String? libraryCode = Auth2().authCard?.libraryNumber;
     if (0 < (libraryCode?.length ?? 0)) {
       NativeCommunicator().getBarcodeImageData({
         'content': Auth2().authCard?.libraryNumber,
         'format': 'codabar',
         'width': 161 * 3,
         'height': 50
-      }).then((Uint8List imageData) {
+      }).then((Uint8List? imageData) {
         setState(() {
           _libraryCode = libraryCode;
           _libraryBarcode = (imageData != null) ? MemoryImage(imageData) : null;
@@ -556,7 +561,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   }
 
   void _updateLibraryBarcode() {
-    String libraryCode = Auth2().authCard?.libraryNumber;
+    String? libraryCode = Auth2().authCard?.libraryNumber;
     if (((_libraryCode == null) && (libraryCode != null)) ||
         ((_libraryCode != null) && (_libraryCode != libraryCode)))
     {
@@ -581,11 +586,11 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
 
 class _RoundedWidget extends StatelessWidget{
 
-  final String title;
+  final String? title;
   final Widget child;
-  final Function onView;
+  final void Function() onView;
 
-  _RoundedWidget({Key key, this.title, @required this.onView, @required this.child}):super(key:key);
+  _RoundedWidget({Key? key, this.title, required this.onView, required this.child}):super(key:key);
 
   @override
   Widget build(BuildContext context) {
@@ -593,14 +598,14 @@ class _RoundedWidget extends StatelessWidget{
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(width: 1.0, color: Styles().colors.surfaceAccent),
+          border: Border.all(width: 1.0, color: Styles().colors!.surfaceAccent!),
           borderRadius: BorderRadius.all(Radius.circular(8))
         ),
         child: Column(
           children: <Widget>[
             Container(
               decoration: BoxDecoration(
-                  color: Styles().colors.lightGray,
+                  color: Styles().colors!.lightGray,
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
               ),
               child: Padding(
@@ -609,10 +614,10 @@ class _RoundedWidget extends StatelessWidget{
                   children: <Widget>[
                     Expanded(
                       child: Text(
-                        title,
+                        title!,
                         style: TextStyle(
-                          color: Styles().colors.fillColorPrimary,
-                          fontFamily: Styles().fontFamilies.bold,
+                          color: Styles().colors!.fillColorPrimary,
+                          fontFamily: Styles().fontFamilies!.bold,
                           fontSize: 14,
                         ),
                       ),
@@ -623,14 +628,14 @@ class _RoundedWidget extends StatelessWidget{
                         onTap: onView,
                       )
                     ),
-                    Container(height: 1, color: Styles().colors.surfaceAccent,)
+                    Container(height: 1, color: Styles().colors!.surfaceAccent,)
                   ],
                 ),
               ),
             ),
             Container(
               decoration: BoxDecoration(
-                color: Styles().colors.white,
+                color: Styles().colors!.white,
                 borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8)),
               ),
               child: child
@@ -644,10 +649,10 @@ class _RoundedWidget extends StatelessWidget{
 
 class _ViewButton extends StatelessWidget{
 
-  final String label;
-  final Function onTap;
+  final String? label;
+  final void Function() onTap;
 
-  _ViewButton({@required this.label, @required this.onTap});
+  _ViewButton({required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -657,15 +662,15 @@ class _ViewButton extends StatelessWidget{
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: <Widget>[
-            Text(label,
+            Text(label!,
               style: TextStyle(
-                color: Styles().colors.fillColorPrimary,
-                fontFamily: Styles().fontFamilies.bold,
+                color: Styles().colors!.fillColorPrimary,
+                fontFamily: Styles().fontFamilies!.bold,
                 fontSize: 16,
               ),
             ),
             Container(width: 10,),
-            Image.asset('images/chevron-right.png'),
+            Image.asset('images/chevron-right.png', excludeFromSemantics: true),
           ],
         ),
       ),
@@ -676,16 +681,16 @@ class _ViewButton extends StatelessWidget{
 class _Card extends StatelessWidget{
 
   static double width = 240;
-  final String title;
-  final Color titleTextColor;
-  final Color titleBackColor;
-  final Color titleIconColor;
+  final String? title;
+  final Color? titleTextColor;
+  final Color? titleBackColor;
+  final Color? titleIconColor;
   final Widget child;
 
-  final Color _defaultTitleTextColor = Styles().colors.white;
-  final Color _defaultTitleBackColor = Styles().colors.fillColorPrimary;
+  final Color? _defaultTitleTextColor = Styles().colors!.white;
+  final Color? _defaultTitleBackColor = Styles().colors!.fillColorPrimary;
 
-  _Card({Key key, @required this.title, this.titleBackColor, this.titleTextColor, this.titleIconColor,  @required this.child}) : super(key: key);
+  _Card({Key? key, required this.title, this.titleBackColor, this.titleTextColor, this.titleIconColor,  required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -695,7 +700,7 @@ class _Card extends StatelessWidget{
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Styles().colors.lightGray,
+            color: Styles().colors!.lightGray!,
             blurRadius: 2.0,
             spreadRadius: 2.0,
             offset: Offset(0.0, 0.0,),
@@ -718,17 +723,17 @@ class _Card extends StatelessWidget{
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 18),
                       child: Text(
-                        title,
+                        title!,
                         style: TextStyle(
                           color: titleTextColor ?? _defaultTitleTextColor,
-                          fontFamily: Styles().fontFamilies.extraBold,
+                          fontFamily: Styles().fontFamilies!.extraBold,
                           fontSize: 20,
                         ),
                       ),
                     ),
                   ),
                   Container(
-                    color: Styles().colors.white,
+                    color: Styles().colors!.white,
                     child: child,
                   )
                 ],

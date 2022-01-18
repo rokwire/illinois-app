@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:path/path.dart';
@@ -35,13 +34,14 @@ class Content /* with Service */ {
 
   Content._internal();
 
-  Future<ImagesResult> useUrl({String storageDir, String url, int width}) async {
+  Future<ImagesResult> useUrl({String? storageDir, required String url, int? width}) async {
     // 1. first check if the url gives an image
-    Response headersResponse = await head(Uri.parse(url));
+    Uri? uri = Uri.tryParse(url);
+    Response? headersResponse = (uri != null) ? await head(Uri.parse(url)) : null;
     if ((headersResponse != null) && (headersResponse.statusCode == 200)) {
       //check content type
       Map<String, String> headers = headersResponse.headers;
-      String contentType = headers["content-type"];
+      String? contentType = headers["content-type"];
       bool isImage = _isValidImage(contentType);
       if (isImage) {
         // 2. download the image
@@ -58,55 +58,59 @@ class Content /* with Service */ {
     }
   }
 
-  Future<ImagesResult> selectImageFromDevice({String storagePath, int width}) async {
-    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+  Future<ImagesResult?> selectImageFromDevice({String? storagePath, int? width}) async {
+    XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image == null) {
       // User has cancelled operation
       return ImagesResult.cancel();
     }
-    if ((image != null) && (await image.exists())) {
-      List<int> imageBytes = image.readAsBytesSync();
-      String fileName = basename(image.path);
-      String contentType = mime(fileName);
-      return _uploadImage(storagePath: storagePath, imageBytes: imageBytes, width: width, fileName: fileName, mediaType: contentType);
-    } else {
-      return null;
+    try {
+      if ((0 < await image.length())) {
+        List<int> imageBytes = await image.readAsBytes();
+        String fileName = basename(image.path);
+        String? contentType = mime(fileName);
+        return _uploadImage(storagePath: storagePath, imageBytes: imageBytes, width: width, fileName: fileName, mediaType: contentType);
+      }
     }
+    catch(e) {
+      print(e.toString());
+    }
+    return null;
   }
 
-  Future<ImagesResult> _uploadImage({List<int> imageBytes, String fileName, String storagePath, int width, String mediaType}) async {
-    String serviceUrl = Config().contentUrl;
-    if (AppString.isStringEmpty(serviceUrl)) {
+  Future<ImagesResult> _uploadImage({List<int>? imageBytes, String? fileName, String? storagePath, int? width, String? mediaType}) async {
+    String? serviceUrl = Config().contentUrl;
+    if (StringUtils.isEmpty(serviceUrl)) {
       return ImagesResult.error('Missing images BB url.');
     }
-    if (AppCollection.isCollectionEmpty(imageBytes)) {
+    if (CollectionUtils.isEmpty(imageBytes)) {
       return ImagesResult.error('No file bytes.');
     }
-    if (AppString.isStringEmpty(fileName)) {
+    if (StringUtils.isEmpty(fileName)) {
       return ImagesResult.error('Missing file name.');
     }
-    if (AppString.isStringEmpty(storagePath)) {
+    if (StringUtils.isEmpty(storagePath)) {
       return ImagesResult.error('Missing storage path.');
     }
     if ((width == null) || (width <= 0)) {
       return ImagesResult.error('Invalid image width. Please, provide positive number.');
     }
-    if (AppString.isStringEmpty(mediaType)) {
+    if (StringUtils.isEmpty(mediaType)) {
       return ImagesResult.error('Missing media type.');
     }
     String url = "$serviceUrl/image";
     Map<String, String> imageRequestFields = {
-      'path': storagePath,
+      'path': storagePath!,
       'width': width.toString(),
       'quality': 100.toString() // Use maximum quality - 100
     };
-    StreamedResponse response = await Network().multipartPost(
+    StreamedResponse? response = await Network().multipartPost(
         url: url, fileKey: 'fileName', fileName: fileName, fileBytes: imageBytes, contentType: mediaType, fields: imageRequestFields, auth: NetworkAuth.Auth2);
     int responseCode = response?.statusCode ?? -1;
-    String responseString = await response?.stream?.bytesToString();
+    String responseString = (await response?.stream.bytesToString())!;
     if (responseCode == 200) {
-      Map<String, dynamic> json = AppJson.decode(responseString);
-      String imageUrl = (json != null) ? json['url'] : null;
+      Map<String, dynamic>? json = JsonUtils.decode(responseString);
+      String? imageUrl = (json != null) ? json['url'] : null;
       return ImagesResult.succeed(imageUrl);
     } else {
       String error = "Failed to upload image. Reason: $responseString";
@@ -115,7 +119,7 @@ class Content /* with Service */ {
     }
   }
 
-  bool _isValidImage(String contentType) {
+  bool _isValidImage(String? contentType) {
     if (contentType == null) return false;
     return contentType.startsWith("image/");
   }
@@ -124,8 +128,8 @@ class Content /* with Service */ {
 enum ImagesResultType { ERROR_OCCURRED, CANCELLED, SUCCEEDED }
 
 class ImagesResult {
-  ImagesResultType resultType;
-  String errorMessage;
+  ImagesResultType? resultType;
+  String? errorMessage;
   dynamic data;
 
   ImagesResult.error(String errorMessage) {

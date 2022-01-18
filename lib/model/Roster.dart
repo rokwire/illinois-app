@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Roster {
-  final String id;
-  final String name;
-  final String firstName;
-  final String lastName;
-  final String position;
-  final String numberString;
-  final String height;
-  final String weight;
-  final String gender;
-  final String year;
-  final String hometown;
-  final String highSchool;
-  final String htmlBio;
-  final String fullSizePhotoUrl;
-  final String thumbPhotoUrl;
+  final String? id;
+  final String? name;
+  final String? firstName;
+  final String? lastName;
+  final String? position;
+  final String? numberString;
+  final String? height;
+  final String? weight;
+  final String? gender;
+  final String? year;
+  final String? hometown;
+  final String? highSchool;
+  final String? htmlBio;
+  final String? fullSizePhotoUrl;
+  final String? thumbPhotoUrl;
 
   Roster(
       {this.id,
@@ -50,13 +50,13 @@ class Roster {
       this.fullSizePhotoUrl,
       this.thumbPhotoUrl});
 
-  factory Roster.fromJson(Map<String, dynamic> json) {
+  static Roster? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
-    Map<String, dynamic> photosJson = json['photos'];
-    String fullSizePhotoUrl;
-    String thumbPhotoUrl;
+    Map<String, dynamic>? photosJson = json['photos'];
+    String? fullSizePhotoUrl;
+    String? thumbPhotoUrl;
     if (photosJson != null) {
       fullSizePhotoUrl = photosJson['fullsize'];
       thumbPhotoUrl = photosJson['thumbnail'];
@@ -80,16 +80,16 @@ class Roster {
   }
 
   bool get hasPosition {
-    return AppString.isStringNotEmpty(position);
+    return StringUtils.isNotEmpty(position);
   }
 
   bool get hasNumber {
-    return AppString.isStringNotEmpty(numberString);
+    return StringUtils.isNotEmpty(numberString);
   }
 
   int get number {
     try {
-      return int.parse(numberString);
+      return int.parse(numberString!);
     } on Exception catch (e) {
       print(e);
       return -1;

@@ -17,52 +17,91 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/service/Localization.dart';
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:share/share.dart';
 import 'package:html/dom.dart' as dom;
 
-class AthleticsNewsArticlePanel extends StatelessWidget {
-  final News article;
+class AthleticsNewsArticlePanel extends StatefulWidget {
+  final String? articleId;
+  final News? article;
 
-  AthleticsNewsArticlePanel({@required this.article}){
-    RecentItems().addRecentItem(RecentItem.fromOriginalType(article));
+  AthleticsNewsArticlePanel({this.article, this.articleId});
+
+  @override
+  _AthleticsNewsArticlePanelState createState() => _AthleticsNewsArticlePanelState();
+}
+
+class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
+
+  News? _article;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    _article = widget.article;
+    if (_article != null) {
+      RecentItems().addRecentItem(RecentItem.fromOriginalType(_article));
+    }
+    else {
+      _loadNewsArticle();
+    }
+
+    super.initState();
+  }
+
+  void _loadNewsArticle() {
+    _setLoading(true);
+    Sports().loadNewsArticle(widget.articleId).then((article) {
+      _article = article;
+      RecentItems().addRecentItem(RecentItem.fromOriginalType(_article));
+      _setLoading(false);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildContent(context),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
 }
 
   Widget _buildContent(BuildContext context) {
+    if (_loading == true) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (_article == null) {
+      return Center(child: Text(Localization().getStringEx('panel.athletics_news_article.load.failed.msg', 'Failed to load news article. Please, try again.')!));
+    }
+
     return CustomScrollView(
         scrollDirection: Axis.vertical,
         slivers: <Widget>[
             SliverToutHeaderBar(
             context: context,
-            imageUrl: article.imageUrl,
-            backColor: Styles().colors.white,
-            leftTriangleColor: Styles().colors.white,
-            rightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
+            imageUrl: _article?.imageUrl,
+            backColor: Styles().colors!.white,
+            leftTriangleColor: Styles().colors!.white,
+            rightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
           ),
           SliverList(
             delegate: SliverChildListDelegate([
               Container(
-                color: Styles().colors.background,
+                color: Styles().colors!.background,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,14 +126,14 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                             children: <Widget>[
                                               Container(
                                                 constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 86),
-                                                color: Styles().colors.fillColorPrimary,
+                                                color: Styles().colors!.fillColorPrimary,
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 6, horizontal: 8),
                                                   child: Text(
-                                                    article.category?.toUpperCase(),
+                                                    _article?.category?.toUpperCase() ?? '',
                                                     style: TextStyle(
-                                                        fontFamily: Styles().fontFamilies.bold,
+                                                        fontFamily: Styles().fontFamilies!.bold,
                                                         fontSize: 14,
                                                         letterSpacing: 1.0,
                                                         color: Colors.white),
@@ -107,21 +146,21 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                             padding:
                                             EdgeInsets.only(top: 12, bottom: 24),
                                             child: Text(
-                                              article.title,
+                                              _article?.title ?? '',
                                               style: TextStyle(
                                                   fontSize: 24,
-                                                  color: Styles().colors.fillColorPrimary),
+                                                  color: Styles().colors!.fillColorPrimary),
                                             ),
                                           ),
                                           Row(
                                             children: <Widget>[
                                               Image.asset('images/icon-news.png'),
                                               Container(width: 5,),
-                                              Text(article.displayTime,
+                                              Text(_article?.displayTime ?? '',
                                                   style: TextStyle(
                                                       fontSize: 16,
-                                                      color: Styles().colors.textBackground,
-                                                      fontFamily: Styles().fontFamilies.medium
+                                                      color: Styles().colors!.textBackground,
+                                                      fontFamily: Styles().fontFamilies!.medium
                                                   )),
                                             ],
                                           ),
@@ -137,15 +176,15 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                           children: _buildContentWidgets(context),
                                         ),
                                       )),
-                                  AppString.isStringNotEmpty(article?.link)?
+                                  StringUtils.isNotEmpty(_article?.link)?
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: 20, right: 20, bottom: 48),
                                     child: ScalableRoundedButton(
                                       label: 'Share this article',
-                                      backgroundColor: Styles().colors.background,
-                                      textColor: Styles().colors.fillColorPrimary,
-                                      borderColor: Styles().colors.fillColorSecondary,
+                                      backgroundColor: Styles().colors!.background,
+                                      textColor: Styles().colors!.fillColorPrimary,
+                                      borderColor: Styles().colors!.fillColorSecondary,
                                       fontSize: 16,
                                       onTap: () => {
                                         _shareArticle()
@@ -170,32 +209,34 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
 
   _shareArticle(){
     Analytics.instance.logSelect(target: "Share Article");
-    Share.share(article.link);
+    if (StringUtils.isNotEmpty(_article?.link)) {
+      Share.share(_article!.link!);
+    }
   }
 
   List<Widget> _buildContentWidgets(BuildContext context) {
     List<Widget> widgets = [];
-    if (!AppString.isStringEmpty(article.description)) {
+    if (!StringUtils.isEmpty(_article?.description)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 10),
         child: Html(
-          data:article.description,
+          data:_article!.description!,
           style: {
-            "body": Style(color: Styles().colors.textBackground)
+            "body": Style(color: Styles().colors!.textBackground)
           },
         ),
       ));
     }
-    String fullText = article.fillText;
-    if (!AppString.isStringEmpty(fullText)) {
+    String? fullText = _article?.fillText;
+    if (!StringUtils.isEmpty(fullText)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 24),
         child: Html(
           data:fullText,
-          onLinkTap: (String url,
+          onLinkTap: (String? url,
               RenderContext context1,
               Map<String, String> attributes,
-              dom.Element element){
+              dom.Element? element){
             Navigator.push(context, CupertinoPageRoute(
                 builder: (context) => WebPanel(url: url,)
             ));
@@ -204,5 +245,12 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
       ));
     }
     return widgets;
+  }
+
+  void _setLoading(bool loading) {
+    _loading = loading;
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

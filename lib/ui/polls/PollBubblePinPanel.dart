@@ -20,7 +20,7 @@ import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class PollBubblePinPanel extends StatefulWidget {
@@ -79,12 +79,12 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
     return pin;
   }
 
-  int get _pinInt{
+  int? get _pinInt{
     return int.tryParse(_pinString);
   }
 
-  bool _isDigit(String text) {
-    RegExpMatch match = (text != null) ? _digitRegExp.firstMatch(text) : null;
+  bool _isDigit(String? text) {
+    RegExpMatch? match = (text != null) ? _digitRegExp.firstMatch(text) : null;
     return (match != null) && (match.start == 0) && (match.end == 1);
   }
 
@@ -116,7 +116,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
                 SingleChildScrollView(child:
                 Column(children: <Widget>[
                   Container(
-                    decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
+                    decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
                     child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildContent(),),),
                   ),
                 ],)),
@@ -142,11 +142,11 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
       Padding(
         padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 52),
         child: Text(
-          Localization().getStringEx("panel.poll_pin_bouble.long_info_description", "Each poll has a 4-digit code associated with it. Only the poll creator can see and share this code. To participate in their poll, have them share the 4-digit code."),
+          Localization().getStringEx("panel.poll_pin_bouble.long_info_description", "Each poll has a 4-digit code associated with it. Only the poll creator can see and share this code. To participate in their poll, have them share the 4-digit code.")!,
           style: TextStyle(
-            fontFamily: Styles().fontFamilies.regular,
+            fontFamily: Styles().fontFamilies!.regular,
             fontSize: 16,
-            color: Styles().colors.white
+            color: Styles().colors!.white
           ),
 
         ),
@@ -161,8 +161,8 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         Padding(padding: EdgeInsets.only(right: 40), child:
           RichText(
             text: TextSpan(
-              text:Localization().getStringEx("panel.poll_pin_bouble.label_description", "Enter your 4-digit code to see poll.") + " ",
-              style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 24),
+              text:Localization().getStringEx("panel.poll_pin_bouble.label_description", "Enter your 4-digit code to see poll.")! + " ",
+              style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24),
               children:[
                 WidgetSpan(
                     child: GestureDetector(
@@ -174,15 +174,15 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
                           borderRadius: new BorderRadius.circular(15.0),
                           border: new Border.all(
                             width: 2.0,
-                            color: Styles().colors.fillColorSecondary,
+                            color: Styles().colors!.fillColorSecondary!,
                           ),
                         ),
                         child: Center(
                           child: Text("i",
                             style: TextStyle(
-                              fontFamily: Styles().fontFamilies.extraBold,
+                              fontFamily: Styles().fontFamilies!.extraBold,
                               fontSize: 20,
-                              color: Styles().colors.fillColorSecondary,
+                              color: Styles().colors!.fillColorSecondary,
                             ),
                           ),
                         ),
@@ -219,9 +219,9 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
       children: widgets,));
   }
 
-  Widget _buildPinField(TextEditingController controller, FocusNode focusNode, FocusNode prevFocusNode, FocusNode nextFocusNode){
+  Widget _buildPinField(TextEditingController controller, FocusNode focusNode, FocusNode? prevFocusNode, FocusNode? nextFocusNode){
     Function nextCallBack = (){
-      if(_isDigit(controller?.value?.text)){
+      if(_isDigit(controller.value.text)){
         if(nextFocusNode != null) {
           nextFocusNode.requestFocus();
         }
@@ -242,7 +242,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         onChanged: (values)=> nextCallBack(),
         decoration: new InputDecoration(
           filled: true,
-          fillColor: Styles().colors.white,
+          fillColor: Styles().colors!.white,
           border: new OutlineInputBorder(
             borderRadius: const BorderRadius.all(
               const Radius.circular(4),
@@ -250,9 +250,9 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
           ),
         ),
         style: TextStyle(
-          fontFamily: Styles().fontFamilies.regular,
+          fontFamily: Styles().fontFamilies!.regular,
           fontSize: 36,
-          color: Styles().colors.fillColorPrimary,
+          color: Styles().colors!.fillColorPrimary,
         ),
       ),
     );
@@ -265,11 +265,11 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
           RoundedButton(
             label: Localization().getStringEx('dialog.continue.title', 'Continue'),
             hint: Localization().getStringEx('dialog.continue.hint', ''),
-            backgroundColor: Styles().colors.white,
+            backgroundColor: Styles().colors!.white,
             height: 20 + 16*MediaQuery.of(context).textScaleFactor,
             fontSize: 16.0,
-            textColor: Styles().colors.fillColorPrimary,
-            borderColor: Styles().colors.fillColorSecondary,
+            textColor: Styles().colors!.fillColorPrimary,
+            borderColor: Styles().colors!.fillColorSecondary,
             padding: EdgeInsets.symmetric(horizontal: 24),
             onTap: () { _onContinue(); }
           ),       
@@ -278,7 +278,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
               height: 42,
               child: Align(alignment: Alignment.center,
                 child: SizedBox(height: 21, width: 21,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
+                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
                 ),
               ),
             ),
@@ -303,7 +303,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         _loading = true;
       });
       
-      Polls().load(pollPin: _pinInt).then((Poll poll) {
+      Polls().load(pollPin: _pinInt).then((Poll? poll) {
         if (poll == null) {
           AppAlert.showDialogResult(context, Localization().getStringEx('panel.poll_pin_bouble.unable_to_load_poll', 'Unable to load poll'));
         }
@@ -317,7 +317,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
           Navigator.of(context).pop(poll);
         }
       }).catchError((e){
-        AppAlert.showDialogResult(context, e?.toString() ?? Localization().getStringEx('panel.poll_pin_bouble.unknown_error_description', 'Unknown error occured'));
+        AppAlert.showDialogResult(context, e.toString());
       }).whenComplete((){
         setState(() {
           _loading = false;

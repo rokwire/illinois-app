@@ -19,7 +19,6 @@
 //
 
 #import "RegionMonitor.h"
-#import "AppDelegate.h"
 
 #import "NSDictionary+InaTypedValue.h"
 #import "NSString+InaJson.h"
@@ -31,7 +30,21 @@ typedef NS_ENUM(NSInteger, InsideRegionSource) {
 	InsideRegionSource_Location,
 };
 
+// Channel Commands
+static NSString *const kCurrentRegionsName = @"currentRegions";
+static NSString *const kMonitorRegionsName = @"monitorRegions";
+
+static NSString *const kStartRangingBeaconsInRegionName = @"startRangingBeaconsInRegion";
+static NSString *const kStopRangingBeaconsInRegionName = @"stopRangingBeaconsInRegion";
+static NSString *const kBeaconsInRegionName = @"beaconsInRegion";
+
+static NSString *const kEnterRegionName = @"onEnterRegion";
+static NSString *const kExitRegionName = @"onExitRegion";
+static NSString *const kCurrentRegionsChangedName = @"onCurrentRegionsChanged";
+static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged";
+
 @interface RegionMonitor()<CLLocationManagerDelegate>
+@property (nonatomic, strong) FlutterMethodChannel* channel;
 @property (nonatomic, strong) CLLocationManager*    locationManager;
 @property (nonatomic, strong) NSMutableDictionary*  regions;
 @property (nonatomic, strong) NSMutableDictionary*  currentRegionIds;
@@ -70,6 +83,12 @@ typedef NS_ENUM(NSInteger, InsideRegionSource) {
 
 @implementation RegionMonitor
 
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+	FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:@"edu.illinois.rokwire/geoFence" binaryMessenger:registrar.messenger];
+	RegionMonitor *instance = [[RegionMonitor alloc] initWithChannel:channel];
+	[registrar addMethodCallDelegate:instance channel:channel];
+}
+
 - (instancetype)init {
 	if (self = [super init]) {
 		_locationManager = [[CLLocationManager alloc] init];
@@ -84,14 +103,40 @@ typedef NS_ENUM(NSInteger, InsideRegionSource) {
 	return self;
 }
 
-+ (instancetype)sharedInstance {
-    static RegionMonitor *_sharedInstance = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _sharedInstance = [[self alloc] init];
-    });
-	
-    return _sharedInstance;
+- (instancetype)initWithChannel:(FlutterMethodChannel*)channel {
+	if (self = [self init]) {
+		_channel = channel;
+	}
+	return self;
+}
+
+#pragma mark FlutterPlugin
+
+- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+
+	if ([call.method isEqualToString:kCurrentRegionsName]) {
+		result(self.currentRegionIdsList);
+	}
+	else if ([call.method isEqualToString:kMonitorRegionsName]) {
+		NSArray *regions = [call.arguments isKindOfClass:[NSArray class]] ? call.arguments : nil;
+		[self monitorRegions:regions];
+		result(nil);
+	}
+	else if ([call.method isEqualToString:kStartRangingBeaconsInRegionName]) {
+		NSString *regionId = [call.arguments isKindOfClass:[NSString class]] ? call.arguments : nil;
+		result(@([self startRangingBeaconsInRegionWithId:regionId]));
+	}
+	else if ([call.method isEqualToString:kStopRangingBeaconsInRegionName]) {
+		NSString *regionId = [call.arguments isKindOfClass:[NSString class]] ? call.arguments : nil;
+		result(@([self stopRangingBeaconsInRegionWithId:regionId]));
+	}
+	else if ([call.method isEqualToString:kBeaconsInRegionName]) {
+		NSString *regionId = [call.arguments isKindOfClass:[NSString class]] ? call.arguments : nil;
+		result([self beaconsInRegionWithId:regionId]);
+	}
+	else {
+		result(nil);
+	}
 }
 
 - (void)monitorRegions:(NSArray*)regions {
@@ -174,7 +219,12 @@ typedef NS_ENUM(NSInteger, InsideRegionSource) {
 }
 
 - (NSArray*)beaconsInRegionWithId:(NSString*)regionId {
-	return [_currentRegionBeacons inaObjectForKey:regionId class:[NSArray class]];
+	NSArray *beacons = [_currentRegionBeacons inaObjectForKey:regionId class:[NSArray class]];
+	NSMutableArray *beaconsJson = (beacons != nil) ? [[NSMutableArray alloc] init] : nil;
+	for (CLBeacon *beacon in beacons) {
+		[beaconsJson addObject:beacon.uiucJson];
+	}
+	return beaconsJson;
 }
 
 
@@ -269,19 +319,19 @@ typedef NS_ENUM(NSInteger, InsideRegionSource) {
 }
 
 - (void)_notifyCurrentRegions {
-	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"geo_fence.regions.changed" arguments:self.currentRegionIdsList];
+	[_channel invokeMethod:kCurrentRegionsChangedName arguments:self.currentRegionIdsList];
 }
 
 - (void)_notifyRegionEnter:(NSString*)regionId {
-	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"geo_fence.regions.enter" arguments:regionId];
+	[_channel invokeMethod:kEnterRegionName arguments:regionId];
 }
 
 - (void)_notifyRegionExit:(NSString*)regionId {
-	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"geo_fence.regions.exit" arguments:regionId];
+	[_channel invokeMethod:kExitRegionName arguments:regionId];
 }
 
 - (void)_notifyBeacons:(NSArray*)beacons forRegionWithId:(NSString*)regionId {
-	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"geo_fence.beacons.changed" arguments:@{
+	[_channel invokeMethod:kBeaconsInRegionChangedName arguments:@{
 		@"regionId": regionId ?: [NSNull null],
 		@"beacons": beacons ?: [NSNull null],
 	}];
@@ -460,8 +510,9 @@ typedef NS_ENUM(NSInteger, InsideRegionSource) {
 
 - (bool)canMonitor {
 	return
-//		[CLLocationManager locationServicesEnabled] &&
-//		([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) &&
+		[CLLocationManager locationServicesEnabled] &&
+		/*(([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) ||
+		   ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedWhenInUse)) &&*/
 		[CLLocationManager isMonitoringAvailableForClass:self.clRegion.class];
 
 }

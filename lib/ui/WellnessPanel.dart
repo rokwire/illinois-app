@@ -19,19 +19,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/Guide.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class WellnessPanel extends StatefulWidget {
-  final Map<String, dynamic> content;
+  final Map<String, dynamic>? content;
 
   WellnessPanel({this.content});
 
@@ -40,8 +39,8 @@ class WellnessPanel extends StatefulWidget {
 }
 
 class _WellnessPanelState extends State<WellnessPanel> implements NotificationsListener {
-  Map<String, dynamic> _jsonContent;
-  Map<String, dynamic> _stringsContent;
+  Map<String, dynamic>? _jsonContent;
+  Map<String, dynamic>? _stringsContent;
 
   @override
   void initState() {
@@ -71,18 +70,18 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
 
   @override
   Widget build(BuildContext context) {
-    String headerTitleKey = AppMapPathKey.entry(_jsonContent, 'header.title');
-    String headerTitle = Localization().getStringFromKeyMapping(headerTitleKey, _stringsContent);
-    String introTextKey = AppMapPathKey.entry(_jsonContent, 'description.intro_text');
-    String introText = Localization().getStringFromKeyMapping(introTextKey, _stringsContent);
-    String mainTextKey = AppMapPathKey.entry(_jsonContent, 'description.main_text');
-    String mainText = Localization().getStringFromKeyMapping(mainTextKey, _stringsContent);
-    String bulletKey = AppMapPathKey.entry(_jsonContent, 'description.bullet');
-    String bullet = Localization().getStringFromKeyMapping(bulletKey, _stringsContent);
-    String secondaryTextKey = AppMapPathKey.entry(_jsonContent, 'description.secondary_text');
-    String secondaryText = Localization().getStringFromKeyMapping(secondaryTextKey, _stringsContent);
+    String? headerTitleKey = MapPathKey.entry(_jsonContent, 'header.title');
+    String headerTitle = Localization().getStringFromKeyMapping(headerTitleKey, _stringsContent)!;
+    String? introTextKey = MapPathKey.entry(_jsonContent, 'description.intro_text');
+    String? introText = Localization().getStringFromKeyMapping(introTextKey, _stringsContent);
+    String? mainTextKey = MapPathKey.entry(_jsonContent, 'description.main_text');
+    String? mainText = Localization().getStringFromKeyMapping(mainTextKey, _stringsContent);
+    String? bulletKey = MapPathKey.entry(_jsonContent, 'description.bullet');
+    String? bullet = Localization().getStringFromKeyMapping(bulletKey, _stringsContent);
+    String? secondaryTextKey = MapPathKey.entry(_jsonContent, 'description.secondary_text');
+    String? secondaryText = Localization().getStringFromKeyMapping(secondaryTextKey, _stringsContent);
     return Scaffold(
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(132),
         child: AppBar(
@@ -116,43 +115,43 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Visibility(
-              visible: AppString.isStringNotEmpty(introText),
+              visible: StringUtils.isNotEmpty(introText),
               child: Padding(
                 padding: EdgeInsets.only(left: 24, top: 24, right: 24),
                 child: Text(
-                  AppString.getDefaultEmptyString(value: introText),
-                  style: TextStyle(fontSize: 20, color: Styles().colors.textBackground),
+                  StringUtils.ensureNotEmpty(introText),
+                  style: TextStyle(fontSize: 20, color: Styles().colors!.textBackground),
                 ),
               ),
             ),
             Visibility(
-              visible: AppString.isStringNotEmpty(mainText),
+              visible: StringUtils.isNotEmpty(mainText),
               child: Padding(
                 padding: EdgeInsets.only(left: 24, right: 24, top: 24),
                 child: Text(
-                  AppString.getDefaultEmptyString(value: mainText),
-                  style: TextStyle(fontSize: 16, color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular),
+                  StringUtils.ensureNotEmpty(mainText),
+                  style: TextStyle(fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular),
                 ),
               ),
             ),
             _buildDescriptionButtons(),
             Visibility(
-              visible: AppString.isStringNotEmpty(bullet),
+              visible: StringUtils.isNotEmpty(bullet),
               child: Padding(
                 padding: EdgeInsets.only(left: 24, right: 24, top: 24),
                 child: Text(
-                  AppString.getDefaultEmptyString(value: bullet),
-                  style: TextStyle(fontSize: 20, color: Styles().colors.textBackground),
+                  StringUtils.ensureNotEmpty(bullet),
+                  style: TextStyle(fontSize: 20, color: Styles().colors!.textBackground),
                 ),
               ),
             ),
             Visibility(
-              visible: AppString.isStringNotEmpty(secondaryText),
+              visible: StringUtils.isNotEmpty(secondaryText),
               child: Padding(
                 padding: EdgeInsets.only(left: 24, right: 24, top: 6),
                 child: Text(
-                  AppString.getDefaultEmptyString(value: secondaryText),
-                  style: TextStyle(fontSize: 16, color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular),
+                  StringUtils.ensureNotEmpty(secondaryText),
+                  style: TextStyle(fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular),
                 ),
               ),
             ),
@@ -166,34 +165,34 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
   }
 
   Widget _buildDescriptionButtons() {
-    List<dynamic> ribbonButtonsContent = AppMapPathKey.entry(_jsonContent, 'description.ribbon_buttons');
+    List<dynamic>? ribbonButtonsContent = MapPathKey.entry(_jsonContent, 'description.ribbon_buttons');
     List<Widget> ribbonButtons = _buildRibbonButtons(ribbonButtonsContent);
     return Visibility(
-        visible: AppCollection.isCollectionNotEmpty(ribbonButtons),
+        visible: CollectionUtils.isNotEmpty(ribbonButtons),
         child: Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child: Column(children: ribbonButtons)));
   }
 
   Widget _buildActivities() {
     List<Widget> widgetList = [];
-    List<dynamic> activities = AppMapPathKey.entry(_jsonContent, 'activities');
-    if (AppCollection.isCollectionNotEmpty(activities)) {
-      activities.forEach((dynamic activitiesContent) {
-        String sectionHeaderTextKey = AppMapPathKey.entry(activitiesContent, 'header.title');
-        String sectionHeaderText = Localization().getStringFromKeyMapping(sectionHeaderTextKey, _stringsContent);
-        List<dynamic> items = AppMapPathKey.entry(activitiesContent, 'items');
+    List<dynamic>? activities = MapPathKey.entry(_jsonContent, 'activities');
+    if (CollectionUtils.isNotEmpty(activities)) {
+      activities!.forEach((dynamic activitiesContent) {
+        String? sectionHeaderTextKey = MapPathKey.entry(activitiesContent, 'header.title');
+        String? sectionHeaderText = Localization().getStringFromKeyMapping(sectionHeaderTextKey, _stringsContent);
+        List<dynamic>? items = MapPathKey.entry(activitiesContent, 'items');
         Stack activitiesWidget = Stack(
           alignment: Alignment.topCenter,
           children: <Widget>[
             Column(
               children: <Widget>[
                 Container(
-                  color: Styles().colors.fillColorPrimary,
+                  color: Styles().colors!.fillColorPrimary,
                   height: 40,
                 ),
                 Container(
                   height: 112,
                   width: double.infinity,
-                  child: Image.asset('images/slant-down-right-blue.png', color: Styles().colors.fillColorPrimary, fit: BoxFit.fill),
+                  child: Image.asset('images/slant-down-right-blue.png', color: Styles().colors!.fillColorPrimary, fit: BoxFit.fill),
                 )
               ],
             ),
@@ -214,7 +213,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
                             excludeSemantics: true,
                             child:
                             Text(
-                              AppString.getDefaultEmptyString(value: sectionHeaderText),
+                              StringUtils.ensureNotEmpty(sectionHeaderText),
                               style: TextStyle(color: Colors.white, fontSize: 20),
                             )
                         )
@@ -247,16 +246,16 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
     ) : Container();
   }
 
-  List<Widget> _buildActivitiesColumns(List<dynamic> itemsJson) {
+  List<Widget> _buildActivitiesColumns(List<dynamic>? itemsJson) {
     List<Widget> columnOneChildren = [];
     List<Widget> columnTwoChildren = [];
-    if (AppCollection.isCollectionNotEmpty(itemsJson)) {
-      for (int i = 0; i < itemsJson.length; i++) {
+    if (CollectionUtils.isNotEmpty(itemsJson)) {
+      for (int i = 0; i < itemsJson!.length; i++) {
         Map<String, dynamic> item = itemsJson[i];
-        String titleKey = AppMapPathKey.entry(item, 'title');
-        String title = Localization().getStringFromKeyMapping(titleKey, _stringsContent);
-        String imageName = AppMapPathKey.entry(item, 'image');
-        dynamic fontSizeJson = AppMapPathKey.entry(item, 'font_size');
+        String? titleKey = MapPathKey.entry(item, 'title');
+        String? title = Localization().getStringFromKeyMapping(titleKey, _stringsContent);
+        String? imageName = MapPathKey.entry(item, 'image');
+        dynamic fontSizeJson = MapPathKey.entry(item, 'font_size');
         double fontSizeDouble = 16.0; //by default
         if (fontSizeJson is int) {
           fontSizeDouble = fontSizeJson.toDouble();
@@ -287,31 +286,28 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
   }
 
   void _onTapActivity(Map<String, dynamic> activity) {
-    String titleKey = AppMapPathKey.entry(activity, 'title');
-    String title = Localization().getString(titleKey, language:'en') ?? titleKey;
+    String? titleKey = MapPathKey.entry(activity, 'title');
+    String? title = Localization().getString(titleKey, language:'en') ?? titleKey;
     if (title != null) {
       Analytics().logSelect(target:title);
     }
 
-    Map<String, dynamic> action = AppMapPathKey.entry(activity, 'action');
-    String actionName = AppMapPathKey.entry(action, 'name');
+    Map<String, dynamic>? action = MapPathKey.entry(activity, 'action');
+    String? actionName = MapPathKey.entry(action, 'name');
     if ('panel' == actionName) {
-      String panelSource = AppMapPathKey.entry(action, 'source');
-      Map<String, dynamic> panelContent = AppMapPathKey.entry(Assets()['wellness.panels'], panelSource);
+      String? panelSource = MapPathKey.entry(action, 'source');
+      Map<String, dynamic>? panelContent = MapPathKey.entry(Assets()['wellness.panels'], panelSource);
       if (panelContent != null) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessPanel(content: panelContent,)));
       }
-    } else if ('web' == actionName) {
-      String url = AppMapPathKey.entry(action, 'source');
-      if (AppString.isStringNotEmpty(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      }
+    } else /*if ('web' == actionName)*/ {
+      _launchUrl(MapPathKey.entry(action, 'source'));
     }
   }
 
-  Widget _buildImage(Map<String, dynamic> json, String key) {
-    String imageName = AppMapPathKey.entry(json, key);
-    if (AppString.isStringEmpty(imageName)) {
+  Widget _buildImage(Map<String, dynamic>? json, String key) {
+    String? imageName = MapPathKey.entry(json, key);
+    if (StringUtils.isEmpty(imageName)) {
       return Container();
     }
     return Image.asset('images/$imageName', excludeFromSemantics: true,);
@@ -319,12 +315,12 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
 
   Widget _buildResources() {
     List<Widget> resourceSections = [];
-    List<dynamic> resources = AppMapPathKey.entry(_jsonContent, 'resources');
-    if (AppCollection.isCollectionNotEmpty(resources)) {
-      for (Map<String, dynamic> resourceItem in resources) {
-        String resourceHeaderTitleKey = AppMapPathKey.entry(resourceItem, 'title');
-        String resourceHeaderTitle = Localization().getStringFromKeyMapping(resourceHeaderTitleKey, _stringsContent);
-        bool isTitleVisible = AppString.isStringNotEmpty(resourceHeaderTitle);
+    List<dynamic>? resources = MapPathKey.entry(_jsonContent, 'resources');
+    if (CollectionUtils.isNotEmpty(resources)) {
+      for (Map<String, dynamic> resourceItem in resources!) {
+        String? resourceHeaderTitleKey = MapPathKey.entry(resourceItem, 'title');
+        String? resourceHeaderTitle = Localization().getStringFromKeyMapping(resourceHeaderTitleKey, _stringsContent);
+        bool isTitleVisible = StringUtils.isNotEmpty(resourceHeaderTitle);
         Stack resourceWidget = Stack(
           alignment: Alignment.topCenter,
           children: <Widget>[
@@ -335,7 +331,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
                 child: Column(
                   children: <Widget>[
                     Container(
-                      color: Styles().colors.backgroundVariant,
+                      color: Styles().colors!.backgroundVariant,
                       height: 40,
                     ),
                     Container(
@@ -359,8 +355,8 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
                         excludeSemantics: true,
                         child:
                         Text(
-                          AppString.getDefaultEmptyString(value: resourceHeaderTitle),
-                          style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20),
+                          StringUtils.ensureNotEmpty(resourceHeaderTitle),
+                          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
                         ),
                       )
                   ),
@@ -376,7 +372,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
           ],
         );
         resourceSections.add(resourceWidget);
-        Widget socialMedia = _buildSocialMediaWidget(resourceItem);
+        Widget? socialMedia = _buildSocialMediaWidget(resourceItem);
         if (socialMedia != null) {
           resourceSections.add(socialMedia);
         }
@@ -387,41 +383,42 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
   }
 
   List<Widget> _buildResourceRibbonButtons(Map<String, dynamic> resourceItem) {
-    List<dynamic> ribbonButtonsContent = AppMapPathKey.entry(resourceItem, 'ribbon_buttons');
+    List<dynamic>? ribbonButtonsContent = MapPathKey.entry(resourceItem, 'ribbon_buttons');
     List<Widget> ribbonButtons = _buildRibbonButtons(ribbonButtonsContent);
     return ribbonButtons;
   }
 
   void _onTapRibbonButton(Map<String, dynamic> ribbonButton) {
-    String titleKey = AppMapPathKey.entry(ribbonButton, 'title');
-    String title = Localization().getString(titleKey, language:'en') ?? titleKey;
+    String? titleKey = MapPathKey.entry(ribbonButton, 'title');
+    String? title = Localization().getString(titleKey, language:'en') ?? titleKey;
     if (title != null) {
       Analytics().logSelect(target:title);
     }
 
-    String url = AppMapPathKey.entry(ribbonButton, 'url');
-    String guideId = AppMapPathKey.entry(ribbonButton, 'guide_id');
-    Map<String, dynamic> guideEntry = (guideId != null) ? Guide().entryById(guideId) : null;
-    if (guideEntry != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideId,)));
-    }
-    else if (AppString.isStringNotEmpty(url)) {
-      if(AppUrl.launchInternal(url)){
+    _launchUrl(MapPathKey.entry(ribbonButton, 'url'));
+  }
+
+  void _launchUrl(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else if (UrlUtils.launchInternal(url)){
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       }
       else{
-        launch(url);
+        launch(url!);
       }
     }
   }
 
-  Widget _buildSocialMediaWidget(Map<String, dynamic> resourceItem) {
-    List<dynamic> socialMediaContent = AppMapPathKey.entry(resourceItem, 'social_media');
-    String resourceItemTitleKey = AppMapPathKey.entry(resourceItem, 'title');
-    String resourceItemTitle = Localization().getStringFromKeyMapping(resourceItemTitleKey, _stringsContent);
-    String followLabel = Localization().getStringFromKeyMapping('panel.wellness.common.resources.follow.label', _stringsContent, defaults: 'Follow');
-    String socialMediaTitle = AppString.isStringNotEmpty(resourceItemTitle) ? '$followLabel $resourceItemTitle' : '';
-    return AppCollection.isCollectionNotEmpty(socialMediaContent) ? Padding(
+  Widget? _buildSocialMediaWidget(Map<String, dynamic> resourceItem) {
+    List<dynamic>? socialMediaContent = MapPathKey.entry(resourceItem, 'social_media');
+    String? resourceItemTitleKey = MapPathKey.entry(resourceItem, 'title');
+    String? resourceItemTitle = Localization().getStringFromKeyMapping(resourceItemTitleKey, _stringsContent);
+    String? followLabel = Localization().getStringFromKeyMapping('panel.wellness.common.resources.follow.label', _stringsContent, defaults: 'Follow');
+    String socialMediaTitle = StringUtils.isNotEmpty(resourceItemTitle) ? '$followLabel $resourceItemTitle' : '';
+    return CollectionUtils.isNotEmpty(socialMediaContent) ? Padding(
       padding: EdgeInsets.only(top: 16, bottom: 32),
       child: Column(
         children: <Widget>[
@@ -429,7 +426,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
             padding: EdgeInsets.only(bottom: 8),
             child: Text(
               socialMediaTitle,
-              style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+              style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
             ),
           ),
           Row(
@@ -441,13 +438,13 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
     ) : null;
   }
 
-  List<Widget> _buildSocialMediaButtons(List<dynamic> socialItems) {
+  List<Widget> _buildSocialMediaButtons(List<dynamic>? socialItems) {
     List<Widget> socialWidgets = [];
-    if (AppCollection.isCollectionNotEmpty(socialItems)) {
-      for (Map<String, dynamic> socialItem in socialItems) {
-        String type = AppMapPathKey.entry(socialItem, 'type');
-        String imagePath = _getImagePathBySocialMediaType(type);
-        if (!AppString.isStringEmpty(imagePath)) {
+    if (CollectionUtils.isNotEmpty(socialItems)) {
+      for (Map<String, dynamic> socialItem in socialItems!) {
+        String? type = MapPathKey.entry(socialItem, 'type');
+        String? imagePath = _getImagePathBySocialMediaType(type);
+        if (!StringUtils.isEmpty(imagePath)) {
           socialWidgets.add(Semantics(label: type ?? "", button: true,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
@@ -456,9 +453,9 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
                   child: Container(
                     width: 40,
                     height: 40,
-                    decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.all(Radius.circular(4))),
+                    decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.all(Radius.circular(4))),
                     child: Center(
-                      child: Image.asset(imagePath, excludeFromSemantics: true,),
+                      child: Image.asset(imagePath!, excludeFromSemantics: true,),
                     ),
                   ),
                 ),
@@ -470,21 +467,21 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
     return socialWidgets;
   }
 
-  List<Widget> _buildRibbonButtons(List<dynamic> buttonsContent) {
+  List<Widget> _buildRibbonButtons(List<dynamic>? buttonsContent) {
     List<Widget> buttonWidgets = [];
-    if (AppCollection.isCollectionNotEmpty(buttonsContent)) {
-      for (Map<String, dynamic> ribbonButtonSource in buttonsContent) {
-        String titleKey = AppMapPathKey.entry(ribbonButtonSource, 'title');
-        String title = Localization().getStringFromKeyMapping(titleKey, _stringsContent);
-        String icon = AppMapPathKey.entry(ribbonButtonSource, 'icon');
-        String iconValue = AppString.getDefaultEmptyString(value: icon, defaultValue: 'chevron-right.png');
-        String hint = AppMapPathKey.entry(ribbonButtonSource, 'hint');
-        String hintKey =
-            hint != null ? AppString.getDefaultEmptyString(value: hint, defaultValue: "panel.wellness.common.resources.poor_accessibility.hint") : null;
-        String hintValue = AppString.isStringNotEmpty(hintKey) ? Localization().getStringFromKeyMapping(hintKey, _stringsContent) : "";
+    if (CollectionUtils.isNotEmpty(buttonsContent)) {
+      for (Map<String, dynamic> ribbonButtonSource in buttonsContent!) {
+        String? titleKey = MapPathKey.entry(ribbonButtonSource, 'title');
+        String? title = Localization().getStringFromKeyMapping(titleKey, _stringsContent);
+        String? icon = MapPathKey.entry(ribbonButtonSource, 'icon');
+        String? iconValue = StringUtils.ensureNotEmpty(icon, defaultValue: 'chevron-right.png');
+        String? hint = MapPathKey.entry(ribbonButtonSource, 'hint');
+        String? hintKey =
+            hint != null ? StringUtils.ensureNotEmpty(hint, defaultValue: "panel.wellness.common.resources.poor_accessibility.hint") : null;
+        String? hintValue = StringUtils.isNotEmpty(hintKey) ? Localization().getStringFromKeyMapping(hintKey, _stringsContent) : "";
         RibbonButton button = RibbonButton(
           height: null,
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
           borderRadius: BorderRadius.all(Radius.circular(5)),
           label: title,
           hint: hintValue,
@@ -498,15 +495,12 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
   }
 
   void _onTapSocialMedia(Map<String, dynamic> socialMedia) {
-    String type = AppMapPathKey.entry(socialMedia, 'type');
+    String? type = MapPathKey.entry(socialMedia, 'type');
     if (type != null) {
       Analytics().logSelect(target:type);
     }
     
-    String url = AppMapPathKey.entry(socialMedia, 'url');
-    if (url != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url,)));
-    }
+    _launchUrl(MapPathKey.entry(socialMedia, 'url'));
   }
 
   void _onTapBack() {
@@ -514,8 +508,8 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
     Navigator.pop(context);
   }
 
-  String _getImagePathBySocialMediaType(String socialMediaType) {
-    if (AppString.isStringEmpty(socialMediaType)) {
+  String? _getImagePathBySocialMediaType(String? socialMediaType) {
+    if (StringUtils.isEmpty(socialMediaType)) {
       return null;
     }
     switch (socialMediaType) {
@@ -548,22 +542,22 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
 }
 
 class _WellnessActivityButton extends StatelessWidget {
-  final String imageName;
-  final String label;
+  final String? imageName;
+  final String? label;
   final String hint;
   final double fontSize;
-  final double orderIndex;
-  final GestureTapCallback onTap;
+  final double? orderIndex;
+  final GestureTapCallback? onTap;
 
-  _WellnessActivityButton({@required this.imageName, @required this.label, this.hint = '', this.fontSize = 20.0, this.onTap, this.orderIndex});
+  _WellnessActivityButton({required this.imageName, required this.label, this.hint = '', this.fontSize = 20.0, this.onTap, this.orderIndex});
 
   @override
   Widget build(BuildContext context) {
-    return (AppString.isStringNotEmpty(label) || AppString.isStringNotEmpty(imageName)) ? Semantics(
+    return (StringUtils.isNotEmpty(label) || StringUtils.isNotEmpty(imageName)) ? Semantics(
         label: label,
         button: true,
         excludeSemantics: true,
-        sortKey: OrdinalSortKey(orderIndex),
+        sortKey: OrdinalSortKey(orderIndex!),
         value: hint,
         child: GestureDetector(
           onTap: onTap,
@@ -578,14 +572,14 @@ class _WellnessActivityButton extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    AppString.isStringNotEmpty(imageName) ? Padding(
+                    StringUtils.isNotEmpty(imageName) ? Padding(
                       padding: EdgeInsets.only(bottom: 16),
                       child: Image.asset('images/$imageName'),
                     ) : Container(),
-                    AppString.isStringNotEmpty(label) ? Text(
-                      label,
+                    StringUtils.isNotEmpty(label) ? Text(
+                      label!,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: fontSize, color: Styles().colors.fillColorPrimary),
+                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: fontSize, color: Styles().colors!.fillColorPrimary),
                     ) : Container()
                   ],
                 ),

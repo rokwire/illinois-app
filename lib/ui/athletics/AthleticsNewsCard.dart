@@ -20,14 +20,14 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Styles.dart';
 
 class AthleticsNewsCard extends StatefulWidget {
-  final GestureTapCallback onTap;
-  final News news;
+  final GestureTapCallback? onTap;
+  final News? news;
 
-  AthleticsNewsCard({Key key, this.onTap, this.news}) : super(key: key);
+  AthleticsNewsCard({Key? key, this.onTap, this.news}) : super(key: key);
 
   @override
   _AthleticsNewsCardState createState() => _AthleticsNewsCardState();
@@ -89,14 +89,14 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
 
   Widget _newsCategory() {
     bool isFavorite = Auth2().isFavorite(widget.news);
-    String category = widget.news.category;
+    String? category = widget.news!.category;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         children: <Widget>[
           Expanded(
             child: Container(
-              color: Styles().colors.fillColorPrimary,
+              color: Styles().colors!.fillColorPrimary,
               constraints: new BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width - 106),
               child: Padding(
@@ -106,7 +106,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
                       (category != null) ? category.toUpperCase() : "",
                       softWrap: true,
                       style: TextStyle(
-                          fontFamily: Styles().fontFamilies.bold,
+                          fontFamily: Styles().fontFamilies!.bold,
                           fontSize: 14,
                           color: Colors.white),
                     )
@@ -150,10 +150,10 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
     return Padding(
       padding: EdgeInsets.only(left: 24, right: 24, top: 12),
       child: Text(
-        (widget.news.title != null) ? widget.news.title : "",
+        (widget.news!.title != null) ? widget.news!.title! : "",
         style:
         TextStyle(fontSize: 24,
-            color: Styles().colors.fillColorPrimary),
+            color: Styles().colors!.fillColorPrimary),
       ),
     );
   }
@@ -161,7 +161,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
   Widget _newsDetails() {
     List<Widget> details = [];
 
-    Widget time = _newsTimeDetail();
+    Widget? time = _newsTimeDetail();
     if (time != null) {
       details.add(time);
     }
@@ -176,9 +176,9 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
         : Container();
   }
 
-  Widget _newsTimeDetail() {
-    News news = widget.news;
-    String displayTime = news?.displayTime;
+  Widget? _newsTimeDetail() {
+    News? news = widget.news;
+    String? displayTime = news?.displayTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Padding(
         padding: _detailPadding,
@@ -191,8 +191,8 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
             Text(displayTime,
                 style: TextStyle(
                     fontSize: 16,
-                    color: Styles().colors.textBackground,
-                    fontFamily: Styles().fontFamilies.medium
+                    color: Styles().colors!.textBackground,
+                    fontFamily: Styles().fontFamilies!.medium
                      )),
           ],
         ),
@@ -203,12 +203,12 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
   }
 
   Widget _topBorder() {
-    Color borderColor = Styles().colors.fillColorPrimary;
+    Color? borderColor = Styles().colors!.fillColorPrimary;
     return _showTopBorder()? Container(height: 7,color: borderColor) : Container();
   }
 
   bool _showTopBorder(){
-    return widget.news?.imageUrl == null ?? true;
+    return widget.news?.imageUrl == null;
   }
 
   void _onTapSave() {

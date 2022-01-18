@@ -17,10 +17,10 @@
 import 'dart:io';
 
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class HttpProxy extends Service implements NotificationsListener{
   
@@ -66,33 +66,33 @@ class HttpProxy extends Service implements NotificationsListener{
   }
 
 
-  bool get httpProxyEnabled{
+  bool? get httpProxyEnabled{
     return Storage().httpProxyEnabled;
   }
 
-  set httpProxyEnabled(bool value){
+  set httpProxyEnabled(bool? value){
     if(Storage().httpProxyEnabled != value) {
       Storage().httpProxyEnabled = value;
       _handleChanged();
     }
   }
 
-  String get httpProxyHost{
+  String? get httpProxyHost{
     return Storage().httpProxyHost;
   }
 
-  set httpProxyHost(String value){
+  set httpProxyHost(String? value){
     if(Storage().httpProxyHost != value) {
       Storage().httpProxyHost = value;
       _handleChanged();
     }
   }
 
-  String get httpProxyPort{
+  String? get httpProxyPort{
     return Storage().httpProxyPort;
   }
 
-  set httpProxyPort(String value){
+  set httpProxyPort(String? value){
     if(Storage().httpProxyPort != value) {
       Storage().httpProxyPort = value;
       _handleChanged();
@@ -100,9 +100,9 @@ class HttpProxy extends Service implements NotificationsListener{
   }
 
   void _handleChanged(){
-    if(httpProxyEnabled &&
-        AppString.isStringNotEmpty(httpProxyHost) &&
-        AppString.isStringNotEmpty(httpProxyPort) &&
+    if(httpProxyEnabled! &&
+        StringUtils.isNotEmpty(httpProxyHost) &&
+        StringUtils.isNotEmpty(httpProxyPort) &&
         Config().configEnvironment == ConfigEnvironment.dev
     ){
       HttpOverrides.global = _MyHttpOverrides(host: httpProxyHost, port: httpProxyPort);
@@ -115,13 +115,13 @@ class HttpProxy extends Service implements NotificationsListener{
 
 class _MyHttpOverrides extends HttpOverrides {
 
-  final String host;
-  final String port;
+  final String? host;
+  final String? port;
 
   _MyHttpOverrides({this.host, this.port});
 
   @override
-  HttpClient createHttpClient(SecurityContext context) {
+  HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
       ..findProxy = (uri) {
         return "PROXY $host:$port;";

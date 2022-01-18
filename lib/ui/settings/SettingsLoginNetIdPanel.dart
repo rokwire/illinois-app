@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -47,10 +47,10 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
 
   @override
   Widget build(BuildContext context) {
-    String titleString = Localization().getStringEx('panel.settings.login.netid.label.title', 'Connect your NetID');
-    String skipTitle = Localization().getStringEx('panel.settings.login.netid.button.dont_continue.title', 'Not right now');
+    String titleString = Localization().getStringEx('panel.settings.login.netid.label.title', 'Connect your NetID')!;
+    String skipTitle = Localization().getStringEx('panel.settings.login.netid.button.dont_continue.title', 'Not right now')!;
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         body: Stack(
           children: <Widget>[
             Column(
@@ -83,7 +83,7 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
                       padding: EdgeInsets.symmetric(horizontal: 18),
                       child: Center(
                         child: Text(titleString,
-                            textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
+                            textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary)),
                       )),
                 ),
                 Container(
@@ -91,8 +91,8 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
                 ),
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Text(Localization().getStringEx('panel.settings.login.netid.label.description', 'Log in with your NetID to use academic and dorm specific features.'),
-                        textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))),
+                    child: Text(Localization().getStringEx('panel.settings.login.netid.label.description', 'Log in with your NetID to use academic and dorm specific features.')!,
+                        textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
                 Container(
                   height: 32,
                 ),
@@ -106,9 +106,9 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
                     child: RoundedButton(
                         label: Localization().getStringEx('panel.settings.login.netid.button.continue.title', 'Log in with NetID'),
                         hint: Localization().getStringEx('panel.settings.login.netid.button.continue.hint', ''),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.background,
-                        textColor: Styles().colors.fillColorPrimary,
+                        borderColor: Styles().colors!.fillColorSecondary,
+                        backgroundColor: Styles().colors!.background,
+                        textColor: Styles().colors!.fillColorPrimary,
                         onTap: () => _onLoginTapped()),
                   ),
                 ),
@@ -128,10 +128,10 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
                                   skipTitle,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: Styles().colors.fillColorPrimary,
+                                    color: Styles().colors!.fillColorPrimary,
                                     decoration: TextDecoration.underline,
-                                    decorationColor: Styles().colors.fillColorSecondary,
-                                    fontFamily: Styles().fontFamilies.medium,
+                                    decorationColor: Styles().colors!.fillColorSecondary,
+                                    fontFamily: Styles().fontFamilies!.medium,
                                     fontSize: 16,
                                   ),
                                 ),
@@ -151,61 +151,28 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
         ));
   }
 
-  Widget _buildDialogWidget(BuildContext context) {
-    return Dialog(
-      child: Padding(
-        padding: EdgeInsets.all(18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              Localization().getStringEx('app.title', 'Illinois'),
-              style: TextStyle(fontSize: 24, color: Colors.black),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 26),
-              child: Text(
-                Localization().getStringEx('panel.settings.login.label.login_failed', 'Unable to login. Please try again later'),
-                textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Colors.black),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                TextButton(
-                    onPressed: () {
-                      Analytics.instance.logAlert(text: "Unable to login", selection: "Ok");
-                      Navigator.pop(context);
-                      //_finish();
-                    },
-                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')))
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
   void _onLoginTapped() {
     Analytics.instance.logSelect(target: 'Log in with NetID');
-    setState(() { _progress = true; });
-    Auth2().authenticateWithOidc().then((bool result) {
-      if (mounted) {
-        if (result == true) {
-          FlexUI().update().then((_){
+    if (_progress != true) {
+      setState(() { _progress = true; });
+      Auth2().authenticateWithOidc().then((bool? result) {
+        if (mounted) {
+          if (result == true) {
+            FlexUI().update().then((_) {
+              if (mounted) {
+                setState(() { _progress = false; });
+                Navigator.pop(context, true);
+              }
+            });
+          } else if (result == false) {
             setState(() { _progress = false; });
-            Navigator.pop(context,true);
-          });
-        } else if (result == false) {
-          setState(() { _progress = false; });
-          showDialog(context: context, builder: (context) => _buildDialogWidget(context));
-        } else {
-          setState(() { _progress = false; });
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          } else {
+            setState(() { _progress = false; });
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   void _onSkipTapped() {

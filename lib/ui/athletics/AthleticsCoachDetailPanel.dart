@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Log.dart';
+import 'package:rokwire_plugin/service/log.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/ModalImageDialog.dart';
 import 'package:illinois/model/Coach.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class AthleticsCoachDetailPanel extends StatefulWidget {
 
-  final SportDefinition sport;
+  final SportDefinition? sport;
   final Coach coach;
 
   AthleticsCoachDetailPanel(this.sport, this.coach);
@@ -59,7 +62,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx('panel.athletics_coach_detail.header.title', 'Staff'),
+          Localization().getStringEx('panel.athletics_coach_detail.header.title', 'Staff')!,
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -78,7 +81,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
                     _CoachDetailHeading(sport:widget.sport, coach:widget.coach, onTapPhoto: _onTapPhoto,),
                     Padding(
                       padding: EdgeInsets.all(16),
-                      child: Text(widget.coach.title,
+                      child: Text(widget.coach.title!,
                         style: TextStyle(
                             fontSize: 24
                         ),
@@ -87,15 +90,12 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
 
                     Container(
                         padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
-                        color: Styles().colors.background,
-                        child: Visibility(visible: AppString.isStringNotEmpty(widget.coach.htmlBio), child: Container(
-                          child: HtmlWidget(
-                            AppString.getDefaultEmptyString(value: widget.coach.htmlBio),
-                            webView: false,
-                            textStyle: TextStyle(
-                                fontFamily: Styles().fontFamilies.regular,
-                                fontSize: 16
-                            ),
+                        color: Styles().colors!.background,
+                        child: Visibility(visible: StringUtils.isNotEmpty(widget.coach.htmlBio), child: Container(
+                          child: Html(
+                            data: StringUtils.ensureNotEmpty(widget.coach.htmlBio),
+                            onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
+                            style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
                           ),
                         ))
                     )
@@ -107,7 +107,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
           ),
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -122,6 +122,16 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
       }
     ) : Container();
   }
+
+  void _launchUrl(String? url, {BuildContext? context}) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
+        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      } else {
+        launch(url!);
+      }
+    }
+  }
 }
 
 class _CoachDetailHeading extends StatelessWidget{
@@ -129,9 +139,9 @@ class _CoachDetailHeading extends StatelessWidget{
   final _horizontalMargin = 16.0;
   final _photoWidth = 80.0;
 
-  final SportDefinition sport;
-  final Coach coach;
-  final GestureTapCallback onTapPhoto;
+  final SportDefinition? sport;
+  final Coach? coach;
+  final GestureTapCallback? onTapPhoto;
 
   _CoachDetailHeading({this.sport, this.coach, this.onTapPhoto});
 
@@ -149,7 +159,7 @@ class _CoachDetailHeading extends StatelessWidget{
             child: Stack(
               children: <Widget>[
                 Container(
-                  color: Styles().colors.fillColorPrimaryVariant,
+                  color: Styles().colors!.fillColorPrimaryVariant,
                   child: Container(
                     margin: EdgeInsets.only(right:(_photoWidth + (_photoMargin + _horizontalMargin))),
                     child: Padding(
@@ -161,14 +171,14 @@ class _CoachDetailHeading extends StatelessWidget{
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Image.asset(sport.iconPath, width: 16, height: 16,),
+                                Image.asset(sport!.iconPath!, width: 16, height: 16,),
                                 Expanded(child:
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),
-                                    child: Text(sport.name,
+                                    child: Text(sport!.name!,
                                       style: TextStyle(
-                                          color: Styles().colors.surfaceAccent,
-                                          fontFamily: Styles().fontFamilies.medium,
+                                          color: Styles().colors!.surfaceAccent,
+                                          fontFamily: Styles().fontFamilies!.medium,
                                           fontSize: 16
                                       ),
                                     ),
@@ -182,10 +192,10 @@ class _CoachDetailHeading extends StatelessWidget{
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(coach.name,
+                                    child: Text(coach!.name!,
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontFamily: Styles().fontFamilies.bold,
+                                          fontFamily: Styles().fontFamilies!.bold,
                                           fontSize: 20
                                       ),
                                     ),
@@ -207,9 +217,9 @@ class _CoachDetailHeading extends StatelessWidget{
                     onTap: onTapPhoto,
                     child: Container(
                       margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
-                      decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
-                      child: (AppString.isStringNotEmpty(coach.thumbPhotoUrl) ?
-                      Image.network(coach.thumbPhotoUrl,width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
+                      decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
+                      child: (StringUtils.isNotEmpty(coach?.thumbPhotoUrl) ?
+                      Image.network(coach!.thumbPhotoUrl!, excludeFromSemantics: true, width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: _photoWidth, color: Colors.white,)
                       ),
                     ),

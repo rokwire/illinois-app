@@ -14,38 +14,21 @@
  * limitations under the License.
  */
 
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
-import 'package:uni_links/uni_links.dart';
+import 'package:flutter/foundation.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 
-class DeepLink with Service {
-  static const String notifyUri  = "edu.illinois.rokwire.deeplink.uri";
+class IlliniDeepLink extends DeepLink {
+  
+  @protected
+  IlliniDeepLink.internal() : super.internal();
 
-  static final DeepLink _deepLink = DeepLink._internal();
-
-  factory DeepLink() {
-    return _deepLink;
+  factory IlliniDeepLink() {
+    return ((DeepLink.instance is IlliniDeepLink) ? (DeepLink.instance as IlliniDeepLink) : (DeepLink.instance = IlliniDeepLink.internal()));
   }
-
-  DeepLink._internal();
 
   @override
-  Future<void> initService() async {
-
-    // 1. Initial Uri
-    getInitialUri().then((uri) {
-      if (uri != null) {
-        NotificationService().notify(notifyUri, uri);
-      }
-    });
-
-    // 2. Updated uri
-    uriLinkStream.listen((Uri uri) {
-      if (uri != null) {
-        NotificationService().notify(notifyUri, uri);
-      }
-    });
-
-    await super.initService();
-  }
+  String? get appScheme => 'edu.illinois.rokwire';
+  
+  @override
+  String? get appHost => 'rokwire.illinois.edu';
 }

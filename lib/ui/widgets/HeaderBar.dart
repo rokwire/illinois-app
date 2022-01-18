@@ -18,33 +18,34 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Network.dart';
 //import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/SearchPanel.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class HeaderBar extends AppBar {
   final BuildContext context;
-  final Widget titleWidget;
+  final Widget? titleWidget;
   final bool searchVisible;
   final bool rightButtonVisible;
   final String rightButtonText;
-  final GestureTapCallback onRightButtonTap;
+  final GestureTapCallback? onRightButtonTap;
 
   HeaderBar(
-      {@required this.context, this.titleWidget, this.searchVisible = false,
-        this.rightButtonVisible = false, this.rightButtonText, this.onRightButtonTap})
+      {required this.context, this.titleWidget, this.searchVisible = false,
+        this.rightButtonVisible = false, required this.rightButtonText, this.onRightButtonTap})
       : super(
-            backgroundColor: Styles().colors.fillColorPrimaryVariant,
+            backgroundColor: Styles().colors!.fillColorPrimaryVariant,
             leading: Semantics(
               label: Localization().getStringEx('headerbar.home.title', 'Home'),
               hint: Localization().getStringEx('headerbar.home.hint', ''),
               button: true,
               excludeSemantics: true,
               child: IconButton(
-                icon: Image.asset('images/block-i-orange.png'),
+                icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true),
                 onPressed: () {
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 })),
@@ -57,7 +58,7 @@ class HeaderBar extends AppBar {
                     hint: Localization().getStringEx('headerbar.search.hint', ''),
                     button: true,
                     child: IconButton(
-                      icon: Image.asset('images/icon-search.png'),
+                      icon: Image.asset('images/icon-search.png', excludeFromSemantics: true),
                       onPressed: () {
                         Navigator.push(
                             context,
@@ -79,9 +80,9 @@ class HeaderBar extends AppBar {
                         child: Text(rightButtonText,
                             style: TextStyle(color: Colors.white,
                                 fontSize: 16,
-                                fontFamily: Styles().fontFamilies.semiBold,
+                                fontFamily: Styles().fontFamilies!.semiBold,
                                 decoration: TextDecoration.underline,
-                                decorationColor: Styles().colors.fillColorSecondary,
+                                decorationColor: Styles().colors!.fillColorSecondary,
                                 decorationThickness: 1,
                                 decorationStyle: TextDecorationStyle.solid)),),)),
                   )
@@ -94,32 +95,32 @@ class HeaderBar extends AppBar {
 
 class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWidget {
   final BuildContext context;
-  final Widget titleWidget;
-  final bool backVisible;
+  final Widget? titleWidget;
+  final bool? backVisible;
   final String backIconRes;
-  final Function onBackPressed;
+  final Function? onBackPressed;
   final bool searchVisible;
-  final List<Widget> actions;
+  final List<Widget>? actions;
 
   final semanticsSortKey;
 
-  SimpleHeaderBarWithBack({@required this.context, this.titleWidget, this.backVisible = true, this.onBackPressed, this.searchVisible = false, this.backIconRes = 'images/chevron-left-white.png', this.semanticsSortKey = const OrdinalSortKey(1), this.actions });
+  SimpleHeaderBarWithBack({required this.context, this.titleWidget, this.backVisible = true, this.onBackPressed, this.searchVisible = false, this.backIconRes = 'images/chevron-left-white.png', this.semanticsSortKey = const OrdinalSortKey(1), this.actions });
 
   @override
   Widget build(BuildContext context) {
     List<Widget> actionsList = <Widget>[];
-    if (AppCollection.isCollectionNotEmpty(actions)) {
-      actionsList.addAll(actions);
+    if (CollectionUtils.isNotEmpty(actions)) {
+      actionsList.addAll(actions!);
     }
     if (searchVisible) {
       actionsList.add(_buildSearchButton());
     }
 
     return Semantics(sortKey:semanticsSortKey,child:AppBar(
-      leading: backVisible ? _buildBackButton() : null,
+      leading: backVisible! ? _buildBackButton() : null,
       title: titleWidget,
       centerTitle: true,
-      backgroundColor: Styles().colors.fillColorPrimaryVariant,
+      backgroundColor: Styles().colors!.fillColorPrimaryVariant,
       actions: actionsList,
     ));
   }
@@ -131,14 +132,14 @@ class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWi
       button: true,
       excludeSemantics: true,
       child: IconButton(
-        icon: Image.asset(backIconRes),
+        icon: Image.asset(backIconRes, excludeFromSemantics: true),
         onPressed: _onTapBack));
   }
 
   void _onTapBack() {
     Analytics.instance.logSelect(target: "Back");
     if (onBackPressed != null) {
-      onBackPressed();
+      onBackPressed!();
     } else {
       Navigator.pop(context);
     }
@@ -151,7 +152,7 @@ class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWi
       button: true,
       excludeSemantics: true,
       child: IconButton(
-        icon: Image.asset('images/icon-search.png', width: 20, height: 20, ),
+        icon: Image.asset('images/icon-search.png', width: 20, height: 20, excludeFromSemantics: true),
         onPressed: _onTapSearch,
       ));
   }
@@ -167,39 +168,39 @@ class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWi
 
 class SliverToutHeaderBar extends SliverAppBar {
   final BuildContext context;
-  final String imageUrl;
-  final GestureTapCallback onBackTap;
+  final String? imageUrl;
+  final GestureTapCallback? onBackTap;
 
   SliverToutHeaderBar(
       {
-        @required this.context,
+        required this.context,
         this.imageUrl,
         this.onBackTap,
-        Color backColor,
-        Color leftTriangleColor,
-        Color rightTriangleColor,
+        Color? backColor,
+        Color? leftTriangleColor,
+        Color? rightTriangleColor,
       })
       : super(
       pinned: true,
       floating: false,
       expandedHeight: 200,
-      backgroundColor: Styles().colors.fillColorPrimaryVariant,
+      backgroundColor: Styles().colors!.fillColorPrimaryVariant,
       flexibleSpace: Semantics(container: true,excludeSemantics: true,child: FlexibleSpaceBar(
           background:
           Container(
-            color: backColor ?? Styles().colors.background,
+            color: backColor ?? Styles().colors!.background,
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: <Widget>[
-                AppString.isStringNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl, fit: BoxFit.cover,)) : Container(),
+                StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl!, fit: BoxFit.cover, headers: Network.authApiKeyHeader, excludeFromSemantics: true)) : Container(),
                 CustomPaint(
-                  painter: TrianglePainter(painterColor: rightTriangleColor ?? Styles().colors.fillColorSecondaryTransparent05, left: false),
+                  painter: TrianglePainter(painterColor: rightTriangleColor ?? Styles().colors!.fillColorSecondaryTransparent05, left: false),
                   child: Container(
                     height: 53,
                   ),
                 ),
                 CustomPaint(
-                  painter: TrianglePainter(painterColor: leftTriangleColor ?? Styles().colors.background),
+                  painter: TrianglePainter(painterColor: leftTriangleColor ?? Styles().colors!.background),
                   child: Container(
                     height: 30,
                   ),
@@ -223,8 +224,8 @@ class SliverToutHeaderBar extends SliverAppBar {
                 child: Container(
                     height: 32,
                     width: 32,
-                    color: Styles().colors.fillColorPrimary,
-                    child: Image.asset('images/chevron-left-white.png')
+                    color: Styles().colors!.fillColorPrimary,
+                    child: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true)
                 ),
               ),
             ),
@@ -237,18 +238,18 @@ class SliverToutHeaderBar extends SliverAppBar {
 
 class SliverHeaderBar extends SliverAppBar {
   final BuildContext context;
-  final Widget titleWidget;
+  final Widget? titleWidget;
   final bool backVisible;
-  final Color backgroundColor;
+  final Color? backgroundColor;
   final String backIconRes;
-  final Function onBackPressed;
-  final List<Widget> actions;
+  final Function? onBackPressed;
+  final List<Widget>? actions;
 
-  SliverHeaderBar({@required this.context, this.titleWidget, this.backVisible = true, this.onBackPressed, this.backgroundColor, this.backIconRes = 'images/chevron-left-white.png', this.actions}):
+  SliverHeaderBar({required this.context, this.titleWidget, this.backVisible = true, this.onBackPressed, this.backgroundColor, this.backIconRes = 'images/chevron-left-white.png', this.actions}):
         super(
         pinned: true,
         floating: false,
-        backgroundColor: backgroundColor ?? Styles().colors.fillColorPrimaryVariant,
+        backgroundColor: backgroundColor ?? Styles().colors!.fillColorPrimaryVariant,
         elevation: 0,
         leading: Visibility(visible: backVisible, child: Semantics(
             label: Localization().getStringEx('headerbar.back.title', 'Back'),
@@ -256,7 +257,7 @@ class SliverHeaderBar extends SliverAppBar {
             button: true,
             excludeSemantics: true,
             child: IconButton(
-                icon: Image.asset(backIconRes),
+                icon: Image.asset(backIconRes, excludeFromSemantics: true),
                 onPressed: (){
                     Analytics.instance.logSelect(target: "Back");
                     if (onBackPressed != null) {

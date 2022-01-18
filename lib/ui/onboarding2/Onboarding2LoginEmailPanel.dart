@@ -15,7 +15,6 @@
  */
 
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Onboarding.dart';
@@ -23,14 +22,15 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class Onboarding2LoginEmailPanel extends StatefulWidget with OnboardingPanel {
 
-  final String email;
-  final Auth2EmailAccountState state;
-  final Map<String, dynamic> onboardingContext;
+  final String? email;
+  final Auth2EmailAccountState? state;
+  final Map<String, dynamic>? onboardingContext;
 
   Onboarding2LoginEmailPanel({this.email, this.state, this.onboardingContext});
 
@@ -42,7 +42,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
   static final Color _successColor = Colors.green.shade800;
   static final Color _errorColor = Colors.red.shade700;
-  static final Color _messageColor = Styles().colors.fillColorPrimary;
+  static final Color? _messageColor = Styles().colors!.fillColorPrimary;
   
   TextEditingController _emailController = TextEditingController();
   FocusNode _emailFocusNode = FocusNode();
@@ -51,18 +51,18 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   TextEditingController _confirmPasswordController = TextEditingController();
   FocusNode _confirmPasswordFocusNode = FocusNode();
   
-  String _validationErrorText;
-  Color _validationErrorColor;
+  String? _validationErrorText;
+  Color? _validationErrorColor;
   GlobalKey _validationErrorKey = GlobalKey();
 
-  Auth2EmailAccountState _state;
+  Auth2EmailAccountState? _state;
   bool _isLoading = false;
   bool _showingPassword = false;
 
   @override
   void initState() {
     super.initState();
-    _emailController.text = widget.email;
+    _emailController.text = widget.email!;
     _state = widget.state;
     if (_state == Auth2EmailAccountState.unverified) {
       _validationErrorText = Localization().getStringEx("panel.onboarding2.email.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential.");
@@ -84,28 +84,28 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   @override
   Widget build(BuildContext context) {
     String title = (_state == Auth2EmailAccountState.nonExistent) ?
-      Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign up with email') :
-      Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign in with email');
+      Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign up with email')! :
+      Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign in with email')!;
 
     String description = (_state == Auth2EmailAccountState.nonExistent) ?
-      Localization().getStringEx('panel.onboarding2.email.sign_up.description.text', 'Please enter a password to create a new account for your email.') :
-      Localization().getStringEx('panel.onboarding2.email.sign_in.description.text', 'Please enter your password to sign in with your email.');
+      Localization().getStringEx('panel.onboarding2.email.sign_up.description.text', 'Please enter a password to create a new account for your email.')! :
+      Localization().getStringEx('panel.onboarding2.email.sign_in.description.text', 'Please enter your password to sign in with your email.')!;
 
     String showPassword = (_state == Auth2EmailAccountState.nonExistent) ?
-      Localization().getStringEx("panel.onboarding2.email.label.show_passwords.text", "Show Passwords") :
-      Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password");
+      Localization().getStringEx("panel.onboarding2.email.label.show_passwords.text", "Show Passwords")! :
+      Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password")!;
 
-    String buttonTitle = (_state == Auth2EmailAccountState.nonExistent) ?
+    String? buttonTitle = (_state == Auth2EmailAccountState.nonExistent) ?
       Localization().getStringEx('panel.onboarding2.email.button.sign_up.text', 'Sign Up') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.text', 'Sign In');
 
-    String buttonHint = (_state == Auth2EmailAccountState.nonExistent) ?
+    String? buttonHint = (_state == Auth2EmailAccountState.nonExistent) ?
       Localization().getStringEx('panel.onboarding2.email.button.sign_up.hint', '') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.hint', '');
 
     EdgeInsetsGeometry backButtonInsets = EdgeInsets.only(left: 10, top: 20 + MediaQuery.of(context).padding.top, right: 20, bottom: 20);
 
-    return Scaffold(backgroundColor: Styles().colors.background, body:
+    return Scaffold(backgroundColor: Styles().colors!.background, body:
       Stack(children: <Widget>[
         Image.asset("images/login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
         SafeArea(child:
@@ -116,14 +116,14 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Padding(padding: EdgeInsets.symmetric(horizontal: 36), child:
                       Semantics( header: true,
-                        child: Text(title, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)))
+                        child: Text(title, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary)))
                     ),
                     Container(height: 24,),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
-                      Text(description, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18, color: Styles().colors.fillColorPrimary)),
+                      Text(description, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary)),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
-                      Text(Localization().getStringEx("panel.onboarding2.email.label.email.text", "Email Address:"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold),),
+                      Text(Localization().getStringEx("panel.onboarding2.email.label.email.text", "Email Address:")!, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12), child:
                       Semantics(
@@ -133,14 +133,14 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                         excludeSemantics: true,
                         value: _emailController.text,
                         child: Container(
-                          color: Styles().colors.background,
+                          color: Styles().colors!.background,
                           child: TextField(
                             enabled: false,
                             controller: _emailController,
                             focusNode: _emailFocusNode,
                             autofocus: false,
                             autocorrect: false,
-                            style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground),
+                            style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
                             decoration: InputDecoration(
                               disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0, style: BorderStyle.solid),),
                               enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0, style: BorderStyle.solid),),
@@ -152,7 +152,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                     ),
 
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
-                      Text(Localization().getStringEx("panel.onboarding2.email.label.password.text", "Password:"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold),),
+                      Text(Localization().getStringEx("panel.onboarding2.email.label.password.text", "Password:")!, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12), child:
                       Semantics(
@@ -162,7 +162,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                         excludeSemantics: true,
                         value: _passwordController.text,
                         child: Container(
-                          color: Styles().colors.white,
+                          color: Styles().colors!.white,
                           child: TextField(
                             controller: _passwordController,
                             focusNode: _passwordFocusNode,
@@ -170,9 +170,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                             autocorrect: false,
                             obscureText: !_showingPassword,
                             onSubmitted: (_) => _clearErrorMsg,
-                            cursorColor: Styles().colors.textBackground,
+                            cursorColor: Styles().colors!.textBackground,
                             keyboardType: TextInputType.text,
-                            style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground),
+                            style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
                             decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0, style: BorderStyle.solid),),
                               focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0),),
@@ -184,7 +184,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
                     Visibility(visible: (_state == Auth2EmailAccountState.nonExistent), child:
                       Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
-                        Text(Localization().getStringEx("panel.onboarding2.email.label.confirm_password.text", "Confirm Password:"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold),),
+                        Text(Localization().getStringEx("panel.onboarding2.email.label.confirm_password.text", "Confirm Password:")!, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
                       ),
                     ),
                     Visibility(visible: (_state == Auth2EmailAccountState.nonExistent), child:
@@ -196,7 +196,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                           excludeSemantics: true,
                           value: _confirmPasswordController.text,
                           child: Container(
-                            color: Styles().colors.white,
+                            color: Styles().colors!.white,
                             child: TextField(
                               controller: _confirmPasswordController,
                               focusNode: _confirmPasswordFocusNode,
@@ -204,9 +204,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                               autocorrect: false,
                               obscureText: !_showingPassword,
                               onSubmitted: (_) => _clearErrorMsg,
-                              cursorColor: Styles().colors.textBackground,
+                              cursorColor: Styles().colors!.textBackground,
                               keyboardType: TextInputType.text,
-                              style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground),
+                              style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0, style: BorderStyle.solid),),
                                 focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0),),
@@ -225,7 +225,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                               Row(mainAxisSize: MainAxisSize.min, children: [
                                 Image.asset(_showingPassword ? 'images/deselected-dark.png' : 'images/deselected.png', excludeFromSemantics: true,),
                                 Container(width: 6),
-                                Text(showPassword, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold),),
+                                Text(showPassword, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
                               ],)
                             ),
                           ),
@@ -238,8 +238,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                               Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12), child:
                                 Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end, children: [
                                   (_state == Auth2EmailAccountState.unverified) ?
-                                    Text(Localization().getStringEx("panel.onboarding2.email.label.resend_email.text", "Resend Verification"), textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies.bold, decoration: TextDecoration.underline),) :
-                                    Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?"), textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies.bold, decoration: TextDecoration.underline),),
+                                    Text(Localization().getStringEx("panel.onboarding2.email.label.resend_email.text", "Resend Verification")!, textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies!.bold, decoration: TextDecoration.underline),) :
+                                    Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?")!, textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies!.bold, decoration: TextDecoration.underline),),
                                 ],)
                               ),
                             ),
@@ -249,9 +249,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
                     ],),
 
-                    Visibility(visible: AppString.isStringNotEmpty(_validationErrorText), child:
+                    Visibility(visible: StringUtils.isNotEmpty(_validationErrorText), child:
                       Padding(key:_validationErrorKey, padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
-                        Text(AppString.getDefaultEmptyString(value: _validationErrorText ?? ''), style: TextStyle(color: _validationErrorColor ?? Styles().colors.fillColorSecondary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),),
+                        Text(StringUtils.ensureNotEmpty(_validationErrorText ?? ''), style: TextStyle(color: _validationErrorColor ?? Styles().colors!.fillColorSecondary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
                       ),
                     ),
                   ],),
@@ -263,9 +263,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
               ScalableRoundedButton(
                 label: buttonTitle,
                 hint: buttonHint,
-                borderColor: Styles().colors.fillColorSecondary,
-                backgroundColor: Styles().colors.background,
-                textColor: Styles().colors.fillColorPrimary,
+                borderColor: Styles().colors!.fillColorSecondary,
+                backgroundColor: Styles().colors!.background,
+                textColor: Styles().colors!.fillColorPrimary,
                 onTap: () => _onTapLogin()
               ),
             ),
@@ -366,7 +366,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       String confirmPassword = _confirmPasswordController.text;
 
       String strengthRegEx = r'^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$';
-      if ((password == null) || password.isEmpty) {
+      if (password.isEmpty) {
         setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.password_empty.text", "Please enter your password."));
       }
       else if (!RegExp(strengthRegEx).hasMatch(password)) {
@@ -415,7 +415,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
       String password = _passwordController.text;
 
-      if ((password == null) || password.isEmpty) {
+      if (password.isEmpty) {
         setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.password_empty.text", "Please enter your password."));
       }
       else {
@@ -441,7 +441,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
             setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.activation_expired.text", "Your activation link has already expired. Please resend verification email again and cofirm it in order to activate your account."));
           }
           else if (widget.onboardingContext != null) {
-            Function onSuccess = widget.onboardingContext["onContinueAction"]; // Hook this panels to Onboarding2
+            Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
             if(onSuccess!=null){
               onSuccess();
             } else {
@@ -453,16 +453,16 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
     }
   }
 
-  void setErrorMsg(String msg, { Color color}) {
+  void setErrorMsg(String? msg, { Color? color}) {
     setState(() {
       _validationErrorText = msg;
       _validationErrorColor = color ?? _errorColor;
     });
 
-    if (AppString.isStringNotEmpty(msg)) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (StringUtils.isNotEmpty(msg)) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
         if (_validationErrorKey.currentContext != null) {
-          Scrollable.ensureVisible(_validationErrorKey.currentContext, duration: Duration(milliseconds: 300)).then((_) {
+          Scrollable.ensureVisible(_validationErrorKey.currentContext!, duration: Duration(milliseconds: 300)).then((_) {
           });
         }
       });
