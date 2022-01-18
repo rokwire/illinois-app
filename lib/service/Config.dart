@@ -27,7 +27,6 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/utils/Crypt.dart';
 import 'package:package_info/package_info.dart';
 import 'package:collection/collection.dart';
 import 'package:illinois/service/Storage.dart';
@@ -35,6 +34,7 @@ import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/utils/crypt.dart';
 
 class Config with Service implements NotificationsListener {
 
