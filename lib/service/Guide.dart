@@ -17,6 +17,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:timezone/timezone.dart';
 
 enum GuideContentSource { Net, Debug }
 
@@ -256,8 +257,16 @@ class Guide with Service implements NotificationsListener {
     return AppJson.stringValue(entryValue(entry, 'content_type')) == campusReminderContentType;
   }
 
+  // Returns the date in:
+  // A) if universityLocation exits => in Univerity timezone;
+  // B) otherwise => in local timezone.
   DateTime? reminderDate(Map<String, dynamic>? entry) {
-    return AppDateTime().dateTimeFromString(AppJson.stringValue(entryValue(entry, 'date')), format: "yyyy-MM-dd", isUtc: true);
+    DateTime? dateUtc = AppDateTime().dateTimeFromString(AppJson.stringValue(entryValue(entry, 'date')), format: "yyyy-MM-dd", isUtc: true);
+    if (dateUtc != null) {
+      Location? universityLocation = AppDateTime().universityLocation;
+      return (universityLocation != null) ? TZDateTime(universityLocation, dateUtc.year, dateUtc.month, dateUtc.day) : DateTime(dateUtc.year, dateUtc.month, dateUtc.day);
+    }
+    return null;
   }
 
   DateTime? reminderSectionDate(Map<String, dynamic> entry) {
@@ -285,14 +294,20 @@ class Guide with Service implements NotificationsListener {
 
   List<Map<String, dynamic>>? get remindersList {
     if (_contentList != null) {
+
+      // midnight's timezone is:
+      // A) if universityLocation exits => the Univerity timezone;
+      // B) otherwise => the local timezone.
+      Location? universityLocation = AppDateTime().universityLocation;
+      DateTime now = (universityLocation != null) ? TZDateTime.from(DateTime.now().toUtc(), universityLocation) : DateTime.now();
+      DateTime midnight = (universityLocation != null) ? TZDateTime(universityLocation, now.year, now.month, now.day) : DateTime(now.year, now.month, now.day);
+
       List<Map<String, dynamic>> remindersList = <Map<String, dynamic>>[];
-      DateTime nowUtc = DateTime.now().toUtc();
-      DateTime midnightUtc = DateTime(nowUtc.year, nowUtc.month, nowUtc.day);
       for (dynamic entry in _contentList!) {
         Map<String, dynamic>? guideEntry = AppJson.mapValue(entry);
         if (isEntryReminder(guideEntry)) {
           DateTime? entryDate = reminderDate(guideEntry);
-          if ((entryDate != null) && (midnightUtc.compareTo(entryDate) <= 0)) {
+          if ((entryDate != null) && (midnight.compareTo(entryDate) <= 0)) {
             remindersList.add(guideEntry!);
           }
         }
