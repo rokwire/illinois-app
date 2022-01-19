@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved Accessibility [#1213](https://github.com/rokwire/illinois-app/issues/1213).
 - Fix tapping on a Group created Event in the Inbox [#1241](https://github.com/rokwire/illinois-app/issues/1241).
 - Show common label for saved items [#1235](https://github.com/rokwire/illinois-app/issues/1235).
+- Display events in Explore Panel [#1236](https://github.com/rokwire/illinois-app/issues/1236).
 
 ## [3.1.12] - 2022-01-13
 ### Fixed
