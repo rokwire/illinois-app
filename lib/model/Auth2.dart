@@ -170,6 +170,17 @@ class Auth2Account {
     return ((authTypes != null) && (0 < authTypes!.length)) ? authTypes?.first : null;
   }
 
+  bool isAuthTypeLinked(Auth2LoginType loginType) {
+    if (authTypes != null) {
+      for (Auth2Type authType in authTypes!) {
+        if (authType.loginType == loginType) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   bool hasRole(String role) => (Auth2StringEntry.findInList(roles, name: role) != null);
   bool hasPermission(String premission) => (Auth2StringEntry.findInList(permissions, name: premission) != null);
   bool bellongsToGroup(String group) => (Auth2StringEntry.findInList(groups, name: group) != null);

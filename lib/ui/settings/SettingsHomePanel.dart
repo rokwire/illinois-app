@@ -122,6 +122,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       else if (code == 'connected') {
         contentList.add(_buildConnected());
       }
+      else if (code == 'linked') {
+        contentList.add(_buildLinked());
+      }
+      else if (code == 'link') {
+        contentList.add(_buildLink());
+      }
       else if (code == 'customizations') {
         contentList.add(_buildCustomizations());
       }
@@ -372,6 +378,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       return AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType;
     });
   }
+
 
   // Customizations
 
@@ -652,6 +659,262 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     );
   }
 
+
+  // Linked
+
+  Widget _buildLinked() {
+    List<Widget> contentList =  [];
+
+    List<dynamic> codes = FlexUI()['settings.linked'] ?? [];
+    for (String code in codes) {
+      if (code == 'netid') {
+        contentList.add(_OptionsSection(
+            title: Localization().getStringEx("panel.settings.home.linked_net_id.title", "Illinois NetID"),
+            widgets: _buildLinkedNetIdLayout()));
+      }
+      else if (code == 'phone') {
+        contentList.add(_OptionsSection(
+            title: Localization().getStringEx("panel.settings.home.linked_phone.title", "Phone"),
+            widgets: _buildLinkedPhoneLayout()));
+      }
+      else if (code == 'email') {
+        contentList.add(_OptionsSection(
+            title: Localization().getStringEx("panel.settings.home.linked_email.title", "Email"),
+            widgets: _buildLinkedEmailLayout()));
+      }
+    }
+    return Column(children: contentList,);
+  }
+
+  List<Widget> _buildLinkedNetIdLayout() {
+    List<Widget> contentList = [];
+
+    // TODO
+    // List<dynamic> codes = FlexUI()['settings.linked.netid'] ?? [];
+    // for (int index = 0; index < codes.length; index++) {
+    //   String code = codes[index];
+    //   BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
+    //   if (code == 'info') {
+    //     contentList.add(Container(
+    //         width: double.infinity,
+    //         decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+    //         child: Padding(
+    //             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    //             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+    //               Text(Localization().getStringEx("panel.settings.home.net_id.message", "Connected as ")!,
+    //                   style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
+    //               Text(Auth2().fullName ?? "",
+    //                   style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+    //             ]))));
+    //   }
+    //   else if (code == 'connect') {
+    //     contentList.add(Stack(children: [
+    //       RibbonButton(
+    //           height: null,
+    //           borderRadius: borderRadius,
+    //           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+    //           label: Localization().getStringEx("panel.settings.home.net_id.button.connect", "Connect your NetID"),
+    //           onTap: _onConnectNetIdClicked),
+    //       Visibility(visible: _connectingNetId == true, child:
+    //       Container(height: 46, child:
+    //       Align(alignment: Alignment.centerRight, child:
+    //       Padding(padding: EdgeInsets.only(right: 10), child:
+    //       SizedBox(height: 24, width: 24, child:
+    //       CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+    //       ),
+    //       )
+    //       ),
+    //       ),
+    //       ),
+    //     ],),);
+    //   }
+    //   else if (code == 'disconnect') {
+    //     contentList.add(RibbonButton(
+    //         height: null,
+    //         borderRadius: borderRadius,
+    //         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+    //         label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Disconnect your NetID"),
+    //         onTap: _onDisconnectNetIdClicked));
+    //   }
+    // }
+
+    return contentList;
+  }
+
+  List<Widget> _buildLinkedPhoneLayout() {
+    List<Widget> contentList = [];
+
+    // TODO
+    // String fullName = Auth2().fullName ?? "";
+    // bool hasFullName = StringUtils.isNotEmpty(fullName);
+
+    // List<dynamic> codes = FlexUI()['settings.linked.phone'] ?? [];
+    // for (int index = 0; index < codes.length; index++) {
+    //   String code = codes[index];
+    //   BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
+    //   if (code == 'info') {
+    //     contentList.add(Container(
+    //         width: double.infinity,
+    //         decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+    //         child: Padding(
+    //             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    //             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+    //               Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Verified as ")!,
+    //                   style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
+    //               Visibility(visible: hasFullName, child: Text(fullName, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
+    //               Text(Auth2().account?.authType?.phone ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+    //             ]))));
+    //   }
+    //   else if (code == 'verify') {
+    //     contentList.add(RibbonButton(
+    //         height: null,
+    //         borderRadius: borderRadius,
+    //         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+    //         label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Phone Number"),
+    //         onTap: _onPhoneOrEmailLoginClicked));
+    //   }
+    //   else if (code == 'disconnect') {
+    //     contentList.add(RibbonButton(
+    //         height: null,
+    //         borderRadius: borderRadius,
+    //         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+    //         label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect","Disconnect your Phone",),
+    //         onTap: _onDisconnectNetIdClicked));
+    //   }
+    // }
+    return contentList;
+  }
+
+  List<Widget> _buildLinkedEmailLayout() {
+    List<Widget> contentList = [];
+
+    // TODO
+    // String fullName = Auth2().fullName ?? "";
+    // bool hasFullName = StringUtils.isNotEmpty(fullName);
+
+    // List<dynamic> codes = FlexUI()['settings.linked.email'] ?? [];
+    // for (int index = 0; index < codes.length; index++) {
+    //   String code = codes[index];
+    //   BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
+    //   if (code == 'info') {
+    //     contentList.add(Container(
+    //         width: double.infinity,
+    //         decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+    //         child: Padding(
+    //             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    //             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+    //               Text(Localization().getStringEx("panel.settings.home.email_login.message", "Logged in as ")!,
+    //                   style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
+    //               Visibility(visible: hasFullName, child: Text(fullName, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
+    //               Text(Auth2().account?.authType?.email ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+    //             ]))));
+    //   }
+    //   else if (code == 'login') {
+    //     contentList.add(RibbonButton(
+    //         height: null,
+    //         borderRadius: borderRadius,
+    //         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+    //         label: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
+    //         onTap: _onPhoneOrEmailLoginClicked));
+    //   }
+    //   else if (code == 'disconnect') {
+    //     contentList.add(RibbonButton(
+    //         height: null,
+    //         borderRadius: borderRadius,
+    //         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+    //         label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect","Logout",),
+    //         onTap: _onDisconnectNetIdClicked));
+    //   }
+    // }
+    return contentList;
+  }
+
+
+  // Link
+
+  Widget _buildLink() {
+    List<Widget> contentList =  [];
+    contentList.add(Padding(
+      padding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 2),
+      child: Text(
+        Localization().getStringEx("panel.settings.home.connect.not_linked.title", "Link an authentication type")!,
+        style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
+      ),
+    ),
+    );
+
+    List<dynamic> codes = FlexUI()['settings.link'] ?? [];
+    for (String code in codes) {
+      if (code == 'netid') {
+        contentList.add(Padding(
+            padding: EdgeInsets.all(10),
+            child: new RichText(
+              text: new TextSpan(
+                style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                children: <TextSpan>[
+                  new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.description.part_1", "Are you a ")),
+                  new TextSpan(
+                      text: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.description.part_2", "university student"),
+                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+                  new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.description.part_3", " or ")),
+                  new TextSpan(
+                      text: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.description.part_4", "employee"),
+                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+                  new TextSpan(
+                      text: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.description.part_5",
+                          "? Link your NetID to see Illinois information specific to you, like your Illini Cash and meal plan."))
+                ],
+              ),
+            )),);
+        contentList.add(Stack(children: [
+          RibbonButton(
+              height: null,
+              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+              borderRadius: _allRounding,
+              label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Link your NetID"),
+              onTap: null), // TODO: implement onTap
+          /*
+          Visibility(visible: _connectingNetId == true, child:
+            Container(height: 46, child:
+              Align(alignment: Alignment.centerRight, child:
+                Padding(padding: EdgeInsets.only(right: 10), child:
+                  SizedBox(height: 24, width: 24, child:
+                    CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                  ),
+                )
+              ),
+            ),
+          ),
+          */
+        ],),);
+      }
+      else if (code == 'phone_or_email') {
+        contentList.add(Padding(
+          padding: EdgeInsets.all(10),
+          child: Text(
+            Localization().getStringEx("panel.settings.home.connect.not_linked.phone_or_email.description",
+                "Link your phone number or email address.")!,
+            style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+          ),
+        ),);
+        contentList.add(RibbonButton(
+            height: null,
+            borderRadius: _allRounding,
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+            label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone_or_email.title", "Proceed"),
+            onTap: null),); // TODO: implement onTap
+      }
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: contentList),
+    );
+  }
+
+
   // NotificationsOptions
 
   Widget _buildNotifications() {
@@ -663,33 +926,33 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
       if (code == 'reminders') {
         contentList.add(ToggleRibbonButton(
-          borderRadius: borderRadius,
-          label: Localization().getStringEx("panel.settings.home.notifications.reminders", "Event reminders"),
-          toggled: FirebaseMessaging().notifyEventReminders,
-          context: context,
-          onTap: _onEventRemindersToggled));
+            borderRadius: borderRadius,
+            label: Localization().getStringEx("panel.settings.home.notifications.reminders", "Event reminders"),
+            toggled: FirebaseMessaging().notifyEventReminders,
+            context: context,
+            onTap: _onEventRemindersToggled));
       }
       else if (code == 'athletics_updates') {
         contentList.add(ToggleRibbonButton(
-          borderRadius: borderRadius,
-          label: Localization().getStringEx("panel.settings.home.notifications.athletics_updates", "Athletics updates"),
-          toggled: FirebaseMessaging().notifyAthleticsUpdates,
-          context: context,
-          onTap: _onAthleticsUpdatesToggled));
+            borderRadius: borderRadius,
+            label: Localization().getStringEx("panel.settings.home.notifications.athletics_updates", "Athletics updates"),
+            toggled: FirebaseMessaging().notifyAthleticsUpdates,
+            context: context,
+            onTap: _onAthleticsUpdatesToggled));
       }
       else if (code == 'dining') {
         contentList.add(ToggleRibbonButton(
-          borderRadius: borderRadius,
-          label: Localization().getStringEx("panel.settings.home.notifications.dining", "Dining specials"),
-          toggled: FirebaseMessaging().notifyDiningSpecials,
-          context: context,
-          onTap: _onDiningSpecialsToggled));
+            borderRadius: borderRadius,
+            label: Localization().getStringEx("panel.settings.home.notifications.dining", "Dining specials"),
+            toggled: FirebaseMessaging().notifyDiningSpecials,
+            context: context,
+            onTap: _onDiningSpecialsToggled));
       }
     }
 
     return _OptionsSection(
-      title: Localization().getStringEx("panel.settings.home.notifications.title", "Notifications"),
-      widgets: contentList);
+        title: Localization().getStringEx("panel.settings.home.notifications.title", "Notifications"),
+        widgets: contentList);
   }
 
   void _onEventRemindersToggled() {
@@ -706,6 +969,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     Analytics.instance.logSelect(target: "Dining Specials");
     FirebaseMessaging().notifyDiningSpecials = !FirebaseMessaging().notifyDiningSpecials!;
   }
+
 
   // Privacy 0
 
