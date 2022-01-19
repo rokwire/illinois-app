@@ -279,17 +279,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       Text(Auth2().authCard?.fullName ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24)),
       Text(roleDisplayString ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 20)),
       
-      Container(height: 30,),
-
-      Semantics( container: true,
-        child: Column(children: <Widget>[
-          Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN')! : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
-          Text(Auth2().authCard?.uin ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 28)),
-        ],),
-      ),
-      Text(cardExpiresText, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
-      
-      Container(height: 30,),
+      Container(height: 15,),
 
       Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
         
@@ -309,10 +299,18 @@ class _IDCardPanelState extends State<IDCardPanel>
         ],),),
 
       ],),
-
       Container(height: 15),
-      
       Text(buildingAccessTime ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20)),
+      Container(height: 15),
+      Semantics( container: true,
+        child: Column(children: <Widget>[
+          // Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN')! : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
+          Text(Auth2().authCard?.uin ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 28)),
+        ],),
+      ),
+      Text(cardExpiresText, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
+      Container(height: 30,),
+
     ],)    );
   }
 
