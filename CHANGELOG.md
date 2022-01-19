@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Display events in Explore Panel [#1236](https://github.com/rokwire/illinois-app/issues/1236).
 - Populating lat/long in CreateEventPanel [#1237](https://github.com/rokwire/illinois-app/issues/1237).
 - Fixed IdCardPanel layout order [#1201](https://github.com/rokwire/illinois-app/issues/1201).
+- Acknowledge reminder dates in university timezone [#1246](https://github.com/rokwire/illinois-app/issues/1246).
 
 ## [3.1.12] - 2022-01-13
 ### Fixed
