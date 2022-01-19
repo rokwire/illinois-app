@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show common label for saved items [#1235](https://github.com/rokwire/illinois-app/issues/1235).
 - Display events in Explore Panel [#1236](https://github.com/rokwire/illinois-app/issues/1236).
 - Populating lat/long in CreateEventPanel [#1237](https://github.com/rokwire/illinois-app/issues/1237).
+- Make _GroupSelectionPopup to be scrollable [#1238](https://github.com/rokwire/illinois-app/issues/1238).
 
 ## [3.1.12] - 2022-01-13
 ### Fixed
