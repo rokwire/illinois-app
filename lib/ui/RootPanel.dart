@@ -613,12 +613,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onFirebaseGroupsNotification(param) {
     if (param is Map<String, dynamic>) {
-      String? operation = param['operation'];
-      // Do not present GroupDetail panel when the admin creates event. This breakes the navigation stack when the creator receives FCM notification.
-      if (operation != 'event_created') {
-        String? groupId = param["entity_id"];
-        _presentGroupDetailPanel(groupId);
-      }
+      String? groupId = param["entity_id"];
+      _presentGroupDetailPanel(groupId);
     }
   }
 
