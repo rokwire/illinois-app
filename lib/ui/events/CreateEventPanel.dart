@@ -1651,7 +1651,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       }
 
       _location!.name = locationName;
-      _eventLocationController.text = locationName!;
+      _eventLocationController.text = StringUtils.ensureNotEmpty(locationName);
 
       if(StringUtils.isNotEmpty(_location!.description)){
         if (_isOnline) {
@@ -2358,9 +2358,10 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
 
   @override
   Widget build(BuildContext context) {
-    BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
-    return Dialog(
-        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+    return AlertDialog(
+      contentPadding: EdgeInsets.zero,
+        scrollable: true,
+        content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
       Container(
           decoration: BoxDecoration(
             color: Styles().colors!.fillColorPrimary,
@@ -2375,18 +2376,7 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
           ])),
       Padding(
           padding: EdgeInsets.all(10),
-          child: CollectionUtils.isNotEmpty(widget.groups)
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) => ToggleRibbonButton(
-                      borderRadius: _topRounding,
-                      label: widget.groups![index].title,
-                      toggled: _isGroupSelected(index),
-                      context: context,
-                      onTap: () => _onTapGroup(index),
-                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
-                  itemCount: widget.groups!.length)
-              : Container()),
+          child: _buildGroupsList()),
       Semantics(
         container: true,
         child:Padding(
@@ -2398,6 +2388,26 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
               textColor: Styles().colors!.fillColorPrimary,
               onTap: _onTapSelect)))
     ]));
+  }
+
+  Widget _buildGroupsList() {
+    if (CollectionUtils.isNotEmpty(widget.groups)) {
+      return Container();
+    }
+    List<Widget> groupWidgetList = [];
+    for (int index = 0; index < widget.groups!.length; index++) {
+      Group group = widget.groups![index];
+      Widget groupSelectionWidget = ToggleRibbonButton(
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+          label: group.title,
+          toggled: _isGroupSelected(index),
+          context: context,
+          onTap: () => _onTapGroup(index),
+          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold));
+
+      groupWidgetList.add(groupSelectionWidget);
+    }
+    return Column(children: groupWidgetList);
   }
 
   void _onTapGroup(int index) {
