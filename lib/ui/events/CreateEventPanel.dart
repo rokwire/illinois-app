@@ -1655,7 +1655,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       }
 
       _location!.name = locationName;
-      _eventLocationController.text = locationName!;
+      _eventLocationController.text = AppString.getDefaultEmptyString(locationName);
 
       if(AppString.isStringNotEmpty(_location!.description)){
         if (_isOnline) {
