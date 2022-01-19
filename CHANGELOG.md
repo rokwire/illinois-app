@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
 ## [3.2.3] - 2022-01-18
 ### Changed  
 - FirebaseCore and FirebaseCrashlytics moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
@@ -25,6 +26,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update Browse panel layout [#1217](https://github.com/rokwire/illinois-app/issues/1217).
 - Update "Campus Resources" Layout [#1219](https://github.com/rokwire/illinois-app/issues/1219).
 - Remove margin from Group Post body in GroupPostDetailPanel [#1227](https://github.com/rokwire/illinois-app/issues/1227).
+
+## [3.1.13] - 2022-01-19        
+### Fixed
+- Improved Accessibility [#1213](https://github.com/rokwire/illinois-app/issues/1213).
+- Fix tapping on a Group created Event in the Inbox [#1241](https://github.com/rokwire/illinois-app/issues/1241).
+- Show common label for saved items [#1235](https://github.com/rokwire/illinois-app/issues/1235).
+- Display events in Explore Panel [#1236](https://github.com/rokwire/illinois-app/issues/1236).
+- Populating lat/long in CreateEventPanel [#1237](https://github.com/rokwire/illinois-app/issues/1237).
+- Fixed IdCardPanel layout order [#1201](https://github.com/rokwire/illinois-app/issues/1201).
+- Acknowledge reminder dates in university timezone [#1246](https://github.com/rokwire/illinois-app/issues/1246).
 
 ## [3.1.12] - 2022-01-13
 ### Fixed
