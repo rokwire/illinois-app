@@ -208,7 +208,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                   children: <Widget>[
                     Expanded(child:
                     Text(
-                      Localization().getStringEx("panel.browse.button.privacy_center.title","Privacy Center")!,
+                      Localization().getStringEx("panel.setting.home.button.privacy_center.title","Privacy Center")!, //TBD to Strings
                       textAlign: TextAlign.start,
                       style: TextStyle(
                           color: Styles().colors!.white,

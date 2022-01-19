@@ -190,7 +190,7 @@
     "panel.browse.button.groups.hint":"",
     "panel.browse.button.safer.title": "Safer Illinois",
     "panel.browse.button.safer.hint": "",
-    "panel.browse.button.building_status.title": "Building Access",
+    "panel.browse.button.building_status.title": "Building Entry",
     "panel.browse.button.building_status.hint": "",
     "panel.browse.button.add_illini_cash.title": "Add Illini Cash",
     "panel.browse.button.add_illini_cash.hint": "",
@@ -198,8 +198,12 @@
     "panel.browse.button.campus_guide.hint":"",
     "panel.browse.button.inbox.title":"Inbox",
     "panel.browse.button.inbox.hint":"",
-    "panel.browse.button.privacy_center.title": "Privacy Center",
+    "panel.browse.button.privacy_center.title": "Privacy",
     "panel.browse.button.privacy_center.hint":"",
+    "panel.browse.button.crisis_help.title": "Crisis Help",
+    "panel.browse.button.crisis_help.hint": "",
+    "panel.browse.button.faqs.title": "FAQs",
+    "panel.browse.button.faqs.hint": "",
     
     "panel.browse.label.browse_all": "Browse all",
     "panel.browse.label.offline.sign_in": "Sign In not available while offline.",
@@ -211,6 +215,8 @@
     "panel.browse.label.offline.create_event": "Create an event is not available while offline.",
     "panel.browse.label.offline.manage_interrest": "Manage interests is not available while offline.",
     "panel.browse.label.offline.feedback": "Providing a feedback is not available while offline.",
+    "panel.browse.label.offline.faqs": "FAQs is not available while offline.",
+    "panel.browse.label.offline.crisis_help": "Crisis Help is not available while offline.",
 
     "panel.browse.button.sign_in.title":"Sign In",
     "panel.browse.button.sign_in.hint":"",
@@ -891,6 +897,8 @@
     "panel.settings.categories.description":"Tap to follow the categories that interest you most",
 
     "panel.settings.feedback.label.title": "Provide Feedback",
+    "panel.settings.faqs.label.title": "FAQs",
+    "panel.settings.crisis_help.label.title": "Crisis Help",
 
     "panel.settings.privacy_statement.label.title": "Privacy Statement",
 
@@ -1998,6 +2006,8 @@
     "widget.home_campus_tools.button.my_illini.hint": "",
     "widget.home_campus_tools.button.wellness.title": "Wellness",
     "widget.home_campus_tools.button.wellness.hint": "",
+    "widget.home_campus_tools.button.crisis_help.title": "Crisis Help",
+    "widget.home_campus_tools.button.crisis_help.hint": "",
 
     "widget.home_create_poll.heading.title":"Polls",
     "widget.home_create_poll.button.close.label":"Close",
