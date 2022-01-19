@@ -380,6 +380,7 @@ class Config with Service implements NotificationsListener {
   String? get illiniCashTosUrl       { return otherUniversityServices['illini_cash_tos_url']; }        // "https://housing.illinois.edu/resources/illini-cash/terms"
   String? get myIlliniUrl            { return otherUniversityServices['myillini_url']; }               // "https://myillini.illinois.edu/Dashboard"
   String? get feedbackUrl            { return otherUniversityServices['feedback_url']; }               // "https://forms.illinois.edu/sec/1971889"
+  String? get crisisHelpUrl          { return otherUniversityServices['crisis_help_url']; }            // "https://wellness.web.illinois.edu/help/im-not-sure-where-to-start/"
   String? get iCardUrl               { return otherUniversityServices['icard_url']; }                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
   String? get privacyPolicyUrl       { return otherUniversityServices['privacy_policy_url']; }         // "https://go.illinois.edu/illinois-app-privacy"
   String? get padaapiUrl             { return otherUniversityServices['padaapi_url']; }                // "https://api-test.test-compliance.rokwire.illinois.edu/padaapi"
