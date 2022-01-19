@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove margin from Group Post body in GroupPostDetailPanel [#1227](https://github.com/rokwire/illinois-app/issues/1227).
 - Update Browse panel layout [#1217](https://github.com/rokwire/illinois-app/issues/1217).
 - Update "Campus Resources" Layout [#1219](https://github.com/rokwire/illinois-app/issues/1219).
+- Make _GroupSelectionPopup to be scrollable [#1238](https://github.com/rokwire/illinois-app/issues/1238).
 
 ## [3.1.12] - 2022-01-13
 ### Fixed
