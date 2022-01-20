@@ -290,16 +290,6 @@ class NativeCommunicator with Service implements NotificationsListener {
     return result;
   }
 
-  Future<String?> queryLocationServicesPermission(String method) async {
-    String? result;
-    try {
-      result = await _platformChannel.invokeMethod('location_services_permission', {"method": method });
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-    return result;
-  }
-
   Future<AuthorizationStatus?> queryTrackingAuthorization(String method) async {
     AuthorizationStatus? result;
     try {

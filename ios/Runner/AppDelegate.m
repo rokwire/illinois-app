@@ -60,7 +60,7 @@ NSString* _interfaceOrientationToString(UIInterfaceOrientation value);
 UIInterfaceOrientation _interfaceOrientationFromMask(UIInterfaceOrientationMask value);
 UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation value);
 
-@interface AppDelegate()<UINavigationControllerDelegate, UNUserNotificationCenterDelegate, CLLocationManagerDelegate, FIRMessagingDelegate, PKAddPassesViewControllerDelegate> {
+@interface AppDelegate()<UINavigationControllerDelegate, UNUserNotificationCenterDelegate, FIRMessagingDelegate, PKAddPassesViewControllerDelegate> {
 }
 
 // Flutter
@@ -81,10 +81,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 // Interface Orientations
 @property (nonatomic) NSSet *supportedInterfaceOrientations;
 @property (nonatomic) UIInterfaceOrientation preferredInterfaceOrientation;
-
-// Location Services
-@property (nonatomic) CLLocationManager *clLocationManager;
-@property (nonatomic) NSMutableSet<FlutterResult> *locationFlutterResults;
 
 // Tracking Authorization
 @property (nonatomic) NSMutableSet<FlutterResult> *trackingAuthorizationResults;
@@ -259,9 +255,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"firebaseInfo"]) {
 		[self handleFirebaseInfoWithParameters:parameters result:result];
 	}
-	else if ([call.method isEqualToString:@"location_services_permission"]) {
-		[self handleLocationServicesWithParameters:parameters result:result];
-	}
 	else if ([call.method isEqualToString:@"tracking_authorization"]) {
 		[self handleTrackingWithParameters:parameters result:result];
 	}
@@ -389,19 +382,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
     FIROptions *options = (firApp != nil) ? [firApp options] : nil;
     NSString *projectID = (options != nil) ? [options projectID] : nil;
     result(projectID);
-}
-
-- (void)handleLocationServicesWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	NSString *method = [parameters inaStringForKey:@"method"];
-	if ([method isEqualToString:@"query"]) {
-		[self queryLocationServicesPermisionWithFlutterResult:result];
-	}
-	else if ([method isEqualToString:@"request"]) {
-		[self requestLocationServicesPermisionWithFlutterResult:result];
-	}
-	else {
-		result(nil);
-	}
 }
 
 - (void)handleTrackingWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
@@ -653,67 +633,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
 	NSLog(@"UIApplication didFailToRegisterForRemoteNotificationsWithError: %@", error);
-}
-
-#pragma mark LocationServices
-
-- (void)queryLocationServicesPermisionWithFlutterResult:(FlutterResult)result {
-	NSString *status = [CLLocationManager locationServicesEnabled] ?
-		[self.class locationServicesPermisionFromAuthorizationStatus:[CLLocationManager authorizationStatus]] :
-		@"disabled";
-	result(status);
-}
-
-+ (NSString*)locationServicesPermisionFromAuthorizationStatus:(CLAuthorizationStatus)authorizationStatus {
-	switch (authorizationStatus) {
-		case kCLAuthorizationStatusNotDetermined:       return @"not_determined";
-		case kCLAuthorizationStatusRestricted:          return @"denied";
-		case kCLAuthorizationStatusDenied:              return @"denied";
-		case kCLAuthorizationStatusAuthorizedAlways:    return @"allowed";
-		case kCLAuthorizationStatusAuthorizedWhenInUse: return @"allowed";
-	}
-	return nil;
-}
-
-- (void)requestLocationServicesPermisionWithFlutterResult:(FlutterResult)flutterResult {
-	if ([CLLocationManager locationServicesEnabled]) {
-		CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
-		if (status == kCLAuthorizationStatusNotDetermined) {
-			if (_locationFlutterResults == nil) {
-				_locationFlutterResults = [[NSMutableSet alloc] init];
-			}
-			[_locationFlutterResults addObject:flutterResult];
-
-			if (_clLocationManager == nil) {
-				_clLocationManager = [[CLLocationManager alloc] init];
-				_clLocationManager.delegate = self;
-				[_clLocationManager requestWhenInUseAuthorization];
-			}
-		}
-		else {
-			flutterResult([self.class locationServicesPermisionFromAuthorizationStatus:status]);
-		}
-	}
-	else {
-		flutterResult([self.class locationServicesPermisionFromAuthorizationStatus:kCLAuthorizationStatusRestricted]);
-	}
-}
-
-#pragma mark CLLocationManagerDelegate
-
-- (void)locationManager:(CLLocationManager*)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-
-	if (status != kCLAuthorizationStatusNotDetermined) {
-		_clLocationManager.delegate = nil;
-		_clLocationManager = nil;
-
-		NSSet<FlutterResult> *flutterResults = _locationFlutterResults;
-		_locationFlutterResults = nil;
-
-		for(FlutterResult flutterResult in flutterResults) {
-			flutterResult([self.class locationServicesPermisionFromAuthorizationStatus:status]);
-		}
-	}
 }
 
 #pragma mark Tracking
