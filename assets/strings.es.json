@@ -1679,6 +1679,9 @@
     "panel.manage_members.button.see_all_requests.hint": "",
     "panel.manage_members.label.filter_by": "Filter by",
     "panel.manage_members.label.filter_by.all_members": "Todos los miembros (#)",
+    "panel.manage_members.field.search.title": "Búsqueda",
+    "panel.manage_members.button.search.clear.title": "Claro",
+    "panel.manage_members.button.search.title": "Búsqueda",
 
     "panel.pending_member_detail.button.add.title": "Añadir",
     "panel.pending_member_detail.button.add.hint": "",

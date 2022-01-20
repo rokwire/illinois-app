@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Styling of Campus Reminders [#1240](https://github.com/rokwire/illinois-app/issues/1240).
 ### Added
 - Descriptive text for "Building access" to HomeLoginWidget [#1221](https://github.com/rokwire/illinois-app/issues/1221).
+- Implemented Search for GroupMembersPanel [#1252](https://github.com/rokwire/illinois-app/issues/1252).
 ### Fixed
 - Case insensitive sorting of groups [#1239](https://github.com/rokwire/illinois-app/issues/1239).
 
