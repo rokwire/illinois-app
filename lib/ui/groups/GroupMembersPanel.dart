@@ -61,6 +61,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   String? _allMembersFilter;
   String? _selectedMembersFilter;
   List<String>? _membersFilter;
+  String? _searchTextValue;
 
   TextEditingController _searchEditingController = TextEditingController();
 
@@ -213,7 +214,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     if((_members?.length ?? 0) > 0) {
       List<Widget> members = [];
       for (Member? member in _members!) {
-        if(_selectedMembersFilter != _allMembersFilter && _selectedMembersFilter != member!.officerTitle){
+        if( !_isMemberMatchingFilter(member) ||
+            !_isMemberMatchingSearch(member)){
           continue;
         }
         if(members.isNotEmpty){
@@ -357,15 +359,31 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 
   void _onSearchTextChanged(String text) {
-    //TBD: implement
+    // implement if needed
   }
 
   void _onTapSearch() {
-    //TBD: implement
+    setState(() {
+      _searchTextValue = _searchEditingController.text.toString();
+    });
   }
 
   void _onTapClearSearch() {
-    //TBD: implement
+    _searchEditingController.text = "";
+    setState(() {
+      _searchTextValue = "";
+    });
+  }
+
+  bool _isMemberMatchingSearch(Member? member){
+    return AppString.isStringEmpty(_searchTextValue) ||
+        (member?.name?.toLowerCase().contains(_searchTextValue!.toLowerCase())?? false) ||
+        (member?.email?.toLowerCase().contains(_searchTextValue!.toLowerCase())?? false);
+  }
+
+  bool _isMemberMatchingFilter(Member? member){
+    return _selectedMembersFilter == _allMembersFilter ||
+        _selectedMembersFilter == member!.officerTitle;
   }
 }
 
