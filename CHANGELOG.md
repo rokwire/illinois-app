@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use external browser for "Crisis Help" [#1255](https://github.com/rokwire/illinois-app/issues/1255).
 ### Added
 - Descriptive text for "Building access" to HomeLoginWidget [#1221](https://github.com/rokwire/illinois-app/issues/1221).
+### Fixed
+- Case insensitive sorting of groups [#1239](https://github.com/rokwire/illinois-app/issues/1239).
 
 ## [3.1.13] - 2022-01-19
 ### Fixed
