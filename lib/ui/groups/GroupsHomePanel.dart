@@ -261,11 +261,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       return groups;
     }
     groups!.sort((group1, group2) {
-      int cmp = group1.category!.compareTo(group2.category!);
+      int cmp = group1.category!.toLowerCase().compareTo(group2.category!.toLowerCase());
       if (cmp != 0) {
         return cmp;
       } else {
-        return group1.title!.compareTo(group2.title!);
+        return group1.title!.toLowerCase().compareTo(group2.title!.toLowerCase());
       }
     });
     return groups;

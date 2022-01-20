@@ -113,7 +113,8 @@
 	"panel.home.connect.not_logged_in.netid.description.part_2": "university student",
 	"panel.home.connect.not_logged_in.netid.description.part_3": " or ",
 	"panel.home.connect.not_logged_in.netid.description.part_4": "employee",
-"panel.home.connect.not_logged_in.netid.description.part_5": "? Sign in with your NetID.",
+	"panel.home.connect.not_logged_in.netid.description.part_5": "? Sign in with your NetID.",
+	"panel.home.connect.not_logged_in.netid.description.part_6": " (A NetID sign-in is REQUIRED to be able to use the Building Access feature).",
 	"panel.home.connect.not_logged_in.netid.title": "Connect your NetID",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_1": "Don't have a NetID? ",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
@@ -899,7 +900,6 @@
 
 	"panel.settings.feedback.label.title":"提供反馈",
 	"panel.settings.faqs.label.title": "FAQs",
-	"panel.settings.crisis_help.label.title": "Crisis Help",
 
 	"panel.settings.privacy_statement.label.title":"隐私声明",
 
@@ -1677,6 +1677,9 @@
 	"panel.manage_members.button.see_all_requests.hint": "",
 	"panel.manage_members.label.filter_by": "筛选依据",
 	"panel.manage_members.label.filter_by.all_members": "所有成员（#）",
+	"panel.manage_members.field.search.title": "搜索",
+	"panel.manage_members.button.search.clear.title": "清除",
+	"panel.manage_members.button.search.title": "搜索",
 
 	"panel.pending_member_detail.button.add.title": "添加",
 	"panel.pending_member_detail.button.add.hint": "",

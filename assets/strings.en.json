@@ -113,6 +113,7 @@
     "panel.home.connect.not_logged_in.netid.description.part_3": " or ",
     "panel.home.connect.not_logged_in.netid.description.part_4": "employee",
     "panel.home.connect.not_logged_in.netid.description.part_5": "? Sign in with your NetID.",
+    "panel.home.connect.not_logged_in.netid.description.part_6": " (A NetID sign-in is REQUIRED to be able to use the Building Access feature).",
     "panel.home.connect.not_logged_in.netid.title": "Connect your NetID",
     "panel.home.connect.not_logged_in.phone_or_email.description.part_1": "Don't have a NetID? ",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
@@ -898,7 +899,6 @@
 
     "panel.settings.feedback.label.title": "Provide Feedback",
     "panel.settings.faqs.label.title": "FAQs",
-    "panel.settings.crisis_help.label.title": "Crisis Help",
 
     "panel.settings.privacy_statement.label.title": "Privacy Statement",
 
@@ -1682,6 +1682,9 @@
     "panel.manage_members.button.see_all_requests.hint": "",
     "panel.manage_members.label.filter_by": "Filter by",
     "panel.manage_members.label.filter_by.all_members": "All members (#)",
+    "panel.manage_members.field.search.title": "Search",
+    "panel.manage_members.button.search.clear.title": "Clear",
+    "panel.manage_members.button.search.title": "Search",
 
     "panel.pending_member_detail.button.add.title": "Add",
     "panel.pending_member_detail.button.add.hint": "",
@@ -1941,7 +1944,7 @@
     "widget.game_detail_heading.button.roster.title":"Roster",
     "widget.game_detail_heading.button.roster.hint": "Tap to view the roster",
 
-    "widget.home_campus_reminders.label.campus_reminders":"CAMPUS REMINDERS",
+    "widget.home_campus_reminders.label.campus_reminders": "Campus Reminders",
     "widget.home_campus_reminders.button.more.title": "View All",
     "widget.home_campus_reminders.button.more.hint": "Tap to view all reminders",
 

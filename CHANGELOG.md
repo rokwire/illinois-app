@@ -5,7 +5,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
 ## [3.2.3] - 2022-01-18
 ### Changed  
 - FirebaseCore and FirebaseCrashlytics moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
@@ -28,7 +27,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update "Campus Resources" Layout [#1219](https://github.com/rokwire/illinois-app/issues/1219).
 - Remove margin from Group Post body in GroupPostDetailPanel [#1227](https://github.com/rokwire/illinois-app/issues/1227).
 
-## [3.1.13] - 2022-01-19        
+## [3.1.14] - 2022-01-20
+### Changed
+- Use external browser for "Crisis Help" [#1255](https://github.com/rokwire/illinois-app/issues/1255).
+- Styling of Campus Reminders [#1240](https://github.com/rokwire/illinois-app/issues/1240).
+### Added
+- Descriptive text for "Building access" to HomeLoginWidget [#1221](https://github.com/rokwire/illinois-app/issues/1221).
+- Implemented Search for GroupMembersPanel [#1252](https://github.com/rokwire/illinois-app/issues/1252).
+### Fixed
+- Case insensitive sorting of groups [#1239](https://github.com/rokwire/illinois-app/issues/1239).
+
+## [3.1.13] - 2022-01-19
 ### Fixed
 - Improved Accessibility [#1213](https://github.com/rokwire/illinois-app/issues/1213).
 - Fix tapping on a Group created Event in the Inbox [#1241](https://github.com/rokwire/illinois-app/issues/1241).

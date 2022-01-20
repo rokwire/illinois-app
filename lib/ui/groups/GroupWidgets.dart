@@ -147,7 +147,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Container(height: 20,),
+            Container(height: 11),
             Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -176,7 +176,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                 style: TextStyle(color: Styles().colors!.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
               ),
             ),
-            Container(height: 20,),
+            Container(height: 11),
             Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,)
           ],)
     );
