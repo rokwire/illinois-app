@@ -41,6 +41,7 @@ import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -362,6 +363,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         settings: RouteSettings(),
         builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
           onboardingContext: {
+            "link": false,
             "onContinueAction": () {
               _didLogin(context);
             }
@@ -667,19 +669,19 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
     List<dynamic> codes = FlexUI()['settings.linked'] ?? [];
     for (String code in codes) {
-      if (code == 'netid') {
+      if (code == 'netid' && !Auth2().isOidcLoggedIn) {
         contentList.add(_OptionsSection(
-            title: Localization().getStringEx("panel.settings.home.linked_net_id.title", "Illinois NetID"),
+            title: Localization().getStringEx("panel.settings.home.linked_net_id.title", "Linked Illinois NetID"),
             widgets: _buildLinkedNetIdLayout()));
       }
       else if (code == 'phone') {
         contentList.add(_OptionsSection(
-            title: Localization().getStringEx("panel.settings.home.linked_phone.title", "Phone"),
+            title: Localization().getStringEx("panel.settings.home.linked_phone.title", "Linked Phone"),
             widgets: _buildLinkedPhoneLayout()));
       }
       else if (code == 'email') {
         contentList.add(_OptionsSection(
-            title: Localization().getStringEx("panel.settings.home.linked_email.title", "Email"),
+            title: Localization().getStringEx("panel.settings.home.linked_email.title", "Linked Email"),
             widgets: _buildLinkedEmailLayout()));
       }
     }
@@ -743,89 +745,149 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   List<Widget> _buildLinkedPhoneLayout() {
     List<Widget> contentList = [];
+    List<String> identifiers = Auth2().linkedPhoneIds;
 
-    // TODO
-    // String fullName = Auth2().fullName ?? "";
-    // bool hasFullName = StringUtils.isNotEmpty(fullName);
-
-    // List<dynamic> codes = FlexUI()['settings.linked.phone'] ?? [];
-    // for (int index = 0; index < codes.length; index++) {
-    //   String code = codes[index];
-    //   BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
-    //   if (code == 'info') {
-    //     contentList.add(Container(
-    //         width: double.infinity,
-    //         decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
-    //         child: Padding(
-    //             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    //             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-    //               Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Verified as ")!,
-    //                   style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
-    //               Visibility(visible: hasFullName, child: Text(fullName, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
-    //               Text(Auth2().account?.authType?.phone ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
-    //             ]))));
-    //   }
-    //   else if (code == 'verify') {
-    //     contentList.add(RibbonButton(
-    //         height: null,
-    //         borderRadius: borderRadius,
-    //         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-    //         label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Phone Number"),
-    //         onTap: _onPhoneOrEmailLoginClicked));
-    //   }
-    //   else if (code == 'disconnect') {
-    //     contentList.add(RibbonButton(
-    //         height: null,
-    //         borderRadius: borderRadius,
-    //         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-    //         label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect","Disconnect your Phone",),
-    //         onTap: _onDisconnectNetIdClicked));
-    //   }
-    // }
+    List<dynamic> codes = FlexUI()['settings.linked.phone'] ?? [];
+    for (int index = 0; index < codes.length; index++) {
+      String code = codes[index];
+      BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
+      if (code == 'info') {
+        List<Widget> linkedEmails = [];
+        for (String identifier in identifiers) {
+          if (StringUtils.isNotEmpty(identifier)) {
+            linkedEmails.add(Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Text(identifier, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+                  Container(width: 10,),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 4.0),
+                            child: RoundedButton(
+                                height: 24,
+                                backgroundColor: Styles().colors!.background!,
+                                borderColor: Styles().colors!.fillColorPrimary!,
+                                label: Localization().getStringEx("panel.settings.home.email_linked.button.unlink", "Unlink"),
+                                textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12),
+                                onTap: null),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 4.0),
+                            child: RoundedButton(
+                                height: 24,
+                                backgroundColor: Styles().colors!.background!,
+                                borderColor: Styles().colors!.fillColorPrimary!,
+                                label: Localization().getStringEx("panel.settings.home.email_linked.button.login", "Login"),
+                                textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12),
+                                onTap: null),
+                          ),
+                        ]),
+                  ),
+                ]
+            ));
+          }
+        }
+        contentList.add(Container(
+            width: double.infinity,
+            decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+            child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: linkedEmails,
+                ))));
+      }
+      // else if (code == 'unlink') {
+      //   contentList.add(RibbonButton(
+      //       height: null,
+      //       borderRadius: borderRadius,
+      //       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+      //       label: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
+      //       onTap: _onPhoneOrEmailLoginClicked));
+      // }
+      // else if (code == 'login') {
+      //   contentList.add(RibbonButton(
+      //       height: null,
+      //       borderRadius: borderRadius,
+      //       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+      //       label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect","Logout",),
+      //       onTap: _onDisconnectNetIdClicked));
+      // }
+    }
     return contentList;
   }
 
   List<Widget> _buildLinkedEmailLayout() {
     List<Widget> contentList = [];
+    List<String> identifiers = Auth2().linkedEmailIds;
 
-    // TODO
-    // String fullName = Auth2().fullName ?? "";
-    // bool hasFullName = StringUtils.isNotEmpty(fullName);
-
-    // List<dynamic> codes = FlexUI()['settings.linked.email'] ?? [];
-    // for (int index = 0; index < codes.length; index++) {
-    //   String code = codes[index];
-    //   BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
-    //   if (code == 'info') {
-    //     contentList.add(Container(
-    //         width: double.infinity,
-    //         decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
-    //         child: Padding(
-    //             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    //             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-    //               Text(Localization().getStringEx("panel.settings.home.email_login.message", "Logged in as ")!,
-    //                   style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
-    //               Visibility(visible: hasFullName, child: Text(fullName, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
-    //               Text(Auth2().account?.authType?.email ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
-    //             ]))));
-    //   }
-    //   else if (code == 'login') {
-    //     contentList.add(RibbonButton(
-    //         height: null,
-    //         borderRadius: borderRadius,
-    //         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-    //         label: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
-    //         onTap: _onPhoneOrEmailLoginClicked));
-    //   }
-    //   else if (code == 'disconnect') {
-    //     contentList.add(RibbonButton(
-    //         height: null,
-    //         borderRadius: borderRadius,
-    //         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-    //         label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect","Logout",),
-    //         onTap: _onDisconnectNetIdClicked));
-    //   }
-    // }
+    List<dynamic> codes = FlexUI()['settings.linked.email'] ?? [];
+    for (int index = 0; index < codes.length; index++) {
+      String code = codes[index];
+      BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
+      if (code == 'info') {
+        List<Widget> linkedEmails = [];
+        for (String identifier in identifiers) {
+          if (StringUtils.isNotEmpty(identifier)) {
+            linkedEmails.add(Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Text(identifier, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+                  Container(width: 10,),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4.0),
+                        child: RoundedButton(
+                            height: 24,
+                            backgroundColor: Styles().colors!.background!,
+                            borderColor: Styles().colors!.fillColorPrimary!,
+                            label: Localization().getStringEx("panel.settings.home.email_linked.button.unlink", "Unlink"),
+                            textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12),
+                            onTap: null),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4.0),
+                        child: RoundedButton(
+                            height: 24,
+                            backgroundColor: Styles().colors!.background!,
+                            borderColor: Styles().colors!.fillColorPrimary!,
+                            label: Localization().getStringEx("panel.settings.home.email_linked.button.login", "Login"),
+                            textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12),
+                            onTap: null),
+                      ),
+                    ]),
+                  ),
+                ]
+            ));
+          }
+        }
+        contentList.add(Container(
+            width: double.infinity,
+            decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+            child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: linkedEmails,
+            ))));
+      }
+      // else if (code == 'unlink') {
+      //   contentList.add(RibbonButton(
+      //       height: null,
+      //       borderRadius: borderRadius,
+      //       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+      //       label: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
+      //       onTap: _onPhoneOrEmailLoginClicked));
+      // }
+      // else if (code == 'login') {
+      //   contentList.add(RibbonButton(
+      //       height: null,
+      //       borderRadius: borderRadius,
+      //       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+      //       label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect","Logout",),
+      //       onTap: _onDisconnectNetIdClicked));
+      // }
+    }
     return contentList;
   }
 
@@ -839,8 +901,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       child: Text(
         Localization().getStringEx("panel.settings.home.connect.not_linked.title", "Link an authentication type")!,
         style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
-      ),
-    ),
+      ),),
     );
 
     List<dynamic> codes = FlexUI()['settings.link'] ?? [];
@@ -873,7 +934,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               borderRadius: _allRounding,
               label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Link your NetID"),
               onTap: null), // TODO: implement onTap
-          /*
           Visibility(visible: _connectingNetId == true, child:
             Container(height: 46, child:
               Align(alignment: Alignment.centerRight, child:
@@ -885,7 +945,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               ),
             ),
           ),
-          */
         ],),);
       }
       else if (code == 'phone_or_email') {
@@ -902,7 +961,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             borderRadius: _allRounding,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone_or_email.title", "Proceed"),
-            onTap: null),); // TODO: implement onTap
+            onTap: _onLinkPhoneOrEmailClicked),);
       }
     }
 
@@ -912,6 +971,25 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           crossAxisAlignment: CrossAxisAlignment.start,
           children: contentList),
     );
+  }
+
+  void _onLinkPhoneOrEmailClicked() {
+    Analytics.instance.logSelect(target: "Link Phone or Email");
+    if (Connectivity().isNotOffline) {
+      Navigator.push(context, CupertinoPageRoute(
+        settings: RouteSettings(),
+        builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
+          onboardingContext: {
+            "link": true,
+            "onContinueAction": () {
+              _didLogin(context); //TODO
+            }
+          },
+        ),
+      ),);
+    } else {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
+    }
   }
 
 

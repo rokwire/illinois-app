@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Localization.dart';
@@ -45,11 +46,13 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
   GlobalKey _validationErrorKey = GlobalKey();
 
   bool _isLoading = false;
+  bool _link = false;
 
   @override
   void initState() {
     super.initState();
     _phoneOrEmailController = TextEditingController();
+    _link = widget.onboardingContext?["link"] ?? false;
   }
 
   @override
@@ -168,12 +171,24 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
   void _loginByPhone(String? phoneNumber) {
     setState(() { _isLoading = true; });
 
-    Auth2().authenticateWithPhone(phoneNumber).then((success) {
-      if (mounted) {
-        setState(() { _isLoading = false; });
-        _onPhoneInitiated(phoneNumber, success);
-      }
-    });
+    if (!_link) {
+      Auth2().authenticateWithPhone(phoneNumber).then((success) {
+        if (mounted) {
+          setState(() { _isLoading = false; });
+          _onPhoneInitiated(phoneNumber, success);
+        }
+      });
+    } else {
+      Map<String, dynamic> credsMap = {
+        "phone": phoneNumber
+      };
+      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, credsMap, null).then((success) {
+        if (mounted) {
+          setState(() { _isLoading = false; });
+          _onPhoneInitiated(phoneNumber, success);
+        }
+      });
+    }
   }
 
   void _onPhoneInitiated(String? phoneNumber, bool success) {

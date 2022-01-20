@@ -116,7 +116,7 @@ class Auth2Account {
   final List<Auth2StringEntry>? permissions;
   final List<Auth2StringEntry>? roles;
   final List<Auth2StringEntry>? groups;
-  final List<Auth2Type>? authTypes;
+  List<Auth2Type>? authTypes;
   
   
   Auth2Account({this.id, this.profile, this.prefs, this.permissions, this.roles, this.groups, this.authTypes});
@@ -179,6 +179,18 @@ class Auth2Account {
       }
     }
     return false;
+  }
+
+  List<String> getLinkedIdsForAuthType(Auth2LoginType loginType) {
+    List<String> ids = [];
+    if (authTypes != null) {
+      for (Auth2Type authType in authTypes!) {
+        if (authType.loginType == loginType && authType.identifier != null) {
+          ids.add(authType.identifier!);
+        }
+      }
+    }
+    return ids;
   }
 
   bool hasRole(String role) => (Auth2StringEntry.findInList(roles, name: role) != null);

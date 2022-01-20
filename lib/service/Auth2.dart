@@ -211,6 +211,10 @@ class Auth2 with Service implements NotificationsListener {
   bool get isPhoneLinked => _account?.isAuthTypeLinked(Auth2LoginType.phoneTwilio) ?? false;
   bool get isEmailLinked => _account?.isAuthTypeLinked(Auth2LoginType.email) ?? false;
 
+  List<String> get linkedOidcIds => _account?.getLinkedIdsForAuthType(Auth2LoginType.oidcIllinois) ?? [];
+  List<String> get linkedPhoneIds => _account?.getLinkedIdsForAuthType(Auth2LoginType.phoneTwilio) ?? [];
+  List<String> get linkedEmailIds => _account?.getLinkedIdsForAuthType(Auth2LoginType.email) ?? [];
+
   bool get hasUin => (0 < (uin?.length ?? 0));
   String? get uin => _account?.authType?.uiucUser?.uin;
   String? get netId => _account?.authType?.uiucUser?.netId;
@@ -648,6 +652,40 @@ class Auth2 with Service implements NotificationsListener {
 
       Response? response = await Network().post(url, headers: headers, body: post);
       return (response?.statusCode == 200);
+    }
+    return false;
+  }
+
+  Future<bool> linkAccountAuthType(Auth2LoginType? loginType, Map<String, dynamic>? creds, Map<String, dynamic>? params) async {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (loginType != null)) {
+      String url = "${Config().coreUrl}/services/auth/account/auth-type/link";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String? post = JsonUtils.encode({
+        'auth_type': auth2LoginTypeToString(loginType),
+        'app_type_identifier': Config().appPlatformId,
+        'creds': creds,
+        'params': params,
+      });
+
+      Response? response = await Network().post(url, headers: headers, body: post);
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
+      bool result = _processLinkResponse(responseJson);
+
+      return result;
+    }
+    return false;
+  }
+
+  bool _processLinkResponse(Map<String, dynamic>? responseJson) {
+    if (responseJson != null) {
+      //TODO: process 'message' field
+      List<Auth2Type>? updatedAuthTypes = Auth2Type.listFromJson(JsonUtils.listValue(responseJson['auth_types']));
+      _account?.authTypes = updatedAuthTypes;
+      Storage().auth2Account = _account;
+
+      return true;
     }
     return false;
   }
