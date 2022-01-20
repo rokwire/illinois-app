@@ -69,6 +69,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated]);
+    _initMemberFilter();
     _reloadGroup();
   }
 
@@ -113,13 +114,25 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
           else return 0;
         }
       });
-    _applyMembersFilter();
+      _refreshAllMembersFilterText();
+      _applyMembersFilter();
     });
   }
 
+  void _initMemberFilter(){
+    _selectedMembersFilter = _allMembersFilter;
+    _refreshAllMembersFilterText();
+  }
+
+  void _refreshAllMembersFilterText(){
+    if(_selectedMembersFilter == _allMembersFilter){
+      _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members?.length?.toString() ?? "0");
+    } else {
+      _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members?.length?.toString() ?? "0");
+    }
+  }
   void _applyMembersFilter(){
     List<String> membersFilter = [];
-    _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members!.length.toString());
     if (_allMembersFilter != null) {
       membersFilter.add(_allMembersFilter!);
     }
@@ -263,7 +276,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
               child: Container(
                 child: GroupDropDownButton<String?>(
                   emptySelectionText: _allMembersFilter,
-                  initialSelectedValue: _allMembersFilter,
+                  initialSelectedValue: _selectedMembersFilter,
                   items: _membersFilter,
                   constructTitle: (dynamic title) => title,
                   decoration: BoxDecoration(),
