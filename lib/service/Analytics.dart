@@ -45,7 +45,7 @@ import 'package:notification_permissions/notification_permissions.dart' as Notif
 import 'package:illinois/main.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/ui/RootPanel.dart';
 
 
@@ -536,10 +536,10 @@ class Analytics with Service implements NotificationsListener {
 
   void _applyLocationServicesStatus(LocationServicesStatus? locationServicesStatus) {
     switch (locationServicesStatus) {
-      case LocationServicesStatus.ServiceDisabled:          _locationServices = "disabled"; break;
-      case LocationServicesStatus.PermissionNotDetermined:  _locationServices = "not_determined"; break;
-      case LocationServicesStatus.PermissionDenied:         _locationServices = "denied"; break;
-      case LocationServicesStatus.PermissionAllowed:        _locationServices = "allowed"; break;
+      case LocationServicesStatus.serviceDisabled:          _locationServices = "disabled"; break;
+      case LocationServicesStatus.permissionNotDetermined:  _locationServices = "not_determined"; break;
+      case LocationServicesStatus.permissionDenied:         _locationServices = "denied"; break;
+      case LocationServicesStatus.permissionAllowed:        _locationServices = "allowed"; break;
       default: break;
     }
   }

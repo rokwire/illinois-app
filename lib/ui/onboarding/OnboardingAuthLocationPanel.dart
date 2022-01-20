@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
@@ -149,19 +149,19 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
   void _requestLocation(BuildContext context) async {
     Analytics.instance.logSelect(target: 'Share My locaiton') ;
     await LocationServices.instance.status.then((LocationServicesStatus? status){
-      if (status == LocationServicesStatus.ServiceDisabled) {
+      if (status == LocationServicesStatus.serviceDisabled) {
         LocationServices.instance.requestService();
       }
-      else if (status == LocationServicesStatus.PermissionNotDetermined) {
+      else if (status == LocationServicesStatus.permissionNotDetermined) {
         LocationServices.instance.requestPermission().then((LocationServicesStatus? status) {
           _goNext(context);
         });
       }
-      else if (status == LocationServicesStatus.PermissionDenied) {
+      else if (status == LocationServicesStatus.permissionDenied) {
         String? message = Localization().getStringEx('panel.onboarding.location.label.access_denied', 'You have already denied access to this app.');
         showDialog(context: context, builder: (context) => _buildDialogWidget(context, message:message!, pushNext : false ));
       }
-      else if (status == LocationServicesStatus.PermissionAllowed) {
+      else if (status == LocationServicesStatus.permissionAllowed) {
         String? message = Localization().getStringEx('panel.onboarding.location.label.access_granted', 'You have already granted access to this app.');
         showDialog(context: context, builder: (context) => _buildDialogWidget(context, message:message!, pushNext : true ));
       }

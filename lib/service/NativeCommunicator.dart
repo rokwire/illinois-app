@@ -39,7 +39,7 @@ class NativeCommunicator with Service implements NotificationsListener {
   static const String notifyGeoFenceRegionsChanged   = "edu.illinois.rokwire.nativecommunicator.geofence.regions.changed";
   static const String notifyGeoFenceBeaconsChanged   = "edu.illinois.rokwire.nativecommunicator.geofence.beacons.changed";
   
-  final MethodChannel _platformChannel = const MethodChannel("edu.illinois.rokwire/native_call");
+  final MethodChannel _platformChannel = const MethodChannel('edu.illinois.rokwire/native_call');
 
   // Singletone
   static final NativeCommunicator _communicator = new NativeCommunicator._internal();

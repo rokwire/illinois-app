@@ -16,18 +16,19 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
 enum LocationServicesStatus {
-  ServiceDisabled,
-  PermissionNotDetermined,
-  PermissionDenied,
-  PermissionAllowed
+  serviceDisabled,
+  permissionNotDetermined,
+  permissionDenied,
+  permissionAllowed
 }
 
 class LocationServices with Service implements NotificationsListener {
@@ -70,7 +71,7 @@ class LocationServices with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    _lastStatus = await this.status;
+    _lastStatus = await status;
     
     if (_lastStatus != null) {
       await super.initService();
@@ -86,7 +87,7 @@ class LocationServices with Service implements NotificationsListener {
   }
 
   Future<LocationServicesStatus?> get status async {
-    _lastStatus = _locationServicesStatusFromString(await NativeCommunicator().queryLocationServicesPermission('query'));
+    _lastStatus = _locationServicesStatusFromString(await RokwirePlugin.queryLocationServicesStatus());
     _updateLocationMonitor();
     return _lastStatus;
   }
@@ -96,15 +97,15 @@ class LocationServices with Service implements NotificationsListener {
       await Geolocator.openLocationSettings();
     }
 
-    _lastStatus = await this.status;
+    _lastStatus = await status;
     _updateLocationMonitor();
     return _lastStatus;
   }
 
   Future<LocationServicesStatus?> requestPermission() async {
-    _lastStatus = await this.status;
-    if (_lastStatus == LocationServicesStatus.PermissionNotDetermined) {
-      _lastStatus = _locationServicesStatusFromString(await NativeCommunicator().queryLocationServicesPermission('request'));
+    _lastStatus = await status;
+    if (_lastStatus == LocationServicesStatus.permissionNotDetermined) {
+      _lastStatus = _locationServicesStatusFromString(await RokwirePlugin.requestLocationServicesPermisions());
       _notifyStatusChanged();
     }
 
@@ -113,7 +114,7 @@ class LocationServices with Service implements NotificationsListener {
   }
 
   Future<Position?> get location async {
-    return (await this.status == LocationServicesStatus.PermissionAllowed) ? await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high) : null;
+    return (await status == LocationServicesStatus.permissionAllowed) ? await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high) : null;
   }
 
   // Location Monitor
@@ -124,10 +125,10 @@ class LocationServices with Service implements NotificationsListener {
 
   void _updateLocationMonitor() {
 
-    if ((_lastStatus == LocationServicesStatus.PermissionAllowed) && (_locationMonitor == null)) {
+    if ((_lastStatus == LocationServicesStatus.permissionAllowed) && (_locationMonitor == null)) {
       _openLocationMonitor();
     }
-    else if ((_lastStatus != LocationServicesStatus.PermissionAllowed) && (_locationMonitor != null)) {
+    else if ((_lastStatus != LocationServicesStatus.permissionAllowed) && (_locationMonitor != null)) {
       _closeLocationMonitor();
     }
   }
@@ -135,17 +136,21 @@ class LocationServices with Service implements NotificationsListener {
   void _openLocationMonitor() {
     if (_locationMonitor == null) {
       try {
-        final LocationSettings locationSettings = LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 100);
+        const LocationSettings locationSettings = LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 100);
         _locationMonitor = Geolocator.getPositionStream(locationSettings: locationSettings).listen((Position position) {
           _lastLocation = position;
           _notifyLocationChanged();
         },
         onError: (e) {
-          print(e?.toString());  
+          if (kDebugMode) {
+            print(e?.toString());  
+          }
         });
       }
       catch(e) {
-        print(e.toString());
+        if (kDebugMode) {
+          print(e.toString());  
+        }
       }
     }
   }
@@ -179,7 +184,7 @@ class LocationServices with Service implements NotificationsListener {
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.resumed) {
       LocationServicesStatus? lastStatus = _lastStatus;
-      this.status.then((_) {
+      status.then((_) {
         if (lastStatus != _lastStatus) {
           _notifyStatusChanged();
         }
@@ -187,7 +192,7 @@ class LocationServices with Service implements NotificationsListener {
 
     }
     else if (state == AppLifecycleState.paused) {
-      this.status.then((_) {
+      status.then((_) {
       });
     }
   }
@@ -196,13 +201,13 @@ class LocationServices with Service implements NotificationsListener {
 
 LocationServicesStatus? _locationServicesStatusFromString(String? value) {
   if (value == 'disabled') {
-    return LocationServicesStatus.ServiceDisabled;
+    return LocationServicesStatus.serviceDisabled;
   } else if (value == 'not_determined') {
-    return LocationServicesStatus.PermissionNotDetermined;
+    return LocationServicesStatus.permissionNotDetermined;
   } else if (value == 'denied') {
-    return LocationServicesStatus.PermissionDenied;
+    return LocationServicesStatus.permissionDenied;
   } else if (value == 'allowed') {
-    return LocationServicesStatus.PermissionAllowed;
+    return LocationServicesStatus.permissionAllowed;
   }
   else {
     return null;
