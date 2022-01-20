@@ -627,11 +627,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Analytics.instance.logSelect(target: "Crisis Help");
 
     if (Connectivity().isNotOffline && Config().crisisHelpUrl != null) {
-      String faqsUrl = Config().crisisHelpUrl!;
-
-      String? panelTitle = Localization().getStringEx('panel.settings.crisis_help.label.title', 'Crisis Help');
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WebPanel(url: faqsUrl, title: panelTitle,)));
+      url_launcher.launch(Config().crisisHelpUrl!);
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));

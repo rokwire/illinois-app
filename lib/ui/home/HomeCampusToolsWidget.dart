@@ -242,15 +242,11 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   void _onTapCrisisHelp() {
     Analytics.instance.logSelect(target: "Crisis Help");
     String? url = Config().crisisHelpUrl;
-    if(AppString.isStringNotEmpty(url)) {
-      String? panelTitle = Localization().getStringEx('panel.settings.crisis_help.label.title', 'Crisis Help');
-      Navigator.push(
-          context, CupertinoPageRoute(
-            builder: (context) => WebPanel(url: url, title: panelTitle,)));
+    if (AppString.isStringNotEmpty(url)) {
+      launch(url!);
     } else {
       Log.e("Missing Config().crisisHelpUrl");
     }
-
   }
 }
 
