@@ -19,15 +19,6 @@
     nextMethodComponents = [call.method substringWithRange:NSMakeRange(range.location + range.length, call.method.length - range.location - range.length)];
   }
   
-  NSArray<NSString*> *methodComponents = [call.method componentsSeparatedByString:@"."];
-  NSString *firstMethodComponent = methodComponents.firstObject, *nextMethodComponents = nil;
-  
-  if (1 < methodComponents.count) {
-    NSMutableArray<NSString*>* methodComponents1 = [NSMutableArray arrayWithArray:methodComponents];
-    [methodComponents1 removeObjectAtIndex:0];
-    nextMethodComponents = [methodComponents1 componentsJoinedByString:@"."];
-  }
-  
   if ([firstMethodComponent isEqualToString:@"getPlatformVersion"]) {
     result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
   }
