@@ -7,7 +7,7 @@ import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/Styles.dart';
@@ -139,10 +139,10 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
       // Ensure current location, if available
       if (_currentLocation == null) {
         LocationServicesStatus? status = await LocationServices.instance.status;
-        if (status == LocationServicesStatus.PermissionNotDetermined) {
+        if (status == LocationServicesStatus.permissionNotDetermined) {
           status = await LocationServices.instance.requestPermission();
         }
-        if (status == LocationServicesStatus.PermissionAllowed) {
+        if (status == LocationServicesStatus.permissionAllowed) {
           _currentLocation = await LocationServices.instance.location;
         }
       }

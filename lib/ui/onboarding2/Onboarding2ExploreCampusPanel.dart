@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
@@ -218,10 +218,10 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
     if (_toggled) {
       LocationServicesStatus? status = await LocationServices.instance.status;
       /* This seems nonsence:
-      if (status == LocationServicesStatus.ServiceDisabled) {
+      if (status == LocationServicesStatus.serviceDisabled) {
         status = await LocationServices.instance.requestService();
       }*/
-      if (status == LocationServicesStatus.PermissionNotDetermined) {
+      if (status == LocationServicesStatus.permissionNotDetermined) {
         await LocationServices.instance.requestPermission();
       }
     }

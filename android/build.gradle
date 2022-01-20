@@ -16,7 +16,7 @@
 
 buildscript {
     ext {
-        gradle_version = '4.2.0'
+        gradle_version = '4.2.2'
     }
     repositories {
         google()
