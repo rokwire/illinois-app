@@ -62,6 +62,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   String? _selectedMembersFilter;
   List<String>? _membersFilter;
 
+  TextEditingController _searchEditingController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -233,6 +235,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
               ),
             ),
             _buildMembersFilter(),
+            _buildMembersSearch(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
@@ -275,6 +278,94 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         ),
       ),
     );
+  }
+
+  Widget _buildMembersSearch() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Container(
+        padding: EdgeInsets.only(left: 16),
+        color: Colors.white,
+        height: 48,
+        child: Row(
+          children: <Widget>[
+            Flexible(
+                child:
+                Semantics(
+                  label: Localization().getStringEx('panel.manage_members.field.search.title', 'Search'),
+                  hint: Localization().getStringEx('panel.manage_members.field.search.hint', ''),
+                  textField: true,
+                  excludeSemantics: true,
+                  child: TextField(
+                    controller: _searchEditingController,
+                    onChanged: (text) => _onSearchTextChanged(text),
+                    onSubmitted: (_) => _onTapSearch(),
+                    autofocus: true,
+                    cursorColor: Styles().colors!.fillColorSecondary,
+                    keyboardType: TextInputType.text,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: Styles().fontFamilies!.regular,
+                        color: Styles().colors!.textBackground),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                    ),
+                  ),
+                )
+            ),
+            Semantics(
+                label: Localization().getStringEx('panel.manage_members.button.search.clear.title', 'Clear'),
+                hint: Localization().getStringEx('panel.manage_members.button.search.clear.hint', ''),
+                button: true,
+                excludeSemantics: true,
+                child: Padding(
+                  padding: EdgeInsets.all(12),
+                  child: GestureDetector(
+                    onTap: _onTapClearSearch,
+                    child: Image.asset(
+                        'images/icon-x-orange.png',
+                        width: 25,
+                        height: 25,
+                        excludeFromSemantics: true
+                    ),
+                  ),
+                )
+            ),
+            Semantics(
+              label: Localization().getStringEx('panel.manage_members.button.search.title', 'Search'),
+              hint: Localization().getStringEx('panel.manage_members.button.search.hint', ''),
+              button: true,
+              excludeSemantics: true,
+              child: Padding(
+                padding: EdgeInsets.all(12),
+                child: GestureDetector(
+                  onTap: _onTapSearch,
+                  child: Image.asset(
+                      'images/icon-search.png',
+                      color: Styles().colors!.fillColorSecondary,
+                      width: 25,
+                      height: 25,
+                      excludeFromSemantics: true
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _onSearchTextChanged(String text) {
+    //TBD: implement
+  }
+
+  void _onTapSearch() {
+    //TBD: implement
+  }
+
+  void _onTapClearSearch() {
+    //TBD: implement
   }
 }
 

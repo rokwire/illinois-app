@@ -1682,6 +1682,9 @@
     "panel.manage_members.button.see_all_requests.hint": "",
     "panel.manage_members.label.filter_by": "Filter by",
     "panel.manage_members.label.filter_by.all_members": "All members (#)",
+    "panel.manage_members.field.search.title": "Search",
+    "panel.manage_members.button.search.clear.title": "Clear",
+    "panel.manage_members.button.search.title": "Search",
 
     "panel.pending_member_detail.button.add.title": "Add",
     "panel.pending_member_detail.button.add.hint": "",

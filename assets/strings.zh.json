@@ -1677,6 +1677,9 @@
 	"panel.manage_members.button.see_all_requests.hint": "",
 	"panel.manage_members.label.filter_by": "筛选依据",
 	"panel.manage_members.label.filter_by.all_members": "所有成员（#）",
+	"panel.manage_members.field.search.title": "搜索",
+	"panel.manage_members.button.search.clear.title": "清除",
+	"panel.manage_members.button.search.title": "搜索",
 
 	"panel.pending_member_detail.button.add.title": "添加",
 	"panel.pending_member_detail.button.add.hint": "",
