@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/gies/GiesPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 
@@ -178,7 +179,7 @@ class HomeGies2State extends State<HomeGies2Widget> {
   }
 
   void _onTapContinue(){
-    //TBD
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GiesPanel()));
   }
 
   void _onTapViewNotes(){

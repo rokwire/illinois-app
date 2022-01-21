@@ -5,19 +5,19 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Giess with Service implements NotificationsListener{
+class Gies with Service implements NotificationsListener{
 
   List<dynamic>? _pages;
   Set<String>? _completedPages;
 
   // Singletone instance
-  static final Giess _instance = Giess._internal();
+  static final Gies _instance = Gies._internal();
 
-  factory Giess() {
+  factory Gies() {
     return _instance;
   }
 
-  Giess._internal();
+  Gies._internal();
 
   // Service
   @override
@@ -37,7 +37,7 @@ class Giess with Service implements NotificationsListener{
     await super.initService();
     _completedPages = Storage().giesCompletedPages ?? Set<String>();
 
-    AppBundle.loadString('assets/gies.json').then((String? assetsContentString) {
+    AppBundle.loadString('assets/gies2.json').then((String? assetsContentString) {
         _pages = JsonUtils.decodeList(assetsContentString);
     });
   }
