@@ -8,41 +8,20 @@ class RokwirePlugin {
   static const MethodChannel _channel = MethodChannel('edu.illinois.rokwire/plugin');
 
   static Future<String?> get platformVersion async {
-    String? result;
-    try {
-      result = await _channel.invokeMethod('getPlatformVersion');
-    }
-    catch(e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
-    }
-    return result;
+    try { return await _channel.invokeMethod('getPlatformVersion'); }
+    catch(e) { debugPrint(e.toString()); }
+    return null;
   }
 
   static Future<String?> queryLocationServicesStatus() async {
-    String? result;
-    try {
-      result = await _channel.invokeMethod('locationServices.queryStatus');
-    }
-    catch(e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
-    }
-    return result;
+    try { return await _channel.invokeMethod('locationServices.queryStatus'); }
+    catch(e) { debugPrint(e.toString()); }
+    return null;
   }
 
   static Future<String?> requestLocationServicesPermisions() async {
-    String? result;
-    try {
-      result = await _channel.invokeMethod('locationServices.requestPermision');
-    }
-    catch(e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
-    }
-    return result;
+    try { return await _channel.invokeMethod('locationServices.requestPermision'); }
+    catch(e) { debugPrint(e.toString()); }
+    return null;
   }
 }

@@ -16,7 +16,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
@@ -142,15 +141,11 @@ class LocationServices with Service implements NotificationsListener {
           _notifyLocationChanged();
         },
         onError: (e) {
-          if (kDebugMode) {
-            print(e?.toString());  
-          }
+          debugPrint(e.toString());
         });
       }
       catch(e) {
-        if (kDebugMode) {
-          print(e.toString());  
-        }
+        debugPrint(e.toString());
       }
     }
   }

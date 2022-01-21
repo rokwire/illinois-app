@@ -46,16 +46,12 @@ class FirebaseCrashlytics with Service {
   }
 
   void handleZoneError(dynamic exception, StackTrace stack) {
-    if (kDebugMode) {
-      print(exception);
-    }
+    debugPrint(exception?.toString());
     google.FirebaseCrashlytics.instance.recordError(exception, stack);
   }
 
   void recordError(dynamic exception, StackTrace? stack) {
-    if (kDebugMode) {
-      print(exception);
-    }
+    debugPrint(exception?.toString());
     google.FirebaseCrashlytics.instance.recordError(exception, stack);
   }
 

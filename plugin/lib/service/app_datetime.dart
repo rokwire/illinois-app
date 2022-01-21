@@ -62,9 +62,7 @@ class AppDateTime with Service {
       timezone.initializeDatabase(rawData);
     }
     else {
-      if (kDebugMode) {
-        print('AppDateTime: Timezone database initializiation omitted.');
-      }
+      debugPrint('AppDateTime: Timezone database initializiation omitted.');
     }
 
     _localTimeZone = await FlutterNativeTimezone.getLocalTimezone();
@@ -73,18 +71,14 @@ class AppDateTime with Service {
       timezone.setLocalLocation(deviceLocation);
     }
     else {
-      if (kDebugMode) {
-        print('AppDateTime: Failed to retrieve local timezone.');
-      }
+      debugPrint('AppDateTime: Failed to retrieve local timezone.');
     }
 
     String? locationName = universityLocationName;
     if (locationName != null) {
       _universityLocation = timezone.getLocation(locationName);
       if (_universityLocation == null) {
-        if (kDebugMode) {
-          print('AppDateTime: Failed to retrieve university location.');
-        }
+        debugPrint('AppDateTime: Failed to retrieve university location.');
       }
     }
 
@@ -149,9 +143,7 @@ class AppDateTime with Service {
       }
     }
     catch (e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      debugPrint(e.toString());
     }
     return formattedDateTime;
   }

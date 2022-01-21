@@ -17,7 +17,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path_package;
 import 'package:flutter/material.dart';
@@ -266,9 +265,7 @@ class UrlUtils {
       Uri? uri = (url != null) ? Uri.parse(url) : null;
       return (uri != null) ? uri.scheme : null;
     } catch(e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      debugPrint(e.toString());
     }
     return null;
   }
@@ -279,9 +276,7 @@ class UrlUtils {
       String? path = (uri != null) ? uri.path : null;
       return (path != null) ? path_package.extension(path) : null;
     } catch(e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      debugPrint(e.toString());
     }
     return null;
   }
@@ -348,9 +343,7 @@ class JsonUtils {
           result = json.encode(value);
         }
       } catch (e) {
-        if (kDebugMode) {
-          print(e.toString());
-        }
+        debugPrint(e.toString());
       }
     }
     return result;
@@ -363,9 +356,7 @@ class JsonUtils {
       try {
         jsonContent = json.decode(jsonString!);
       } catch (e) {
-        if (kDebugMode) {
-          print(e.toString());
-        }
+        debugPrint(e.toString());
       }
     }
     return jsonContent;
@@ -375,22 +366,18 @@ class JsonUtils {
     try {
       return (decode(jsonString) as List?)?.cast<dynamic>();
     } catch (e) {
-        if (kDebugMode) {
-          print(e.toString());
-        }
-      return null;
+      debugPrint(e.toString());
     }
+    return null;
   }
 
   static Map<String, dynamic>? decodeMap(String? jsonString) {
     try {
       return (decode(jsonString) as Map?)?.cast<String, dynamic>();
     } catch (e) {
-        if (kDebugMode) {
-          print(e.toString());
-        }
-      return null;
+      debugPrint(e.toString());
     }
+    return null;
   }
 
   static String? stringValue(dynamic value) {
@@ -402,9 +389,7 @@ class JsonUtils {
         return value.toString();
       }
       catch(e) {
-        if (kDebugMode) {
-          print(e.toString());
-        }
+        debugPrint(e.toString());
       }
     }
     return null;
@@ -438,9 +423,7 @@ class JsonUtils {
       return (value is Map) ? value.cast<String, dynamic>() : null;
     }
     catch(e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      debugPrint(e.toString());
     }
     return null;
   }
@@ -450,9 +433,7 @@ class JsonUtils {
       return (value is List) ? value.cast<dynamic>() : null;
     }
     catch(e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      debugPrint(e.toString());
     }
     return null;
   }
@@ -484,9 +465,7 @@ class JsonUtils {
       return (value is List) ? value.cast<String>() : null;
     }
     catch(e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      debugPrint(e.toString());
     }
     return null;
   }
@@ -496,9 +475,7 @@ class JsonUtils {
       return (value is List) ? Set.from(value.cast<String>()) : null;
     }
     catch(e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      debugPrint(e.toString());
     }
     return null;
   }
@@ -705,9 +682,7 @@ class AppBundle {
       return rootBundle.loadString(key, cache: cache);
     }
     catch(e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      debugPrint(e.toString());
     }
     return null;
   }
@@ -717,9 +692,7 @@ class AppBundle {
       return rootBundle.load(key);
     }
     catch(e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      debugPrint(e.toString());
     }
     return null;
   }
@@ -748,9 +721,7 @@ class DateTimeUtils {
         DateTime.tryParse(dateTimeString!);
     }
     on Exception catch (e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      debugPrint(e.toString());
     }
     return dateTime;
   }
@@ -776,9 +747,7 @@ class DateTimeUtils {
     try{
      return timezone.TZDateTime(location,time.year,time.month,time.day, time.hour, time.minute);
     } catch(e){
-      if (kDebugMode) {
-        print(e);
-      }
+      debugPrint(e.toString());
     }
     return null;
   }
@@ -794,9 +763,7 @@ class DateTimeUtils {
           return DateFormat(format).parse(dateTimeString, isUtc);
         }
         catch (e) {
-          if (kDebugMode) {
-            print(e.toString());
-          }
+          debugPrint(e.toString());
         }
       }
       else {
