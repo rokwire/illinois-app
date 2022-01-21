@@ -27,6 +27,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update "Campus Resources" Layout [#1219](https://github.com/rokwire/illinois-app/issues/1219).
 - Remove margin from Group Post body in GroupPostDetailPanel [#1227](https://github.com/rokwire/illinois-app/issues/1227).
 
+## [3.1.15] - 2022-01-21
+### Fixed
+- Crash when editing group event [#1262](https://github.com/rokwire/illinois-app/issues/1262).
+- Differ checkboxes for voted and non-voted answers in polls [#1264](https://github.com/rokwire/illinois-app/issues/1264).
+- Place "Leave" group button below the tabs [#1265](https://github.com/rokwire/illinois-app/issues/1265).
+
 ## [3.1.14] - 2022-01-20
 ### Changed
 - Use external browser for "Crisis Help" [#1255](https://github.com/rokwire/illinois-app/issues/1255).
