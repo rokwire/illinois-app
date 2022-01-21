@@ -1493,10 +1493,18 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       _isOnline = event.isVirtual ?? false;
       _isFree = event.isEventFree?? false;
       _location = event.location;
-      _eventDescriptionController.text = event.longDescription!;
-      _eventPurchaseUrlController.text = event.registrationUrl!;
-      _eventWebsiteController.text = event.titleUrl!;
-      _eventPriceController.text = event.cost!;
+      if (event.longDescription != null) {
+        _eventDescriptionController.text = event.longDescription!;
+      }
+      if (event.registrationUrl != null) {
+        _eventPurchaseUrlController.text = event.registrationUrl!;
+      }
+      if (event.titleUrl != null) {
+        _eventWebsiteController.text = event.titleUrl!;
+      }
+      if (event.cost != null) {
+        _eventPriceController.text = event.cost!;
+      }
       _selectedPrivacy = (event.isGroupPrivate??false) ? eventPrivacyPrivate : eventPrivacyPublic;
       if(event.location!=null){
         if (_isOnline) {
