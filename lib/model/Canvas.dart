@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 final _canvasDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
 
@@ -59,45 +59,45 @@ class CanvasCourse {
 
   static CanvasCourse? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? CanvasCourse(
-      id: AppJson.intValue(json['id']),
-      accountId: AppJson.intValue(json['account_id']),
-      rootAccountId: AppJson.intValue(json['root_account_id']),
-      enrollmentTermId: AppJson.intValue(json['enrollment_term_id']),
-      gradingStandardId: AppJson.intValue(json['grading_standard_id']),
-      sisImportId: AppJson.intValue(json['sis_import_id']),
-      integrationId: AppJson.intValue(json['integration_id']),
-      sisCourseId: AppJson.stringValue(json['sis_course_id']),
+      id: JsonUtils.intValue(json['id']),
+      accountId: JsonUtils.intValue(json['account_id']),
+      rootAccountId: JsonUtils.intValue(json['root_account_id']),
+      enrollmentTermId: JsonUtils.intValue(json['enrollment_term_id']),
+      gradingStandardId: JsonUtils.intValue(json['grading_standard_id']),
+      sisImportId: JsonUtils.intValue(json['sis_import_id']),
+      integrationId: JsonUtils.intValue(json['integration_id']),
+      sisCourseId: JsonUtils.stringValue(json['sis_course_id']),
       
-      uuid: AppJson.stringValue(json['uuid']),
-      name: AppJson.stringValue(json['name']),
-      friendlyName: AppJson.stringValue(json['friendly_name']),
-      courseCode: AppJson.stringValue(json['course_code']),
-      courseColor: AppJson.stringValue(json['course_color']),
-      timezone: AppJson.stringValue(json['time_zone']),
+      uuid: JsonUtils.stringValue(json['uuid']),
+      name: JsonUtils.stringValue(json['name']),
+      friendlyName: JsonUtils.stringValue(json['friendly_name']),
+      courseCode: JsonUtils.stringValue(json['course_code']),
+      courseColor: JsonUtils.stringValue(json['course_color']),
+      timezone: JsonUtils.stringValue(json['time_zone']),
       
-      createdAt: AppDateTime.parseDateTime(AppJson.stringValue(json['created_at'])),
-      startAt: AppDateTime.parseDateTime(AppJson.stringValue(json['start_at'])),
-      endAt: AppDateTime.parseDateTime(AppJson.stringValue(json['end_at'])),
+      createdAt: AppDateTime.parseDateTime(JsonUtils.stringValue(json['created_at'])),
+      startAt: AppDateTime.parseDateTime(JsonUtils.stringValue(json['start_at'])),
+      endAt: AppDateTime.parseDateTime(JsonUtils.stringValue(json['end_at'])),
 
-      isPublic: AppJson.boolValue(json['is_public']),
-      isPublicToAuthUsers: AppJson.boolValue(json['is_public_to_auth_users']),
-      publicSyllabus: AppJson.boolValue(json['public_syllabus']),
-      publicSyllabusToAuth: AppJson.boolValue(json['public_syllabus_to_auth']),
-      homeroomCourse: AppJson.boolValue(json['homeroom_course']),
-      applyAssignmentGroupWeights: AppJson.boolValue(json['apply_assignment_group_weights']),
-      hideFinalGrades: AppJson.boolValue(json['hide_final_grades']),
-      restrictEnrollmentsToCourseDates: AppJson.boolValue(json['restrict_enrollments_to_course_dates']),
-      blueprint: AppJson.boolValue(json['blueprint']),
-      template: AppJson.boolValue(json['template']),
+      isPublic: JsonUtils.boolValue(json['is_public']),
+      isPublicToAuthUsers: JsonUtils.boolValue(json['is_public_to_auth_users']),
+      publicSyllabus: JsonUtils.boolValue(json['public_syllabus']),
+      publicSyllabusToAuth: JsonUtils.boolValue(json['public_syllabus_to_auth']),
+      homeroomCourse: JsonUtils.boolValue(json['homeroom_course']),
+      applyAssignmentGroupWeights: JsonUtils.boolValue(json['apply_assignment_group_weights']),
+      hideFinalGrades: JsonUtils.boolValue(json['hide_final_grades']),
+      restrictEnrollmentsToCourseDates: JsonUtils.boolValue(json['restrict_enrollments_to_course_dates']),
+      blueprint: JsonUtils.boolValue(json['blueprint']),
+      template: JsonUtils.boolValue(json['template']),
       
-      gradePassbackSetting: AppJson.stringValue(json['grade_passback_setting']),
-      workflowState: AppJson.stringValue(json['workflow_state']),
-      defaultView: AppJson.stringValue(json['default_view']),
-      license: AppJson.stringValue(json['license']),
+      gradePassbackSetting: JsonUtils.stringValue(json['grade_passback_setting']),
+      workflowState: JsonUtils.stringValue(json['workflow_state']),
+      defaultView: JsonUtils.stringValue(json['default_view']),
+      license: JsonUtils.stringValue(json['license']),
 
-      storageQuotaMb: AppJson.intValue(json['storage_quota_mb']),
-      calendar: CanvasCalendar.fromJson(AppJson.mapValue(json['calendar'])),
-      enrollments: CanvasEnrollment.listFromJson(AppJson.listValue(json['enrollments'])),
+      storageQuotaMb: JsonUtils.intValue(json['storage_quota_mb']),
+      calendar: CanvasCalendar.fromJson(JsonUtils.mapValue(json['calendar'])),
+      enrollments: CanvasEnrollment.listFromJson(JsonUtils.listValue(json['enrollments'])),
     ) : null;
   }
 
@@ -239,7 +239,7 @@ class CanvasCalendar {
 
   static CanvasCalendar? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? CanvasCalendar(
-      ics: AppJson.stringValue(json['ics']),
+      ics: JsonUtils.stringValue(json['ics']),
     ) : null;
   }
 
@@ -272,12 +272,12 @@ class CanvasEnrollment {
 
   static CanvasEnrollment? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? CanvasEnrollment(
-      id: AppJson.intValue(json['is']),
-      userId: AppJson.intValue(json['user_id']),
-      type: AppJson.stringValue(json['type']),
-      role: AppJson.stringValue(json['role']),
-      enrollmentState: AppJson.stringValue(json['enrollment_state']),
-      limitPrivilegesToCourseSection: AppJson.boolValue(json['limit_privileges_to_course_section']),
+      id: JsonUtils.intValue(json['is']),
+      userId: JsonUtils.intValue(json['user_id']),
+      type: JsonUtils.stringValue(json['type']),
+      role: JsonUtils.stringValue(json['role']),
+      enrollmentState: JsonUtils.stringValue(json['enrollment_state']),
+      limitPrivilegesToCourseSection: JsonUtils.boolValue(json['limit_privileges_to_course_section']),
     ) : null;
   }
 
@@ -314,7 +314,7 @@ class CanvasEnrollment {
     if (jsonList != null) {
       result = <CanvasEnrollment>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, CanvasEnrollment.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, CanvasEnrollment.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
