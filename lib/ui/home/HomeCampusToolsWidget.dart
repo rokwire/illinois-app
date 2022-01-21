@@ -26,7 +26,6 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/WellnessPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
