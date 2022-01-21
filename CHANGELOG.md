@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Crash when editing group event [#1262](https://github.com/rokwire/illinois-app/issues/1262).
+- Differ checkboxes for voted and non-voted answers in polls [#1264](https://github.com/rokwire/illinois-app/issues/1264).
 
 ## [3.1.14] - 2022-01-20
 ### Changed
