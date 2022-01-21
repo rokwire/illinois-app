@@ -27,7 +27,7 @@ import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -162,7 +162,7 @@ class ExploreService with Service implements NotificationsListener {
         dynamic body = json.encode(event.toNotNullJson());
         response = (Config().eventsUrl != null) ? await Network().post(Config().eventsUrl, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
-            auth: NetworkAuth.Auth2) : null;
+            auth: NetworkAuth.auth2) : null;
         Map<String, dynamic>? jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? JsonUtils.decode(response?.body) : null;
         String? eventId = (jsonData != null) ? JsonUtils.stringValue(jsonData["id"]) : null;
         if (eventId != null) {
@@ -185,7 +185,7 @@ class ExploreService with Service implements NotificationsListener {
         String url = Config().eventsUrl! + "/" + event.id!;
         response = (Config().eventsUrl != null) ? await Network().put(url, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
-            auth: NetworkAuth.Auth2) : null;
+            auth: NetworkAuth.auth2) : null;
         Map<String, dynamic>? jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? JsonUtils.decode(response?.body) : null;
         String? eventId = (jsonData != null) ? JsonUtils.stringValue(jsonData["id"]) : null;
         if (eventId != null) {
@@ -207,7 +207,7 @@ class ExploreService with Service implements NotificationsListener {
         String url = Config().eventsUrl! + "/" + eventId;
         response = (Config().eventsUrl != null) ? await Network().delete(url,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
-            auth: NetworkAuth.Auth2) : null;
+            auth: NetworkAuth.auth2) : null;
     Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
     return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201|| response.statusCode == 202));
     } catch (e) {
@@ -257,7 +257,7 @@ class ExploreService with Service implements NotificationsListener {
     http.Response? response;
     if(_enabled) {
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.auth2, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load event categories');
         Log.e(e.toString());
@@ -280,7 +280,7 @@ class ExploreService with Service implements NotificationsListener {
     if(_enabled) {
       http.Response? response;
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.auth2, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load event categories');
         Log.e(e.toString());
@@ -303,7 +303,7 @@ class ExploreService with Service implements NotificationsListener {
     if(_enabled) {
       http.Response? response;
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/tags', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/tags', auth: NetworkAuth.auth2, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e(e.toString());
         return null;
@@ -612,7 +612,7 @@ class ExploreService with Service implements NotificationsListener {
       && StringUtils.isNotEmpty(Config().eventsUrl);
 
   NetworkAuth get _userOrAppAuth{
-    return NetworkAuth.Auth2;
+    return NetworkAuth.auth2;
   }
 
   /////////////////////////

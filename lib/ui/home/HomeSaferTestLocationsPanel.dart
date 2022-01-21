@@ -9,7 +9,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -126,7 +126,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
     String? contentUrl = Config().contentUrl;
     if ((contentUrl != null)) {
       String url = "$contentUrl/health_locations";
-      Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
+      Response? response = await Network().get(url, auth: NetworkAuth.auth2);
       return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(JsonUtils.decode(response!.body)) : null;
     }
     return null;

@@ -30,7 +30,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:package_info/package_info.dart';
 import 'package:collection/collection.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -78,7 +78,7 @@ class Config with Service, NotificationsListener, NetworkAuthProvider {
 
   @override
   void createService() {
-    Network().subscribeAuthProvider(this, NetworkAuth.ApiKey);
+    Network().subscribeAuthProvider(this, NetworkAuth.apiKey);
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       FirebaseMessaging.notifyConfigUpdate
@@ -140,7 +140,7 @@ class Config with Service, NotificationsListener, NetworkAuthProvider {
 
   @override
   Pair<String, String>? authHeader(NetworkAuth? auth) {
-    if (auth == NetworkAuth.ApiKey) {
+    if (auth == NetworkAuth.apiKey) {
       String? value = rokwireApiKey;
       if ((value != null) && value.isNotEmpty) {
         return Pair(RokwireApiKey, value);
@@ -150,7 +150,7 @@ class Config with Service, NotificationsListener, NetworkAuthProvider {
   }
 
   Map<String, String>? get authHeaders {
-    Pair<String, String>? apiKeyHeader = authHeader(NetworkAuth.ApiKey);
+    Pair<String, String>? apiKeyHeader = authHeader(NetworkAuth.apiKey);
     return (apiKeyHeader != null) ? {
       apiKeyHeader.left : apiKeyHeader.right
     } : null;
@@ -193,7 +193,7 @@ class Config with Service, NotificationsListener, NetworkAuthProvider {
 
   Future<String?> _loadAsStringFromNet() async {
     try {
-      http.Response? response = await Network().get(appConfigUrl, auth: NetworkAuth.ApiKey);
+      http.Response? response = await Network().get(appConfigUrl, auth: NetworkAuth.apiKey);
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     } catch (e) {
       print(e.toString());

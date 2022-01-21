@@ -11,7 +11,7 @@ import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -84,7 +84,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
 
   @override
   void createService() {
-    Network().subscribeAuthProvider(this, [NetworkAuth.UIUC_Id, NetworkAuth.UIUC_Access, NetworkAuth.Auth2]);
+    Network().subscribeAuthProvider(this, [NetworkAuth.uiucId, NetworkAuth.uiucAccess, NetworkAuth.auth2]);
     NotificationService().subscribe(this, [
       DeepLink.notifyUri,
       AppLivecycle.notifyStateChanged,
@@ -198,20 +198,20 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
 
   @override
   Pair<String, String>? authHeader(NetworkAuth? auth) {
-    if (auth == NetworkAuth.UIUC_Id) {
+    if (auth == NetworkAuth.uiucId) {
       String? idToken = uiucToken?.idToken;
       if ((idToken != null) && idToken.isNotEmpty) {
         String tokenType = uiucToken?.tokenType ?? 'Bearer';
         return Pair(HttpHeaders.authorizationHeader, "$tokenType $idToken");
       }
     }
-    else if (auth == NetworkAuth.UIUC_Access) {
+    else if (auth == NetworkAuth.uiucAccess) {
       String? accessToken = uiucToken?.accessToken;
       if ((accessToken != null) && accessToken.isNotEmpty) {
         return Pair(UIUCAccessToken, accessToken);
       }
     }
-    else if (auth == NetworkAuth.Auth2) {
+    else if (auth == NetworkAuth.auth2) {
       String? accessToken = token?.accessToken;
       if ((accessToken != null) && accessToken.isNotEmpty) {
         String tokenType = token?.tokenType ?? 'Bearer';
@@ -229,7 +229,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   @override
   Future<bool> refreshAuthTokenIfNeeded(NetworkAuth? auth, Http.BaseResponse? response, dynamic token) async {
     if ((response?.statusCode == 401) &&
-        ((NetworkAuth.Auth2 == auth) || (NetworkAuth.UIUC_Id == auth) || (NetworkAuth.UIUC_Access == auth)) &&
+        ((NetworkAuth.auth2 == auth) || (NetworkAuth.uiucId == auth) || (NetworkAuth.uiucAccess == auth)) &&
         (token is Auth2Token) && (token == Auth2().token))
     {
       return (await refreshToken(token) != null);
@@ -754,7 +754,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   Future<bool> _deleteUserAccount() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account";
-      Response? response = await Network().delete(url, auth: NetworkAuth.Auth2);
+      Response? response = await Network().delete(url, auth: NetworkAuth.auth2);
       return response?.statusCode == 200;
     }
     return false;
@@ -947,7 +947,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
       _updateUserPrefsClient?.close();
       _updateUserPrefsClient = client;
       
-      Response? response = await Network().put(url, auth: NetworkAuth.Auth2, headers: headers, body: post, client: _updateUserPrefsClient);
+      Response? response = await Network().put(url, auth: NetworkAuth.auth2, headers: headers, body: post, client: _updateUserPrefsClient);
       
       if (identical(client, _updateUserPrefsClient)) {
         if (response?.statusCode == 200) {
@@ -969,7 +969,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   Future<Auth2UserPrefs?> _loadAccountUserPrefs() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account/preferences";
-      Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
+      Response? response = await Network().get(url, auth: NetworkAuth.auth2);
       return (response?.statusCode == 200) ? Auth2UserPrefs.fromJson(JsonUtils.decodeMap(response?.body)) : null;
     }
     return null;
@@ -1005,7 +1005,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   Future<Auth2UserProfile?> _loadAccountUserProfile() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account/profile";
-      Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
+      Response? response = await Network().get(url, auth: NetworkAuth.auth2);
       return (response?.statusCode == 200) ? Auth2UserProfile.fromJson(JsonUtils.decodeMap(response?.body)) : null;
     }
     return null;
@@ -1018,7 +1018,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
         'Content-Type': 'application/json'
       };
       String? post = JsonUtils.encode(profile!.toJson());
-      Response? response = await Network().put(url, auth: NetworkAuth.Auth2, headers: headers, body: post);
+      Response? response = await Network().put(url, auth: NetworkAuth.auth2, headers: headers, body: post);
       return (response?.statusCode == 200);
     }
     return false;
