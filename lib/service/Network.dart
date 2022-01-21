@@ -25,10 +25,10 @@ import 'package:http_parser/http_parser.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
 import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum NetworkAuth {
@@ -45,6 +45,11 @@ class Network  {
   static const String RokwireUserPrivacyLevel = 'ROKWIRE-USER-PRIVACY-LEVEL';
   static const String RokwirePadaapiKey = 'x-api-key';
   static const String UIUCAccessToken = 'access_token';
+
+  static const String notifyHttpResponse  = "edu.illinois.rokwire.network.http_response";
+  static const String notifyHttpRequestUrl  = "requestUrl";
+  static const String notifyHttpRequestMethod  = "requestMethod";
+  static const String notifyHttpResponseCode  = "responseCode";
 
   static final Network _network = new Network._internal();
   factory Network() {
@@ -152,7 +157,7 @@ class Network  {
     }
 
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'GET', requestUrl: analyticsUrl ?? url);
+      NotificationService().notify(notifyHttpResponse, _notifyHttpResponseParam(response, analyticsUrl: analyticsUrl));
     }
 
     _saveCookiesFromResponse(url, response);
@@ -190,7 +195,7 @@ class Network  {
     }
 
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'POST', requestUrl: analyticsUrl ?? url);
+      NotificationService().notify(notifyHttpResponse, _notifyHttpResponseParam(response, analyticsUrl: analyticsUrl));
     }
 
     _saveCookiesFromResponse(url, response);
@@ -234,7 +239,7 @@ class Network  {
     }
 
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'PUT', requestUrl: analyticsUrl ?? url);
+      NotificationService().notify(notifyHttpResponse, _notifyHttpResponseParam(response, analyticsUrl: analyticsUrl));
     }
 
     _saveCookiesFromResponse(url, response);
@@ -272,7 +277,7 @@ class Network  {
     }
 
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'PATCH', requestUrl: analyticsUrl ?? url);
+      NotificationService().notify(notifyHttpResponse, _notifyHttpResponseParam(response, analyticsUrl: analyticsUrl));
     }
 
     _saveCookiesFromResponse(url, response);
@@ -309,7 +314,7 @@ class Network  {
     }
 
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'DELETE', requestUrl: analyticsUrl ?? url);
+      NotificationService().notify(notifyHttpResponse, _notifyHttpResponseParam(response, analyticsUrl: analyticsUrl));
     }
 
     _saveCookiesFromResponse(url, response);
@@ -376,7 +381,7 @@ class Network  {
     }
 
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod: 'POST', requestUrl: analyticsUrl ?? url);
+      NotificationService().notify(notifyHttpResponse, _notifyHttpResponseParam(response, analyticsUrl: analyticsUrl));
     }
 
     _saveCookiesFromResponse(url, response);
@@ -557,6 +562,14 @@ class Network  {
     result = result.substring(0, result.length - 2);
 
     return result;
+  }
+
+  static dynamic _notifyHttpResponseParam(Http.BaseResponse? response, { String? analyticsUrl }) {
+    return (analyticsUrl != null) ? response : {
+      notifyHttpRequestUrl: response?.request?.url.toString(),
+      notifyHttpRequestMethod: response?.request?.method,
+      notifyHttpResponseCode: response?.statusCode,
+    };
   }
 
   static Uri? _uriFromUrlString(dynamic url) {

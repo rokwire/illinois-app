@@ -170,6 +170,10 @@ class SetUtils {
 }
 
 class MapUtils {
+  static T? get<K, T>(Map<K, T>? map, K? key) {
+    return ((map != null) && (key != null)) ? map[key] : null;
+  }
+
   static void set<K, T>(Map<K, T>? map, K? key, T? value) {
     if ((map != null) && (key != null) && (value != null)) {
       map[key] = value;

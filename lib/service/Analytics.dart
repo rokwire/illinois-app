@@ -287,6 +287,7 @@ class Analytics with Service implements NotificationsListener {
       Auth2UserPrefs.notifyRolesChanged,
       Auth2.notifyPrefsChanged,
       Auth2.notifyUserDeleted,
+      Network.notifyHttpResponse,
       NativeCommunicator.notifyMapRouteStart,
       NativeCommunicator.notifyMapRouteFinish,
       NativeCommunicator.notifyGeoFenceRegionsEnter,
@@ -418,6 +419,9 @@ class Analytics with Service implements NotificationsListener {
       _updateSessionUuid();
       _updateUserRoles();
     }
+    else if (name == Network.notifyHttpResponse) {
+      logHttpResponse(param);
+    }
     else if (name == NativeCommunicator.notifyMapRouteStart) {
       logMapRoute(action: LogMapRouteStartActionName, params: param);
     }
@@ -430,7 +434,7 @@ class Analytics with Service implements NotificationsListener {
     else if (name == NativeCommunicator.notifyGeoFenceRegionsExit) {
       logGeoFenceRegion(action: LogGeoFenceRegionExitActionName, regionId: param);
     }
-  }
+}
 
   // Connectivity
 
@@ -804,13 +808,26 @@ class Analytics with Service implements NotificationsListener {
     logEvent(event);
   }
 
-  void logHttpResponse(Http.BaseResponse? response, {String? requestMethod, String? requestUrl}) {
-    Map<String, dynamic> httpResponseEvent = {
-      LogEventName                    : LogHttpResponseEventName,
-      LogHttpRequestUrlName           : requestUrl,
-      LogHttpRequestMethodName        : requestMethod,
-      LogHttpResponseCodeName         : response?.statusCode
-    };
+  void logHttpResponse(dynamic param) {
+
+    Map<String, dynamic>? httpResponseEvent;
+    if (param is Http.BaseResponse) {
+      httpResponseEvent = {
+        LogEventName                    : LogHttpResponseEventName,
+        LogHttpRequestUrlName           : param.request?.url.toString(),
+        LogHttpRequestMethodName        : param.request?.method,
+        LogHttpResponseCodeName         : param.statusCode,
+      };
+    }
+    else if (param is Map) {
+      httpResponseEvent = {
+        LogEventName                    : LogHttpResponseEventName,
+        LogHttpRequestUrlName           : param[Network.notifyHttpRequestUrl],
+        LogHttpRequestMethodName        : param[Network.notifyHttpRequestMethod],
+        LogHttpResponseCodeName         : param[Network.notifyHttpResponseCode],
+      };
+    }
+
     logEvent(httpResponseEvent);
   }
 
