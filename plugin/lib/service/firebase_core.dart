@@ -15,17 +15,28 @@
  */
 
 import 'package:firebase_core/firebase_core.dart' as google;
+import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
 class FirebaseCore extends Service {
 
-  static final FirebaseCore _service = FirebaseCore._internal();
-  FirebaseCore._internal();
-  factory FirebaseCore() {
-    return _service;
-  }
-
   google.FirebaseApp? _firebaseApp;
+
+  // Singletone Factory
+
+  static FirebaseCore? _instance;
+
+  static FirebaseCore? get instance => _instance;
+
+  @protected
+  static set instance(FirebaseCore? value) => _instance = value;
+
+  factory FirebaseCore() => _instance ?? (_instance = FirebaseCore.internal());
+
+  @protected
+  FirebaseCore.internal();
+  
+  // Service
 
   @override
   Future<void> initService() async{

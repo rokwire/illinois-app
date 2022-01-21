@@ -124,7 +124,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   Future<void> _loadCurrentLocation() async {
-    _locationData = Auth2().privacyMatch(2) ? await LocationServices.instance.location : null;
+    _locationData = Auth2().privacyMatch(2) ? await LocationServices().location : null;
   }
 
   void _updateCurrentLocation() {

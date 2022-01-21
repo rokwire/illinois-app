@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -36,7 +36,7 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
   Future<void> _lodUserInfo() async{
       try {
         Response? response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user",
-            auth: NetworkAuth.Auth2) : null;
+            auth: NetworkAuth.auth2) : null;
         Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
         if(jsonData != null){
           setState(() {

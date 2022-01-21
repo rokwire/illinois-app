@@ -216,13 +216,13 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
 
   Future<void> _requestLocationPermissionsIfNeeded() async {
     if (_toggled) {
-      LocationServicesStatus? status = await LocationServices.instance.status;
+      LocationServicesStatus? status = await LocationServices().status;
       /* This seems nonsence:
       if (status == LocationServicesStatus.serviceDisabled) {
-        status = await LocationServices.instance.requestService();
+        status = await LocationServices().requestService();
       }*/
       if (status == LocationServicesStatus.permissionNotDetermined) {
-        await LocationServices.instance.requestPermission();
+        await LocationServices().requestPermission();
       }
     }
   }

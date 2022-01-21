@@ -26,7 +26,7 @@ import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

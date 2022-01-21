@@ -11,16 +11,17 @@ import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:http/http.dart' as Http;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Auth2 with Service implements NotificationsListener {
+class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   
   static const String notifyLoginStarted      = "edu.illinois.rokwire.auth2.login.started";
   static const String notifyLoginSucceeded    = "edu.illinois.rokwire.auth2.login.succeeded";
@@ -37,6 +38,8 @@ class Auth2 with Service implements NotificationsListener {
   static const String analyticsUin         = 'UINxxxxxx';
   static const String analyticsFirstName   = 'FirstNameXXXXXX';
   static const String analyticsLastName    = 'LastNameXXXXXX';
+
+  static const String UIUCAccessToken      = 'access_token';
 
   static const String _authCardName        = "idCard.json";
 
@@ -81,11 +84,18 @@ class Auth2 with Service implements NotificationsListener {
 
   @override
   void createService() {
+    Network().subscribeAuthProvider(this, [NetworkAuth.uiucId, NetworkAuth.uiucAccess, NetworkAuth.auth2]);
     NotificationService().subscribe(this, [
       DeepLink.notifyUri,
       AppLivecycle.notifyStateChanged,
       Auth2UserPrefs.notifyChanged,
     ]);
+  }
+
+  @override
+  void destroyService() {
+    Network().unsubscribeAuthProvider(this);
+    NotificationService().unsubscribe(this);
   }
 
   @override
@@ -129,11 +139,6 @@ class Auth2 with Service implements NotificationsListener {
     }
 
     await super.initService();
-  }
-
-  @override
-  void destroyService() {
-    NotificationService().unsubscribe(this);
   }
 
   @override
@@ -187,6 +192,49 @@ class Auth2 with Service implements NotificationsListener {
         _handleOidcAuthentication(uri);
       }
     }
+  }
+
+  // NetworkAuthProvider
+
+  @override
+  Pair<String, String>? authHeader(NetworkAuth? auth) {
+    if (auth == NetworkAuth.uiucId) {
+      String? idToken = uiucToken?.idToken;
+      if ((idToken != null) && idToken.isNotEmpty) {
+        String tokenType = uiucToken?.tokenType ?? 'Bearer';
+        return Pair(HttpHeaders.authorizationHeader, "$tokenType $idToken");
+      }
+    }
+    else if (auth == NetworkAuth.uiucAccess) {
+      String? accessToken = uiucToken?.accessToken;
+      if ((accessToken != null) && accessToken.isNotEmpty) {
+        return Pair(UIUCAccessToken, accessToken);
+      }
+    }
+    else if (auth == NetworkAuth.auth2) {
+      String? accessToken = token?.accessToken;
+      if ((accessToken != null) && accessToken.isNotEmpty) {
+        String tokenType = token?.tokenType ?? 'Bearer';
+        return Pair(HttpHeaders.authorizationHeader, "$tokenType $accessToken");
+      }
+    }
+    return null;
+  }
+
+  @override
+  dynamic authToken(NetworkAuth? auth) {
+    return token;
+  }
+  
+  @override
+  Future<bool> refreshAuthTokenIfNeeded(NetworkAuth? auth, Http.BaseResponse? response, dynamic token) async {
+    if ((response?.statusCode == 401) &&
+        ((NetworkAuth.auth2 == auth) || (NetworkAuth.uiucId == auth) || (NetworkAuth.uiucAccess == auth)) &&
+        (token is Auth2Token) && (token == Auth2().token))
+    {
+      return (await refreshToken(token) != null);
+    }
+    return false;
   }
 
   // Getters
@@ -706,7 +754,7 @@ class Auth2 with Service implements NotificationsListener {
   Future<bool> _deleteUserAccount() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account";
-      Response? response = await Network().delete(url, auth: NetworkAuth.Auth2);
+      Response? response = await Network().delete(url, auth: NetworkAuth.auth2);
       return response?.statusCode == 200;
     }
     return false;
@@ -899,7 +947,7 @@ class Auth2 with Service implements NotificationsListener {
       _updateUserPrefsClient?.close();
       _updateUserPrefsClient = client;
       
-      Response? response = await Network().put(url, auth: NetworkAuth.Auth2, headers: headers, body: post, client: _updateUserPrefsClient);
+      Response? response = await Network().put(url, auth: NetworkAuth.auth2, headers: headers, body: post, client: _updateUserPrefsClient);
       
       if (identical(client, _updateUserPrefsClient)) {
         if (response?.statusCode == 200) {
@@ -921,7 +969,7 @@ class Auth2 with Service implements NotificationsListener {
   Future<Auth2UserPrefs?> _loadAccountUserPrefs() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account/preferences";
-      Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
+      Response? response = await Network().get(url, auth: NetworkAuth.auth2);
       return (response?.statusCode == 200) ? Auth2UserPrefs.fromJson(JsonUtils.decodeMap(response?.body)) : null;
     }
     return null;
@@ -957,7 +1005,7 @@ class Auth2 with Service implements NotificationsListener {
   Future<Auth2UserProfile?> _loadAccountUserProfile() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account/profile";
-      Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
+      Response? response = await Network().get(url, auth: NetworkAuth.auth2);
       return (response?.statusCode == 200) ? Auth2UserProfile.fromJson(JsonUtils.decodeMap(response?.body)) : null;
     }
     return null;
@@ -970,7 +1018,7 @@ class Auth2 with Service implements NotificationsListener {
         'Content-Type': 'application/json'
       };
       String? post = JsonUtils.encode(profile!.toJson());
-      Response? response = await Network().put(url, auth: NetworkAuth.Auth2, headers: headers, body: post);
+      Response? response = await Network().put(url, auth: NetworkAuth.auth2, headers: headers, body: post);
       return (response?.statusCode == 200);
     }
     return false;

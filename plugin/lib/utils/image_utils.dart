@@ -18,7 +18,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -45,9 +44,7 @@ class ImageUtils {
     try {
       saveResult = await GallerySaver.saveImage(capturedFile.path);
     } catch (e) {
-      if (kDebugMode) {
-        print('Failed to save image to fs. \nException: ${e.toString()}');
-      }
+      debugPrint('Failed to save image to fs. \nException: ${e.toString()}');
     }
     return saveResult;
   }
@@ -106,9 +103,7 @@ class ImageUtils {
 
         return newQrBytes;
       } catch (e) {
-        if (kDebugMode) {
-          print('Failed to apply label to image. \nException: ${e.toString()}');
-        }
+        debugPrint('Failed to apply label to image. \nException: ${e.toString()}');
       }
     }
     return null;

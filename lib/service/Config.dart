@@ -30,22 +30,24 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:package_info/package_info.dart';
 import 'package:collection/collection.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/utils/crypt.dart';
 
-class Config with Service implements NotificationsListener {
-
-  static const String _configsAsset       = "configs.json.enc";
-  static const String _configKeysAsset    = "config.keys.json";
+class Config with Service, NotificationsListener, NetworkAuthProvider {
 
   static const String notifyUpgradeRequired     = "edu.illinois.rokwire.config.upgrade.required";
   static const String notifyUpgradeAvailable    = "edu.illinois.rokwire.config.upgrade.available";
   static const String notifyOnboardingRequired  = "edu.illinois.rokwire.config.onboarding.required";
   static const String notifyConfigChanged       = "edu.illinois.rokwire.config.changed";
   static const String notifyEnvironmentChanged  = "edu.illinois.rokwire.config.environment.changed";
+
+  static const String RokwireApiKey       = 'ROKWIRE-API-KEY';
+
+  static const String _configsAsset       = "configs.json.enc";
+  static const String _configKeysAsset    = "config.keys.json";
 
   Map<String, dynamic>? _config;
   Map<String, dynamic>? _configAsset;
@@ -76,7 +78,7 @@ class Config with Service implements NotificationsListener {
 
   @override
   void createService() {
-
+    Network().subscribeAuthProvider(this, NetworkAuth.apiKey);
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       FirebaseMessaging.notifyConfigUpdate
@@ -85,6 +87,7 @@ class Config with Service implements NotificationsListener {
 
   @override
   void destroyService() {
+    Network().unsubscribeAuthProvider(this);
     NotificationService().unsubscribe(this);
   }
 
@@ -133,6 +136,26 @@ class Config with Service implements NotificationsListener {
     }
   }
 
+  // NetworkAuthProvider
+
+  @override
+  Pair<String, String>? authHeader(NetworkAuth? auth) {
+    if (auth == NetworkAuth.apiKey) {
+      String? value = rokwireApiKey;
+      if ((value != null) && value.isNotEmpty) {
+        return Pair(RokwireApiKey, value);
+      }
+    }
+    return null;
+  }
+
+  Map<String, String>? get authHeaders {
+    Pair<String, String>? apiKeyHeader = authHeader(NetworkAuth.apiKey);
+    return (apiKeyHeader != null) ? {
+      apiKeyHeader.left : apiKeyHeader.right
+    } : null;
+  }
+
   // Implementation
 
   String get _configName {
@@ -170,7 +193,7 @@ class Config with Service implements NotificationsListener {
 
   Future<String?> _loadAsStringFromNet() async {
     try {
-      http.Response? response = await Network().get(appConfigUrl, auth: NetworkAuth.ApiKey);
+      http.Response? response = await Network().get(appConfigUrl, auth: NetworkAuth.apiKey);
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     } catch (e) {
       print(e.toString());
