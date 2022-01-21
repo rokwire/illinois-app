@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Crash when editing group event [#1262](https://github.com/rokwire/illinois-app/issues/1262).
+
 ## [3.1.14] - 2022-01-20
 ### Changed
 - Use external browser for "Crisis Help" [#1255](https://github.com/rokwire/illinois-app/issues/1255).
