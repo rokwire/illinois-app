@@ -15,10 +15,10 @@
  */
 
 import 'package:illinois/model/Voter.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
 class Voter with Service implements NotificationsListener {

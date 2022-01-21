@@ -71,8 +71,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private static final String TAG = "MainActivity";
 
-    private final int REQUEST_LOCATION_PERMISSION_CODE = 1;
-
     private static MethodChannel METHOD_CHANNEL;
     private static final String NATIVE_CHANNEL = "edu.illinois.rokwire/native_call";
     private static MainActivity instance = null;
@@ -83,8 +81,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private int preferredScreenOrientation;
     private Set<Integer> supportedScreenOrientations;
-
-    private RequestLocationCallback rlCallback;
 
     private Toast statusToast;
 
@@ -124,22 +120,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == REQUEST_LOCATION_PERMISSION_CODE) {
-            boolean granted;
-            if (grantResults.length > 1 &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "granted");
-                granted = true;
-            } else {
-                Log.d(TAG, "not granted");
-                granted = false;
-            }
-            if (rlCallback != null) {
-                rlCallback.onResult(granted);
-                rlCallback = null;
-            }
-        }
     }
 
     public HashMap getKeys() {
@@ -258,66 +238,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         App app = getApp();
         if (app != null) {
             app.showNotification(title, body);
-        }
-    }
-
-    private void requestLocationPermission(MethodChannel.Result result) {
-        Utils.AppSharedPrefs.saveBool(this, Constants.LOCATION_PERMISSIONS_REQUESTED_KEY, true);
-        //check if granted
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED  ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "request permission");
-
-            rlCallback = new RequestLocationCallback() {
-                @Override
-                public void onResult(boolean granted) {
-                    if (granted) {
-                        result.success("allowed");
-
-                        if (geofenceMonitor != null) {
-                            geofenceMonitor.onLocationPermissionGranted();
-                        }
-
-                    } else {
-                        result.success("denied");
-                    }
-                }
-            };
-
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    REQUEST_LOCATION_PERMISSION_CODE);
-        } else {
-            Log.d(TAG, "already granted");
-            if (geofenceMonitor != null) {
-                geofenceMonitor.onLocationPermissionGranted();
-            }
-            result.success("allowed");
-        }
-    }
-
-    private String getLocationServicesStatus() {
-        boolean locationServicesEnabled;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            // This is new method provided in API 28
-            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationServicesEnabled = ((lm != null) && lm.isLocationEnabled());
-        } else {
-            // This is Deprecated in API 28
-            int mode = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE,
-                    Settings.Secure.LOCATION_MODE_OFF);
-            locationServicesEnabled = (mode != Settings.Secure.LOCATION_MODE_OFF);
-        }
-        if (locationServicesEnabled) {
-            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
-                return "allowed";
-            } else {
-                boolean locationPermissionRequested = Utils.AppSharedPrefs.getBool(this, Constants.LOCATION_PERMISSIONS_REQUESTED_KEY, false);
-                return locationPermissionRequested ? "denied" : "not_determined";
-            }
-        } else {
-            return "disabled";
         }
     }
 
@@ -625,15 +545,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     Object orientations = methodCall.argument("orientations");
                     List<String> orientationsList = handleEnabledOrientations(orientations);
                     result.success(orientationsList);
-                    break;
-                case Constants.APP_LOCATION_SERVICES_PERMISSION:
-                    String locationServicesMethod = Utils.Map.getValueFromPath(methodCall.arguments, "method", null);
-                    if ("query".equals(locationServicesMethod)) {
-                        String locationServicesStatus = getLocationServicesStatus();
-                        result.success(locationServicesStatus);
-                    } else if ("request".equals(locationServicesMethod)) {
-                        requestLocationPermission(result);
-                    }
                     break;
                 case Constants.APP_TRACKING_AUTHORIZATION:
                     result.success("allowed"); // tracking is allowed in Android by default

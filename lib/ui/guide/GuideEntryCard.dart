@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -12,7 +12,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideEntryCard extends StatefulWidget {
@@ -70,10 +70,10 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
           Semantics(button: true, child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Padding(padding: EdgeInsets.only(right: 12), child:
+                Padding(padding: EdgeInsets.only(right: 17), child:
                 Html(data: titleHtml ?? '',
                   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                  style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),),
+                  style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),),
                 Container(height: isReminder ? 4 : 8,),
                 isReminder ?
                   Text(reminderDate ?? '',
@@ -96,7 +96,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
             button: true,
             child:
             GestureDetector(onTap: _onTapFavorite, child:
-              Container(padding: EdgeInsets.only(top:9, right:9, left: 20, bottom: 20), child:
+              Container(padding: EdgeInsets.only(top:16, right:16, left: 20, bottom: 20), child:
                 Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
           ),)),),),
       ],),

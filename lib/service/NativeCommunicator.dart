@@ -24,7 +24,7 @@ import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class NativeCommunicator with Service implements NotificationsListener {
   
@@ -39,7 +39,7 @@ class NativeCommunicator with Service implements NotificationsListener {
   static const String notifyGeoFenceRegionsChanged   = "edu.illinois.rokwire.nativecommunicator.geofence.regions.changed";
   static const String notifyGeoFenceBeaconsChanged   = "edu.illinois.rokwire.nativecommunicator.geofence.beacons.changed";
   
-  final MethodChannel _platformChannel = const MethodChannel("edu.illinois.rokwire/native_call");
+  final MethodChannel _platformChannel = const MethodChannel('edu.illinois.rokwire/native_call');
 
   // Singletone
   static final NativeCommunicator _communicator = new NativeCommunicator._internal();
@@ -284,16 +284,6 @@ class NativeCommunicator with Service implements NotificationsListener {
     AuthorizationStatus? result;
     try {
       result = _authorizationStatusFromString(await _platformChannel.invokeMethod('notifications_authorization', {"method": method }));
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-    return result;
-  }
-
-  Future<String?> queryLocationServicesPermission(String method) async {
-    String? result;
-    try {
-      result = await _platformChannel.invokeMethod('location_services_permission', {"method": method });
     } on PlatformException catch (e) {
       print(e.message);
     }

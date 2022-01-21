@@ -22,7 +22,6 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/GeoFence.dart';
@@ -44,7 +43,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -148,7 +147,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Container(height: 20,),
+            Container(height: 11),
             Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -177,7 +176,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                 style: TextStyle(color: Styles().colors!.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
               ),
             ),
-            Container(height: 20,),
+            Container(height: 11),
             Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,)
           ],)
     );
@@ -443,7 +442,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
 
   Widget _buildComment(GroupEventComment comment){
     String? memberName = comment.member!.name;
-    String postDate = AppDateTime.timeAgoSinceDate(comment.dateCreated!);
+    String postDate = AppDateTimeUtils.timeAgoSinceDate(comment.dateCreated!);
     return
       Semantics(
           label: "$memberName posted, $postDate: ${comment.text}",
@@ -1984,7 +1983,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
       bool useCustomColor = isClosed && maxValueIndex == optionIndex;
       String option = widget.poll.options![optionIndex];
       bool didVote = ((widget.poll.userVote != null) && (0 < (widget.poll.userVote![optionIndex] ?? 0)));
-      String checkboxImage = 'images/checkbox-unselected.png'; // 'images/checkbox-selected.png'
+      String checkboxImage = didVote ? 'images/deselected-dark.png' : 'images/checkbox-unselected.png';
 
       String? votesString;
       int? votesCount = (widget.poll.results != null) ? widget.poll.results![optionIndex] : null;
@@ -2462,7 +2461,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
       bool useCustomColor = isClosed && maxValueIndex == optionIndex;
       String option = widget.poll!.options![optionIndex];
       bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
-      String checkboxImage = 'images/checkbox-unselected.png'; // 'images/checkbox-selected.png'
+      String checkboxImage = didVote ? 'images/deselected-dark.png' : 'images/checkbox-unselected.png';
 
       String? votesString;
       int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;

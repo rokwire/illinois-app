@@ -18,10 +18,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path_package;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:timezone/timezone.dart' as timezone;
 
 class StringUtils {
 
@@ -697,9 +699,22 @@ class BoolExpr {
 }
 
 class AppBundle {
+  
   static Future<String?> loadString(String key, {bool cache = true}) async {
     try {
       return rootBundle.loadString(key, cache: cache);
+    }
+    catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+    return null;
+  }
+
+  static Future<ByteData?> loadBytes(String key) async {
+    try {
+      return rootBundle.load(key);
     }
     catch(e) {
       if (kDebugMode) {
@@ -717,5 +732,81 @@ class HtmlUtils {
       return value!;
     }
     return value!.replaceAll('\r\n', '</br>').replaceAll('\n', '</br>');
+  }
+}
+
+class DateTimeUtils {
+  
+  static DateTime? dateTimeFromString(String? dateTimeString, {String? format, bool isUtc = false}) {
+    if (StringUtils.isEmpty(dateTimeString)) {
+      return null;
+    }
+    DateTime? dateTime;
+    try {
+      dateTime = StringUtils.isNotEmpty(format) ?
+        DateFormat(format).parse(dateTimeString!, isUtc) :
+        DateTime.tryParse(dateTimeString!);
+    }
+    on Exception catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+    return dateTime;
+  }
+
+  static int getWeekDayFromString(String weekDayName){
+    switch (weekDayName){
+      case "monday"   : return 1;
+      case "tuesday"  : return 2;
+      case "wednesday": return 3;
+      case "thursday" : return 4;
+      case "friday"   : return 5;
+      case "saturday" : return 6;
+      case "sunday"   : return 7;
+      default: return 0;
+    }
+  }
+
+  static DateTime? midnight(DateTime? date) {
+    return (date != null) ? DateTime(date.year, date.month, date.day) : null;
+  }
+  
+  static timezone.TZDateTime? changeTimeZoneToDate(DateTime time, timezone.Location location) {
+    try{
+     return timezone.TZDateTime(location,time.year,time.month,time.day, time.hour, time.minute);
+    } catch(e){
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    return null;
+  }
+
+  DateTime copyDateTime(DateTime date){
+    return DateTime(date.year, date.month, date.day, date.hour, date.minute, date.second);
+  }
+
+  static DateTime? parseDateTime(String dateTimeString, {String? format, bool isUtc = false}) {
+    if (StringUtils.isNotEmpty(dateTimeString)) {
+      if (StringUtils.isNotEmpty(format)) {
+        try {
+          return DateFormat(format).parse(dateTimeString, isUtc);
+        }
+        catch (e) {
+          if (kDebugMode) {
+            print(e.toString());
+          }
+        }
+      }
+      else {
+        return DateTime.tryParse(dateTimeString);
+      }
+    }
+    return null;
+  }
+
+  static String? utcDateTimeToString(DateTime? dateTime, { String format  = 'yyyy-MM-ddTHH:mm:ss.SSS'  }) {
+    return (dateTime != null) ? (DateFormat(format).format(dateTime.isUtc ? dateTime : dateTime.toUtc()) + 'Z') : null;
   }
 }

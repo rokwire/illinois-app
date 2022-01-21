@@ -17,8 +17,8 @@
 import 'dart:math';
 
 import 'package:illinois/model/Location.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class ParkingEvent {
   final String? id;
@@ -36,6 +36,9 @@ class ParkingEvent {
   final bool? live;
 
   List<ParkingLot>? lots;
+
+  static final String dateTimeFormat = "yyyy-MM-ddTHH:mm:ssZ";
+
 
   ParkingEvent({this.id, this.name,
     this.fromDateString, this.toDateString, this.parkingFromDateString, this.parkingToDateString,
@@ -62,10 +65,10 @@ class ParkingEvent {
       toDateString: json['to'],
       parkingFromDateString: json['parking_from'],
       parkingToDateString: json['parking_to'],
-      fromDateUtc: AppDateTime().dateTimeFromString(json['from'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
-      toDateUtc: AppDateTime().dateTimeFromString(json['to'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
-      parkingFromDateUtc: AppDateTime().dateTimeFromString(json['parking_from'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
-      parkingToDateUtc: AppDateTime().dateTimeFromString(json['parking_to'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
+      fromDateUtc: DateTimeUtils.dateTimeFromString(json['from'], format: dateTimeFormat, isUtc: true),
+      toDateUtc: DateTimeUtils.dateTimeFromString(json['to'], format: dateTimeFormat, isUtc: true),
+      parkingFromDateUtc: DateTimeUtils.dateTimeFromString(json['parking_from'], format: dateTimeFormat, isUtc: true),
+      parkingToDateUtc: DateTimeUtils.dateTimeFromString(json['parking_to'], format: dateTimeFormat, isUtc: true),
       landMarkId: json['landmark_id'],
       slug: json['slug'],
       live: json['live'],
@@ -119,19 +122,19 @@ class ParkingEvent {
   }
 
   String get displayFromDate {
-    return AppDateTime().getDisplayDateTime(fromDateUtc);
+    return AppDateTimeUtils.getDisplayDateTime(fromDateUtc);
   }
 
   String get displayToDate {
-    return AppDateTime().getDisplayDateTime(toDateUtc);
+    return AppDateTimeUtils.getDisplayDateTime(toDateUtc);
   }
 
   String get displayParkingFromDate {
-    return AppDateTime().getDisplayDateTime(parkingFromDateUtc);
+    return AppDateTimeUtils.getDisplayDateTime(parkingFromDateUtc);
   }
 
   String get displayParkingToDate {
-    return AppDateTime().getDisplayDateTime(parkingToDateUtc);
+    return AppDateTimeUtils.getDisplayDateTime(parkingToDateUtc);
   }
 }
 

@@ -20,11 +20,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/AppNavigation.dart';
+import 'package:illinois/service/IlliniAppDateTime.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/IlliniDeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/ExploreService.dart';
@@ -37,14 +36,14 @@ import 'package:illinois/service/HttpProxy.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/LiveStats.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/service/Services.dart';
+import 'package:illinois/service/IlliniServices.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Voter.dart';
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
@@ -57,10 +56,10 @@ import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContentWidget.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
+import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -68,6 +67,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
 final AppExitListener appExitListener = AppExitListener();
@@ -88,7 +88,7 @@ void main() async {
     FirebaseCore(),
     FirebaseCrashlytics(),
     AppLivecycle(),
-    AppDateTime(),
+    IlliniAppDateTime(),
     Connectivity(),
     LocationServices(),
     IlliniDeepLink(),

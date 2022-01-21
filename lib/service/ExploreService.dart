@@ -20,7 +20,7 @@ import 'dart:convert';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:http/http.dart' as http;
 import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -30,7 +30,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 
 

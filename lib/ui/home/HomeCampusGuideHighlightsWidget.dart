@@ -15,7 +15,7 @@ import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCampusGuideHighlightsWidget extends StatefulWidget {
 

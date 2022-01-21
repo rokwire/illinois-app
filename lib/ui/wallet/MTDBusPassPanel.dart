@@ -20,7 +20,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
@@ -30,7 +30,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class MTDBusPassPanel extends StatefulWidget {

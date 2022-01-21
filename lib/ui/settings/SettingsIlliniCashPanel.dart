@@ -18,7 +18,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/illinicash/Transaction.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
@@ -32,7 +32,7 @@ import 'package:illinois/ui/widgets/VerticalTitleContentSection.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class SettingsIlliniCashPanel extends StatefulWidget {
@@ -630,7 +630,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
 
   String? _getFormattedDate(DateTime? date) {
     return AppDateTime().formatDateTime(
-        date, format: AppDateTime.scheduleServerQueryDateTimeFormat);
+        date, format: 'MM/dd/yyyy');
   }
 
   // NotificationsListener

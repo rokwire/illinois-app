@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -75,7 +75,7 @@ class Tweet {
   static Tweet? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Tweet(
       id: JsonUtils.stringValue(json['id']),
-      createdAtUtc: AppDateTime().dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+      createdAtUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
       text: JsonUtils.stringValue(json['text']),
       lang: JsonUtils.stringValue(json['lang']),
       conversationId: JsonUtils.stringValue(json['conversation_id']),
@@ -94,7 +94,7 @@ class Tweet {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'created_at': AppDateTime.utcDateTimeToString(createdAtUtc),
+      'created_at': DateTimeUtils.utcDateTimeToString(createdAtUtc),
       'text': text,
       'lang': lang,
       'conversation_id': conversationId,
@@ -1050,7 +1050,7 @@ class TwitterUser {
       Map<String, dynamic>? entitiesUrl = (entities != null) ? JsonUtils.mapValue(entities['url']) : null;
       return TwitterUser(
         id: JsonUtils.stringValue(json['id']),
-        createdAtUtc: AppDateTime().dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+        createdAtUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
         name: JsonUtils.stringValue(json['name']),
         userName: JsonUtils.stringValue(json['username']),
         description: JsonUtils.stringValue(json['description']),
@@ -1069,7 +1069,7 @@ class TwitterUser {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'created_at': AppDateTime.utcDateTimeToString(createdAtUtc),
+      'created_at': DateTimeUtils.utcDateTimeToString(createdAtUtc),
       'name': name,
       'username': userName,
       'description': description,

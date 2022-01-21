@@ -29,7 +29,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 enum NetworkAuth {
   ApiKey,      // Config.rokwireApiKey

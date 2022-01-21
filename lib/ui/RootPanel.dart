@@ -53,7 +53,7 @@ import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/PopupDialog.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 enum RootTab { Home, Athletics, Explore, Wallet, Browse }
@@ -614,12 +614,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onFirebaseGroupsNotification(param) {
     if (param is Map<String, dynamic>) {
-      String? operation = param['operation'];
-      // Do not present GroupDetail panel when the admin creates event. This breakes the navigation stack when the creator receives FCM notification.
-      if (operation != 'event_created') {
-        String? groupId = param["entity_id"];
-        _presentGroupDetailPanel(groupId);
-      }
+      String? groupId = param["entity_id"];
+      _presentGroupDetailPanel(groupId);
     }
   }
 
@@ -718,7 +714,7 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                           flex: 5,
                           child: Text(
                             Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')!
-                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title"," and also your calendar.")! :""),
+                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title", " and if it is an event, also your calendar")! :"") + ".",
                             style: TextStyle(
                               color: Styles().colors!.white,
                               fontSize: 16,

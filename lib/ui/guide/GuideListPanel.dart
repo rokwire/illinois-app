@@ -27,7 +27,7 @@ import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {

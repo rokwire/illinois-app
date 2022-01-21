@@ -21,11 +21,11 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -38,7 +38,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -275,7 +275,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   //Event utils
   String getEventDate(Event event) {
-    return AppDateTime().getDisplayDay(dateTimeUtc: event.startDateGmt, allDay: event.allDay)!;
+    return AppDateTimeUtils.getDisplayDay(dateTimeUtc: event.startDateGmt, allDay: event.allDay)!;
   }
 
   Widget _buildEmpty() {
@@ -788,7 +788,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   bool _userLocationEnabled() {
-    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
+    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
   //EventsLoading
@@ -934,7 +934,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
-        if (_locationServicesStatus == LocationServicesStatus.PermissionNotDetermined) {
+        if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
           LocationServices.instance.requestPermission().then((LocationServicesStatus? locationServicesStatus) {
             _locationServicesStatus = locationServicesStatus;
             _refresh((){});

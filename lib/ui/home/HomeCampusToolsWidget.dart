@@ -26,7 +26,6 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/WellnessPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -34,7 +33,7 @@ import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/widgets/LinkTileButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeCampusToolsWidget extends StatefulWidget {
@@ -243,15 +242,11 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   void _onTapCrisisHelp() {
     Analytics.instance.logSelect(target: "Crisis Help");
     String? url = Config().crisisHelpUrl;
-    if(StringUtils.isNotEmpty(url)) {
-      String? panelTitle = Localization().getStringEx('panel.settings.crisis_help.label.title', 'Crisis Help');
-      Navigator.push(
-          context, CupertinoPageRoute(
-            builder: (context) => WebPanel(url: url, title: panelTitle,)));
+    if (StringUtils.isNotEmpty(url)) {
+      launch(url!);
     } else {
       Log.e("Missing Config().crisisHelpUrl");
     }
-
   }
 }
 

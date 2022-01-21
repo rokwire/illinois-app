@@ -5,15 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 /////////////////////////////////////////////
 // HomeSaferTestLocationsPanel
@@ -140,10 +139,10 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
       // Ensure current location, if available
       if (_currentLocation == null) {
         LocationServicesStatus? status = await LocationServices.instance.status;
-        if (status == LocationServicesStatus.PermissionNotDetermined) {
+        if (status == LocationServicesStatus.permissionNotDetermined) {
           status = await LocationServices.instance.requestPermission();
         }
-        if (status == LocationServicesStatus.PermissionAllowed) {
+        if (status == LocationServicesStatus.permissionAllowed) {
           _currentLocation = await LocationServices.instance.location;
         }
       }
@@ -645,7 +644,7 @@ class HealthLocationDayOfOperation {
   final int? closeMinutes;
 
   HealthLocationDayOfOperation({this.name, this.openTime, this.closeTime}) :
-    weekDay = (name != null) ? AppDateTime.getWeekDayFromString(name.toLowerCase()) : null,
+    weekDay = (name != null) ? DateTimeUtils.getWeekDayFromString(name.toLowerCase()) : null,
     openMinutes = _timeMinutes(openTime),
     closeMinutes = _timeMinutes(closeTime);
 
@@ -694,7 +693,7 @@ class HealthLocationDayOfOperation {
   // Helper function for conversion work time string to number of minutes
 
   static int? _timeMinutes(String? time, {String format = 'hh:mma'}) {
-    DateTime? dateTime = (time != null) ? AppDateTime.parseDateTime(time.toUpperCase(), format: format) : null;
+    DateTime? dateTime = (time != null) ? DateTimeUtils.parseDateTime(time.toUpperCase(), format: format) : null;
     TimeOfDay? timeOfDay = (dateTime != null) ? TimeOfDay.fromDateTime(dateTime) : null;
     return _timeOfDayMinutes(timeOfDay);
   }

@@ -20,7 +20,7 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -37,7 +37,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Dining.dart';
@@ -49,7 +49,7 @@ import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
@@ -280,7 +280,7 @@ class ExplorePanelState extends State<ExplorePanel>
       LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
-        if (_locationServicesStatus == LocationServicesStatus.PermissionNotDetermined) {
+        if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
           LocationServices.instance.requestPermission().then((LocationServicesStatus? locationServicesStatus) {
             _locationServicesStatus = locationServicesStatus;
             _updateTabs();
@@ -325,7 +325,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   bool _userLocationEnabled() {
-    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
+    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
   void _initFilters() {
@@ -383,7 +383,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   List<String?> _buildFilterEventDateSubLabels() {
-    String dateFormat = AppDateTime.eventFilterDisplayDateFormat;
+    String dateFormat = 'MM/dd';
     DateTime now = DateTime.now();
     String? todayDateLabel = AppDateTime()
         .formatDateTime(now, format: dateFormat,
@@ -466,8 +466,8 @@ class ExplorePanelState extends State<ExplorePanel>
         case ExploreTab.Events: 
           {
             if (_initialSelectedFilter != null) {
-              ExploreFilter? filter = (CollectionUtils.isNotEmpty(selectedFilterList)) ? (selectedFilterList as List<ExploreFilter?>).firstWhere((selectedFilter) =>
-              selectedFilter?.type == _initialSelectedFilter?.type, orElse: () => null) : null;
+              ExploreFilter? filter = (CollectionUtils.isNotEmpty(selectedFilterList)) ? (selectedFilterList as List<ExploreFilter?>).firstWhereOrNull((selectedFilter) =>
+              selectedFilter?.type == _initialSelectedFilter?.type) : null;
               if (filter != null) {
                 int filterIndex = selectedFilterList!.indexOf(filter);
                 selectedFilterList.remove(filter);

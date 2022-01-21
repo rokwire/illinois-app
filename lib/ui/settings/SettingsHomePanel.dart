@@ -17,11 +17,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:illinois/service/AppNavigation.dart';
+import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Groups.dart';
@@ -43,7 +42,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:package_info/package_info.dart';
 
@@ -229,7 +228,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     String fullName = Auth2().fullName ?? "";
     bool hasFullName =  StringUtils.isNotEmpty(fullName);
     String welcomeMessage = StringUtils.isNotEmpty(fullName)
-        ? AppDateTime().getDayGreeting()! + ","
+        ? AppDateTimeUtils.getDayGreeting() + ","
         : Localization().getStringEx("panel.settings.home.user_info.title.sufix", "Welcome to Illinois")!;
     return Container(
         width: double.infinity,

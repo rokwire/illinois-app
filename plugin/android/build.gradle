@@ -33,3 +33,13 @@ android {
         minSdkVersion 16
     }
 }
+
+dependencies {
+
+    //Common Dependencies
+
+    //Security
+    implementation "androidx.security:security-crypto:1.1.0-alpha03"
+    
+    //End Common Dependencies
+}

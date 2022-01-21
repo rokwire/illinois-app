@@ -46,7 +46,7 @@ import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:rokwire_plugin/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -760,23 +760,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       tabs.add(tabWidget);
     }
 
-    if (_canLeaveGroup) {
-      Widget leaveButton = GestureDetector(
-          onTap: _onTapLeave,
-          child: Padding(
-              padding: EdgeInsets.only(left: 24, top: 10, bottom: 10),
-              child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave')!,
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: Styles().fontFamilies!.regular,
-                      color: Styles().colors!.fillColorPrimary,
-                      decoration: TextDecoration.underline,
-                      decorationColor: Styles().colors!.fillColorSecondary,
-                      decorationThickness: 1.5))));
-      tabs.add(leaveButton);
-    }
+    Widget leaveButton = GestureDetector(
+        onTap: _onTapLeave,
+        child: Padding(
+            padding: EdgeInsets.only(left: 24, top: 10, bottom: 10),
+            child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave')!,
+                style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: Styles().fontFamilies!.regular,
+                    color: Styles().colors!.fillColorPrimary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: Styles().colors!.fillColorSecondary,
+                    decorationThickness: 1.5))));
 
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: tabs)));
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: tabs)),
+      Visibility(visible: _canLeaveGroup, child: Padding(padding: EdgeInsets.only(top: 5), child: Row(children: [Expanded(child: Container()), leaveButton])))
+    ]));
   }
 
   Widget _buildEvents() {
