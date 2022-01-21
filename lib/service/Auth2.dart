@@ -16,11 +16,12 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:http/http.dart' as Http;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Auth2 with Service implements NotificationsListener {
+class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   
   static const String notifyLoginStarted      = "edu.illinois.rokwire.auth2.login.started";
   static const String notifyLoginSucceeded    = "edu.illinois.rokwire.auth2.login.succeeded";
@@ -37,6 +38,8 @@ class Auth2 with Service implements NotificationsListener {
   static const String analyticsUin         = 'UINxxxxxx';
   static const String analyticsFirstName   = 'FirstNameXXXXXX';
   static const String analyticsLastName    = 'LastNameXXXXXX';
+
+  static const String UIUCAccessToken      = 'access_token';
 
   static const String _authCardName        = "idCard.json";
 
@@ -81,11 +84,18 @@ class Auth2 with Service implements NotificationsListener {
 
   @override
   void createService() {
+    Network().subscribeAuthProvider(this, [NetworkAuth.UIUC_Id, NetworkAuth.UIUC_Access, NetworkAuth.Auth2]);
     NotificationService().subscribe(this, [
       DeepLink.notifyUri,
       AppLivecycle.notifyStateChanged,
       Auth2UserPrefs.notifyChanged,
     ]);
+  }
+
+  @override
+  void destroyService() {
+    Network().unsubscribeAuthProvider(this);
+    NotificationService().unsubscribe(this);
   }
 
   @override
@@ -129,11 +139,6 @@ class Auth2 with Service implements NotificationsListener {
     }
 
     await super.initService();
-  }
-
-  @override
-  void destroyService() {
-    NotificationService().unsubscribe(this);
   }
 
   @override
@@ -187,6 +192,49 @@ class Auth2 with Service implements NotificationsListener {
         _handleOidcAuthentication(uri);
       }
     }
+  }
+
+  // NetworkAuthProvider
+
+  @override
+  Pair<String, String>? authHeader(NetworkAuth? auth) {
+    if (auth == NetworkAuth.UIUC_Id) {
+      String? idToken = uiucToken?.idToken;
+      if ((idToken != null) && idToken.isNotEmpty) {
+        String tokenType = uiucToken?.tokenType ?? 'Bearer';
+        return Pair(HttpHeaders.authorizationHeader, "$tokenType $idToken");
+      }
+    }
+    else if (auth == NetworkAuth.UIUC_Access) {
+      String? accessToken = uiucToken?.accessToken;
+      if ((accessToken != null) && accessToken.isNotEmpty) {
+        return Pair(UIUCAccessToken, accessToken);
+      }
+    }
+    else if (auth == NetworkAuth.Auth2) {
+      String? accessToken = token?.accessToken;
+      if ((accessToken != null) && accessToken.isNotEmpty) {
+        String tokenType = token?.tokenType ?? 'Bearer';
+        return Pair(HttpHeaders.authorizationHeader, "$tokenType $accessToken");
+      }
+    }
+    return null;
+  }
+
+  @override
+  dynamic authToken(NetworkAuth? auth) {
+    return token;
+  }
+  
+  @override
+  Future<bool> refreshAuthTokenIfNeeded(NetworkAuth? auth, Http.BaseResponse? response, dynamic token) async {
+    if ((response?.statusCode == 401) &&
+        ((NetworkAuth.Auth2 == auth) || (NetworkAuth.UIUC_Id == auth) || (NetworkAuth.UIUC_Access == auth)) &&
+        (token is Auth2Token) && (token == Auth2().token))
+    {
+      return (await refreshToken(token) != null);
+    }
+    return false;
   }
 
   // Getters

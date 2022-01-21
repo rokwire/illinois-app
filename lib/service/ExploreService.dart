@@ -40,6 +40,9 @@ class ExploreService with Service implements NotificationsListener {
   static const String notifyEventCreated = "edu.illinois.rokwire.explore.event.created";
   static const String notifyEventUpdated = "edu.illinois.rokwire.explore.event.updated";
 
+  static const String RokwireUserUuid = 'ROKWIRE-USER-UUID';
+  static const String RokwireUserPrivacyLevel = 'ROKWIRE-USER-PRIVACY-LEVEL';
+
   static final int _defaultLocationRadiusInMeters = 1000;
 
   List<Map<String, dynamic>>? _eventDetailsCache;
@@ -597,8 +600,8 @@ class ExploreService with Service implements NotificationsListener {
     if (headers == null) {
       headers = Map<String, String>();
     }
-    headers[Network.RokwireUserUuid] = Auth2().accountId ?? "null";
-    headers[Network.RokwireUserPrivacyLevel] = Auth2().prefs?.privacyLevel?.toString() ?? "null";
+    headers[RokwireUserUuid] = Auth2().accountId ?? "null";
+    headers[RokwireUserPrivacyLevel] = Auth2().prefs?.privacyLevel?.toString() ?? "null";
     return headers;
   }
 
