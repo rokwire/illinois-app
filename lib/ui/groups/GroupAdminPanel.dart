@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
@@ -31,7 +30,8 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -177,7 +177,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
 
   Widget _buildEventsSection(){
     Widget eventsWidget;
-    if(AppCollection.isCollectionNotEmpty(widget.groupEvents)){
+    if(CollectionUtils.isNotEmpty(widget.groupEvents)){
       eventsWidget = Column(
         children: widget.groupEvents!.map((event){
           return Padding(
@@ -362,7 +362,7 @@ class _EventCard extends StatelessWidget {
                   ],),),),
                   Expanded(
                     flex:3,
-                    child: Text(AppDateTime().getDisplayDateTime(comment.dateCreated), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textBackground),)
+                    child: Text(AppDateTimeUtils.getDisplayDateTime(comment.dateCreated), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textBackground),)
                   )
                 ],),
                 Padding(padding: EdgeInsets.only(top:8), child:
@@ -477,7 +477,7 @@ class _EventCard extends StatelessWidget {
                             Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: event, onEditTap: (Event event){
                               //TBD notify service for Event Update
                               Groups().updateGroupEvents(event).then((String? id) {
-                                if (AppString.isStringNotEmpty(id)) {
+                                if (StringUtils.isNotEmpty(id)) {
                                   Navigator.pop(context);
                                 }
                                 else {

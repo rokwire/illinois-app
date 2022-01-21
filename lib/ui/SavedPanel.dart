@@ -51,7 +51,7 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:notification_permissions/notification_permissions.dart';
 
@@ -223,7 +223,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   void _loadEvents() {
     Set<String>? favoriteEventIds = Auth2().prefs?.getFavorites(Event.favoriteKeyName);
-    if (AppCollection.isCollectionNotEmpty(favoriteEventIds) && Connectivity().isNotOffline) {
+    if (CollectionUtils.isNotEmpty(favoriteEventIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
       });
@@ -234,7 +234,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
         });
       });
     }
-    else if (AppCollection.isCollectionNotEmpty(_events)) {
+    else if (CollectionUtils.isNotEmpty(_events)) {
       setState(() {
         _events = null;
       });
@@ -243,7 +243,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   void _loadDinings() {
     Set<String>? favoriteDiningIds = Auth2().prefs?.getFavorites(Dining.favoriteKeyName);
-    if (AppCollection.isCollectionNotEmpty(favoriteDiningIds) && Connectivity().isNotOffline) {
+    if (CollectionUtils.isNotEmpty(favoriteDiningIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
       });
@@ -254,7 +254,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
         });
       });
     }
-    else if (AppCollection.isCollectionNotEmpty(_dinings)) {
+    else if (CollectionUtils.isNotEmpty(_dinings)) {
       setState(() {
         _dinings = null;
       });
@@ -263,7 +263,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   void _loadAthletics() {
     Set<String>? favoriteGameIds = Auth2().prefs?.getFavorites(Game.favoriteKeyName);
-    if (AppCollection.isCollectionNotEmpty(favoriteGameIds) && Connectivity().isNotOffline) {
+    if (CollectionUtils.isNotEmpty(favoriteGameIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
       });
@@ -274,7 +274,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
         });
       });
     }
-    else if (AppCollection.isCollectionNotEmpty(_athletics)) {
+    else if (CollectionUtils.isNotEmpty(_athletics)) {
       setState(() {
         _athletics = null;
       });
@@ -283,7 +283,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   void _loadNews() {
     Set<String>? favoriteNewsIds = Auth2().prefs?.getFavorites(News.favoriteKeyName);
-    if (AppCollection.isCollectionNotEmpty(favoriteNewsIds) && Connectivity().isNotOffline) {
+    if (CollectionUtils.isNotEmpty(favoriteNewsIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
       });
@@ -294,7 +294,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
         });
       });
     }
-    else if (AppCollection.isCollectionNotEmpty(_news)) {
+    else if (CollectionUtils.isNotEmpty(_news)) {
       setState(() {
         _news = null;
       });
@@ -306,7 +306,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       return;
     }
     Set<String>? favoriteLaundryIds = Auth2().prefs?.getFavorites(LaundryRoom.favoriteKeyName);
-    if (AppCollection.isCollectionNotEmpty(favoriteLaundryIds) && Connectivity().isNotOffline) {
+    if (CollectionUtils.isNotEmpty(favoriteLaundryIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
       });
@@ -317,7 +317,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
         });
       });
     }
-    else if (AppCollection.isCollectionNotEmpty(_laundries)) {
+    else if (CollectionUtils.isNotEmpty(_laundries)) {
       setState(() {
         _laundries = null;
       });
@@ -330,23 +330,23 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     List<Favorite> guideItems = <Favorite>[];
     if (favoriteGuideIds != null) {
       for (dynamic contentEntry in Guide().contentList!) {
-        String? guideEntryId = Guide().entryId(AppJson.mapValue(contentEntry));
+        String? guideEntryId = Guide().entryId(JsonUtils.mapValue(contentEntry));
         
         if ((guideEntryId != null) && favoriteGuideIds.contains(guideEntryId)) {
           guideItems.add(GuideFavorite(
             id: guideEntryId,
-            title: Guide().entryTitle(AppJson.mapValue(contentEntry), stripHtmlTags: true),
+            title: Guide().entryTitle(JsonUtils.mapValue(contentEntry), stripHtmlTags: true),
           ));
         }
       }
     }
 
-    if (AppCollection.isCollectionNotEmpty(guideItems) && Connectivity().isNotOffline) {
+    if (CollectionUtils.isNotEmpty(guideItems) && Connectivity().isNotOffline) {
       setState(() {
         _guideItems = guideItems;
       });
     }
-    else if (AppCollection.isCollectionNotEmpty(_guideItems)) {
+    else if (CollectionUtils.isNotEmpty(_guideItems)) {
       setState(() {
         _guideItems = null;
       });
@@ -371,13 +371,13 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   List<Favorite>? _buildFilteredItems(List<Favorite>? items, Set<String>? ids) {
-    if (AppCollection.isCollectionEmpty(items) || AppCollection.isCollectionEmpty(ids)) {
+    if (CollectionUtils.isEmpty(items) || CollectionUtils.isEmpty(ids)) {
       return null;
     }
     List<Favorite> result = [];
     items!.forEach((Favorite? item) {
       String? id = item!.favoriteId;
-      if (AppString.isStringNotEmpty(id) && ids!.contains(id)) {
+      if (StringUtils.isNotEmpty(id) && ids!.contains(id)) {
         result.add(item);
       }
     });
@@ -544,12 +544,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   bool _isContentEmpty() {
     return
-      !AppCollection.isCollectionNotEmpty(_events) &&
-          !AppCollection.isCollectionNotEmpty(_dinings) &&
-          !AppCollection.isCollectionNotEmpty(_athletics) &&
-          !AppCollection.isCollectionNotEmpty(_news) &&
-          !AppCollection.isCollectionNotEmpty(_laundries) &&
-          !AppCollection.isCollectionNotEmpty(_guideItems);
+      !CollectionUtils.isNotEmpty(_events) &&
+          !CollectionUtils.isNotEmpty(_dinings) &&
+          !CollectionUtils.isNotEmpty(_athletics) &&
+          !CollectionUtils.isNotEmpty(_news) &&
+          !CollectionUtils.isNotEmpty(_laundries) &&
+          !CollectionUtils.isNotEmpty(_guideItems);
   }
 
   void _onAuthorizeTapped(){
@@ -602,7 +602,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 
   @override
   Widget build(BuildContext context) {
-    if (AppCollection.isCollectionEmpty(widget.items)) {
+    if (CollectionUtils.isEmpty(widget.items)) {
       return Container();
     }
     bool showMoreButton = widget.limit < widget.items!.length;
@@ -625,7 +625,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 
   List<Widget> _buildListItems(BuildContext context) {
     List<Widget> widgets = [];
-    if (AppCollection.isCollectionNotEmpty(widget.items)) {
+    if (CollectionUtils.isNotEmpty(widget.items)) {
       int itemsCount = widget.items!.length;
       int visibleCount = (_showAll ? itemsCount : min(widget.limit, itemsCount));
       for (int i = 0; i < visibleCount; i++) {
@@ -647,10 +647,10 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 
     bool favorite = Auth2().isFavorite(item);
     Color? headerColor = _cardHeaderColor(item);
-    String title = AppString.getDefaultEmptyString(_cardTitle(item));
-    String? cardDetailLabel = AppString.getDefaultEmptyString(_cardDetailLabel(item));
+    String title = StringUtils.ensureNotEmpty(_cardTitle(item));
+    String? cardDetailLabel = StringUtils.ensureNotEmpty(_cardDetailLabel(item));
     String? cardDetailImgRes = _cardDetailImageResource(item);
-    bool detailVisible = AppString.isStringNotEmpty(cardDetailLabel);
+    bool detailVisible = StringUtils.isNotEmpty(cardDetailLabel);
     return GestureDetector(onTap: () => _onTapItem(item), child: Semantics(
         label: title,
         child: Column(

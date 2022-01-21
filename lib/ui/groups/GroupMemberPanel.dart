@@ -17,7 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -25,7 +25,8 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -85,7 +86,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
 
   void _loadMember(){
     if(mounted) {
-      if (AppCollection.isCollectionNotEmpty(_group.members)) {
+      if (CollectionUtils.isNotEmpty(_group.members)) {
         setState(() {
           _member = _group.getMembersById(widget.memberId);
           _isAdmin = _member!.isAdmin;
@@ -172,7 +173,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
             borderRadius: BorderRadius.circular(65),
             child: Container(
                 width: 65, height: 65 ,
-                child: AppString.isStringNotEmpty(_member?.photoURL) ? Image.network(_member!.photoURL!, excludeFromSemantics: true,) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true,)
+                child: StringUtils.isNotEmpty(_member?.photoURL) ? Image.network(_member!.photoURL!, excludeFromSemantics: true,) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true,)
             ),
           ),
         ),

@@ -17,29 +17,26 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'package:path/path.dart' as Path;
+import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path_package;
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:timezone/timezone.dart' as timezone;
 
-class AppString {
+class StringUtils {
 
-  static bool isStringEmpty(String? stringToCheck) {
+  static bool isEmpty(String? stringToCheck) {
     return (stringToCheck == null || stringToCheck.isEmpty);
   }
 
-  static bool isStringNotEmpty(String? stringToCheck) {
-    return !isStringEmpty(stringToCheck);
+  static bool isNotEmpty(String? stringToCheck) {
+    return !isEmpty(stringToCheck);
   }
 
-  static String getDefaultEmptyString(String? value, {String defaultValue = ''}) {
-    if (isStringEmpty(value)) {
+  static String ensureNotEmpty(String? value, {String defaultValue = ''}) {
+    if (isEmpty(value)) {
       return defaultValue;
     }
     return value!;
@@ -53,7 +50,7 @@ class AppString {
   }
 
   static String getMaskedPhoneNumber(String? phoneNumber) {
-    if(AppString.isStringEmpty(phoneNumber)) {
+    if(StringUtils.isEmpty(phoneNumber)) {
       return "*********";
     }
     int phoneNumberLength = phoneNumber!.length;
@@ -65,7 +62,7 @@ class AppString {
   }
 
   static String capitalize(String value) {
-    if (value.length == 0) {
+    if (value.isEmpty) {
       return '';
     }
     else if (value.length == 1) {
@@ -83,9 +80,9 @@ class AppString {
   static String? fullName(List<String?> names) {
     String? fullName;
     for (String? name in names) {
-      if ((name != null) && (0 < name.length)) {
+      if ((name != null) && name.isNotEmpty) {
         if (fullName == null) {
-          fullName = '$name';
+          fullName = name;
         }
         else {
           fullName += ' $name';
@@ -99,13 +96,13 @@ class AppString {
 
   static const String _usPhonePattern1 = "^[2-9][0-9]{9}\$";          // Valid:   23456789120
   static const String _usPhonePattern2 = "^[1][2-9][0-9]{9}\$";       // Valid:  123456789120
-  static const String _usPhonePattern3 = "^\\\+[1][2-9][0-9]{9}\$";   // Valid: +123456789120
+  static const String _usPhonePattern3 = "^\\+[1][2-9][0-9]{9}\$";   // Valid: +123456789120
 
   static const String _phonePattern = "^((\\+?\\d{1,3})?[\\(\\- ]?\\d{3,5}[\\)\\- ]?)?(\\d[.\\- ]?\\d)+\$";   // Valid: +123456789120
 
 
   static bool isUsPhoneValid(String? phone){
-    if(isStringNotEmpty(phone)){
+    if(isNotEmpty(phone)){
       return (phone!.length == 10 && RegExp(_usPhonePattern1).hasMatch(phone))
           || (phone.length == 11 && RegExp(_usPhonePattern2).hasMatch(phone))
           || (phone.length == 12 && RegExp(_usPhonePattern3).hasMatch(phone));
@@ -118,7 +115,7 @@ class AppString {
   }
 
   static bool isPhoneValid(String? phone) {
-    return isStringNotEmpty(phone) && RegExp(_phonePattern).hasMatch(phone!);
+    return isNotEmpty(phone) && RegExp(_phonePattern).hasMatch(phone!);
   }
 
   /// US Phone construction
@@ -140,24 +137,24 @@ class AppString {
 
   /// Email validation  https://github.com/rokwire/illinois-app/issues/47
 
-  static const String _emailPattern = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*\$" ;
+  static const String _emailPattern = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*\$" ;
 
   static bool isEmailValid(String email){
-    return isStringNotEmpty(email) && RegExp(_emailPattern).hasMatch(email);
+    return isNotEmpty(email) && RegExp(_emailPattern).hasMatch(email);
   }
 }
 
-class AppCollection {
-  static bool isCollectionNotEmpty(Iterable<Object?>? collection) {
+class CollectionUtils {
+  static bool isNotEmpty(Iterable<Object?>? collection) {
     return collection != null && collection.isNotEmpty;
   }
 
-  static bool isCollectionEmpty(Iterable<Object?>? collection) {
-    return !isCollectionNotEmpty(collection);
+  static bool isEmpty(Iterable<Object?>? collection) {
+    return !isNotEmpty(collection);
   }
 }
 
-class AppList {
+class ListUtils {
   static void add<T>(List<T>? list, T? entry) {
     if ((list != null) && (entry != null)) {
       list.add(entry);
@@ -165,7 +162,7 @@ class AppList {
   }
 }
 
-class AppSet {
+class SetUtils {
   static void add<T>(Set<T>? set, T? entry) {
     if ((set != null) && (entry != null)) {
       set.add(entry);
@@ -173,7 +170,7 @@ class AppSet {
   }
 }
 
-class AppMap {
+class MapUtils {
   static void set<K, T>(Map<K, T>? map, K? key, T? value) {
     if ((map != null) && (key != null) && (value != null)) {
       map[key] = value;
@@ -181,7 +178,7 @@ class AppMap {
   }
 }
 
-class AppColor {
+class ColorUtils {
   static Color? fromHex(String? strValue) {
     if (strValue != null) {
       if (strValue.startsWith("#")) {
@@ -262,13 +259,17 @@ class AppVersion {
   }
 }
 
-class AppUrl {
+class UrlUtils {
   
   static String? getScheme(String? url) {
     try {
       Uri? uri = (url != null) ? Uri.parse(url) : null;
       return (uri != null) ? uri.scheme : null;
-    } catch(e) {}
+    } catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 
@@ -276,8 +277,12 @@ class AppUrl {
     try {
       Uri? uri = (url != null) ? Uri.parse(url) : null;
       String? path = (uri != null) ? uri.path : null;
-      return (path != null) ? Path.extension(path) : null;
-    } catch(e) {}
+      return (path != null) ? path_package.extension(path) : null;
+    } catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 
@@ -291,50 +296,11 @@ class AppUrl {
   }
 
   static bool launchInternal(String? url) {
-    return AppUrl.isWebScheme(url) && !(Platform.isAndroid && AppUrl.isPdf(url));
-  }
-
-  static String? getGameDayGuideUrl(String? sportKey) {
-    if (sportKey == "football") {
-      return Config().gameDayFootballUrl;
-    } else if ((sportKey == "mbball") || (sportKey == "wbball")) {
-      return Config().gameDayBasketballUrl;
-    } else if ((sportKey == "mten") || (sportKey == "wten")) {
-      return Config().gameDayTennisUrl;
-    } else if (sportKey == "wvball") {
-      return Config().gameDayVolleyballUrl;
-    } else if (sportKey == "softball") {
-      return Config().gameDaySoftballUrl;
-    } else if (sportKey == "wswim") {
-      return Config().gameDaySwimDiveUrl;
-    } else if ((sportKey == "mcross") || (sportKey == "wcross")) {
-      return Config().gameDayCrossCountryUrl;
-    } else if (sportKey == "baseball") {
-      return Config().gameDayBaseballUrl;
-    } else if ((sportKey == "mgym") || (sportKey == "wgym")) {
-      return Config().gameDayGymnasticsUrl;
-    } else if (sportKey == "wrestling") {
-      return Config().gameDayWrestlingUrl;
-    } else if (sportKey == "wsoc") {
-      return Config().gameDaySoccerUrl;
-    } else if ((sportKey == "mtrack") || (sportKey == "wtrack")) {
-      return Config().gameDayTrackFieldUrl;
-    } else {
-      return Config().gameDayAllUrl;
-    }
-  }
-
-  static String? getDeepLinkRedirectUrl(String? deepLink) {
-    Uri? assetsUri = AppString.isStringNotEmpty(Config().assetsUrl) ? Uri.tryParse(Config().assetsUrl!) : null;
-    String? redirectUrl = assetsUri != null ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
-    return AppString.isStringNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
+    return UrlUtils.isWebScheme(url) && !(Platform.isAndroid && UrlUtils.isPdf(url));
   }
 }
 
-class AppLocation {
-  static final double defaultLocationLat = 40.096230;
-  static final double defaultLocationLng = -88.235899;
-  static final int defaultLocationRadiusInMeters = 1000;
+class LocationUtils {
 
   static double distance(double lat1, double lon1, double lat2, double lon2) {
     double theta = lon1 - lon2;
@@ -358,14 +324,14 @@ class AppLocation {
   }  
 }
 
-class AppJson {
+class JsonUtils {
 
   static List<dynamic> encodeList(List items) {
     List<dynamic> result =  [];
     if (items.isNotEmpty) {
-      items.forEach((item) {
+      for (dynamic item in items) {
         result.add(item.toJson());
-      });
+      }
     }
 
     return result;
@@ -376,13 +342,15 @@ class AppJson {
     if (value != null) {
       try {
         if (prettify == true) {
-          result = JsonEncoder.withIndent("  ").convert(value);
+          result = const JsonEncoder.withIndent("  ").convert(value);
         }
         else {
           result = json.encode(value);
         }
       } catch (e) {
-        Log.e(e.toString());
+        if (kDebugMode) {
+          print(e.toString());
+        }
       }
     }
     return result;
@@ -391,11 +359,13 @@ class AppJson {
   // TBD: Use everywhere decodeMap or decodeList to guard type cast
   static dynamic decode(String? jsonString) {
     dynamic jsonContent;
-    if (AppString.isStringNotEmpty(jsonString)) {
+    if (StringUtils.isNotEmpty(jsonString)) {
       try {
         jsonContent = json.decode(jsonString!);
       } catch (e) {
-        Log.e(e.toString());
+        if (kDebugMode) {
+          print(e.toString());
+        }
       }
     }
     return jsonContent;
@@ -405,7 +375,9 @@ class AppJson {
     try {
       return (decode(jsonString) as List?)?.cast<dynamic>();
     } catch (e) {
-      print(e.toString());
+        if (kDebugMode) {
+          print(e.toString());
+        }
       return null;
     }
   }
@@ -414,7 +386,9 @@ class AppJson {
     try {
       return (decode(jsonString) as Map?)?.cast<String, dynamic>();
     } catch (e) {
-      print(e.toString());
+        if (kDebugMode) {
+          print(e.toString());
+        }
       return null;
     }
   }
@@ -424,8 +398,14 @@ class AppJson {
       return value;
     }
     else if (value != null) {
-      try { return value.toString(); }
-      catch(e) { print(e.toString()); }
+      try {
+        return value.toString();
+      }
+      catch(e) {
+        if (kDebugMode) {
+          print(e.toString());
+        }
+      }
     }
     return null;
   }
@@ -454,14 +434,26 @@ class AppJson {
   }
 
   static Map<String, dynamic>? mapValue(dynamic value) {
-    try { return (value is Map) ? value.cast<String, dynamic>() : null; }
-    catch(e) { print(e.toString()); }
+    try {
+      return (value is Map) ? value.cast<String, dynamic>() : null;
+    }
+    catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 
   static List<dynamic>? listValue(dynamic value) {
-    try { return (value is List) ? value.cast<dynamic>() : null; }
-    catch(e) { print(e.toString()); }
+    try {
+      return (value is List) ? value.cast<dynamic>() : null;
+    }
+    catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 
@@ -479,7 +471,7 @@ class AppJson {
   static Set<String>? stringSetValue(dynamic value) {
     Set<String>? result;
     if (value is List) {
-      result = Set<String>();
+      result = <String>{};
       for (dynamic entry in value) {
         result.add(entry.toString());
       }
@@ -488,14 +480,26 @@ class AppJson {
   }
   
   static List<String>? listStringsValue(dynamic value) {
-    try { return (value is List) ? value.cast<String>() : null; }
-    catch(e) { print(e.toString()); }
+    try {
+      return (value is List) ? value.cast<String>() : null;
+    }
+    catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 
   static Set<String>? setStringsValue(dynamic value) {
-    try { return (value is List) ? Set.from(value.cast<String>()) : null; }
-    catch(e) { print(e.toString()); }
+    try {
+      return (value is List) ? Set.from(value.cast<String>()) : null;
+    }
+    catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 }
@@ -508,69 +512,12 @@ class AppToast {
       toastLength: Toast.LENGTH_LONG,
       timeInSecForIosWeb: 3,
       gravity: ToastGravity.BOTTOM,
-      backgroundColor: Styles().colors!.blackTransparent06,
+      backgroundColor: const Color(0x99000000),
     );
   }
 }
 
-class AppAlert {
-  static Future<bool?> showDialogResult(
-    BuildContext builderContext, String? message) async {
-    bool? alertDismissed = await showDialog(
-      context: builderContext,
-      builder: (context) {
-        return AlertDialog(
-          content: Text(message!),
-          actions: <Widget>[
-            TextButton(
-                child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
-                onPressed: () {
-                  Analytics.instance.logAlert(text: message, selection: "Ok");
-                  Navigator.pop(context, true);
-                }
-            ) //return dismissed 'true'
-          ],
-        );
-      },
-    );
-    return alertDismissed;
-  }
-
-  static Future<bool?> showCustomDialog(
-    {required BuildContext context, Widget? contentWidget, List<Widget>? actions, EdgeInsets contentPadding = const EdgeInsets.all(18), }) async {
-    bool? alertDismissed = await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(content: contentWidget, actions: actions,contentPadding: contentPadding,);
-      },
-    );
-    return alertDismissed;
-  }
-
-  static Future<bool?> showOfflineMessage(BuildContext context, String? message) async {
-    return showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline")!, style: TextStyle(fontSize: 18),),
-          Container(height:16),
-          Text(message!, textAlign: TextAlign.center,),
-        ],),
-        actions: <Widget>[
-          TextButton(
-              child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
-              onPressed: (){
-                Analytics.instance.logAlert(text: message, selection: "OK");
-                  Navigator.pop(context, true);
-              }
-          ) //return dismissed 'true'
-        ],
-      );
-    },);
-
-  }
-}
-
-class AppMapPathKey {
+class MapPathKey {
   static dynamic entry(Map<String, dynamic>? map, dynamic key) {
     if ((map != null) && (key != null)) {
       if (key is String) {
@@ -629,31 +576,7 @@ class AppMapPathKey {
 
 }
 
-class AppSemantics {
-    static void announceCheckBoxStateChange(BuildContext? context, bool checked, String? name){
-      String message = (AppString.isStringNotEmpty(name)?name!+", " :"")+
-          (checked ?
-            Localization().getStringEx("toggle_button.status.checked", "checked",)! :
-            Localization().getStringEx("toggle_button.status.unchecked", "unchecked")!); // !toggled because we announce before it got changed
-      announceMessage(context, message);
-    }
-
-    static Semantics buildCheckBoxSemantics({Widget? child, String? title, bool selected = false, double? sortOrder}){
-      return Semantics(label: title, button: true ,excludeSemantics: true, sortKey: sortOrder!=null?OrdinalSortKey(sortOrder) : null,
-      value: (selected?Localization().getStringEx("toggle_button.status.checked", "checked",) :
-      Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
-      ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
-      child: child );
-    }
-
-    static void announceMessage(BuildContext? context, String message){
-        if(context != null){
-          context.findRenderObject()!.sendSemanticsEvent(AnnounceSemanticsEvent(message,TextDirection.ltr));
-        }
-    }
-}
-
-class AppSort {
+class SortUtils {
   static int compareIntegers(int? v1, int? v2) {
     if (v1 != null) {
       if (v2 != null) {
@@ -689,72 +612,19 @@ class AppSort {
   }
 }
 
-class AppDeviceOrientation {
-  
-  static DeviceOrientation? fromStr(String value) {
-    switch (value) {
-      case 'portraitUp': return DeviceOrientation.portraitUp;
-      case 'portraitDown': return DeviceOrientation.portraitDown;
-      case 'landscapeLeft': return DeviceOrientation.landscapeLeft;
-      case 'landscapeRight': return DeviceOrientation.landscapeRight;
-    }
-    return null;
-  }
-
-  static String? toStr(DeviceOrientation value) {
-      switch(value) {
-        case DeviceOrientation.portraitUp: return "portraitUp";
-        case DeviceOrientation.portraitDown: return "portraitDown";
-        case DeviceOrientation.landscapeLeft: return "landscapeLeft";
-        case DeviceOrientation.landscapeRight: return "landscapeRight";
-      }
-  }
-
-  static List<DeviceOrientation>? fromStrList(List<dynamic>? stringsList) {
-    
-    List<DeviceOrientation>? orientationsList;
-    if (stringsList != null) {
-      orientationsList = [];
-      for (dynamic string in stringsList) {
-        if (string is String) {
-          DeviceOrientation? orientation = fromStr(string);
-          if (orientation != null) {
-            orientationsList.add(orientation);
-          }
-        }
-      }
-    }
-    return orientationsList;
-  }
-
-  static List<String>? toStrList(List<DeviceOrientation>? orientationsList) {
-    
-    List<String>? stringsList;
-    if (orientationsList != null) {
-      stringsList = [];
-      for (DeviceOrientation orientation in orientationsList) {
-        String? orientationString = toStr(orientation);
-        if (orientationString != null) {
-          stringsList.add(orientationString);
-        }
-      }
-    }
-    return stringsList;
-  }
-
-}
-
-class AppGeometry {
+class GeometryUtils {
 
   static Size scaleSizeToFit(Size size, Size boundsSize) {
     double fitW = boundsSize.width;
     double fitH = boundsSize.height;
     double ratioW = (0.0 < boundsSize.width) ? (size.width / boundsSize.width) : double.maxFinite;
     double ratioH = (0.0 < boundsSize.height) ? (size.height / boundsSize.height) : double.maxFinite;
-    if(ratioW < ratioH)
+    if(ratioW < ratioH) {
       fitW = (0.0 < size.height) ? (size.width * boundsSize.height / size.height) : boundsSize.width;
-    else if(ratioH < ratioW)
+    }
+    else if(ratioH < ratioW) {
       fitH = (0.0 < size.width) ? (size.height * boundsSize.width / size.width) : boundsSize.height;
+    }
     return Size(fitW, fitH);
   }
 
@@ -763,15 +633,17 @@ class AppGeometry {
     double fitH = boundsSize.height;
     double ratioW = (0.0 < boundsSize.width) ? (size.width / boundsSize.width) : double.maxFinite;
     double ratioH = (0.0 < boundsSize.height) ? (size.height / boundsSize.height) : double.maxFinite;
-    if(ratioW < ratioH)
+    if(ratioW < ratioH) {
   		fitH = (0.0 < size.width) ? (size.height * boundsSize.width / size.width) : boundsSize.height;
-    else if(ratioH < ratioW)
+    }
+    else if(ratioH < ratioW) {
   		fitW = (0.0 < size.height) ? (size.width * boundsSize.height / size.height) : boundsSize.width;
+    }
     return Size(fitW, fitH);
   }
 }
 
-class AppBoolExpr {
+class BoolExpr {
   
   static bool eval(dynamic expr, bool? Function(String?)? evalArg) {
     
@@ -827,19 +699,114 @@ class AppBoolExpr {
 }
 
 class AppBundle {
+  
   static Future<String?> loadString(String key, {bool cache = true}) async {
-    try { return rootBundle.loadString(key, cache: cache); }
-    catch(e) { print(e.toString()); }
+    try {
+      return rootBundle.loadString(key, cache: cache);
+    }
+    catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+    return null;
+  }
+
+  static Future<ByteData?> loadBytes(String key) async {
+    try {
+      return rootBundle.load(key);
+    }
+    catch(e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
     return null;
   }
 }
 
 
-class AppHtml {
+class HtmlUtils {
   static String replaceNewLineSymbols(String? value) {
-    if (AppString.isStringEmpty(value)) {
+    if (StringUtils.isEmpty(value)) {
       return value!;
     }
     return value!.replaceAll('\r\n', '</br>').replaceAll('\n', '</br>');
+  }
+}
+
+class DateTimeUtils {
+  
+  static DateTime? dateTimeFromString(String? dateTimeString, {String? format, bool isUtc = false}) {
+    if (StringUtils.isEmpty(dateTimeString)) {
+      return null;
+    }
+    DateTime? dateTime;
+    try {
+      dateTime = StringUtils.isNotEmpty(format) ?
+        DateFormat(format).parse(dateTimeString!, isUtc) :
+        DateTime.tryParse(dateTimeString!);
+    }
+    on Exception catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+    return dateTime;
+  }
+
+  static int getWeekDayFromString(String weekDayName){
+    switch (weekDayName){
+      case "monday"   : return 1;
+      case "tuesday"  : return 2;
+      case "wednesday": return 3;
+      case "thursday" : return 4;
+      case "friday"   : return 5;
+      case "saturday" : return 6;
+      case "sunday"   : return 7;
+      default: return 0;
+    }
+  }
+
+  static DateTime? midnight(DateTime? date) {
+    return (date != null) ? DateTime(date.year, date.month, date.day) : null;
+  }
+  
+  static timezone.TZDateTime? changeTimeZoneToDate(DateTime time, timezone.Location location) {
+    try{
+     return timezone.TZDateTime(location,time.year,time.month,time.day, time.hour, time.minute);
+    } catch(e){
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    return null;
+  }
+
+  DateTime copyDateTime(DateTime date){
+    return DateTime(date.year, date.month, date.day, date.hour, date.minute, date.second);
+  }
+
+  static DateTime? parseDateTime(String dateTimeString, {String? format, bool isUtc = false}) {
+    if (StringUtils.isNotEmpty(dateTimeString)) {
+      if (StringUtils.isNotEmpty(format)) {
+        try {
+          return DateFormat(format).parse(dateTimeString, isUtc);
+        }
+        catch (e) {
+          if (kDebugMode) {
+            print(e.toString());
+          }
+        }
+      }
+      else {
+        return DateTime.tryParse(dateTimeString);
+      }
+    }
+    return null;
+  }
+
+  static String? utcDateTimeToString(DateTime? dateTime, { String format  = 'yyyy-MM-ddTHH:mm:ss.SSS'  }) {
+    return (dateTime != null) ? (DateFormat(format).format(dateTime.isUtc ? dateTime : dateTime.toUtc()) + 'Z') : null;
   }
 }

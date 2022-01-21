@@ -18,12 +18,12 @@ import 'dart:convert';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/utils/Crypt.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/utils/crypt.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Storage with Service {
@@ -213,7 +213,7 @@ class Storage with Service {
   static const String _userKey  = 'user';
 
   Map<String, dynamic>? get userProfile {
-    return AppJson.decodeMap(_getStringWithName(_userKey));
+    return JsonUtils.decodeMap(_getStringWithName(_userKey));
   }
 
   // Dining: readonly, backward compatability only.
@@ -358,7 +358,7 @@ class Storage with Service {
   static const String illiniCashBallanceKey  = '_illinicash_ballance';
 
   IlliniCashBallance? get illiniCashBallance {
-    return IlliniCashBallance.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(illiniCashBallanceKey)));
+    return IlliniCashBallance.fromJson(JsonUtils.decodeMap(_getEncryptedStringWithName(illiniCashBallanceKey)));
   }
 
   set illiniCashBallance(IlliniCashBallance? value) {
@@ -376,8 +376,7 @@ class Storage with Service {
 
   DateTime? get offsetDate {
     String? dateString = _getStringWithName(offsetDateKey);
-    return AppString.isStringNotEmpty(dateString) ? AppDateTime()
-        .dateTimeFromString(dateString) : null;
+    return StringUtils.isNotEmpty(dateString) ? DateTimeUtils.dateTimeFromString(dateString) : null;
   }
 
   /////////////////
@@ -413,7 +412,7 @@ class Storage with Service {
   
   List<dynamic>? get recentItems {
     final String? jsonString = _getStringWithName(recentItemsKey);
-    return AppJson.decode(jsonString);
+    return JsonUtils.decode(jsonString);
   }
 
   set recentItems(List<dynamic>? recentItems) {
@@ -556,7 +555,7 @@ class Storage with Service {
   InboxUserInfo? get inboxUserInfo {
     try {
       String? jsonString = _getStringWithName(inboxUserInfoKey);
-      dynamic jsonData = AppJson.decode(jsonString);
+      dynamic jsonData = JsonUtils.decode(jsonString);
       return (jsonData != null) ? InboxUserInfo.fromJson(jsonData) : null;
     } on Exception catch (e) { print(e.toString()); }
     return null;
@@ -680,61 +679,61 @@ class Storage with Service {
   static const String _auth2AnonymousTokenKey = 'auth2AnonymousToken';
 
   Auth2Token? get auth2AnonymousToken {
-    return Auth2Token.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2AnonymousTokenKey)));
+    return Auth2Token.fromJson(JsonUtils.decodeMap(_getEncryptedStringWithName(_auth2AnonymousTokenKey)));
   }
 
   set auth2AnonymousToken(Auth2Token? value) {
-    _setEncryptedStringWithName(_auth2AnonymousTokenKey, AppJson.encode(value?.toJson()));
+    _setEncryptedStringWithName(_auth2AnonymousTokenKey, JsonUtils.encode(value?.toJson()));
   }
 
   static const String _auth2AnonymousPrefsKey = 'auth2AnonymousPrefs';
 
   Auth2UserPrefs? get auth2AnonymousPrefs {
-    return Auth2UserPrefs.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2AnonymousPrefsKey)));
+    return Auth2UserPrefs.fromJson(JsonUtils.decodeMap(_getEncryptedStringWithName(_auth2AnonymousPrefsKey)));
   }
 
   set auth2AnonymousPrefs(Auth2UserPrefs? value) {
-    _setEncryptedStringWithName(_auth2AnonymousPrefsKey, AppJson.encode(value?.toJson()));
+    _setEncryptedStringWithName(_auth2AnonymousPrefsKey, JsonUtils.encode(value?.toJson()));
   }
 
   static const String _auth2AnonymousProfileKey = 'auth2AnonymousProfile';
 
   Auth2UserProfile? get auth2AnonymousProfile {
-    return Auth2UserProfile.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2AnonymousProfileKey)));
+    return Auth2UserProfile.fromJson(JsonUtils.decodeMap(_getEncryptedStringWithName(_auth2AnonymousProfileKey)));
   }
 
   set auth2AnonymousProfile(Auth2UserProfile? value) {
-    _setEncryptedStringWithName(_auth2AnonymousProfileKey, AppJson.encode(value?.toJson()));
+    _setEncryptedStringWithName(_auth2AnonymousProfileKey, JsonUtils.encode(value?.toJson()));
   }
 
   static const String _auth2TokenKey = 'auth2Token';
 
   Auth2Token? get auth2Token {
-    return Auth2Token.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2TokenKey)));
+    return Auth2Token.fromJson(JsonUtils.decodeMap(_getEncryptedStringWithName(_auth2TokenKey)));
   }
 
   set auth2Token(Auth2Token? value) {
-    _setEncryptedStringWithName(_auth2TokenKey, AppJson.encode(value?.toJson()));
+    _setEncryptedStringWithName(_auth2TokenKey, JsonUtils.encode(value?.toJson()));
   }
 
   static const String _auth2UiucTokenKey = 'auth2UiucToken';
 
   Auth2Token? get auth2UiucToken {
-    return Auth2Token.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2UiucTokenKey)));
+    return Auth2Token.fromJson(JsonUtils.decodeMap(_getEncryptedStringWithName(_auth2UiucTokenKey)));
   }
 
   set auth2UiucToken(Auth2Token? value) {
-    _setEncryptedStringWithName(_auth2UiucTokenKey, AppJson.encode(value?.toJson()));
+    _setEncryptedStringWithName(_auth2UiucTokenKey, JsonUtils.encode(value?.toJson()));
   }
 
   static const String _auth2AccountKey = 'auth2Account';
 
   Auth2Account? get auth2Account {
-    return Auth2Account.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2AccountKey)));
+    return Auth2Account.fromJson(JsonUtils.decodeMap(_getEncryptedStringWithName(_auth2AccountKey)));
   }
 
   set auth2Account(Auth2Account? value) {
-    _setEncryptedStringWithName(_auth2AccountKey, AppJson.encode(value?.toJson()));
+    _setEncryptedStringWithName(_auth2AccountKey, JsonUtils.encode(value?.toJson()));
   }
 
   static const String auth2CardTimeKey  = 'auth2CardTime';
@@ -754,7 +753,7 @@ class Storage with Service {
 
   Map<String, String>? get calendarEventsTable {
     String? jsonString = _getStringWithName(_calendarEventsTableKey);
-    try { return (AppJson.decode(jsonString) as Map?)?.cast<String, String>(); }
+    try { return (JsonUtils.decode(jsonString) as Map?)?.cast<String, String>(); }
     catch(e) { print(e.toString()); }
     return null;
   }

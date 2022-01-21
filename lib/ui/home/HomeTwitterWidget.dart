@@ -11,7 +11,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/Twitter.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeTwitterWidget extends StatefulWidget {
@@ -244,7 +244,7 @@ class _TweetWidget extends StatelessWidget {
             Expanded(child: 
               SingleChildScrollView(child:
                 Column(children: [
-                  AppString.isStringNotEmpty(tweet?.media?.url) ?
+                  StringUtils.isNotEmpty(tweet?.media?.url) ?
                     InkWell(onTap: () => _onTap(context), child:
                       Image.network(tweet!.media!.url!, excludeFromSemantics: true)) :
                   Container(),
@@ -260,7 +260,7 @@ class _TweetWidget extends StatelessWidget {
 
             Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
               Row(children: [
-                Expanded(child: AppString.isStringNotEmpty(tweet?.author?.userName) ?
+                Expanded(child: StringUtils.isNotEmpty(tweet?.author?.userName) ?
                   //Text("@${tweet?.author?.userName}", style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),) :
                   Html(data: tweet?.author?.html,
                     onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
@@ -280,7 +280,7 @@ class _TweetWidget extends StatelessWidget {
   }
 
   void _launchUrl(String? url, {BuildContext? context}) {
-    if (AppString.isStringNotEmpty(url)) {
+    if (StringUtils.isNotEmpty(url)) {
       launch(url!);
     }
   }

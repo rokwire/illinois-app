@@ -29,6 +29,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Polls.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
@@ -52,7 +53,7 @@ import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/PopupDialog.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 enum RootTab { Home, Athletics, Explore, Wallet, Browse }
@@ -454,29 +455,29 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   Future<void> _onFirebaseEventDetail(Map<String, dynamic>? content) async {
-    String? eventId = (content != null) ? AppJson.stringValue(content['event_id']) : null;
-    if (AppString.isStringNotEmpty(eventId)) {
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) : null;
+    if (StringUtils.isNotEmpty(eventId)) {
       ExplorePanel.presentDetailPanel(context, eventId: eventId);
     }
   }
 
   
   Future<void> _onFirebaseGameDetail(Map<String, dynamic>? content) async {
-    String? gameId = (content != null) ? AppJson.stringValue(content['game_id']) : null;
-    String? sport = (content != null) ? AppJson.stringValue(content['sport']) : null;
-    if (AppString.isStringNotEmpty(gameId) && AppString.isStringNotEmpty(sport)) {
+    String? gameId = (content != null) ? JsonUtils.stringValue(content['game_id']) : null;
+    String? sport = (content != null) ? JsonUtils.stringValue(content['sport']) : null;
+    if (StringUtils.isNotEmpty(gameId) && StringUtils.isNotEmpty(sport)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sport, gameId: gameId,)));
     }
   }
 
   Future<void> _onGroupDetail(Map<String, dynamic>? content) async {
-    String? groupId = (content != null) ? AppJson.stringValue(content['group_id']) : null;
+    String? groupId = (content != null) ? JsonUtils.stringValue(content['group_id']) : null;
     _presentGroupDetailPanel(groupId);
   }
 
   Future<void> _onGuideDetail(Map<String, dynamic>? content) async {
-    String? guideId = (content != null) ? AppJson.stringValue(content['guide_id']) : null;
-    if(AppString.isStringNotEmpty(guideId)){
+    String? guideId = (content != null) ? JsonUtils.stringValue(content['guide_id']) : null;
+    if(StringUtils.isNotEmpty(guideId)){
       WidgetsBinding.instance!.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
         Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
           GuideDetailPanel(guideEntryId: guideId,)));
@@ -493,7 +494,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     String? sportShortName = athleticsGameDetails["Path"];
     String? gameId = athleticsGameDetails["GameId"];
-    if (AppString.isStringEmpty(sportShortName) || AppString.isStringEmpty(gameId)) {
+    if (StringUtils.isEmpty(sportShortName) || StringUtils.isEmpty(gameId)) {
       return;
     }
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sportShortName, gameId: gameId,)));
@@ -584,7 +585,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     List<String>? codes = _getTabbarCodes();
     if (codes != null) {
       for (String code in codes) {
-        AppList.add(tabs, rootTabFromString(code));
+        ListUtils.add(tabs, rootTabFromString(code));
       }
     }
     return tabs;
@@ -613,17 +614,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onFirebaseGroupsNotification(param) {
     if (param is Map<String, dynamic>) {
-      String? operation = param['operation'];
-      // Do not present GroupDetail panel when the admin creates event. This breakes the navigation stack when the creator receives FCM notification.
-      if (operation != 'event_created') {
-        String? groupId = param["entity_id"];
-        _presentGroupDetailPanel(groupId);
-      }
+      String? groupId = param["entity_id"];
+      _presentGroupDetailPanel(groupId);
     }
   }
 
   void _presentGroupDetailPanel(String? groupId) {
-    if (AppString.isStringNotEmpty(groupId)) {
+    if (StringUtils.isNotEmpty(groupId)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupIdentifier: groupId)));
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
@@ -633,7 +630,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _onFirebaseAthleticsNewsNotification(param) {
     if (param is Map<String, dynamic>) {
       String? newsId = param["news_id"];
-      if (AppString.isStringNotEmpty(newsId)) {
+      if (StringUtils.isNotEmpty(newsId)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(articleId: newsId)));
       }
     }
@@ -717,7 +714,7 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                           flex: 5,
                           child: Text(
                             Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')!
-                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title"," and also your calendar.")! :""),
+                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title", " and if it is an event, also your calendar")! :"") + ".",
                             style: TextStyle(
                               color: Styles().colors!.white,
                               fontSize: 16,

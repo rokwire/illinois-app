@@ -29,6 +29,8 @@ abstract class BaseTransaction {
 
 class IlliniCashTransaction extends BaseTransaction {
 
+  static final String dateFormat = 'MM-dd-yyyy';
+
   IlliniCashTransaction(
       {String? dateString, String? description, String? location, String? amount}):
         super(dateString: dateString, description: description, location: location, amount: amount);

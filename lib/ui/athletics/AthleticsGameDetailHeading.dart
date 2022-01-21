@@ -32,7 +32,7 @@ import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
@@ -92,8 +92,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     String? videoUrl = widget.game?.links?.video;
 
     double wrapperHeight = 30;
-    wrapperHeight += AppString.isStringNotEmpty(audioUrl) ? 48 : 0;
-    wrapperHeight += AppString.isStringNotEmpty(videoUrl) ? 48 : 0;
+    wrapperHeight += StringUtils.isNotEmpty(audioUrl) ? 48 : 0;
+    wrapperHeight += StringUtils.isNotEmpty(videoUrl) ? 48 : 0;
     wrapperHeight += showOrderFoodAndDrink ? 48 : 0;
     wrapperHeight += showGetTickets || showParking ? 48 : 0;
     wrapperHeight += showGameDayGuide ? 48 : 0;
@@ -162,7 +162,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                               style: TextStyle(fontSize: 32, color: Colors.white),
                             ),
                           ),
-                          (!AppString.isStringEmpty(widget.game?.longDescription)
+                          (!StringUtils.isEmpty(widget.game?.longDescription)
                               ? Padding(
                                   padding: EdgeInsets.symmetric(vertical: 16),
                                   child: Text(
@@ -175,7 +175,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   padding: EdgeInsets.only(top: 16),
                                 )),
                           Visibility(
-                              visible: AppString.isStringNotEmpty(widget.game?.displayTime),
+                              visible: StringUtils.isNotEmpty(widget.game?.displayTime),
                               child: Semantics(
                                 label: widget.game?.displayTime,
                                 button: false,
@@ -196,7 +196,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                 ),
                               )),
                           Visibility(
-                            visible: AppString.isStringNotEmpty(widget.game?.location?.location),
+                            visible: StringUtils.isNotEmpty(widget.game?.location?.location),
                             child: Padding(
                               padding: EdgeInsets.only(bottom: 20),
                               child: Semantics(
@@ -245,7 +245,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 showScore ? _createScoreBoard() : Container(),
-                AppString.isStringEmpty(liveStatsUrl)
+                StringUtils.isEmpty(liveStatsUrl)
                     ? Container()
                     : _DetailRibbonButton(
                         iconResource: 'images/icon-live-stats.png',
@@ -255,13 +255,13 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                           Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: liveStatsUrl)));
                         },
                       ),
-                AppString.isStringEmpty(liveStatsUrl)
+                StringUtils.isEmpty(liveStatsUrl)
                     ? Container()
                     : Container(
                         color: Styles().colors!.fillColorPrimaryTransparent015,
                         height: 1,
                       ),
-                AppString.isStringEmpty(audioUrl)
+                StringUtils.isEmpty(audioUrl)
                     ? Container()
                     : _DetailRibbonButton(
                         iconResource: 'images/icon-listen.png',
@@ -270,13 +270,13 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         subTitle: widget.game?.radio,
                         onTap: () => _onTapListen(audioUrl),
                       ),
-                AppString.isStringEmpty(audioUrl)
+                StringUtils.isEmpty(audioUrl)
                     ? Container()
                     : Container(
                         color: Styles().colors!.fillColorPrimaryTransparent015,
                         height: 1,
                       ),
-                AppString.isStringEmpty(videoUrl)
+                StringUtils.isEmpty(videoUrl)
                     ? Container()
                     : _DetailRibbonButton(
                         iconResource: 'images/icon-watch.png',
@@ -285,7 +285,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         subTitle: widget.game?.tv,
                         onTap: () => _onTapWatch(videoUrl),
                       ),
-                AppString.isStringEmpty(videoUrl)
+                StringUtils.isEmpty(videoUrl)
                     ? Container()
                     : Container(
                         color: Styles().colors!.fillColorPrimaryTransparent015,
@@ -405,7 +405,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   List<Widget> _buildHeaderWidgets() {
     List<Widget> widgets = [];
     if(widget.showImageTout) {
-      if (!AppString.isStringEmpty(widget.game?.imageUrl)) {
+      if (!StringUtils.isEmpty(widget.game?.imageUrl)) {
         widgets.add(Positioned(
             child: Image.network(
               widget.game!.imageUrl!,
@@ -457,7 +457,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   void _onTapGameDayGuide() {
     Analytics.instance.logSelect(target: "Game Day");
     String? sportKey = widget.game?.sport?.shortName;
-    String? url = AppUrl.getGameDayGuideUrl(sportKey);
+    String? url = Sports.getGameDayGuideUrl(sportKey);
     if (url != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
     }
@@ -465,14 +465,14 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
 
   void _onTapListen(String? audioUrl) {
     Analytics.instance.logSelect(target: "Listen");
-    if (AppString.isStringNotEmpty(audioUrl)) {
+    if (StringUtils.isNotEmpty(audioUrl)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: audioUrl)));
     }
   }
 
   void _onTapWatch(String? videoUrl) {
     Analytics.instance.logSelect(target: "Watch");
-    if (AppString.isStringNotEmpty(videoUrl)) {
+    if (StringUtils.isNotEmpty(videoUrl)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: videoUrl)));
     }
   }
@@ -524,7 +524,7 @@ class _DetailRibbonButton extends StatelessWidget {
                   ),
                   Visibility(
                       child: Text(
-                        (!AppString.isStringEmpty(subTitle) ? subTitle! : ''),
+                        (!StringUtils.isEmpty(subTitle) ? subTitle! : ''),
                         style: TextStyle(
                             fontFamily: Styles().fontFamilies!.medium,
                             color: Styles().colors!.textBackground,
@@ -722,7 +722,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       //return opponent image
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
-      if(AppString.isStringNotEmpty(opponentUrl)) {
+      if(StringUtils.isNotEmpty(opponentUrl)) {
         return Image.network(opponentUrl!, excludeFromSemantics: true);
       } else {
         return Container();
@@ -774,7 +774,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       //return opponent image
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
-      if(AppString.isStringNotEmpty(opponentUrl)) {
+      if(StringUtils.isNotEmpty(opponentUrl)) {
         return Image.network(opponentUrl!, excludeFromSemantics: true);
       } else {
         return Container();
@@ -838,9 +838,9 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     if (_currentLiveGame == null) return false;
 
     dynamic customData = _currentLiveGame!.custom;
-    if (AppString.isStringEmpty(customData)) return false;
+    if (StringUtils.isEmpty(customData)) return false;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(customData);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(customData);
     if (mapCustomData == null) {
       return null;
     }
@@ -883,7 +883,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game!.opponent?.logoImage;
-      return AppString.isStringNotEmpty(opponentUrl) ? Image.network(opponentUrl!, excludeFromSemantics: true) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? Image.network(opponentUrl!, excludeFromSemantics: true) : null;
     }
   }
 
@@ -894,7 +894,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game?.opponent?.logoImage;
-      return AppString.isStringNotEmpty(opponentUrl) ? Image.network(opponentUrl!, excludeFromSemantics: true) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? Image.network(opponentUrl!, excludeFromSemantics: true) : null;
     }
   }
 
@@ -902,9 +902,9 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     if (_currentLiveGame == null) return Container();
 
     dynamic customData = _currentLiveGame!.custom;
-    if (AppString.isStringEmpty(customData)) return Container();
+    if (StringUtils.isEmpty(customData)) return Container();
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(customData);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(customData);
     if (mapCustomData == null) return Container();
 
     String? phase = mapCustomData["Phase"];
@@ -1467,7 +1467,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
 
   Widget _buildBottomSection() {
     String? lastPlay = _getLastPlay();
-    bool hasLastPlay = AppString.isStringNotEmpty(lastPlay);
+    bool hasLastPlay = StringUtils.isNotEmpty(lastPlay);
     return hasLastPlay
         ? Container(
         decoration: new BoxDecoration(
@@ -1482,17 +1482,17 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   String? _getLastPlay() {
-    if (AppString.isStringEmpty(_currentLiveGame?.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame?.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["LastPlay"];
   }
 
   String? _getPossession() {
-    if (AppString.isStringEmpty(_currentLiveGame?.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame?.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Possession"];
   }
@@ -1514,9 +1514,9 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   String? _getCustomClock() {
-    if (AppString.isStringEmpty(_currentLiveGame!.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame!.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Clock"];
   }
@@ -1531,9 +1531,9 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   String? _getCustomPhase() {
-    if (AppString.isStringEmpty(_currentLiveGame!.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame!.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Phase"];
   }
@@ -1617,7 +1617,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
 
   Widget _buildBottomSection() {
     String? lastPlay = _getLastPlay();
-    bool hasLastPlay = AppString.isStringNotEmpty(lastPlay);
+    bool hasLastPlay = StringUtils.isNotEmpty(lastPlay);
     return hasLastPlay
         ? Container(
         decoration: new BoxDecoration(
@@ -1632,9 +1632,9 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   String? _getLastPlay() {
-    if (AppString.isStringEmpty(_currentLiveGame?.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame?.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["LastPlay"];
   }
@@ -1656,9 +1656,9 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   String? _getCustomClock() {
-    if (AppString.isStringEmpty(_currentLiveGame!.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame!.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Clock"];
   }
@@ -1673,9 +1673,9 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   String? _getCustomPhase() {
-    if (AppString.isStringEmpty(_currentLiveGame!.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame!.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Phase"];
   }

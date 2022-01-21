@@ -25,7 +25,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 
@@ -326,7 +326,7 @@ class _FactItem extends StatelessWidget {
               Expanded(
                 flex: 5,
                 child: Text(
-                  AppString.isStringNotEmpty(label) ? label! : "",
+                  StringUtils.isNotEmpty(label) ? label! : "",
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       color: Styles().colors!.fillColorPrimary,
@@ -337,7 +337,7 @@ class _FactItem extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: Text(
-                AppString.isStringNotEmpty(value) ? value! : "",
+                StringUtils.isNotEmpty(value) ? value! : "",
                 textAlign: TextAlign.right,
                 style: TextStyle(
                     color: Styles().colors!.mediumGray,
@@ -379,7 +379,7 @@ class _IngredientItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                AppString.isStringNotEmpty(label) ? label! : "",
+                StringUtils.isNotEmpty(label) ? label! : "",
                 style: TextStyle(
                     color: Styles().colors!.fillColorPrimary,
                     fontSize: 16,

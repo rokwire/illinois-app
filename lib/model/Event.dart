@@ -18,15 +18,16 @@ import 'dart:ui';
 
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 //////////////////////////////
 /// Event
@@ -86,6 +87,10 @@ class Event with Explore implements Favorite {
 
   bool? isEventFree;
 
+  static final String dateTimeFormat = 'E, dd MMM yyyy HH:mm:ss v';
+  static final String serverRequestDateTimeFormat =  'yyyy/MM/ddTHH:mm:ss';
+
+
   Event({Map<String, dynamic>? json, Event? other}) {
     if (json != null) {
       _initFromJson(json);
@@ -120,8 +125,8 @@ class Event with Explore implements Favorite {
     eventId = json['eventId'];
     startDateString = json['startDate'];
     endDateString = json['endDate'];
-    startDateGmt = AppDateTime().dateTimeFromString(json['startDate'], format: AppDateTime.serverResponseDateTimeFormat, isUtc: true);
-    endDateGmt = AppDateTime().dateTimeFromString(json['endDate'], format: AppDateTime.serverResponseDateTimeFormat, isUtc: true);
+    startDateGmt = DateTimeUtils.dateTimeFromString(json['startDate'], format: dateTimeFormat, isUtc: true);
+    endDateGmt = DateTimeUtils.dateTimeFromString(json['endDate'], format: dateTimeFormat, isUtc: true);
     category = json['category'];
     subCategory = json['subCategory'];
     sponsor = json['sponsor'];
@@ -131,16 +136,16 @@ class Event with Explore implements Favorite {
     outlookUrl = json['outlookUrl'];
     speaker = json['speaker'];
     registrationLabel = json['registrationLabel'];
-    if (AppString.isStringNotEmpty(json['registrationUrl'])) {
+    if (StringUtils.isNotEmpty(json['registrationUrl'])) {
       registrationUrl = json['registrationUrl'];
     }
-    else if (AppString.isStringNotEmpty(json['registrationURL'])) {
+    else if (StringUtils.isNotEmpty(json['registrationURL'])) {
       registrationUrl = json['registrationURL'];
     }
     cost = json['cost'];
     this.contacts = contacts;
     this.tags = tags;
-    modifiedDate = AppDateTime().dateTimeFromString(json['modifiedDate']);
+    modifiedDate = DateTimeUtils.dateTimeFromString(json['modifiedDate']);
     submissionResult = json['submissionResult'];
     allDay = json['allDay'] ?? false;
     recurringFlag = json['recurringFlag'] ?? false;
@@ -401,7 +406,7 @@ class Event with Explore implements Favorite {
     if(recurrenceId!=null) {
       result["recurrenceId"] = recurrenceId;
     }
-    if(isRecurring && AppCollection.isCollectionNotEmpty(recurringEvents)) {
+    if(isRecurring && CollectionUtils.isNotEmpty(recurringEvents)) {
       result["recurringEvents"] = _encodeRecurringEvents();
     }
     if(convergeScore!=null) {
@@ -447,7 +452,7 @@ class Event with Explore implements Favorite {
     if (jsonList != null) {
       result = <Event>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, Event.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, Event.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -492,8 +497,8 @@ class Event with Explore implements Favorite {
 
   bool get isGameEvent {
     bool isAthletics = (category == "Athletics" || category == "Recreation");
-    bool hasGameId = AppString.isStringNotEmpty(speaker);
-    bool hasRegistrationFlag = AppString.isStringNotEmpty(registrationLabel);
+    bool hasGameId = StringUtils.isNotEmpty(speaker);
+    bool hasRegistrationFlag = StringUtils.isNotEmpty(registrationLabel);
     return isAthletics && hasGameId && hasRegistrationFlag;
   }
 
@@ -645,22 +650,22 @@ class Event with Explore implements Favorite {
       String? endDateFormatted = AppDateTime().formatDateTime(endDateGmt, format: dateFormat);
       return '$startDateFormatted - $endDateFormatted';
     } else {
-      return AppDateTime().getDisplayDateTime(startDateGmt, allDay: allDay);
+      return AppDateTimeUtils.getDisplayDateTime(startDateGmt, allDay: allDay);
     }
   }
 
   String? get displayDate {
-    return AppDateTime().getDisplayDay(dateTimeUtc: startDateGmt, allDay: allDay);
+    return AppDateTimeUtils.getDisplayDay(dateTimeUtc: startDateGmt, allDay: allDay);
   }
 
   String? get displayStartEndTime {
     if (allDay!) {
       return Localization().getStringEx('model.explore.time.all_day', 'All day');
     }
-    String? startTime = AppDateTime().getDisplayTime(dateTimeUtc: startDateGmt, allDay: allDay);
-    String? endTime = AppDateTime().getDisplayTime(dateTimeUtc: endDateGmt, allDay: allDay);
+    String? startTime = AppDateTimeUtils.getDisplayTime(dateTimeUtc: startDateGmt, allDay: allDay);
+    String? endTime = AppDateTimeUtils.getDisplayTime(dateTimeUtc: endDateGmt, allDay: allDay);
     String displayTime = '$startTime';
-    if (AppString.isStringNotEmpty(endTime)) {
+    if (StringUtils.isNotEmpty(endTime)) {
       displayTime += '-$endTime';
     }
     return displayTime;
@@ -676,7 +681,7 @@ class Event with Explore implements Favorite {
   }
 
   String get displaySuperTime {
-    String? date = AppDateTime().getDisplayDay(dateTimeUtc: startDateGmt, allDay: allDay);
+    String? date = AppDateTimeUtils.getDisplayDay(dateTimeUtc: startDateGmt, allDay: allDay);
     String? time = displayStartEndTime;
     return '$date, $time';
   }
@@ -715,17 +720,17 @@ class Event with Explore implements Favorite {
     }
     bool sameDay = ((startDateTime != null) && (endDateTime != null) && (startDateTime.year == endDateTime.year) &&
         (startDateTime.month == endDateTime.month) && (startDateTime.day == endDateTime.day));
-    String? startDateString = AppDateTime().getDisplayDay(dateTimeUtc: firstEvent.startDateGmt, allDay: firstEvent.allDay);
+    String? startDateString = AppDateTimeUtils.getDisplayDay(dateTimeUtc: firstEvent.startDateGmt, allDay: firstEvent.allDay);
     if (sameDay) {
       return startDateString;
     }
-    String? endDateString = AppDateTime().getDisplayDay(dateTimeUtc: lastEvent.startDateGmt, allDay: lastEvent.allDay);
+    String? endDateString = AppDateTimeUtils.getDisplayDay(dateTimeUtc: lastEvent.startDateGmt, allDay: lastEvent.allDay);
     return '$startDateString - $endDateString';
   }
 
   String get displayInterests {
     String interests = "";
-    if(AppCollection.isCollectionNotEmpty(tags)) {
+    if(CollectionUtils.isNotEmpty(tags)) {
       tags!.forEach((String tag){
           if(Auth2().prefs?.hasPositiveTag(tag) ?? false) {
             if (interests.isNotEmpty) {
@@ -790,7 +795,7 @@ class Contact {
     if (jsonList != null) {
       result = <Contact>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, Contact.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, Contact.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;

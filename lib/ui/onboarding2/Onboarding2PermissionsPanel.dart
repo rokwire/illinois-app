@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -28,23 +28,23 @@ class _Onboarding2PermissionsPanelState extends State <Onboarding2PermissionsPan
   void _requestLocation(BuildContext context) async {
     Analytics.instance.logSelect(target: 'Share My locaiton') ;
     await LocationServices.instance.status.then((LocationServicesStatus? status){
-      if (status == LocationServicesStatus.ServiceDisabled) {
+      if (status == LocationServicesStatus.serviceDisabled) {
         LocationServices.instance.requestService();
       }
-      else if (status == LocationServicesStatus.PermissionNotDetermined) {
+      else if (status == LocationServicesStatus.permissionNotDetermined) {
         LocationServices.instance.requestPermission().then((LocationServicesStatus? status) {
           //Next
           _goNext();
         });
       }
-      else if (status == LocationServicesStatus.PermissionDenied) {
+      else if (status == LocationServicesStatus.permissionDenied) {
         //Denied  - request again
         LocationServices.instance.requestPermission().then((LocationServicesStatus? status) {
           //Next
           _goNext();
         });
       }
-      else if (status == LocationServicesStatus.PermissionAllowed) {
+      else if (status == LocationServicesStatus.permissionAllowed) {
         //Next()
         _goNext();
       }

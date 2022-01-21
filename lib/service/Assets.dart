@@ -28,7 +28,7 @@ import 'package:http/http.dart' as http;
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Assets with Service implements NotificationsListener {
 
@@ -118,7 +118,7 @@ class Assets with Service implements NotificationsListener {
   // Assets
 
   dynamic operator [](dynamic key) {
-    return AppMapPathKey.entry(_externalContent, key) ?? AppMapPathKey.entry(_internalContent, key);
+    return MapPathKey.entry(_externalContent, key) ?? MapPathKey.entry(_internalContent, key);
   }
 
   String? randomStringFromListWithKey(dynamic key) {
@@ -141,7 +141,7 @@ class Assets with Service implements NotificationsListener {
   Future<Map<String, dynamic>?> _loadFromCache() async {
     try {
       String? assetsContent = ((_cacheFile != null) && await _cacheFile!.exists()) ? await _cacheFile!.readAsString() : null;
-      return AppJson.decodeMap(assetsContent);
+      return JsonUtils.decodeMap(assetsContent);
     } catch (e) {
       print(e.toString());
     }
@@ -151,7 +151,7 @@ class Assets with Service implements NotificationsListener {
   Future<Map<String, dynamic>?> _loadFromAssets() async {
     try {
       String assetsContent = await rootBundle.loadString('assets/$_assetsName');
-      return AppJson.decodeMap(assetsContent);
+      return JsonUtils.decodeMap(assetsContent);
     } catch (e) {
       print(e.toString());
     }
@@ -171,7 +171,7 @@ class Assets with Service implements NotificationsListener {
   Future<void> _updateFromNet() async {
     try {
       String? externalContentString = await _loadContentStringFromNet();
-      Map<String, dynamic>? externalContent = AppJson.decodeMap(externalContentString);
+      Map<String, dynamic>? externalContent = JsonUtils.decodeMap(externalContentString);
       if ((externalContent != null) && !DeepCollectionEquality().equals(_externalContent, externalContent)) {
         if (externalContent.isNotEmpty) {
           _externalContent = externalContent;

@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
@@ -26,7 +27,7 @@ import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -98,15 +99,15 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     if (_guideItems != null) {
 
         _guideItems!.sort((dynamic entry1, dynamic entry2) {
-          return AppSort.compareIntegers(
-            (entry1 is Map) ? AppJson.intValue(entry1['sort_order']) : null,
-            (entry2 is Map) ? AppJson.intValue(entry2['sort_order']) : null
+          return SortUtils.compareIntegers(
+            (entry1 is Map) ? JsonUtils.intValue(entry1['sort_order']) : null,
+            (entry2 is Map) ? JsonUtils.intValue(entry2['sort_order']) : null
           );
         });
 
       _features = LinkedHashSet<String>();
       for (Map<String, dynamic> guideEntry in _guideItems!) {
-        List<dynamic>? features = AppJson.listValue(Guide().entryValue(guideEntry, 'features'));
+        List<dynamic>? features = JsonUtils.listValue(Guide().entryValue(guideEntry, 'features'));
         if (features != null) {
           for (dynamic feature in features) {
             if ((feature is String) && !_features!.contains(feature)) {
@@ -281,7 +282,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   GuideFeatureButton? _buildFeatureButton(String feature) {
 
-    List<dynamic> features = AppJson.listValue(FlexUI()['campus_guide.features']) ?? [];
+    List<dynamic> features = JsonUtils.listValue(FlexUI()['campus_guide.features']) ?? [];
     
     if (feature == 'athletics') {
       return features.contains('athletics') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.athletics.title", "Athletics"), icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,) : null;
@@ -394,7 +395,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     }
-    else if (AppString.isStringNotEmpty(Config().myIlliniUrl)) {
+    else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
       launch(Config().myIlliniUrl!);
     }
   }

@@ -24,7 +24,7 @@ import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class LiveStats with Service implements NotificationsListener {
 
@@ -168,11 +168,11 @@ class LiveStats with Service implements NotificationsListener {
     response.then((response) {
     String? responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
-        List<dynamic>? gamesList = AppJson.decode(responseBody);
+        List<dynamic>? gamesList = JsonUtils.decode(responseBody);
         List<LiveGame> result = [];
         if (gamesList != null) {
           for (dynamic current in gamesList) {
-            AppList.add(result, LiveGame.fromJson(current));
+            ListUtils.add(result, LiveGame.fromJson(current));
           }
         }
         _liveGames = result;
@@ -186,7 +186,7 @@ class LiveStats with Service implements NotificationsListener {
   /////////////////////////
   // Enabled
 
-  bool get _enabled => AppString.isStringNotEmpty(Config().sportsServiceUrl);
+  bool get _enabled => StringUtils.isNotEmpty(Config().sportsServiceUrl);
 
   // NotificationsListener
   

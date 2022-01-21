@@ -21,7 +21,7 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/Laundry.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart' as xml;
 
 // LaundryService does rely on Service initialization API so it does not override service interfaces and is not registered in Services..
@@ -74,7 +74,7 @@ class LaundryService /* with Service */ {
   }
 
   Future<LaundryRoomAvailability?> getNumAvailable(String? laundryLocation) async {
-    if (AppString.isStringEmpty(laundryLocation)) {
+    if (StringUtils.isEmpty(laundryLocation)) {
       return null;
     }
     final availabilityUrl = (Config().laundryHostUrl != null) ? "${Config().laundryHostUrl}school?api_key=${Config().laundryApiKey}&method=getNumAvailable" : null;
@@ -110,7 +110,7 @@ class LaundryService /* with Service */ {
 
   Future<List<LaundryRoomAppliance>?> getAppliances(
       String? laundryRoomLocation) async {
-    if (AppString.isStringEmpty(laundryRoomLocation)) {
+    if (StringUtils.isEmpty(laundryRoomLocation)) {
       return null;
     }
     List<LaundryRoomAppliance>? laundryRoomAppliances;
@@ -154,7 +154,7 @@ class LaundryService /* with Service */ {
 
   Map<String, Location>? _loadLaundryLocationMapping() {
     List<dynamic>? jsonData = Assets()['laundry.locations'];
-    if (AppCollection.isCollectionEmpty(jsonData)) {
+    if (CollectionUtils.isEmpty(jsonData)) {
       return null;
     }
     Map<String, Location> locationMapping = Map();
@@ -170,7 +170,7 @@ class LaundryService /* with Service */ {
   }
 
   String? _getValueFromXmlItem(Iterable<xml.XmlElement> items) {
-    if (AppCollection.isCollectionEmpty(items)) {
+    if (CollectionUtils.isEmpty(items)) {
       return null;
     }
     var textValue;

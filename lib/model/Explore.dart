@@ -26,7 +26,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
 
 import 'package:illinois/model/Location.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 //////////////////////////////
 /// Explore
@@ -114,7 +114,7 @@ class ExploreCategory {
   static ExploreCategory? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? ExploreCategory(
       name: json['category'],
-      subCategories: AppJson.listStringsValue(json['subcategories'])
+      subCategories: JsonUtils.listStringsValue(json['subcategories'])
     ) : null;
   }
 
@@ -130,7 +130,7 @@ class ExploreCategory {
     if (jsonList is List) {
       result = <ExploreCategory>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, ExploreCategory.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, ExploreCategory.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -148,7 +148,7 @@ class ExploreHelper {
       Location? location = explore.exploreLocation;
       if (location != null) {
         if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
-          double distance = AppLocation.distance(location.latitude!.toDouble(), location.longitude!.toDouble(), locationData.latitude, locationData.longitude);
+          double distance = LocationUtils.distance(location.latitude!.toDouble(), location.longitude!.toDouble(), locationData.latitude, locationData.longitude);
           return distance.toStringAsFixed(1) + " mi away";
         }
         if ((location.description != null) && location.description!.isNotEmpty) {
@@ -180,7 +180,7 @@ class ExploreHelper {
       Location? location = explore.exploreLocation;
       if (location != null) {
         if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
-          double distance = AppLocation.distance(location.latitude!.toDouble(), location.longitude!.toDouble(), locationData.latitude, locationData.longitude);
+          double distance = LocationUtils.distance(location.latitude!.toDouble(), location.longitude!.toDouble(), locationData.latitude, locationData.longitude);
           displayText = distance.toStringAsFixed(1) + " mi away";
         }
         if ((location.description != null) && location.description!.isNotEmpty) {

@@ -25,7 +25,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -138,13 +138,13 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
     String? text = hasJsonContent ? _jsonContent!['text'] : null;
     List<dynamic>? buttonsJsonContent = hasJsonContent ? _jsonContent!['buttons'] : null;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Visibility(visible: AppString.isStringNotEmpty(title), child:
+      Visibility(visible: StringUtils.isNotEmpty(title), child:
         Padding(padding: EdgeInsets.only(top: 0), child:
           Text(title ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),
         ),),),
-        Visibility(visible: AppString.isStringNotEmpty(text), child:
+        Visibility(visible: StringUtils.isNotEmpty(text), child:
           Padding(padding: EdgeInsets.only(top: 10), child:
-            Text(AppString.getDefaultEmptyString(text), style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies!.medium, fontSize: 16, ), ),
+            Text(StringUtils.ensureNotEmpty(text), style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies!.medium, fontSize: 16, ), ),
         ),),
         _buildButtons(buttonsJsonContent)
       ],
@@ -152,7 +152,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
   }
 
   Widget _buildButtons(List<dynamic>? buttonsJsonContent) {
-    if (AppCollection.isCollectionEmpty(buttonsJsonContent)) {
+    if (CollectionUtils.isEmpty(buttonsJsonContent)) {
       return Container();
     }
     List<Widget> buttons = [];
@@ -160,7 +160,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
       String? title = buttonContent['title'];
       buttons.add(Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
         RoundedButton(
-          label: AppString.getDefaultEmptyString(title),
+          label: StringUtils.ensureNotEmpty(title),
           padding: EdgeInsets.symmetric(horizontal: 14),
           textColor: Styles().colors!.fillColorPrimary,
           borderColor: Styles().colors!.fillColorSecondary,
@@ -193,7 +193,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
       return;
     }
     String? url = linkJsonContent['url'];
-    if (AppString.isStringEmpty(url)) {
+    if (StringUtils.isEmpty(url)) {
       return;
     }
     Map<String, dynamic>? options = linkJsonContent['options'];
@@ -206,7 +206,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
       launch(url!);
     }
     else {
-      String? panelTitle = ((options != null) ? AppJson.stringValue(options['title']) : null) ?? title;
+      String? panelTitle = ((options != null) ? JsonUtils.stringValue(options['title']) : null) ?? title;
       Navigator.of(context).push(CupertinoPageRoute(builder: (context) => WebPanel(url: url, title: panelTitle, hideToolBar: !Storage().onBoardingPassed!, )));
     }
   }

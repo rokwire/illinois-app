@@ -7,7 +7,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
@@ -29,7 +29,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
     Groups().loadEvents(widget.group).then((Map<int, List<GroupEvent>>? eventsMap) {
       if (mounted) {
         setState(() {
-          _groupEvents = AppCollection.isCollectionNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
+          _groupEvents = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
         });
       }
     });

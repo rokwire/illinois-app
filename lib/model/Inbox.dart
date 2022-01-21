@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -30,21 +30,21 @@ class InboxMessage with Favorite {
 
   static InboxMessage? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? InboxMessage(
-      messageId: AppJson.stringValue(json['id']),
-      priority: AppJson.intValue(json['priority']),
-      topic: AppJson.stringValue(json['topic']),
-      category: AppJson.stringValue(json['category']),
+      messageId: JsonUtils.stringValue(json['id']),
+      priority: JsonUtils.intValue(json['priority']),
+      topic: JsonUtils.stringValue(json['topic']),
+      category: JsonUtils.stringValue(json['category']),
 
-      dateCreatedUtc: AppDateTime().dateTimeFromString(AppJson.stringValue(json['date_created'])),
-      dateUpdatedUtc: AppDateTime().dateTimeFromString(AppJson.stringValue(json['date_updated'])),
-      dateSentUtc: AppDateTime().dateTimeFromString(AppJson.stringValue(json['date_sent'])),
+      dateCreatedUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_created'])),
+      dateUpdatedUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_updated'])),
+      dateSentUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_sent'])),
 
-      subject: AppJson.stringValue(json['subject']),
-      body: AppJson.stringValue(json['body']),
-      data: AppJson.mapValue(json['data']),
+      subject: JsonUtils.stringValue(json['subject']),
+      body: JsonUtils.stringValue(json['body']),
+      data: JsonUtils.mapValue(json['data']),
 
-      sender: InboxSender.fromJson(AppJson.mapValue(json['sender'])),
-      recepients: InboxRecepient.listFromJson(AppJson.listValue(json['recipients']))
+      sender: InboxSender.fromJson(JsonUtils.mapValue(json['sender'])),
+      recepients: InboxRecepient.listFromJson(JsonUtils.listValue(json['recipients']))
     ) : null;
   }
 
@@ -54,9 +54,9 @@ class InboxMessage with Favorite {
       'priority': priority,
       'topic': topic,
 
-      'date_created': AppDateTime.utcDateTimeToString(dateCreatedUtc),
-      'date_updated': AppDateTime.utcDateTimeToString(dateUpdatedUtc),
-      'date_sent': AppDateTime.utcDateTimeToString(dateSentUtc),
+      'date_created': DateTimeUtils.utcDateTimeToString(dateCreatedUtc),
+      'date_updated': DateTimeUtils.utcDateTimeToString(dateUpdatedUtc),
+      'date_sent': DateTimeUtils.utcDateTimeToString(dateSentUtc),
 
       'subject': subject,
       'body': body,
@@ -72,7 +72,7 @@ class InboxMessage with Favorite {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, InboxMessage.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, InboxMessage.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -172,7 +172,7 @@ class InboxRecepient {
 
   static InboxRecepient? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? InboxRecepient(
-      userId: AppJson.stringValue(json['user_id'])
+      userId: JsonUtils.stringValue(json['user_id'])
     ) : null;
   }
 
@@ -187,7 +187,7 @@ class InboxRecepient {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, InboxRecepient.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, InboxRecepient.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -213,8 +213,8 @@ class InboxSender {
 
   static InboxSender? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? InboxSender(
-      type: inboxSenderTypeFromString(AppJson.stringValue(json['type'])),
-      user: InboxSenderUser.fromJson(AppJson.mapValue(json['user'])),
+      type: inboxSenderTypeFromString(JsonUtils.stringValue(json['type'])),
+      user: InboxSenderUser.fromJson(JsonUtils.mapValue(json['user'])),
     ) : null;
   }
 
@@ -234,8 +234,8 @@ class InboxSenderUser {
 
   static InboxSenderUser? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? InboxSenderUser(
-      userId: AppJson.stringValue(json['user_id']),
-      name: AppJson.stringValue(json['name']),
+      userId: JsonUtils.stringValue(json['user_id']),
+      name: JsonUtils.stringValue(json['name']),
     ) : null;
   }
 
@@ -284,11 +284,11 @@ class InboxUserInfo{
 
   static InboxUserInfo? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? InboxUserInfo(
-      userId: AppJson.stringValue(json["user_id"]),
-      dateCreated: AppJson.stringValue(json["date_created"]),
-      dateUpdated: AppJson.stringValue(json["date_updated"]),
-      notificationsDisabled: AppJson.boolValue(json["notifications_disabled"]),
-      topics: AppJson.stringSetValue(json["topics"]),
+      userId: JsonUtils.stringValue(json["user_id"]),
+      dateCreated: JsonUtils.stringValue(json["date_created"]),
+      dateUpdated: JsonUtils.stringValue(json["date_updated"]),
+      notificationsDisabled: JsonUtils.boolValue(json["notifications_disabled"]),
+      topics: JsonUtils.stringSetValue(json["topics"]),
     ) : null;
   }
 

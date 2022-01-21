@@ -5,7 +5,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{
@@ -97,7 +97,7 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{
 
   void onEmailTapped(){
     String? email = Config().saferWellness['email'];
-    if (AppString.isStringNotEmpty(email)) {
+    if (StringUtils.isNotEmpty(email)) {
       launch('mailto:$email');
     }
   }
@@ -105,7 +105,7 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{
   String get displayPhone {
     String? displayPhone;
     String? phone = Config().saferWellness['phone'];
-    if (AppString.isStringNotEmpty(phone)) {
+    if (StringUtils.isNotEmpty(phone)) {
       displayPhone = phone;
       if (displayPhone!.startsWith('+1')) {
         displayPhone = displayPhone.substring(2);
@@ -119,7 +119,7 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{
 
   void onPhoneTapped(){
     String? phone = Config().saferWellness['phone'];
-    if (AppString.isStringNotEmpty(phone)) {
+    if (StringUtils.isNotEmpty(phone)) {
       launch('tel:$phone');
     }
   }

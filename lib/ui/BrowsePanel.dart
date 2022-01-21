@@ -18,6 +18,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
@@ -46,7 +47,7 @@ import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
@@ -516,7 +517,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     }
-    else if (AppString.isStringNotEmpty(Config().myIlliniUrl)) {
+    else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
       url_launcher.launch(Config().myIlliniUrl!);
     }
   }
@@ -627,11 +628,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Analytics.instance.logSelect(target: "Crisis Help");
 
     if (Connectivity().isNotOffline && Config().crisisHelpUrl != null) {
-      String faqsUrl = Config().crisisHelpUrl!;
-
-      String? panelTitle = Localization().getStringEx('panel.settings.crisis_help.label.title', 'Crisis Help');
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WebPanel(url: faqsUrl, title: panelTitle,)));
+      url_launcher.launch(Config().crisisHelpUrl!);
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));

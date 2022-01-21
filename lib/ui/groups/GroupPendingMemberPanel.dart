@@ -17,13 +17,14 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -93,7 +94,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(65),
-                child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(widget.member?.photoURL) ? Image.network(widget.member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
+                child: Container(width: 65, height: 65 ,child: StringUtils.isNotEmpty(widget.member?.photoURL) ? Image.network(widget.member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
               ),
             ),
             Container(width: 11,),
@@ -137,7 +138,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
   Widget _buildQuestions(){
     List<Widget> list = [];
-    if(AppCollection.isCollectionNotEmpty(widget.member?.answers)) {
+    if(CollectionUtils.isNotEmpty(widget.member?.answers)) {
       for (int index = 0; index < widget.member!.answers!.length; index++) {
         GroupMembershipAnswer answer = widget.member!.answers![index];
         list.add(_MembershipAnswer(member: widget.member, answer: answer));

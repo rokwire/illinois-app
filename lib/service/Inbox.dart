@@ -13,7 +13,7 @@ import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Inbox with Service implements NotificationsListener {
 
@@ -140,16 +140,16 @@ class Inbox with Service implements NotificationsListener {
       urlParams = "?$urlParams";
     }
 
-    dynamic body = (messageIds != null) ? AppJson.encode({ "ids": List.from(messageIds) }) : null;
+    dynamic body = (messageIds != null) ? JsonUtils.encode({ "ids": List.from(messageIds) }) : null;
 
     String? url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/messages$urlParams" : null;
     Response? response = await Network().get(url, body: body, auth: NetworkAuth.Auth2);
-    return (response?.statusCode == 200) ? (InboxMessage.listFromJson(AppJson.decodeList(response?.body)) ?? []) : null;
+    return (response?.statusCode == 200) ? (InboxMessage.listFromJson(JsonUtils.decodeList(response?.body)) ?? []) : null;
   }
 
   Future<bool> deleteMessages(Iterable? messageIds) async {
     String? url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/messages" : null;
-    String? body = AppJson.encode({
+    String? body = JsonUtils.encode({
       "ids": (messageIds != null) ? List.from(messageIds) : null
     });
 
@@ -159,7 +159,7 @@ class Inbox with Service implements NotificationsListener {
 
   Future<bool> sendMessage(InboxMessage? message) async {
     String? url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/message" : null;
-    String? body = AppJson.encode(message?.toJson());
+    String? body = JsonUtils.encode(message?.toJson());
 
     Response? response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
     return (response?.statusCode == 200);
@@ -190,7 +190,7 @@ class Inbox with Service implements NotificationsListener {
   Future<bool> _manageFCMSubscription({String? topic, String? token, String? action}) async {
     if ((Config().notificationsUrl != null) && (topic != null) && (token != null) && (action != null)) {
       String url = "${Config().notificationsUrl}/api/topic/$topic/$action";
-      String? body = AppJson.encode({
+      String? body = JsonUtils.encode({
         'token': token
       });
       Response? response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
@@ -227,7 +227,7 @@ class Inbox with Service implements NotificationsListener {
   Future<bool> _updateFCMToken({String? token, String? previousToken}) async {
     if ((Config().notificationsUrl != null) && ((token != null) || (previousToken != null))) {
       String url = "${Config().notificationsUrl}/api/token";
-      String? body = AppJson.encode({
+      String? body = JsonUtils.encode({
         'token': token,
         'previous_token': previousToken,
         'app_platform': Platform.operatingSystem,
@@ -269,7 +269,7 @@ class Inbox with Service implements NotificationsListener {
     try {
       Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2) : null;
       if(response?.statusCode == 200) {
-        Map<String, dynamic>? jsonData = AppJson.decode(response?.body);
+        Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
         InboxUserInfo? userInfo = InboxUserInfo.fromJson(jsonData);
         _applyUserInfo(userInfo);
       }
@@ -281,10 +281,10 @@ class Inbox with Service implements NotificationsListener {
 
   Future<bool> _putUserInfo(InboxUserInfo? userInfo) async {
     if (Auth2().isLoggedIn && Config().notificationsUrl != null && userInfo != null){
-      String? body = AppJson.encode(userInfo.toJson()); // Update user API do not receive topics. Only update enable/disable notifications for now
+      String? body = JsonUtils.encode(userInfo.toJson()); // Update user API do not receive topics. Only update enable/disable notifications for now
       Response? response = await Network().put("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2, body: body);
       if(response?.statusCode == 200) {
-        Map<String, dynamic>? jsonData = AppJson.decode(response?.body);
+        Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
         InboxUserInfo? userInfo = InboxUserInfo.fromJson(jsonData);
         _applyUserInfo(userInfo);
         return true;
@@ -311,7 +311,7 @@ class Inbox with Service implements NotificationsListener {
   //Delete User
   void _deleteUser() async{
     try {
-      String? body = AppJson.encode({
+      String? body = JsonUtils.encode({
         'notifications_disabled': true,
       });
       Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().delete("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2, body: body) : null;

@@ -33,7 +33,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class ExploreCard extends StatefulWidget {
@@ -76,7 +76,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   String get semanticLabel {
     String? category = _exploreCategory;
     String? sportName = _gameSportName;
-    if (AppString.isStringNotEmpty(category) && AppString.isStringNotEmpty(sportName)) {
+    if (StringUtils.isNotEmpty(category) && StringUtils.isNotEmpty(sportName)) {
       category = '$category - $sportName';
     }
     dynamic explore = widget.explore;
@@ -99,7 +99,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     bool isGame = (widget.explore is Game);
     Event? event = isEvent ? widget.explore as Event : null;
     bool isCompositeEvent = event?.isComposite ?? false;
-    String imageUrl = AppString.getDefaultEmptyString(widget.explore!.exploreImageURL);
+    String imageUrl = StringUtils.ensureNotEmpty(widget.explore!.exploreImageURL);
     String interestsLabelValue = _getInterestsLabelValue();
 
     return Semantics(
@@ -138,7 +138,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                                 _exploreDetails(),
                               ],)),
                             Visibility(visible: ((widget.showSmallImage ?? false) &&
-                                AppString.isStringNotEmpty(imageUrl)),
+                                StringUtils.isNotEmpty(imageUrl)),
                                 child: Padding(
                                   padding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
                                   child: SizedBox(
@@ -171,7 +171,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                                                       color: Styles().colors!.textBackground,
                                                       fontSize: 12,
                                                       fontFamily: Styles().fontFamilies!.bold),),
-                                                Text(AppString.getDefaultEmptyString(
+                                                Text(StringUtils.ensureNotEmpty(
                                                     interestsLabelValue), style: TextStyle(
                                                     color: Styles().colors!.textBackground,
                                                     fontSize: 12,
@@ -201,11 +201,11 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   bool _showInterests() {
     String interestsLabelValue = _getInterestsLabelValue();
-    return (widget.explore is Event) && AppString.isStringNotEmpty(interestsLabelValue);
+    return (widget.explore is Event) && StringUtils.isNotEmpty(interestsLabelValue);
   }
 
   bool _hasConvergeUrl() {
-    return AppString.isStringNotEmpty(_getConvergeUrl());
+    return StringUtils.isNotEmpty(_getConvergeUrl());
   }
 
   bool _hasConvergeScore() {
@@ -249,10 +249,10 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     bool starVisible = Auth2().canFavorite;
     String leftLabel = "";
     TextStyle leftLabelStyle;
-    if (AppString.isStringNotEmpty(category)) {
+    if (StringUtils.isNotEmpty(category)) {
       leftLabel = category!.toUpperCase();
       String? sportName = _gameSportName;
-      if (AppString.isStringNotEmpty(sportName)) {
+      if (StringUtils.isNotEmpty(sportName)) {
         leftLabel += ' - $sportName';
       }
       leftLabelStyle = TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, letterSpacing: 0.86, color: Styles().colors!.fillColorPrimary);
@@ -304,7 +304,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   Widget _exploreName() {
     return Padding(
         padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
-        child: Text(AppString.getDefaultEmptyString(widget.explore?.exploreTitle),
+        child: Text(StringUtils.ensureNotEmpty(widget.explore?.exploreTitle),
             style: TextStyle(fontSize: 20, color: Styles().colors!.fillColorPrimary)));
   }
 
@@ -338,7 +338,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   Widget? _exploreTimeDetail() {
     String? displayTime = _getExploreTimeDisplayString();
-    if (AppString.isStringEmpty(displayTime)) {
+    if (StringUtils.isEmpty(displayTime)) {
       return null;
     }
     return Semantics(label: displayTime, child: Padding(
@@ -485,7 +485,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     }
     Event? parentEvent = (widget.explore is Event) ? (widget.explore as Event) : null;
     List<Event>? subEvents = parentEvent?.recurringEvents ?? parentEvent?.featuredEvents;
-    bool showViewMoreCard = AppCollection.isCollectionNotEmpty(subEvents);
+    bool showViewMoreCard = CollectionUtils.isNotEmpty(subEvents);
     if (showViewMoreCard && (subEvents != null) && (subEvents.length > 5)) {
       subEvents = subEvents.sublist(0, 5);
     }

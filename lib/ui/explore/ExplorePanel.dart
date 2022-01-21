@@ -20,7 +20,7 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -37,7 +37,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Dining.dart';
@@ -49,7 +49,7 @@ import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
@@ -280,7 +280,7 @@ class ExplorePanelState extends State<ExplorePanel>
       LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
-        if (_locationServicesStatus == LocationServicesStatus.PermissionNotDetermined) {
+        if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
           LocationServices.instance.requestPermission().then((LocationServicesStatus? locationServicesStatus) {
             _locationServicesStatus = locationServicesStatus;
             _updateTabs();
@@ -325,7 +325,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   bool _userLocationEnabled() {
-    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
+    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
   void _initFilters() {
@@ -383,7 +383,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   List<String?> _buildFilterEventDateSubLabels() {
-    String dateFormat = AppDateTime.eventFilterDisplayDateFormat;
+    String dateFormat = 'MM/dd';
     DateTime now = DateTime.now();
     String? todayDateLabel = AppDateTime()
         .formatDateTime(now, format: dateFormat,
@@ -466,8 +466,8 @@ class ExplorePanelState extends State<ExplorePanel>
         case ExploreTab.Events: 
           {
             if (_initialSelectedFilter != null) {
-              ExploreFilter? filter = (AppCollection.isCollectionNotEmpty(selectedFilterList)) ? (selectedFilterList as List<ExploreFilter?>).firstWhere((selectedFilter) =>
-              selectedFilter?.type == _initialSelectedFilter?.type, orElse: () => null) : null;
+              ExploreFilter? filter = (CollectionUtils.isNotEmpty(selectedFilterList)) ? (selectedFilterList as List<ExploreFilter?>).firstWhereOrNull((selectedFilter) =>
+              selectedFilter?.type == _initialSelectedFilter?.type) : null;
               if (filter != null) {
                 int filterIndex = selectedFilterList!.indexOf(filter);
                 selectedFilterList.remove(filter);
@@ -515,13 +515,13 @@ class ExplorePanelState extends State<ExplorePanel>
     Set<String?>? categories = _getSelectedCategories(selectedFilterList);
     List<Explore> explores = [];
     List<Explore>? events = await ExploreService().loadEvents(categories: categories, eventFilter: EventTimeFilter.upcoming);
-    if (AppCollection.isCollectionNotEmpty(events)) {
+    if (CollectionUtils.isNotEmpty(events)) {
       explores.addAll(events!);
     }
     if (_shouldLoadGames(categories)) {
       List<DateTime?> gamesTimeFrame = _getGamesTimeFrame(EventTimeFilter.upcoming);
       List<Explore>? games = await Sports().loadGames(startDate: gamesTimeFrame.first, endDate: gamesTimeFrame.last);
-      if (AppCollection.isCollectionNotEmpty(games)) {
+      if (CollectionUtils.isNotEmpty(games)) {
         explores.addAll(games!);
       }
     }
@@ -544,13 +544,13 @@ class ExplorePanelState extends State<ExplorePanel>
     EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
     List<Explore> explores = [];
     List<Explore>? events = await ExploreService().loadEvents(categories: categories, tags: tags, eventFilter: eventFilter);
-    if (AppCollection.isCollectionNotEmpty(events)) {
+    if (CollectionUtils.isNotEmpty(events)) {
       explores.addAll(events!);
     }
     if (_shouldLoadGames(categories)) {
       List<DateTime?> gamesTimeFrame = _getGamesTimeFrame(eventFilter);
       List<Explore>? games = await Sports().loadGames(startDate: gamesTimeFrame.first, endDate: gamesTimeFrame.last);
-      if (AppCollection.isCollectionNotEmpty(games)) {
+      if (CollectionUtils.isNotEmpty(games)) {
         explores.addAll(games!);
       }
     }
@@ -561,7 +561,7 @@ class ExplorePanelState extends State<ExplorePanel>
   Future<List<Explore>?> _loadDining(List<ExploreFilter>? selectedFilterList) async {
     String? workTime = _getSelectedWorkTime(selectedFilterList);
     PaymentType? paymentType = _getSelectedPaymentType(selectedFilterList);
-    bool onlyOpened = (AppCollection.isCollectionNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
+    bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
 
     _locationData = _userLocationEnabled() ? await LocationServices.instance.location : null;
     _diningSpecials = await DiningService().loadDiningSpecials();
@@ -573,7 +573,7 @@ class ExplorePanelState extends State<ExplorePanel>
   /// Load athletics games if "All Categories" or "Athletics" categories are selected
   ///
   bool _shouldLoadGames(Set<String?>? selectedCategories) {
-    return AppCollection.isCollectionEmpty(selectedCategories) || selectedCategories!.contains('Athletics');
+    return CollectionUtils.isEmpty(selectedCategories) || selectedCategories!.contains('Athletics');
   }
 
   ///
@@ -610,7 +610,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _sortExplores(List<Explore> explores) {
-    if (AppCollection.isCollectionEmpty(explores)) {
+    if (CollectionUtils.isEmpty(explores)) {
       return;
     }
     explores.sort((Explore first, Explore second) {
@@ -658,7 +658,7 @@ class ExplorePanelState extends State<ExplorePanel>
               if ((selectedCategoryIndex < filterCategoriesValues.length) &&
                   selectedCategoryIndex != 1) {
                 String? singleCategory = filterCategoriesValues[selectedCategoryIndex];
-                if (AppString.isStringNotEmpty(singleCategory)) {
+                if (StringUtils.isNotEmpty(singleCategory)) {
                   selectedCategories.add(singleCategory);
                 }
               }
@@ -1079,7 +1079,7 @@ class ExplorePanelState extends State<ExplorePanel>
     List<String> filterValues = _getFilterValuesByType(selectedFilter.type)!;
     List<String?>? filterSubLabels = (selectedFilter.type ==
         ExploreFilterType.event_time) ? _buildFilterEventDateSubLabels() : null;
-    bool hasSubLabels = AppCollection.isCollectionNotEmpty(filterSubLabels);
+    bool hasSubLabels = CollectionUtils.isNotEmpty(filterSubLabels);
     return Semantics(sortKey: _ExploreSortKey.filterLayout,
       child: Visibility(
         visible: _filterOptionsVisible,
@@ -1418,7 +1418,7 @@ class ExplorePanelState extends State<ExplorePanel>
     if (_nativeMapController!.mapId == mapID) {
       dynamic explore;
       if (exploreJson is Map) {
-        explore = _exploreFromMapExplore(Explore.fromJson(AppJson.mapValue(exploreJson)));
+        explore = _exploreFromMapExplore(Explore.fromJson(JsonUtils.mapValue(exploreJson)));
       }
       else if (exploreJson is List) {
         explore = _exploresFromMapExplores(Explore.listFromJson(exploreJson));

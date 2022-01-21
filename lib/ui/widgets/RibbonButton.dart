@@ -16,7 +16,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class RibbonButton extends StatelessWidget {
@@ -72,7 +73,7 @@ class RibbonButton extends StatelessWidget {
             padding: padding,
             child:  Row(
               children: <Widget>[
-                AppString.isStringNotEmpty(leftIcon) ? Padding(padding: EdgeInsets.only(right: 7), child: Image.asset(leftIcon!, excludeFromSemantics: true)) : Container(),
+                StringUtils.isNotEmpty(leftIcon) ? Padding(padding: EdgeInsets.only(right: 7), child: Image.asset(leftIcon!, excludeFromSemantics: true)) : Container(),
                 Expanded(child:
                   Text(label!,
                     style: style ?? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),

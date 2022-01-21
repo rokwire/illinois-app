@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class ExploreConvergeDetailItem extends StatelessWidget{
@@ -86,7 +86,7 @@ class ExploreConvergeDetailItem extends StatelessWidget{
   }
 
   bool hasConvergeUrl(){
-    return !AppString.isStringEmpty(eventConvergeUrl);
+    return !StringUtils.isEmpty(eventConvergeUrl);
   }
 
   bool hasConvergeScore(){

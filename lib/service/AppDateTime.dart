@@ -20,8 +20,8 @@ import 'package:illinois/service/Localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/Utils.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart' as timezone;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
@@ -88,12 +88,12 @@ class AppDateTime with Service {
   timezone.Location? get universityLocation => _universityLocation;
 
   DateTime? dateTimeFromString(String? dateTimeString, {String? format, bool isUtc = false}) {
-    if (AppString.isStringEmpty(dateTimeString)) {
+    if (StringUtils.isEmpty(dateTimeString)) {
       return null;
     }
     DateTime? dateTime;
     try {
-      dateTime = AppString.isStringNotEmpty(format) ?
+      dateTime = StringUtils.isNotEmpty(format) ?
         DateFormat(format).parse(dateTimeString!, isUtc) :
         DateTime.tryParse(dateTimeString!);
     }
@@ -140,7 +140,7 @@ class AppDateTime with Service {
     if (dateTime == null) {
       return null;
     }
-    if (AppString.isStringEmpty(format)) {
+    if (StringUtils.isEmpty(format)) {
       format = iso8601DateTimeFormat;
     }
     bool? useDeviceLocalTimeZone = Storage().useDeviceLocalTimeZone;
@@ -304,8 +304,8 @@ class AppDateTime with Service {
   }
 
   static DateTime? parseDateTime(String? dateTimeString, {String? format, bool isUtc = false}) {
-    if (AppString.isStringNotEmpty(dateTimeString)) {
-      if (AppString.isStringNotEmpty(format)) {
+    if (StringUtils.isNotEmpty(dateTimeString)) {
+      if (StringUtils.isNotEmpty(format)) {
         try { return DateFormat(format).parse(dateTimeString!, isUtc); }
         catch (e) { print(e.toString()); }
       }

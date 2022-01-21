@@ -5,15 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 /////////////////////////////////////////////
 // HomeSaferTestLocationsPanel
@@ -75,7 +74,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
     else if (_statusString != null) {
       contentWidget = _buildStatus(_statusString!);
     }
-    else if (AppCollection.isCollectionEmpty(_locations)) {
+    else if (CollectionUtils.isEmpty(_locations)) {
       contentWidget = _buildStatus(Localization().getStringEx("panel.home.safer.test_locations.no_locations.text", "No Locations found for selected provider and county")! );
     }
     else {
@@ -128,7 +127,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
     if ((contentUrl != null)) {
       String url = "$contentUrl/health_locations";
       Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
-      return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(AppJson.decode(response!.body)) : null;
+      return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(JsonUtils.decode(response!.body)) : null;
     }
     return null;
   }
@@ -140,10 +139,10 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
       // Ensure current location, if available
       if (_currentLocation == null) {
         LocationServicesStatus? status = await LocationServices.instance.status;
-        if (status == LocationServicesStatus.PermissionNotDetermined) {
+        if (status == LocationServicesStatus.permissionNotDetermined) {
           status = await LocationServices.instance.requestPermission();
         }
-        if (status == LocationServicesStatus.PermissionAllowed) {
+        if (status == LocationServicesStatus.permissionAllowed) {
           _currentLocation = await LocationServices.instance.location;
         }
       }
@@ -153,8 +152,8 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
         locations.sort((fistLocation, secondLocation) {
           if ((fistLocation.latitude != null) && (fistLocation.longitude != null)) {
             if ((secondLocation.latitude != null) && (secondLocation.longitude != null)) {
-              double firstDistance = AppLocation.distance(fistLocation.latitude!, fistLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
-              double secondDistance = AppLocation.distance(secondLocation.latitude!, secondLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
+              double firstDistance = LocationUtils.distance(fistLocation.latitude!, fistLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
+              double secondDistance = LocationUtils.distance(secondLocation.latitude!, secondLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
               return firstDistance.compareTo(secondDistance);
             }
             else {
@@ -477,7 +476,7 @@ class _TestLocation extends StatelessWidget {
   /* Hide wait times
   bool get _isLocationOpen{
     HealthLocationDayOfOperation? todayPeriod;
-    if(AppCollection.isCollectionNotEmpty(testLocation?.daysOfOperation)) {
+    if(CollectionUtils.isNotEmpty(testLocation?.daysOfOperation)) {
       todayPeriod = _determineTodayPeriod(
           LinkedHashMap<int, HealthLocationDayOfOperation>.fromIterable(
               testLocation!.daysOfOperation!, key: (period) => period.weekDay ?? 0));
@@ -523,8 +522,8 @@ class HealthServiceLocation {
       zip: json["zip"],
       url: json["url"],
       notes: json["notes"],
-      latitude: AppJson.doubleValue(json["latitude"]),
-      longitude: AppJson.doubleValue(json["longitude"]),
+      latitude: JsonUtils.doubleValue(json["latitude"]),
+      longitude: JsonUtils.doubleValue(json["longitude"]),
       waitTimeColor: HealthServiceLocation.waitTimeColorFromString(json['wait_time_color']),
       daysOfOperation: HealthLocationDayOfOperation.listFromJson(json['days_of_operation']),
     ) : null;
@@ -572,7 +571,7 @@ class HealthServiceLocation {
     if (json != null) {
       values = <HealthServiceLocation>[];
       for (dynamic entry in json) {
-        AppList.add(values, HealthServiceLocation.fromJson(AppJson.mapValue(entry)));
+        ListUtils.add(values, HealthServiceLocation.fromJson(JsonUtils.mapValue(entry)));
       }
     }
     return values;
@@ -645,7 +644,7 @@ class HealthLocationDayOfOperation {
   final int? closeMinutes;
 
   HealthLocationDayOfOperation({this.name, this.openTime, this.closeTime}) :
-    weekDay = (name != null) ? AppDateTime.getWeekDayFromString(name.toLowerCase()) : null,
+    weekDay = (name != null) ? DateTimeUtils.getWeekDayFromString(name.toLowerCase()) : null,
     openMinutes = _timeMinutes(openTime),
     closeMinutes = _timeMinutes(closeTime);
 
@@ -685,7 +684,7 @@ class HealthLocationDayOfOperation {
     if (json != null) {
       values = <HealthLocationDayOfOperation>[];
       for (dynamic entry in json) {
-        AppList.add(values, HealthLocationDayOfOperation.fromJson(AppJson.mapValue(entry)));
+        ListUtils.add(values, HealthLocationDayOfOperation.fromJson(JsonUtils.mapValue(entry)));
       }
     }
     return values;
@@ -694,7 +693,7 @@ class HealthLocationDayOfOperation {
   // Helper function for conversion work time string to number of minutes
 
   static int? _timeMinutes(String? time, {String format = 'hh:mma'}) {
-    DateTime? dateTime = (time != null) ? AppDateTime.parseDateTime(time.toUpperCase(), format: format) : null;
+    DateTime? dateTime = (time != null) ? DateTimeUtils.parseDateTime(time.toUpperCase(), format: format) : null;
     TimeOfDay? timeOfDay = (dateTime != null) ? TimeOfDay.fromDateTime(dateTime) : null;
     return _timeOfDayMinutes(timeOfDay);
   }

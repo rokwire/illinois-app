@@ -226,7 +226,7 @@ packages:
     source: hosted
     version: "2.0.1"
   encrypt:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: encrypt
       url: "https://pub.dartlang.org"
@@ -383,7 +383,7 @@ packages:
     source: hosted
     version: "2.5.1"
   flutter_native_timezone:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: flutter_native_timezone
       url: "https://pub.dartlang.org"
@@ -428,7 +428,7 @@ packages:
     source: hosted
     version: "0.8.4"
   fluttertoast:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: fluttertoast
       url: "https://pub.dartlang.org"
@@ -491,7 +491,7 @@ packages:
     source: hosted
     version: "0.6.2+1"
   gallery_saver:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: gallery_saver
       url: "https://pub.dartlang.org"
@@ -986,7 +986,7 @@ packages:
     source: hosted
     version: "0.4.3"
   timezone:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: timezone
       url: "https://pub.dartlang.org"

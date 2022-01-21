@@ -15,7 +15,7 @@
  */
 
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 //////////////////////////////
 /// Location
@@ -180,7 +180,7 @@ class LatLng {
     if (json != null) {
       values = [];
       for (dynamic entry in json) {
-        AppList.add(values, LatLng.fromJson(AppJson.mapValue(entry)));
+        ListUtils.add(values, LatLng.fromJson(JsonUtils.mapValue(entry)));
       }
     }
     return values;

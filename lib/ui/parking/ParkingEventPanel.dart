@@ -25,7 +25,7 @@ import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class ParkingEventPanel extends StatefulWidget{
@@ -131,7 +131,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
 
   Widget _buildLots(){
     List<Widget> widgets = [];
-    if(AppCollection.isCollectionNotEmpty(_eventLots)){
+    if(CollectionUtils.isNotEmpty(_eventLots)){
       for(ParkingLot inventory in _eventLots! ){
         if(inventory.totalSpots != null && inventory.totalSpots! > 0){
           if(widgets.isNotEmpty){
@@ -141,7 +141,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
         }
       }
     }
-    if(AppCollection.isCollectionEmpty(widgets)){
+    if(CollectionUtils.isEmpty(widgets)){
       widgets.add(Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(Localization().getStringEx("panel.parking_lots.label.empty","No parking lots available for this event")!,
@@ -230,7 +230,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
                   ),
                 ),
                 Text(
-                  "${AppString.getDefaultEmptyString(widget.inventory!.lotAddress)}",
+                  "${StringUtils.ensureNotEmpty(widget.inventory!.lotAddress)}",
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.medium,
                     fontSize: 16,

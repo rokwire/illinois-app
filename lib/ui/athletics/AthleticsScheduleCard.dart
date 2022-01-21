@@ -27,7 +27,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class AthleticsScheduleCard extends StatefulWidget {
@@ -142,7 +142,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   Widget _cardSubTitle() {
-    return AppString.isStringNotEmpty(widget._game!.shortDescription)
+    return StringUtils.isNotEmpty(widget._game!.shortDescription)
         ? Padding(
             padding: EdgeInsets.only(left: 24, right: 24, top: 8),
             child: Row(
@@ -237,10 +237,10 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     if (result == null) {
       return null;
     }
-    String formattedResult = AppString.getDefaultEmptyString(result.status);
-    if (AppString.isStringNotEmpty(result.teamScore)) {
+    String formattedResult = StringUtils.ensureNotEmpty(result.status);
+    if (StringUtils.isNotEmpty(result.teamScore)) {
       formattedResult += ' ' + result.teamScore!;
-      if (AppString.isStringNotEmpty(result.opponentScore)) {
+      if (StringUtils.isNotEmpty(result.opponentScore)) {
         formattedResult += '-' + result.opponentScore!;
       }
     }
@@ -304,7 +304,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     bool homeGame = widget._game!.isHomeGame;
     SportDefinition? sportDefinition = Sports().getSportByShortName(widget._game?.sport?.shortName);
     bool ticketedSport = sportDefinition?.ticketed ?? false;
-    bool hasTicketsUrl = AppString.isStringNotEmpty(widget._game?.links?.tickets);
+    bool hasTicketsUrl = StringUtils.isNotEmpty(widget._game?.links?.tickets);
     return homeGame && ticketedSport && hasTicketsUrl;
   }
 }

@@ -24,7 +24,7 @@ import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class NativeCommunicator with Service implements NotificationsListener {
   
@@ -39,7 +39,7 @@ class NativeCommunicator with Service implements NotificationsListener {
   static const String notifyGeoFenceRegionsChanged   = "edu.illinois.rokwire.nativecommunicator.geofence.regions.changed";
   static const String notifyGeoFenceBeaconsChanged   = "edu.illinois.rokwire.nativecommunicator.geofence.beacons.changed";
   
-  final MethodChannel _platformChannel = const MethodChannel("edu.illinois.rokwire/native_call");
+  final MethodChannel _platformChannel = const MethodChannel('edu.illinois.rokwire/native_call');
 
   // Singletone
   static final NativeCommunicator _communicator = new NativeCommunicator._internal();
@@ -261,9 +261,9 @@ class NativeCommunicator with Service implements NotificationsListener {
   Future<List<DeviceOrientation>?> enabledOrientations(List<DeviceOrientation> orientationsList) async {
     List<DeviceOrientation>? result;
     try {
-      dynamic inputStringsList = AppDeviceOrientation.toStrList(orientationsList);
+      dynamic inputStringsList = _deviceOrientationListToStringList(orientationsList);
       dynamic outputStringsList = await _platformChannel.invokeMethod('enabledOrientations', { "orientations" : inputStringsList });
-      result = AppDeviceOrientation.fromStrList(outputStringsList);
+      result = _deviceOrientationListFromStringList(outputStringsList);
     } on PlatformException catch (e) {
       print(e.message);
     }
@@ -284,16 +284,6 @@ class NativeCommunicator with Service implements NotificationsListener {
     AuthorizationStatus? result;
     try {
       result = _authorizationStatusFromString(await _platformChannel.invokeMethod('notifications_authorization', {"method": method }));
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-    return result;
-  }
-
-  Future<String?> queryLocationServicesPermission(String method) async {
-    String? result;
-    try {
-      result = await _platformChannel.invokeMethod('location_services_permission', {"method": method });
     } on PlatformException catch (e) {
       print(e.message);
     }
@@ -414,7 +404,7 @@ class NativeCommunicator with Service implements NotificationsListener {
   }
 
   void _notifyMapSelectExplore(dynamic arguments) {
-    dynamic jsonData = (arguments is String) ? AppJson.decode(arguments) : null;
+    dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
     Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
     int? mapId = (params is Map) ? params!['mapId'] : null;
     dynamic exploreJson = (params is Map) ? params!['explore'] : null;
@@ -426,7 +416,7 @@ class NativeCommunicator with Service implements NotificationsListener {
   }
   
   void _notifyMapClearExplore(dynamic arguments) {
-    dynamic jsonData = (arguments is String) ? AppJson.decode(arguments) : null;
+    dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
     Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
     int? mapId = (params is Map) ? params!['mapId'] : null;
 
@@ -436,13 +426,13 @@ class NativeCommunicator with Service implements NotificationsListener {
   }
 
   void _notifyMapRouteStart(dynamic arguments) {
-    dynamic jsonData = (arguments is String) ? AppJson.decode(arguments) : null;
+    dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
     Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
     NotificationService().notify(notifyMapRouteStart, params);
   }
 
   void _notifyMapRouteFinish(dynamic arguments) {
-    dynamic jsonData = (arguments is String) ? AppJson.decode(arguments) : null;
+    dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
     Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
     NotificationService().notify(notifyMapRouteFinish, params);
   }
@@ -487,4 +477,55 @@ AuthorizationStatus? _authorizationStatusFromString(String? value){
   else {
     return null;
   }
+}
+
+DeviceOrientation? _deviceOrientationFromString(String value) {
+  switch (value) {
+    case 'portraitUp': return DeviceOrientation.portraitUp;
+    case 'portraitDown': return DeviceOrientation.portraitDown;
+    case 'landscapeLeft': return DeviceOrientation.landscapeLeft;
+    case 'landscapeRight': return DeviceOrientation.landscapeRight;
+  }
+  return null;
+}
+
+String? _deviceOrientationToString(DeviceOrientation value) {
+    switch(value) {
+      case DeviceOrientation.portraitUp: return "portraitUp";
+      case DeviceOrientation.portraitDown: return "portraitDown";
+      case DeviceOrientation.landscapeLeft: return "landscapeLeft";
+      case DeviceOrientation.landscapeRight: return "landscapeRight";
+    }
+}
+
+List<DeviceOrientation>? _deviceOrientationListFromStringList(List<dynamic>? stringsList) {
+  
+  List<DeviceOrientation>? orientationsList;
+  if (stringsList != null) {
+    orientationsList = [];
+    for (dynamic string in stringsList) {
+      if (string is String) {
+        DeviceOrientation? orientation = _deviceOrientationFromString(string);
+        if (orientation != null) {
+          orientationsList.add(orientation);
+        }
+      }
+    }
+  }
+  return orientationsList;
+}
+
+List<String>? _deviceOrientationListToStringList(List<DeviceOrientation>? orientationsList) {
+  
+  List<String>? stringsList;
+  if (orientationsList != null) {
+    stringsList = [];
+    for (DeviceOrientation orientation in orientationsList) {
+      String? orientationString = _deviceOrientationToString(orientation);
+      if (orientationString != null) {
+        stringsList.add(orientationString);
+      }
+    }
+  }
+  return stringsList;
 }

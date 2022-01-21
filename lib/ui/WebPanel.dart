@@ -25,7 +25,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -139,7 +139,7 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
   FutureOr<FlutterWebView.NavigationDecision> _processNavigation(FlutterWebView.NavigationRequest navigation) {
     String url = navigation.url;
-    if (AppUrl.launchInternal(url)) {
+    if (UrlUtils.launchInternal(url)) {
       return FlutterWebView.NavigationDecision.navigate;
     }
     else {
@@ -206,7 +206,7 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
   }
 
   void _onTapStatusLink(String? url) {
-    if (AppString.isStringNotEmpty(url)) {
+    if (StringUtils.isNotEmpty(url)) {
       launch(url!);
     }
   }

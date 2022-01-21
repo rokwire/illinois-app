@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -18,9 +18,9 @@ class TweetsPage {
 
   static TweetsPage? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetsPage(
-      tweets: Tweet.listFromJson(AppJson.listValue(json['data'])),
-      includes: TweetsIncludes.fromJson(AppJson.mapValue(json['includes'])),
-      meta: TweetsMeta.fromJson(AppJson.mapValue(json['meta']))
+      tweets: Tweet.listFromJson(JsonUtils.listValue(json['data'])),
+      includes: TweetsIncludes.fromJson(JsonUtils.mapValue(json['includes'])),
+      meta: TweetsMeta.fromJson(JsonUtils.mapValue(json['meta']))
     ) : null;
   }
 
@@ -74,27 +74,27 @@ class Tweet {
  
   static Tweet? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Tweet(
-      id: AppJson.stringValue(json['id']),
-      createdAtUtc: AppDateTime().dateTimeFromString(AppJson.stringValue(json['created_at']), isUtc: true),
-      text: AppJson.stringValue(json['text']),
-      lang: AppJson.stringValue(json['lang']),
-      conversationId: AppJson.stringValue(json['conversation_id']),
-      authorId: AppJson.stringValue(json['author_id']),
-      source: AppJson.stringValue(json['source']),
-      replySettings: AppJson.stringValue(json['reply_settings']),
-      possiblySensitive: AppJson.boolValue(json['possibly_sensitive']),
-      entities: TweetEntities.fromJson(AppJson.mapValue(json['entities'])),
-      publicMetrics: TweetPublicMetrics.fromJson(AppJson.mapValue(json['public_metrics'])),
-      contextAnotations: TweetContextAnotations.fromJson(AppJson.mapValue(json['context_annotations'])),
-      attachments: TweetAttachments.fromJson(AppJson.mapValue(json['attachments'])),
-      referencedTweets: TweetRef.listFromJson(AppJson.listValue(json['referenced_tweets'])),
+      id: JsonUtils.stringValue(json['id']),
+      createdAtUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+      text: JsonUtils.stringValue(json['text']),
+      lang: JsonUtils.stringValue(json['lang']),
+      conversationId: JsonUtils.stringValue(json['conversation_id']),
+      authorId: JsonUtils.stringValue(json['author_id']),
+      source: JsonUtils.stringValue(json['source']),
+      replySettings: JsonUtils.stringValue(json['reply_settings']),
+      possiblySensitive: JsonUtils.boolValue(json['possibly_sensitive']),
+      entities: TweetEntities.fromJson(JsonUtils.mapValue(json['entities'])),
+      publicMetrics: TweetPublicMetrics.fromJson(JsonUtils.mapValue(json['public_metrics'])),
+      contextAnotations: TweetContextAnotations.fromJson(JsonUtils.mapValue(json['context_annotations'])),
+      attachments: TweetAttachments.fromJson(JsonUtils.mapValue(json['attachments'])),
+      referencedTweets: TweetRef.listFromJson(JsonUtils.listValue(json['referenced_tweets'])),
     ) : null;
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'created_at': AppDateTime.utcDateTimeToString(createdAtUtc),
+      'created_at': DateTimeUtils.utcDateTimeToString(createdAtUtc),
       'text': text,
       'lang': lang,
       'conversation_id': conversationId,
@@ -146,10 +146,10 @@ class Tweet {
   TwitterUser? get author => _author;
 
   TwitterMedia? get media {
-    if (AppCollection.isCollectionNotEmpty(attachments?.media)) {
+    if (CollectionUtils.isNotEmpty(attachments?.media)) {
       return attachments?.media?.first;
     }
-    else if (AppCollection.isCollectionNotEmpty(referencedTweets)) {
+    else if (CollectionUtils.isNotEmpty(referencedTweets)) {
       return TweetRef.mediaFromList(referencedTweets);
     }
     return null;
@@ -228,7 +228,7 @@ class Tweet {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, Tweet.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, Tweet.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -273,10 +273,10 @@ class TweetEntities {
 
   static TweetEntities? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetEntities(
-        urls: TweetEntityUrl.listFromJson(AppJson.listValue(json['urls'])),
-        annotations: TweetEntityAnnotation.listFromJson(AppJson.listValue(json['annotations'])),
-        hashtags: TweetEntityHashtag.listFromJson(AppJson.listValue(json['hashtags'])),
-        mentions: TweetEntityMention.listFromJson(AppJson.listValue(json['mentions'])),
+        urls: TweetEntityUrl.listFromJson(JsonUtils.listValue(json['urls'])),
+        annotations: TweetEntityAnnotation.listFromJson(JsonUtils.listValue(json['annotations'])),
+        hashtags: TweetEntityHashtag.listFromJson(JsonUtils.listValue(json['hashtags'])),
+        mentions: TweetEntityMention.listFromJson(JsonUtils.listValue(json['mentions'])),
     ) : null;
   }
 
@@ -359,15 +359,15 @@ class TweetEntityUrl with TweetEntity {
 
   static TweetEntityUrl? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetEntityUrl(
-      start: AppJson.intValue(json['start']),
-      end: AppJson.intValue(json['end']),
-      url: AppJson.stringValue(json['url']),
-      expandedUrl: AppJson.stringValue(json['expanded_url']),
-      displayUrl: AppJson.stringValue(json['display_url']),
-      status: AppJson.intValue(json['status']),
-      title: AppJson.stringValue(json['title']),
-      description: AppJson.stringValue(json['description']),
-      unwoundUrl: AppJson.stringValue(json['unwound_url']),
+      start: JsonUtils.intValue(json['start']),
+      end: JsonUtils.intValue(json['end']),
+      url: JsonUtils.stringValue(json['url']),
+      expandedUrl: JsonUtils.stringValue(json['expanded_url']),
+      displayUrl: JsonUtils.stringValue(json['display_url']),
+      status: JsonUtils.intValue(json['status']),
+      title: JsonUtils.stringValue(json['title']),
+      description: JsonUtils.stringValue(json['description']),
+      unwoundUrl: JsonUtils.stringValue(json['unwound_url']),
     ) : null;
   }
 
@@ -437,7 +437,7 @@ class TweetEntityUrl with TweetEntity {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, TweetEntityUrl.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, TweetEntityUrl.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -469,11 +469,11 @@ class TweetEntityAnnotation with TweetEntity {
 
   static TweetEntityAnnotation? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetEntityAnnotation(
-      start: AppJson.intValue(json['start']),
-      end: AppJson.intValue(json['end']),
-      probability: AppJson.doubleValue(json['probability']),
-      type: AppJson.stringValue(json['type']),
-      normalizedText: AppJson.stringValue(json['normalized_text']),
+      start: JsonUtils.intValue(json['start']),
+      end: JsonUtils.intValue(json['end']),
+      probability: JsonUtils.doubleValue(json['probability']),
+      type: JsonUtils.stringValue(json['type']),
+      normalizedText: JsonUtils.stringValue(json['normalized_text']),
     ) : null;
   }
 
@@ -507,7 +507,7 @@ class TweetEntityAnnotation with TweetEntity {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, TweetEntityAnnotation.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, TweetEntityAnnotation.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -537,9 +537,9 @@ class TweetEntityHashtag with TweetEntity {
 
   static TweetEntityHashtag? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetEntityHashtag(
-      start: AppJson.intValue(json['start']),
-      end: AppJson.intValue(json['end']),
-      tag: AppJson.stringValue(json['tag']),
+      start: JsonUtils.intValue(json['start']),
+      end: JsonUtils.intValue(json['end']),
+      tag: JsonUtils.stringValue(json['tag']),
     ) : null;
   }
 
@@ -571,7 +571,7 @@ class TweetEntityHashtag with TweetEntity {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, TweetEntityHashtag.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, TweetEntityHashtag.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -602,10 +602,10 @@ class TweetEntityMention with TweetEntity {
 
   static TweetEntityMention? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetEntityMention(
-      start: AppJson.intValue(json['start']),
-      end: AppJson.intValue(json['end']),
-      userName: AppJson.stringValue(json['username']),
-      id: AppJson.stringValue(json['id']),
+      start: JsonUtils.intValue(json['start']),
+      end: JsonUtils.intValue(json['end']),
+      userName: JsonUtils.stringValue(json['username']),
+      id: JsonUtils.stringValue(json['id']),
     ) : null;
   }
 
@@ -640,7 +640,7 @@ class TweetEntityMention with TweetEntity {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, TweetEntityMention.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, TweetEntityMention.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -670,8 +670,8 @@ class TweetRef {
 
   static TweetRef? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetRef(
-      id: AppJson.stringValue(json['id']),
-      type: AppJson.stringValue(json['type']),
+      id: JsonUtils.stringValue(json['id']),
+      type: JsonUtils.stringValue(json['type']),
     ) : null;
   }
 
@@ -722,7 +722,7 @@ class TweetRef {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, TweetRef.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, TweetRef.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -751,7 +751,7 @@ class TweetAttachments {
 
   static TweetAttachments? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetAttachments(
-      mediaKeys: AppJson.listStringsValue(json['media_keys']),
+      mediaKeys: JsonUtils.listStringsValue(json['media_keys']),
     ) : null;
   }
 
@@ -787,10 +787,10 @@ class TweetPublicMetrics {
 
   static TweetPublicMetrics? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetPublicMetrics(
-      retweetCount: AppJson.intValue(json['retweet_count']),
-      replyCount: AppJson.intValue(json['reply_count']),
-      likeCount: AppJson.intValue(json['like_count']),
-      quoteCount: AppJson.intValue(json['quote_count']),
+      retweetCount: JsonUtils.intValue(json['retweet_count']),
+      replyCount: JsonUtils.intValue(json['reply_count']),
+      likeCount: JsonUtils.intValue(json['like_count']),
+      quoteCount: JsonUtils.intValue(json['quote_count']),
     ) : null;
   }
 
@@ -829,9 +829,9 @@ class TweetContextAnotation {
 
   static TweetContextAnotation? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetContextAnotation(
-      id: AppJson.stringValue(json['id']),
-      name: AppJson.stringValue(json['name']),
-      description: AppJson.stringValue(json['description']),
+      id: JsonUtils.stringValue(json['id']),
+      name: JsonUtils.stringValue(json['name']),
+      description: JsonUtils.stringValue(json['description']),
     ) : null;
   }
 
@@ -866,8 +866,8 @@ class TweetContextAnotations {
 
   static TweetContextAnotations? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetContextAnotations(
-      domain: TweetContextAnotation.fromJson(AppJson.mapValue(json['domain'])),
-      entity: TweetContextAnotation.fromJson(AppJson.mapValue(json['entity'])),
+      domain: TweetContextAnotation.fromJson(JsonUtils.mapValue(json['domain'])),
+      entity: TweetContextAnotation.fromJson(JsonUtils.mapValue(json['entity'])),
     ) : null;
   }
 
@@ -900,9 +900,9 @@ class TweetsIncludes {
 
   static TweetsIncludes? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetsIncludes(
-      media: TwitterMedia.listFromJson(AppJson.listValue(json['media'])),
-      users: TwitterUser.listFromJson(AppJson.listValue(json['users'])),
-      tweets: Tweet.listFromJson(AppJson.listValue(json['tweets'])),
+      media: TwitterMedia.listFromJson(JsonUtils.listValue(json['media'])),
+      users: TwitterUser.listFromJson(JsonUtils.listValue(json['users'])),
+      tweets: Tweet.listFromJson(JsonUtils.listValue(json['tweets'])),
     ) : null;
   }
 
@@ -941,12 +941,12 @@ class TwitterMedia {
 
   static TwitterMedia? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TwitterMedia(
-      key: AppJson.stringValue(json['media_key']),
-      type: AppJson.stringValue(json['type']),
-      url: AppJson.stringValue(json['url']),
-      altText: AppJson.stringValue(json['alt_text']),
-      width: AppJson.intValue(json['width']),
-      height: AppJson.intValue(json['height']),
+      key: JsonUtils.stringValue(json['media_key']),
+      type: JsonUtils.stringValue(json['type']),
+      url: JsonUtils.stringValue(json['url']),
+      altText: JsonUtils.stringValue(json['alt_text']),
+      width: JsonUtils.intValue(json['width']),
+      height: JsonUtils.intValue(json['height']),
     ) : null;
   }
 
@@ -983,7 +983,7 @@ class TwitterMedia {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, TwitterMedia.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, TwitterMedia.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -1016,7 +1016,7 @@ class TwitterMedia {
     if ((contentList != null) && (keys != null)) {
       result = <TwitterMedia>[];
       for (String key in keys) {
-        AppList.add(result, entryInList(contentList, key: key));
+        ListUtils.add(result, entryInList(contentList, key: key));
       }
     }
     return result;
@@ -1046,21 +1046,21 @@ class TwitterUser {
 
   static TwitterUser? fromJson(Map<String, dynamic>? json) {
     if (json != null) {
-      Map<String, dynamic>? entities = AppJson.mapValue(json['entities']);
-      Map<String, dynamic>? entitiesUrl = (entities != null) ? AppJson.mapValue(entities['url']) : null;
+      Map<String, dynamic>? entities = JsonUtils.mapValue(json['entities']);
+      Map<String, dynamic>? entitiesUrl = (entities != null) ? JsonUtils.mapValue(entities['url']) : null;
       return TwitterUser(
-        id: AppJson.stringValue(json['id']),
-        createdAtUtc: AppDateTime().dateTimeFromString(AppJson.stringValue(json['created_at']), isUtc: true),
-        name: AppJson.stringValue(json['name']),
-        userName: AppJson.stringValue(json['username']),
-        description: AppJson.stringValue(json['description']),
-        url: AppJson.stringValue(json['url']),
-        profileImageUrl: AppJson.stringValue(json['profile_image_url']),
-        location: AppJson.stringValue(json['location']),
-        protected: AppJson.boolValue(json['protected']),
-        verified: AppJson.boolValue(json['verified']),
-        publicMetrics: TweeterUserPublicMetrics.fromJson(AppJson.mapValue(json['public_metrics'])),
-        entetityUrls: (entitiesUrl != null) ? TweetEntityUrl.listFromJson(AppJson.listValue(entitiesUrl['urls'])) : null,
+        id: JsonUtils.stringValue(json['id']),
+        createdAtUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+        name: JsonUtils.stringValue(json['name']),
+        userName: JsonUtils.stringValue(json['username']),
+        description: JsonUtils.stringValue(json['description']),
+        url: JsonUtils.stringValue(json['url']),
+        profileImageUrl: JsonUtils.stringValue(json['profile_image_url']),
+        location: JsonUtils.stringValue(json['location']),
+        protected: JsonUtils.boolValue(json['protected']),
+        verified: JsonUtils.boolValue(json['verified']),
+        publicMetrics: TweeterUserPublicMetrics.fromJson(JsonUtils.mapValue(json['public_metrics'])),
+        entetityUrls: (entitiesUrl != null) ? TweetEntityUrl.listFromJson(JsonUtils.listValue(entitiesUrl['urls'])) : null,
       );
     }
     return null;
@@ -1069,7 +1069,7 @@ class TwitterUser {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'created_at': AppDateTime.utcDateTimeToString(createdAtUtc),
+      'created_at': DateTimeUtils.utcDateTimeToString(createdAtUtc),
       'name': name,
       'username': userName,
       'description': description,
@@ -1125,7 +1125,7 @@ class TwitterUser {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, TwitterUser.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, TwitterUser.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -1166,10 +1166,10 @@ class TweeterUserPublicMetrics {
 
   static TweeterUserPublicMetrics? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweeterUserPublicMetrics(
-      followersCount: AppJson.intValue(json['followers_count']),
-      followingCount: AppJson.intValue(json['following_count']),
-      tweetCount: AppJson.intValue(json['tweet_count']),
-      listedCount: AppJson.intValue(json['listed_count']),
+      followersCount: JsonUtils.intValue(json['followers_count']),
+      followingCount: JsonUtils.intValue(json['following_count']),
+      tweetCount: JsonUtils.intValue(json['tweet_count']),
+      listedCount: JsonUtils.intValue(json['listed_count']),
     ) : null;
   }
 
@@ -1209,11 +1209,11 @@ class TweetsMeta {
 
   static TweetsMeta? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetsMeta(
-      oldestId: AppJson.stringValue(json['oldest_id']),
-      newestId: AppJson.stringValue(json['newest_id']),
-      nextToken: AppJson.stringValue(json['next_token']),
-      previousToken: AppJson.stringValue(json['previous_token']),
-      resultCount: AppJson.intValue(json['result_count']),
+      oldestId: JsonUtils.stringValue(json['oldest_id']),
+      newestId: JsonUtils.stringValue(json['newest_id']),
+      nextToken: JsonUtils.stringValue(json['next_token']),
+      previousToken: JsonUtils.stringValue(json['previous_token']),
+      resultCount: JsonUtils.intValue(json['result_count']),
     ) : null;
   }
 

@@ -27,14 +27,14 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/utils/Crypt.dart';
 import 'package:package_info/package_info.dart';
 import 'package:collection/collection.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/utils/crypt.dart';
 
 class Config with Service implements NotificationsListener {
 
@@ -159,7 +159,7 @@ class Config with Service implements NotificationsListener {
     try {
       String configsStrEnc = await rootBundle.loadString('assets/$_configsAsset');
       String? configsStr = AESCrypt.decrypt(configsStrEnc, key: encryptionKey, iv: encryptionIV);
-      Map<String, dynamic>? configs = AppJson.decode(configsStr);
+      Map<String, dynamic>? configs = JsonUtils.decode(configsStr);
       String? configTarget = configEnvToString(_configEnvironment);
       return (configs != null) ? configs[configTarget] : null;
     } catch (e) {
@@ -179,7 +179,7 @@ class Config with Service implements NotificationsListener {
   }
 
   Map<String, dynamic>? _configFromJsonString(String? configJsonString) {
-    dynamic configJson =  AppJson.decode(configJsonString);
+    dynamic configJson =  JsonUtils.decode(configJsonString);
     List<dynamic>? jsonList = (configJson is List) ? configJson : null;
     if (jsonList != null) {
       
@@ -202,13 +202,13 @@ class Config with Service implements NotificationsListener {
   void _decryptSecretKeys(Map<String, dynamic>? config) {
     dynamic secretKeys = (config != null) ? config['secretKeys'] : null;
     if (secretKeys is String) {
-      config!['secretKeys'] = AppJson.decodeMap(AESCrypt.decrypt(secretKeys, key: encryptionKey, iv: encryptionIV));
+      config!['secretKeys'] = JsonUtils.decodeMap(AESCrypt.decrypt(secretKeys, key: encryptionKey, iv: encryptionIV));
     }
   }
 
   Future<Map<String, dynamic>?> _loadEncryptionKeysFromAssets() async {
     try {
-      return AppJson.decode(await rootBundle.loadString('assets/$_configKeysAsset'));
+      return JsonUtils.decode(await rootBundle.loadString('assets/$_configKeysAsset'));
     } catch (e) {
       print(e.toString());
     }
@@ -447,6 +447,12 @@ class Config with Service implements NotificationsListener {
   String? get eventsOrConvergeUrl    {
     String? convergeURL = FlexUI().hasFeature('converge') ? convergeUrl : null;
     return ((convergeURL != null) && convergeURL.isNotEmpty) ? convergeURL : eventsUrl;
+  }
+
+  String? deepLinkRedirectUrl(String? deepLink) {
+    Uri? assetsUri = StringUtils.isNotEmpty(assetsUrl) ? Uri.tryParse(assetsUrl!) : null;
+    String? redirectUrl = (assetsUri != null) ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
+    return StringUtils.isNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
   }
 
   int get refreshTimeout {

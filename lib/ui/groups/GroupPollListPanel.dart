@@ -25,7 +25,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupPollListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group group;
@@ -142,7 +142,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
               textAlign: TextAlign.center,
               style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24)),
           Container(height: 16),
-          Text(AppString.getDefaultEmptyString(_pollsError),
+          Text(StringUtils.ensureNotEmpty(_pollsError),
               textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16))
         ]));
   }
@@ -150,7 +150,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
   void _loadPolls() {
     if (((_polls == null) || (_pollsCursor != null)) && !_pollsLoading) {
       String? groupId = widget.group.id;
-      if (AppString.isStringNotEmpty(groupId)) {
+      if (StringUtils.isNotEmpty(groupId)) {
         _setGroupPollsLoading(true);
         Polls().getGroupPolls([groupId!], cursor: _pollsCursor)!.then((PollsChunk? result) {
           if (result != null) {
@@ -182,7 +182,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
   }
 
   void _updatePoll(Poll poll) {
-    if (AppCollection.isCollectionNotEmpty(_polls)) {
+    if (CollectionUtils.isNotEmpty(_polls)) {
       for (int index = 0; index < _polls!.length; index++) {
         if (_polls![index].pollId == poll.pollId) {
           _polls![index] = poll;

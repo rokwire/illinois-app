@@ -23,7 +23,7 @@ import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/SearchPanel.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class HeaderBar extends AppBar {
@@ -109,7 +109,7 @@ class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWi
   @override
   Widget build(BuildContext context) {
     List<Widget> actionsList = <Widget>[];
-    if (AppCollection.isCollectionNotEmpty(actions)) {
+    if (CollectionUtils.isNotEmpty(actions)) {
       actionsList.addAll(actions!);
     }
     if (searchVisible) {
@@ -192,7 +192,7 @@ class SliverToutHeaderBar extends SliverAppBar {
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: <Widget>[
-                AppString.isStringNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl!, fit: BoxFit.cover, headers: Network.authApiKeyHeader, excludeFromSemantics: true)) : Container(),
+                StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl!, fit: BoxFit.cover, headers: Network.authApiKeyHeader, excludeFromSemantics: true)) : Container(),
                 CustomPaint(
                   painter: TrianglePainter(painterColor: rightTriangleColor ?? Styles().colors!.fillColorSecondaryTransparent05, left: false),
                   child: Container(

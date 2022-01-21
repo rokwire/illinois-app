@@ -21,40 +21,48 @@ import 'dart:typed_data';
 import "package:asn1lib/asn1lib.dart";
 import 'package:flutter/foundation.dart';
 import "package:pointycastle/export.dart";
-import 'package:encrypt/encrypt.dart' as Encrypt;
+import 'package:encrypt/encrypt.dart' as encrypt_package;
 
 class AESCrypt {
 
   static const int kCCBlockSizeAES128 = 16;
 
-  static String? encrypt(String plainText, {String? key, String? iv, Encrypt.AESMode mode = Encrypt.AESMode.cbc, String padding = 'PKCS7' }) {
+  static String? encrypt(String plainText, {String? key, String? iv, encrypt_package.AESMode mode = encrypt_package.AESMode.cbc, String padding = 'PKCS7' }) {
     if (key != null) {
       try {
-        final encrypterKey = Encrypt.Key.fromBase64(key);
-        final encrypterIV = (iv != null) ? Encrypt.IV.fromBase64(iv) : Encrypt.IV.fromLength(base64Decode(key).length);
-        final encrypter = Encrypt.Encrypter(Encrypt.AES(encrypterKey, mode: mode, padding: padding));
+        final encrypterKey = encrypt_package.Key.fromBase64(key);
+        final encrypterIV = (iv != null) ? encrypt_package.IV.fromBase64(iv) : encrypt_package.IV.fromLength(base64Decode(key).length);
+        final encrypter = encrypt_package.Encrypter(encrypt_package.AES(encrypterKey, mode: mode, padding: padding));
         return encrypter.encrypt(plainText, iv: encrypterIV).base64;
       }
-      catch(e) { print(e.toString()); }
+      catch(e) {
+        if (kDebugMode) {
+          print(e.toString());
+        }
+      }
     }
     return null;
   }
 
-  static String? decrypt(String cipherBase64, { String? key, String? iv, Encrypt.AESMode mode = Encrypt.AESMode.cbc, String padding = 'PKCS7' }) {
+  static String? decrypt(String cipherBase64, { String? key, String? iv, encrypt_package.AESMode mode = encrypt_package.AESMode.cbc, String padding = 'PKCS7' }) {
     if (key != null) {
       try {
-        final encrypterKey = Encrypt.Key.fromBase64(key);
-        final encrypterIV = (iv != null) ? Encrypt.IV.fromBase64(iv) : Encrypt.IV.fromLength(base64Decode(key).length);
-        final encrypter = Encrypt.Encrypter(Encrypt.AES(encrypterKey, mode: mode, padding: padding));
-        return encrypter.decrypt(Encrypt.Encrypted.fromBase64(cipherBase64), iv: encrypterIV);
+        final encrypterKey = encrypt_package.Key.fromBase64(key);
+        final encrypterIV = (iv != null) ? encrypt_package.IV.fromBase64(iv) : encrypt_package.IV.fromLength(base64Decode(key).length);
+        final encrypter = encrypt_package.Encrypter(encrypt_package.AES(encrypterKey, mode: mode, padding: padding));
+        return encrypter.decrypt(encrypt_package.Encrypted.fromBase64(cipherBase64), iv: encrypterIV);
       }
-      catch(e) { print(e.toString()); }
+      catch(e) {
+        if (kDebugMode) {
+          print(e.toString());
+        }
+      }
     }
     return null;
   }
 
   static String randomKey({ int keySize = kCCBlockSizeAES128 }) {
-    var random = new Random.secure();
+    var random = Random.secure();
     return base64Encode(List.generate(keySize, (index) {
       return random.nextInt(256);
     }));
@@ -88,19 +96,27 @@ class RSACrypt {
 
   static String? encrypt(String plainText, PublicKey publicKey) {
       try {
-        final encrypter = Encrypt.Encrypter(Encrypt.RSA(publicKey: publicKey as RSAPublicKey, privateKey: null));
+        final encrypter = encrypt_package.Encrypter(encrypt_package.RSA(publicKey: publicKey as RSAPublicKey, privateKey: null));
         return encrypter.encrypt(plainText).base64;
       }
-      catch(e) { print(e.toString()); }
+      catch(e) {
+        if (kDebugMode) {
+          print(e.toString());
+        }
+      }
       return null;
   }
 
   static String? decrypt(String cipherBase64, PrivateKey privateKey) {
       try {
-        final encrypter = Encrypt.Encrypter(Encrypt.RSA(publicKey: null, privateKey: privateKey as RSAPrivateKey?));
-        return encrypter.decrypt(Encrypt.Encrypted.fromBase64(cipherBase64));
+        final encrypter = encrypt_package.Encrypter(encrypt_package.RSA(publicKey: null, privateKey: privateKey as RSAPrivateKey?));
+        return encrypter.decrypt(encrypt_package.Encrypted.fromBase64(cipherBase64));
       }
-      catch(e) { print(e.toString()); }
+      catch(e) {
+        if (kDebugMode) {
+          print(e.toString());
+        }
+      }
       return null;
   }
 }
@@ -126,7 +142,7 @@ class RsaKeyHelper {
     for (int i = 0; i < 32; i++) {
       seeds.add(random.nextInt(255));
     }
-    secureRandom.seed(new KeyParameter(new Uint8List.fromList(seeds)));
+    secureRandom.seed(KeyParameter(Uint8List.fromList(seeds)));
     return secureRandom;
   }
 
@@ -157,10 +173,10 @@ class RsaKeyHelper {
 
   static RSAPublicKey parsePublicKeyFromPemData(Uint8List pemData) {
 
-    var asn1Parser = new ASN1Parser(pemData);
+    var asn1Parser = ASN1Parser(pemData);
     var topLevelSeq = asn1Parser.nextObject() as ASN1Sequence;
 
-    var modulus, exponent;
+    ASN1Integer modulus, exponent;
     // Depending on the first element type, we either have PKCS1 or 2
     if (topLevelSeq.elements[0].runtimeType == ASN1Integer) {
       modulus = topLevelSeq.elements[0] as ASN1Integer;
@@ -168,13 +184,13 @@ class RsaKeyHelper {
     } else {
       var publicKeyBitString = topLevelSeq.elements[1];
 
-      var publicKeyAsn = new ASN1Parser(publicKeyBitString.contentBytes()!);
+      var publicKeyAsn = ASN1Parser(publicKeyBitString.contentBytes()!);
       ASN1Sequence publicKeySeq = publicKeyAsn.nextObject() as ASN1Sequence;
       modulus = publicKeySeq.elements[0] as ASN1Integer;
       exponent = publicKeySeq.elements[1] as ASN1Integer;
     }
 
-    RSAPublicKey rsaPublicKey = RSAPublicKey(modulus.valueAsBigInteger, exponent.valueAsBigInteger);
+    RSAPublicKey rsaPublicKey = RSAPublicKey(modulus.valueAsBigInteger!, exponent.valueAsBigInteger!);
 
     return rsaPublicKey;
   }
@@ -192,7 +208,7 @@ class RsaKeyHelper {
 
   /// Creates a [Uint8List] from a string to be signed
   static Uint8List _createUint8ListFromString(String s) {
-    var codec = Utf8Codec(allowMalformed: true);
+    var codec = const Utf8Codec(allowMalformed: true);
     return Uint8List.fromList(codec.encode(s));
   }
 
@@ -206,15 +222,15 @@ class RsaKeyHelper {
 
   static RSAPrivateKey parsePrivateKeyFromPemData(Uint8List pemData) {
 
-    var asn1Parser = new ASN1Parser(pemData);
+    var asn1Parser = ASN1Parser(pemData);
     var topLevelSeq = asn1Parser.nextObject() as ASN1Sequence;
 
-    var modulus, privateExponent, p, q;
+    ASN1Integer modulus, privateExponent, p, q;
     // Depending on the number of elements, we will either use PKCS1 or PKCS8
     if (topLevelSeq.elements.length == 3) {
       var privateKey = topLevelSeq.elements[2];
 
-      asn1Parser = new ASN1Parser(privateKey.contentBytes()!);
+      asn1Parser = ASN1Parser(privateKey.contentBytes()!);
       var pkSeq = asn1Parser.nextObject() as ASN1Sequence;
 
       modulus = pkSeq.elements[1] as ASN1Integer;
@@ -229,8 +245,8 @@ class RsaKeyHelper {
     }
 
     RSAPrivateKey rsaPrivateKey = RSAPrivateKey(
-        modulus.valueAsBigInteger,
-        privateExponent.valueAsBigInteger,
+        modulus.valueAsBigInteger!,
+        privateExponent.valueAsBigInteger!,
         p.valueAsBigInteger,
         q.valueAsBigInteger);
 
@@ -258,7 +274,7 @@ class RsaKeyHelper {
       "-----END PGP PUBLIC KEY BLOCK-----",
       "-----END PGP PRIVATE KEY BLOCK-----",
     ];
-    bool isOpenPgp = pem.indexOf('BEGIN PGP') != -1;
+    bool isOpenPgp = pem.contains('BEGIN PGP');
 
     pem = pem.replaceAll(' ', '');
     pem = pem.replaceAll('\n', '');
@@ -297,7 +313,7 @@ class RsaKeyHelper {
 
   static Uint8List encodePrivateKeyToPEMDataPKCS1(RSAPrivateKey privateKey) {
 
-    var topLevel = new ASN1Sequence();
+    var topLevel = ASN1Sequence();
 
     var version = ASN1Integer(BigInt.from(0));
     var modulus = ASN1Integer(privateKey.n!);
@@ -335,7 +351,7 @@ class RsaKeyHelper {
   }
 
   static Uint8List encodePublicKeyToPemDataPKCS1(RSAPublicKey publicKey) {
-    var topLevel = new ASN1Sequence();
+    var topLevel = ASN1Sequence();
 
     topLevel.add(ASN1Integer(publicKey.modulus!));
     topLevel.add(ASN1Integer(publicKey.exponent!));
@@ -348,9 +364,9 @@ class RsaKeyHelper {
   /// Returns a [AsymmetricKeyPair] based on the [RSAKeyGenerator] with custom parameters,
   /// including a [SecureRandom]
   static AsymmetricKeyPair<PublicKey, PrivateKey> getRsaKeyPair(SecureRandom secureRandom) {
-    var rsapars = new RSAKeyGeneratorParameters(BigInt.from(65537), 2048, 5);
-    var params = new ParametersWithRandom(rsapars, secureRandom);
-    var keyGenerator = new RSAKeyGenerator();
+    var rsapars = RSAKeyGeneratorParameters(BigInt.from(65537), 2048, 5);
+    var params = ParametersWithRandom(rsapars, secureRandom);
+    var keyGenerator = RSAKeyGenerator();
     keyGenerator.init(params);
     return keyGenerator.generateKeyPair();
   }

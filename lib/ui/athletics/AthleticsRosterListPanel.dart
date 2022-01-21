@@ -25,7 +25,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
 import 'package:illinois/model/Roster.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 
@@ -247,7 +247,7 @@ class _RosterListHeading extends StatelessWidget{
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  AppString.isStringNotEmpty(sport?.iconPath) ?
+                  StringUtils.isNotEmpty(sport?.iconPath) ?
                     Image.asset(sport!.iconPath!, width: 16, height: 16, excludeFromSemantics: true,) : Container(),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
@@ -353,7 +353,7 @@ class _RosterItem extends StatelessWidget{
                                 ),
                               ),
                             ),
-                            Text(AppString.getDefaultEmptyString(roster.numberString),
+                            Text(StringUtils.ensureNotEmpty(roster.numberString),
                               style: TextStyle(
                                   color: Styles().colors!.whiteTransparent06,
                                   fontFamily: Styles().fontFamilies!.medium,
@@ -397,7 +397,7 @@ class _RosterItem extends StatelessWidget{
                   child: Container(
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
-                    child: (AppString.isStringNotEmpty(roster.thumbPhotoUrl) ?
+                    child: (StringUtils.isNotEmpty(roster.thumbPhotoUrl) ?
                       Image.network(roster.thumbPhotoUrl!, excludeFromSemantics: true, width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,) :
                       Container(height: 96, width: 80, color: Colors.white,)),
                   ),
@@ -460,7 +460,7 @@ class _RosterInfoLine extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: AppString.isStringNotEmpty(value) ?
+      child: StringUtils.isNotEmpty(value) ?
       Row(
         children: <Widget>[
           Container(

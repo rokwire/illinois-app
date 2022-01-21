@@ -30,7 +30,7 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembersPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -61,11 +61,15 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   String? _allMembersFilter;
   String? _selectedMembersFilter;
   List<String>? _membersFilter;
+  String? _searchTextValue;
+
+  TextEditingController _searchEditingController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated]);
+    _initMemberFilter();
     _reloadGroup();
   }
 
@@ -98,7 +102,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       _pendingMembers = _group?.getMembersByStatus(GroupMemberStatus.pending);
       _pendingMembers?.sort((member1, member2) => member1.displayName.compareTo(member2.displayName));
 
-      _members = AppCollection.isCollectionNotEmpty(_group?.members)
+      _members = CollectionUtils.isNotEmpty(_group?.members)
           ? _group!.members!.where((member) => (member.status != GroupMemberStatus.pending)).toList()
           : [];
       _members!.sort((member1, member2){
@@ -110,19 +114,31 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
           else return 0;
         }
       });
-    _applyMembersFilter();
+      _refreshAllMembersFilterText();
+      _applyMembersFilter();
     });
   }
 
+  void _initMemberFilter(){
+    _selectedMembersFilter = _allMembersFilter;
+    _refreshAllMembersFilterText();
+  }
+
+  void _refreshAllMembersFilterText(){
+    if(_selectedMembersFilter == _allMembersFilter){
+      _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members?.length.toString() ?? "0");
+    } else {
+      _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members?.length.toString() ?? "0");
+    }
+  }
   void _applyMembersFilter(){
     List<String> membersFilter = [];
-    _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members!.length.toString());
     if (_allMembersFilter != null) {
       membersFilter.add(_allMembersFilter!);
     }
-    if(AppCollection.isCollectionNotEmpty(_members)){
+    if(CollectionUtils.isNotEmpty(_members)){
       for(Member member in _members!){
-        if(AppString.isStringNotEmpty(member.officerTitle) && !membersFilter.contains(member.officerTitle)){
+        if(StringUtils.isNotEmpty(member.officerTitle) && !membersFilter.contains(member.officerTitle)){
           membersFilter.add(member.officerTitle!);
         }
       }
@@ -211,7 +227,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     if((_members?.length ?? 0) > 0) {
       List<Widget> members = [];
       for (Member? member in _members!) {
-        if(_selectedMembersFilter != _allMembersFilter && _selectedMembersFilter != member!.officerTitle){
+        if( !_isMemberMatchingFilter(member) ||
+            !_isMemberMatchingSearch(member)){
           continue;
         }
         if(members.isNotEmpty){
@@ -233,6 +250,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
               ),
             ),
             _buildMembersFilter(),
+            _buildMembersSearch(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
@@ -258,7 +276,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
               child: Container(
                 child: GroupDropDownButton<String?>(
                   emptySelectionText: _allMembersFilter,
-                  initialSelectedValue: _allMembersFilter,
+                  initialSelectedValue: _selectedMembersFilter,
                   items: _membersFilter,
                   constructTitle: (dynamic title) => title,
                   decoration: BoxDecoration(),
@@ -275,6 +293,110 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         ),
       ),
     );
+  }
+
+  Widget _buildMembersSearch() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Container(
+        padding: EdgeInsets.only(left: 16),
+        color: Colors.white,
+        height: 48,
+        child: Row(
+          children: <Widget>[
+            Flexible(
+                child:
+                Semantics(
+                  label: Localization().getStringEx('panel.manage_members.field.search.title', 'Search'),
+                  hint: Localization().getStringEx('panel.manage_members.field.search.hint', ''),
+                  textField: true,
+                  excludeSemantics: true,
+                  child: TextField(
+                    controller: _searchEditingController,
+                    onChanged: (text) => _onSearchTextChanged(text),
+                    onSubmitted: (_) => _onTapSearch(),
+                    autofocus: true,
+                    cursorColor: Styles().colors!.fillColorSecondary,
+                    keyboardType: TextInputType.text,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: Styles().fontFamilies!.regular,
+                        color: Styles().colors!.textBackground),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                    ),
+                  ),
+                )
+            ),
+            Semantics(
+                label: Localization().getStringEx('panel.manage_members.button.search.clear.title', 'Clear'),
+                hint: Localization().getStringEx('panel.manage_members.button.search.clear.hint', ''),
+                button: true,
+                excludeSemantics: true,
+                child: Padding(
+                  padding: EdgeInsets.all(12),
+                  child: GestureDetector(
+                    onTap: _onTapClearSearch,
+                    child: Image.asset(
+                        'images/icon-x-orange.png',
+                        width: 25,
+                        height: 25,
+                        excludeFromSemantics: true
+                    ),
+                  ),
+                )
+            ),
+            Semantics(
+              label: Localization().getStringEx('panel.manage_members.button.search.title', 'Search'),
+              hint: Localization().getStringEx('panel.manage_members.button.search.hint', ''),
+              button: true,
+              excludeSemantics: true,
+              child: Padding(
+                padding: EdgeInsets.all(12),
+                child: GestureDetector(
+                  onTap: _onTapSearch,
+                  child: Image.asset(
+                      'images/icon-search.png',
+                      color: Styles().colors!.fillColorSecondary,
+                      width: 25,
+                      height: 25,
+                      excludeFromSemantics: true
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _onSearchTextChanged(String text) {
+    // implement if needed
+  }
+
+  void _onTapSearch() {
+    setState(() {
+      _searchTextValue = _searchEditingController.text.toString();
+    });
+  }
+
+  void _onTapClearSearch() {
+    _searchEditingController.text = "";
+    setState(() {
+      _searchTextValue = "";
+    });
+  }
+
+  bool _isMemberMatchingSearch(Member? member){
+    return StringUtils.isEmpty(_searchTextValue) ||
+        (member?.name?.toLowerCase().contains(_searchTextValue!.toLowerCase())?? false) ||
+        (member?.email?.toLowerCase().contains(_searchTextValue!.toLowerCase())?? false);
+  }
+
+  bool _isMemberMatchingFilter(Member? member){
+    return _selectedMembersFilter == _allMembersFilter ||
+        _selectedMembersFilter == member!.officerTitle;
   }
 }
 
@@ -296,7 +418,7 @@ class _PendingMemberCard extends StatelessWidget {
         children: <Widget>[
           ClipRRect(
             borderRadius: BorderRadius.circular(65),
-            child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
+            child: Container(width: 65, height: 65 ,child: StringUtils.isNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
           ),
           Expanded(
             child: Padding(
@@ -358,7 +480,7 @@ class _GroupMemberCard extends StatelessWidget{
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(65),
-              child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
+              child: Container(width: 65, height: 65 ,child: StringUtils.isNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
             ),
             Expanded(
               child: Padding(
@@ -369,7 +491,7 @@ class _GroupMemberCard extends StatelessWidget{
                     Row(
                       children: <Widget>[
                         Expanded(child:
-                          Text(AppString.getDefaultEmptyString(member?.displayName),
+                          Text(StringUtils.ensureNotEmpty(member?.displayName),
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies!.bold,
                                 fontSize: 20,

@@ -17,10 +17,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:illinois/service/AppNavigation.dart';
+import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Groups.dart';
@@ -42,7 +42,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:package_info/package_info.dart';
 
@@ -226,9 +226,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   Widget _buildUserInfo() {
     String fullName = Auth2().fullName ?? "";
-    bool hasFullName =  AppString.isStringNotEmpty(fullName);
-    String welcomeMessage = AppString.isStringNotEmpty(fullName)
-        ? AppDateTime().getDayGreeting()! + ","
+    bool hasFullName =  StringUtils.isNotEmpty(fullName);
+    String welcomeMessage = StringUtils.isNotEmpty(fullName)
+        ? AppDateTimeUtils.getDayGreeting() + ","
         : Localization().getStringEx("panel.settings.home.user_info.title.sufix", "Welcome to Illinois")!;
     return Container(
         width: double.infinity,
@@ -516,7 +516,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     List<Widget> contentList = [];
 
     String fullName = Auth2().fullName ?? "";
-    bool hasFullName = AppString.isStringNotEmpty(fullName);
+    bool hasFullName = StringUtils.isNotEmpty(fullName);
 
     List<dynamic> codes = FlexUI()['settings.connected.phone'] ?? [];
     for (int index = 0; index < codes.length; index++) {
@@ -559,7 +559,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     List<Widget> contentList = [];
 
     String fullName = Auth2().fullName ?? "";
-    bool hasFullName = AppString.isStringNotEmpty(fullName);
+    bool hasFullName = StringUtils.isNotEmpty(fullName);
 
     List<dynamic> codes = FlexUI()['settings.connected.email'] ?? [];
     for (int index = 0; index < codes.length; index++) {
@@ -1109,7 +1109,7 @@ class _OptionsSection extends StatelessWidget {
               style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
             ),
           ),
-          AppString.isStringEmpty(description)
+          StringUtils.isEmpty(description)
               ? Container()
               : Padding(
                   padding: EdgeInsets.only(left: 8, right: 8, bottom: 12),

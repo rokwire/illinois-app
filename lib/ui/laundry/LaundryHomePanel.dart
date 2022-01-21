@@ -20,7 +20,7 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/LaundryService.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -33,7 +33,7 @@ import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryListPanel.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 
@@ -71,7 +71,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
       _locationServicesStatus = locationServicesStatus;
 
-      if (_locationServicesStatus == LocationServicesStatus.PermissionNotDetermined) {
+      if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
         LocationServices.instance.requestPermission().then((LocationServicesStatus? locationServicesStatus) {
           _locationServicesStatus = locationServicesStatus;
         });
@@ -140,7 +140,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     if (_nativeMapController!.mapId == mapID) {
       dynamic laundry;
       if (laundryJson is Map) {
-        laundry = LaundryRoom.fromJson(AppJson.mapValue(laundryJson));
+        laundry = LaundryRoom.fromJson(JsonUtils.mapValue(laundryJson));
       }
       else if (laundryJson is List) {
         laundry = [];
@@ -486,7 +486,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   bool _userLocationEnabled() {
-    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
+    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
   void _placeLaundryRoomsOnMap(List<LaundryRoom>? rooms) {

@@ -22,13 +22,14 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsSportItemWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class HomePreferredSportsWidget extends StatefulWidget {
@@ -105,11 +106,11 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
   }
 
   bool get _hasMenSports {
-    return AppCollection.isCollectionNotEmpty(_menSports);
+    return CollectionUtils.isNotEmpty(_menSports);
   }
 
   bool get _hasWomenSports {
-    return AppCollection.isCollectionNotEmpty(_womenSports);
+    return CollectionUtils.isNotEmpty(_womenSports);
   }
 
   @override

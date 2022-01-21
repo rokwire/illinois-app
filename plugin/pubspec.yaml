@@ -11,10 +11,20 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   logger: ^1.1.0
   connectivity: ^3.0.6
   uni_links: ^0.5.1
+  fluttertoast: ^8.0.8
+  path: ^1.8.0
+  gallery_saver: ^2.3.2
+  path_provider: ^2.0.4
+  asn1lib: ^1.0.3
+  pointycastle: ^3.5.0
+  encrypt: ^5.0.1
+  intl: ^0.17.0
+  timezone: ^0.8.0
+  flutter_native_timezone: ^2.0.0
+  geolocator: ^8.0.0
 
   #Firebase
   firebase_core: ^1.10.0

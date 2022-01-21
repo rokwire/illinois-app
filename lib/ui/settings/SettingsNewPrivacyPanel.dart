@@ -24,6 +24,7 @@ import 'package:illinois/service/Auth2.dart';
 import "package:illinois/service/Config.dart";
 import "package:illinois/service/FlexUI.dart";
 import "package:illinois/service/Localization.dart";
+import 'package:illinois/utils/AppUtils.dart';
 import "package:rokwire_plugin/service/notification_service.dart";
 import "package:illinois/service/Onboarding.dart";
 import "package:illinois/service/Storage.dart";
@@ -33,7 +34,7 @@ import 'package:illinois/ui/widgets/PrivacySlider.dart';
 import "package:illinois/ui/widgets/RoundedButton.dart";
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import "package:illinois/ui/widgets/TabBarWidget.dart";
-import "package:illinois/utils/Utils.dart";
+import "package:rokwire_plugin/utils/utils.dart";
 import "package:illinois/service/Styles.dart";
 
 enum SettingsPrivacyPanelMode { regular, onboarding, update }
@@ -568,7 +569,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
   Widget _descriptionLayout() {
     int level = _sliderValue?.round() ?? _privacyLevel.truncate();
     PrivacyDescription? description;
-    if (AppCollection.isCollectionNotEmpty(_data?.privacyDescription)) {
+    if (CollectionUtils.isNotEmpty(_data?.privacyDescription)) {
       for (PrivacyDescription desc in _data!.privacyDescription!) {
         if (desc.level == level) {
           description = desc;
@@ -701,7 +702,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
   List<Widget> _buildCategories() {
     List<Widget> widgets =  [];
     PrivacyData? data = widget.data;
-    if (data != null && AppCollection.isCollectionNotEmpty(data.categories)) {
+    if (data != null && CollectionUtils.isNotEmpty(data.categories)) {
       data.categories!.forEach((PrivacyCategory category) {
         widgets.add(_buildCategory(category));
         widgets.add(Container(height: 12,));

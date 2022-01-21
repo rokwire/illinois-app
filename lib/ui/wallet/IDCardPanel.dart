@@ -20,7 +20,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -28,7 +28,7 @@ import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -104,7 +104,7 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   Future<MemoryImage?> _loadAsyncPhotoImage() async{
     Uint8List? photoBytes = await  Auth2().authCard?.photoBytes;
-    return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
+    return CollectionUtils.isNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
   }
 
   Future<Color?> _loadActiveColor() async{
@@ -113,15 +113,15 @@ class _IDCardPanelState extends State<IDCardPanel>
   }
 
   Future<bool?> _loadBuildingAccess() async {
-    if (AppString.isStringNotEmpty(Config().padaapiUrl) && AppString.isStringNotEmpty(Config().padaapiApiKey) && AppString.isStringNotEmpty(Auth2().authCard?.uin)) {
+    if (StringUtils.isNotEmpty(Config().padaapiUrl) && StringUtils.isNotEmpty(Config().padaapiApiKey) && StringUtils.isNotEmpty(Auth2().authCard?.uin)) {
       String url = "${Config().padaapiUrl}/access/${Auth2().authCard?.uin}";
       Map<String, String> headers = {
         HttpHeaders.acceptHeader : 'application/json',
         Network.RokwirePadaapiKey: Config().padaapiApiKey!
       };
       Response? response = await Network().get(url, headers: headers);
-      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      return (responseJson != null) ? AppJson.boolValue(responseJson['allowAccess']) : null;
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
+      return (responseJson != null) ? JsonUtils.boolValue(responseJson['allowAccess']) : null;
     }
     return null;
   }
@@ -279,17 +279,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       Text(Auth2().authCard?.fullName ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24)),
       Text(roleDisplayString ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 20)),
       
-      Container(height: 30,),
-
-      Semantics( container: true,
-        child: Column(children: <Widget>[
-          Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN')! : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
-          Text(Auth2().authCard?.uin ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 28)),
-        ],),
-      ),
-      Text(cardExpiresText, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
-      
-      Container(height: 30,),
+      Container(height: 15,),
 
       Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
         
@@ -309,10 +299,18 @@ class _IDCardPanelState extends State<IDCardPanel>
         ],),),
 
       ],),
-
       Container(height: 15),
-      
       Text(buildingAccessTime ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20)),
+      Container(height: 15),
+      Semantics( container: true,
+        child: Column(children: <Widget>[
+          // Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN')! : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
+          Text(Auth2().authCard?.uin ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 28)),
+        ],),
+      ),
+      Text(cardExpiresText, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
+      Container(height: 30,),
+
     ],)    );
   }
 

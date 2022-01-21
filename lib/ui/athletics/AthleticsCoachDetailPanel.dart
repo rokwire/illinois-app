@@ -25,7 +25,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/ModalImageDialog.dart';
 import 'package:illinois/model/Coach.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'package:flutter_html/flutter_html.dart';
@@ -91,9 +91,9 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
                     Container(
                         padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
                         color: Styles().colors!.background,
-                        child: Visibility(visible: AppString.isStringNotEmpty(widget.coach.htmlBio), child: Container(
+                        child: Visibility(visible: StringUtils.isNotEmpty(widget.coach.htmlBio), child: Container(
                           child: Html(
-                            data: AppString.getDefaultEmptyString(widget.coach.htmlBio),
+                            data: StringUtils.ensureNotEmpty(widget.coach.htmlBio),
                             onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
                             style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
                           ),
@@ -124,8 +124,8 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
   }
 
   void _launchUrl(String? url, {BuildContext? context}) {
-    if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         launch(url!);
@@ -218,7 +218,7 @@ class _CoachDetailHeading extends StatelessWidget{
                     child: Container(
                       margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                       decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
-                      child: (AppString.isStringNotEmpty(coach?.thumbPhotoUrl) ?
+                      child: (StringUtils.isNotEmpty(coach?.thumbPhotoUrl) ?
                       Image.network(coach!.thumbPhotoUrl!, excludeFromSemantics: true, width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: _photoWidth, color: Colors.white,)
                       ),

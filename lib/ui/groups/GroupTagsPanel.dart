@@ -20,7 +20,8 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupTagsPanel extends StatefulWidget {
@@ -55,7 +56,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
 
   @override
   Widget build(BuildContext context) {
-    bool hasGroupTags = AppCollection.isCollectionNotEmpty(_groupTags);
+    bool hasGroupTags = CollectionUtils.isNotEmpty(_groupTags);
 
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
@@ -85,7 +86,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
 
   void _initTags() {
     _setLoading(true);
-    _groupTags = AppCollection.isCollectionNotEmpty(widget.selectedTags) ? List.from(widget.selectedTags!) : [];
+    _groupTags = CollectionUtils.isNotEmpty(widget.selectedTags) ? List.from(widget.selectedTags!) : [];
     Groups().loadTags().then((List<String>? tagList) {
       _allTags = tagList;
       _setLoading(false);
@@ -93,13 +94,13 @@ class _GroupTagsState extends State<GroupTagsPanel> {
   }
 
   Widget _buildTagsWidget(List<String>? tags) {
-    if (AppCollection.isCollectionEmpty(tags)) {
+    if (CollectionUtils.isEmpty(tags)) {
       return Container();
     }
 
     List<Widget> tagWidgets = [];
     for (String tag in tags!) {
-      if (AppCollection.isCollectionNotEmpty(tagWidgets)) {
+      if (CollectionUtils.isNotEmpty(tagWidgets)) {
         tagWidgets.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
       }
       tagWidgets.add(_TagSelectionWidget(label: tag, selected: _isTagSelected(tag), onTap: () => _onTagTaped(tag)));
@@ -210,7 +211,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
 
   void _onTextChanged(text) {
     setState(() {
-      _searchView = AppString.isStringNotEmpty(text);
+      _searchView = StringUtils.isNotEmpty(text);
     });
   }
 
@@ -230,9 +231,9 @@ class _GroupTagsState extends State<GroupTagsPanel> {
   }
 
   List<String>? _filterTags(String key) {
-    if (AppString.isStringEmpty(key)) {
+    if (StringUtils.isEmpty(key)) {
       return _allTags;
-    } else if (AppCollection.isCollectionNotEmpty(_allTags)) {
+    } else if (CollectionUtils.isNotEmpty(_allTags)) {
       return _allTags!.where((String tag) => tag.toLowerCase().contains(key.toLowerCase())).toList();
     }
     return null;

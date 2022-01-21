@@ -23,7 +23,7 @@ import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -34,7 +34,7 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Event.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -250,7 +250,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   Widget _eventSponsor() {
     String eventSponsorText = widget.event?.sponsor ?? '';
-    bool sponsorVisible = AppString.isStringNotEmpty(eventSponsorText);
+    bool sponsorVisible = StringUtils.isNotEmpty(eventSponsorText);
     return Visibility(visible: sponsorVisible, child: Padding(
         padding: EdgeInsets.only(bottom: 16),
         child: Row(
@@ -362,14 +362,14 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     String locationText = ExploreHelper.getLongDisplayLocation(widget.event, _locationData)??"";
     bool isVirtual = widget.event?.isVirtual ?? false;
     String eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event")! : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event")!;
-    bool hasEventUrl = AppString.isStringNotEmpty(widget.event?.location?.description);
+    bool hasEventUrl = StringUtils.isNotEmpty(widget.event?.location?.description);
     bool isOnlineUnderlined = isVirtual && hasEventUrl;
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
     String iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
-    String locationId = AppString.getDefaultEmptyString(widget.event?.location?.locationId);
+    String locationId = StringUtils.ensureNotEmpty(widget.event?.location?.locationId);
     bool isLocationIdUrl = Uri.tryParse(locationId)?.isAbsolute ?? false;
     String value = isVirtual ? locationId : locationText;
-    bool isValueVisible = AppString.isStringNotEmpty(value) && (!isVirtual || !isLocationIdUrl);
+    bool isValueVisible = StringUtils.isNotEmpty(value) && (!isVirtual || !isLocationIdUrl);
     return GestureDetector(
         onTap: _onLocationDetailTapped,
         child: Semantics(
@@ -439,7 +439,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     bool isFree = widget.event?.isEventFree ?? false;
     String priceText =isFree? "Free" : (widget.event?.cost ?? "Free");
     String? additionalDescription = isFree? widget.event?.cost : null;
-    bool hasAdditionalDescription = AppString.isStringNotEmpty(additionalDescription);
+    bool hasAdditionalDescription = StringUtils.isNotEmpty(additionalDescription);
     if (priceText.isNotEmpty) {
       return Semantics(
           label: Localization().getStringEx("panel.explore_detail.label.price.title","Price"),
@@ -484,7 +484,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget? _superEventLink() {
-    if (AppString.isStringEmpty(widget.superEventTitle)) {
+    if (StringUtils.isEmpty(widget.superEventTitle)) {
       return null;
     }
     return GestureDetector(onTap: () {
@@ -544,7 +544,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   Widget _exploreSubTitle() {
     String? subTitle = widget.event?.exploreSubTitle;
-    if (AppString.isStringEmpty(subTitle)) {
+    if (StringUtils.isEmpty(subTitle)) {
       return Container();
     }
     return Padding(
@@ -558,7 +558,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _exploreContacts() {
-    if (AppCollection.isCollectionEmpty(widget.event?.contacts)) {
+    if (CollectionUtils.isEmpty(widget.event?.contacts)) {
       return Container();
     }
     List<Widget> contactList = [];
@@ -566,26 +566,26 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:')!)));
     for (Contact? contact in widget.event!.contacts!) {
       String contactDetails = '';
-      if (AppString.isStringNotEmpty(contact!.firstName)) {
+      if (StringUtils.isNotEmpty(contact!.firstName)) {
         contactDetails += contact.firstName!;
       }
-      if (AppString.isStringNotEmpty(contact.lastName)) {
-        if (AppString.isStringNotEmpty(contactDetails)) {
+      if (StringUtils.isNotEmpty(contact.lastName)) {
+        if (StringUtils.isNotEmpty(contactDetails)) {
           contactDetails += ' ';
         }
         contactDetails += contact.lastName!;
       }
-      if (AppString.isStringNotEmpty(contact.organization)) {
+      if (StringUtils.isNotEmpty(contact.organization)) {
         contactDetails += ' (${contact.organization})';
       }
-      if (AppString.isStringNotEmpty(contact.email)) {
-        if (AppString.isStringNotEmpty(contactDetails)) {
+      if (StringUtils.isNotEmpty(contact.email)) {
+        if (StringUtils.isNotEmpty(contactDetails)) {
           contactDetails += ', ';
         }
         contactDetails += contact.email!;
       }
-      if (AppString.isStringNotEmpty(contact.phone)) {
-        if (AppString.isStringNotEmpty(contactDetails)) {
+      if (StringUtils.isNotEmpty(contact.phone)) {
+        if (StringUtils.isNotEmpty(contactDetails)) {
           contactDetails += ', ';
         }
         contactDetails += contact.phone!;
@@ -597,7 +597,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   Widget _exploreDescription() {
     String? longDescription = widget.event!.exploreLongDescription;
-    bool showDescription = AppString.isStringNotEmpty(longDescription);
+    bool showDescription = StringUtils.isNotEmpty(longDescription);
     if (!showDescription) {
       return Container();
     }
@@ -644,10 +644,10 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     List<Widget> buttons = <Widget>[];
     
     String? titleUrl = widget.event?.titleUrl;
-    bool hasTitleUrl = AppString.isStringNotEmpty(titleUrl);
+    bool hasTitleUrl = StringUtils.isNotEmpty(titleUrl);
 
     String? registrationUrl = widget.event?.registrationUrl;
-    bool hasRegistrationUrl = AppString.isStringNotEmpty(registrationUrl);
+    bool hasRegistrationUrl = StringUtils.isNotEmpty(registrationUrl);
 
     if (hasTitleUrl) {
       buttons.add(Row(children:<Widget>[
@@ -694,7 +694,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     int? eventConvergeScore = (widget.event != null) ? widget.event?.convergeScore : null;
     String? eventConvergeUrl = (widget.event != null) ? widget.event?.convergeUrl : null;
     bool hasConvergeScore = (eventConvergeScore != null) && eventConvergeScore>0;
-    bool hasConvergeUrl = !AppString.isStringEmpty(eventConvergeUrl);
+    bool hasConvergeUrl = !StringUtils.isEmpty(eventConvergeUrl);
     bool hasConvergeContent = hasConvergeScore || hasConvergeUrl;
 
     return hasConvergeContent?
@@ -739,7 +739,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _buildGroupButtons(){
-    return (AppString.isStringEmpty(widget.browseGroupId) || (widget.event?.isGroupPrivate ?? false))? Container():
+    return (StringUtils.isEmpty(widget.browseGroupId) || (widget.event?.isGroupPrivate ?? false))? Container():
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           child:
@@ -786,7 +786,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   void _onTapWebButton(String? url, String analyticsName){
-    if(AppString.isStringNotEmpty(url)){
+    if(StringUtils.isNotEmpty(url)){
       Navigator.push(
           context,
           CupertinoPageRoute(
@@ -800,7 +800,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   void _onLocationDetailTapped() {
     if((widget.event?.isVirtual?? false) == true){
       String? url = widget.event?.location?.description;
-      if(AppString.isStringNotEmpty(url)) {
+      if(StringUtils.isNotEmpty(url)) {
         _onTapWebButton(url, "Event Link ");
       }
     } else if(widget.event?.location?.latitude != null && widget.event?.location?.longitude != null) {
@@ -840,8 +840,8 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
   
   void _launchUrl(String? url, {BuildContext? context}) {
-    if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         launch(url!);

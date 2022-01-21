@@ -4,7 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -18,7 +18,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -34,10 +34,10 @@ class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
     Map<String, dynamic>? guideEntry = Guide().entryById(guideEntryId);
     return {
       Analytics.LogAttributeGuideId : guideEntryId,
-      Analytics.LogAttributeGuideTitle : AppJson.stringValue(Guide().entryTitle(guideEntry, stripHtmlTags: true)),
-      Analytics.LogAttributeGuide : AppJson.stringValue(Guide().entryValue(guideEntry, 'guide')),
-      Analytics.LogAttributeGuideCategory :  AppJson.stringValue(Guide().entryValue(guideEntry, 'category')),
-      Analytics.LogAttributeGuideSection :  AppJson.stringValue(Guide().entryValue(guideEntry, 'section')),
+      Analytics.LogAttributeGuideTitle : JsonUtils.stringValue(Guide().entryTitle(guideEntry, stripHtmlTags: true)),
+      Analytics.LogAttributeGuide : JsonUtils.stringValue(Guide().entryValue(guideEntry, 'guide')),
+      Analytics.LogAttributeGuideCategory :  JsonUtils.stringValue(Guide().entryValue(guideEntry, 'category')),
+      Analytics.LogAttributeGuideSection :  JsonUtils.stringValue(Guide().entryValue(guideEntry, 'section')),
     };
   }
 }
@@ -87,7 +87,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     String? headerTitle;
     Widget contentWidget;
     if (_guideEntry != null) {
-      headerTitle = AppJson.stringValue(Guide().entryValue(_guideEntry, 'header_title'));
+      headerTitle = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'header_title'));
       contentWidget = SingleChildScrollView(child:
         SafeArea(child:
           Stack(children: [
@@ -149,14 +149,14 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   Widget _buildHeading() {
     List<Widget> contentList = <Widget>[];
 
-    String? category = AppJson.stringValue(Guide().entryValue(_guideEntry, 'category'));
+    String? category = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'category'));
     contentList.add(
       Padding(padding: EdgeInsets.only(bottom: 8), child:
         Semantics(hint: "Heading", child:Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)),
     ),);
 
-    String? titleHtml = AppJson.stringValue(Guide().entryValue(_guideEntry, 'detail_title')) ?? AppJson.stringValue(Guide().entryValue(_guideEntry, 'title'));
-    if (AppString.isStringNotEmpty(titleHtml)) {
+    String? titleHtml = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'detail_title')) ?? JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'title'));
+    if (StringUtils.isNotEmpty(titleHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           Html(data: titleHtml,
@@ -175,8 +175,8 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
       ),);
     }
 
-    String? descriptionHtml = AppJson.stringValue(Guide().entryValue(_guideEntry, 'detail_description')) ?? AppJson.stringValue(Guide().entryValue(_guideEntry, 'description'));
-    if (AppString.isStringNotEmpty(descriptionHtml)) {
+    String? descriptionHtml = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'detail_description')) ?? JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'description'));
+    if (StringUtils.isNotEmpty(descriptionHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           Html(data: descriptionHtml,
@@ -186,18 +186,18 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     }
 
 
-    List<dynamic>? links = AppJson.listValue(Guide().entryValue(_guideEntry, 'links'));
+    List<dynamic>? links = JsonUtils.listValue(Guide().entryValue(_guideEntry, 'links'));
     if (links != null) {
       for (dynamic link in links) {
         if (link is Map) {
-          String? text = AppJson.stringValue(link['text']);
-          String? icon = AppJson.stringValue(link['icon']);
-          String? url = AppJson.stringValue(link['url']);
+          String? text = JsonUtils.stringValue(link['text']);
+          String? icon = JsonUtils.stringValue(link['icon']);
+          String? url = JsonUtils.stringValue(link['url']);
           Uri? uri = (url != null) ? Uri.tryParse(url) : null;
-          bool hasUri = AppString.isStringNotEmpty(uri?.scheme);
+          bool hasUri = StringUtils.isNotEmpty(uri?.scheme);
 
-          Map<String, dynamic>? location = AppJson.mapValue(link['location']);
-          Map<String, dynamic>? locationGps = (location != null) ? AppJson.mapValue(location['location']) : null;
+          Map<String, dynamic>? location = JsonUtils.mapValue(link['location']);
+          Map<String, dynamic>? locationGps = (location != null) ? JsonUtils.mapValue(location['location']) : null;
           bool hasLocation = (locationGps != null) && (locationGps['latitude'] != null) && (locationGps['longitude'] != null);
 
           if ((text != null) && (hasUri || hasLocation)) {
@@ -231,9 +231,9 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   }
 
   Widget _buildImage() {
-    String? imageUrl = AppJson.stringValue(Guide().entryValue(_guideEntry, 'image'));
+    String? imageUrl = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'image'));
     Uri? imageUri = (imageUrl != null) ? Uri.tryParse(imageUrl) : null;
-    if (AppString.isStringNotEmpty(imageUri?.scheme)) {
+    if (StringUtils.isNotEmpty(imageUri?.scheme)) {
       return Stack(alignment: Alignment.bottomCenter, children: [
         Container(color: Styles().colors!.white, padding: EdgeInsets.all(16), child:
           Row(children: [
@@ -264,16 +264,16 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   Widget _buildDetails() {
     List<Widget> contentList = <Widget>[];
 
-    String? title = AppJson.stringValue(Guide().entryValue(_guideEntry, 'sub_details_title'));
-    if (AppString.isStringNotEmpty(title)) {
+    String? title = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'sub_details_title'));
+    if (StringUtils.isNotEmpty(title)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           Text(title ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 36, fontFamily: Styles().fontFamilies!.bold),),
       ),);
     }
 
-    String? descriptionHtml = AppJson.stringValue(Guide().entryValue(_guideEntry, 'sub_details_description'));
-    if (AppString.isStringNotEmpty(descriptionHtml)) {
+    String? descriptionHtml = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'sub_details_description'));
+    if (StringUtils.isNotEmpty(descriptionHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           Html(data: descriptionHtml,
@@ -282,12 +282,12 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
       ),),);
     }
 
-    List<dynamic>? subDetails = AppJson.listValue(Guide().entryValue(_guideEntry, 'sub_details'));
+    List<dynamic>? subDetails = JsonUtils.listValue(Guide().entryValue(_guideEntry, 'sub_details'));
     if (subDetails != null) {
       for (dynamic subDetail in subDetails) {
         if (subDetail is Map) {
-          String? sectionHtml = AppJson.stringValue(subDetail['section']);
-          if (AppString.isStringNotEmpty(sectionHtml)) {
+          String? sectionHtml = JsonUtils.stringValue(subDetail['section']);
+          if (StringUtils.isNotEmpty(sectionHtml)) {
             contentList.add(
               Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
                 Html(data: sectionHtml,
@@ -296,12 +296,12 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
             ),),);
           }
 
-          List<dynamic>? entries = AppJson.listValue(subDetail['entries']);
+          List<dynamic>? entries = JsonUtils.listValue(subDetail['entries']);
           if (entries != null) {
             for (dynamic entry in entries) {
               if (entry is Map) {
-                String? headingHtml = AppJson.stringValue(entry['heading']);
-                if (AppString.isStringNotEmpty(headingHtml)) {
+                String? headingHtml = JsonUtils.stringValue(entry['heading']);
+                if (StringUtils.isNotEmpty(headingHtml)) {
                   contentList.add(
                     Padding(padding: EdgeInsets.only(top: 4, bottom: 8), child:
                       Html(data: headingHtml,
@@ -310,23 +310,23 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                   ),),);
                 }
 
-                List<dynamic>? numbers = AppJson.listValue(entry['numbers']);
+                List<dynamic>? numbers = JsonUtils.listValue(entry['numbers']);
                 if (numbers != null) {
 
-                  Map<String, dynamic>? number = AppJson.mapValue(entry['number']);
-                  String numberTextFormat = ((number != null) ? AppJson.stringValue(number['text']) : null) ?? '%d.';
-                  Color? numberColor = ((number != null) ? AppColor.fromHex(AppJson.stringValue(number['color'])) : null) ?? Styles().colors!.textBackground;
+                  Map<String, dynamic>? number = JsonUtils.mapValue(entry['number']);
+                  String numberTextFormat = ((number != null) ? JsonUtils.stringValue(number['text']) : null) ?? '%d.';
+                  Color? numberColor = ((number != null) ? ColorUtils.fromHex(JsonUtils.stringValue(number['color'])) : null) ?? Styles().colors!.textBackground;
                   
-                  Map<String, dynamic>? numberFont = (number != null) ? AppJson.mapValue(number['font']) : null;
-                  double numberFontSize = ((numberFont != null) ? AppJson.doubleValue(numberFont['size']) : null) ?? 20;
-                  String? numberFontFamilyCode = (numberFont != null) ? AppJson.stringValue(numberFont['family']) : null;
+                  Map<String, dynamic>? numberFont = (number != null) ? JsonUtils.mapValue(number['font']) : null;
+                  double numberFontSize = ((numberFont != null) ? JsonUtils.doubleValue(numberFont['size']) : null) ?? 20;
+                  String? numberFontFamilyCode = (numberFont != null) ? JsonUtils.stringValue(numberFont['family']) : null;
                   String? numberFontFamily = Styles().fontFamilies!.fromCode(numberFontFamilyCode) ?? Styles().fontFamilies!.regular;
 
-                  Map<String, dynamic>? numberPadding = (number != null) ? AppJson.mapValue(number['padding']) : null;
-                  double numberLeftPadding = ((numberPadding != null) ? AppJson.doubleValue(numberPadding['left']) : null) ?? 16;
-                  double numberRightPadding = ((numberPadding != null) ? AppJson.doubleValue(numberPadding['right']) : null) ?? 8;
-                  double numberTopPadding = ((numberPadding != null) ? AppJson.doubleValue(numberPadding['top']) : null) ?? 2;
-                  double numberBottomPadding = ((numberPadding != null) ? AppJson.doubleValue(numberPadding['bottom']) : null) ?? 2;
+                  Map<String, dynamic>? numberPadding = (number != null) ? JsonUtils.mapValue(number['padding']) : null;
+                  double numberLeftPadding = ((numberPadding != null) ? JsonUtils.doubleValue(numberPadding['left']) : null) ?? 16;
+                  double numberRightPadding = ((numberPadding != null) ? JsonUtils.doubleValue(numberPadding['right']) : null) ?? 8;
+                  double numberTopPadding = ((numberPadding != null) ? JsonUtils.doubleValue(numberPadding['top']) : null) ?? 2;
+                  double numberBottomPadding = ((numberPadding != null) ? JsonUtils.doubleValue(numberPadding['bottom']) : null) ?? 2;
 
                   for (int numberIndex = 0; numberIndex < numbers.length; numberIndex++) {
                     dynamic numberHtml = numbers[numberIndex];
@@ -348,22 +348,22 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                   }
                 }
 
-                List<dynamic>? bullets = AppJson.listValue(entry['bullets']);
+                List<dynamic>? bullets = JsonUtils.listValue(entry['bullets']);
                 if (bullets != null) {
-                  Map<String, dynamic>? bullet = AppJson.mapValue(entry['bullet']);
-                  String bulletText = ((bullet != null) ? AppJson.stringValue(bullet['text']) : null) ?? '\u2022';
-                  Color? bulletColor = ((bullet != null) ? AppColor.fromHex(AppJson.stringValue(bullet['color'])) : null) ?? Styles().colors!.textBackground;
+                  Map<String, dynamic>? bullet = JsonUtils.mapValue(entry['bullet']);
+                  String bulletText = ((bullet != null) ? JsonUtils.stringValue(bullet['text']) : null) ?? '\u2022';
+                  Color? bulletColor = ((bullet != null) ? ColorUtils.fromHex(JsonUtils.stringValue(bullet['color'])) : null) ?? Styles().colors!.textBackground;
                   
-                  Map<String, dynamic>? bulletFont = (bullet != null) ? AppJson.mapValue(bullet['font']) : null;
-                  double bulletFontSize = ((bulletFont != null) ? AppJson.doubleValue(bulletFont['size']) : null) ?? 20;
-                  String? bulletFontFamilyCode = (bulletFont != null) ? AppJson.stringValue(bulletFont['family']) : null;
+                  Map<String, dynamic>? bulletFont = (bullet != null) ? JsonUtils.mapValue(bullet['font']) : null;
+                  double bulletFontSize = ((bulletFont != null) ? JsonUtils.doubleValue(bulletFont['size']) : null) ?? 20;
+                  String? bulletFontFamilyCode = (bulletFont != null) ? JsonUtils.stringValue(bulletFont['family']) : null;
                   String? bulletFontFamily = Styles().fontFamilies!.fromCode(bulletFontFamilyCode) ?? Styles().fontFamilies!.regular;
 
-                  Map<String, dynamic>? bulletPadding = (bullet != null) ? AppJson.mapValue(bullet['padding']) : null;
-                  double bulletLeftPadding = ((bulletPadding != null) ? AppJson.doubleValue(bulletPadding['left']) : null) ?? 16;
-                  double bulletRightPadding = ((bulletPadding != null) ? AppJson.doubleValue(bulletPadding['right']) : null) ?? 8;
-                  double bulletTopPadding = ((bulletPadding != null) ? AppJson.doubleValue(bulletPadding['top']) : null) ?? 2;
-                  double bulletBottomPadding = ((bulletPadding != null) ? AppJson.doubleValue(bulletPadding['bottom']) : null) ?? 2;
+                  Map<String, dynamic>? bulletPadding = (bullet != null) ? JsonUtils.mapValue(bullet['padding']) : null;
+                  double bulletLeftPadding = ((bulletPadding != null) ? JsonUtils.doubleValue(bulletPadding['left']) : null) ?? 16;
+                  double bulletRightPadding = ((bulletPadding != null) ? JsonUtils.doubleValue(bulletPadding['right']) : null) ?? 8;
+                  double bulletTopPadding = ((bulletPadding != null) ? JsonUtils.doubleValue(bulletPadding['top']) : null) ?? 2;
+                  double bulletBottomPadding = ((bulletPadding != null) ? JsonUtils.doubleValue(bulletPadding['bottom']) : null) ?? 2;
 
                   for (dynamic bulletHtml in bullets) {
                     if ((bulletHtml is String) && (0 < bulletHtml.length)) {
@@ -391,16 +391,16 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
       }
     }
 
-    List<dynamic>? buttons = AppJson.listValue(Guide().entryValue(_guideEntry, 'buttons'));
+    List<dynamic>? buttons = JsonUtils.listValue(Guide().entryValue(_guideEntry, 'buttons'));
     if (buttons != null) {
       List<Widget> buttonWidgets = <Widget>[];
       for (dynamic button in buttons) {
         if (button is Map) {
-          String? text = AppJson.stringValue(button['text']);
-          String? url = AppJson.stringValue(button['url']);
+          String? text = JsonUtils.stringValue(button['text']);
+          String? url = JsonUtils.stringValue(button['url']);
           Uri? uri = (url != null) ? Uri.tryParse(url) : null;
 
-          if (AppString.isStringNotEmpty(text) && AppString.isStringNotEmpty(uri?.scheme)) {
+          if (StringUtils.isNotEmpty(text) && StringUtils.isNotEmpty(uri?.scheme)) {
             buttonWidgets.add(
               Padding(padding: EdgeInsets.only(top: 16), child:
                 RoundedButton(label: text,
@@ -440,13 +440,13 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
 
   Widget _buildRelated() {
     List<Widget>? contentList;
-    List<dynamic>? related = AppJson.listValue(Guide().entryValue(_guideEntry, 'related'));
+    List<dynamic>? related = JsonUtils.listValue(Guide().entryValue(_guideEntry, 'related'));
     if (related != null) {
       contentList = <Widget>[];
       for (dynamic relatedEntry in related) {
         Map<String, dynamic>? guideEntry;
         if (relatedEntry is Map) {
-          guideEntry = AppJson.mapValue(relatedEntry);
+          guideEntry = JsonUtils.mapValue(relatedEntry);
         }
         else if (relatedEntry is String) {
           guideEntry = Guide().entryById(relatedEntry);
@@ -477,8 +477,8 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   }
 
   void _onTapLink(String? url) {
-    if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         launch(url!);
