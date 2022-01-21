@@ -22,7 +22,7 @@
 },{
   "id":"setup.university.accounts",
   "progress": 2,
-  "title":"Step 2: Set up your University Accounts",
+  "title":"Set up your University Accounts",
   "text":"<p><i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i></p><p>Throughout your program, you will use a variety of platforms to complete your courses and connect with your peers. The steps below are essential to utilizing with these platforms and should only take 5-10 minutes each to setup.</p><p>You should complete Step 2 of your checklist within 1-2 weeks of accepting your offer.</p>",
   "steps":[
     {"key":"a", "page_id":"claim.netid.and.password"},
@@ -30,7 +30,7 @@
     {"key":"c", "page_id": "verify.personal.information"},
     {"key":"d", "page_id": "setup.zoom.account"}
   ],
-  "buttons":[
+  "_buttons":[
     {"title":"Continue", "page":"claim.netid.and.password"}
   ]
 },{
