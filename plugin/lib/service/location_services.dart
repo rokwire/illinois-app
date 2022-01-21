@@ -39,20 +39,21 @@ class LocationServices with Service implements NotificationsListener {
   Position? _lastLocation;
   StreamSubscription<Position>? _locationMonitor;
 
-  // Singletone Instance
+  // Singletone Factory
 
-  LocationServices._internal();
-  static final LocationServices _instance = LocationServices._internal();
+  static LocationServices? _instance;
+
+  static LocationServices? get instance => _instance;
+
+  @protected
+  static set instance(LocationServices? value) => _instance = value;
+
+  factory LocationServices() => _instance ?? (_instance = LocationServices.internal());
+
+  @protected
+  LocationServices.internal();
   
-  factory LocationServices() {
-    return _instance;
-  }
-
-  static LocationServices get instance {
-    return _instance;
-  }
-
-  // Initialization
+  // Service
 
   @override
   void createService() {

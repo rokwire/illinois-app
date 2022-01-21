@@ -138,12 +138,12 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
       
       // Ensure current location, if available
       if (_currentLocation == null) {
-        LocationServicesStatus? status = await LocationServices.instance.status;
+        LocationServicesStatus? status = await LocationServices().status;
         if (status == LocationServicesStatus.permissionNotDetermined) {
-          status = await LocationServices.instance.requestPermission();
+          status = await LocationServices().requestPermission();
         }
         if (status == LocationServicesStatus.permissionAllowed) {
-          _currentLocation = await LocationServices.instance.location;
+          _currentLocation = await LocationServices().location;
         }
       }
 

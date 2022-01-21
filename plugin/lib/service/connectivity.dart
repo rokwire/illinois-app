@@ -17,6 +17,7 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart' as connectivity;
+import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -32,18 +33,19 @@ class Connectivity with Service {
 
   // Singleton Factory
 
-  Connectivity._internal();
-  static final Connectivity _instance = Connectivity._internal();
+  static Connectivity? _instance;
 
-  factory Connectivity() {
-    return _instance;
-  }
+  static Connectivity? get instance => _instance;
 
-  Connectivity get instance {
-    return _instance;
-  }
+  @protected
+  static set instance(Connectivity? value) => _instance = value;
 
-  // Initialization
+  factory Connectivity() => _instance ?? (_instance = Connectivity.internal());
+
+  @protected
+  Connectivity.internal();
+
+  // Service
 
   @override
   void createService() {

@@ -27,19 +27,19 @@ class _Onboarding2PermissionsPanelState extends State <Onboarding2PermissionsPan
 
   void _requestLocation(BuildContext context) async {
     Analytics.instance.logSelect(target: 'Share My locaiton') ;
-    await LocationServices.instance.status.then((LocationServicesStatus? status){
+    await LocationServices().status.then((LocationServicesStatus? status){
       if (status == LocationServicesStatus.serviceDisabled) {
-        LocationServices.instance.requestService();
+        LocationServices().requestService();
       }
       else if (status == LocationServicesStatus.permissionNotDetermined) {
-        LocationServices.instance.requestPermission().then((LocationServicesStatus? status) {
+        LocationServices().requestPermission().then((LocationServicesStatus? status) {
           //Next
           _goNext();
         });
       }
       else if (status == LocationServicesStatus.permissionDenied) {
         //Denied  - request again
-        LocationServices.instance.requestPermission().then((LocationServicesStatus? status) {
+        LocationServices().requestPermission().then((LocationServicesStatus? status) {
           //Next
           _goNext();
         });

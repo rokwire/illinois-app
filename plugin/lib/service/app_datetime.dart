@@ -28,20 +28,6 @@ class AppDateTime with Service {
 
   static const String iso8601DateTimeFormat = 'yyyy-MM-ddTHH:mm:ss';
 
-  static AppDateTime? _instance;
-
-  @protected
-  AppDateTime.internal();
-
-  factory AppDateTime() {
-    return _instance ?? (_instance = AppDateTime.internal());
-  }
-
-  static AppDateTime? get instance => _instance;
-  
-  @protected
-  static set instance(AppDateTime? value) => _instance = value;
-
   timezone.Location? _universityLocation;
   timezone.Location? get universityLocation => _universityLocation;
 
@@ -53,6 +39,22 @@ class AppDateTime with Service {
   String? get universityLocationName  => null;
 
   bool get useDeviceLocalTimeZone => false;
+
+  // Singletone Factory
+
+  static AppDateTime? _instance;
+
+  static AppDateTime? get instance => _instance;
+  
+  @protected
+  static set instance(AppDateTime? value) => _instance = value;
+
+  factory AppDateTime() => _instance ?? (_instance = AppDateTime.internal());
+
+  @protected
+  AppDateTime.internal();
+
+  // Service
 
   @override
   Future<void> initService() async {

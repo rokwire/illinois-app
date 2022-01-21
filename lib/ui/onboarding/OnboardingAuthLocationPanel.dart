@@ -148,12 +148,12 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
 
   void _requestLocation(BuildContext context) async {
     Analytics.instance.logSelect(target: 'Share My locaiton') ;
-    await LocationServices.instance.status.then((LocationServicesStatus? status){
+    await LocationServices().status.then((LocationServicesStatus? status){
       if (status == LocationServicesStatus.serviceDisabled) {
-        LocationServices.instance.requestService();
+        LocationServices().requestService();
       }
       else if (status == LocationServicesStatus.permissionNotDetermined) {
-        LocationServices.instance.requestPermission().then((LocationServicesStatus? status) {
+        LocationServices().requestPermission().then((LocationServicesStatus? status) {
           _goNext(context);
         });
       }

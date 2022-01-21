@@ -533,7 +533,7 @@ class Analytics with Service implements NotificationsListener {
   // Location Services
 
   void _updateLocationServices() {
-    LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+    LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
       _applyLocationServicesStatus(locationServicesStatus);
     });
   }
