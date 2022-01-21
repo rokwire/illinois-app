@@ -172,22 +172,19 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     setState(() { _isLoading = true; });
 
     if (!_link) {
-      Auth2().authenticateWithPhone(phoneNumber).then((success) {
-        if (mounted) {
-          setState(() { _isLoading = false; });
-          _onPhoneInitiated(phoneNumber, success);
-        }
-      });
+      Auth2().authenticateWithPhone(phoneNumber).then((success) => _loginByPhoneCallback(success, phoneNumber));
     } else {
       Map<String, dynamic> credsMap = {
         "phone": phoneNumber
       };
-      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, credsMap, null).then((success) {
-        if (mounted) {
-          setState(() { _isLoading = false; });
-          _onPhoneInitiated(phoneNumber, success);
-        }
-      });
+      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, credsMap, null).then((success) => _loginByPhoneCallback(success, phoneNumber));
+    }
+  }
+
+  void _loginByPhoneCallback(bool success, String? phoneNumber) {
+    if (mounted) {
+      setState(() { _isLoading = false; });
+      _onPhoneInitiated(phoneNumber, success);
     }
   }
 
@@ -207,7 +204,11 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
       if (mounted) {
         setState(() { _isLoading = false; });
         if (state != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: state, onboardingContext: widget.onboardingContext)));
+          if (_link && state != Auth2EmailAccountState.nonExistent) {
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.link_email.exists", "You have already linked this email address to your account."));
+          } else {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: state, onboardingContext: widget.onboardingContext)));
+          }
         }
         else {
           setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));

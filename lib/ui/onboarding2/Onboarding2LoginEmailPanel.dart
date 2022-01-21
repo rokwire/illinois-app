@@ -16,6 +16,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Localization.dart';
@@ -58,12 +59,14 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   Auth2EmailAccountState? _state;
   bool _isLoading = false;
   bool _showingPassword = false;
+  bool _link = false;
 
   @override
   void initState() {
     super.initState();
     _emailController.text = widget.email!;
     _state = widget.state;
+    _link = widget.onboardingContext?["link"] ?? false;
     if (_state == Auth2EmailAccountState.unverified) {
       _validationErrorText = Localization().getStringEx("panel.onboarding2.email.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential.");
       _validationErrorColor = _messageColor;
@@ -378,32 +381,52 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       else {
         setState(() { _isLoading = true; });
 
-        Auth2().signUpWithEmail(widget.email, password).then((Auth2EmailSignUpResult result) {
-          
-          setState(() { _isLoading = false; });
-          
-          if (result == Auth2EmailSignUpResult.succeded) {
-            _emailFocusNode.unfocus();
-            _passwordFocusNode.unfocus();
-            _confirmPasswordFocusNode.unfocus();
-            setState(() {
-              _state = Auth2EmailAccountState.unverified;
-              _showingPassword = false;
-            });
-            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential."), color: _successColor);
-          }
-          else if (result == Auth2EmailSignUpResult.failedAccountExist) {
-            setState(() {
-              _state = Auth2EmailAccountState.unverified;
-              _showingPassword = false;
-            });
-            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.account_exists.text", "Sign up failed. This account already exists."));
-          }
-          else /*if (result == Auth2EmailSignUpResult.failed)*/ {
-            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.text", "Sign up failed."));
-          }
-        });
+        if (!_link) {
+          Auth2().signUpWithEmail(widget.email, password).then((Auth2EmailSignUpResult result) => _trySignUpCallback(result));
+        } else {
+          Map<String, dynamic> creds = {
+            "email": widget.email,
+            "password": password
+          };
+          Map<String, dynamic> params = {
+            "sign_up": true,
+            "confirm_password": confirmPassword
+          };
+          Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((bool success) {
+            if (success) {
+              _trySignUpCallback(Auth2EmailSignUpResult.succeded);
+            } else {
+              _trySignUpCallback(Auth2EmailSignUpResult.failed);
+            }
+          });
+        }
       }
+    }
+  }
+
+  void _trySignUpCallback(Auth2EmailSignUpResult result) {
+
+    setState(() { _isLoading = false; });
+
+    if (result == Auth2EmailSignUpResult.succeded) {
+      _emailFocusNode.unfocus();
+      _passwordFocusNode.unfocus();
+      _confirmPasswordFocusNode.unfocus();
+      setState(() {
+        _state = Auth2EmailAccountState.unverified;
+        _showingPassword = false;
+      });
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential."), color: _successColor);
+    }
+    else if (result == Auth2EmailSignUpResult.failedAccountExist) {
+      setState(() {
+        _state = Auth2EmailAccountState.unverified;
+        _showingPassword = false;
+      });
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.account_exists.text", "Sign up failed. This account already exists."));
+    }
+    else /*if (result == Auth2EmailSignUpResult.failed)*/ {
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.text", "Sign up failed."));
     }
   }
 

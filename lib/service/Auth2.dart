@@ -669,7 +669,7 @@ class Auth2 with Service implements NotificationsListener {
         'params': params,
       });
 
-      Response? response = await Network().post(url, headers: headers, body: post);
+      Response? response = await Network().post(url, headers: headers, body: post, auth: NetworkAuth.Auth2);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
       bool result = _processLinkResponse(responseJson);
 
@@ -680,7 +680,6 @@ class Auth2 with Service implements NotificationsListener {
 
   bool _processLinkResponse(Map<String, dynamic>? responseJson) {
     if (responseJson != null) {
-      //TODO: process 'message' field
       List<Auth2Type>? updatedAuthTypes = Auth2Type.listFromJson(JsonUtils.listValue(responseJson['auth_types']));
       _account?.authTypes = updatedAuthTypes;
       Storage().auth2Account = _account;
