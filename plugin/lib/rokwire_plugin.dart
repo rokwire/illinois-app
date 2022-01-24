@@ -13,6 +13,23 @@ class RokwirePlugin {
     return null;
   }
 
+  static Future<String?> getDeviceId(String? identifier) async {
+    try { return await _channel.invokeMethod('getDeviceId', {
+      'identifier': identifier,
+    }); }
+    catch(e) { debugPrint(e.toString()); }
+    return null;
+  }
+
+  static Future<String?> getEncryptionKey(String? identifier, int? size) async {
+    try { return await _channel.invokeMethod('getEncryptionKey', {
+      'identifier': identifier,
+      'size': size,
+    }); }
+    catch(e) { debugPrint(e.toString()); }
+    return null;
+  }
+
   static Future<String?> queryLocationServicesStatus() async {
     try { return await _channel.invokeMethod('locationServices.queryStatus'); }
     catch(e) { debugPrint(e.toString()); }
