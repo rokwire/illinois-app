@@ -461,7 +461,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
             setState(() {
               _state = Auth2EmailAccountState.unverified;
             });
-            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.activation_expired.text", "Your activation link has already expired. Please resend verification email again and cofirm it in order to activate your account."));
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.activation_expired.text", "Your activation link has already expired. Please resend verification email again and confirm it in order to activate your account."));
           }
           else if (widget.onboardingContext != null) {
             Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2

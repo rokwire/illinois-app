@@ -80,11 +80,17 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                     Semantics(
                       header: true,
                       child: Padding(padding: EdgeInsets.symmetric(horizontal: 36), child:
-                        Text(Localization().getStringEx('panel.onboarding2.phone_or_email.title.text', 'Login by phone or email')!, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary))
+                        Text(_link ?
+                          Localization().getStringEx('panel.onboarding2.phone_or_email.link.title.text', 'Link a phone or email')! :
+                          Localization().getStringEx('panel.onboarding2.phone_or_email.title.text', 'Login by phone or email')!,
+                          textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary))
                     )),
                     Container(height: 24,),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
-                      Text(Localization().getStringEx("panel.onboarding2.phone_or_email.description", "Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email.")!, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary)),
+                      Text(_link ?
+                        Localization().getStringEx("panel.onboarding2.phone_or_email.link.description", "Please enter the phone number or email address you wish to link to your account.")! :
+                        Localization().getStringEx("panel.onboarding2.phone_or_email.description", "Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email.")!,
+                        textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary)),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
                       Text(Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.text", "Phone number or email address:")!, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
@@ -178,16 +184,29 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     if (!_link) {
       Auth2().authenticateWithPhone(phoneNumber).then((success) => _loginByPhoneCallback(success, phoneNumber));
     } else {
-      Map<String, dynamic> credsMap = {
+      Map<String, dynamic> creds = {
         "phone": phoneNumber
       };
-      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, credsMap, null).then((success) => _loginByPhoneCallback(success, phoneNumber));
+      Map<String, dynamic> params = {};
+      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((success) => _loginByPhoneCallback(success, phoneNumber));
     }
   }
 
   void _loginByPhoneCallback(bool success, String? phoneNumber) {
     if (mounted) {
       setState(() { _isLoading = false; });
+      if (_link) {
+        if (success) {
+          Function? onSuccess = widget.onboardingContext!["onContinueAction"];
+          if(onSuccess!=null){
+            onSuccess();
+            return;
+          }
+        } else {
+          setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.link.failed", "Failed to link phone number."));
+          return;
+        }
+      }
       _onPhoneInitiated(phoneNumber, success);
     }
   }

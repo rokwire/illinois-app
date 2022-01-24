@@ -971,7 +971,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
               borderRadius: _allRounding,
               label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Link your NetID"),
-              onTap: null), // TODO: implement onTap
+              onTap: _onLinkNetIdClicked), // TODO: implement onTap
           Visibility(visible: _connectingNetId == true, child:
             Container(height: 46, child:
               Align(alignment: Alignment.centerRight, child:
@@ -1011,6 +1011,19 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     );
   }
 
+  void _onLinkNetIdClicked() {
+    Analytics.instance.logSelect(target: "Link Illinois NetID");
+    if (Connectivity().isNotOffline) {
+      Auth2().authenticateWithOidc(link: true).then((bool? result) {
+        if (result == false) {
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to link Illinois NetID."));
+        }
+      });
+    } else {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.netid', 'Feature not available when offline.'));
+    }
+  }
+
   void _onLinkPhoneOrEmailClicked() {
     Analytics.instance.logSelect(target: "Link Phone or Email");
     if (Connectivity().isNotOffline) {
@@ -1036,9 +1049,10 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       Auth2().logout();
       switch (loginType) {
         case Auth2LoginType.oidcIllinois:
+          setState(() { _connectingNetId = true; });
           Auth2().authenticateWithOidc().then((bool? result) {
             if (mounted) {
-              // setState(() { _connectingNetId = false; });
+              setState(() { _connectingNetId = false; });
               if (result == false) {
                 AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
               }
@@ -1206,7 +1220,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             rowWidgets.add(Container(width: 12),);
           }
           rowWidgets.add(Expanded(child: privacyButton));
-          
+
           if (rowWidgets.length >= 3) {
             if (colWidgets.isNotEmpty) {
               colWidgets.add(Container(height: 12),);
@@ -1452,7 +1466,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         borderColor: Styles().colors!.fillColorSecondary,
         onTap: _onDebugClicked,
       ),
-    ); 
+    );
   }
 
   Widget _buildHeaderBarDebug() {

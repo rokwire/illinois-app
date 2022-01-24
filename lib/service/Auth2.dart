@@ -44,6 +44,7 @@ class Auth2 with Service implements NotificationsListener {
   _OidcLogin? _oidcLogin;
   List<Completer<bool?>>? _oidcAuthenticationCompleters;
   bool? _processingOidcAuthentication;
+  bool _processingOidcLink = false;
   Timer? _oidcAuthenticationTimer;
 
   Map<String, Future<Response?>> _refreshTokenFutures = {};
@@ -283,7 +284,7 @@ class Auth2 with Service implements NotificationsListener {
 
   // OIDC Authentication
 
-  Future<bool?> authenticateWithOidc() async {
+  Future<bool?> authenticateWithOidc({bool? link}) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null)) {
 
       if (_oidcAuthenticationCompleters == null) {
@@ -293,6 +294,9 @@ class Auth2 with Service implements NotificationsListener {
         _OidcLogin? oidcLogin = await _getOidcData();
         if (oidcLogin?.loginUrl != null) {
           _oidcLogin = oidcLogin;
+          if (link != null) {
+            _processingOidcLink = link;
+          }
           await _launchUrl(_oidcLogin?.loginUrl);
         }
         else {
@@ -315,8 +319,13 @@ class Auth2 with Service implements NotificationsListener {
     
     _cancelOidcAuthenticationTimer();
 
+    bool result;
     _processingOidcAuthentication = true;
-    bool result = await _processOidcAuthentication(uri);
+    if (_processingOidcLink) {
+      result = await linkAccountAuthType(Auth2LoginType.oidcIllinois, uri.toString(), _oidcLogin?.params);
+    } else {
+      result = await _processOidcAuthentication(uri);
+    }
     _processingOidcAuthentication = false;
 
     Analytics().logAuth(action: Analytics.LogAuthLoginNetIdActionName, result: result);
@@ -451,6 +460,7 @@ class Auth2 with Service implements NotificationsListener {
     NotificationService().notify(notifyLoginFinished);
 
     _oidcLogin = null;
+    _processingOidcLink = false;
 
     if (_oidcAuthenticationCompleters != null) {
       List<Completer<bool?>> loginCompleters = _oidcAuthenticationCompleters!;
@@ -657,7 +667,7 @@ class Auth2 with Service implements NotificationsListener {
     return false;
   }
 
-  Future<bool> linkAccountAuthType(Auth2LoginType? loginType, Map<String, dynamic>? creds, Map<String, dynamic>? params) async {
+  Future<bool> linkAccountAuthType(Auth2LoginType? loginType, dynamic creds, Map<String, dynamic>? params) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (loginType != null)) {
       String url = "${Config().coreUrl}/services/auth/account/auth-type/link";
       Map<String, String> headers = {
