@@ -98,7 +98,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     return Visibility(visible: AppCollection.isCollectionNotEmpty(_reminderItems), child:
       Column(children: [
           SectionTitlePrimary(
-            title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'CAMPUS REMINDERS'),
+            title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
             iconPath: 'images/campus-tools.png',
             children: _buildRemindersList()
           ),

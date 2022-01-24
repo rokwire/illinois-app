@@ -6,6 +6,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.1.15] - 2022-01-21
+### Fixed
+- Crash when editing group event [#1262](https://github.com/rokwire/illinois-app/issues/1262).
+- Differ checkboxes for voted and non-voted answers in polls [#1264](https://github.com/rokwire/illinois-app/issues/1264).
+- Place "Leave" group button below the tabs [#1265](https://github.com/rokwire/illinois-app/issues/1265).
+- Fixed UIUC token refresh.
+
+## [3.1.14] - 2022-01-20
+### Changed
+- Use external browser for "Crisis Help" [#1255](https://github.com/rokwire/illinois-app/issues/1255).
+- Styling of Campus Reminders [#1240](https://github.com/rokwire/illinois-app/issues/1240).
+### Added
+- Descriptive text for "Building access" to HomeLoginWidget [#1221](https://github.com/rokwire/illinois-app/issues/1221).
+- Implemented Search for GroupMembersPanel [#1252](https://github.com/rokwire/illinois-app/issues/1252).
+### Fixed
+- Case insensitive sorting of groups [#1239](https://github.com/rokwire/illinois-app/issues/1239).
+
+## [3.1.13] - 2022-01-19
+### Fixed
+- Improved Accessibility [#1213](https://github.com/rokwire/illinois-app/issues/1213).
+- Fix tapping on a Group created Event in the Inbox [#1241](https://github.com/rokwire/illinois-app/issues/1241).
+- Show common label for saved items [#1235](https://github.com/rokwire/illinois-app/issues/1235).
+- Display events in Explore Panel [#1236](https://github.com/rokwire/illinois-app/issues/1236).
+- Populating lat/long in CreateEventPanel [#1237](https://github.com/rokwire/illinois-app/issues/1237).
+- Fixed IdCardPanel layout order [#1201](https://github.com/rokwire/illinois-app/issues/1201).
+- Acknowledge reminder dates in university timezone [#1246](https://github.com/rokwire/illinois-app/issues/1246).
+- Remove margin from Group Post body in GroupPostDetailPanel [#1227](https://github.com/rokwire/illinois-app/issues/1227).
+- Update Browse panel layout [#1217](https://github.com/rokwire/illinois-app/issues/1217).
+- Update "Campus Resources" Layout [#1219](https://github.com/rokwire/illinois-app/issues/1219).
+- Make _GroupSelectionPopup to be scrollable [#1238](https://github.com/rokwire/illinois-app/issues/1238).
+
+## [3.1.12] - 2022-01-13
+### Fixed
+- Wrong header bar colors [#1206](https://github.com/rokwire/illinois-app/issues/1206).
+- Android: Soft keyboard does not appear in web view [#1209](https://github.com/rokwire/illinois-app/issues/1209).
+- Crash in Privacy Center.
+- Respect user's category interests and sort random events [#1171](https://github.com/rokwire/illinois-app/issues/1171).
+### Changed
+- Label from "Building Entry" to "Building Access" [#1172](https://github.com/rokwire/illinois-app/issues/1172).
+
 ## [3.1.11] - 2022-01-11
 ### Added
 - Paging for Group Polls [#1157](https://github.com/rokwire/illinois-app/issues/1157).

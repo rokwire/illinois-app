@@ -296,7 +296,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                     "body": Style(
                                         color: Styles().colors!.fillColorPrimary,
                                         fontFamily: Styles().fontFamilies!.regular,
-                                        fontSize: FontSize(20))
+                                        fontSize: FontSize(20),
+                                        margin: EdgeInsets.zero,
+                                    ),
                                   },
                                   onLinkTap: (url, context, attributes, element) =>
                                       _onTapPostLink(url)))),
@@ -452,6 +454,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           wrapContent: true,
           buttonVisible: _editingReply!=null,
           onImageChanged: (String imageUrl) => _replyEditData?.imageUrl = imageUrl,
+          imageSemanticsLabel: "Reply", //TBD localize
         )
      );
   }

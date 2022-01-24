@@ -114,6 +114,7 @@
     "panel.home.connect.not_logged_in.netid.description.part_3": " or ",
     "panel.home.connect.not_logged_in.netid.description.part_4": "employee",
     "panel.home.connect.not_logged_in.netid.description.part_5": "? Sign in with your NetID.",
+    "panel.home.connect.not_logged_in.netid.description.part_6": " (A NetID sign-in is REQUIRED to be able to use the Building Access feature).",
     "panel.home.connect.not_logged_in.netid.title": "Connect your NetID",
     "panel.home.connect.not_logged_in.phone_or_email.description.part_1": "Don't have a NetID? ",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
@@ -191,7 +192,7 @@
     "panel.browse.button.groups.hint":"",
     "panel.browse.button.safer.title": "Illinois más seguro",
     "panel.browse.button.safer.hint": "",
-    "panel.browse.button.building_status.title": "Entrada al edificio",
+    "panel.browse.button.building_status.title": "Building Entry",
     "panel.browse.button.building_status.hint": "",
     "panel.browse.button.add_illini_cash.title": "Añadir Illini Cash",
     "panel.browse.button.add_illini_cash.hint": "",
@@ -199,8 +200,12 @@
     "panel.browse.button.campus_guide.hint":"",
     "panel.browse.button.inbox.title":"Bandeja de entrada",
     "panel.browse.button.inbox.hint":"",
-    "panel.browse.button.privacy_center.title": "Centro de privacidad",
+    "panel.browse.button.privacy_center.title": "Privacy",
     "panel.browse.button.privacy_center.hint":"",
+    "panel.browse.button.crisis_help.title": "Crisis Help",
+    "panel.browse.button.crisis_help.hint": "",
+    "panel.browse.button.faqs.title": "FAQs",
+    "panel.browse.button.faqs.hint": "",
 
     "panel.browse.label.browse_all": "Explorar todo",
     "panel.browse.label.offline.sign_in": "Iniciar sesión no disponible sin conexión.",
@@ -212,6 +217,8 @@
     "panel.browse.label.offline.create_event": "Crear evento no disponible sin conexión.",
     "panel.browse.label.offline.manage_interrest": "Gestionar intereses no disponibles sin conexión.",
     "panel.browse.label.offline.feedback": "Proporcionar un comentario no está disponible sin conexión.",
+    "panel.browse.label.offline.faqs": "FAQs is not available while offline.",
+    "panel.browse.label.offline.crisis_help": "Crisis Help is not available while offline.",
 
     "panel.browse.button.sign_in.title":"Iniciar sesión",
     "panel.browse.button.sign_in.hint":"",
@@ -892,6 +899,7 @@
     "panel.settings.categories.description":"Toque para seguir las categorías que más le interesen",
 
     "panel.settings.feedback.label.title": "Proporcionar comentarios",
+    "panel.settings.faqs.label.title": "FAQs",
 
     "panel.settings.privacy_statement.label.title": "Declaración de privacidad",
 
@@ -1671,6 +1679,9 @@
     "panel.manage_members.button.see_all_requests.hint": "",
     "panel.manage_members.label.filter_by": "Filter by",
     "panel.manage_members.label.filter_by.all_members": "Todos los miembros (#)",
+    "panel.manage_members.field.search.title": "Búsqueda",
+    "panel.manage_members.button.search.clear.title": "Claro",
+    "panel.manage_members.button.search.title": "Búsqueda",
 
     "panel.pending_member_detail.button.add.title": "Añadir",
     "panel.pending_member_detail.button.add.hint": "",
@@ -1929,7 +1940,7 @@
     "widget.game_detail_heading.button.roster.title":"Lista",
     "widget.game_detail_heading.button.roster.hint": "Toca para ver la lista",
 
-    "widget.home_campus_reminders.label.campus_reminders":"RECORDATORIOS DE CAMPUS",
+    "widget.home_campus_reminders.label.campus_reminders": "Recordatorios de Campus",
     "widget.home_campus_reminders.button.more.title": "Ver todo",
     "widget.home_campus_reminders.button.more.hint": "Toca para ver todos los recordatorios",
 
@@ -1994,6 +2005,8 @@
     "widget.home_campus_tools.button.my_illini.hint": "",
     "widget.home_campus_tools.button.wellness.title": "Bienestar",
     "widget.home_campus_tools.button.wellness.hint": "",
+    "widget.home_campus_tools.button.crisis_help.title": "Crisis Help",
+    "widget.home_campus_tools.button.crisis_help.hint": "",
 
     "widget.home_create_poll.heading.title":"Centro",
     "widget.home_create_poll.button.close.label":"Cerrar",
@@ -2113,7 +2126,7 @@
     "widget.privacy_level_slider.label.right.title": "La mayoría de las funciones",
 
     "widget.favorites_saved_dialog.title":"This starred item has been added to your saved list" ,
-    "widget.favorites_saved_dialog.calendar.title":" and also your calendar." ,
+    "widget.favorites_saved_dialog.calendar.title": " and if it is an event, also your calendar" ,
     "widget.favorites_saved_dialog.button.view":"View saved" ,
 
     "widget.explore_card.small.view_all.title": "Ver todos los eventos",

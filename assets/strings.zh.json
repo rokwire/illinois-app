@@ -113,7 +113,8 @@
 	"panel.home.connect.not_logged_in.netid.description.part_2": "university student",
 	"panel.home.connect.not_logged_in.netid.description.part_3": " or ",
 	"panel.home.connect.not_logged_in.netid.description.part_4": "employee",
-"panel.home.connect.not_logged_in.netid.description.part_5": "? Sign in with your NetID.",
+	"panel.home.connect.not_logged_in.netid.description.part_5": "? Sign in with your NetID.",
+	"panel.home.connect.not_logged_in.netid.description.part_6": " (A NetID sign-in is REQUIRED to be able to use the Building Access feature).",
 	"panel.home.connect.not_logged_in.netid.title": "Connect your NetID",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_1": "Don't have a NetID? ",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
@@ -191,7 +192,7 @@
 	"panel.browse.button.groups.hint":"",
 	"panel.browse.button.safer.title": "伊利诺伊",
 	"panel.browse.button.safer.hint": "",
-	"panel.browse.button.building_status.title": "建築入口",
+	"panel.browse.button.building_status.title": "Building Entry",
 	"panel.browse.button.building_status.hint": "",
 	"panel.browse.button.add_illini_cash.title": "添加伊利尼現金",
 	"panel.browse.button.add_illini_cash.hint": "",
@@ -199,8 +200,12 @@
 	"panel.browse.button.campus_guide.hint":"",
 	"panel.browse.button.inbox.title":"收件箱",
 	"panel.browse.button.inbox.hint":"",
-	"panel.browse.button.privacy_center.title": "隱私中心",
+	"panel.browse.button.privacy_center.title": "Privacy",
 	"panel.browse.button.privacy_center.hint":"",
+	"panel.browse.button.crisis_help.title": "Crisis Help",
+	"panel.browse.button.crisis_help.hint": "",
+	"panel.browse.button.faqs.title": "FAQs",
+	"panel.browse.button.faqs.hint": "",
 
 	"panel.browse.label.browse_all": "浏览全部",
 	"panel.browse.label.offline.sign_in":"离线时无法登录",
@@ -212,6 +217,8 @@
 	"panel.browse.label.offline.create_event":"离线时无法创建活动。",
 	"panel.browse.label.offline.manage_interrest":"离线时无法管理兴趣。",
 	"panel.browse.label.offline.feedback":"离线时无法提供反馈。",
+	"panel.browse.label.offline.faqs": "FAQs is not available while offline.",
+	"panel.browse.label.offline.crisis_help": "Crisis Help is not available while offline.",
 
 	"panel.browse.button.sign_in.title":"登录",
 	"panel.browse.button.sign_in.hint":"",
@@ -892,6 +899,7 @@
 	"panel.settings.categories.description":"点击以遵循您最感兴趣的类别",
 
 	"panel.settings.feedback.label.title":"提供反馈",
+	"panel.settings.faqs.label.title": "FAQs",
 
 	"panel.settings.privacy_statement.label.title":"隐私声明",
 
@@ -1669,6 +1677,9 @@
 	"panel.manage_members.button.see_all_requests.hint": "",
 	"panel.manage_members.label.filter_by": "筛选依据",
 	"panel.manage_members.label.filter_by.all_members": "所有成员（#）",
+	"panel.manage_members.field.search.title": "搜索",
+	"panel.manage_members.button.search.clear.title": "清除",
+	"panel.manage_members.button.search.title": "搜索",
 
 	"panel.pending_member_detail.button.add.title": "添加",
 	"panel.pending_member_detail.button.add.hint": "",
@@ -1992,6 +2003,8 @@
 	"widget.home_campus_tools.button.my_illini.hint":"",
 	"widget.home_campus_tools.button.wellness.title": "健康",
 	"widget.home_campus_tools.button.wellness.hint": "",
+	"widget.home_campus_tools.button.crisis_help.title": "Crisis Help",
+	"widget.home_campus_tools.button.crisis_help.hint": "",
 
 	"widget.home_create_poll.heading.title":"民意調查",
 	"widget.home_create_poll.button.close.label":"关闭",
@@ -2111,7 +2124,7 @@
 	"widget.privacy_level_slider.label.right.title":"大多数功能",
 
 	"widget.favorites_saved_dialog.title":"This starred item has been added to your saved list" ,
-	"widget.favorites_saved_dialog.calendar.title":" and also your calendar." ,
+	"widget.favorites_saved_dialog.calendar.title": " and if it is an event, also your calendar" ,
 	"widget.favorites_saved_dialog.button.view":"View saved" ,
 
 	"widget.explore_card.small.view_all.title": "查看所有活動",

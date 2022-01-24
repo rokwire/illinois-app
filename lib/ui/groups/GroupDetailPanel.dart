@@ -759,23 +759,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       tabs.add(tabWidget);
     }
 
-    if (_canLeaveGroup) {
-      Widget leaveButton = GestureDetector(
-          onTap: _onTapLeave,
-          child: Padding(
-              padding: EdgeInsets.only(left: 24, top: 10, bottom: 10),
-              child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave')!,
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: Styles().fontFamilies!.regular,
-                      color: Styles().colors!.fillColorPrimary,
-                      decoration: TextDecoration.underline,
-                      decorationColor: Styles().colors!.fillColorSecondary,
-                      decorationThickness: 1.5))));
-      tabs.add(leaveButton);
-    }
+    Widget leaveButton = GestureDetector(
+        onTap: _onTapLeave,
+        child: Padding(
+            padding: EdgeInsets.only(left: 24, top: 10, bottom: 10),
+            child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave')!,
+                style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: Styles().fontFamilies!.regular,
+                    color: Styles().colors!.fillColorPrimary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: Styles().colors!.fillColorSecondary,
+                    decorationThickness: 1.5))));
 
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: tabs)));
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: tabs)),
+      Visibility(visible: _canLeaveGroup, child: Padding(padding: EdgeInsets.only(top: 5), child: Row(children: [Expanded(child: Container()), leaveButton])))
+    ]));
   }
 
   Widget _buildEvents() {
@@ -921,7 +921,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             iconPath: 'images/icon-calendar.png',
             rightIconPath: 'images/icon-add-20x18.png',
             rightIconAction: _onTapCreatePoll,
-            rightIconLabel: Localization().getStringEx('panel.group_detail.button.create_event.title', 'Create Poll'),
+            rightIconLabel: Localization().getStringEx('panel.group_detail.button.create_poll.title', 'Create Poll'),//TBD Localization
             children: pollsContentList)
       ]),
       _pollsLoading

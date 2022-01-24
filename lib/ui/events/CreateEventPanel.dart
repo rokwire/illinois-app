@@ -1493,10 +1493,18 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       _isOnline = event.isVirtual ?? false;
       _isFree = event.isEventFree?? false;
       _location = event.location;
-      _eventDescriptionController.text = event.longDescription!;
-      _eventPurchaseUrlController.text = event.registrationUrl!;
-      _eventWebsiteController.text = event.titleUrl!;
-      _eventPriceController.text = event.cost!;
+      if (event.longDescription != null) {
+        _eventDescriptionController.text = event.longDescription!;
+      }
+      if (event.registrationUrl != null) {
+        _eventPurchaseUrlController.text = event.registrationUrl!;
+      }
+      if (event.titleUrl != null) {
+        _eventWebsiteController.text = event.titleUrl!;
+      }
+      if (event.cost != null) {
+        _eventPriceController.text = event.cost!;
+      }
       _selectedPrivacy = (event.isGroupPrivate??false) ? eventPrivacyPrivate : eventPrivacyPublic;
       if(event.location!=null){
         if (_isOnline) {
@@ -1655,7 +1663,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       }
 
       _location!.name = locationName;
-      _eventLocationController.text = locationName!;
+      _eventLocationController.text = AppString.getDefaultEmptyString(locationName);
 
       if(AppString.isStringNotEmpty(_location!.description)){
         if (_isOnline) {
@@ -2362,9 +2370,10 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
 
   @override
   Widget build(BuildContext context) {
-    BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
-    return Dialog(
-        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+    return AlertDialog(
+      contentPadding: EdgeInsets.zero,
+        scrollable: true,
+        content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
       Container(
           decoration: BoxDecoration(
             color: Styles().colors!.fillColorPrimary,
@@ -2379,18 +2388,7 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
           ])),
       Padding(
           padding: EdgeInsets.all(10),
-          child: AppCollection.isCollectionNotEmpty(widget.groups)
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) => ToggleRibbonButton(
-                      borderRadius: _topRounding,
-                      label: widget.groups![index].title,
-                      toggled: _isGroupSelected(index),
-                      context: context,
-                      onTap: () => _onTapGroup(index),
-                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
-                  itemCount: widget.groups!.length)
-              : Container()),
+          child: _buildGroupsList()),
       Semantics(
         container: true,
         child:Padding(
@@ -2402,6 +2400,26 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
               textColor: Styles().colors!.fillColorPrimary,
               onTap: _onTapSelect)))
     ]));
+  }
+
+  Widget _buildGroupsList() {
+    if (AppCollection.isCollectionEmpty(widget.groups)) {
+      return Container();
+    }
+    List<Widget> groupWidgetList = [];
+    for (int index = 0; index < widget.groups!.length; index++) {
+      Group group = widget.groups![index];
+      Widget groupSelectionWidget = ToggleRibbonButton(
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+          label: group.title,
+          toggled: _isGroupSelected(index),
+          context: context,
+          onTap: () => _onTapGroup(index),
+          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold));
+
+      groupWidgetList.add(groupSelectionWidget);
+    }
+    return Column(children: groupWidgetList);
   }
 
   void _onTapGroup(int index) {

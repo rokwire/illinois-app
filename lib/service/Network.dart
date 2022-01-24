@@ -487,13 +487,11 @@ class Network  {
   }
 
   Future<bool> _refreshTokenIfNeeded(Http.BaseResponse? response, NetworkAuth? auth, Auth2Token? token) async {
-    if ((response?.statusCode == 401) && (token != null) && (token == Auth2().token)) {
-      if (NetworkAuth.Auth2 == auth) {
+    if ((response?.statusCode == 401) &&
+        (token != null) && (token == Auth2().token) &&
+        ((NetworkAuth.Auth2 == auth) || (NetworkAuth.UIUC_Id == auth) || (NetworkAuth.UIUC_Access == auth)))
+    {
         return (await Auth2().refreshToken(token) != null);
-      }
-      else if (((NetworkAuth.UIUC_Id == auth) || (NetworkAuth.UIUC_Access == auth)) && (token == Auth2().userToken)) {
-        return (await Auth2().refreshToken(token) != null);
-      }
     }
     return false;
   }

@@ -23,6 +23,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/WellnessPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
@@ -102,6 +103,11 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
       hint = Localization().getStringEx('widget.home_campus_tools.button.wellness.hint', '');
       iconPath = 'images/icon-campus-tools-wellness.png';
       onTap = _onTapWellness;
+    } else if (code == 'crisis_help') {
+      label = Localization().getStringEx('widget.home_campus_tools.button.crisis_help.title', 'Crisis Help');
+      hint = Localization().getStringEx('widget.home_campus_tools.button.crisis_help.hint', '');
+      iconPath = 'images/icon-campus-tools-crisis.png';
+      onTap = _onTapCrisisHelp;
      } else {
       return null;
     }
@@ -145,6 +151,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
       children: <Widget>[
         SectionTitlePrimary(title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
           iconPath: 'images/campus-tools.png',
+          listPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           children: rows,),
         Container(height: 48,),
       ],
@@ -230,6 +237,15 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
     Analytics.instance.logSelect(target: "Wellness");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessPanel()));
 
+  }
+  void _onTapCrisisHelp() {
+    Analytics.instance.logSelect(target: "Crisis Help");
+    String? url = Config().crisisHelpUrl;
+    if (AppString.isStringNotEmpty(url)) {
+      launch(url!);
+    } else {
+      Log.e("Missing Config().crisisHelpUrl");
+    }
   }
 }
 
