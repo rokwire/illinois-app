@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/service/Styles.dart';
 
 class ImageHolderListItem extends StatelessWidget {

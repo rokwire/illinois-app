@@ -20,7 +20,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/ExploreService.dart';
@@ -44,6 +43,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as timezone;
+import 'package:rokwire_plugin/service/config.dart';
 
 
 class CreateEventPanel extends StatefulWidget {

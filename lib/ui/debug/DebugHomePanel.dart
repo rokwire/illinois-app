@@ -42,6 +42,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/config.dart' as rokwire;
 
 class DebugHomePanel extends StatefulWidget {
   @override
@@ -51,7 +52,7 @@ class DebugHomePanel extends StatefulWidget {
 class _DebugHomePanelState extends State<DebugHomePanel> implements NotificationsListener {
 
   DateTime? _offsetDate;
-  ConfigEnvironment? _selectedEnv;
+  rokwire.ConfigEnvironment? _selectedEnv;
   Set<String> _rangingRegionIds = Set();
 
   final TextEditingController _mapThresholdDistanceController = TextEditingController();
@@ -192,11 +193,11 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       separatorBuilder: (context, index) => Divider(color: Colors.transparent),
-                      itemCount: ConfigEnvironment.values.length,
+                      itemCount: rokwire.ConfigEnvironment.values.length,
                       itemBuilder: (context, index) {
-                        ConfigEnvironment environment = ConfigEnvironment.values[index];
+                        rokwire.ConfigEnvironment environment = rokwire.ConfigEnvironment.values[index];
                         RadioListTile widget = RadioListTile(
-                            title: Text(configEnvToString(environment)!), value: environment, groupValue: _selectedEnv, onChanged: _onConfigChanged);
+                            title: Text(rokwire.configEnvToString(environment)!), value: environment, groupValue: _selectedEnv, onChanged: _onConfigChanged);
                         return widget;
                       },
                     )
@@ -308,7 +309,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             borderColor: Styles().colors!.fillColorPrimary,
                             onTap: _onTapClearVoting)),
                     Visibility(
-                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
@@ -320,7 +321,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               onTap: _onTapGuide))
                     ),
                     Visibility(
-                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
@@ -341,7 +342,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             borderColor: Styles().colors!.fillColorPrimary,
                             onTap: _onTapRefreshToken)),
                     Visibility(
-                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
@@ -608,7 +609,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onConfigChanged(dynamic env) {
-    if (env is ConfigEnvironment) {
+    if (env is rokwire.ConfigEnvironment) {
       setState(() {
         Config().configEnvironment = env;
         _selectedEnv = Config().configEnvironment;
@@ -617,7 +618,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onTapHttpProxy() {
-    if(Config().configEnvironment == ConfigEnvironment.dev) {
+    if(Config().configEnvironment == rokwire.ConfigEnvironment.dev) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHttpProxyPanel()));
     }
   }

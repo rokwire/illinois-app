@@ -75,6 +75,8 @@ class Storage with Service {
     }
   }
 
+  // Encryption
+
   String  get encryptionKeyId => _ecryptionKeyId;
   String? get encryptionKey => _encryptionKey;
   
@@ -91,13 +93,7 @@ class Storage with Service {
       AESCrypt.decrypt(value, key: _encryptionKey, iv: _encryptionIV) : null;
   }
 
-  void deleteEverything(){
-    if (_sharedPreferences != null) {
-      for(String key in _sharedPreferences!.getKeys()){
-        _sharedPreferences!.remove(key);
-      }
-    }
-  }
+  // Utilities
 
   String? getStringWithName(String name, {String? defaultValue}) {
     return _sharedPreferences?.getString(name) ?? defaultValue;
@@ -212,6 +208,36 @@ class Storage with Service {
     }
     else if (value == null) {
       _sharedPreferences?.remove(key);
+    }
+  }
+
+  void deleteEverything(){
+    if (_sharedPreferences != null) {
+      for(String key in _sharedPreferences!.getKeys()){
+        _sharedPreferences!.remove(key);
+      }
+    }
+  }
+
+  // Config
+  String get configEnvKey => 'edu.illinois.rokwire.config_environment';
+  String? get configEnvironment => getStringWithName(configEnvKey);
+  set configEnvironment(String? value) => setStringWithName(configEnvKey, value);
+
+  // Upgrade
+
+  String get reportedUpgradeVersionsKey  => 'edu.illinois.rokwire.reported_upgrade_versions';
+
+  Set<String> get reportedUpgradeVersions {
+    List<String>? list = getStringListWithName(reportedUpgradeVersionsKey);
+    return (list != null) ? Set.from(list) : <String>{};
+  }
+
+  set reportedUpgradeVersion(String? version) {
+    if (version != null) {
+      Set<String> versions = reportedUpgradeVersions;
+      versions.add(version);
+      setStringListWithName(reportedUpgradeVersionsKey, versions.toList());
     }
   }
 

@@ -20,10 +20,12 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/storage.dart' as rokwire_storage;
+import 'package:rokwire_plugin/service/storage.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Storage extends rokwire_storage.Storage {
+class Storage extends rokwire.Storage {
+
+  static String get notifySettingChanged => rokwire.Storage.notifySettingChanged;
 
   // Singletone Factory
 
@@ -31,11 +33,12 @@ class Storage extends rokwire_storage.Storage {
   Storage.internal() : super.internal();
 
   factory Storage() {
-    return ((rokwire_storage.Storage.instance is Storage) ? (rokwire_storage.Storage.instance as Storage) : (rokwire_storage.Storage.instance = Storage.internal()));
+    return ((rokwire.Storage.instance is Storage) ? (rokwire.Storage.instance as Storage) : (rokwire.Storage.instance = Storage.internal()));
   }
 
-  static String get notifySettingChanged => rokwire_storage.Storage.notifySettingChanged;
 
+  @override String get configEnvKey => 'config_environment';
+  @override String get reportedUpgradeVersionsKey  => 'reported_upgrade_versions';
 
   // User: readonly, backward compatability only.
 
@@ -122,24 +125,6 @@ class Storage extends rokwire_storage.Storage {
 
   bool? get onBoardingImproveChoice {
     return getBoolWithName(onBoardingImproveChoiceKey, defaultValue: true);
-  }
-
-  ////////////////
-  // Upgrade
-
-  static const String reportedUpgradeVersionsKey  = 'reported_upgrade_versions';
-
-  Set<String> get reportedUpgradeVersions {
-    List<String>? list = getStringListWithName(reportedUpgradeVersionsKey);
-    return (list != null) ? Set.from(list) : Set<String>();
-  }
-
-  set reportedUpgradeVersion(String? version) {
-    if (version != null) {
-      Set<String> versions = reportedUpgradeVersions;
-      versions.add(version);
-      setStringListWithName(reportedUpgradeVersionsKey, versions.toList());
-    }
   }
 
   ////////////////////////////
@@ -405,19 +390,6 @@ class Storage extends rokwire_storage.Storage {
 
   set activePolls(String? value) {
     setStringWithName(activePollsKey, value);
-  }
-
-  /////////////
-  // Config
-
-  static const String _configEnvKey = 'config_environment';
-
-  String? get configEnvironment {
-    return getStringWithName(_configEnvKey);
-  }
-
-  set configEnvironment(String? value) {
-    setStringWithName(_configEnvKey, value);
   }
 
   /////////////

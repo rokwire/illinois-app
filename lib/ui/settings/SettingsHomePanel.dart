@@ -28,6 +28,7 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
@@ -142,7 +143,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
     }
 
-    if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
+    if (kDebugMode || (Config().configEnvironment == rokwire.ConfigEnvironment.dev)) {
       contentList.add(_buildDebug());
       actionsList.add(_buildHeaderBarDebug());
     }
