@@ -18,19 +18,19 @@
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart' as rokwire_app_datetime;
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class IlliniAppDateTime extends AppDateTime {
+class AppDateTime extends rokwire_app_datetime.AppDateTime {
 
   // Singletone Factory
   
   @protected
-  IlliniAppDateTime.internal() : super.internal();
+  AppDateTime.internal() : super.internal();
 
-  factory IlliniAppDateTime() {
-    return ((AppDateTime.instance is IlliniAppDateTime) ? (AppDateTime.instance as IlliniAppDateTime) : (AppDateTime.instance = IlliniAppDateTime.internal()));
+  factory AppDateTime() {
+    return ((rokwire_app_datetime.AppDateTime.instance is AppDateTime) ? (rokwire_app_datetime.AppDateTime.instance as AppDateTime) : (rokwire_app_datetime.AppDateTime.instance = AppDateTime.internal()));
   }
 
   @protected
