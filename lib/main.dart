@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/service/Gies.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -120,6 +121,7 @@ void main() async {
     DeviceCalendar(),
     ExploreService(),
     Groups(),
+    Gies(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // LaundryService(),
