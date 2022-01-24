@@ -21,7 +21,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
+class Auth2 with Service implements NotificationsListener {
   
   static const String notifyLoginStarted      = "edu.illinois.rokwire.auth2.login.started";
   static const String notifyLoginSucceeded    = "edu.illinois.rokwire.auth2.login.succeeded";
@@ -38,8 +38,6 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   static const String analyticsUin         = 'UINxxxxxx';
   static const String analyticsFirstName   = 'FirstNameXXXXXX';
   static const String analyticsLastName    = 'LastNameXXXXXX';
-
-  static const String UIUCAccessToken      = 'access_token';
 
   static const String _authCardName        = "idCard.json";
 
@@ -84,7 +82,6 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
 
   @override
   void createService() {
-    Network().subscribeAuthProvider(this, [NetworkAuth.uiucId, NetworkAuth.uiucAccess, NetworkAuth.auth2]);
     NotificationService().subscribe(this, [
       DeepLink.notifyUri,
       AppLivecycle.notifyStateChanged,
@@ -94,7 +91,6 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
 
   @override
   void destroyService() {
-    Network().unsubscribeAuthProvider(this);
     NotificationService().unsubscribe(this);
   }
 
@@ -192,49 +188,6 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
         _handleOidcAuthentication(uri);
       }
     }
-  }
-
-  // NetworkAuthProvider
-
-  @override
-  Pair<String, String>? authHeader(NetworkAuth? auth) {
-    if (auth == NetworkAuth.uiucId) {
-      String? idToken = uiucToken?.idToken;
-      if ((idToken != null) && idToken.isNotEmpty) {
-        String tokenType = uiucToken?.tokenType ?? 'Bearer';
-        return Pair(HttpHeaders.authorizationHeader, "$tokenType $idToken");
-      }
-    }
-    else if (auth == NetworkAuth.uiucAccess) {
-      String? accessToken = uiucToken?.accessToken;
-      if ((accessToken != null) && accessToken.isNotEmpty) {
-        return Pair(UIUCAccessToken, accessToken);
-      }
-    }
-    else if (auth == NetworkAuth.auth2) {
-      String? accessToken = token?.accessToken;
-      if ((accessToken != null) && accessToken.isNotEmpty) {
-        String tokenType = token?.tokenType ?? 'Bearer';
-        return Pair(HttpHeaders.authorizationHeader, "$tokenType $accessToken");
-      }
-    }
-    return null;
-  }
-
-  @override
-  dynamic authToken(NetworkAuth? auth) {
-    return token;
-  }
-  
-  @override
-  Future<bool> refreshAuthTokenIfNeeded(NetworkAuth? auth, Http.BaseResponse? response, dynamic token) async {
-    if ((response?.statusCode == 401) &&
-        ((NetworkAuth.auth2 == auth) || (NetworkAuth.uiucId == auth) || (NetworkAuth.uiucAccess == auth)) &&
-        (token is Auth2Token) && (token == Auth2().token))
-    {
-      return (await refreshToken(token) != null);
-    }
-    return false;
   }
 
   // Getters
@@ -754,7 +707,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   Future<bool> _deleteUserAccount() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account";
-      Response? response = await Network().delete(url, auth: NetworkAuth.auth2);
+      Response? response = await Network().delete(url, auth: Auth2NetworkAuth());
       return response?.statusCode == 200;
     }
     return false;
@@ -947,7 +900,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
       _updateUserPrefsClient?.close();
       _updateUserPrefsClient = client;
       
-      Response? response = await Network().put(url, auth: NetworkAuth.auth2, headers: headers, body: post, client: _updateUserPrefsClient);
+      Response? response = await Network().put(url, auth: Auth2NetworkAuth(), headers: headers, body: post, client: _updateUserPrefsClient);
       
       if (identical(client, _updateUserPrefsClient)) {
         if (response?.statusCode == 200) {
@@ -969,7 +922,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   Future<Auth2UserPrefs?> _loadAccountUserPrefs() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account/preferences";
-      Response? response = await Network().get(url, auth: NetworkAuth.auth2);
+      Response? response = await Network().get(url, auth: Auth2NetworkAuth());
       return (response?.statusCode == 200) ? Auth2UserPrefs.fromJson(JsonUtils.decodeMap(response?.body)) : null;
     }
     return null;
@@ -1005,7 +958,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   Future<Auth2UserProfile?> _loadAccountUserProfile() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account/profile";
-      Response? response = await Network().get(url, auth: NetworkAuth.auth2);
+      Response? response = await Network().get(url, auth: Auth2NetworkAuth());
       return (response?.statusCode == 200) ? Auth2UserProfile.fromJson(JsonUtils.decodeMap(response?.body)) : null;
     }
     return null;
@@ -1018,7 +971,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
         'Content-Type': 'application/json'
       };
       String? post = JsonUtils.encode(profile!.toJson());
-      Response? response = await Network().put(url, auth: NetworkAuth.auth2, headers: headers, body: post);
+      Response? response = await Network().put(url, auth: Auth2NetworkAuth(), headers: headers, body: post);
       return (response?.statusCode == 200);
     }
     return false;
@@ -1092,4 +1045,68 @@ enum Auth2EmailSignInResult {
   failed,
   failedActivationExpired,
   failedNotActivated,
+}
+
+abstract class _Auth2NetworkAuth extends NetworkAuthProvider {
+
+  String? get _token;
+  String? get _tokenType;
+  String  get _headerField;
+
+  @override
+  Map<String, String>? get networkAuthHeaders {
+    String? token = _token;
+    if ((token != null) && token.isNotEmpty) {
+      String? tokenType = _tokenType;
+      String headerValue = ((tokenType != null) && tokenType.isNotEmpty) ? "$tokenType $token" : "$token";
+      return { _headerField : headerValue };
+    }
+    return null;
+  }
+
+  @override
+  dynamic get networkAuthToken => Auth2().token;
+  
+  @override
+  Future<bool> refreshNetworkAuthTokenIfNeeded(Http.BaseResponse? response, dynamic token) async {
+    if ((response?.statusCode == 401) && (token is Auth2Token) && (Auth2().token == token)) {
+      return (await Auth2().refreshToken(token) != null);
+    }
+    return false;
+  }
+}
+
+class Auth2NetworkAuth extends _Auth2NetworkAuth {
+
+  static final Auth2NetworkAuth _instance = Auth2NetworkAuth._internal();
+  Auth2NetworkAuth._internal();
+  factory Auth2NetworkAuth() => _instance;
+
+  @override String? get _token => Auth2().token?.accessToken;
+  @override String? get _tokenType => Auth2().token?.tokenType ?? 'Bearer';
+  @override String  get _headerField => HttpHeaders.authorizationHeader;
+}
+
+class UiucIdNetworkAuth extends _Auth2NetworkAuth {
+
+  static final UiucIdNetworkAuth _instance = UiucIdNetworkAuth._internal();
+  UiucIdNetworkAuth._internal();
+  factory UiucIdNetworkAuth() => _instance;
+
+  @override String? get _token => Auth2().uiucToken?.idToken;
+  @override String? get _tokenType => Auth2().uiucToken?.tokenType ?? 'Bearer';
+  @override String  get _headerField => HttpHeaders.authorizationHeader;
+}
+
+class UiucAccessNetworkAuth extends _Auth2NetworkAuth {
+
+  static const String UIUCAccessToken = 'access_token';
+
+  static final UiucAccessNetworkAuth _instance = UiucAccessNetworkAuth._internal();
+  UiucAccessNetworkAuth._internal();
+  factory UiucAccessNetworkAuth() => _instance;
+
+  @override String? get _token => Auth2().uiucToken?.accessToken;
+  @override String? get _tokenType => null;
+  @override String  get _headerField => UIUCAccessToken;
 }

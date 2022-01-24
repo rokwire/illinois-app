@@ -22,6 +22,7 @@ import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 
@@ -756,7 +757,7 @@ class _SettingsAddIlliniCashPanelState
 
   bool get _isAmountValid{
     double? ammount = _amountInDolars;
-    double minAmount = (kReleaseMode && (Config().configEnvironment != ConfigEnvironment.dev)) ? 5.00 : 0.00;
+    double minAmount = (kReleaseMode && (Config().configEnvironment != rokwire.ConfigEnvironment.dev)) ? 5.00 : 0.00;
     return (ammount != null) && (ammount >= minAmount);
   }
 

@@ -29,6 +29,7 @@ import 'package:illinois/model/Poll.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -649,9 +650,9 @@ class Analytics with Service implements NotificationsListener {
   Future<bool>_sendPacket(String? packet) async {
     if (packet != null) {
       try {
-        //TMP: Temporarly use NetworkAuth.apiKey auth until logging service gets updated to acknowledge the new Core BB token.
+        //TMP: Temporarly use ApiKeyNetworkAuth auth until logging service gets updated to acknowledge the new Core BB token.
         //TBD: Remove this when logging service gets updated.
-        final response = await Network().post(Config().loggingUrl, body: packet, headers: { "Accept": "application/json", "Content-type":"application/json" }, auth: NetworkAuth.apiKey /* NetworkAuth.auth2 */, sendAnalytics: false);
+        final response = await Network().post(Config().loggingUrl, body: packet, headers: { "Accept": "application/json", "Content-type":"application/json" }, auth: rokwire.ApiKeyNetworkAuth() /* Auth2NetworkAuth() */, sendAnalytics: false);
         return (response != null) && ((response.statusCode == 200) || (response.statusCode == 201));
       }
       catch (e) {

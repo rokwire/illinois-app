@@ -5,11 +5,29 @@ import android.app.Application;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
 import java.lang.ref.WeakReference;
+
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
+
+import java.io.ByteArrayOutputStream;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -99,6 +117,12 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
     if (firstMethodComponent.equals("getPlatformVersion")) {
       result.success("Android " + android.os.Build.VERSION.RELEASE);
     }
+    else if (firstMethodComponent.equals("getDeviceId")) {
+      result.success(getDeviceId(call.arguments));
+    }
+    else if (firstMethodComponent.equals("getEncryptionKey")) {
+      result.success(getEncryptionKey(call.arguments));
+    }
     else if (firstMethodComponent.equals("locationServices")) {
       LocationServices.getInstance().handleMethodCall(nextMethodComponents, call.arguments, result);
     }
@@ -134,6 +158,47 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
 
   public Activity getActivity() {
     return (_activityBinding != null) ? _activityBinding.getActivity() : null;
+  }
+
+  // Method call handlers
+
+  private String getDeviceId(Object params) {
+    String deviceId = "";
+    try
+    {
+      UUID uuid;
+      final String androidId = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
+      uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8"));
+      deviceId = uuid.toString();
+    }
+    catch (Exception e)
+    {
+      Log.d(TAG, "Failed to generate uuid");
+    }
+    return deviceId;
+  }
+
+  private Object getEncryptionKey(Object params) {
+    String identifier = Utils.Map.getValueFromPath(params, "identifier", null);
+    if (Utils.Str.isEmpty(identifier)) {
+      return null;
+    }
+    int keySize = Utils.Map.getValueFromPath(params, "size", 0);
+    if (keySize <= 0) {
+      return null;
+    }
+    String base64KeyValue = Utils.AppSecureSharedPrefs.getString(getActivity(), identifier, null);
+    byte[] encryptionKey = Utils.Base64.decode(base64KeyValue);
+    if ((encryptionKey != null) && (encryptionKey.length == keySize)) {
+      return base64KeyValue;
+    } else {
+      byte[] keyBytes = new byte[keySize];
+      SecureRandom secRandom = new SecureRandom();
+      secRandom.nextBytes(keyBytes);
+      base64KeyValue = Utils.Base64.encode(keyBytes);
+      Utils.AppSecureSharedPrefs.saveString(getActivity(), identifier, base64KeyValue);
+      return base64KeyValue;
+    }
   }
 
   // Helpers

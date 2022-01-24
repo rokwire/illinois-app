@@ -29,11 +29,10 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum NetworkAuth {
-  apiKey,      // Config.rokwireApiKey
-  uiucId,      // UIUC.idToken
-  uiucAccess,  // UIUC.accessToken
-  auth2,       // Auth2.accessToken
+abstract class NetworkAuthProvider {
+  Map<String, String>? get networkAuthHeaders;
+  dynamic get networkAuthToken => null;
+  Future<bool> refreshNetworkAuthTokenIfNeeded(http.BaseResponse? response, dynamic token) async => false;
 }
 
 class Network  {
@@ -107,7 +106,7 @@ class Network  {
     return null;
   }
 
-  Future<http.Response?> _get(url, { String? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout, http.Client? client} ) async {
+  Future<http.Response?> _get(url, { String? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuthProvider? auth, int? timeout, http.Client? client} ) async {
     if (Connectivity().isNotOffline) {
       try {
         Uri? uri = _uriFromUrlString(url);
@@ -140,14 +139,14 @@ class Network  {
     return null;
   }
 
-  Future<http.Response?> get(url, { String? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, http.Client? client, int? timeout = 60, bool sendAnalytics = true, String? analyticsUrl }) async {
+  Future<http.Response?> get(url, { String? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuthProvider? auth, http.Client? client, int? timeout = 60, bool sendAnalytics = true, String? analyticsUrl }) async {
     http.Response? response;
 
     try {
-      dynamic token = _getAuthToken(auth);
+      dynamic token = auth?.networkAuthToken;
       response = await _get(url, headers: headers, body: body, encoding: encoding, auth: auth, client: client, timeout: timeout);
       
-      if (await _refreshAuthTokenIfNeeded(auth, response, token)) {
+      if (await auth?.refreshNetworkAuthTokenIfNeeded(response, token) == true) {
         response = await _get(url, body: body, headers: headers, auth: auth, client: client, timeout: timeout);
       }
     } catch (e) { 
@@ -164,7 +163,7 @@ class Network  {
     return response;
   }
 
-  Future<http.Response?> _post(url, { Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout}) async{
+  Future<http.Response?> _post(url, { Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuthProvider? auth, int? timeout}) async{
     if (Connectivity().isNotOffline) {
       try {
         Uri? uri = _uriFromUrlString(url);
@@ -178,14 +177,14 @@ class Network  {
     return null;
   }
 
-  Future<http.Response?> post(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60, bool sendAnalytics = true, String? analyticsUrl }) async{
+  Future<http.Response?> post(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuthProvider? auth, int? timeout = 60, bool sendAnalytics = true, String? analyticsUrl }) async{
     http.Response? response;
     
     try {
-      dynamic token = _getAuthToken(auth);
+      dynamic token = auth?.networkAuthToken;
       response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       
-      if (await _refreshAuthTokenIfNeeded(auth, response, token)) {
+      if (await auth?.refreshNetworkAuthTokenIfNeeded(response, token) == true) {
         response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       }
     } catch (e) {
@@ -202,7 +201,7 @@ class Network  {
     return response;
   }
 
-  Future<http.Response?> _put(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout, http.Client? client }) async {
+  Future<http.Response?> _put(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuthProvider? auth, int? timeout, http.Client? client }) async {
     if (Connectivity().isNotOffline) {
       try {
         Uri? uri = _uriFromUrlString(url);
@@ -222,14 +221,14 @@ class Network  {
     return null;
   }
 
-  Future<http.Response?> put(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60, http.Client? client, bool sendAnalytics = true, String? analyticsUrl }) async {
+  Future<http.Response?> put(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuthProvider? auth, int? timeout = 60, http.Client? client, bool sendAnalytics = true, String? analyticsUrl }) async {
     http.Response? response;
     
     try {
-      dynamic token = _getAuthToken(auth);
+      dynamic token = auth?.networkAuthToken;
       response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
       
-      if (await _refreshAuthTokenIfNeeded(auth, response, token)) {
+      if (await auth?.refreshNetworkAuthTokenIfNeeded(response, token) == true) {
         response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
       }
     } catch (e) {
@@ -246,7 +245,7 @@ class Network  {
     return response;
   }
 
-  Future<http.Response?> _patch(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout }) async {
+  Future<http.Response?> _patch(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuthProvider? auth, int? timeout }) async {
     if (Connectivity().isNotOffline) {
       try {
         Uri? uri = _uriFromUrlString(url);
@@ -260,14 +259,14 @@ class Network  {
     return null;
   }
 
-  Future<http.Response?> patch(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60, bool sendAnalytics = true, String? analyticsUrl }) async {
+  Future<http.Response?> patch(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuthProvider? auth, int? timeout = 60, bool sendAnalytics = true, String? analyticsUrl }) async {
     http.Response? response;
     
     try {    
-      dynamic token = _getAuthToken(auth);
+      dynamic token = auth?.networkAuthToken;
       response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       
-      if (await _refreshAuthTokenIfNeeded(auth, response, token)) {
+      if (await auth?.refreshNetworkAuthTokenIfNeeded(response, token) == true) {
         response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       }
     } catch (e) {
@@ -284,7 +283,7 @@ class Network  {
     return response;
   }
 
-  Future<http.Response?> _delete(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout }) async {
+  Future<http.Response?> _delete(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuthProvider? auth, int? timeout }) async {
     if (Connectivity().isNotOffline) {
       try {
         Uri? uri = _uriFromUrlString(url);
@@ -298,13 +297,13 @@ class Network  {
     return null;
   }
 
-  Future<http.Response?> delete(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60, bool sendAnalytics = true, String? analyticsUrl }) async {
+  Future<http.Response?> delete(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuthProvider? auth, int? timeout = 60, bool sendAnalytics = true, String? analyticsUrl }) async {
     http.Response? response;
     try {
-      dynamic token = _getAuthToken(auth);
+      dynamic token = auth?.networkAuthToken;
       response = await _delete(url, body: body, encoding:encoding, headers: headers, auth: auth, timeout: timeout);
       
-      if (await _refreshAuthTokenIfNeeded(auth, response, token)) {
+      if (await auth?.refreshNetworkAuthTokenIfNeeded(response, token) == true) {
         response = await _delete(url, body: body, encoding:encoding, headers: headers, auth: auth, timeout: timeout);
       }
     } catch (e) {
@@ -321,7 +320,7 @@ class Network  {
     return response;
   }
 
-  Future<String?> _read(url, { Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60 }) async {
+  Future<String?> _read(url, { Map<String, String?>? headers, NetworkAuthProvider? auth, int? timeout = 60 }) async {
     if (Connectivity().isNotOffline) {
       try {
         Uri? uri = _uriFromUrlString(url);
@@ -335,7 +334,7 @@ class Network  {
     return null;
   }
 
-  Future<String?> read(url, { Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60 }) async {
+  Future<String?> read(url, { Map<String, String?>? headers, NetworkAuthProvider? auth, int? timeout = 60 }) async {
     try {
       return await _read(url, headers: headers, auth: auth, timeout: timeout);
     }
@@ -346,7 +345,7 @@ class Network  {
     return null;
   }
 
-  Future<Uint8List?> _readBytes(url, { Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60 }) async{
+  Future<Uint8List?> _readBytes(url, { Map<String, String?>? headers, NetworkAuthProvider? auth, int? timeout = 60 }) async{
     if (Connectivity().isNotOffline) {
       try {
         Uri? uri = _uriFromUrlString(url);
@@ -360,18 +359,18 @@ class Network  {
     return null;
   }
 
-  Future<Uint8List?> readBytes(url, { Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60 }) async {
+  Future<Uint8List?> readBytes(url, { Map<String, String?>? headers, NetworkAuthProvider? auth, int? timeout = 60 }) async {
     return _readBytes(url, headers: headers, auth: auth, timeout: timeout);
   }
 
-  Future<http.StreamedResponse?> multipartPost({String? url, String? fileKey, List<int>? fileBytes, String? fileName, String? contentType, Map<String, String?>? headers, Map<String, String>? fields, NetworkAuth? auth, bool refreshToken = true, bool sendAnalytics = true, String? analyticsUrl}) async {
+  Future<http.StreamedResponse?> multipartPost({String? url, String? fileKey, List<int>? fileBytes, String? fileName, String? contentType, Map<String, String?>? headers, Map<String, String>? fields, NetworkAuthProvider? auth, bool refreshToken = true, bool sendAnalytics = true, String? analyticsUrl}) async {
     http.StreamedResponse? response;
 
     try {
-      dynamic token = _getAuthToken(auth);
+      dynamic token = auth?.networkAuthToken;
       response = await _multipartPost(url: url, fileKey: fileKey, fileBytes: fileBytes, fileName: fileName, contentType: contentType, headers: headers, fields: fields, auth: auth);
 
-      if (await _refreshAuthTokenIfNeeded(auth, response, token)) {
+      if (await auth?.refreshNetworkAuthTokenIfNeeded(response, token) == true) {
         response = await _multipartPost(url: url, fileKey: fileKey, fileBytes: fileBytes, fileName: fileName, contentType: contentType, headers: headers, fields: fields, auth: auth);
       }
     } catch (e) {
@@ -388,7 +387,7 @@ class Network  {
     return response;
   }
 
-  Future<http.StreamedResponse?> _multipartPost({String? url, String? fileKey, List<int>? fileBytes, String? fileName, String? contentType, Map<String, String?>? headers, Map<String, String?>? fields, NetworkAuth? auth}) async {
+  Future<http.StreamedResponse?> _multipartPost({String? url, String? fileKey, List<int>? fileBytes, String? fileName, String? contentType, Map<String, String?>? headers, Map<String, String?>? fields, NetworkAuthProvider? auth}) async {
     if (Connectivity().isNotOffline) {
       try {
         Uri? uri = _uriFromUrlString(url);
@@ -418,56 +417,9 @@ class Network  {
     return null;
   }
 
-  // NetworkAuthProvider
-
-  final Map<NetworkAuth, NetworkAuthProvider> _authProviders = <NetworkAuth, NetworkAuthProvider>{};
-
-  NetworkAuthProvider? authProvider(NetworkAuth? auth) => _authProviders[auth];
-
-  void subscribeAuthProvider(NetworkAuthProvider provider, dynamic auth) {
-    if (auth is NetworkAuth) {
-      _subscribeAuthProvider(provider, auth);
-    }
-    else if (auth is List) {
-      for (dynamic authEntry in auth) {
-        if (authEntry is NetworkAuth) {
-          _subscribeAuthProvider(provider, authEntry);
-        }
-      }
-    }
-  }
-
-  void unsubscribeAuthProvider(NetworkAuthProvider provider, { dynamic auth }) {
-    if (auth is NetworkAuth) {
-      _unsubscribeAuthProvider(provider, auth);
-    }
-    else if (auth is List) {
-      for (dynamic authEntry in auth) {
-        if (authEntry is NetworkAuth) {
-          _unsubscribeAuthProvider(provider, authEntry);
-        }
-      }
-    }
-    else if (auth == null) {
-      for (NetworkAuth auth in _authProviders.keys) {
-        _unsubscribeAuthProvider(provider, auth);
-      }
-    }
-  }
-
-  void _subscribeAuthProvider(NetworkAuthProvider provider, NetworkAuth auth) {
-      _authProviders[auth] = provider;
-  }
-
-  void _unsubscribeAuthProvider(NetworkAuthProvider provider, NetworkAuth auth) {
-    if (_authProviders[auth] == provider) {
-      _authProviders.remove(auth);
-    }
-  }
-
   // NetworkAuth
 
-  Future<Map<String, String>?> _prepareHeaders(Map<String, String?>? headers, NetworkAuth? auth, Uri? uri) async {
+  Future<Map<String, String>?> _prepareHeaders(Map<String, String?>? headers, NetworkAuthProvider? auth, Uri? uri) async {
 
     // authentication
     Map<String, String>? result = _prepareAuthHeaders(headers, auth);
@@ -482,25 +434,21 @@ class Network  {
     return result;
   }
 
-  Map<String, String>? _prepareAuthHeaders(Map<String, String?>? headers, NetworkAuth? auth) {
+  Map<String, String>? _prepareAuthHeaders(Map<String, String?>? headers, NetworkAuthProvider? auth) {
 
     Map<String, String>? result = (headers != null) ? _ensureMapValues(headers) : null;
 
-    Pair<String, String>? authHeader = authProvider(auth)?.authHeader(auth);
-    if (authHeader != null) {
-      result ??= <String, String>{};
-      result[authHeader.left] = authHeader.right;
+    Map<String, String>? authHeaders = auth?.networkAuthHeaders;
+    if ((authHeaders != null) && authHeaders.isNotEmpty) {
+      if (result != null) {
+        result.addAll(authHeaders);
+      }
+      else {
+        result = Map.from(authHeaders);
+      }
     }
 
     return result;
-  }
-
-  dynamic _getAuthToken(NetworkAuth? auth) {
-    return authProvider(auth)?.authToken(auth);
-  }
-
-  Future<bool> _refreshAuthTokenIfNeeded(NetworkAuth? auth, http.BaseResponse? response, dynamic token) async {
-    return await authProvider(auth)?.refreshAuthTokenIfNeeded(auth, response, token) ?? false;
   }
 
   static Map<String, String>? _ensureMapValues(Map<String, String?>? headers) {
@@ -589,10 +537,4 @@ class Network  {
     }
     return uri;
   }
-}
-
-abstract class NetworkAuthProvider {
-  Pair<String, String>? authHeader(NetworkAuth? auth);
-  dynamic authToken(NetworkAuth? auth) => null;
-  Future<bool> refreshAuthTokenIfNeeded(NetworkAuth? auth, http.BaseResponse? response, dynamic token) async => false;
 }
