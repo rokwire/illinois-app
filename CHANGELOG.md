@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed  
+- Storage and Config services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 - Netowrk service moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 
 ## [3.2.3] - 2022-01-18
