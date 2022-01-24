@@ -18,7 +18,7 @@ import 'dart:async';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

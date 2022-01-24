@@ -156,7 +156,7 @@ packages:
     source: hosted
     version: "3.0.1"
   cookie_jar:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: cookie_jar
       url: "https://pub.dartlang.org"

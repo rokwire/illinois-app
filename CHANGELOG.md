@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed  
+- Netowrk service moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+
 ## [3.2.3] - 2022-01-18
 ### Changed  
 - FirebaseCore and FirebaseCrashlytics moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
@@ -32,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Crash when editing group event [#1262](https://github.com/rokwire/illinois-app/issues/1262).
 - Differ checkboxes for voted and non-voted answers in polls [#1264](https://github.com/rokwire/illinois-app/issues/1264).
 - Place "Leave" group button below the tabs [#1265](https://github.com/rokwire/illinois-app/issues/1265).
+- Fixed UIUC token refresh.
 
 ## [3.1.14] - 2022-01-20
 ### Changed

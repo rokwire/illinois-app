@@ -28,19 +28,22 @@ class AppNavigation extends NavigatorObserver {
   static const String notifyParamRoute  = 'route';
   static const String notifyParamPreviousRoute  = 'previous_route';
 
-  // Singletone Instance
+  // Singletone Factory
 
-  AppNavigation._internal();
-  static final AppNavigation _instance = AppNavigation._internal();
+  static AppNavigation ? _instance;
+
+  static AppNavigation? get instance => _instance;
   
-  factory AppNavigation() {
-    return _instance;
-  }
+  @protected
+  static set instance(AppNavigation? value) => _instance = value;
 
-  static AppNavigation get instance {
-    return _instance;
-  }
+  factory AppNavigation() => _instance ?? (_instance = AppNavigation.internal());
 
+  @protected
+  AppNavigation.internal();
+
+  // NavigatorObserver
+  
   @override
   void didPush(Route route, Route? previousRoute) {
     NotificationService().notify(notifyEvent, {

@@ -16,7 +16,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
@@ -40,20 +39,21 @@ class LocationServices with Service implements NotificationsListener {
   Position? _lastLocation;
   StreamSubscription<Position>? _locationMonitor;
 
-  // Singletone Instance
+  // Singletone Factory
 
-  LocationServices._internal();
-  static final LocationServices _instance = LocationServices._internal();
+  static LocationServices? _instance;
+
+  static LocationServices? get instance => _instance;
+
+  @protected
+  static set instance(LocationServices? value) => _instance = value;
+
+  factory LocationServices() => _instance ?? (_instance = LocationServices.internal());
+
+  @protected
+  LocationServices.internal();
   
-  factory LocationServices() {
-    return _instance;
-  }
-
-  static LocationServices get instance {
-    return _instance;
-  }
-
-  // Initialization
+  // Service
 
   @override
   void createService() {
@@ -142,15 +142,11 @@ class LocationServices with Service implements NotificationsListener {
           _notifyLocationChanged();
         },
         onError: (e) {
-          if (kDebugMode) {
-            print(e?.toString());  
-          }
+          debugPrint(e.toString());
         });
       }
       catch(e) {
-        if (kDebugMode) {
-          print(e.toString());  
-        }
+        debugPrint(e.toString());
       }
     }
   }

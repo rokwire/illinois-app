@@ -38,25 +38,23 @@ class AppLivecycle with Service {
 
   WidgetsBindingObserver? _bindingObserver;
   AppLifecycleState _state = AppLifecycleState.resumed; // initial value
+  AppLifecycleState get state => _state;
 
-  // Singletone Instance
+  // Singletone Factory
 
-  AppLivecycle._internal();
-  static final AppLivecycle _instance = AppLivecycle._internal();
+  static AppLivecycle? _instance;
+
+  static AppLivecycle? get instance => _instance;
+
+  @protected
+  static set instance(AppLivecycle? value) => _instance = value;
+
+  factory AppLivecycle() => _instance ?? (_instance = AppLivecycle.internal());
+
+  @protected
+  AppLivecycle.internal();
   
-  factory AppLivecycle() {
-    return _instance;
-  }
-
-  static AppLivecycle get instance {
-    return _instance;
-  }
-
-  AppLifecycleState get state {
-    return _state;
-  }
-
-  // Initialization
+  // Service
 
   @override
   void createService() {
