@@ -70,6 +70,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   void initState() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
+      Auth2.notifyLinkChanged,
       Auth2.notifyPrefsChanged,
       FirebaseMessaging.notifySettingUpdated,
       FlexUI.notifyChanged,
@@ -91,6 +92,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
+      _updateState();
+    } else if (name == Auth2.notifyLinkChanged){
       _updateState();
     } else if (name == Auth2.notifyPrefsChanged){
       _updateState();
@@ -670,20 +673,29 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
     List<dynamic> codes = FlexUI()['settings.linked'] ?? [];
     for (String code in codes) {
-      if (code == 'netid' && !Auth2().isOidcLoggedIn) {
-        contentList.add(_OptionsSection(
-            title: Localization().getStringEx("panel.settings.home.linked_net_id.title", "Linked Illinois NetID"),
-            widgets: _buildLinkedNetIdLayout()));
+      if (code == 'netid') {
+        List<Widget> linkedNetIDs = _buildLinkedNetIdLayout();
+        if (linkedNetIDs.length > 0) {
+          contentList.add(_OptionsSection(
+              title: Localization().getStringEx("panel.settings.home.linked_net_id.title", "Linked Illinois NetID"),
+              widgets: linkedNetIDs));
+        }
       }
       else if (code == 'phone') {
-        contentList.add(_OptionsSection(
-            title: Localization().getStringEx("panel.settings.home.linked_phone.title", "Linked Phone"),
-            widgets: _buildLinkedPhoneLayout()));
+        List<Widget> linkedPhones = _buildLinkedPhoneLayout();
+        if (linkedPhones.length > 0) {
+          contentList.add(_OptionsSection(
+              title: Localization().getStringEx("panel.settings.home.linked_phone.title", "Linked Phone"),
+              widgets: linkedPhones));
+        }
       }
       else if (code == 'email') {
-        contentList.add(_OptionsSection(
-            title: Localization().getStringEx("panel.settings.home.linked_email.title", "Linked Email"),
-            widgets: _buildLinkedEmailLayout()));
+        List<Widget> linkedEmails = _buildLinkedEmailLayout();
+        if (linkedEmails.length > 0) {
+          contentList.add(_OptionsSection(
+              title: Localization().getStringEx("panel.settings.home.linked_email.title", "Linked Email"),
+              widgets: linkedEmails));
+        }
       }
     }
     return Column(children: contentList,);
@@ -700,7 +712,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       if (code == 'info') {
         List<Widget> linkedNetIDs = [];
         for (String identifier in identifiers) {
-          if (StringUtils.isNotEmpty(identifier)) {
+          if (StringUtils.isNotEmpty(identifier) && identifier != Auth2().account?.authType?.identifier) {
             linkedNetIDs.add(Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -727,7 +739,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                                 borderColor: Styles().colors!.fillColorPrimary!,
                                 label: Localization().getStringEx("panel.settings.home.linked_netid.button.login", "Login"),
                                 textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12),
-                                onTap: null),
+                                onTap: () => _loginWithLinkedAuthType(Auth2LoginType.oidcIllinois)),
                           ),
                         ]),
                   ),
@@ -735,13 +747,15 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             ));
           }
         }
-        contentList.add(Container(
-            width: double.infinity,
-            decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
-            child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: linkedNetIDs,
-                ))));
+        if (linkedNetIDs.length > 0 ) {
+          contentList.add(Container(
+              width: double.infinity,
+              decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+              child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: linkedNetIDs,
+                  ))));
+        }
       }
       // else if (code == 'unlink') {
       //   contentList.add(RibbonButton(
@@ -774,7 +788,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       if (code == 'info') {
         List<Widget> linkedPhones = [];
         for (String identifier in identifiers) {
-          if (StringUtils.isNotEmpty(identifier)) {
+          if (StringUtils.isNotEmpty(identifier) && identifier != Auth2().account?.authType?.identifier) {
             linkedPhones.add(Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -801,7 +815,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                                 borderColor: Styles().colors!.fillColorPrimary!,
                                 label: Localization().getStringEx("panel.settings.home.linked_phone.button.login", "Login"),
                                 textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12),
-                                onTap: null),
+                                onTap: () => _loginWithLinkedAuthType(Auth2LoginType.phoneTwilio, identifier: identifier)),
                           ),
                         ]),
                   ),
@@ -809,13 +823,15 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             ));
           }
         }
-        contentList.add(Container(
-            width: double.infinity,
-            decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
-            child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: linkedPhones,
-                ))));
+        if (linkedPhones.length > 0) {
+          contentList.add(Container(
+              width: double.infinity,
+              decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+              child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: linkedPhones,
+                  ))));
+        }
       }
       // else if (code == 'unlink') {
       //   contentList.add(RibbonButton(
@@ -848,7 +864,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       if (code == 'info') {
         List<Widget> linkedEmails = [];
         for (String identifier in identifiers) {
-          if (StringUtils.isNotEmpty(identifier)) {
+          if (StringUtils.isNotEmpty(identifier) && identifier != Auth2().account?.authType?.identifier) {
             linkedEmails.add(Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -883,13 +899,15 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             ));
           }
         }
-        contentList.add(Container(
-            width: double.infinity,
-            decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
-            child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: linkedEmails,
-            ))));
+        if (linkedEmails.length > 0) {
+          contentList.add(Container(
+              width: double.infinity,
+              decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+              child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: linkedEmails,
+                  ))));
+        }
       }
       // else if (code == 'unlink') {
       //   contentList.add(RibbonButton(
@@ -1016,7 +1034,38 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     Analytics.instance.logSelect(target: "Login with linked auth type");
     if (Connectivity().isNotOffline) {
       Auth2().logout();
-      //TODO: call Auth2().authenticateWith<loginType>
+      switch (loginType) {
+        case Auth2LoginType.oidcIllinois:
+          Auth2().authenticateWithOidc().then((bool? result) {
+            if (mounted) {
+              // setState(() { _connectingNetId = false; });
+              if (result == false) {
+                AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+              }
+            }
+          });
+          break;
+        case Auth2LoginType.phoneTwilio:
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPhoneOrEmailPanel(onboardingContext: {
+            "link": false,
+            "identifier": identifier,
+            "onContinueAction": () {
+              _didLogin(context);
+            }
+          },)));
+          break;
+        case Auth2LoginType.email:
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPhoneOrEmailPanel(onboardingContext: {
+            "link": false,
+            "identifier": identifier,
+            "onContinueAction": () {
+              _didLogin(context);
+            }
+          },)));
+          break;
+        default:
+          break;
+      }
     } else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }

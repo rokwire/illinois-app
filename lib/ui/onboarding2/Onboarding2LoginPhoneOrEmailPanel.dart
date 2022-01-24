@@ -52,6 +52,9 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
   void initState() {
     super.initState();
     _phoneOrEmailController = TextEditingController();
+    if (widget.onboardingContext?["identifier"] != null) {
+      _phoneOrEmailController!.text = widget.onboardingContext?["identifier"];
+    }
     _link = widget.onboardingContext?["link"] ?? false;
   }
 
@@ -94,9 +97,10 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                         excludeSemantics: true,
                         value: _phoneOrEmailController!.text,
                         child: Container(
-                          color: Styles().colors!.white,
+                          color: widget.onboardingContext?["identifier"] == null ? Styles().colors!.white: Styles().colors!.background,
                           child: TextField(
                             controller: _phoneOrEmailController,
+                            readOnly: widget.onboardingContext?["identifier"] != null,
                             autofocus: false,
                             autocorrect: false,
                             onSubmitted: (_) => _clearErrorMsg,
