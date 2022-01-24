@@ -22,7 +22,7 @@ class RokwirePlugin {
     return null;
   }
 
-  static Future<String?> getEncryptionKey(String? identifier, int? size) async {
+  static Future<String?> getEncryptionKey({String? identifier, int? size}) async {
     try { return await _channel.invokeMethod('getEncryptionKey', {
       'identifier': identifier,
       'size': size,
