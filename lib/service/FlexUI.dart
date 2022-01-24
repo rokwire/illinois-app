@@ -26,7 +26,8 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/config.dart' as rokwire;
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -449,7 +450,7 @@ class FlexUI with Service implements NotificationsListener {
             target = Platform.operatingSystem;
           }
           else if (key == 'envirnment') {
-            target = configEnvToString(Config().configEnvironment);
+            target = rokwire.configEnvToString(Config().configEnvironment);
           }
           else if (key == 'build') {
             if (kReleaseMode) {

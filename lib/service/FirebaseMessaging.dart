@@ -295,7 +295,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     Log.d("FCM: onMessageProcess: $message");
     if (message?.data != null) {
       try {
-        if(AppLivecycle.instance.state == AppLifecycleState.resumed &&
+        if(AppLivecycle.instance?.state == AppLifecycleState.resumed &&
           StringUtils.isNotEmpty(message?.notification?.body)
         ){
           NotificationService().notify(notifyForegroundMessage, {

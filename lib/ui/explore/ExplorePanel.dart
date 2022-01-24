@@ -277,11 +277,11 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _initTabs() {
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
         if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
-          LocationServices.instance.requestPermission().then((LocationServicesStatus? locationServicesStatus) {
+          LocationServices().requestPermission().then((LocationServicesStatus? locationServicesStatus) {
             _locationServicesStatus = locationServicesStatus;
             _updateTabs();
           });
@@ -533,7 +533,7 @@ class ExplorePanelState extends State<ExplorePanel>
     Set<String?>? categories = _getSelectedCategories(selectedFilterList);
     Set<String>? tags = _getSelectedEventTags(selectedFilterList);
     EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
-    _locationData = _userLocationEnabled() ? await LocationServices.instance.location : null;
+    _locationData = _userLocationEnabled() ? await LocationServices().location : null;
     // Do not load games here, because they do not have proper location data (lat, long)
     return (_locationData != null) ? ExploreService().loadEvents(locationData: _locationData, categories: categories, tags: tags, eventFilter: eventFilter) : null;
   }
@@ -563,7 +563,7 @@ class ExplorePanelState extends State<ExplorePanel>
     PaymentType? paymentType = _getSelectedPaymentType(selectedFilterList);
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
 
-    _locationData = _userLocationEnabled() ? await LocationServices.instance.location : null;
+    _locationData = _userLocationEnabled() ? await LocationServices().location : null;
     _diningSpecials = await DiningService().loadDiningSpecials();
 
     return DiningService().loadBackendDinings(onlyOpened, paymentType, _locationData);
@@ -1397,7 +1397,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _onPrivacyLevelChanged() {
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _updateTabs();
       });

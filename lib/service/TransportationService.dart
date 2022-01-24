@@ -18,9 +18,10 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:illinois/model/Parking.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -36,14 +37,14 @@ class TransportationService /* with Service */ {
 
   Future<List<ParkingEvent>?> loadParkingEvents() async {
     final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/events" : null;
-    final response = await Network().get(url, auth: NetworkAuth.Auth2);
+    final response = await Network().get(url, auth: Auth2NetworkAuth());
     return (response?.statusCode == 200) ? ParkingEvent.listFromJson(JsonUtils.decodeList(response?.body)) : null;
   }
 
   Future<List<ParkingLot>?> loadParkingEventInventory(String? eventId) async {
     if (StringUtils.isNotEmpty(eventId)) {
       final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/v2/inventory?event-id=$eventId" : null;
-      final response = await Network().get(url, auth: NetworkAuth.Auth2);
+      final response = await Network().get(url, auth: Auth2NetworkAuth());
       return (response?.statusCode == 200) ? ParkingLot.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
     return null;
@@ -59,7 +60,7 @@ class TransportationService /* with Service */ {
 
     try {
       String body = json.encode(data);
-      final response = await Network().get(url, auth: NetworkAuth.Auth2, body:body);
+      final response = await Network().get(url, auth: Auth2NetworkAuth(), body:body);
 
       if ((response != null) && (response.statusCode == 200)) {
         Map<String, dynamic>? jsonData = JsonUtils.decodeMap(response.body);
@@ -82,7 +83,7 @@ class TransportationService /* with Service */ {
         'ibeacon_data': iBeaconData,
       };
       String body = json.encode(data);
-      final response = await Network().get(url, auth: NetworkAuth.Auth2, body:body);
+      final response = await Network().get(url, auth: Auth2NetworkAuth(), body:body);
       if (response != null) {
         if (response.statusCode == 200) {
           String responseBody = response.body;

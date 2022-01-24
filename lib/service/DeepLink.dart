@@ -15,15 +15,17 @@
  */
 
 import 'package:flutter/foundation.dart';
-import 'package:rokwire_plugin/service/deep_link.dart';
+import 'package:rokwire_plugin/service/deep_link.dart' as rokwire;
 
-class IlliniDeepLink extends DeepLink {
+class DeepLink extends rokwire.DeepLink {
+  
+  // Singletone Factory
   
   @protected
-  IlliniDeepLink.internal() : super.internal();
+  DeepLink.internal() : super.internal();
 
-  factory IlliniDeepLink() {
-    return ((DeepLink.instance is IlliniDeepLink) ? (DeepLink.instance as IlliniDeepLink) : (DeepLink.instance = IlliniDeepLink.internal()));
+  factory DeepLink() {
+    return ((rokwire.DeepLink.instance is DeepLink) ? (rokwire.DeepLink.instance as DeepLink) : (rokwire.DeepLink.instance = DeepLink.internal()));
   }
 
   @override

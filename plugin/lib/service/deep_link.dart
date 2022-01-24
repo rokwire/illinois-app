@@ -23,19 +23,21 @@ class DeepLink with Service {
   
   static const String notifyUri  = "edu.illinois.rokwire.deeplink.uri";
 
+  // Singletone Factory
+
   static DeepLink? _instance;
-
-  @protected
-  DeepLink.internal();
-
-  factory DeepLink() {
-    return _instance ?? (_instance = DeepLink.internal());
-  }
 
   static DeepLink? get instance => _instance;
   
   @protected
   static set instance(DeepLink? value) => _instance = value;
+
+  factory DeepLink() => _instance ?? (_instance = DeepLink.internal());
+
+  @protected
+  DeepLink.internal();
+
+  // Service
 
   @override
   Future<void> initService() async {

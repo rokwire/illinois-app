@@ -6,6 +6,7 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/ExploreService.dart';
@@ -14,7 +15,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -151,7 +151,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(_event?.exploreImageURL) ?  Positioned.fill(child:Image.network(widget.event!.exploreImageURL!, fit: BoxFit.cover, headers: Network.authApiKeyHeader, excludeFromSemantics: true)) : Container(),
+          StringUtils.isNotEmpty(_event?.exploreImageURL) ?  Positioned.fill(child:Image.network(widget.event!.exploreImageURL!, fit: BoxFit.cover, headers: ApiKeyNetworkAuth().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false),
             child: Container(

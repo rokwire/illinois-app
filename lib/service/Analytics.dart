@@ -29,9 +29,10 @@ import 'package:illinois/model/Poll.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/GeoFence.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
@@ -287,6 +288,7 @@ class Analytics with Service implements NotificationsListener {
       Auth2UserPrefs.notifyRolesChanged,
       Auth2.notifyPrefsChanged,
       Auth2.notifyUserDeleted,
+      Network.notifyHttpResponse,
       NativeCommunicator.notifyMapRouteStart,
       NativeCommunicator.notifyMapRouteFinish,
       NativeCommunicator.notifyGeoFenceRegionsEnter,
@@ -418,6 +420,9 @@ class Analytics with Service implements NotificationsListener {
       _updateSessionUuid();
       _updateUserRoles();
     }
+    else if (name == Network.notifyHttpResponse) {
+      logHttpResponse(param);
+    }
     else if (name == NativeCommunicator.notifyMapRouteStart) {
       logMapRoute(action: LogMapRouteStartActionName, params: param);
     }
@@ -430,7 +435,7 @@ class Analytics with Service implements NotificationsListener {
     else if (name == NativeCommunicator.notifyGeoFenceRegionsExit) {
       logGeoFenceRegion(action: LogGeoFenceRegionExitActionName, regionId: param);
     }
-  }
+}
 
   // Connectivity
 
@@ -529,7 +534,7 @@ class Analytics with Service implements NotificationsListener {
   // Location Services
 
   void _updateLocationServices() {
-    LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+    LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
       _applyLocationServicesStatus(locationServicesStatus);
     });
   }
@@ -645,9 +650,9 @@ class Analytics with Service implements NotificationsListener {
   Future<bool>_sendPacket(String? packet) async {
     if (packet != null) {
       try {
-        //TMP: Temporarly use NetworkAuth.ApiKey auth until logging service gets updated to acknowledge the new Core BB token.
+        //TMP: Temporarly use ApiKeyNetworkAuth auth until logging service gets updated to acknowledge the new Core BB token.
         //TBD: Remove this when logging service gets updated.
-        final response = await Network().post(Config().loggingUrl, body: packet, headers: { "Accept": "application/json", "Content-type":"application/json" }, auth: NetworkAuth.ApiKey /* NetworkAuth.Auth2 */, sendAnalytics: false);
+        final response = await Network().post(Config().loggingUrl, body: packet, headers: { "Accept": "application/json", "Content-type":"application/json" }, auth: rokwire.ApiKeyNetworkAuth() /* Auth2NetworkAuth() */, sendAnalytics: false);
         return (response != null) && ((response.statusCode == 200) || (response.statusCode == 201));
       }
       catch (e) {
@@ -804,13 +809,26 @@ class Analytics with Service implements NotificationsListener {
     logEvent(event);
   }
 
-  void logHttpResponse(Http.BaseResponse? response, {String? requestMethod, String? requestUrl}) {
-    Map<String, dynamic> httpResponseEvent = {
-      LogEventName                    : LogHttpResponseEventName,
-      LogHttpRequestUrlName           : requestUrl,
-      LogHttpRequestMethodName        : requestMethod,
-      LogHttpResponseCodeName         : response?.statusCode
-    };
+  void logHttpResponse(dynamic param) {
+
+    Map<String, dynamic>? httpResponseEvent;
+    if (param is Http.BaseResponse) {
+      httpResponseEvent = {
+        LogEventName                    : LogHttpResponseEventName,
+        LogHttpRequestUrlName           : param.request?.url.toString(),
+        LogHttpRequestMethodName        : param.request?.method,
+        LogHttpResponseCodeName         : param.statusCode,
+      };
+    }
+    else if (param is Map) {
+      httpResponseEvent = {
+        LogEventName                    : LogHttpResponseEventName,
+        LogHttpRequestUrlName           : param[Network.notifyHttpRequestUrl],
+        LogHttpRequestMethodName        : param[Network.notifyHttpRequestMethod],
+        LogHttpResponseCodeName         : param[Network.notifyHttpResponseCode],
+      };
+    }
+
     logEvent(httpResponseEvent);
   }
 

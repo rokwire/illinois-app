@@ -28,20 +28,6 @@ class AppDateTime with Service {
 
   static const String iso8601DateTimeFormat = 'yyyy-MM-ddTHH:mm:ss';
 
-  static AppDateTime? _instance;
-
-  @protected
-  AppDateTime.internal();
-
-  factory AppDateTime() {
-    return _instance ?? (_instance = AppDateTime.internal());
-  }
-
-  static AppDateTime? get instance => _instance;
-  
-  @protected
-  static set instance(AppDateTime? value) => _instance = value;
-
   timezone.Location? _universityLocation;
   timezone.Location? get universityLocation => _universityLocation;
 
@@ -54,6 +40,22 @@ class AppDateTime with Service {
 
   bool get useDeviceLocalTimeZone => false;
 
+  // Singletone Factory
+
+  static AppDateTime? _instance;
+
+  static AppDateTime? get instance => _instance;
+  
+  @protected
+  static set instance(AppDateTime? value) => _instance = value;
+
+  factory AppDateTime() => _instance ?? (_instance = AppDateTime.internal());
+
+  @protected
+  AppDateTime.internal();
+
+  // Service
+
   @override
   Future<void> initService() async {
 
@@ -62,9 +64,7 @@ class AppDateTime with Service {
       timezone.initializeDatabase(rawData);
     }
     else {
-      if (kDebugMode) {
-        print('AppDateTime: Timezone database initializiation omitted.');
-      }
+      debugPrint('AppDateTime: Timezone database initializiation omitted.');
     }
 
     _localTimeZone = await FlutterNativeTimezone.getLocalTimezone();
@@ -73,18 +73,14 @@ class AppDateTime with Service {
       timezone.setLocalLocation(deviceLocation);
     }
     else {
-      if (kDebugMode) {
-        print('AppDateTime: Failed to retrieve local timezone.');
-      }
+      debugPrint('AppDateTime: Failed to retrieve local timezone.');
     }
 
     String? locationName = universityLocationName;
     if (locationName != null) {
       _universityLocation = timezone.getLocation(locationName);
       if (_universityLocation == null) {
-        if (kDebugMode) {
-          print('AppDateTime: Failed to retrieve university location.');
-        }
+        debugPrint('AppDateTime: Failed to retrieve university location.');
       }
     }
 
@@ -149,9 +145,7 @@ class AppDateTime with Service {
       }
     }
     catch (e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      debugPrint(e.toString());
     }
     return formattedDateTime;
   }

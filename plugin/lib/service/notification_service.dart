@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
+import 'package:flutter/foundation.dart';
+
 class NotificationService {
   
-  static final NotificationService _instance = NotificationService._internal();
-  
-  factory NotificationService() {
-    return _instance;
-  }
+  // Singletone Factory
 
-  NotificationService._internal();
+  static NotificationService? _instance;
+
+  static NotificationService? get instance => _instance;
+
+  @protected
+  static set instance(NotificationService? value) => _instance = value;
+
+  factory NotificationService() => _instance ?? (_instance = NotificationService.internal());
+
+  @protected
+  NotificationService.internal();
   
-  static NotificationService get instance {
-    return _instance;
-  }
 
   final Map<String, Set<NotificationsListener>> _listeners = {};
 

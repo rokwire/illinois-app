@@ -15,12 +15,13 @@
  */
 
 import 'dart:ui';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -164,7 +165,7 @@ class LiveStats with Service implements NotificationsListener {
 
   void _loadLiveGames() {
     String? url = (Config().sportsServiceUrl != null) ? "${Config().sportsServiceUrl}/api/v2/live-games" : null;
-    var response = Network().get(url, auth: NetworkAuth.Auth2);
+    var response = Network().get(url, auth: Auth2NetworkAuth());
     response.then((response) {
     String? responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {

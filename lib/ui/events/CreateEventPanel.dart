@@ -29,7 +29,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -44,6 +43,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as timezone;
+import 'package:rokwire_plugin/service/config.dart';
 
 
 class CreateEventPanel extends StatefulWidget {
@@ -183,7 +183,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             alignment: Alignment.bottomCenter,
                             children: <Widget>[
                               StringUtils.isNotEmpty(_imageUrl)
-                                  ? Positioned.fill(child: Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Network.authApiKeyHeader))
+                                  ? Positioned.fill(child: Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: ApiKeyNetworkAuth().networkAuthHeaders))
                                   : Container(),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.white), child: Container(height: 30)),

@@ -68,11 +68,11 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       Auth2UserPrefs.notifyPrivacyLevelChanged,
     ]);
 
-    LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+    LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
       _locationServicesStatus = locationServicesStatus;
 
       if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
-        LocationServices.instance.requestPermission().then((LocationServicesStatus? locationServicesStatus) {
+        LocationServices().requestPermission().then((LocationServicesStatus? locationServicesStatus) {
           _locationServicesStatus = locationServicesStatus;
         });
       }
@@ -119,7 +119,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
 
   void _updateOnPrivacyLevelChanged() {
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _enableMyLocationOnMap();
       });

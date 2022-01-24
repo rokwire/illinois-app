@@ -10,7 +10,7 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -163,7 +163,7 @@ class Guide with Service implements NotificationsListener {
 
   Future<String?> _loadContentStringFromNet() async {
     try {
-      Response? response = await Network().get("${Config().contentUrl}/student_guides", auth: NetworkAuth.Auth2);
+      Response? response = await Network().get("${Config().contentUrl}/student_guides", auth: Auth2NetworkAuth());
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     }
     catch (e) { print(e.toString()); }

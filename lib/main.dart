@@ -21,10 +21,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Gies.dart';
-import 'package:illinois/service/IlliniAppDateTime.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/IlliniDeepLink.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/ExploreService.dart';
@@ -37,14 +37,13 @@ import 'package:illinois/service/HttpProxy.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/LiveStats.dart';
-import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/service/IlliniServices.dart';
+import 'package:illinois/service/Services.dart' as illinois;
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Voter.dart';
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
@@ -60,6 +59,7 @@ import 'package:illinois/ui/widgets/FlexContentWidget.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
@@ -83,22 +83,22 @@ void main() async {
 
   NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
 
-  IlliniServices().create([
+  illinois.Services().create([
     // Add highest priority services at top
 
     FirebaseCore(),
     FirebaseCrashlytics(),
     AppLivecycle(),
-    IlliniAppDateTime(),
+    AppDateTime(),
     Connectivity(),
     LocationServices(),
-    IlliniDeepLink(),
+    DeepLink(),
 
     Storage(),
-    HttpProxy(),
 
     Config(),
     NativeCommunicator(),
+    HttpProxy(),
 
     Auth2(),
     Localization(),
@@ -128,7 +128,7 @@ void main() async {
     // Content(),
   ]);
   
-  ServiceError? serviceError = await IlliniServices().init();
+  ServiceError? serviceError = await illinois.Services().init();
 
   // do not show the red error widget when release mode
   if (kReleaseMode) {
@@ -151,7 +151,7 @@ class AppExitListener implements NotificationsListener {
     if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
       Future.delayed(Duration(), () {
         NotificationService().unsubscribe(appExitListener);
-        IlliniServices().destroy();
+        illinois.Services().destroy();
       });
     }
   }
@@ -338,7 +338,7 @@ class _AppState extends State<App> implements NotificationsListener {
       return await _retryInitialzeFuture;
     }
     else {
-      _retryInitialzeFuture = IlliniServices().init();
+      _retryInitialzeFuture = illinois.Services().init();
       ServiceError? serviceError = await _retryInitialzeFuture;
       _retryInitialzeFuture = null;
 

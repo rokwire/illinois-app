@@ -931,11 +931,11 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   //LocationServices
   _initLocationService(){
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
         if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
-          LocationServices.instance.requestPermission().then((LocationServicesStatus? locationServicesStatus) {
+          LocationServices().requestPermission().then((LocationServicesStatus? locationServicesStatus) {
             _locationServicesStatus = locationServicesStatus;
             _refresh((){});
           });
@@ -979,7 +979,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   _onPrivacyLevelChanged(){
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _refresh((){});
       });
