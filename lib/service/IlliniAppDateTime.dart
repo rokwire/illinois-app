@@ -24,6 +24,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class IlliniAppDateTime extends AppDateTime {
 
+  // Singletone Factory
+  
   @protected
   IlliniAppDateTime.internal() : super.internal();
 

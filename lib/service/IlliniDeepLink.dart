@@ -19,6 +19,8 @@ import 'package:rokwire_plugin/service/deep_link.dart';
 
 class IlliniDeepLink extends DeepLink {
   
+  // Singletone Factory
+  
   @protected
   IlliniDeepLink.internal() : super.internal();
 

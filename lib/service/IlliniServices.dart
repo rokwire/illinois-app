@@ -21,6 +21,9 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
 class IlliniServices extends Services {
+  
+  // Singletone Factory
+  
   @protected
   IlliniServices.internal() : super.internal();
 
