@@ -23,7 +23,7 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/IlliniDeepLink.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/ExploreService.dart';
@@ -91,7 +91,7 @@ void main() async {
     AppDateTime(),
     Connectivity(),
     LocationServices(),
-    IlliniDeepLink(),
+    DeepLink(),
 
     Storage(),
     HttpProxy(),
