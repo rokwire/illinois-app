@@ -20,6 +20,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -157,6 +158,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       }
       else if (code == 'gies') {
         widget = HomeGiesWidget(key: _giesWidgetKey, refreshController: _refreshController);
+      }
+      else if (code == 'canvas_courses') {
+        widget = HomeCanvasCoursesWidget(refreshController: _refreshController);
       }
       else if (code == 'voter_registration') {
         widget = HomeVoterRegistrationWidget();

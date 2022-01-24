@@ -2084,6 +2084,8 @@
 	"widget.home.interest_selection.description":"查看基于您选择的主题的活动",
 	"widget.home.interest_selection.button.see_all":"查看全部",
 
+	"widget.home_canvas_courses.header.label": "培訓班",
+
 	"widget.add_image.heading":"选择图像",
 	"widget.add_image.description":"选择图像类型",
 	"widget.add_image.field.image_url.label":"图片地址",

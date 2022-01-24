@@ -2086,6 +2086,8 @@
     "widget.home.interest_selection.description": "Ver eventos según los temas que elegiste",
     "widget.home.interest_selection.button.see_all": "Ver todo",
 
+    "widget.home_canvas_courses.header.label": "Cursos",
+
     "widget.add_image.heading": "Seleccionar imagen",
     "widget.add_image.description":"Seleccione un tipo de imagen",
     "widget.add_image.field.image_url.label":"URL de imagen",
