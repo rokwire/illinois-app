@@ -36,14 +36,13 @@ import 'package:illinois/service/HttpProxy.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/LiveStats.dart';
-import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/service/IlliniServices.dart';
+import 'package:illinois/service/Services.dart' as illinois;
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Voter.dart';
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
@@ -59,6 +58,7 @@ import 'package:illinois/ui/widgets/FlexContentWidget.dart';
 import 'package:illinois/service/Styles.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
@@ -82,7 +82,7 @@ void main() async {
 
   NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
 
-  IlliniServices().create([
+  illinois.Services().create([
     // Add highest priority services at top
 
     FirebaseCore(),
@@ -126,7 +126,7 @@ void main() async {
     // Content(),
   ]);
   
-  ServiceError? serviceError = await IlliniServices().init();
+  ServiceError? serviceError = await illinois.Services().init();
 
   // do not show the red error widget when release mode
   if (kReleaseMode) {
@@ -149,7 +149,7 @@ class AppExitListener implements NotificationsListener {
     if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
       Future.delayed(Duration(), () {
         NotificationService().unsubscribe(appExitListener);
-        IlliniServices().destroy();
+        illinois.Services().destroy();
       });
     }
   }
@@ -336,7 +336,7 @@ class _AppState extends State<App> implements NotificationsListener {
       return await _retryInitialzeFuture;
     }
     else {
-      _retryInitialzeFuture = IlliniServices().init();
+      _retryInitialzeFuture = illinois.Services().init();
       ServiceError? serviceError = await _retryInitialzeFuture;
       _retryInitialzeFuture = null;
 
