@@ -390,6 +390,9 @@ class Config with Service, NotificationsListener, NetworkAuthProvider {
   String? get twitterToken          { return secretTwitter['token']; }
   String? get twitterTokenType      { return secretTwitter['token_type']; }
 
+  String? get canvasToken           { return secretCanvas['token']; }
+  String? get canvasTokenType       { return secretCanvas['token_type']; }
+
   // Getters: Other University Services
   String? get shibbolethAuthTokenUrl { return otherUniversityServices['shibboleth_auth_token_url']; }  // "https://{shibboleth_client_id}:{shibboleth_client_secret}@shibboleth.illinois.edu/idp/profile/oidc/token"
   String? get shibbolethOauthHostUrl { return otherUniversityServices['shibboleth_oauth_host_url']; }  // "shibboleth.illinois.edu"

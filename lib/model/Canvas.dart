@@ -101,6 +101,20 @@ class CanvasCourse {
     ) : null;
   }
 
+  static List<CanvasCourse>? fromJsonList(List<dynamic>? jsonList) {
+    if (CollectionUtils.isEmpty(jsonList)) {
+      return null;
+    }
+    List<CanvasCourse>? courses;
+    if (jsonList != null) {
+      courses = [];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(courses, CanvasCourse.fromJson(jsonEntry));
+      }
+    }
+    return courses;
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id' : id,
