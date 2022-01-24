@@ -94,10 +94,10 @@ void main() async {
     DeepLink(),
 
     Storage(),
-    HttpProxy(),
 
     Config(),
     NativeCommunicator(),
+    HttpProxy(),
 
     Auth2(),
     Localization(),
