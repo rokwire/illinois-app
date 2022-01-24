@@ -23,7 +23,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -440,11 +439,6 @@ class Config with Service, NotificationsListener {
   }
 
   // Getters: Other Entries
-
-  String? get eventsOrConvergeUrl    {
-    String? convergeURL = FlexUI().hasFeature('converge') ? convergeUrl : null;
-    return ((convergeURL != null) && convergeURL.isNotEmpty) ? convergeURL : eventsUrl;
-  }
 
   String? deepLinkRedirectUrl(String? deepLink) {
     Uri? assetsUri = StringUtils.isNotEmpty(assetsUrl) ? Uri.tryParse(assetsUrl!) : null;

@@ -608,8 +608,7 @@ class ExploreService with Service implements NotificationsListener {
   /////////////////////////
   // Enabled
 
-  bool get _enabled => StringUtils.isNotEmpty(Config().eventsOrConvergeUrl)
-      && StringUtils.isNotEmpty(Config().eventsUrl);
+  bool get _enabled => StringUtils.isNotEmpty(Config().eventsUrl);
 
   /////////////////////////
   // DeepLinks
