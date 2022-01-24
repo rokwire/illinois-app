@@ -2,11 +2,14 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Gies.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/gies/GiesPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeGies2Widget extends StatefulWidget{
 
@@ -19,7 +22,19 @@ class HomeGies2Widget extends StatefulWidget{
 
 }
 
-class HomeGies2State extends State<HomeGies2Widget> {
+class HomeGies2State extends State<HomeGies2Widget> implements NotificationsListener{
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [Gies.notifyPageChanged]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    NotificationService().unsubscribe(this);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,8 +161,8 @@ class HomeGies2State extends State<HomeGies2Widget> {
   }
 
   Widget _buildProgressContent() {
-    int completedCount = 2; //TBD
-    int pagesCount = 7;//TBD
+    int completedCount =  _completedStpsCount;
+    int pagesCount = _stepsCount;//TBD
     return Padding(
         padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
         child:
@@ -187,11 +202,26 @@ class HomeGies2State extends State<HomeGies2Widget> {
   }
 
   bool get _isStarted {
-    return true; //TBD
+    return _completedStpsCount > 0;
   }
 
   bool get _isEnded {
-    return true; //TBD
+    return false; //TBD
+  }
+
+  int get _completedStpsCount {
+    return Gies().completedPages?.length ?? 0;
+  }
+
+  int get _stepsCount {
+    return Gies().progressSteps?.length ?? 0;
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if(name == Gies.notifyPageChanged){
+      setState(() {});
+    }
   }
 
 }

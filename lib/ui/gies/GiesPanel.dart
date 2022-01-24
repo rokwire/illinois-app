@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -8,7 +9,12 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../WebPanel.dart';
 
 class GiesPanel extends StatefulWidget{
   @override
@@ -16,7 +22,20 @@ class GiesPanel extends StatefulWidget{
 
 }
 
-class _GiesPanelState extends State<GiesPanel>{
+class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [Gies.notifyPageChanged]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    NotificationService().unsubscribe(this);
+  }
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -154,33 +173,143 @@ class _GiesPanelState extends State<GiesPanel>{
   }
 
   void _onTapNotes() {
-    //TBD
+    _showPopup(_pagePopup(_currentPage) ?? 'notes');
   }
 
-  void _onTapLink(String? link) {
-    //TBD
+  void _onTapLink(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+
+      Uri? uri = Uri.tryParse(url!);
+      Uri? giesUri = Uri.tryParse(giesUrl);
+      if ((giesUri != null) &&
+          (giesUri.scheme == uri!.scheme) &&
+          (giesUri.authority == uri.authority) &&
+          (giesUri.path == uri.path))
+      {
+        String? pageId = JsonUtils.stringValue(uri.queryParameters['page_id']);
+        Gies().pushPage(Gies().getPage(id: pageId));
+      }
+      else if (UrlUtils.launchInternal(url)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      } else {
+        launch(url);
+      }
+    }
   }
 
   void _onTapButton(Map<String, dynamic> button) {
-    //TBD
+    _processButtonPopup(button).then((_) {
+      _processButtonPage(button);
+    });
   }
 
   void _onTapBack() {
-    //TBD
+    Gies().popPage(); //TBD consider usage
   }
 
   void _onTapProgress(int progress) {
-    //TBD
+    int? currentPageProgress = _currentPageProgress;
+    if (currentPageProgress != progress) {
+      Gies().pushPage(Gies().getPage(progress: progress));
+    }
+  }
+
+  Future<void> _processButtonPopup(Map<String, dynamic> button) async {
+    String? popupId = JsonUtils.stringValue(button['popup']);
+    if (popupId != null) {
+      await _showPopup(popupId);
+    }
+  }
+
+  Future<void> _showPopup(String popupId) async {
+    return showDialog(context: context, builder: (BuildContext context) {
+      if (popupId == 'notes') {
+        return _GiesNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
+      }
+      else if (popupId == 'current-notes') {
+        List<dynamic> notes = JsonUtils.decodeList(Storage().giesNotes) ?? [];
+        String? focusNodeId =  Gies().setCurrentNotes(notes);
+        return _GiesNotesWidget(notes: notes, focusNoteId: focusNodeId,);
+      }
+      else {
+        return Container();
+      }
+    });
+  }
+
+  void _processButtonPage(Map<String, dynamic> button) {
+    String? currentPageId = Gies().currentPageId;
+    if (Gies().pageButtonCompletes(button)) {
+      if ((currentPageId != null) && currentPageId.isNotEmpty && !Gies().completedPages!.contains(currentPageId)) {
+        setState(() {
+          Gies().completedPages!.add(currentPageId);
+        });
+        Storage().giesCompletedPages = Gies().completedPages;
+      }
+    }
+
+    String? pushPageId = JsonUtils.stringValue(button['page']);
+    if ((pushPageId != null) && pushPageId.isNotEmpty) {
+      int? currentPageProgress = Gies().getPageProgress(_currentPage);
+
+      Map<String, dynamic>? pushPage = Gies().getPage(id: pushPageId);
+      int? pushPageProgress = Gies().getPageProgress(pushPage);
+
+      if ((currentPageProgress != null) && (pushPageProgress != null) && (currentPageProgress < pushPageProgress)) {
+        while (Gies().setProgressStepCompleted(pushPageProgress)) {
+          int nextPushPageProgress = pushPageProgress! + 1;
+          Map<String, dynamic>? nextPushPage = Gies().getPage(progress: nextPushPageProgress);
+          String? nextPushPageId = (nextPushPage != null) ? JsonUtils.stringValue(nextPushPage['id']) : null;
+          if ((nextPushPageId != null) && nextPushPageId.isNotEmpty) {
+            pushPage = nextPushPage;
+            pushPageId = nextPushPageId;
+            pushPageProgress = nextPushPageProgress;
+          }
+          else {
+            break;
+          }
+        }
+      }
+
+      Gies().pushPage(pushPage);
+    }
+  }
+
+  String? _pagePopup(Map? page) {
+    List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
+    if (buttons != null) {
+      String? popup;
+      for (dynamic button in buttons) {
+        if ((button is Map) && ((popup = _pageButtonPopup(button)) != null)) {
+          return popup;
+        }
+      }
+    }
+    return null;
+  }
+
+  String? _pageButtonPopup(Map button) {
+    return JsonUtils.stringValue(button['popup']);
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if(name == Gies.notifyPageChanged){
+      setState(() {});
+    }
   }
 
 
   int? get _currentPageProgress {
-    return Gies.getPageProgress(_currentPage);
+    return Gies().getPageProgress(_currentPage);
   }
 
   Map<String, dynamic> get _currentPage {
     return Gies().getPage(id: Gies().currentPageId) ?? {};
   }
+
+  String get giesUrl => '${DeepLink().appUrl}/gies';
+
 }
 
 class _GiesPageWidget extends StatelessWidget {
@@ -334,7 +463,7 @@ class _GiesPageWidget extends StatelessWidget {
     }
     List<dynamic>? steps = (page != null) ? JsonUtils.listValue(page!['steps']) : null;
     if (steps != null ) {
-      contentList.add(_StepsHorizontalListWidget(pages: steps, title: "Step ${page!["progress"]}: ${page!["title"]}"));
+      contentList.add(_StepsHorizontalListWidget(pages: steps, title: "Step ${page!["progress"]}: ${page!["title"]}", onTapLink: onTapLink, onTapButton: onTapButton, onTapBack: (1 < Gies().navigationPages!.length) ? onTapBack : null));
     }
 
     List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page!['buttons']) : null;
@@ -545,7 +674,11 @@ class _StepsHorizontalListWidget extends StatefulWidget{
   final List<dynamic>? pages;
   final String? title;
 
-  const _StepsHorizontalListWidget({Key? key, this.pages, this.title}) : super(key: key);
+  final void Function(String?)? onTapLink;
+  final void Function(Map<String, dynamic> button)? onTapButton;
+  final void Function()? onTapBack;
+
+  const _StepsHorizontalListWidget({Key? key, this.pages, this.title, this.onTapLink, this.onTapButton, this.onTapBack}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _StepsHorizontalListState();
@@ -628,7 +761,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
               borderRadius: BorderRadius.all(Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
           ),
           child: SingleChildScrollView(
-            child:_GiesPageWidget( page: Gies().getPage(id: page!["page_id"]), ))));//TBD listeners
+            child:_GiesPageWidget( page: Gies().getPage(id: page!["page_id"]), onTapBack: widget.onTapBack, onTapButton: _onTapButton, onTapLink: widget.onTapLink,))));//TBD listeners
   }
 
   Widget _buildSlant() {
@@ -639,5 +772,9 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
       Container(height: 55,),
       )),
     ],);
+  }
+
+  void _onTapButton(Map<String, dynamic> button){
+    widget.onTapButton!(button);
   }
 }

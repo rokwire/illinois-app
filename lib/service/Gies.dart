@@ -6,6 +6,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Gies with Service implements NotificationsListener{
+  static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
 
   List<dynamic>? _pages;
   List<String>?  _navigationPages;
@@ -107,7 +108,65 @@ class Gies with Service implements NotificationsListener{
     return null;
   }
 
+  void pushPage(Map<String, dynamic>? pushPage) {
+    String? pushPageId = (pushPage != null) ? JsonUtils.stringValue(pushPage['id']) : null;
+    if ((pushPageId != null) && pushPageId.isNotEmpty && _hasPage(id: pushPageId)) {
+      int? currentPageProgress = getPageProgress(currentPage);
+      int? pushPageProgress = getPageProgress(pushPage);
+      if (currentPageProgress == pushPageProgress) {
+        _navigationPages!.add(pushPageId);
+      }
+      else {
+        _navigationPages = [pushPageId];
+      }
+      Storage().giesNavPages = _navigationPages;
+      NotificationService().notify(notifyPageChanged); //TBD NOTIFY
+    }
+  }
+
+  void popPage() {
+    if (1 < _navigationPages!.length) {
+      _navigationPages!.removeLast();
+      Storage().giesNavPages = _navigationPages;
+      NotificationService().notify(notifyPageChanged); //TBD NOTIFY
+    }
+  }
+
+
+
+  bool _hasPage({String? id}) {
+    return getPage(id: id) != null;
+  }
+
   bool isProgressStepCompleted(int? progressStep) {
+    Set<String>? progressPages = _progressPages[progressStep];
+    return (progressPages == null) || _completedPages!.containsAll(progressPages);
+  }
+
+  String? setCurrentNotes(List<dynamic>? notes) {
+
+    Map<String, dynamic>? currentPage = Gies().currentPage;
+    String? currentPageId = (currentPage != null) ? JsonUtils.stringValue(currentPage['id']) : null;
+    if ((notes != null) && (currentPageId != null)) {
+      for (dynamic note in notes) {
+        if (note is Map) {
+          String? noteId = JsonUtils.stringValue(note['id']);
+          if (noteId == currentPageId) {
+            return currentPageId;
+          }
+        }
+      }
+
+      notes.add({
+        'id': currentPageId,
+        'title': JsonUtils.stringValue(currentPage!['title']),
+      });
+    }
+
+    return currentPageId;
+  }
+
+  bool setProgressStepCompleted(int? progressStep) {
     Set<String>? progressPages = _progressPages[progressStep];
     return (progressPages == null) || _completedPages!.containsAll(progressPages);
   }
@@ -132,10 +191,14 @@ class Gies with Service implements NotificationsListener{
     return _progressSteps;
   }
 
+  Map<String, dynamic>? get currentPage{
+    return getPage(id: currentPageId);
+  }
+
   String? get currentPageId {
-    Map<String, dynamic> page = _pages?[1] ?? {};
-    return page["id"];
-    // return (_navigationPages?.isNotEmpty?? false) ? _navigationPages!.last : null;// TBD Implement properly
+    // Map<String, dynamic> page = _pages?[1] ?? {};
+    // return page["id"];
+    return (_navigationPages?.isNotEmpty?? false) ? _navigationPages!.last : null;// TBD Implement properly
   }
 
   String? get _navigationRootPageId {
@@ -153,11 +216,11 @@ class Gies with Service implements NotificationsListener{
   }
 
   //Utils
-  static bool _pageCanComplete(Map? page) {
+  bool _pageCanComplete(Map? page) {
     List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
     if (buttons != null) {
       for (dynamic button in buttons) {
-        if ((button is Map) && _pageButtonCompletes(button)) {
+        if ((button is Map) && pageButtonCompletes(button)) {
           return true;
         }
       }
@@ -165,11 +228,11 @@ class Gies with Service implements NotificationsListener{
     return false;
   }
 
-  static bool _pageButtonCompletes(Map button) {
+  bool pageButtonCompletes(Map button) {
     return JsonUtils.boolValue(button['completes']) == true;
   }
 
-  static int? getPageProgress(Map<String, dynamic>? page) {
+  int? getPageProgress(Map<String, dynamic>? page) {
     return (page != null) ? (JsonUtils.intValue(page['progress']) ?? JsonUtils.intValue(page['progress-possition'])) : null;
   }
 
