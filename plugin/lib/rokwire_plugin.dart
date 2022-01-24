@@ -13,9 +13,10 @@ class RokwirePlugin {
     return null;
   }
 
-  static Future<String?> getDeviceId(String? identifier) async {
+  static Future<String?> getDeviceId([String? identifier, String? identifier2]) async {
     try { return await _channel.invokeMethod('getDeviceId', {
       'identifier': identifier,
+      'identifier2': identifier2
     }); }
     catch(e) { debugPrint(e.toString()); }
     return null;

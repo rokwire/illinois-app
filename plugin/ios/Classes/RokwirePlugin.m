@@ -46,8 +46,9 @@
 - (NSString*)deviceUuidWithParameters:(NSDictionary*)parameters {
   NSUUID *result = nil;
   NSString* identifier = [parameters rokwireStringForKey:@"identifier"];
+  NSString* generic = [parameters rokwireStringForKey:@"identifier2"];
   if (identifier != nil) {
-    NSData *data = rokwireSecStorageData(identifier, identifier, nil);
+    NSData *data = rokwireSecStorageData(identifier, generic, nil);
     if ([data isKindOfClass:[NSData class]] && (data.length == sizeof(uuid_t))) {
       result = [[NSUUID alloc] initWithUUIDBytes:data.bytes];
     }
@@ -55,7 +56,7 @@
       uuid_t uuidData;
       int rndStatus = SecRandomCopyBytes(kSecRandomDefault, sizeof(uuidData), uuidData);
       if (rndStatus == errSecSuccess) {
-        NSNumber *storageResult = rokwireSecStorageData(identifier, identifier, [NSData dataWithBytes:uuidData length:sizeof(uuidData)]);
+        NSNumber *storageResult = rokwireSecStorageData(identifier, generic, [NSData dataWithBytes:uuidData length:sizeof(uuidData)]);
         if ([storageResult isKindOfClass:[NSNumber class]] && [storageResult boolValue]) {
           result = [[NSUUID alloc] initWithUUIDBytes:uuidData];
         }
