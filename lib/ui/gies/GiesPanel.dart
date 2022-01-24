@@ -173,7 +173,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
   }
 
   void _onTapNotes() {
-    _showPopup(_pagePopup(_currentPage) ?? 'notes');
+    _showPopup(_pagePopup(_currentPage) ?? 'notes', _currentPage["id"]);
   }
 
   void _onTapLink(String? url) {
@@ -197,9 +197,9 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
     }
   }
 
-  void _onTapButton(Map<String, dynamic> button) {
-    _processButtonPopup(button).then((_) {
-      _processButtonPage(button);
+  void _onTapButton(Map<String, dynamic> button, String pageId) {
+    _processButtonPopup(button, pageId).then((_) {
+      _processButtonPage(button, callerPageId: pageId);
     });
   }
 
@@ -214,21 +214,21 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
     }
   }
 
-  Future<void> _processButtonPopup(Map<String, dynamic> button) async {
+  Future<void> _processButtonPopup(Map<String, dynamic> button, String panelId) async {
     String? popupId = JsonUtils.stringValue(button['popup']);
     if (popupId != null) {
-      await _showPopup(popupId);
+      await _showPopup(popupId, panelId);
     }
   }
 
-  Future<void> _showPopup(String popupId) async {
+  Future<void> _showPopup(String popupId, String pageId) async {
     return showDialog(context: context, builder: (BuildContext context) {
       if (popupId == 'notes') {
         return _GiesNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
       }
       else if (popupId == 'current-notes') {
         List<dynamic> notes = JsonUtils.decodeList(Storage().giesNotes) ?? [];
-        String? focusNodeId =  Gies().setCurrentNotes(notes);
+        String? focusNodeId =  Gies().setCurrentNotes(notes, pageId);
         return _GiesNotesWidget(notes: notes, focusNoteId: focusNodeId,);
       }
       else {
@@ -237,12 +237,12 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
     });
   }
 
-  void _processButtonPage(Map<String, dynamic> button) {
-    String? currentPageId = Gies().currentPageId;
+  void _processButtonPage(Map<String, dynamic> button, {String? callerPageId}) {
+    String? pageId = callerPageId ?? Gies().currentPageId;
     if (Gies().pageButtonCompletes(button)) {
-      if ((currentPageId != null) && currentPageId.isNotEmpty && !Gies().completedPages!.contains(currentPageId)) {
+      if ((pageId != null) && pageId.isNotEmpty && !Gies().completedPages!.contains(pageId)) {
         setState(() {
-          Gies().completedPages!.add(currentPageId);
+          Gies().completedPages!.add(pageId);
         });
         Storage().giesCompletedPages = Gies().completedPages;
       }
@@ -315,7 +315,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 class _GiesPageWidget extends StatelessWidget {
   final Map<String, dynamic>? page;
   final void Function(String?)? onTapLink;
-  final void Function(Map<String, dynamic> button)? onTapButton;
+  final void Function(Map<String, dynamic> button, String panelId)? onTapButton;
   final void Function()? onTapBack;
 
   final bool showTitle;
@@ -484,7 +484,7 @@ class _GiesPageWidget extends StatelessWidget {
                   borderWidth: 2,
                   height: 42,
                   onTap:() {
-                    try { onTapButton!(button.cast<String, dynamic>()); }
+                    try { onTapButton!(button.cast<String, dynamic>(), JsonUtils.stringValue(page?["id"])!); }
                     catch (e) { print(e.toString()); }
                   }
               )
@@ -675,7 +675,7 @@ class _StepsHorizontalListWidget extends StatefulWidget{
   final String? title;
 
   final void Function(String?)? onTapLink;
-  final void Function(Map<String, dynamic> button)? onTapButton;
+  final void Function(Map<String, dynamic> button, String panelId)? onTapButton;
   final void Function()? onTapBack;
 
   const _StepsHorizontalListWidget({Key? key, this.pages, this.title, this.onTapLink, this.onTapButton, this.onTapBack}) : super(key: key);
@@ -761,7 +761,14 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
               borderRadius: BorderRadius.all(Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
           ),
           child: SingleChildScrollView(
-            child:_GiesPageWidget( page: Gies().getPage(id: page!["page_id"]), onTapBack: widget.onTapBack, onTapButton: _onTapButton, onTapLink: widget.onTapLink,))));//TBD listeners
+            child:_GiesPageWidget( page: Gies().getPage(id: page!["page_id"]),
+              onTapBack: widget.onTapBack,
+              onTapButton: (button, id){
+                if(widget.onTapButton!=null) {
+                  widget.onTapButton!(button, JsonUtils.stringValue(page["page_id"])??"");
+                }
+              },
+              onTapLink: widget.onTapLink,))));//TBD listeners
   }
 
   Widget _buildSlant() {
@@ -774,7 +781,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
     ],);
   }
 
-  void _onTapButton(Map<String, dynamic> button){
-    widget.onTapButton!(button);
+  void _onTapButton(Map<String, dynamic> button, String panelId){
+    widget.onTapButton!(button, panelId);
   }
 }

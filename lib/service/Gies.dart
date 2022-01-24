@@ -143,9 +143,9 @@ class Gies with Service implements NotificationsListener{
     return (progressPages == null) || _completedPages!.containsAll(progressPages);
   }
 
-  String? setCurrentNotes(List<dynamic>? notes) {
+  String? setCurrentNotes(List<dynamic>? notes, String? pageId) {
 
-    Map<String, dynamic>? currentPage = Gies().currentPage;
+    Map<String, dynamic>? currentPage =pageId!=null? Gies().getPage(id: pageId): Gies().currentPage;
     String? currentPageId = (currentPage != null) ? JsonUtils.stringValue(currentPage['id']) : null;
     if ((notes != null) && (currentPageId != null)) {
       for (dynamic note in notes) {
@@ -157,9 +157,10 @@ class Gies with Service implements NotificationsListener{
         }
       }
 
+      String title = "${JsonUtils.intValue(currentPage!['progress'])}${JsonUtils.stringValue(currentPage['tab_index'])??""} ${JsonUtils.stringValue(currentPage['title'])}";
       notes.add({
         'id': currentPageId,
-        'title': JsonUtils.stringValue(currentPage!['title']),
+        'title': title,
       });
     }
 
