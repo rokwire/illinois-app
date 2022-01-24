@@ -215,7 +215,7 @@ class GeoFence with Service implements NotificationsListener {
     }
     else {
       try {
-        Http.Response? response = await Network().get("${Config().locationsUrl}/regions", auth: NetworkAuth.auth2);
+        Http.Response? response = await Network().get("${Config().locationsUrl}/regions", auth: Auth2NetworkAuth());
         return ((response != null) && (response.statusCode == 200)) ? response.body : null;
         } catch (e) {
           print(e.toString());

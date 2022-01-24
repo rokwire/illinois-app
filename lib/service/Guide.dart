@@ -163,7 +163,7 @@ class Guide with Service implements NotificationsListener {
 
   Future<String?> _loadContentStringFromNet() async {
     try {
-      Response? response = await Network().get("${Config().contentUrl}/student_guides", auth: NetworkAuth.auth2);
+      Response? response = await Network().get("${Config().contentUrl}/student_guides", auth: Auth2NetworkAuth());
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     }
     catch (e) { print(e.toString()); }

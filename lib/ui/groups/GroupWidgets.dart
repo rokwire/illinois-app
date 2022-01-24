@@ -618,7 +618,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                     width: _smallImageSize,
                     height: _smallImageSize,
                     child: Image.network(
-                      widget.event!.exploreImageURL!, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().authHeaders),),)),
+                      widget.event!.exploreImageURL!, excludeFromSemantics: true, fit: BoxFit.fill, headers: ApiKeyNetworkAuth().networkAuthHeaders),),)),
                 ])
                 )
     ],);
@@ -1430,7 +1430,7 @@ class ModalImageDialog extends StatelessWidget{
                                         ),
                                       ),
                                       Container(
-                                        child: StringUtils.isNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fitWidth, headers: Config().authHeaders): Container(),
+                                        child: StringUtils.isNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fitWidth, headers: ApiKeyNetworkAuth().networkAuthHeaders): Container(),
                                       )
                                     ],
                                   ))
