@@ -107,7 +107,7 @@ class Auth2 with Service implements NotificationsListener {
     _authCardCacheFile = await _getAuthCardCacheFile();
     _authCard = await _loadAuthCardFromCache();
 
-    _deviceId = await RokwirePlugin.getDeviceId(deviceIdIdentifier, deviceIdIdentifier2); //TBD
+    _deviceId = await RokwirePlugin.getDeviceId(deviceIdIdentifier, deviceIdIdentifier2);
 
     if ((_account == null) && (_anonymousPrefs == null)) {
       Storage().auth2AnonymousPrefs = _anonymousPrefs = defaultAnonimousPrefs;
