@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -169,7 +169,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().authHeaders)) : Container(),
+          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: ApiKeyNetworkAuth().networkAuthHeaders)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false),
             child: Container(

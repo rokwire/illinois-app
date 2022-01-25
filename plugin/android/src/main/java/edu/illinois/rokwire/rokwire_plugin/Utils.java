@@ -94,6 +94,79 @@ public class Utils {
         }
     }
 
+    public static class Map {
+
+        public static String getValueFromPath(Object object, String path, String defaultValue) {
+            Object valueObject = getValueFromPath(object, path);
+            return (valueObject instanceof String) ? (String)valueObject : defaultValue;
+        }
+
+        public static int getValueFromPath(Object object, String path, int defaultValue) {
+            Object valueObject = getValueFromPath(object, path);
+            return (valueObject instanceof Integer) ? (Integer) valueObject : defaultValue;
+        }
+
+        public static long getValueFromPath(Object object, String path, long defaultValue) {
+            Object valueObject = getValueFromPath(object, path);
+            return (valueObject instanceof Long) ? (Long) valueObject : defaultValue;
+        }
+
+        public static double getValueFromPath(Object object, String path, double defaultValue) {
+            Object valueObject = getValueFromPath(object, path);
+            return (valueObject instanceof Double) ? (Double) valueObject : defaultValue;
+        }
+
+        public static boolean getValueFromPath(Object object, String path, boolean defaultValue) {
+            Object valueObject = getValueFromPath(object, path);
+            return (valueObject instanceof Boolean) ? (Boolean) valueObject : defaultValue;
+        }
+
+        private static Object getValueFromPath(Object object, String path) {
+            if (!(object instanceof java.util.Map) || Str.isEmpty(path)) {
+                return null;
+            }
+            java.util.Map map = (java.util.Map) object;
+            int dotFirstIndex = path.indexOf(".");
+            while (dotFirstIndex != -1) {
+                String subPath = path.substring(0, dotFirstIndex);
+                path = path.substring(dotFirstIndex + 1);
+                Object innerObject = (map != null) ? map.get(subPath) : null;
+                map = (innerObject instanceof HashMap) ? (HashMap) innerObject : null;
+                dotFirstIndex = path.indexOf(".");
+            }
+            Object generalValue = (map != null) ? map.get(path) : null;
+            return getPlatformValue(generalValue);
+        }
+
+        private static Object getPlatformValue(Object object) {
+            if (object instanceof HashMap) {
+                HashMap hashMap = (HashMap) object;
+                return hashMap.get("android");
+            } else {
+                return object;
+            }
+        }
+    }
+
+    public static class Base64 {
+
+        public static byte[] decode(String value) {
+            if (value != null) {
+                return android.util.Base64.decode(value, android.util.Base64.NO_WRAP);
+            } else {
+                return null;
+            }
+        }
+
+        public static String encode(byte[] bytes) {
+            if (bytes != null) {
+                return android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP);
+            } else {
+                return null;
+            }
+        }
+    }
+
     public static class AppSharedPrefs {
 
         public static final String DEFAULT_SHARED_PREFS_FILE_NAME = "default_shared_prefs";

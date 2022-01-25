@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 final _canvasDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
@@ -75,9 +74,9 @@ class CanvasCourse {
       courseColor: JsonUtils.stringValue(json['course_color']),
       timezone: JsonUtils.stringValue(json['time_zone']),
       
-      createdAt: AppDateTime.parseDateTime(JsonUtils.stringValue(json['created_at'])),
-      startAt: AppDateTime.parseDateTime(JsonUtils.stringValue(json['start_at'])),
-      endAt: AppDateTime.parseDateTime(JsonUtils.stringValue(json['end_at'])),
+      createdAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+      startAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['start_at']), isUtc: true),
+      endAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['end_at']), isUtc: true),
 
       isPublic: JsonUtils.boolValue(json['is_public']),
       isPublicToAuthUsers: JsonUtils.boolValue(json['is_public_to_auth_users']),
@@ -133,9 +132,9 @@ class CanvasCourse {
       'course_color': courseColor,
       'time_zone': timezone,
       
-      'created_at': AppDateTime.utcDateTimeToString(createdAt, format: _canvasDateFormat),
-      'start_at': AppDateTime.utcDateTimeToString(startAt, format: _canvasDateFormat),
-      'end_at': AppDateTime.utcDateTimeToString(endAt, format: _canvasDateFormat),
+      'created_at': DateTimeUtils.utcDateTimeToString(createdAt, format: _canvasDateFormat),
+      'start_at': DateTimeUtils.utcDateTimeToString(startAt, format: _canvasDateFormat),
+      'end_at': DateTimeUtils.utcDateTimeToString(endAt, format: _canvasDateFormat),
 
       'is_public': isPublic,
       'is_public_to_auth_users': isPublicToAuthUsers,

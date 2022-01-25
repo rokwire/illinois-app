@@ -1,6 +1,7 @@
 
 import 'package:http/http.dart';
 import 'package:illinois/model/Twitter.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -42,7 +43,7 @@ class Twitter  /* with Service */ {
         "Cache-Control" : "no-cache"
       } : null;
       
-      Response? response = await Network().get(url, auth: NetworkAuth.auth2, headers: headers);
+      Response? response = await Network().get(url, auth: Auth2NetworkAuth(), headers: headers);
       String? responseString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
       print("Twitter Page Load: ${response?.statusCode}\n${response?.body}");
       return TweetsPage.fromJson(JsonUtils.decodeMap(responseString));

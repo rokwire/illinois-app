@@ -23,7 +23,7 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Groups.dart';
@@ -618,7 +618,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                     width: _smallImageSize,
                     height: _smallImageSize,
                     child: Image.network(
-                      widget.event!.exploreImageURL!, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().authHeaders),),)),
+                      widget.event!.exploreImageURL!, excludeFromSemantics: true, fit: BoxFit.fill, headers: ApiKeyNetworkAuth().networkAuthHeaders),),)),
                 ])
                 )
     ],);
@@ -1430,7 +1430,7 @@ class ModalImageDialog extends StatelessWidget{
                                         ),
                                       ),
                                       Container(
-                                        child: StringUtils.isNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fitWidth, headers: Config().authHeaders): Container(),
+                                        child: StringUtils.isNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fitWidth, headers: ApiKeyNetworkAuth().networkAuthHeaders): Container(),
                                       )
                                     ],
                                   ))

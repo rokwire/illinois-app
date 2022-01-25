@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/service/Styles.dart';
 
 class ImageHolderListItem extends StatelessWidget {
@@ -55,7 +55,7 @@ class ImageHolderListItem extends StatelessWidget {
                       height: imageHeight,
                       width: MediaQuery.of(context).size.width,
                       fit: BoxFit.cover,
-                      headers: Config().authHeaders,
+                      headers: ApiKeyNetworkAuth().networkAuthHeaders,
                       excludeFromSemantics: true,
                     ) : Container(height: 0),
                     Padding(

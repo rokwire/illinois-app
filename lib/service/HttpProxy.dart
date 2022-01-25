@@ -21,6 +21,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/config.dart' as rokwire;
 
 class HttpProxy extends Service implements NotificationsListener{
   
@@ -56,7 +57,7 @@ class HttpProxy extends Service implements NotificationsListener{
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage()]);
+    return Set.from([Storage(), Config()]);
   }
 
   void onNotification(String name, dynamic param){
@@ -103,7 +104,7 @@ class HttpProxy extends Service implements NotificationsListener{
     if(httpProxyEnabled! &&
         StringUtils.isNotEmpty(httpProxyHost) &&
         StringUtils.isNotEmpty(httpProxyPort) &&
-        Config().configEnvironment == ConfigEnvironment.dev
+        Config().configEnvironment == rokwire.ConfigEnvironment.dev
     ){
       HttpOverrides.global = _MyHttpOverrides(host: httpProxyHost, port: httpProxyPort);
     }
