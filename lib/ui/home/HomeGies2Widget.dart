@@ -2,8 +2,10 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:illinois/service/Gies.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/gies/GiesPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -198,7 +200,9 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
   }
 
   void _onTapViewNotes(){
-    //TBD
+    showDialog(context: context, builder: (BuildContext context) {
+        return GiesNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
+    });
   }
 
   bool get _isStarted {
@@ -206,11 +210,11 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
   }
 
   bool get _isEnded {
-    return false; //TBD
+    return Gies().completedStepsCount>= _stepsCount;
   }
 
   int get _completedStpsCount {
-    return Gies().completedPages?.length ?? 0;
+    return Gies().completedStepsCount;
   }
 
   int get _stepsCount {

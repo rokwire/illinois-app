@@ -216,6 +216,17 @@ class Gies with Service implements NotificationsListener{
     return null;
   }
 
+  int get completedStepsCount{
+    int count = 0;
+    for(int progress in _progressSteps!){
+      if(isProgressStepCompleted(progress)){
+        count++;
+      }
+    }
+
+    return count;
+  }
+
   //Utils
   bool _pageCanComplete(Map? page) {
     List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;

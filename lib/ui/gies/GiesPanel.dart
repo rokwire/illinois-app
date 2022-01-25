@@ -17,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../WebPanel.dart';
 
 class GiesPanel extends StatefulWidget{
+
   @override
   State<StatefulWidget> createState() => _GiesPanelState();
 
@@ -28,6 +29,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
   void initState() {
     NotificationService().subscribe(this, [Gies.notifyPageChanged]);
     super.initState();
+
   }
 
   @override
@@ -59,13 +61,15 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
   }
 
   Widget _buildTitle() {
+    String? progress = JsonUtils.intValue(_currentPage["progress"])?.toString();
     return Container(color: Styles().colors!.fillColorPrimary, child:
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10), child:
         Column(children: [
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Expanded(child:
-            Text("Step ${_currentPage["progress"]}", textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20,),),),
-          ],),
+          Visibility( visible:  progress!=null,
+            child:Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Expanded(child:
+              Text("Step ${progress ?? ""}", textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20,),),),
+          ],)),
           Container(height: 8,),
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Expanded(child:
@@ -224,12 +228,12 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
   Future<void> _showPopup(String popupId, String pageId) async {
     return showDialog(context: context, builder: (BuildContext context) {
       if (popupId == 'notes') {
-        return _GiesNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
+        return GiesNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
       }
       else if (popupId == 'current-notes') {
         List<dynamic> notes = JsonUtils.decodeList(Storage().giesNotes) ?? [];
         String? focusNodeId =  Gies().setCurrentNotes(notes, pageId);
-        return _GiesNotesWidget(notes: notes, focusNoteId: focusNodeId,);
+        return GiesNotesWidget(notes: notes, focusNoteId: focusNodeId,);
       }
       else {
         return Container();
@@ -516,14 +520,15 @@ class _GiesPageWidget extends StatelessWidget {
   }
 }
 
-class _GiesNotesWidget extends StatefulWidget {
+class GiesNotesWidget extends StatefulWidget {
   final List<dynamic>? notes;
   final String? focusNoteId;
-  _GiesNotesWidget({this.notes, this.focusNoteId});
+
+  GiesNotesWidget({this.notes, this.focusNoteId});
   _GiesNotesWidgetState createState() => _GiesNotesWidgetState();
 }
 
-class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
+class _GiesNotesWidgetState extends State<GiesNotesWidget> {
 
   Map<String, TextEditingController> _textEditingControllers = Map<String, TextEditingController>();
   FocusNode _focusNode = FocusNode();
@@ -779,9 +784,5 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
       Container(height: 55,),
       )),
     ],);
-  }
-
-  void _onTapButton(Map<String, dynamic> button, String panelId){
-    widget.onTapButton!(button, panelId);
   }
 }
