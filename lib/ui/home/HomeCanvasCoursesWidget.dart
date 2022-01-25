@@ -117,13 +117,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   }
 
   Widget _buildCourseCard(CanvasCourse course) {
-    const double cardWidth = 200;
-    return Padding(padding: EdgeInsets.only(left: 10), child: GestureDetector(onTap: () => _onTapCourse(course), child: Container(
-        width: cardWidth,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(6),
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
-        child: CanvasCourseCard(course: course))));
+    return Padding(padding: EdgeInsets.only(left: 10), child: GestureDetector(onTap: () => _onTapCourse(course), child: CanvasCourseCard(course: course, isSmall: true)));
   }
 
   void _loadCourses() {

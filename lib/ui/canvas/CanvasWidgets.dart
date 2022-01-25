@@ -6,14 +6,17 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class CanvasCourseCard extends StatelessWidget {
   final CanvasCourse course;
+  final bool isSmall;
 
-  CanvasCourseCard({required this.course});
+  CanvasCourseCard({required this.course, this.isSmall = false});
 
   @override
   Widget build(BuildContext context) {
     final Color defaultColor = Colors.black;
     const double cardHeight = 166;
     double cardInnerPadding = 10;
+    final double? cardWidth = isSmall ? 200 : null;
+    const double borderRadiusValue = 6;
     //TBD: check from which field to take this value
     String completionPercentage = _formatDecimalValue(0);
     Color? mainColor = StringUtils.isNotEmpty(course.courseColor) ? UiColors.fromHex(course.courseColor!) : defaultColor;
@@ -22,9 +25,13 @@ class CanvasCourseCard extends StatelessWidget {
     }
     return Container(
         height: cardHeight,
+        width: cardWidth,
+        decoration: BoxDecoration(
+          borderRadius: (isSmall ? BorderRadius.circular(borderRadiusValue) : null),
+          boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(
-              child: Container(color: mainColor, child: Padding(
+              child: Container(decoration: BoxDecoration(color: mainColor, borderRadius: (isSmall ? BorderRadius.vertical(top: Radius.circular(borderRadiusValue)) : null)), child: Padding(
                   padding: EdgeInsets.only(left: cardInnerPadding, top: cardInnerPadding),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Container(
@@ -34,7 +41,7 @@ class CanvasCourseCard extends StatelessWidget {
                         Text('$completionPercentage%', style: TextStyle(color: mainColor, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)))
                   ])))),
           Expanded(
-              child: Container(color: Styles().colors!.white, child: Padding(
+              child: Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: (isSmall ? BorderRadius.vertical(bottom: Radius.circular(borderRadiusValue)) : null)), child: Padding(
                   padding: EdgeInsets.all(cardInnerPadding),
                   child: Row(children: [Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(StringUtils.ensureNotEmpty(course.name),
