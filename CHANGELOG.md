@@ -5,8 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Changed  
+### Added
 - Link multiple authentication types to one account [#1233](https://github.com/rokwire/illinois-app/issues/1233).
+### Changed
 - FirebaseCore and FirebaseCrashlytics moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 - AppDateTime split to service and utils parts, service moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 - Utils moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
