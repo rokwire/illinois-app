@@ -42,7 +42,6 @@ import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -678,7 +677,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         if (linkedNetIDs.length > 0) {
           contentList.add(_OptionsSection(
               title: Localization().getStringEx("panel.settings.home.linked_net_id.title", "Linked Illinois NetID"),
-              widgets: linkedNetIDs));
+              widgets: linkedNetIDs,
+              showBox: false));
         }
       }
       else if (code == 'phone') {
@@ -686,7 +686,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         if (linkedPhones.length > 0) {
           contentList.add(_OptionsSection(
               title: Localization().getStringEx("panel.settings.home.linked_phone.title", "Linked Phone"),
-              widgets: linkedPhones));
+              widgets: linkedPhones,
+              showBox: false));
         }
       }
       else if (code == 'email') {
@@ -694,7 +695,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         if (linkedEmails.length > 0) {
           contentList.add(_OptionsSection(
               title: Localization().getStringEx("panel.settings.home.linked_email.title", "Linked Email"),
-              widgets: linkedEmails));
+              widgets: linkedEmails,
+              showBox: false));
         }
       }
     }
@@ -717,11 +719,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
                 child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                      Text(Localization().getStringEx("panel.settings.home.linked.message", "Linked as ")!,
-                          style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
-                      Text(identifier, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
-                    ]))));
+                    child: Text(identifier, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+                )));
           }
           else if (code == 'login') {
             contentList.add(RibbonButton(
@@ -731,6 +730,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 label: Localization().getStringEx("panel.settings.home.linked_netid.button.login", "Login"),
                 onTap: () => _loginWithLinkedAuthType(Auth2LoginType.oidcIllinois, identifier: identifier)));
           }
+        }
+        if (identifiers.indexOf(identifier) < identifiers.length - 1) {
+          contentList.add(Container(height: 16.0,));
         }
       }
     }
@@ -753,12 +755,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 width: double.infinity,
                 decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
                 child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                      Text(Localization().getStringEx("panel.settings.home.linked.message", "Linked as ")!,
-                          style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
-                      Text(identifier, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
-                    ]))));
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Text(identifier, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+                )));
           }
           else if (code == 'login') {
             contentList.add(RibbonButton(
@@ -768,6 +767,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 label: Localization().getStringEx("panel.settings.home.linked_phone.button.login", "Login"),
                 onTap: () => _loginWithLinkedAuthType(Auth2LoginType.phoneTwilio, identifier: identifier)));
           }
+        }
+        if (identifiers.indexOf(identifier) < identifiers.length - 1) {
+          contentList.add(Container(height: 16.0,));
         }
       }
     }
@@ -790,12 +792,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 width: double.infinity,
                 decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
                 child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                      Text(Localization().getStringEx("panel.settings.home.linked.message", "Linked as ")!,
-                          style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
-                      Text(identifier, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
-                    ]))));
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Text(identifier, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+                )));
           }
           else if (code == 'login') {
             contentList.add(RibbonButton(
@@ -805,6 +804,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 label: Localization().getStringEx("panel.settings.home.linked_email.button.login", "Login"),
                 onTap: () => _loginWithLinkedAuthType(Auth2LoginType.email, identifier: identifier)));
           }
+        }
+        if (identifiers.indexOf(identifier) < identifiers.length - 1) {
+          contentList.add(Container(height: 16.0,));
         }
       }
     }
@@ -1412,8 +1414,9 @@ class _OptionsSection extends StatelessWidget {
   final List<Widget>? widgets;
   final String? title;
   final String? description;
+  final bool? showBox;
 
-  const _OptionsSection({Key? key, this.widgets, this.title, this.description}) : super(key: key);
+  const _OptionsSection({Key? key, this.widgets, this.title, this.description, this.showBox}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1437,7 +1440,7 @@ class _OptionsSection extends StatelessWidget {
                   )),
           Stack(alignment: Alignment.topCenter, children: [
             Container(
-              decoration: BoxDecoration(
+              decoration: (showBox == false) ? null : BoxDecoration(
                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5),
                 borderRadius: BorderRadius.circular(5.0),
               ),
