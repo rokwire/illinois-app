@@ -32,9 +32,7 @@ class Config extends rokwire.Config {
   @protected
   Config.internal() : super.internal();
 
-  factory Config() {
-    return ((rokwire.Config.instance is Config) ? (rokwire.Config.instance as Config) : (rokwire.Config.instance = Config.internal()));
-  }
+  factory Config() => ((rokwire.Config.instance is Config) ? (rokwire.Config.instance as Config) : (rokwire.Config.instance = Config.internal()));
 
   // Getters: compound entries
 

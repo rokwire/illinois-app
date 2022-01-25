@@ -22,16 +22,14 @@ import 'package:rokwire_plugin/service/service.dart' as rokwire;
 
 class Services extends rokwire.Services {
   
+  bool _offlineChecked = false;
+
   // Singletone Factory
   
   @protected
   Services.internal() : super.internal();
 
-  factory Services() {
-    return ((rokwire.Services.instance is Services) ? (rokwire.Services.instance as Services) : (rokwire.Services.instance = Services.internal()));
-  }
-
-  bool _offlineChecked = false;
+  factory Services() =>  ((rokwire.Services.instance is Services) ? (rokwire.Services.instance as Services) : (rokwire.Services.instance = Services.internal()));
 
   @override
   Future<rokwire.ServiceError?> initService(rokwire.Service service) async {

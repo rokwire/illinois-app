@@ -29,9 +29,7 @@ class AppDateTime extends rokwire.AppDateTime {
   @protected
   AppDateTime.internal() : super.internal();
 
-  factory AppDateTime() {
-    return ((rokwire.AppDateTime.instance is AppDateTime) ? (rokwire.AppDateTime.instance as AppDateTime) : (rokwire.AppDateTime.instance = AppDateTime.internal()));
-  }
+  factory AppDateTime() => ((rokwire.AppDateTime.instance is AppDateTime) ? (rokwire.AppDateTime.instance as AppDateTime) : (rokwire.AppDateTime.instance = AppDateTime.internal()));
 
   @protected
   Future<Uint8List?> get timezoneDatabase async {
