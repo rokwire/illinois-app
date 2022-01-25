@@ -21,11 +21,10 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/TransportationService.dart';
@@ -289,7 +288,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   void _loadBusPass() async {
-    String? deviceId = await NativeCommunicator().getDeviceId(); //TMP: '1234'
+    String? deviceId = Auth2().deviceId; //TMP: '1234'
     Map<String, dynamic>? beaconData = (_currentBeacon != null) ? {
       'uuid': _currentBeacon!.uuid,
       'major': _currentBeacon!.major.toString(),

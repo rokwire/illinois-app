@@ -18,12 +18,11 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:http/http.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/TransportationService.dart';
@@ -108,7 +107,7 @@ class _IDCardPanelState extends State<IDCardPanel>
   }
 
   Future<Color?> _loadActiveColor() async{
-    String? deviceId = await NativeCommunicator().getDeviceId();
+    String? deviceId = Auth2().deviceId;
     return await TransportationService().loadBusColor(deviceId: deviceId, userId: Auth2().accountId);
   }
 

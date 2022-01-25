@@ -15,10 +15,12 @@
  */
 
 import 'package:flutter/foundation.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/crypt.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Storage with Service {
@@ -220,6 +222,7 @@ class Storage with Service {
   }
 
   // Config
+
   String get configEnvKey => 'edu.illinois.rokwire.config_environment';
   String? get configEnvironment => getStringWithName(configEnvKey);
   set configEnvironment(String? value) => setStringWithName(configEnvKey, value);
@@ -241,4 +244,37 @@ class Storage with Service {
     }
   }
 
+  // Auth2
+  
+  String get auth2AnonymousIdKey => 'edu.illinois.rokwire.auth2.anonymous.id';
+  String? get auth2AnonymousId => getStringWithName(configEnvKey);
+  set auth2AnonymousId(String? value) => setStringWithName(configEnvKey, value);
+
+  String get auth2AnonymousTokenKey => 'edu.illinois.rokwire.auth2.anonymous.token';
+  Auth2Token? get auth2AnonymousToken => Auth2Token.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(auth2AnonymousTokenKey)));
+  set auth2AnonymousToken(Auth2Token? value) => setEncryptedStringWithName(auth2AnonymousTokenKey, JsonUtils.encode(value?.toJson()));
+
+  String get auth2AnonymousPrefsKey => 'edu.illinois.rokwire.auth2.anonymous.prefs';
+  Auth2UserPrefs? get auth2AnonymousPrefs => Auth2UserPrefs.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(auth2AnonymousPrefsKey)));
+  set auth2AnonymousPrefs(Auth2UserPrefs? value) => setEncryptedStringWithName(auth2AnonymousPrefsKey, JsonUtils.encode(value?.toJson()));
+
+  String get auth2AnonymousProfileKey => 'edu.illinois.rokwire.auth2.anonymous.profile';
+  Auth2UserProfile? get auth2AnonymousProfile =>  Auth2UserProfile.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(auth2AnonymousProfileKey)));
+  set auth2AnonymousProfile(Auth2UserProfile? value) => setEncryptedStringWithName(auth2AnonymousProfileKey, JsonUtils.encode(value?.toJson()));
+
+  String get auth2TokenKey => 'edu.illinois.rokwire.auth2.token';
+  Auth2Token? get auth2Token => Auth2Token.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(auth2TokenKey)));
+  set auth2Token(Auth2Token? value) => setEncryptedStringWithName(auth2TokenKey, JsonUtils.encode(value?.toJson()));
+
+  String get auth2UiucTokenKey => 'edu.illinois.rokwire.auth2.uiuc_token';
+  Auth2Token? get auth2UiucToken => Auth2Token.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(auth2UiucTokenKey)));
+  set auth2UiucToken(Auth2Token? value) => setEncryptedStringWithName(auth2UiucTokenKey, JsonUtils.encode(value?.toJson()));
+
+  String get auth2AccountKey => 'edu.illinois.rokwire.auth2.account';
+  Auth2Account? get auth2Account => Auth2Account.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(auth2AccountKey)));
+  set auth2Account(Auth2Account? value) => setEncryptedStringWithName(auth2AccountKey, JsonUtils.encode(value?.toJson()));
+
+  String get auth2CardTimeKey => 'edu.illinois.rokwire.auth2.card_time';
+  int? get auth2CardTime => getIntWithName(auth2CardTimeKey);
+  set auth2CardTime(int? value) => setIntWithName(auth2CardTimeKey, value);
 }

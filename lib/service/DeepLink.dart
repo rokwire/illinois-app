@@ -24,9 +24,7 @@ class DeepLink extends rokwire.DeepLink {
   @protected
   DeepLink.internal() : super.internal();
 
-  factory DeepLink() {
-    return ((rokwire.DeepLink.instance is DeepLink) ? (rokwire.DeepLink.instance as DeepLink) : (rokwire.DeepLink.instance = DeepLink.internal()));
-  }
+  factory DeepLink() => ((rokwire.DeepLink.instance is DeepLink) ? (rokwire.DeepLink.instance as DeepLink) : (rokwire.DeepLink.instance = DeepLink.internal()));
 
   @override
   String? get appScheme => 'edu.illinois.rokwire';
