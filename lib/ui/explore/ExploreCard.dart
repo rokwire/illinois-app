@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Auth2.dart';

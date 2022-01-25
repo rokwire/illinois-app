@@ -19,7 +19,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/model/Laundry.dart';

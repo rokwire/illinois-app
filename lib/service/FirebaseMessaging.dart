@@ -19,7 +19,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase_messaging;
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';

@@ -45,13 +45,15 @@ class Auth2Token {
     };
   }
 
-  bool operator ==(o) =>
-    (o is Auth2Token) &&
-      (o.idToken == idToken) &&
-      (o.accessToken == accessToken) &&
-      (o.refreshToken == refreshToken) &&
-      (o.tokenType == tokenType);
+  @override
+  bool operator ==(other) =>
+    (other is Auth2Token) &&
+      (other.idToken == idToken) &&
+      (other.accessToken == accessToken) &&
+      (other.refreshToken == refreshToken) &&
+      (other.tokenType == tokenType);
 
+  @override
   int get hashCode =>
     (idToken?.hashCode ?? 0) ^
     (accessToken?.hashCode ?? 0) ^
@@ -144,29 +146,31 @@ class Auth2Account {
     };
   }
 
-  bool operator ==(o) =>
-    (o is Auth2Account) &&
-      (o.id == id) &&
-      (o.profile == profile) &&
-      DeepCollectionEquality().equals(o.permissions, permissions) &&
-      DeepCollectionEquality().equals(o.roles, roles) &&
-      DeepCollectionEquality().equals(o.groups, groups) &&
-      DeepCollectionEquality().equals(o.authTypes, authTypes);
+  @override
+  bool operator ==(other) =>
+    (other is Auth2Account) &&
+      (other.id == id) &&
+      (other.profile == profile) &&
+      const DeepCollectionEquality().equals(other.permissions, permissions) &&
+      const DeepCollectionEquality().equals(other.roles, roles) &&
+      const DeepCollectionEquality().equals(other.groups, groups) &&
+      const DeepCollectionEquality().equals(other.authTypes, authTypes);
 
+  @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
     (profile?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(permissions)) ^
-    (DeepCollectionEquality().hash(roles)) ^
-    (DeepCollectionEquality().hash(groups)) ^
-    (DeepCollectionEquality().hash(authTypes));
+    (const DeepCollectionEquality().hash(permissions)) ^
+    (const DeepCollectionEquality().hash(roles)) ^
+    (const DeepCollectionEquality().hash(groups)) ^
+    (const DeepCollectionEquality().hash(authTypes));
 
   bool get isValid {
     return (id != null) && id!.isNotEmpty /* && (profile != null) && profile.isValid*/;
   }
 
   Auth2Type? get authType {
-    return ((authTypes != null) && (0 < authTypes!.length)) ? authTypes?.first : null;
+    return ((authTypes != null) && authTypes!.isNotEmpty) ? authTypes?.first : null;
   }
 
   bool hasRole(String role) => (Auth2StringEntry.findInList(roles, name: role) != null);
@@ -278,23 +282,25 @@ class Auth2UserProfile {
     };
   }
 
-  bool operator ==(o) =>
-    (o is Auth2UserProfile) &&
-      (o._id == _id) &&
-      (o._firstName == _firstName) &&
-      (o._middleName == _middleName) &&
-      (o._lastName == _lastName) &&
-      (o._birthYear == _birthYear) &&
-      (o._photoUrl == _photoUrl) &&
+  @override
+  bool operator ==(other) =>
+    (other is Auth2UserProfile) &&
+      (other._id == _id) &&
+      (other._firstName == _firstName) &&
+      (other._middleName == _middleName) &&
+      (other._lastName == _lastName) &&
+      (other._birthYear == _birthYear) &&
+      (other._photoUrl == _photoUrl) &&
 
-      (o._email == _email) &&
-      (o._phone == _phone) &&
+      (other._email == _email) &&
+      (other._phone == _phone) &&
 
-      (o._address == _address) &&
-      (o._state == _state) &&
-      (o._zip == _zip) &&
-      (o._country == _country);
+      (other._address == _address) &&
+      (other._state == _state) &&
+      (other._zip == _zip) &&
+      (other._country == _country);
 
+  @override
   int get hashCode =>
     (_id?.hashCode ?? 0) ^
     (_firstName?.hashCode ?? 0) ^
@@ -410,11 +416,13 @@ class Auth2StringEntry {
     };
   }
 
-  bool operator ==(o) =>
-    (o is Auth2StringEntry) &&
-      (o.id == id) &&
-      (o.name == name);
+  @override
+  bool operator ==(other) =>
+    (other is Auth2StringEntry) &&
+      (other.id == id) &&
+      (other.name == name);
 
+  @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
     (name?.hashCode ?? 0);
@@ -493,22 +501,24 @@ class Auth2Type {
     };
   }
 
-  bool operator ==(o) =>
-    (o is Auth2Type) &&
-      (o.id == id) &&
-      (o.identifier == identifier) &&
-      (o.active == active) &&
-      (o.active2fa == active2fa) &&
-      (o.code == code) &&
-      DeepCollectionEquality().equals(o.params, params);
+  @override
+  bool operator ==(other) =>
+    (other is Auth2Type) &&
+      (other.id == id) &&
+      (other.identifier == identifier) &&
+      (other.active == active) &&
+      (other.active2fa == active2fa) &&
+      (other.code == code) &&
+      const DeepCollectionEquality().equals(other.params, params);
 
+  @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
     (identifier?.hashCode ?? 0) ^
     (active?.hashCode ?? 0) ^
     (active2fa?.hashCode ?? 0) ^
     (code?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(params));
+    (const DeepCollectionEquality().hash(params));
 
   String? get uin {
     return (loginType == Auth2LoginType.oidcIllinois) ? identifier : null;
@@ -568,11 +578,13 @@ class Auth2Error {
     };
   }
 
-  bool operator ==(o) =>
-    (o is Auth2Error) &&
-      (o.status == status) &&
-      (o.message == message);
+  @override
+  bool operator ==(other) =>
+    (other is Auth2Error) &&
+      (other.status == status) &&
+      (other.message == message);
 
+  @override
   int get hashCode =>
     (status?.hashCode ?? 0) ^
     (message?.hashCode ?? 0);
@@ -619,24 +631,26 @@ class Auth2UiucUser {
     };
   }
 
-  bool operator ==(o) =>
-    (o is Auth2UiucUser) &&
-      (o.email == email) &&
-      (o.firstName == firstName) &&
-      (o.lastName == lastName) &&
-      (o.middleName == middleName) &&
-      (o.identifier == identifier) &&
-      DeepCollectionEquality().equals(o.groups, groups) &&
-      DeepCollectionEquality().equals(o.systemSpecific, systemSpecific);
+  @override
+  bool operator ==(other) =>
+    (other is Auth2UiucUser) &&
+      (other.email == email) &&
+      (other.firstName == firstName) &&
+      (other.lastName == lastName) &&
+      (other.middleName == middleName) &&
+      (other.identifier == identifier) &&
+      const DeepCollectionEquality().equals(other.groups, groups) &&
+      const DeepCollectionEquality().equals(other.systemSpecific, systemSpecific);
 
+  @override
   int get hashCode =>
     (email?.hashCode ?? 0) ^
     (firstName?.hashCode ?? 0) ^
     (lastName?.hashCode ?? 0) ^
     (middleName?.hashCode ?? 0) ^
     (identifier?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(groups)) ^
-    (DeepCollectionEquality().hash(systemSpecific));
+    (const DeepCollectionEquality().hash(groups)) ^
+    (const DeepCollectionEquality().hash(systemSpecific));
 
   String? get uin {
     return ((systemSpecific != null) ? JsonUtils.stringValue(systemSpecific!['uiucedu_uin']) : null) ?? identifier;
@@ -728,15 +742,15 @@ class Auth2UserPrefs {
   factory Auth2UserPrefs.empty() {
     return Auth2UserPrefs(
       privacyLevel: null,
-      roles: Set<UserRole>(),
-      favorites: Map<String, Set<String>>(),
-      interests: Map<String, Set<String>>(),
+      roles: <UserRole>{},
+      favorites: <String, Set<String>>{},
+      interests: <String, Set<String>>{},
       foodFilters: {
-        _foodIncludedTypes : Set<String>(),
-        _foodExcludedIngredients : Set<String>(),
+        _foodIncludedTypes : <String>{},
+        _foodExcludedIngredients : <String>{},
       },
-      tags: Map<String, bool>(),
-      settings: Map<String, dynamic>(),
+      tags: <String, bool>{},
+      settings: <String, dynamic>{},
       voter: Auth2VoterPrefs(),
     );
   }
@@ -752,15 +766,15 @@ class Auth2UserPrefs {
 
     return Auth2UserPrefs(
       privacyLevel: privacyLevel,
-      roles: roles ?? Set<UserRole>(),
-      favorites: favorites ?? Map<String, Set<String>>(),
-      interests: interests ?? Map<String, Set<String>>(),
+      roles: roles ?? <UserRole>{},
+      favorites: favorites ?? <String, Set<String>>{},
+      interests: interests ?? <String, Set<String>>{},
       foodFilters: {
-        _foodIncludedTypes : includedFoodTypes ?? Set<String>(),
-        _foodExcludedIngredients : excludedFoodIngredients ?? Set<String>(),
+        _foodIncludedTypes : includedFoodTypes ?? <String>{},
+        _foodExcludedIngredients : excludedFoodIngredients ?? <String>{},
       },
-      tags: tags ?? Map<String, bool>(),
-      settings: settings ?? Map<String, dynamic>(),
+      tags: tags ?? <String, bool>{},
+      settings: settings ?? <String, dynamic>{},
       voter: voter ?? Auth2VoterPrefs(),
     );
   }
@@ -778,25 +792,27 @@ class Auth2UserPrefs {
     };
   }
 
-  bool operator ==(o) =>
-    (o is Auth2UserPrefs) &&
-      (o._privacyLevel == _privacyLevel) &&
-      DeepCollectionEquality().equals(o._roles, _roles) &&
-      DeepCollectionEquality().equals(o._favorites, _favorites) &&
-      DeepCollectionEquality().equals(o._interests, _interests) &&
-      DeepCollectionEquality().equals(o._foodFilters, _foodFilters) &&
-      DeepCollectionEquality().equals(o._tags, _tags) &&
-      DeepCollectionEquality().equals(o._settings, _settings) &&
-      (o._voter == _voter);
+  @override
+  bool operator ==(other) =>
+    (other is Auth2UserPrefs) &&
+      (other._privacyLevel == _privacyLevel) &&
+      const DeepCollectionEquality().equals(other._roles, _roles) &&
+      const DeepCollectionEquality().equals(other._favorites, _favorites) &&
+      const DeepCollectionEquality().equals(other._interests, _interests) &&
+      const DeepCollectionEquality().equals(other._foodFilters, _foodFilters) &&
+      const DeepCollectionEquality().equals(other._tags, _tags) &&
+      const DeepCollectionEquality().equals(other._settings, _settings) &&
+      (other._voter == _voter);
 
+  @override
   int get hashCode =>
     (_privacyLevel?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(_roles)) ^
-    (DeepCollectionEquality().hash(_favorites)) ^
-    (DeepCollectionEquality().hash(_interests)) ^
-    (DeepCollectionEquality().hash(_foodFilters)) ^
-    (DeepCollectionEquality().hash(_tags)) ^
-    (DeepCollectionEquality().hash(_settings)) ^
+    (const DeepCollectionEquality().hash(_roles)) ^
+    (const DeepCollectionEquality().hash(_favorites)) ^
+    (const DeepCollectionEquality().hash(_interests)) ^
+    (const DeepCollectionEquality().hash(_foodFilters)) ^
+    (const DeepCollectionEquality().hash(_tags)) ^
+    (const DeepCollectionEquality().hash(_settings)) ^
     (_voter?.hashCode ?? 0);
 
   bool apply(Auth2UserPrefs? prefs, { bool? notify }) {
@@ -812,7 +828,7 @@ class Auth2UserPrefs {
         modified = true;
       }
       
-      if ((prefs.roles != null) && prefs.roles!.isNotEmpty && !DeepCollectionEquality().equals(prefs.roles, _roles)) {
+      if ((prefs.roles != null) && prefs.roles!.isNotEmpty && !const DeepCollectionEquality().equals(prefs.roles, _roles)) {
         _roles = prefs._roles;
         if (notify == true) {
           NotificationService().notify(notifyRolesChanged);
@@ -820,7 +836,7 @@ class Auth2UserPrefs {
         modified = true;
       }
       
-      if ((prefs._favorites != null) && prefs.hasFavorites && !DeepCollectionEquality().equals(prefs._favorites, _favorites)) {
+      if ((prefs._favorites != null) && prefs.hasFavorites && !const DeepCollectionEquality().equals(prefs._favorites, _favorites)) {
         _favorites = prefs._favorites;
         if (notify == true) {
           NotificationService().notify(notifyFavoritesChanged);
@@ -828,7 +844,7 @@ class Auth2UserPrefs {
         modified = true;
       }
       
-      if ((prefs._interests != null) && prefs._interests!.isNotEmpty && !DeepCollectionEquality().equals(prefs._interests, _interests)) {
+      if ((prefs._interests != null) && prefs._interests!.isNotEmpty && !const DeepCollectionEquality().equals(prefs._interests, _interests)) {
         _interests = prefs._interests;
         if (notify == true) {
           NotificationService().notify(notifyInterestsChanged);
@@ -836,7 +852,7 @@ class Auth2UserPrefs {
         modified = true;
       }
       
-      if ((prefs._foodFilters != null) && prefs.hasFoodFilters && !DeepCollectionEquality().equals(prefs._foodFilters, _foodFilters)) {
+      if ((prefs._foodFilters != null) && prefs.hasFoodFilters && !const DeepCollectionEquality().equals(prefs._foodFilters, _foodFilters)) {
         _foodFilters = prefs._foodFilters;
         if (notify == true) {
           NotificationService().notify(notifyInterestsChanged);
@@ -844,7 +860,7 @@ class Auth2UserPrefs {
         modified = true;
       }
 
-      if ((prefs._tags != null) && prefs._tags!.isNotEmpty && !DeepCollectionEquality().equals(prefs._tags, _tags)) {
+      if ((prefs._tags != null) && prefs._tags!.isNotEmpty && !const DeepCollectionEquality().equals(prefs._tags, _tags)) {
         _tags = prefs._tags;
         if (notify == true) {
           NotificationService().notify(notifyTagsChanged);
@@ -852,7 +868,7 @@ class Auth2UserPrefs {
         modified = true;
       }
       
-      if ((prefs._settings != null) && prefs._settings!.isNotEmpty && !DeepCollectionEquality().equals(prefs._settings, _settings)) {
+      if ((prefs._settings != null) && prefs._settings!.isNotEmpty && !const DeepCollectionEquality().equals(prefs._settings, _settings)) {
         _settings = prefs._settings;
         if (notify == true) {
           NotificationService().notify(notifySettingsChanged);
@@ -911,16 +927,14 @@ class Auth2UserPrefs {
   }
 
   void toggleFavorite(Favorite? favorite) {
-    if(_favorites == null){
-      _favorites = Map<String, Set<String>>();
-    }
+    _favorites ??= <String, Set<String>>{};
 
     if ((favorite != null) && (_favorites != null)) {
       Set<String>? favoriteIdsForKey = _favorites![favorite.favoriteKey];
       bool shouldFavorite = (favoriteIdsForKey == null) || !favoriteIdsForKey.contains(favorite.favoriteId);
       if (shouldFavorite) {
         if (favoriteIdsForKey == null) {
-          _favorites![favorite.favoriteKey] = favoriteIdsForKey = Set<String>();
+          _favorites![favorite.favoriteKey] = favoriteIdsForKey = <String>{};
         }
         SetUtils.add(favoriteIdsForKey, favorite.favoriteId);
       }
@@ -950,9 +964,7 @@ class Auth2UserPrefs {
   }
 
   void setListFavorite(List<Favorite>? favorites, bool shouldFavorite, {Favorite? sourceFavorite}) {
-    if(_favorites == null){
-      _favorites = Map<String, Set<String>>();
-    }
+    _favorites ??= <String, Set<String>>{};
 
     if ((favorites != null) && (_favorites != null)) {
       for (Favorite favorite in favorites) {
@@ -966,7 +978,7 @@ class Auth2UserPrefs {
         }
         else if (!isFavorite && shouldFavorite) {
           if (favoriteIdsForKey == null) {
-            _favorites![favorite.favoriteKey] = favoriteIdsForKey = Set<String>();
+            _favorites![favorite.favoriteKey] = favoriteIdsForKey = <String>{};
           }
           SetUtils.add(favoriteIdsForKey, favorite.favoriteId);
         }
@@ -998,16 +1010,14 @@ class Auth2UserPrefs {
   }
 
   void toggleInterestCategory(String? category) {
-    if(_interests == null){
-      _interests = Map<String, Set<String>>();
-    }
+    _interests ??= <String, Set<String>>{};
 
     if ((category != null) && (_interests != null)) {
       if (_interests!.containsKey(category)) {
         _interests!.remove(category);
       }
       else {
-        _interests![category] = Set<String>();
+        _interests![category] = <String>{};
       }
 
       NotificationService().notify(notifyInterestsChanged);
@@ -1016,9 +1026,7 @@ class Auth2UserPrefs {
   }
 
   void applyInterestCategories(Set<String>? categories) {
-    if(_interests == null){
-      _interests = Map<String, Set<String>>();
-    }
+    _interests ??= <String, Set<String>>{};
 
     if ((categories != null) && (_interests != null)) {
 
@@ -1026,16 +1034,14 @@ class Auth2UserPrefs {
       Set<String>? categoriesToRemove;
       for (String category in _interests!.keys) {
         if (!categories.contains(category)) {
-          if (categoriesToRemove == null) {
-            categoriesToRemove = Set<String>();
-          }
+          categoriesToRemove ??= <String>{};
           categoriesToRemove.add(category);
         }
       }
 
       for (String category in categories) {
         if (!_interests!.containsKey(category)) {
-          _interests![category] = Set<String>();
+          _interests![category] = <String>{};
           modified = true;
         }
       }
@@ -1064,14 +1070,12 @@ class Auth2UserPrefs {
   }
 
   void toggleInterest(String? category, String? interest) {
-    if(_interests == null){
-      _interests = Map<String, Set<String>>();
-    }
+    _interests ??= <String, Set<String>>{};
 
     if ((category != null) && (interest != null) && (_interests != null)) {
       Set<String>? categories = _interests![category];
       if (categories == null) {
-        _interests![category] = categories = Set<String>();
+        _interests![category] = categories = <String>{};
       }
       if (categories.contains(interest)) {
         categories.remove(interest);
@@ -1086,14 +1090,12 @@ class Auth2UserPrefs {
   }
 
   void toggleInterests(String? category, Iterable<String>? interests) {
-    if(_interests == null){
-      _interests = Map<String, Set<String>>();
-    }
+    _interests ??= <String, Set<String>>{};
 
     if ((category != null) && (interests != null) && interests.isNotEmpty && (_interests != null)) {
       Set<String>? categories = _interests![category];
       if (categories == null) {
-        _interests![category] = categories = Set<String>();
+        _interests![category] = categories = <String>{};
       }
       for (String interest in interests) {
         if (categories.contains(interest)) {
@@ -1110,13 +1112,11 @@ class Auth2UserPrefs {
   }
 
   void applyInterests(String? category, Iterable<String>? interests) {
-    if(_interests == null){
-      _interests = Map<String, Set<String>>();
-    }
+    _interests ??= <String, Set<String>>{};
 
     if ((category != null) && (_interests != null)) {
       bool modified = false;
-      if ((interests != null) && !DeepCollectionEquality().equals(_interests![category], interests)) {
+      if ((interests != null) && !const DeepCollectionEquality().equals(_interests![category], interests)) {
         _interests![category] = Set<String>.from(interests);
         modified = true;
       }
@@ -1136,13 +1136,13 @@ class Auth2UserPrefs {
     bool modified = false;
 
     if ((_interests == null) || _interests!.isNotEmpty) {
-      _interests = Map<String, Set<String>>();
+      _interests = <String, Set<String>>{};
       modified = true;
       NotificationService().notify(notifyInterestsChanged);
     }
 
     if ((_tags == null) || _tags!.isNotEmpty) {
-      _tags = Map<String, bool>();
+      _tags = <String, bool>{};
       modified = true;
       NotificationService().notify(notifyTagsChanged);
     }
@@ -1168,7 +1168,7 @@ class Auth2UserPrefs {
   }
 
   set excludedFoodIngredients(Set<String>? value) {
-    if (!SetEquality().equals(excludedFoodIngredients, value)) {
+    if (!const SetEquality().equals(excludedFoodIngredients, value)) {
       if (value != null) {
         if (_foodFilters != null) {
           _foodFilters![_foodExcludedIngredients] = value;
@@ -1190,7 +1190,7 @@ class Auth2UserPrefs {
   }
 
   set includedFoodTypes(Set<String>? value) {
-    if (!SetEquality().equals(includedFoodTypes, value)) {
+    if (!const SetEquality().equals(includedFoodTypes, value)) {
       if (value != null) {
         if (_foodFilters != null) {
           _foodFilters![_foodIncludedTypes] = value;
@@ -1213,7 +1213,7 @@ class Auth2UserPrefs {
 
   void clearFoodFilters() {
     if (hasFoodFilters) {
-      _foodFilters = Map<String, Set<String>>();
+      _foodFilters = <String, Set<String>>{};
       NotificationService().notify(notifyFoodChanged);
       NotificationService().notify(notifyChanged, this);
     }
@@ -1228,7 +1228,7 @@ class Auth2UserPrefs {
   Set<String>? getTags({ bool? positive }) {
     Set<String>? tags;
     if (_tags != null) {
-      tags = Set<String>();
+      tags = <String>{};
       for (String tag in _tags!.keys) {
         if ((positive == null) || (_tags![tag] == positive)) {
           tags.add(tag);
@@ -1247,9 +1247,7 @@ class Auth2UserPrefs {
   }
 
   void toggleTag(String? tag, { bool positive = true}) {
-    if(_tags == null){
-      _tags = Map<String, bool>();
-    }
+    _tags ??= <String, bool>{};
 
     if ((_tags != null) && (tag != null)) {
       if (_tags!.containsKey(tag)) {
@@ -1264,9 +1262,7 @@ class Auth2UserPrefs {
   }
 
   void addTag(String? tag, { bool? positive }) {
-    if(_tags == null){
-      _tags = Map<String, bool>();
-    }
+    _tags ??= <String, bool>{};
 
     if ((_tags != null) && (tag != null) && (_tags![tag] != positive)) {
       _tags![tag] = positive ?? false;
@@ -1284,9 +1280,7 @@ class Auth2UserPrefs {
   }
 
   void applyTags(Iterable<String>? tags, { bool positive = true }) {
-    if(_tags == null){
-      _tags = Map<String, bool>();
-    }
+    _tags ??= <String, bool>{};
 
     if ((_tags != null) && (tags != null)) {
       bool modified = false;
@@ -1317,8 +1311,7 @@ class Auth2UserPrefs {
   }
 
   void applySetting(String settingName, dynamic settingValue){
-    if(_settings == null)
-      _settings = Map<String, dynamic>();
+    _settings ??= <String, dynamic>{};
     _settings![settingName] = settingValue;
 
     NotificationService().notify(notifySettingsChanged);
@@ -1339,7 +1332,7 @@ class Auth2UserPrefs {
   static Map<String, Set<String>>? _mapOfStringSetsFromJson(Map<String, dynamic>? jsonMap) {
     Map<String, Set<String>>? result;
     if (jsonMap != null) {
-      result = Map<String, Set<String>>();
+      result = <String, Set<String>>{};
       for (String key in jsonMap.keys) {
         MapUtils.set(result, key, JsonUtils.setStringsValue(jsonMap[key]));
       }
@@ -1350,7 +1343,7 @@ class Auth2UserPrefs {
   static Map<String, dynamic>? _mapOfStringSetsToJson(Map<String, Set<String>>? contentMap) {
     Map<String, dynamic>? jsonMap;
     if (contentMap != null) {
-      jsonMap = Map<String, dynamic>();
+      jsonMap = <String, dynamic>{};
       for (String key in contentMap.keys) {
         jsonMap[key] = List.from(contentMap[key]!);
       }
@@ -1360,12 +1353,12 @@ class Auth2UserPrefs {
 
   static Map<String, bool>? _tagsFromJson(Map<String, dynamic>? json) {
     try { return json?.cast<String, bool>(); }
-    catch(e) { print(e.toString()); }
+    catch(e) { debugPrint(e.toString()); }
     return null;
   }
 
   static Map<String, bool>? _tagsFromProfileLists({List<dynamic>? positive, List<dynamic>? negative}) {
-    Map<String, bool>? result = ((positive != null) || (negative != null)) ? Map<String, bool>() : null;
+    Map<String, bool>? result = ((positive != null) || (negative != null)) ? <String, bool>{} : null;
 
     if (negative != null) {
       for (dynamic negativeEntry in negative) {
@@ -1389,12 +1382,12 @@ class Auth2UserPrefs {
   static Map<String, Set<String>>? _interestsFromProfileList(List<dynamic>? jsonList) {
     Map<String, Set<String>>? result;
     if (jsonList != null) {
-      result = Map<String, Set<String>>();
+      result = <String, Set<String>>{};
       for (dynamic jsonEntry in jsonList) {
         if (jsonEntry is Map) {
           String? category = JsonUtils.stringValue(jsonEntry['category']);
           if (category != null) {
-            result[category] = JsonUtils.setStringsValue(jsonEntry['subcategories']) ?? Set<String>();
+            result[category] = JsonUtils.setStringsValue(jsonEntry['subcategories']) ?? <String>{};
           }
         }
       }
@@ -1445,13 +1438,16 @@ class Auth2VoterPrefs {
     ) : null;
   }
 
-  bool operator ==(o) =>
-    (o is Auth2VoterPrefs) &&
-      (o._registeredVoter == _registeredVoter) &&
-      (o._votePlace == _votePlace) &&
-      (o._voterByMail == _voterByMail) &&
-      (o._voted == _voted);
+  
+  @override
+  bool operator ==(other) =>
+    (other is Auth2VoterPrefs) &&
+      (other._registeredVoter == _registeredVoter) &&
+      (other._votePlace == _votePlace) &&
+      (other._voterByMail == _voterByMail) &&
+      (other._voted == _voted);
 
+  @override
   int get hashCode =>
     (_registeredVoter?.hashCode ?? 0) ^
     (_votePlace?.hashCode ?? 0) ^
@@ -1537,14 +1533,14 @@ class Auth2VoterPrefs {
 // UserRole
 
 class UserRole {
-  static const student = const UserRole._internal('student');
-  static const visitor = const UserRole._internal('visitor');
-  static const fan = const UserRole._internal('fan');
-  static const employee = const UserRole._internal('employee');
-  static const alumni = const UserRole._internal('alumni');
-  static const parent = const UserRole._internal('parent');
-  static const resident = const UserRole._internal('resident');
-  static const gies = const UserRole._internal('gies');
+  static const student = UserRole._internal('student');
+  static const visitor = UserRole._internal('visitor');
+  static const fan = UserRole._internal('fan');
+  static const employee = UserRole._internal('employee');
+  static const alumni = UserRole._internal('alumni');
+  static const parent = UserRole._internal('parent');
+  static const resident = UserRole._internal('resident');
+  static const gies = UserRole._internal('gies');
 
   static List<UserRole> get values {
     return [student, visitor, fan, employee, alumni, parent, resident, gies];
@@ -1562,13 +1558,15 @@ class UserRole {
     return (value is String) ? UserRole._internal(value) : null;
   }
 
+  @override
   toString() => _value;
+  
   toJson() => _value;
 
   @override
-  bool operator==(dynamic obj) {
-    if (obj is UserRole) {
-      return obj._value == _value;
+  bool operator==(dynamic other) {
+    if (other is UserRole) {
+      return other._value == _value;
     }
     return false;
   }
@@ -1601,7 +1599,7 @@ class UserRole {
   static Set<UserRole>? setFromJson(List<dynamic>? jsonList) {
     Set<UserRole>? result;
     if (jsonList != null) {
-      result = Set<UserRole>();
+      result = <UserRole>{};
       for (dynamic jsonEntry in jsonList) {
         SetUtils.add(result, (jsonEntry is String) ? UserRole.fromString(jsonEntry) : null);
       }
@@ -1695,18 +1693,20 @@ class AuthCard {
     };
   }
 
-  bool operator ==(o) =>
-      o is AuthCard &&
-          o.uin == uin &&
-          o.fullName == fullName &&
-          o.role == role &&
-          o.studentLevel == studentLevel &&
-          o.cardNumber == cardNumber &&
-          o.expirationDate == expirationDate &&
-          o.libraryNumber == libraryNumber &&
-          o.magTrack2 == magTrack2 &&
-          o.photoBase64 == photoBase64;
+  @override
+  bool operator ==(other) =>
+      other is AuthCard &&
+          other.uin == uin &&
+          other.fullName == fullName &&
+          other.role == role &&
+          other.studentLevel == studentLevel &&
+          other.cardNumber == cardNumber &&
+          other.expirationDate == expirationDate &&
+          other.libraryNumber == libraryNumber &&
+          other.magTrack2 == magTrack2 &&
+          other.photoBase64 == photoBase64;
 
+  @override
   int get hashCode =>
       uin.hashCode ^
       fullName.hashCode ^

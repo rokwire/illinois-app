@@ -16,7 +16,7 @@
 
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -467,15 +467,9 @@ class Storage extends rokwire.Storage {
   //////////////////
   // Auth2
 
-  static const String _auth2AnonymousIdKey = 'auth2AnonymousId';
+  @override
+  String get auth2AnonymousIdKey => 'auth2AnonymousId';
 
-  String? get auth2AnonymousId {
-    return getStringWithName(_auth2AnonymousIdKey);
-  }
-
-  set auth2AnonymousId(String? value) {
-    setStringWithName(_auth2AnonymousIdKey, value);
-  }
 
   static const String _auth2AnonymousTokenKey = 'auth2AnonymousToken';
 

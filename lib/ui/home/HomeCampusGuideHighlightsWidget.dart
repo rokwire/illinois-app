@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';

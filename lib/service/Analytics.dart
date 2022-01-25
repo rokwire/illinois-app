@@ -23,7 +23,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as Http;
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';

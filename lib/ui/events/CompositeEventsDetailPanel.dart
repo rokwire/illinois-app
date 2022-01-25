@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Groups.dart';

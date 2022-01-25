@@ -220,6 +220,7 @@ class Storage with Service {
   }
 
   // Config
+
   String get configEnvKey => 'edu.illinois.rokwire.config_environment';
   String? get configEnvironment => getStringWithName(configEnvKey);
   set configEnvironment(String? value) => setStringWithName(configEnvKey, value);
@@ -241,4 +242,13 @@ class Storage with Service {
     }
   }
 
+  // Config
+  
+  String get auth2AnonymousIdKey => 'edu.illinois.rokwire.auth2.anonymous_id';
+  String? get auth2AnonymousId => getStringWithName(configEnvKey);
+  set auth2AnonymousId(String? value) => setStringWithName(configEnvKey, value);
+
+//String get auth2AnonymousTokenKey => 'edu.illinois.rokwire.auth2.anonymous_id';
+//Auth2Token? get auth2AnonymousToken => getStringWithName(configEnvKey);
+//set auth2AnonymousToken(Auth2Token? value) => setStringWithName(configEnvKey, value);
 }

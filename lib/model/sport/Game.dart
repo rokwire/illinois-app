@@ -16,7 +16,7 @@
 
 import 'dart:ui';
 
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Assets.dart';
