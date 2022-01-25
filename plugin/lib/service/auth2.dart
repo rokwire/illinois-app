@@ -192,6 +192,7 @@ class Auth2 with Service implements NotificationsListener {
   Auth2Token? get uiucToken => _uiucToken;
   Auth2Account? get account => _account;
   AuthCard? get authCard => _authCard;
+  String? get deviceId => _deviceId;
   
   String? get accountId => _account?.id ?? _anonymousId;
   Auth2UserPrefs? get prefs => _account?.prefs ?? _anonymousPrefs;
