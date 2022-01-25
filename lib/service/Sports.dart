@@ -23,7 +23,7 @@ import 'package:illinois/model/sport/Team.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/News.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 
 import 'package:illinois/model/Coach.dart';

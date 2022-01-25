@@ -444,7 +444,8 @@ class Config with Service, NotificationsListener {
   Map<String, dynamic> get content                 => _config ?? {};
 
   Map<String, dynamic> get secretKeys              => JsonUtils.mapValue(content['secretKeys']) ?? {};
-  Map<String, dynamic> get secretRokwire           => secretKeys['rokwire'] ?? {};
+  Map<String, dynamic> get secretRokwire           => JsonUtils.mapValue(secretKeys['rokwire']) ?? {};
+  Map<String, dynamic> get secretCore              => JsonUtils.mapValue(secretKeys['core'])  ?? {};
 
   Map<String, dynamic> get otherUniversityServices => JsonUtils.mapValue(content['otherUniversityServices']) ?? {};
   Map<String, dynamic> get platformBuildingBlocks  => JsonUtils.mapValue(content['platformBuildingBlocks']) ?? {};
@@ -453,12 +454,20 @@ class Config with Service, NotificationsListener {
 
   Map<String, dynamic> get upgradeInfo             => JsonUtils.mapValue(content['upgrade']) ?? {};
 
-  // Getters: settings
-  int get refreshTimeout                           => JsonUtils.intValue(settings['refreshTimeout'])  ?? 0;
-  
+  // Getters: platformBuildingBlocks
+  String? get coreUrl                              => JsonUtils.stringValue(platformBuildingBlocks['core_url']);
+
   // Getters: otherUniversityServices
   String? get assetsUrl                            => JsonUtils.stringValue(otherUniversityServices['assets_url']);
+  String? get iCardUrl                             => JsonUtils.stringValue(otherUniversityServices['icard_url']);                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
 
+  // Getters: secretKeys
+  String? get coreOrgId                            => JsonUtils.stringValue(secretCore['org_id']);
+
+  // Getters: settings
+  int get refreshTimeout                           => JsonUtils.intValue(settings['refreshTimeout'])  ?? 0;
+  int get refreshTokenRetriesCount                 => JsonUtils.intValue(settings['refreshTokenRetriesCount']) ?? 3;
+  
 }
 
 enum ConfigEnvironment { production, test, dev }

@@ -18,7 +18,7 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:http/http.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';

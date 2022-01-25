@@ -16,7 +16,6 @@
 
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -467,79 +466,14 @@ class Storage extends rokwire.Storage {
   //////////////////
   // Auth2
 
-  @override
-  String get auth2AnonymousIdKey => 'auth2AnonymousId';
-
-
-  static const String _auth2AnonymousTokenKey = 'auth2AnonymousToken';
-
-  Auth2Token? get auth2AnonymousToken {
-    return Auth2Token.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(_auth2AnonymousTokenKey)));
-  }
-
-  set auth2AnonymousToken(Auth2Token? value) {
-    setEncryptedStringWithName(_auth2AnonymousTokenKey, JsonUtils.encode(value?.toJson()));
-  }
-
-  static const String _auth2AnonymousPrefsKey = 'auth2AnonymousPrefs';
-
-  Auth2UserPrefs? get auth2AnonymousPrefs {
-    return Auth2UserPrefs.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(_auth2AnonymousPrefsKey)));
-  }
-
-  set auth2AnonymousPrefs(Auth2UserPrefs? value) {
-    setEncryptedStringWithName(_auth2AnonymousPrefsKey, JsonUtils.encode(value?.toJson()));
-  }
-
-  static const String _auth2AnonymousProfileKey = 'auth2AnonymousProfile';
-
-  Auth2UserProfile? get auth2AnonymousProfile {
-    return Auth2UserProfile.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(_auth2AnonymousProfileKey)));
-  }
-
-  set auth2AnonymousProfile(Auth2UserProfile? value) {
-    setEncryptedStringWithName(_auth2AnonymousProfileKey, JsonUtils.encode(value?.toJson()));
-  }
-
-  static const String _auth2TokenKey = 'auth2Token';
-
-  Auth2Token? get auth2Token {
-    return Auth2Token.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(_auth2TokenKey)));
-  }
-
-  set auth2Token(Auth2Token? value) {
-    setEncryptedStringWithName(_auth2TokenKey, JsonUtils.encode(value?.toJson()));
-  }
-
-  static const String _auth2UiucTokenKey = 'auth2UiucToken';
-
-  Auth2Token? get auth2UiucToken {
-    return Auth2Token.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(_auth2UiucTokenKey)));
-  }
-
-  set auth2UiucToken(Auth2Token? value) {
-    setEncryptedStringWithName(_auth2UiucTokenKey, JsonUtils.encode(value?.toJson()));
-  }
-
-  static const String _auth2AccountKey = 'auth2Account';
-
-  Auth2Account? get auth2Account {
-    return Auth2Account.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(_auth2AccountKey)));
-  }
-
-  set auth2Account(Auth2Account? value) {
-    setEncryptedStringWithName(_auth2AccountKey, JsonUtils.encode(value?.toJson()));
-  }
-
-  static const String auth2CardTimeKey  = 'auth2CardTime';
-
-  int? get auth2CardTime {
-    return getIntWithName(auth2CardTimeKey);
-  }
-
-  set auth2CardTime(int? value) {
-    setIntWithName(auth2CardTimeKey, value);
-  }
+  @override String get auth2AnonymousIdKey => 'auth2AnonymousId';
+  @override String get auth2AnonymousTokenKey => 'auth2AnonymousToken';
+  @override String get auth2AnonymousPrefsKey => 'auth2AnonymousPrefs';
+  @override String get auth2AnonymousProfileKey => 'auth2AnonymousProfile';
+  @override String get auth2TokenKey => 'auth2Token';
+  @override String get auth2UiucTokenKey => 'auth2UiucToken';
+  @override String get auth2AccountKey => 'auth2Account';
+  @override String get auth2CardTimeKey => 'auth2CardTime';
 
   //////////////////
   // Calendar

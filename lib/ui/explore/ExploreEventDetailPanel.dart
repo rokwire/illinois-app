@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
