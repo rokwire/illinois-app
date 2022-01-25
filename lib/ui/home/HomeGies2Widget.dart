@@ -9,7 +9,6 @@ import 'package:illinois/ui/gies/GiesPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeGies2Widget extends StatefulWidget{
 
