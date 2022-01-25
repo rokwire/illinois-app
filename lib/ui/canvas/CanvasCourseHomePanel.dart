@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 
@@ -31,12 +32,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
         Expanded(
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Container(
-                child: _buildCourseContent()
-              )
-            )
+            child: _buildCourseContent()
           )
         )
       ]),
@@ -46,6 +42,8 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   }
 
   Widget _buildCourseContent() {
-    return Container(child: Center(child: Text('TODO: implement it')));
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      CanvasCourseCard(course: widget.course)
+    ]);
   }
 }

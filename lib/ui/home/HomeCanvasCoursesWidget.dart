@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -9,8 +8,8 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
+import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -118,56 +117,13 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   }
 
   Widget _buildCourseCard(CanvasCourse course) {
-    final Color defaultColor = Colors.black;
-    const double cardHeight = 166;
     const double cardWidth = 200;
-    double cardInnerPadding = 10;
-    double cardBorderRadius = 6;
-    //TBD: check from which field to take this value
-    String completionPercentage = _formatDecimalValue(0);
-    Color? mainColor = StringUtils.isNotEmpty(course.courseColor) ? UiColors.fromHex(course.courseColor!) : defaultColor;
-    if (mainColor == null) {
-      mainColor = defaultColor;
-    }
-
-    return Padding(
-        padding: EdgeInsets.only(left: 10),
-        child: GestureDetector(
-            onTap: () => _onTapCourse(course),
-            child: Container(
-                height: cardHeight,
-                width: cardWidth,
-                decoration: BoxDecoration(
-                    color: mainColor,
-                    borderRadius: BorderRadius.circular(cardBorderRadius),
-                    boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Expanded(
-                      child: Padding(
-                          padding: EdgeInsets.only(left: cardInnerPadding, top: cardInnerPadding),
-                          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Container(
-                                padding: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Styles().colors!.white),
-                                child:
-                                    Text('$completionPercentage%', style: TextStyle(color: mainColor, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)))
-                          ]))),
-                  Expanded(
-                      child: Container(
-                          decoration:
-                              BoxDecoration(color: Styles().colors!.background, borderRadius: BorderRadius.vertical(bottom: Radius.circular(cardBorderRadius))),
-                          child: Padding(
-                              padding: EdgeInsets.all(cardInnerPadding),
-                              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Text(StringUtils.ensureNotEmpty(course.name),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(color: defaultColor, fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold)),
-                                Text(StringUtils.ensureNotEmpty(course.courseCode),
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies!.bold))
-                              ]))))
-                ]))));
+    return Padding(padding: EdgeInsets.only(left: 10), child: GestureDetector(onTap: () => _onTapCourse(course), child: Container(
+        width: cardWidth,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(6),
+            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
+        child: CanvasCourseCard(course: course))));
   }
 
   void _loadCourses() {
@@ -182,13 +138,6 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   void _onTapCourse(CanvasCourse course) {
     Analytics.instance.logSelect(target: "HomeCanvasCourse");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseHomePanel(course: course)));
-  }
-
-  String _formatDecimalValue(double num, {int minimumFractionDigits = 0, int maximumFractionDigits = 2}) {
-    NumberFormat numFormatter = NumberFormat();
-    numFormatter.minimumFractionDigits = minimumFractionDigits;
-    numFormatter.maximumFractionDigits = maximumFractionDigits;
-    return numFormatter.format(num);
   }
 
   bool get _hasCourses {
