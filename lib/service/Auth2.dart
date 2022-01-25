@@ -28,6 +28,12 @@ class Auth2 extends rokwire.Auth2 {
   factory Auth2() => ((rokwire.Auth2.instance is Auth2) ? (rokwire.Auth2.instance as Auth2) : (rokwire.Auth2.instance = Auth2.internal()));
 
   @override
+  String? get deviceIdIdentifier => 'deviceUUID';
+
+  @override
+  String? get deviceIdIdentifier2 => 'deviceUUID';
+
+  @override
   Auth2UserPrefs get defaultAnonimousPrefs => Auth2UserPrefs.fromStorage(
     profile: Storage().userProfile,
     includedFoodTypes: Storage().includedFoodTypesPrefs,

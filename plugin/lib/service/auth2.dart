@@ -33,7 +33,8 @@ class Auth2 with Service implements NotificationsListener {
   static const String notifyUserDeleted       = "edu.illinois.rokwire.auth2.user.deleted";
   static const String notifyPrepareUserDelete = "edu.illinois.rokwire.auth2.user.prepare.delete";
 
-  static const String _authCardName        = "idCard.json";
+  static const String _authCardName           = "idCard.json";
+  static const String _deviceIdIdentifier     = 'edu.illinois.rokwire.device_id';
 
   _OidcLogin? _oidcLogin;
   List<Completer<bool?>>? _oidcAuthenticationCompleters;
@@ -106,7 +107,7 @@ class Auth2 with Service implements NotificationsListener {
     _authCardCacheFile = await _getAuthCardCacheFile();
     _authCard = await _loadAuthCardFromCache();
 
-    _deviceId = await RokwirePlugin.getDeviceId("deviceUUID", "deviceUUID"); //TBD
+    _deviceId = await RokwirePlugin.getDeviceId(deviceIdIdentifier, deviceIdIdentifier2); //TBD
 
     if ((_account == null) && (_anonymousPrefs == null)) {
       Storage().auth2AnonymousPrefs = _anonymousPrefs = defaultAnonimousPrefs;
@@ -232,11 +233,19 @@ class Auth2 with Service implements NotificationsListener {
   bool get didVote => prefs?.voter?.voted ?? false;
   String? get votePlace => prefs?.voter?.votePlace;
   
+  // Overrides
+
   @protected
   Auth2UserPrefs get defaultAnonimousPrefs => Auth2UserPrefs.empty();
 
   @protected
   Auth2UserProfile get defaultAnonimousProfile => Auth2UserProfile.empty();
+
+  @protected
+  String? get deviceIdIdentifier => _deviceIdIdentifier;
+
+  @protected
+  String? get deviceIdIdentifier2 => null;
 
   // Anonymous Authentication
 
