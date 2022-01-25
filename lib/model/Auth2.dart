@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -932,7 +931,6 @@ class Auth2UserPrefs {
         }
       }
 
-      Analytics().logFavorite(favorite, shouldFavorite);
       NotificationService().notify(notifyFavoriteChanged, favorite);
       NotificationService().notify(notifyFavoritesChanged);
       NotificationService().notify(notifyChanged, this);
@@ -976,7 +974,7 @@ class Auth2UserPrefs {
         NotificationService().notify(notifyFavoriteChanged, favorite);
       }
       if (sourceFavorite != null) {
-        Analytics().logFavorite(sourceFavorite, shouldFavorite);
+        NotificationService().notify(notifyFavoriteChanged, sourceFavorite);
       }
       NotificationService().notify(notifyFavoritesChanged);
       NotificationService().notify(notifyChanged, this);

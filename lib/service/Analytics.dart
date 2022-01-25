@@ -287,6 +287,7 @@ class Analytics with Service implements NotificationsListener {
       AppNavigation.notifyEvent,
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyRolesChanged,
+      Auth2UserPrefs.notifyFavoriteChanged,
       Auth2.notifyLoginSucceeded,
       Auth2.notifyLoginFailed,
       Auth2.notifyLogout,
@@ -416,6 +417,9 @@ class Analytics with Service implements NotificationsListener {
     }
     else if (name == Auth2UserPrefs.notifyRolesChanged) {
       _updateUserRoles();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoriteChanged) {
+      logFavorite(param);
     }
     else if (name == Auth2.notifyLoginSucceeded) {
       logAuth(loginType: param, result: true);
@@ -845,10 +849,13 @@ class Analytics with Service implements NotificationsListener {
     logEvent(httpResponseEvent);
   }
 
-  void logFavorite(Favorite? favorite, bool? on) {
+  void logFavorite(Favorite? favorite, [bool? on]) {
+    if (on == null) {
+      on = Auth2().isFavorite(favorite);
+    }
     logEvent({
       LogEventName          : LogFavoriteEventName,
-      LogFavoriteActionName : (on != null) ? (on ? LogFavoriteOnActionName : LogFavoriteOffActionName) : null,
+      LogFavoriteActionName : on ? LogFavoriteOnActionName : LogFavoriteOffActionName,
       LogFavoriteTypeName   : favorite?.favoriteKey,
       LogFavoriteIdName     : favorite?.favoriteId,
       LogFavoriteTitleName  : favorite?.favoriteTitle,
