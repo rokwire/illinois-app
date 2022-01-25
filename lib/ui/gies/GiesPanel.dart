@@ -172,7 +172,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   Widget _buildContent() {
     return Container(color: Colors.white, padding: EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0), child:
-      _GiesPageWidget(page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < Gies().navigationPages!.length) ? _onTapBack : null, showTitle: false,),
+      _GiesPageWidget(page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < Gies().navigationPages!.length) ? _onTapBack : null,onTapNotes: _onTapNotes, showTitle: false,),
     );
   }
 
@@ -321,10 +321,11 @@ class _GiesPageWidget extends StatelessWidget {
   final void Function(String?)? onTapLink;
   final void Function(Map<String, dynamic> button, String panelId)? onTapButton;
   final void Function()? onTapBack;
+  final void Function()? onTapNotes;
 
   final bool showTitle;
 
-  _GiesPageWidget({this.page, this.onTapLink, this.onTapButton, this.onTapBack, this.showTitle = true});
+  _GiesPageWidget({this.page, this.onTapLink, this.onTapButton, this.onTapBack, this.showTitle = true, this.onTapNotes});
 
   @override
   Widget build(BuildContext context) {
@@ -470,8 +471,12 @@ class _GiesPageWidget extends StatelessWidget {
       contentList.add(_StepsHorizontalListWidget(tabs: steps,
           pageProgress: JsonUtils.intValue(page!["progress"]) ?? 0,
           title: "Step ${page!["progress"]}: ${page!["title"]}",
-          onTapLink: onTapLink, onTapButton: onTapButton,
-          onTapBack: (1 < Gies().navigationPages!.length) ? onTapBack : null));
+          onTapLink: onTapLink,
+          onTapButton: onTapButton,
+          onTapBack: (1 < Gies().navigationPages!.length) ? onTapBack : null,
+          onTapNotes: onTapNotes,
+      ),
+      );
     }
 
     List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page!['buttons']) : null;
@@ -687,8 +692,9 @@ class _StepsHorizontalListWidget extends StatefulWidget{
   final void Function(String?)? onTapLink;
   final void Function(Map<String, dynamic> button, String panelId)? onTapButton;
   final void Function()? onTapBack;
+  final void Function()? onTapNotes;
 
-  const _StepsHorizontalListWidget({Key? key, this.tabs, this.title, this.onTapLink, this.onTapButton, this.onTapBack, this.pageProgress = 0}) : super(key: key);
+  const _StepsHorizontalListWidget({Key? key, this.tabs, this.title, this.onTapLink, this.onTapButton, this.onTapBack, this.pageProgress = 0, this.onTapNotes}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _StepsHorizontalListState();
@@ -731,6 +737,14 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
         tabs.add(_buildTab(index: i, tabData: widget.tabs![i] ));
       }
     }
+
+    tabs.add(
+          GestureDetector(onTap: _onTapNotes,
+            child: Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child:
+              Text(Localization().getStringEx('widget.gies.button.notes', 'Notes')!, style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 16, decoration: TextDecoration.underline, ),), // Styles().colors.fillColorSecondary
+            ),
+          ),
+      );
     return Container(
       padding: EdgeInsets.only(right: 16, left: 16,),
       color: Styles().colors!.fillColorPrimary,
@@ -759,7 +773,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
         onTap: (){_onTapTabButton(index);},
         child: Container(
           padding: EdgeInsets.only(right: 16, top: 8, bottom: 8),
-          child: Text("${widget.pageProgress}${tabKey??""}", style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 14, decoration: TextDecoration.underline),),
+          child: Text("${widget.pageProgress}${tabKey??""}", style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16, decoration: TextDecoration.underline),),
         )
       )
     );
@@ -835,6 +849,11 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
 
   void _onTapTabButton(int index){
     _swipeToIndex(index);
+  }
+
+  void _onTapNotes(){
+    if(widget.onTapNotes!=null)
+      widget.onTapNotes!();
   }
 
   void _swipeToPage(String pageId){
