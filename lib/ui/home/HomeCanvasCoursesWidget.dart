@@ -130,7 +130,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   }
 
   void _onTapCourse(CanvasCourse course) {
-    Analytics.instance.logSelect(target: "HomeCanvasCourse");
+    Analytics.instance.logSelect(target: "Home Canvas Course");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseHomePanel(course: course)));
   }
 

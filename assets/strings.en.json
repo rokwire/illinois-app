@@ -1934,6 +1934,12 @@
     "panel.home_canvas_course.button.notifications.title": "Notifications",
     "panel.home_canvas_course.button.inbox.title": "Inbox",
 
+    "panel.syllabus_canvas_course.header.title": "Syllabus",
+    "panel.syllabus_canvas_course.button.modules.title": "Modules",
+    "panel.syllabus_canvas_course.button.assignments.title": "Assignments",
+    "panel.syllabus_canvas_course.button.zoom.title": "Zoom Meeting",
+    "panel.syllabus_canvas_course.button.grades.title": "Grades",
+
     "widget.game_day.label.its_game_day":"It's Game Day!",
 
     "widget.game_detail_heading.button.live_stats.title":"Live Stats",

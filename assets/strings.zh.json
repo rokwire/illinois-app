@@ -1928,6 +1928,12 @@
 	"panel.home_canvas_course.button.notifications.title": "通知",
 	"panel.home_canvas_course.button.inbox.title": "收件箱",
 
+	"panel.syllabus_canvas_course.header.title": "教學大綱",
+	"panel.syllabus_canvas_course.button.modules.title": "模塊",
+	"panel.syllabus_canvas_course.button.assignments.title": "作業",
+	"panel.syllabus_canvas_course.button.zoom.title": "變焦會議",
+	"panel.syllabus_canvas_course.button.grades.title": "成績",
+
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 
 	"widget.game_detail_heading.button.live_stats.title":"实时信息",

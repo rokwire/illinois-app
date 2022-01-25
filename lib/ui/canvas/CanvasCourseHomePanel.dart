@@ -4,6 +4,7 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/canvas/CanvasCourseSyllabusPanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -101,7 +102,8 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   }
 
   void _onTapSyllabus() {
-    //TBD: handle tap action
+    Analytics.instance.logSelect(target: "Canvas Course Syllabus");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseSyllabusPanel(course: widget.course)));
   }
 
   void _onTapInbox() {
