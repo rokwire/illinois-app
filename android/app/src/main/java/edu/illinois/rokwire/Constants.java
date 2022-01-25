@@ -33,8 +33,6 @@ public class Constants {
     static final String APP_ENABLED_ORIENTATIONS_KEY = "enabledOrientations";
     static final String APP_TRACKING_AUTHORIZATION = "tracking_authorization";
     static final String FIREBASE_INFO = "firebaseInfo";
-    static final String DEVICE_ID_KEY = "deviceId";
-    static final String ENCRYPTION_KEY_KEY = "encryptionKey";
     static final String BARCODE_KEY = "barcode";
     static final String LAUNCH_APP = "launchApp";
     static final String LAUNCH_APP_SETTINGS = "launchAppSettings";
