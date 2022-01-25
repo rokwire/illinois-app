@@ -4,17 +4,19 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Auth2.dart';
+
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/Storage.dart';
+
+import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:http/http.dart' as Http;
 import 'package:path/path.dart';
@@ -458,6 +460,8 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<bool> authenticateWithPhone(String? phoneNumber) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (phoneNumber != null)) {
+      NotificationService().notify(notifyLoginStarted);
+
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
@@ -503,7 +507,10 @@ class Auth2 with Service implements NotificationsListener {
 
       Response? response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
-      return await _processLoginResponse(responseJson);
+      bool result = await _processLoginResponse(responseJson);
+      NotificationService().notify(result ? notifyLoginSucceeded : notifyLoginFailed);
+      NotificationService().notify(notifyLoginFinished);
+      return result;
     }
     return false;
   }
@@ -512,6 +519,9 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<Auth2EmailSignInResult> authenticateWithEmail(String? email, String? password) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null) && (password != null)) {
+      
+      NotificationService().notify(notifyLoginStarted);
+
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
@@ -533,10 +543,14 @@ class Auth2 with Service implements NotificationsListener {
       Response? response = await Network().post(url, headers: headers, body: post);
       if (response?.statusCode == 200) {
         if (await _processLoginResponse(JsonUtils.decodeMap(response?.body))) {
+          NotificationService().notify(notifyLoginSucceeded);
+          NotificationService().notify(notifyLoginFinished);
           return Auth2EmailSignInResult.succeded;
         }
       }
       else {
+        NotificationService().notify(notifyLoginFailed);
+        NotificationService().notify(notifyLoginFinished);
         Auth2Error? error = Auth2Error.fromJson(JsonUtils.decodeMap(response?.body));
         if (error?.status == 'unverified') {
           return Auth2EmailSignInResult.failedNotActivated;
