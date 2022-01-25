@@ -467,7 +467,11 @@ class _GiesPageWidget extends StatelessWidget {
     }
     List<dynamic>? steps = (page != null) ? JsonUtils.listValue(page!['steps']) : null;
     if (steps != null ) {
-      contentList.add(_StepsHorizontalListWidget(pages: steps, title: "Step ${page!["progress"]}: ${page!["title"]}", onTapLink: onTapLink, onTapButton: onTapButton, onTapBack: (1 < Gies().navigationPages!.length) ? onTapBack : null));
+      contentList.add(_StepsHorizontalListWidget(tabs: steps,
+          pageProgress: JsonUtils.intValue(page!["progress"]) ?? 0,
+          title: "Step ${page!["progress"]}: ${page!["title"]}",
+          onTapLink: onTapLink, onTapButton: onTapButton,
+          onTapBack: (1 < Gies().navigationPages!.length) ? onTapBack : null));
     }
 
     List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page!['buttons']) : null;
@@ -676,14 +680,15 @@ class _GiesNotesWidgetState extends State<GiesNotesWidget> {
 }
 
 class _StepsHorizontalListWidget extends StatefulWidget{
-  final List<dynamic>? pages;
+  final List<dynamic>? tabs;
   final String? title;
+  final int pageProgress;
 
   final void Function(String?)? onTapLink;
   final void Function(Map<String, dynamic> button, String panelId)? onTapButton;
   final void Function()? onTapBack;
 
-  const _StepsHorizontalListWidget({Key? key, this.pages, this.title, this.onTapLink, this.onTapButton, this.onTapBack}) : super(key: key);
+  const _StepsHorizontalListWidget({Key? key, this.tabs, this.title, this.onTapLink, this.onTapButton, this.onTapBack, this.pageProgress = 0}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _StepsHorizontalListState();
@@ -691,6 +696,7 @@ class _StepsHorizontalListWidget extends StatefulWidget{
 
 class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
   PageController? _pageController;
+  int _currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -718,22 +724,51 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
     );
   }
 
-  Widget _buildTabBar(){ //TBD
+  Widget _buildTabBar(){
+    List<Widget> tabs = [];
+    if(widget.tabs?.isNotEmpty ?? false){
+      for(int i=0; i<widget.tabs!.length; i++){
+        tabs.add(_buildTab(index: i, tabData: widget.tabs![i] ));
+      }
+    }
     return Container(
       padding: EdgeInsets.only(right: 16, left: 16,),
       color: Styles().colors!.fillColorPrimary,
       child: Row(
-        children: [
-          // Text("TBD TAB BAR", style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 24),),
-        ],
+        children: tabs,
+      )
+    );
+  }
+
+  Widget _buildTab({required int index, dynamic tabData}){
+    String? tabKey = JsonUtils.stringValue(tabData["key"]);
+    String? pageId = JsonUtils.stringValue(tabData["page_id"]);
+    bool isCompleted = Gies().completedPages!.contains(pageId);
+    bool isCurrentTab = _currentPage == index;
+    Color textColor = Colors.white;
+    String? textFamily = Styles().fontFamilies!.regular;
+    if(isCompleted){
+        textColor = Colors.greenAccent;
+    }
+
+    if(isCurrentTab){
+      textFamily = Styles().fontFamilies!.extraBold;
+    }
+    return Container(
+      child: GestureDetector(
+        onTap: (){_onTapTabButton(index);},
+        child: Container(
+          padding: EdgeInsets.only(right: 16, top: 8, bottom: 8),
+          child: Text("${widget.pageProgress}${tabKey??""}", style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 14, decoration: TextDecoration.underline),),
+        )
       )
     );
   }
 
   Widget _buildViewPager(){
     List<Widget> pages = <Widget>[];
-    if(widget.pages?.isNotEmpty ?? false) {
-      for (Map<String, dynamic>? page in widget.pages!) {
+    if(widget.tabs?.isNotEmpty ?? false) {
+      for (Map<String, dynamic>? page in widget.tabs!) {
         if (page != null) {
           pages.add( _buildCard(page));
         }
@@ -745,18 +780,22 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
     double pageViewport = (screenWidth - 40) / screenWidth;
 
     if (_pageController == null) {
-      _pageController = PageController(viewportFraction: pageViewport);
+      _pageController = PageController(viewportFraction: pageViewport, keepPage: true);
     }
 
     return
       Padding(padding: EdgeInsets.only(top: 10, bottom: 20), child:
         Container(height: pageHeight, child:
-          PageView(controller: _pageController, children: pages,)
+          PageView(
+            controller: _pageController,
+            children: pages,
+            onPageChanged: _onPageChanged,
+          )
         )
       );
   }
 
-  Widget _buildCard(Map<String, dynamic>? page){
+  Widget _buildCard(Map<String, dynamic>? tab){
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         child:Container(
@@ -766,12 +805,10 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
               borderRadius: BorderRadius.all(Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
           ),
           child: SingleChildScrollView(
-            child:_GiesPageWidget( page: Gies().getPage(id: page!["page_id"]),
+            child:_GiesPageWidget( page: Gies().getPage(id: tab!["page_id"]),
               onTapBack: widget.onTapBack,
               onTapButton: (button, id){
-                if(widget.onTapButton!=null) {
-                  widget.onTapButton!(button, JsonUtils.stringValue(page["page_id"])??"");
-                }
+                _onTapButton(button, id);
               },
               onTapLink: widget.onTapLink,))));//TBD listeners
   }
@@ -784,5 +821,44 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
       Container(height: 55,),
       )),
     ],);
+  }
+
+  void _onTapButton(Map<String, dynamic> button, String panelId,){
+    String? swipeToId = JsonUtils.stringValue(button["swipe_page"]); //This is _StepsHorizontalListWidget action the rest are global Page actions
+    if(swipeToId!=null)
+      _swipeToPage(swipeToId);
+    
+    if(widget.onTapButton!=null) {
+      widget.onTapButton!(button, panelId);
+    }
+  }
+
+  void _onTapTabButton(int index){
+    _swipeToIndex(index);
+  }
+
+  void _swipeToPage(String pageId){
+    if(StringUtils.isNotEmpty(pageId)){
+      int pageIndex = _getPageIndexById(pageId);
+      _swipeToIndex(pageIndex);
+    }
+  }
+
+  void _swipeToIndex(int pageIndex){
+      if(pageIndex>=0)
+        _pageController?.animateToPage(pageIndex, duration: Duration(milliseconds: 500), curve: Curves.linear);
+  }
+
+  int _getPageIndexById(String pageId){
+    if((widget.tabs?.isNotEmpty ?? false)  && StringUtils.isNotEmpty(pageId)){
+      return widget.tabs!.indexWhere((tab) => JsonUtils.stringValue(tab["page_id"]) == pageId);
+    }
+    return -1;
+  }
+
+  void _onPageChanged(int index){
+    setState(() {
+      _currentPage = index;
+    });
   }
 }
