@@ -47,37 +47,37 @@
 	},
 	"rules": {
 		"roles" : {
-			"tabbar.home"                     : [["NOT", "fan"], "OR", "student", "OR", "employee", "OR", "parent"],
-			"tabbar.athletics"                : ["fan", "AND", ["NOT", ["student", "OR", "employee", "OR", "parent"]]],
-			"tabbar.explore"                  : ["NOT", ["employee", "OR", "student", "OR", "resident"]],
-			"tabbar.wallet"                   : ["student", "OR", "employee", "OR", "resident"],
+			"tabbar.home"                            : [["NOT", "fan"], "OR", "student", "OR", "employee", "OR", "parent"],
+			"tabbar.athletics"                       : ["fan", "AND", ["NOT", ["student", "OR", "employee", "OR", "parent"]]],
+			"tabbar.explore"                         : ["NOT", ["employee", "OR", "student", "OR", "resident"]],
+			"tabbar.wallet"                          : ["student", "OR", "employee", "OR", "resident"],
 
-			"home.content"                    : ["~gies?"],
-			"home.gies_only_content"          : ["gies!"],
-			"home.twitter.user.gies2"         : ["gies"],
-			"home.gies_only_content.gies2"    : ["gies"],
-			"home.gies_only_content.canvas_courses"    : ["gies"],
-			"home.content.gies2"              : ["gies"],
-			"home.content.canvas_courses"     : ["gies"],
+			"home.content"                           : ["~gies?"],
+			"home.gies_only_content"                 : ["gies!"],
+			"home.twitter.user.gies2"                : ["gies"],
+			"home.gies_only_content.gies2"           : ["gies"],
+			"home.gies_only_content.canvas_courses"  : ["gies"],
+			"home.content.gies2"                     : ["gies"],
+			"home.content.canvas_courses"            : ["gies"],
 
-			"game_day"                        : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
-			"pref_sports"                     : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
-			"campus_reminders"                : [["NOT", "alumni"], "OR", "student", "OR", "fan", "OR", "employee", "OR", "parent"],
+			"game_day"                               : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
+			"pref_sports"                            : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
+			"campus_reminders"                       : [["NOT", "alumni"], "OR", "student", "OR", "fan", "OR", "employee", "OR", "parent"],
 
-			"my_illini"                       : ["student"],
-			"illini_cash"                     : ["student", "OR", "employee", "OR", "parent"],
-			"meal_plan"                       : ["student"],
-			"create_poll"                     : ["student", "OR", "employee"],
-			"upgrade_version_message"         : ["student", "OR", "employee"],
+			"my_illini"                              : ["student"],
+			"illini_cash"                            : ["student", "OR", "employee", "OR", "parent"],
+			"meal_plan"                              : ["student"],
+			"create_poll"                            : ["student", "OR", "employee"],
+			"upgrade_version_message"                : ["student", "OR", "employee"],
 
-			"onboarding.login_netid"          : ["student", "OR", "employee"],
-			"onboarding.login_phone"          : ["NOT", ["employee", "OR", "student"]],
-			"onboarding.verify_phone"         : ["NOT", ["employee", "OR", "student"]],
-			"onboarding.confirm_phone"        : ["NOT", ["employee", "OR", "student"]],
+			"onboarding.login_netid"                 : ["student", "OR", "employee"],
+			"onboarding.login_phone"                 : ["NOT", ["employee", "OR", "student"]],
+			"onboarding.verify_phone"                : ["NOT", ["employee", "OR", "student"]],
+			"onboarding.confirm_phone"               : ["NOT", ["employee", "OR", "student"]],
 
-			"onboarding.sport_prefs"          : ["fan"],
+			"onboarding.sport_prefs"                 : ["fan"],
 
-			"bus_pass"                        : ["student", "OR", "employee", "OR", "resident"]
+			"bus_pass"                               : ["student", "OR", "employee", "OR", "resident"]
 		},
 		"privacy" : {
 			"illini_cash"                     : 3,
