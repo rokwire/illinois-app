@@ -23,11 +23,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as Http;
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -200,6 +200,7 @@ class Analytics with Service implements NotificationsListener {
   static const String   LogAuthAction                      = "action";
   static const String   LogAuthLoginNetIdActionName        = "login_netid";
   static const String   LogAuthLoginPhoneActionName        = "login_phone";
+  static const String   LogAuthLoginEmailActionName        = "login_email";
   static const String   LogAuthLogoutActionName            = "logout";
   static const String   LogAuthResult                      = "result";
 
@@ -286,6 +287,10 @@ class Analytics with Service implements NotificationsListener {
       AppNavigation.notifyEvent,
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyRolesChanged,
+      Auth2UserPrefs.notifyFavoriteChanged,
+      Auth2.notifyLoginSucceeded,
+      Auth2.notifyLoginFailed,
+      Auth2.notifyLogout,
       Auth2.notifyPrefsChanged,
       Auth2.notifyUserDeleted,
       Network.notifyHttpResponse,
@@ -412,6 +417,18 @@ class Analytics with Service implements NotificationsListener {
     }
     else if (name == Auth2UserPrefs.notifyRolesChanged) {
       _updateUserRoles();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoriteChanged) {
+      logFavorite(param);
+    }
+    else if (name == Auth2.notifyLoginSucceeded) {
+      logAuth(loginType: param, result: true);
+    }
+    else if (name == Auth2.notifyLoginFailed) {
+      logAuth(loginType: param, result: false);
+    }
+    else if (name == Auth2.notifyLogout) {
+      logAuth(action: Analytics.LogAuthLogoutActionName);
     }
     else if (name == Auth2.notifyPrefsChanged) {
       _updateUserRoles();
@@ -832,10 +849,13 @@ class Analytics with Service implements NotificationsListener {
     logEvent(httpResponseEvent);
   }
 
-  void logFavorite(Favorite? favorite, bool? on) {
+  void logFavorite(Favorite? favorite, [bool? on]) {
+    if (on == null) {
+      on = Auth2().isFavorite(favorite);
+    }
     logEvent({
       LogEventName          : LogFavoriteEventName,
-      LogFavoriteActionName : (on != null) ? (on ? LogFavoriteOnActionName : LogFavoriteOffActionName) : null,
+      LogFavoriteActionName : on ? LogFavoriteOnActionName : LogFavoriteOffActionName,
       LogFavoriteTypeName   : favorite?.favoriteKey,
       LogFavoriteIdName     : favorite?.favoriteId,
       LogFavoriteTitleName  : favorite?.favoriteTitle,
@@ -904,18 +924,32 @@ class Analytics with Service implements NotificationsListener {
     logEvent(event);
   }
 
-  void logAuth({String? action, bool? result, Map<String, dynamic>? attributes}) {
-    Map<String, dynamic> event = {
-      LogEventName           : LogAuthEventName,
-      LogAuthAction          : action,
-    };
-    if (result != null) {
-      event[LogAuthResult] = result;
+  void logAuth({String? action, Auth2LoginType? loginType, bool? result, Map<String, dynamic>? attributes}) {
+    
+    if ((action == null) && (loginType != null)) {
+      switch(loginType) {
+        case Auth2LoginType.oidc:
+        case Auth2LoginType.oidcIllinois: action = LogAuthLoginNetIdActionName; break;
+        case Auth2LoginType.phone:
+        case Auth2LoginType.phoneTwilio:  action = LogAuthLoginPhoneActionName; break;
+        case Auth2LoginType.email:        action = LogAuthLoginEmailActionName; break;
+        case Auth2LoginType.anonymous:    break;
+      }
     }
-    if (attributes != null) {
-      event.addAll(attributes);
+
+    if (action != null) {
+      Map<String, dynamic> event = {
+        LogEventName           : LogAuthEventName,
+        LogAuthAction          : action,
+      };
+      if (result != null) {
+        event[LogAuthResult] = result;
+      }
+      if (attributes != null) {
+        event.addAll(attributes);
+      }
+      logEvent(event);
     }
-    logEvent(event);
   }
 
   void logGroup({String? action, Map<String, dynamic>? attributes}) {

@@ -21,9 +21,9 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as Http;
 
 import 'package:collection/collection.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;

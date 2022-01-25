@@ -15,7 +15,7 @@
  */
 
 import 'dart:ui';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
