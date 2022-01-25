@@ -394,6 +394,11 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
           };
           Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((bool success) {
             if (success) {
+              Function? onSuccess = widget.onboardingContext!["onContinueAction"];
+              if(onSuccess!=null){
+                onSuccess();
+                return;
+              }
               _trySignUpCallback(Auth2EmailSignUpResult.succeded);
             } else {
               _trySignUpCallback(Auth2EmailSignUpResult.failed);
