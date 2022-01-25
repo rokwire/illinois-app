@@ -64,7 +64,12 @@ class RibbonButton extends StatelessWidget {
   Widget _content() {
     Widget? image = getImage();
     return GestureDetector(
-      onTap: () { onTap!(); anaunceChange(); },
+      onTap: () {
+        if (onTap != null) {
+          onTap!();
+          anaunceChange();
+        }
+      },
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[ Expanded(
         child: Container(
           decoration: BoxDecoration(color: backgroundColor, border:border, borderRadius: borderRadius, boxShadow: shadow),

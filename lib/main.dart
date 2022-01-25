@@ -20,10 +20,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/service/Gies.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/DiningService.dart';
@@ -31,6 +31,7 @@ import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
+import 'package:illinois/service/Gies.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/HttpProxy.dart';
@@ -122,6 +123,7 @@ void main() async {
     ExploreService(),
     Groups(),
     Gies(),
+    Canvas(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // LaundryService(),

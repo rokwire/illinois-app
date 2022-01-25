@@ -1921,6 +1921,21 @@
 	"panel.home.safer.test_locations.wait_time.status.label.yellow": "Medium wait time",
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
+    "panel.home_canvas_course.header.title": "Curso",
+    "panel.home_canvas_course.button.syllabus.title": "Programa de estudios",
+    "panel.home_canvas_course.button.announcements.title": "Anuncios",
+    "panel.home_canvas_course.button.files.title": "Archivos",
+    "panel.home_canvas_course.button.collaborations.title": "Colaboraciones",
+    "panel.home_canvas_course.button.calendar.title": "Calendario",
+    "panel.home_canvas_course.button.notifications.title": "Notificaciones",
+    "panel.home_canvas_course.button.inbox.title": "Bandeja de entrada",
+
+    "panel.syllabus_canvas_course.header.title": "Programa de estudios",
+    "panel.syllabus_canvas_course.button.modules.title": "Módulos",
+    "panel.syllabus_canvas_course.button.assignments.title": "Tareas",
+    "panel.syllabus_canvas_course.button.zoom.title": "Reunión Zoom",
+    "panel.syllabus_canvas_course.button.grades.title": "Los grados",
+
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 
     "widget.game_detail_heading.button.live_stats.title":"Estadísticas en vivo",
@@ -2085,6 +2100,8 @@
     "widget.home.interest_selection.title": "¿Qué le interesa?",
     "widget.home.interest_selection.description": "Ver eventos según los temas que elegiste",
     "widget.home.interest_selection.button.see_all": "Ver todo",
+
+    "widget.home_canvas_courses.header.label": "Cursos",
 
     "widget.add_image.heading": "Seleccionar imagen",
     "widget.add_image.description":"Seleccione un tipo de imagen",
