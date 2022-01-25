@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Auth2.dart';
 
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -204,6 +203,7 @@ class Auth2 with Service implements NotificationsListener {
   String? get accountId => _account?.id ?? _anonymousId;
   Auth2UserPrefs? get prefs => _account?.prefs ?? _anonymousPrefs;
   Auth2UserProfile? get profile => _account?.profile ?? _anonymousProfile;
+  Auth2LoginType? get loginType => _account?.authType?.loginType;
 
   bool get isLoggedIn => (_account?.id != null);
   bool get isOidcLoggedIn => (_account?.authType?.loginType == Auth2LoginType.oidcIllinois);
@@ -282,7 +282,7 @@ class Auth2 with Service implements NotificationsListener {
 
       if (_oidcAuthenticationCompleters == null) {
         _oidcAuthenticationCompleters = <Completer<bool?>>[];
-        NotificationService().notify(notifyLoginStarted);
+        NotificationService().notify(notifyLoginStarted, Auth2LoginType.oidcIllinois);
 
         _OidcLogin? oidcLogin = await _getOidcData();
         if (oidcLogin?.loginUrl != null) {
@@ -312,8 +312,6 @@ class Auth2 with Service implements NotificationsListener {
     _processingOidcAuthentication = true;
     bool result = await _processOidcAuthentication(uri);
     _processingOidcAuthentication = false;
-
-    Analytics().logAuth(action: Analytics.LogAuthLoginNetIdActionName, result: result);
 
     _completeOidcAuthentication(result);
     return result;
@@ -436,13 +434,7 @@ class Auth2 with Service implements NotificationsListener {
 
   void _completeOidcAuthentication(bool? success) {
     
-    if (success == true) {
-      NotificationService().notify(notifyLoginSucceeded);
-    }
-    else if (success == false) {
-      NotificationService().notify(notifyLoginFailed);
-    }
-    NotificationService().notify(notifyLoginFinished);
+    _notifyLogin(Auth2LoginType.oidcIllinois, success);
 
     _oidcLogin = null;
 
@@ -460,7 +452,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<bool> authenticateWithPhone(String? phoneNumber) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (phoneNumber != null)) {
-      NotificationService().notify(notifyLoginStarted);
+      NotificationService().notify(notifyLoginStarted, Auth2LoginType.phoneTwilio);
 
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
@@ -508,8 +500,7 @@ class Auth2 with Service implements NotificationsListener {
       Response? response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
       bool result = await _processLoginResponse(responseJson);
-      NotificationService().notify(result ? notifyLoginSucceeded : notifyLoginFailed);
-      NotificationService().notify(notifyLoginFinished);
+      _notifyLogin(Auth2LoginType.phoneTwilio, result);
       return result;
     }
     return false;
@@ -520,7 +511,7 @@ class Auth2 with Service implements NotificationsListener {
   Future<Auth2EmailSignInResult> authenticateWithEmail(String? email, String? password) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null) && (password != null)) {
       
-      NotificationService().notify(notifyLoginStarted);
+      NotificationService().notify(notifyLoginStarted, Auth2LoginType.email);
 
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
@@ -542,15 +533,12 @@ class Auth2 with Service implements NotificationsListener {
 
       Response? response = await Network().post(url, headers: headers, body: post);
       if (response?.statusCode == 200) {
-        if (await _processLoginResponse(JsonUtils.decodeMap(response?.body))) {
-          NotificationService().notify(notifyLoginSucceeded);
-          NotificationService().notify(notifyLoginFinished);
-          return Auth2EmailSignInResult.succeded;
-        }
+        bool result = await _processLoginResponse(JsonUtils.decodeMap(response?.body));
+        _notifyLogin(Auth2LoginType.email, result);
+        return result ? Auth2EmailSignInResult.succeded : Auth2EmailSignInResult.failed;
       }
       else {
-        NotificationService().notify(notifyLoginFailed);
-        NotificationService().notify(notifyLoginFinished);
+        _notifyLogin(Auth2LoginType.email, false);
         Auth2Error? error = Auth2Error.fromJson(JsonUtils.decodeMap(response?.body));
         if (error?.status == 'unverified') {
           return Auth2EmailSignInResult.failedNotActivated;
@@ -663,6 +651,16 @@ class Auth2 with Service implements NotificationsListener {
     return false;
   }
 
+  // Notify Login
+
+  void _notifyLogin(Auth2LoginType loginType, bool? result) {
+    if (result != null) {
+      NotificationService().notify(result ? notifyLoginSucceeded : notifyLoginFailed, loginType);
+      NotificationService().notify(notifyLoginFinished, loginType);
+    }
+  }
+
+
   // Device Info
 
   Map<String, dynamic> get _deviceInfo {
@@ -696,8 +694,6 @@ class Auth2 with Service implements NotificationsListener {
       _saveAuthCardStringToCache(null);
       Storage().auth2CardTime = null;
 
-      Analytics().logAuth(action: Analytics.LogAuthLogoutActionName);
-      
       NotificationService().notify(notifyCardChanged);
       NotificationService().notify(notifyProfileChanged);
       NotificationService().notify(notifyPrefsChanged);
