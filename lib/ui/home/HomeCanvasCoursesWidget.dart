@@ -116,8 +116,10 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   Widget _buildCourseCard(CanvasCourse course) {
     final Color defaultColor = Colors.black;
-    const double height = 150;
-    const double width = 180;
+    const double cardHeight = 166;
+    const double cardWidth = 200;
+    double cardInnerPadding = 10;
+    double cardBorderRadius = 6;
     //TBD: check from which field to take this value
     String completionPercentage = _formatDecimalValue(0);
     Color? mainColor = StringUtils.isNotEmpty(course.courseColor) ? UiColors.fromHex(course.courseColor!) : defaultColor;
@@ -126,25 +128,25 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
     }
 
     return Padding(padding: EdgeInsets.only(left: 10), child: Container(
-        height: height,
-        width: width,
+        height: cardHeight,
+        width: cardWidth,
         decoration: BoxDecoration(
             color: mainColor,
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(cardBorderRadius),
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(
                   child: Padding(
-                      padding: EdgeInsets.only(left: 5, top: 5),
+                      padding: EdgeInsets.only(left: cardInnerPadding, top: cardInnerPadding),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Container(
                           padding: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
                           decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Styles().colors!.white),
                           child: Text('$completionPercentage%', style: TextStyle(color: mainColor, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)))]))),
               Expanded(
               child: Container(
-                  color: Styles().colors!.background,
+                decoration: BoxDecoration(color: Styles().colors!.background, borderRadius: BorderRadius.vertical(bottom: Radius.circular(cardBorderRadius))),
                   child: Padding(
-                      padding: EdgeInsets.all(6),
+                      padding: EdgeInsets.all(cardInnerPadding),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text(StringUtils.ensureNotEmpty(course.name), maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: defaultColor, fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold)),
                         Text(StringUtils.ensureNotEmpty(course.courseCode), overflow: TextOverflow.ellipsis, style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies!.bold))
