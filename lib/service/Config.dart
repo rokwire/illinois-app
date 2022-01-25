@@ -47,6 +47,7 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get secretParkhub => JsonUtils.mapValue(secretKeys['parkhub']) ?? {};
   Map<String, dynamic> get secretPadaapi => JsonUtils.mapValue(secretKeys['padaapi']) ?? {};
   Map<String, dynamic> get secretTwitter => JsonUtils.mapValue(secretKeys['twitter']) ?? {};
+  Map<String, dynamic> get secretCanvas => JsonUtils.mapValue(secretKeys['canvas']) ?? {};
   
   List<dynamic>? get supportedLocales => JsonUtils.listValue(content['languages']);
   Map<String, dynamic> get twitter => JsonUtils.mapValue(content['twitter']) ?? {};
@@ -74,6 +75,9 @@ class Config extends rokwire.Config {
   String? get twitterToken           => JsonUtils.stringValue(secretTwitter['token']);
   String? get twitterTokenType       => JsonUtils.stringValue(secretTwitter['token_type']);
 
+  String? get canvasToken            => JsonUtils.stringValue(secretCanvas['token']);
+  String? get canvasTokenType        => JsonUtils.stringValue(secretCanvas['token_type']);
+
 
   // Getters: Other University Services
   String? get shibbolethAuthTokenUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_auth_token_url']);  // "https://{shibboleth_client_id}:{shibboleth_client_secret}@shibboleth.illinois.edu/idp/profile/oidc/token"
@@ -93,6 +97,7 @@ class Config extends rokwire.Config {
   String? get iCardUrl               => JsonUtils.stringValue(otherUniversityServices['icard_url']);                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
   String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);         // "https://go.illinois.edu/illinois-app-privacy"
   String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);                // "https://api-test.test-compliance.rokwire.illinois.edu/padaapi"
+  String? get canvasUrl              => JsonUtils.stringValue(otherUniversityServices['canvas_url']);                 // "https://canvas.illinois.edu"
 
   // Getters: Platform Building Blocks
   String? get coreUrl                => JsonUtils.stringValue(platformBuildingBlocks['core_url']);                    // "https://api-dev.rokwire.illinois.edu/core"

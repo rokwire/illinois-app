@@ -1925,6 +1925,21 @@
 	"panel.home.safer.test_locations.wait_time.status.label.yellow": "Medium wait time",
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
+    "panel.home_canvas_course.header.title": "Course",
+    "panel.home_canvas_course.button.syllabus.title": "Syllabus",
+    "panel.home_canvas_course.button.announcements.title": "Announcements",
+    "panel.home_canvas_course.button.files.title": "Files",
+    "panel.home_canvas_course.button.collaborations.title": "Collaborations",
+    "panel.home_canvas_course.button.calendar.title": "Calendar",
+    "panel.home_canvas_course.button.notifications.title": "Notifications",
+    "panel.home_canvas_course.button.inbox.title": "Inbox",
+
+    "panel.syllabus_canvas_course.header.title": "Syllabus",
+    "panel.syllabus_canvas_course.button.modules.title": "Modules",
+    "panel.syllabus_canvas_course.button.assignments.title": "Assignments",
+    "panel.syllabus_canvas_course.button.zoom.title": "Zoom Meeting",
+    "panel.syllabus_canvas_course.button.grades.title": "Grades",
+
     "widget.game_day.label.its_game_day":"It's Game Day!",
 
     "widget.game_detail_heading.button.live_stats.title":"Live Stats",
@@ -2089,6 +2104,8 @@
     "widget.home.interest_selection.title": "What are you interested in?",
     "widget.home.interest_selection.description": "See events based on topics you chose",
     "widget.home.interest_selection.button.see_all": "See all",
+
+    "widget.home_canvas_courses.header.label": "Courses",
 
     "widget.add_image.heading": "Select Image",
     "widget.add_image.description":"Select an image type",
