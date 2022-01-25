@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Canvas Courses initial view [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 ### Changed  
 - Auth2 service moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Updated Gies wizard [#1224](https://github.com/rokwire/illinois-app/issues/1224).
 
 ## [3.2.4] - 2022-01-24
 ### Changed  
