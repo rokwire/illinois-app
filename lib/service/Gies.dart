@@ -5,7 +5,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Gies with Service implements NotificationsListener{
+class Gies with Service{
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
 
   List<dynamic>? _pages;
@@ -26,18 +26,6 @@ class Gies with Service implements NotificationsListener{
 
   // Service
   @override
-  void createService() {
-    NotificationService().subscribe(this,[
-
-    ]);
-  }
-
-  @override
-  void destroyService() {
-    NotificationService().unsubscribe(this);
-  }
-
-  @override
   Future<void> initService() async{
     await super.initService();
     _navigationPages = Storage().giesNavPages ?? [];
@@ -52,12 +40,7 @@ class Gies with Service implements NotificationsListener{
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), Auth2()]); //TBD check
-  }
-
-  @override
-  void onNotification(String name, dynamic param) {
-    //TBD Notifications
+    return Set.from([Storage()]);
   }
 
   void _buildProgressSteps() {
@@ -92,6 +75,10 @@ class Gies with Service implements NotificationsListener{
     }
   }
 
+  bool _hasPage({String? id}) {
+    return getPage(id: id) != null;
+  }
+
   Map<String, dynamic>? getPage({String? id, int? progress}) {
     if (_pages != null) {
       for (dynamic page in _pages!) {
@@ -120,7 +107,7 @@ class Gies with Service implements NotificationsListener{
         _navigationPages = [pushPageId];
       }
       Storage().giesNavPages = _navigationPages;
-      NotificationService().notify(notifyPageChanged); //TBD NOTIFY
+      NotificationService().notify(notifyPageChanged);
     }
   }
 
@@ -128,14 +115,8 @@ class Gies with Service implements NotificationsListener{
     if (1 < _navigationPages!.length) {
       _navigationPages!.removeLast();
       Storage().giesNavPages = _navigationPages;
-      NotificationService().notify(notifyPageChanged); //TBD NOTIFY
+      NotificationService().notify(notifyPageChanged);
     }
-  }
-
-
-
-  bool _hasPage({String? id}) {
-    return getPage(id: id) != null;
   }
 
   bool isProgressStepCompleted(int? progressStep) {
@@ -157,7 +138,9 @@ class Gies with Service implements NotificationsListener{
         }
       }
 
-      String title = "${JsonUtils.intValue(currentPage!['progress'])}${JsonUtils.stringValue(currentPage['tab_index'])??""} ${JsonUtils.stringValue(currentPage['title'])}";
+      // String title = "${JsonUtils.intValue(currentPage!['progress'])}${JsonUtils.stringValue(currentPage['tab_index'])??""} ${JsonUtils.stringValue(currentPage['title'])}";
+      // String title = "${JsonUtils.stringValue(currentPage!['title'])}";
+      String title = "${JsonUtils.stringValue(currentPage!["step_title"])}: ${JsonUtils.stringValue(currentPage['title'])}";
       notes.add({
         'id': currentPageId,
         'title': title,
@@ -165,11 +148,6 @@ class Gies with Service implements NotificationsListener{
     }
 
     return currentPageId;
-  }
-
-  bool setProgressStepCompleted(int? progressStep) {
-    Set<String>? progressPages = _progressPages[progressStep];
-    return (progressPages == null) || _completedPages!.containsAll(progressPages);
   }
 
   List<dynamic>? get pages{
@@ -197,9 +175,7 @@ class Gies with Service implements NotificationsListener{
   }
 
   String? get currentPageId {
-    // Map<String, dynamic> page = _pages?[1] ?? {};
-    // return page["id"];
-    return (_navigationPages?.isNotEmpty?? false) ? _navigationPages!.last : null;// TBD Implement properly
+    return (_navigationPages?.isNotEmpty?? false) ? _navigationPages!.last : null;
   }
 
   String? get _navigationRootPageId {
@@ -247,6 +223,4 @@ class Gies with Service implements NotificationsListener{
   int? getPageProgress(Map<String, dynamic>? page) {
     return (page != null) ? (JsonUtils.intValue(page['progress']) ?? JsonUtils.intValue(page['progress-possition'])) : null;
   }
-
-  //TBD Notify when data changed
 }
