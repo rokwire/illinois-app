@@ -1922,6 +1922,13 @@
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
     "panel.home_canvas_course.header.title": "Curso",
+    "panel.home_canvas_course.button.syllabus.title": "Programa de estudios",
+    "panel.home_canvas_course.button.announcements.title": "Anuncios",
+    "panel.home_canvas_course.button.files.title": "Archivos",
+    "panel.home_canvas_course.button.collaborations.title": "Colaboraciones",
+    "panel.home_canvas_course.button.calendar.title": "Calendario",
+    "panel.home_canvas_course.button.notifications.title": "Notificaciones",
+    "panel.home_canvas_course.button.inbox.title": "Bandeja de entrada",
 
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 
