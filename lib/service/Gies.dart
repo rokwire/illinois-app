@@ -117,6 +117,43 @@ class Gies with Service{
     }
   }
 
+  void processButtonPage(Map<String, dynamic> button, {String? callerPageId}) {
+    String? pageId = callerPageId ?? Gies().currentPageId;
+    if (Gies().pageButtonCompletes(button)) {
+      if ((pageId != null) && pageId.isNotEmpty && !Gies().completedPages!.contains(pageId)) {
+          _completedPages!.add(pageId);
+        Storage().giesCompletedPages = _completedPages;
+        NotificationService().notify(notifyPageChanged);
+      }
+    }
+
+    String? pushPageId = JsonUtils.stringValue(button['page']);
+    if ((pushPageId != null) && pushPageId.isNotEmpty) {
+      int? currentPageProgress = Gies().getPageProgress(currentPage);
+
+      Map<String, dynamic>? pushPage = Gies().getPage(id: pushPageId);
+      int? pushPageProgress = Gies().getPageProgress(pushPage);
+
+      if ((currentPageProgress != null) && (pushPageProgress != null) && (currentPageProgress < pushPageProgress)) {
+        while (Gies().isProgressStepCompleted(pushPageProgress)) {
+          int nextPushPageProgress = pushPageProgress! + 1;
+          Map<String, dynamic>? nextPushPage = Gies().getPage(progress: nextPushPageProgress);
+          String? nextPushPageId = (nextPushPage != null) ? JsonUtils.stringValue(nextPushPage['id']) : null;
+          if ((nextPushPageId != null) && nextPushPageId.isNotEmpty) {
+            pushPage = nextPushPage;
+            pushPageId = nextPushPageId;
+            pushPageProgress = nextPushPageProgress;
+          }
+          else {
+            break;
+          }
+        }
+      }
+
+      Gies().pushPage(pushPage);
+    }
+  }
+
   bool isProgressStepCompleted(int? progressStep) {
     Set<String>? progressPages = _progressPages[progressStep];
     return (progressPages == null) || _completedPages!.containsAll(progressPages);

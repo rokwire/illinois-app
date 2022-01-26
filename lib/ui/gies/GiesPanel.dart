@@ -200,7 +200,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   void _onTapButton(Map<String, dynamic> button, String pageId) {
     _processButtonPopup(button, pageId).then((_) {
-      _processButtonPage(button, callerPageId: pageId);
+      Gies().processButtonPage(button, callerPageId: pageId);
     });
   }
 
@@ -249,44 +249,6 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
         return Container();
       }
     });
-  }
-
-  void _processButtonPage(Map<String, dynamic> button, {String? callerPageId}) {
-    String? pageId = callerPageId ?? Gies().currentPageId;
-    if (Gies().pageButtonCompletes(button)) {
-      if ((pageId != null) && pageId.isNotEmpty && !Gies().completedPages!.contains(pageId)) {
-        setState(() {
-          Gies().completedPages!.add(pageId);
-        });
-        Storage().giesCompletedPages = Gies().completedPages;
-      }
-    }
-
-    String? pushPageId = JsonUtils.stringValue(button['page']);
-    if ((pushPageId != null) && pushPageId.isNotEmpty) {
-      int? currentPageProgress = Gies().getPageProgress(_currentPage);
-
-      Map<String, dynamic>? pushPage = Gies().getPage(id: pushPageId);
-      int? pushPageProgress = Gies().getPageProgress(pushPage);
-
-      if ((currentPageProgress != null) && (pushPageProgress != null) && (currentPageProgress < pushPageProgress)) {
-        while (Gies().isProgressStepCompleted(pushPageProgress)) {
-          int nextPushPageProgress = pushPageProgress! + 1;
-          Map<String, dynamic>? nextPushPage = Gies().getPage(progress: nextPushPageProgress);
-          String? nextPushPageId = (nextPushPage != null) ? JsonUtils.stringValue(nextPushPage['id']) : null;
-          if ((nextPushPageId != null) && nextPushPageId.isNotEmpty) {
-            pushPage = nextPushPage;
-            pushPageId = nextPushPageId;
-            pushPageProgress = nextPushPageProgress;
-          }
-          else {
-            break;
-          }
-        }
-      }
-
-      Gies().pushPage(pushPage);
-    }
   }
 
   String? _pagePopup(Map? page) {
