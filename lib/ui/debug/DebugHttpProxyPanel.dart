@@ -36,7 +36,7 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
   @override
   void initState() {
     super.initState();
-    _proxyEnabled = HttpProxy().httpProxyEnabled;
+    _proxyEnabled = HttpProxy().httpProxyEnabled ?? false;
     _hostController.text = HttpProxy().httpProxyHost ?? '';
     _portController.text = HttpProxy().httpProxyPort ?? '';
   }
@@ -66,7 +66,7 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
             children: [
               ToggleRibbonButton(label: Localization().getStringEx("panel.debug_http_proxy_enable.button.save.title", "Http Proxy Enabled"), toggled: _proxyEnabled, onTap: (){
                 setState(() {
-                  _proxyEnabled = !_proxyEnabled!;
+                  _proxyEnabled = (_proxyEnabled != true);
                 });
               }),
               Padding(

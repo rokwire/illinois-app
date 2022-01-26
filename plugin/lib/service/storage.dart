@@ -280,7 +280,7 @@ class Storage with Service {
 
   // Http Proxy
   String get httpProxyEnabledKey =>  'edu.illinois.rokwire.http_proxy.enabled';
-  bool? get httpProxyEnabled => getBoolWithName(httpProxyEnabledKey, defaultValue: false);
+  bool? get httpProxyEnabled => getBoolWithName(httpProxyEnabledKey);
   set httpProxyEnabled(bool? value) => setBoolWithName(httpProxyEnabledKey, value);
 
   String get httpProxyHostKey => 'edu.illinois.rokwire.http_proxy.host';
