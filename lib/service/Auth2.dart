@@ -682,21 +682,12 @@ class Auth2 with Service implements NotificationsListener {
 
       Response? response = await Network().post(url, headers: headers, body: post, auth: NetworkAuth.Auth2);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
-      bool result = _processLinkResponse(responseJson);
-
-      return result;
-    }
-    return false;
-  }
-
-  bool _processLinkResponse(Map<String, dynamic>? responseJson) {
-    if (responseJson != null) {
-      List<Auth2Type>? updatedAuthTypes = Auth2Type.listFromJson(JsonUtils.listValue(responseJson['auth_types']));
-      _account?.authTypes = updatedAuthTypes;
-      Storage().auth2Account = _account;
-
-      NotificationService().notify(notifyLinkChanged);
-      return true;
+      List<Auth2Type>? authTypes = (responseJson != null) ? Auth2Type.listFromJson(JsonUtils.listValue(responseJson['auth_types'])) : null;
+      if (authTypes != null) {
+        Storage().auth2Account = _account = Auth2Account.fromOther(_account, authTypes: authTypes);
+        NotificationService().notify(notifyLinkChanged);
+        return true;
+      }
     }
     return false;
   }
