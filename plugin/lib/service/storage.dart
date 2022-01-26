@@ -174,7 +174,7 @@ class Storage with Service {
     NotificationService().notify(notifySettingChanged, name);
   }
 
-  double getDoubleWithName(String name, {double defaultValue = 0.0}) {
+  double? getDoubleWithName(String name, {double? defaultValue}) {
     return _sharedPreferences?.getDouble(name) ?? defaultValue;
   }
 
