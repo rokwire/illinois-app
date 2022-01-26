@@ -37,8 +37,8 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
   void initState() {
     super.initState();
     _proxyEnabled = HttpProxy().httpProxyEnabled;
-    _hostController.text = HttpProxy().httpProxyHost!;
-    _portController.text = HttpProxy().httpProxyPort!;
+    _hostController.text = HttpProxy().httpProxyHost ?? '';
+    _portController.text = HttpProxy().httpProxyPort ?? '';
   }
 
   @override
