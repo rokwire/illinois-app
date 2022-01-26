@@ -67,7 +67,7 @@ class Canvas with Service {
     }
   }
 
-  Future<CanvasCourse?> loadCourse(int? courseId) async {
+  Future<CanvasCourse?> loadCourse(int? courseId, {CanvasIncludeInfo? includeInfo}) async {
     if (!_available) {
       return null;
     }
@@ -76,6 +76,10 @@ class Canvas with Service {
       return null;
     }
     String url = '${Config().canvasUrl}/api/v1/courses/$courseId';
+    String? includeValue = _includeInfoToString(includeInfo);
+    if (includeValue != null) {
+      url += '?include[]=$includeValue';
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -98,4 +102,15 @@ class Canvas with Service {
   bool get _available {
     return StringUtils.isNotEmpty(Config().canvasTokenType) && StringUtils.isNotEmpty(Config().canvasToken) && StringUtils.isNotEmpty(Auth2().netId);
   }
+
+  static String? _includeInfoToString(CanvasIncludeInfo? include) {
+    switch (include) {
+      case CanvasIncludeInfo.syllabus:
+        return 'syllabus_body';
+      default:
+        return null;
+    }
+  }
 }
+
+enum CanvasIncludeInfo { syllabus }
