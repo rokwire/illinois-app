@@ -264,9 +264,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"deviceId"]) {
 		[self handleDeviceIdWithParameters:parameters result:result];
 	}
-	else if ([call.method isEqualToString:@"encryptionKey"]) {
-		[self handleEncryptionKeyWithParameters:parameters result:result];
-	}
 	else if ([call.method isEqualToString:@"enabledOrientations"]) {
 		[self handleEnabledOrientationsWithParameters:parameters result:result];
 	}
@@ -406,10 +403,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 - (void)handleDeviceIdWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	result(self.deviceUUID.UUIDString);
-}
-
-- (void)handleEncryptionKeyWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	result([self encryptionKeyWithParameters:parameters]);
 }
 
 - (void)handleTestWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
@@ -751,38 +744,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 			NSNumber *result = uiucSecStorageData(deviceUUID, deviceUUID, [NSData dataWithBytes:uuidData length:sizeof(uuidData)]);
 			if ([result isKindOfClass:[NSNumber class]] && [result boolValue]) {
 				return [[NSUUID alloc] initWithUUIDBytes:uuidData];
-			}
-		}
-	}
-	return nil;
-}
-
-#pragma mark Encryption Key
-
-- (id)encryptionKeyWithParameters:(NSDictionary*)parameters {
-	
-	NSString *identifier = [parameters inaStringForKey:@"identifier"];
-	if (identifier == nil) {
-		return nil;
-	}
-	
-	NSInteger keySize = [parameters inaIntegerForKey:@"size"];
-	if (keySize <= 0) {
-		return nil;
-	}
-
-	NSData *data = uiucSecStorageData(identifier, nil, nil);
-	if ([data isKindOfClass:[NSData class]] && (data.length == keySize)) {
-		return [data base64EncodedStringWithOptions:0];
-	}
-	else {
-		UInt8 key[keySize];
-		int rndStatus = SecRandomCopyBytes(kSecRandomDefault, sizeof(key), key);
-		if (rndStatus == errSecSuccess) {
-			data = [NSData dataWithBytes:key length:sizeof(key)];
-			NSNumber *result = uiucSecStorageData(identifier, nil, data);
-			if ([result isKindOfClass:[NSNumber class]] && [result boolValue]) {
-				return [data base64EncodedStringWithOptions:0];
 			}
 		}
 	}

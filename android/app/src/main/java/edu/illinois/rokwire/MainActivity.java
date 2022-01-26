@@ -296,45 +296,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         }
     }
 
-    private String getDeviceId(){
-        String deviceId = "";
-        try
-        {
-            UUID uuid;
-            final String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8"));
-            deviceId = uuid.toString();
-        }
-        catch (Exception e)
-        {
-            Log.d(TAG, "Failed to generate uuid");
-        }
-        return deviceId;
-    }
-
-    private Object handleEncryptionKey(Object params) {
-        String identifier = Utils.Map.getValueFromPath(params, "identifier", null);
-        if (Utils.Str.isEmpty(identifier)) {
-            return null;
-        }
-        int keySize = Utils.Map.getValueFromPath(params, "size", 0);
-        if (keySize <= 0) {
-            return null;
-        }
-        String base64KeyValue = Utils.AppSecureSharedPrefs.getString(this, identifier, null);
-        byte[] encryptionKey = Utils.Base64.decode(base64KeyValue);
-        if ((encryptionKey != null) && (encryptionKey.length == keySize)) {
-            return base64KeyValue;
-        } else {
-            byte[] keyBytes = new byte[keySize];
-            SecureRandom secRandom = new SecureRandom();
-            secRandom.nextBytes(keyBytes);
-            base64KeyValue = Utils.Base64.encode(keyBytes);
-            Utils.AppSecureSharedPrefs.saveString(this, identifier, base64KeyValue);
-            return base64KeyValue;
-        }
-    }
-
     private int getScreenOrientationFromString(String orientationString) {
         if (Utils.Str.isEmpty(orientationString)) {
             return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
@@ -552,14 +513,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 case Constants.FIREBASE_INFO:
                     String projectId = FirebaseApp.getInstance().getOptions().getProjectId();
                     result.success(projectId);
-                    break;
-                case Constants.DEVICE_ID_KEY:
-                    String deviceId = getDeviceId();
-                    result.success(deviceId);
-                    break;
-                case Constants.ENCRYPTION_KEY_KEY:
-                    Object encryptionKey = handleEncryptionKey(methodCall.arguments);
-                    result.success(encryptionKey);
                     break;
                 case Constants.BARCODE_KEY:
                     String barcodeImageData = handleBarcode(methodCall.arguments);

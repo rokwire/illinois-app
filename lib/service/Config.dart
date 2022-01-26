@@ -32,15 +32,12 @@ class Config extends rokwire.Config {
   @protected
   Config.internal() : super.internal();
 
-  factory Config() {
-    return ((rokwire.Config.instance is Config) ? (rokwire.Config.instance as Config) : (rokwire.Config.instance = Config.internal()));
-  }
+  factory Config() => ((rokwire.Config.instance is Config) ? (rokwire.Config.instance as Config) : (rokwire.Config.instance = Config.internal()));
 
   // Getters: compound entries
 
   Map<String, dynamic> get thirdPartyServices  => JsonUtils.mapValue(content['thirdPartyServices']) ?? {};
 
-  Map<String, dynamic> get secretCore => JsonUtils.mapValue(secretKeys['core'])  ?? {};
   Map<String, dynamic> get secretShibboleth => JsonUtils.mapValue(secretKeys['shibboleth']) ?? {};
   Map<String, dynamic> get secretIlliniCash => JsonUtils.mapValue(secretKeys['illini_cash']) ?? {};
   Map<String, dynamic> get secretLaundry => JsonUtils.mapValue(secretKeys['laundry']) ?? {};
@@ -58,8 +55,6 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get saferWellness => JsonUtils.mapValue(safer['wellness']) ?? {};
 
   // Getters: Secret Keys
-
-  String? get coreOrgId              => JsonUtils.stringValue(secretCore['org_id']);
 
   String? get shibbolethClientId     => JsonUtils.stringValue(secretShibboleth['client_id']);
   String? get shibbolethClientSecret => JsonUtils.stringValue(secretShibboleth['client_secret']);
@@ -94,13 +89,11 @@ class Config extends rokwire.Config {
   String? get myIlliniUrl            => JsonUtils.stringValue(otherUniversityServices['myillini_url']);               // "https://myillini.illinois.edu/Dashboard"
   String? get feedbackUrl            => JsonUtils.stringValue(otherUniversityServices['feedback_url']);               // "https://forms.illinois.edu/sec/1971889"
   String? get crisisHelpUrl          => JsonUtils.stringValue(otherUniversityServices['crisis_help_url']);            // "https://wellness.web.illinois.edu/help/im-not-sure-where-to-start/"
-  String? get iCardUrl               => JsonUtils.stringValue(otherUniversityServices['icard_url']);                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
   String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);         // "https://go.illinois.edu/illinois-app-privacy"
   String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);                // "https://api-test.test-compliance.rokwire.illinois.edu/padaapi"
   String? get canvasUrl              => JsonUtils.stringValue(otherUniversityServices['canvas_url']);                 // "https://canvas.illinois.edu"
 
   // Getters: Platform Building Blocks
-  String? get coreUrl                => JsonUtils.stringValue(platformBuildingBlocks['core_url']);                    // "https://api-dev.rokwire.illinois.edu/core"
   String? get loggingUrl             => JsonUtils.stringValue(platformBuildingBlocks['logging_url']);                 // "https://api-dev.rokwire.illinois.edu/logs"
   String? get rokwireAuthUrl         => JsonUtils.stringValue(platformBuildingBlocks['rokwire_auth_url']);            // "https://api-dev.rokwire.illinois.edu/authentication"
   String? get sportsServiceUrl       => JsonUtils.stringValue(platformBuildingBlocks['sports_service_url']);          // "https://api-dev.rokwire.illinois.edu/sports-service";
@@ -162,7 +155,6 @@ class Config extends rokwire.Config {
     return StringUtils.isNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
   }
 
-  int get refreshTokenRetriesCount => JsonUtils.intValue(settings['refreshTokenRetriesCount']) ?? 3;
   String get appPrivacyVersion => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
 
   @override

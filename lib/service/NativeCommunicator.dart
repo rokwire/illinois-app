@@ -300,29 +300,6 @@ class NativeCommunicator with Service implements NotificationsListener {
     return result;
   }
 
-  Future<String?> getDeviceId() async {
-    String? result;
-    try {
-      result = await _platformChannel.invokeMethod('deviceId');
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-    return result;
-  }
-
-  Future<String?> encryptionKey({String? identifier, int? size}) async {
-    String? result;
-    try {
-      result = await _platformChannel.invokeMethod('encryptionKey', {
-        'identifier': identifier,
-        'size': size,
-      });
-    } catch (e) {
-      print(e.toString());
-    }
-    return result;
-  }
-
   Future<Uint8List?> getBarcodeImageData(Map<String, dynamic> params) async {
     Uint8List? result;
     try {

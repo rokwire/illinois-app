@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
