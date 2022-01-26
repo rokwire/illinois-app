@@ -23,7 +23,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyStatementPanel.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
 import 'Onboarding2Widgets.dart';

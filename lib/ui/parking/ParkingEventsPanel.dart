@@ -23,7 +23,7 @@ import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/ui/parking/ParkingEventPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class ParkingEventsPanel extends StatefulWidget{
 

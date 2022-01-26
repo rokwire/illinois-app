@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class PrivacyLevelSlider extends StatefulWidget {
   final double? initialValue;

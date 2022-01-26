@@ -384,15 +384,7 @@ class Storage extends rokwire.Storage {
   /////////////
   // Styles
 
-  static const String _stylesContentModeKey = 'styles_content_mode';
-
-  String? get stylesContentMode {
-    return getStringWithName(_stylesContentModeKey);
-  }
-
-  set stylesContentMode(String? value) {
-    setStringWithName(_stylesContentModeKey, value);
-  }
+  @override String get stylesContentModeKey => 'styles_content_mode';
 
   /////////////
   // Voter

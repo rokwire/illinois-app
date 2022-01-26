@@ -23,7 +23,7 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsGameDayWidget extends StatefulWidget {
   final Game? game;

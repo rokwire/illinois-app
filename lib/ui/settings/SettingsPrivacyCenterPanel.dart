@@ -22,7 +22,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/settings/SettingsNewPrivacyPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';

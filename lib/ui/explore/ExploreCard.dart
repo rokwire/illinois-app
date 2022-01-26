@@ -34,7 +34,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class ExploreCard extends StatefulWidget {
   final GestureTapCallback? onTap;

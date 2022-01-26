@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
 
 typedef OnContinueCallback(List<String> selectedOptions, OnContinueProgressController progressController);

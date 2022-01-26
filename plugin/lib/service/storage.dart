@@ -295,4 +295,9 @@ class Storage with Service {
   String get currentLanguageKey => 'edu.illinois.rokwire.current_language';
   String? get currentLanguage => getStringWithName(currentLanguageKey);
   set currentLanguage(String? value) => setStringWithName(currentLanguageKey, value);
+
+  // Styles
+  String get stylesContentModeKey => 'edu.illinois.rokwire.styles.content_mode';
+  String? get stylesContentMode => getStringWithName(stylesContentModeKey);
+  set stylesContentMode(String? value) => setStringWithName(stylesContentModeKey, value);
 }

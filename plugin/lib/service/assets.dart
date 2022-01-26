@@ -138,7 +138,7 @@ class Assets with Service implements NotificationsListener {
     if ((assetsDir != null) && !await assetsDir.exists()) {
       await assetsDir.create(recursive: true);
     }
-    String? cacheFilePath = (assetsDir != null) ? join(assetsDir.path, _assetsName) : null;
+    String? cacheFilePath = (assetsDir != null) ? join(assetsDir.path, assetsFileName) : null;
     return (cacheFilePath != null) ? File(cacheFilePath) : null;
   }
 
@@ -173,7 +173,7 @@ class Assets with Service implements NotificationsListener {
   @protected
   Future<String?> loadContentStringFromNet() async {
     try {
-      http.Response? response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$_assetsName") : null;
+      http.Response? response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$assetsFileName") : null;
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     } catch (e) {
       debugPrint(e.toString());
