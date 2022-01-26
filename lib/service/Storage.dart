@@ -64,7 +64,7 @@ class Storage extends rokwire.Storage {
   // Notifications
 
   bool? getNotifySetting(String name) {
-    return getBoolWithName(name, defaultValue: null);
+    return getBoolWithName(name);
   }
 
   void setNotifySetting(String name, bool? value) {
@@ -193,15 +193,7 @@ class Storage extends rokwire.Storage {
   /////////////////
   // Language
 
-  static const String currentLanguageKey  = 'current_language';
-
-  String? get currentLanguage {
-    return getStringWithName(currentLanguageKey);
-  }
-
-  set currentLanguage(String? value) {
-    setStringWithName(currentLanguageKey, value);
-  }
+  @override String get currentLanguageKey => 'current_language';
 
   //////////////////
   // Favorites
@@ -209,7 +201,7 @@ class Storage extends rokwire.Storage {
   static const String favoritesDialogWasVisibleKey  = 'favorites_dialog_was_visible';
 
   bool? get favoritesDialogWasVisible {
-    return getBoolWithName(favoritesDialogWasVisibleKey);
+    return getBoolWithName(favoritesDialogWasVisibleKey, defaultValue: false);
   }
 
   set favoritesDialogWasVisible(bool? value) {
@@ -260,7 +252,7 @@ class Storage extends rokwire.Storage {
   static const String debugGeoFenceRegionRadiusKey  = 'debug_geo_fence_region_radius';
 
   int? get debugGeoFenceRegionRadius {
-    return getIntWithName(debugGeoFenceRegionRadiusKey, defaultValue: null);
+    return getIntWithName(debugGeoFenceRegionRadiusKey);
   }
 
   set debugGeoFenceRegionRadius(int? value) {
@@ -270,7 +262,7 @@ class Storage extends rokwire.Storage {
   static const String debugDisableLiveGameCheckKey  = 'debug_disable_live_game_check';
 
   bool? get debugDisableLiveGameCheck {
-    return getBoolWithName(debugDisableLiveGameCheckKey);
+    return getBoolWithName(debugDisableLiveGameCheckKey, defaultValue: false);
   }
 
   set debugDisableLiveGameCheck(bool? value) {
@@ -392,15 +384,7 @@ class Storage extends rokwire.Storage {
   /////////////
   // Styles
 
-  static const String _stylesContentModeKey = 'styles_content_mode';
-
-  String? get stylesContentMode {
-    return getStringWithName(_stylesContentModeKey);
-  }
-
-  set stylesContentMode(String? value) {
-    setStringWithName(_stylesContentModeKey, value);
-  }
+  @override String get stylesContentModeKey => 'styles_content_mode';
 
   /////////////
   // Voter
@@ -408,7 +392,7 @@ class Storage extends rokwire.Storage {
   static const String _voterHiddenForPeriodKey = 'voter_hidden_for_period';
 
   bool? get voterHiddenForPeriod {
-    return getBoolWithName(_voterHiddenForPeriodKey);
+    return getBoolWithName(_voterHiddenForPeriodKey, defaultValue: false);
   }
 
   set voterHiddenForPeriod(bool? value) {
@@ -418,36 +402,10 @@ class Storage extends rokwire.Storage {
   /////////////
   // Http Proxy
 
-  static const String _httpProxyEnabledKey = 'http_proxy_enabled';
-
-  bool? get httpProxyEnabled {
-    return getBoolWithName(_httpProxyEnabledKey, defaultValue: false);
-  }
-
-  set httpProxyEnabled(bool? value) {
-    setBoolWithName(_httpProxyEnabledKey, value);
-  }
-
-  static const String _httpProxyHostKey = 'http_proxy_host';
-
-  String? get httpProxyHost {
-    return getStringWithName(_httpProxyHostKey);
-  }
-
-  set httpProxyHost(String? value) {
-    setStringWithName(_httpProxyHostKey, value);
-  }
-
-  static const String _httpProxyPortKey = 'http_proxy_port';
-
-  String? get httpProxyPort {
-    return getStringWithName(_httpProxyPortKey);
-  }
-
-  set httpProxyPort(String? value) {
-    setStringWithName(_httpProxyPortKey, value);
-  }
-
+  @override String get httpProxyEnabledKey => 'http_proxy_enabled';
+  @override String get httpProxyHostKey => 'http_proxy_host';
+  @override String get httpProxyPortKey => 'http_proxy_port';
+  
   //////////////////
   // Guide
 
@@ -503,7 +461,7 @@ class Storage extends rokwire.Storage {
   static const String _calendarEnablePromptKey = 'calendar_enabled_to_prompt';
 
   bool? get calendarCanPrompt{
-    return getBoolWithName(_calendarEnablePromptKey);
+    return getBoolWithName(_calendarEnablePromptKey, defaultValue: false);
   }
 
   set calendarCanPrompt(bool? value){

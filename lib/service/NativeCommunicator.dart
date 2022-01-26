@@ -207,14 +207,6 @@ class NativeCommunicator with Service implements NotificationsListener {
     });
   }
 
-  Future<void> dismissSafariVC() async {
-    try {
-      await _platformChannel.invokeMethod('dismissSafariVC');
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-  }
-
   Future<void> dismissLaunchScreen() async {
     try {
       await _platformChannel.invokeMethod('dismissLaunchScreen');

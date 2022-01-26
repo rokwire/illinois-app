@@ -451,8 +451,9 @@ class Config with Service, NotificationsListener {
   Map<String, dynamic> get platformBuildingBlocks  => JsonUtils.mapValue(content['platformBuildingBlocks']) ?? {};
   
   Map<String, dynamic> get settings                => JsonUtils.mapValue(content['settings'])  ?? {};
-
   Map<String, dynamic> get upgradeInfo             => JsonUtils.mapValue(content['upgrade']) ?? {};
+  
+  List<dynamic>? get supportedLocales              => JsonUtils.listValue(content['languages']);
 
   // Getters: platformBuildingBlocks
   String? get coreUrl                              => JsonUtils.stringValue(platformBuildingBlocks['core_url']);

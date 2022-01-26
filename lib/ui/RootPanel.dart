@@ -34,7 +34,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/SavedPanel.dart';
@@ -54,7 +54,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/PopupDialog.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 enum RootTab { Home, Athletics, Explore, Wallet, Browse }
 
@@ -675,7 +675,7 @@ class _FavoritesSavedDialog extends StatefulWidget {
   }
 
   static void show(BuildContext? context) {
-    bool favoriteDialogWasShown = Storage().favoritesDialogWasVisible!;
+    bool favoriteDialogWasShown = (Storage().favoritesDialogWasVisible == true);
     if (favoriteDialogWasShown || context == null) {
       return;
     }

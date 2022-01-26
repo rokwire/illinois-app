@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class PrivacyData{

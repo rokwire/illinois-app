@@ -31,6 +31,11 @@ class RokwirePlugin {
     return null;
   }
 
+  static Future<bool?> dismissSafariVC() async {
+    try { return await _channel.invokeMethod('dismissSafariVC'); }
+    catch(e) { debugPrint(e.toString()); }
+  }
+
   static Future<String?> queryLocationServicesStatus() async {
     try { return await _channel.invokeMethod('locationServices.queryStatus'); }
     catch(e) { debugPrint(e.toString()); }

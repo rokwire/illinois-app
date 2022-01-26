@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/config.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class ImageHolderListItem extends StatelessWidget {
   final Color? placeHolderDividerResource;

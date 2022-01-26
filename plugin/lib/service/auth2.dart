@@ -313,8 +313,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<bool> _handleOidcAuthentication(Uri uri) async {
     
-    
-    //TBD: NativeCommunicator().dismissSafariVC();
+    RokwirePlugin.dismissSafariVC();
     
     _cancelOidcAuthenticationTimer();
 

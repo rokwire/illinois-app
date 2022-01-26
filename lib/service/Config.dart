@@ -46,7 +46,6 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get secretTwitter => JsonUtils.mapValue(secretKeys['twitter']) ?? {};
   Map<String, dynamic> get secretCanvas => JsonUtils.mapValue(secretKeys['canvas']) ?? {};
   
-  List<dynamic>? get supportedLocales => JsonUtils.listValue(content['languages']);
   Map<String, dynamic> get twitter => JsonUtils.mapValue(content['twitter']) ?? {};
   Map<String, dynamic> get onboardingInfo => JsonUtils.mapValue(content['onboarding']) ?? {};
 

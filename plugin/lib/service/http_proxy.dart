@@ -16,25 +16,30 @@
 
 import 'dart:io';
 
-import 'package:illinois/service/Config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/service/storage.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:rokwire_plugin/service/config.dart' as rokwire;
 
-class HttpProxy extends Service implements NotificationsListener{
+class HttpProxy extends Service implements NotificationsListener {
   
-  HttpProxy._internal();
-  static final HttpProxy _instance = HttpProxy._internal();
+  // Singletone Factory
 
-  factory HttpProxy() {
-    return _instance;
-  }
+  static HttpProxy? _instance;
 
-  HttpProxy get instance {
-    return _instance;
-  }
+  static HttpProxy? get instance => _instance;
+  
+  @protected
+  static set instance(HttpProxy? value) => _instance = value;
+
+  factory HttpProxy() => _instance ?? (_instance = HttpProxy.internal());
+
+  @protected
+  HttpProxy.internal();
+
+  // Service
 
   @override
   void createService() {
@@ -57,9 +62,10 @@ class HttpProxy extends Service implements NotificationsListener{
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config()]);
+    return {Storage(), Config()};
   }
 
+  @override
   void onNotification(String name, dynamic param){
     if(name == Config.notifyEnvironmentChanged){
       _handleChanged();
@@ -104,7 +110,7 @@ class HttpProxy extends Service implements NotificationsListener{
     if(httpProxyEnabled! &&
         StringUtils.isNotEmpty(httpProxyHost) &&
         StringUtils.isNotEmpty(httpProxyPort) &&
-        Config().configEnvironment == rokwire.ConfigEnvironment.dev
+        Config().configEnvironment == ConfigEnvironment.dev
     ){
       HttpOverrides.global = _MyHttpOverrides(host: httpProxyHost, port: httpProxyPort);
     }
