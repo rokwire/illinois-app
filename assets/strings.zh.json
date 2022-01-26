@@ -1920,6 +1920,7 @@
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
 	"panel.home_canvas_course.header.title": "課程",
+	"panel.home_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",
 	"panel.home_canvas_course.button.syllabus.title": "教學大綱",
 	"panel.home_canvas_course.button.announcements.title": "公告",
 	"panel.home_canvas_course.button.files.title": "文件",

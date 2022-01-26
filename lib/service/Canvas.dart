@@ -67,6 +67,27 @@ class Canvas with Service {
     }
   }
 
+  Future<CanvasCourse?> loadCourse(int? courseId) async {
+    if (!_available) {
+      return null;
+    }
+    if (courseId == null) {
+      Log.d('Failed to load canvas course - missing course id.');
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/courses/$courseId';
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      Map<String, dynamic>? courseJson = JsonUtils.decodeMap(responseString);
+      return CanvasCourse.fromJson(courseJson);
+    } else {
+      Log.w('Failed to load canvas course. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
   Map<String, String>? get _authHeaders {
     if (!_available) {
       return null;

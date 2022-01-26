@@ -1,25 +1,40 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/canvas/CanvasCourseSyllabusPanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 
 class CanvasCourseHomePanel extends StatefulWidget {
-  final CanvasCourse course;
-  CanvasCourseHomePanel({required this.course});
+  final int? courseId;
+  CanvasCourseHomePanel({this.courseId});
 
   @override
   _CanvasCourseHomePanelState createState() => _CanvasCourseHomePanelState();
 }
 
 class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
+  CanvasCourse? _course;
+  Group? _group;
+  int _loadingProgress = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCourse();
+    _loadGroup();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,25 +48,53 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
               letterSpacing: 1.0)
         )
       ),
-      body: Column(children: <Widget>[
-        Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: _buildCourseContent()
-          )
-        )
-      ]),
+      body: _buildContent(),
       backgroundColor: Styles().colors!.white,
       bottomNavigationBar: TabBarWidget(),
     );
   }
 
+  Widget _buildContent() {
+    if (_isLoading) {
+      return _buildLoadingContent();
+    }
+    if (_course != null) {
+      return _buildCourseContent();
+    } else {
+      return _buildErrorContent();
+    }
+  }
+
+  Widget _buildLoadingContent() {
+    return Center(child: CircularProgressIndicator());
+  }
+
+  Widget _buildErrorContent() {
+    return Center(
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.home_canvas_course.load.failed.error.msg', 'Failed to load course. Please, try again later.')!,
+            textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+  }
+
   Widget _buildCourseContent() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      CanvasCourseCard(course: widget.course),
-      //TBD: here place the group
-      _buildButtonsContent()
+    return Column(children: <Widget>[
+      Expanded(
+          child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                CanvasCourseCard(course: _course!),
+                _buildGroupContent(),
+                _buildButtonsContent()
+              ])
+          )
+      )
     ]);
+  }
+
+  Widget _buildGroupContent() {
+    if (_group == null) {
+      return Container();
+    }
+    return Padding(padding: EdgeInsets.all(16), child: GroupCard(group: _group, displayType: GroupCardDisplayType.allGroups));
   }
 
   Widget _buildButtonsContent() {
@@ -103,11 +146,45 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
 
   void _onTapSyllabus() {
     Analytics.instance.logSelect(target: "Canvas Course Syllabus");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseSyllabusPanel(course: widget.course)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseSyllabusPanel(course: _course!)));
   }
 
   void _onTapInbox() {
     Analytics.instance.logSelect(target: "Canvas Course -> Inbox");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => InboxHomePanel()));
+  }
+
+  void _loadCourse() {
+    _increaseProgress();
+    Canvas().loadCourse(widget.courseId).then((course) {
+      _course = course;
+      _decreaseProgress();
+    });
+  }
+
+  void _loadGroup() {
+    _increaseProgress();
+    Groups().loadGroupByCanvasCourseId(widget.courseId).then((group) {
+      _group = group;
+      _decreaseProgress();
+    });
+  }
+
+  void _increaseProgress() {
+    _loadingProgress++;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _decreaseProgress() {
+    _loadingProgress--;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  bool get _isLoading {
+    return (_loadingProgress > 0);
   }
 }
