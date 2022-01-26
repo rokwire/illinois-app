@@ -181,7 +181,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     if (StringUtils.isEmpty(_voterRule?.nrvText) && StringUtils.isEmpty(_voterRule?.rvText)) {
       return false;
     }
-    if ((_voterRule?.hideForPeriod ?? false) && Storage().voterHiddenForPeriod!) {
+    if ((_voterRule?.hideForPeriod ?? false) && (Storage().voterHiddenForPeriod == true)) {
       return false;
     }
     bool isElectionPeriod = (_voterRule?.electionPeriod ?? false);

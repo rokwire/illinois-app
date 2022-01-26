@@ -139,7 +139,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
                 if(!Storage().calendarEnabledToSave!) {
                   return;
                 }
-                setState(() { Storage().calendarCanPrompt = !Storage().calendarCanPrompt!;});
+                setState(() { Storage().calendarCanPrompt = (Storage().calendarCanPrompt != true);});
               }),
           Container(height: 29,),
         ],));

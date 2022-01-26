@@ -675,7 +675,7 @@ class _FavoritesSavedDialog extends StatefulWidget {
   }
 
   static void show(BuildContext? context) {
-    bool favoriteDialogWasShown = Storage().favoritesDialogWasVisible!;
+    bool favoriteDialogWasShown = (Storage().favoritesDialogWasVisible == true);
     if (favoriteDialogWasShown || context == null) {
       return;
     }

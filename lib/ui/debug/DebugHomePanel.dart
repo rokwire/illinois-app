@@ -510,7 +510,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onDisableLiveGameCheckToggled() {
     setState(() {
-      Storage().debugDisableLiveGameCheck = !Storage().debugDisableLiveGameCheck!;
+      Storage().debugDisableLiveGameCheck = (Storage().debugDisableLiveGameCheck != true);
     });
   }
 

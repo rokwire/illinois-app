@@ -64,7 +64,7 @@ class Storage extends rokwire.Storage {
   // Notifications
 
   bool? getNotifySetting(String name) {
-    return getBoolWithName(name, defaultValue: null);
+    return getBoolWithName(name);
   }
 
   void setNotifySetting(String name, bool? value) {
@@ -209,7 +209,7 @@ class Storage extends rokwire.Storage {
   static const String favoritesDialogWasVisibleKey  = 'favorites_dialog_was_visible';
 
   bool? get favoritesDialogWasVisible {
-    return getBoolWithName(favoritesDialogWasVisibleKey);
+    return getBoolWithName(favoritesDialogWasVisibleKey, defaultValue: false);
   }
 
   set favoritesDialogWasVisible(bool? value) {
@@ -270,7 +270,7 @@ class Storage extends rokwire.Storage {
   static const String debugDisableLiveGameCheckKey  = 'debug_disable_live_game_check';
 
   bool? get debugDisableLiveGameCheck {
-    return getBoolWithName(debugDisableLiveGameCheckKey);
+    return getBoolWithName(debugDisableLiveGameCheckKey, defaultValue: false);
   }
 
   set debugDisableLiveGameCheck(bool? value) {
@@ -408,7 +408,7 @@ class Storage extends rokwire.Storage {
   static const String _voterHiddenForPeriodKey = 'voter_hidden_for_period';
 
   bool? get voterHiddenForPeriod {
-    return getBoolWithName(_voterHiddenForPeriodKey);
+    return getBoolWithName(_voterHiddenForPeriodKey, defaultValue: false);
   }
 
   set voterHiddenForPeriod(bool? value) {
@@ -477,7 +477,7 @@ class Storage extends rokwire.Storage {
   static const String _calendarEnablePromptKey = 'calendar_enabled_to_prompt';
 
   bool? get calendarCanPrompt{
-    return getBoolWithName(_calendarEnablePromptKey);
+    return getBoolWithName(_calendarEnablePromptKey, defaultValue: false);
   }
 
   set calendarCanPrompt(bool? value){

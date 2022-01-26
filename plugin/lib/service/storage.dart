@@ -148,7 +148,7 @@ class Storage with Service {
     NotificationService().notify(notifySettingChanged, name);
   }
 
-  bool? getBoolWithName(String name, {bool? defaultValue = false}) {
+  bool? getBoolWithName(String name, {bool? defaultValue}) {
     return _sharedPreferences?.getBool(name) ?? defaultValue;
   }
 

@@ -84,7 +84,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     bool showParking = widget.game?.parkingUrl != null;
     bool showGameDayGuide = widget.game?.isHomeGame ?? false;
     bool hasScores = sportDefinition?.hasScores ?? false;
-    bool hasLiveGame = Storage().debugDisableLiveGameCheck! ? true : LiveStats().hasLiveGame(widget.game?.id);
+    bool hasLiveGame = (Storage().debugDisableLiveGameCheck == true) || LiveStats().hasLiveGame(widget.game?.id);
     bool showScore = hasScores && (widget.game?.isGameDay ?? false) && hasLiveGame;
     bool isGameFavorite = Auth2().isFavorite(widget.game);
     String? liveStatsUrl = widget.game?.links?.liveStats;
