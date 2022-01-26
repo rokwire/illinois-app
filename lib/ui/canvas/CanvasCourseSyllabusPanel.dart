@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/canvas/CanvasSyllabusHtmlPanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -77,7 +80,8 @@ class _CanvasCourseSyllabusPanelState extends State<CanvasCourseSyllabusPanel> {
       RibbonButton(
           label: Localization().getStringEx('panel.syllabus_canvas_course.button.syllabus.title', 'Syllabus'),
           hint: Localization().getStringEx('panel.syllabus_canvas_course.button.syllabus.hint', ''),
-          leftIcon: 'images/icon-settings.png'),
+          leftIcon: 'images/icon-settings.png',
+          onTap: _onTapSyllabus),
       _buildDelimiter(),
       RibbonButton(
           label: Localization().getStringEx('panel.syllabus_canvas_course.button.modules.title', 'Modules'),
@@ -104,6 +108,11 @@ class _CanvasCourseSyllabusPanelState extends State<CanvasCourseSyllabusPanel> {
 
   Widget _buildDelimiter() {
     return Container(height: 1, color: Styles().colors!.surfaceAccent);
+  }
+
+  void _onTapSyllabus() {
+    Analytics.instance.logSelect(target: 'Syllabus');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasSyllabusHtmlPanel(courseId: widget.courseId!)));
   }
 
   void _loadCourse() {

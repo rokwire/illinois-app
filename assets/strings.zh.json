@@ -1937,6 +1937,9 @@
 	"panel.syllabus_canvas_course.button.zoom.title": "變焦會議",
 	"panel.syllabus_canvas_course.button.grades.title": "成績",
 
+	"panel.syllabus_html.header.title": "教學大綱",
+	"panel.syllabus_html.load.failed.error.msg": "未能加載課程內容. 請稍後再試.",
+
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 
 	"widget.game_detail_heading.button.live_stats.title":"实时信息",

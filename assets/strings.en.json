@@ -1943,6 +1943,9 @@
     "panel.syllabus_canvas_course.button.zoom.title": "Zoom Meeting",
     "panel.syllabus_canvas_course.button.grades.title": "Grades",
 
+    "panel.syllabus_html.header.title": "Syllabus",
+    "panel.syllabus_html.load.failed.error.msg": "Failed to load syllabus content. Please, try again later.",
+
     "widget.game_day.label.its_game_day":"It's Game Day!",
 
     "widget.game_detail_heading.button.live_stats.title":"Live Stats",
