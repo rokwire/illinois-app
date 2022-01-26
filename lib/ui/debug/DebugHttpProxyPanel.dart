@@ -15,12 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/HttpProxy.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/service/http_proxy.dart';
 
 class DebugHttpProxyPanel extends StatefulWidget{
   _DebugHttpProxyPanelState createState() => _DebugHttpProxyPanelState();

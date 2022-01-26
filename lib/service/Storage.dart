@@ -418,36 +418,10 @@ class Storage extends rokwire.Storage {
   /////////////
   // Http Proxy
 
-  static const String _httpProxyEnabledKey = 'http_proxy_enabled';
-
-  bool? get httpProxyEnabled {
-    return getBoolWithName(_httpProxyEnabledKey, defaultValue: false);
-  }
-
-  set httpProxyEnabled(bool? value) {
-    setBoolWithName(_httpProxyEnabledKey, value);
-  }
-
-  static const String _httpProxyHostKey = 'http_proxy_host';
-
-  String? get httpProxyHost {
-    return getStringWithName(_httpProxyHostKey);
-  }
-
-  set httpProxyHost(String? value) {
-    setStringWithName(_httpProxyHostKey, value);
-  }
-
-  static const String _httpProxyPortKey = 'http_proxy_port';
-
-  String? get httpProxyPort {
-    return getStringWithName(_httpProxyPortKey);
-  }
-
-  set httpProxyPort(String? value) {
-    setStringWithName(_httpProxyPortKey, value);
-  }
-
+  @override String get httpProxyEnabledKey => 'http_proxy_enabled';
+  @override String get httpProxyHostKey => 'http_proxy_host';
+  @override String get httpProxyPortKey => 'http_proxy_port';
+  
   //////////////////
   // Guide
 

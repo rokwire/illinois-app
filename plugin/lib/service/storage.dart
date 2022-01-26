@@ -277,4 +277,17 @@ class Storage with Service {
   String get auth2CardTimeKey => 'edu.illinois.rokwire.auth2.card_time';
   int? get auth2CardTime => getIntWithName(auth2CardTimeKey);
   set auth2CardTime(int? value) => setIntWithName(auth2CardTimeKey, value);
+
+  // Http Proxy
+  String get httpProxyEnabledKey =>  'edu.illinois.rokwire.http_proxy.enabled';
+  bool? get httpProxyEnabled => getBoolWithName(httpProxyEnabledKey, defaultValue: false);
+  set httpProxyEnabled(bool? value) => setBoolWithName(httpProxyEnabledKey, value);
+
+  String get httpProxyHostKey => 'edu.illinois.rokwire.http_proxy.host';
+  String? get httpProxyHost => getStringWithName(httpProxyHostKey);
+  set httpProxyHost(String? value) =>  setStringWithName(httpProxyHostKey, value);
+  
+  String get httpProxyPortKey => 'edu.illinois.rokwire.http_proxy.port';
+  String? get httpProxyPort => getStringWithName(httpProxyPortKey);
+  set httpProxyPort(String? value) => setStringWithName(httpProxyPortKey, value);
 }

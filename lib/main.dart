@@ -34,7 +34,6 @@ import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Gies.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/HttpProxy.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/LiveStats.dart';
@@ -69,6 +68,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/http_proxy.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
