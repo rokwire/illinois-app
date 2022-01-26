@@ -138,7 +138,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
 
   void _onTapSyllabus() {
     Analytics.instance.logSelect(target: "Canvas Course Syllabus");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseSyllabusPanel(course: _course!)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseSyllabusPanel(courseId: widget.courseId!)));
   }
 
   void _onTapInbox() {
