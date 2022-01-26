@@ -232,6 +232,28 @@ class Groups with Service implements NotificationsListener {
     return null;
   }
 
+  //TBD sync with backend team, update group model and UI
+  Future<Group?> loadGroupByCanvasCourseId(int? courseId) async {
+    await _waitForLogin();
+    if (courseId != null) {
+      String url = '${Config().groupsUrl}/groups/canvas_course/$courseId';
+      try {
+        Response? response = await Network().get(url, auth: Auth2NetworkAuth());
+        int responseCode = response?.statusCode ?? -1;
+        String? responseBody = response?.body;
+        if (responseCode == 200) {
+          Map<String, dynamic>? groupJson = JsonUtils.decodeMap(responseBody);
+          return Group.fromJson(groupJson);
+        } else {
+          Log.d('Failed to load group by canvas course id. Reason: \n$responseCode: $responseBody');
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+    return null;
+  }
+
   Future<GroupError?> createGroup(Group? group) async {
     await _waitForLogin();
     if(group != null) {

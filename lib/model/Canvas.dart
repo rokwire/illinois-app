@@ -47,13 +47,16 @@ class CanvasCourse {
   final CanvasCalendar? calendar;
   final List<CanvasEnrollment>? enrollments;
 
+  final String? syllabusBody;
+
   CanvasCourse({
     this.id, this.accountId, this.rootAccountId, this.enrollmentTermId, this.gradingStandardId, this.sisImportId, this.integrationId, this.sisCourseId,
     this.uuid, this.name, this.friendlyName, this.courseCode, this.courseColor, this.timezone,
     this.createdAt, this.startAt, this.endAt,
     this.isPublic, this.isPublicToAuthUsers, this.publicSyllabus, this.publicSyllabusToAuth, this.homeroomCourse, this.applyAssignmentGroupWeights, this.hideFinalGrades, this.restrictEnrollmentsToCourseDates, this.blueprint, this.template,
     this.gradePassbackSetting, this.workflowState, this.defaultView, this.license,
-    this.storageQuotaMb, this.calendar, this.enrollments
+    this.storageQuotaMb, this.calendar, this.enrollments,
+    this.syllabusBody
   });
 
   static CanvasCourse? fromJson(Map<String, dynamic>? json) {
@@ -97,6 +100,8 @@ class CanvasCourse {
       storageQuotaMb: JsonUtils.intValue(json['storage_quota_mb']),
       calendar: CanvasCalendar.fromJson(JsonUtils.mapValue(json['calendar'])),
       enrollments: CanvasEnrollment.listFromJson(JsonUtils.listValue(json['enrollments'])),
+
+      syllabusBody: JsonUtils.stringValue(json['syllabus_body']),
     ) : null;
   }
 
@@ -155,6 +160,8 @@ class CanvasCourse {
       'storage_quota_mb': storageQuotaMb,
       'calendar': calendar?.toJson(),
       'enrollments': CanvasEnrollment.listToJson(enrollments),
+
+      'syllabus_body': syllabusBody,
     };
   }
 
@@ -198,7 +205,9 @@ class CanvasCourse {
 
       (o.storageQuotaMb == storageQuotaMb) &&
       (o.calendar == calendar) &&
-      DeepCollectionEquality().equals(o.enrollments, enrollments);
+      DeepCollectionEquality().equals(o.enrollments, enrollments) &&
+
+      (o.syllabusBody == syllabusBody);
 
   int get hashCode =>
     (id?.hashCode ?? 0) ^
@@ -239,7 +248,9 @@ class CanvasCourse {
 
     (storageQuotaMb?.hashCode ?? 0) ^
     (calendar?.hashCode ?? 0) ^
-    DeepCollectionEquality().hash(enrollments);
+    DeepCollectionEquality().hash(enrollments) ^
+
+    (syllabusBody?.hashCode ?? 0);
 }
 
 ////////////////////////////////
