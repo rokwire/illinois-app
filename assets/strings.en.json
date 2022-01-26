@@ -1936,6 +1936,7 @@
     "panel.home_canvas_course.button.inbox.title": "Inbox",
 
     "panel.syllabus_canvas_course.header.title": "Syllabus",
+    "panel.syllabus_canvas_course.button.syllabus.title": "Syllabus",
     "panel.syllabus_canvas_course.button.modules.title": "Modules",
     "panel.syllabus_canvas_course.button.assignments.title": "Assignments",
     "panel.syllabus_canvas_course.button.zoom.title": "Zoom Meeting",

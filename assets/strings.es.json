@@ -1932,6 +1932,7 @@
     "panel.home_canvas_course.button.inbox.title": "Bandeja de entrada",
 
     "panel.syllabus_canvas_course.header.title": "Programa de estudios",
+    "panel.syllabus_canvas_course.button.syllabus.title": "Programa de estudios",
     "panel.syllabus_canvas_course.button.modules.title": "Módulos",
     "panel.syllabus_canvas_course.button.assignments.title": "Tareas",
     "panel.syllabus_canvas_course.button.zoom.title": "Reunión Zoom",

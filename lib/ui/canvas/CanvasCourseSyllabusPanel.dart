@@ -53,6 +53,11 @@ class _CanvasCourseSyllabusPanelState extends State<CanvasCourseSyllabusPanel> {
     return Column(children: [
       _buildDelimiter(),
       RibbonButton(
+          label: Localization().getStringEx('panel.syllabus_canvas_course.button.syllabus.title', 'Syllabus'),
+          hint: Localization().getStringEx('panel.syllabus_canvas_course.button.syllabus.hint', ''),
+          leftIcon: 'images/icon-settings.png'),
+      _buildDelimiter(),
+      RibbonButton(
           label: Localization().getStringEx('panel.syllabus_canvas_course.button.modules.title', 'Modules'),
           hint: Localization().getStringEx('panel.syllabus_canvas_course.button.modules.hint', ''),
           leftIcon: 'images/icon-settings.png'),
