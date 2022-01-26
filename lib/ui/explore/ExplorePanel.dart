@@ -39,7 +39,7 @@ import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';

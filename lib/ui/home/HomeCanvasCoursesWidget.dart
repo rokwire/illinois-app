@@ -5,7 +5,7 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';

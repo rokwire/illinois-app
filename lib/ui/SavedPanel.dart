@@ -32,7 +32,7 @@ import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/LaundryService.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';

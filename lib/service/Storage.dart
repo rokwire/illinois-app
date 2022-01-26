@@ -193,15 +193,7 @@ class Storage extends rokwire.Storage {
   /////////////////
   // Language
 
-  static const String currentLanguageKey  = 'current_language';
-
-  String? get currentLanguage {
-    return getStringWithName(currentLanguageKey);
-  }
-
-  set currentLanguage(String? value) {
-    setStringWithName(currentLanguageKey, value);
-  }
+  @override String get currentLanguageKey => 'current_language';
 
   //////////////////
   // Favorites

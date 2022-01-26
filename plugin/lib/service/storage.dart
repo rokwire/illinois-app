@@ -290,4 +290,9 @@ class Storage with Service {
   String get httpProxyPortKey => 'edu.illinois.rokwire.http_proxy.port';
   String? get httpProxyPort => getStringWithName(httpProxyPortKey);
   set httpProxyPort(String? value) => setStringWithName(httpProxyPortKey, value);
+
+  // Language
+  String get currentLanguageKey => 'edu.illinois.rokwire.current_language';
+  String? get currentLanguage => getStringWithName(currentLanguageKey);
+  set currentLanguage(String? value) => setStringWithName(currentLanguageKey, value);
 }
