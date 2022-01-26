@@ -23,7 +23,7 @@ import 'package:http/http.dart' as Http;
 
 import 'package:illinois/model/GeoFence.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/Assets.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';

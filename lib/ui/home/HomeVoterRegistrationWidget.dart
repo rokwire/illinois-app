@@ -21,7 +21,7 @@ import 'package:illinois/model/Voter.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/Assets.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:rokwire_plugin/service/localization.dart';

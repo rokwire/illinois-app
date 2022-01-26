@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import 'package:illinois/service/Assets.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

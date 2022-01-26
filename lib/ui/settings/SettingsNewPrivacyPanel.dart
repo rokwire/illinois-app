@@ -19,7 +19,7 @@ import 'dart:math';
 import "package:flutter/material.dart";
 import "package:illinois/model/PrivacyData.dart";
 import "package:illinois/service/Analytics.dart";
-import "package:illinois/service/Assets.dart";
+import "package:rokwire_plugin/service/assets.dart";
 import 'package:rokwire_plugin/service/auth2.dart';
 import "package:illinois/service/Config.dart";
 import "package:illinois/service/FlexUI.dart";

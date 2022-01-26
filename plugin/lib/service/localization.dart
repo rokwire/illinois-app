@@ -154,17 +154,15 @@ class Localization with Service implements NotificationsListener {
   }
 
   @protected
-  String getAssetsResourceKey(language) => 'assets/strings.$language.json';
+  String getResourceAssetsKey(language) => 'assets/strings.$language.json';
 
   @protected
-  Future<String?> loadAssetsJsonString(String language) async {
-    return await rootBundle.loadString(getAssetsResourceKey(language));
-  }
+  Future<String?> loadResourceAssetsJsonString(String language) => rootBundle.loadString(getResourceAssetsKey(language));
 
   @protected
   Future<Map<String, dynamic>?> loadAssetsStrings(String language) async {
     dynamic jsonData;
-    try {jsonData = JsonUtils.decode(await loadAssetsJsonString(language)); }
+    try {jsonData = JsonUtils.decode(await loadResourceAssetsJsonString(language)); }
     catch (e) { debugPrint(e.toString()); }
     return ((jsonData != null) && (jsonData is Map<String,dynamic>)) ? jsonData : null;
   }

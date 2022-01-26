@@ -17,7 +17,7 @@
 import 'dart:ui';
 
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/service/Assets.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/Explore.dart';
