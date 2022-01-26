@@ -35,6 +35,7 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+
 const String _channelId = "Notifications_Channel_ID";
 
 class FirebaseMessaging with Service implements NotificationsListener {
@@ -140,7 +141,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
   );
 
   String?   _token;
-  String?   _projectID;
   DateTime? _pausedDateTime;
   
   // Singletone instance
@@ -160,7 +160,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
   // Public getters
 
   String? get token => _token;
-  String? get projectID => _projectID;
   bool get hasToken => StringUtils.isNotEmpty(_token);
 
   // Service
@@ -209,11 +208,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
       Log.d('FCM: token: $token');
       NotificationService().notify(notifyToken, null);
       _updateSubscriptions();
-    });
-    
-    //The project id is not given via the lib so we need to get it via NativeCommunicator
-    NativeCommunicator().queryFirebaseInfo().then((String? info) {
-      _projectID = info;
     });
 
     await super.initService();

@@ -23,8 +23,8 @@ import 'package:illinois/model/GeoFence.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/GeoFence.dart';
+import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -118,7 +118,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   Widget build(BuildContext context) {
     String? userUuid = Auth2().accountId;
     String? pid = Auth2().profile?.id;
-    String? firebaseProjectId = FirebaseMessaging().projectID;
+    String? firebaseProjectId = FirebaseCore().app?.options.projectId;
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
