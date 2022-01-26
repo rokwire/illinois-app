@@ -28,7 +28,7 @@ class Auth2 with Service implements NotificationsListener {
   static const String notifyLoginChanged      = "edu.illinois.rokwire.auth2.login.changed";
   static const String notifyLoginFinished     = "edu.illinois.rokwire.auth2.login.finished";
   static const String notifyLogout            = "edu.illinois.rokwire.auth2.logout";
-  static const String notifyLinkChanged      = "edu.illinois.rokwire.auth2.link.changed";
+  static const String notifyLinkChanged       = "edu.illinois.rokwire.auth2.link.changed";
   static const String notifyProfileChanged    = "edu.illinois.rokwire.auth2.profile.changed";
   static const String notifyPrefsChanged      = "edu.illinois.rokwire.auth2.prefs.changed";
   static const String notifyCardChanged       = "edu.illinois.rokwire.auth2.card.changed";
@@ -42,9 +42,9 @@ class Auth2 with Service implements NotificationsListener {
   static const String _authCardName        = "idCard.json";
 
   _OidcLogin? _oidcLogin;
+  bool? _oidcLink;
   List<Completer<bool?>>? _oidcAuthenticationCompleters;
   bool? _processingOidcAuthentication;
-  bool _processingOidcLink = false;
   Timer? _oidcAuthenticationTimer;
 
   Map<String, Future<Response?>> _refreshTokenFutures = {};
@@ -294,9 +294,7 @@ class Auth2 with Service implements NotificationsListener {
         _OidcLogin? oidcLogin = await _getOidcData();
         if (oidcLogin?.loginUrl != null) {
           _oidcLogin = oidcLogin;
-          if (link != null) {
-            _processingOidcLink = link;
-          }
+          _oidcLink = link;
           await _launchUrl(_oidcLogin?.loginUrl);
         }
         else {
@@ -319,13 +317,10 @@ class Auth2 with Service implements NotificationsListener {
     
     _cancelOidcAuthenticationTimer();
 
-    bool result;
     _processingOidcAuthentication = true;
-    if (_processingOidcLink) {
-      result = await linkAccountAuthType(Auth2LoginType.oidcIllinois, uri.toString(), _oidcLogin?.params);
-    } else {
-      result = await _processOidcAuthentication(uri);
-    }
+    bool result = (_oidcLink == true) ?
+      await linkAccountAuthType(Auth2LoginType.oidcIllinois, uri.toString(), _oidcLogin?.params) :
+      await _processOidcAuthentication(uri);
     _processingOidcAuthentication = false;
 
     Analytics().logAuth(action: Analytics.LogAuthLoginNetIdActionName, result: result);
@@ -460,7 +455,7 @@ class Auth2 with Service implements NotificationsListener {
     NotificationService().notify(notifyLoginFinished);
 
     _oidcLogin = null;
-    _processingOidcLink = false;
+    _oidcLink = null;
 
     if (_oidcAuthenticationCompleters != null) {
       List<Completer<bool?>> loginCompleters = _oidcAuthenticationCompleters!;
@@ -667,6 +662,8 @@ class Auth2 with Service implements NotificationsListener {
     return false;
   }
 
+  // Account Linking
+
   Future<bool> linkAccountAuthType(Auth2LoginType? loginType, dynamic creds, Map<String, dynamic>? params) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (loginType != null)) {
       String url = "${Config().coreUrl}/services/auth/account/auth-type/link";
@@ -679,6 +676,7 @@ class Auth2 with Service implements NotificationsListener {
         'creds': creds,
         'params': params,
       });
+      _oidcLink = null;
 
       Response? response = await Network().post(url, headers: headers, body: post, auth: NetworkAuth.Auth2);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
