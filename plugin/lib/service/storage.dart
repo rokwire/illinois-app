@@ -161,7 +161,7 @@ class Storage with Service {
     NotificationService().notify(notifySettingChanged, name);
   }
 
-  int? getIntWithName(String name, {int? defaultValue = 0}) {
+  int? getIntWithName(String name, {int? defaultValue}) {
     return _sharedPreferences?.getInt(name) ?? defaultValue;
   }
 

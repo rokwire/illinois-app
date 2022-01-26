@@ -260,7 +260,7 @@ class Storage extends rokwire.Storage {
   static const String debugGeoFenceRegionRadiusKey  = 'debug_geo_fence_region_radius';
 
   int? get debugGeoFenceRegionRadius {
-    return getIntWithName(debugGeoFenceRegionRadiusKey, defaultValue: null);
+    return getIntWithName(debugGeoFenceRegionRadiusKey);
   }
 
   set debugGeoFenceRegionRadius(int? value) {
