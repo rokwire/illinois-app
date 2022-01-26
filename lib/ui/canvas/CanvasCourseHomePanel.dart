@@ -76,18 +76,10 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   }
 
   Widget _buildCourseContent() {
-    return Column(children: <Widget>[
-      Expanded(
-          child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                CanvasCourseCard(course: _course!),
-                _buildGroupContent(),
-                _buildButtonsContent()
-              ])
-          )
-      )
-    ]);
+    return SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [CanvasCourseCard(course: _course!), _buildGroupContent(), _buildButtonsContent()]));
   }
 
   Widget _buildGroupContent() {
