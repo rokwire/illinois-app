@@ -1,5 +1,8 @@
 #import "RokwirePlugin.h"
 #import "LocationServices.h"
+
+#import <SafariServices/SafariServices.h>
+
 #import "Security+RokwireUtils.h"
 #import "NSDictionary+RokwireTypedValue.h"
 
@@ -32,6 +35,9 @@
   }
   else if ([firstMethodComponent isEqualToString:@"getEncryptionKey"]) {
     result([self encryptionKeyWithParameters:parameters]);
+  }
+  else if ([firstMethodComponent isEqualToString:@"dismissSafariVC"]) {
+  	[self dismissSafariViewControllerWithParameters:parameters result:result];
   }
   else if ([firstMethodComponent isEqualToString:@"locationServices"]) {
     [LocationServices.sharedInstance handleMethodCallWithName:nextMethodComponents parameters:call.arguments result:result];
@@ -96,6 +102,20 @@
 		}
 	}
 	return nil;
+}
+
+#pragma mark SFSafariViewController
+
+- (void)dismissSafariViewControllerWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+	UIViewController *presentedController = UIApplication.sharedApplication.keyWindow.rootViewController.presentedViewController;
+	if ([presentedController isKindOfClass:[SFSafariViewController class]]) {
+		[presentedController dismissViewControllerAnimated:YES completion:^{
+			result(@(YES));
+		}];
+	}
+	else {
+		result(@(NO));
+	}
 }
 
 @end

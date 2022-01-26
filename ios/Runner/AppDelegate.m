@@ -42,7 +42,6 @@
 
 #import <AppTrackingTransparency/AppTrackingTransparency.h>
 #import <UserNotifications/UserNotifications.h>
-#import <SafariServices/SafariServices.h>
 #import <PassKit/PassKit.h>
 
 static NSString *const kFIRMessagingFCMTokenNotification = @"com.firebase.iid.notif.fcm-token";
@@ -243,9 +242,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"showNotification"]) {
 		[self handleShowNotificationWithParameters:parameters result:result];
 	}
-	else if ([call.method isEqualToString:@"dismissSafariVC"]) {
-		[self handleDismissSafariVCWithParameters:parameters result:result];
-	}
 	else if ([call.method isEqualToString:@"dismissLaunchScreen"]) {
 		[self handleDismissLaunchScreenWithParameters:parameters result:result];
 	}
@@ -349,18 +345,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 			NSLog(@"%@", error.localizedDescription);
 		}
 	}];
-}
-
-- (void)handleDismissSafariVCWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	UIViewController *presentedController = self.flutterViewController.presentedViewController;
-	if ([presentedController isKindOfClass:[SFSafariViewController class]]) {
-		[presentedController dismissViewControllerAnimated:YES completion:^{
-			result(@(YES));
-		}];
-	}
-	else {
-		result(@(NO));
-	}
 }
 
 - (void)handleDismissLaunchScreenWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
