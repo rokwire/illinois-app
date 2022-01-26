@@ -2,7 +2,7 @@
 import 'package:device_calendar/device_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 import 'RoundedButton.dart';
 

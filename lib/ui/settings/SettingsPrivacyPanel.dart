@@ -15,12 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Assets.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Onboarding.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/PrivacyData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -32,7 +32,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 enum SettingsPrivacyPanelMode { regular, onboarding, update }
 

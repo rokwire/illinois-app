@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/DiningService.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -26,7 +26,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 
 class FoodDetailPanel extends StatefulWidget {

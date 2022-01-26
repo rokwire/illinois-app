@@ -15,8 +15,8 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';

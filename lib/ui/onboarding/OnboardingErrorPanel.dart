@@ -16,9 +16,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/main.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class OnboardingErrorPanel extends StatefulWidget {
   final ServiceError? error;

@@ -23,7 +23,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -37,7 +37,7 @@ import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/OptionSelectionCell.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Game? game;

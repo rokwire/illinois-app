@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

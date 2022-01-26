@@ -26,7 +26,6 @@ public class Constants {
     static final String MAP_PICK_LOCATION_KEY = "pickLocation";
     static final String MAP_KEY = "map";
     static final String SHOW_NOTIFICATION_KEY = "showNotification";
-    static final String APP_DISMISS_SAFARI_VC_KEY = "dismissSafariVC";
     static final String APP_DISMISS_LAUNCH_SCREEN_KEY = "dismissLaunchScreen";
     static final String APP_SET_LAUNCH_SCREEN_STATUS_KEY = "setLaunchScreenStatus";
     static final String APP_ADD_CARD_TO_WALLET_KEY = "addToWallet";

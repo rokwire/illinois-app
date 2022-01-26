@@ -15,13 +15,13 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class OnboardingPrivacyStatementPanel extends StatefulWidget with OnboardingPanel {
 

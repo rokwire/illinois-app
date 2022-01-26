@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -27,7 +27,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 import 'athletics/AthleticsGameDetailPanel.dart';

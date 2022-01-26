@@ -493,7 +493,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     launchNotification(methodCall);
                     result.success(true);
                     break;
-                case Constants.APP_DISMISS_SAFARI_VC_KEY:
                 case Constants.APP_DISMISS_LAUNCH_SCREEN_KEY:
                 case Constants.APP_SET_LAUNCH_SCREEN_STATUS_KEY:
                     handleSetLaunchScreenStatus(methodCall.arguments);

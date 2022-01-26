@@ -24,13 +24,13 @@ import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class MTDBusPassPanel extends StatefulWidget {
   _MTDBusPassPanelState createState() => _MTDBusPassPanelState();

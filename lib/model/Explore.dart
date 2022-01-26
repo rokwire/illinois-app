@@ -20,7 +20,7 @@ import 'package:geolocator/geolocator.dart' as Core;
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';

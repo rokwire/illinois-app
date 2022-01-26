@@ -18,13 +18,14 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/service/storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
@@ -50,13 +51,19 @@ class Styles extends Service implements NotificationsListener{
   UiStyles? _uiStyles;
   UiStyles? get uiStyles => _uiStyles;
 
-  static final Styles _logic = Styles._internal();
+  // Singletone Factory
 
-  factory Styles() {
-    return _logic;
-  }
+  static Styles? _instance;
 
-  Styles._internal();
+  static Styles? get instance => _instance;
+  
+  @protected
+  static set instance(Styles? value) => _instance = value;
+
+  factory Styles() => _instance ?? (_instance = Styles.internal());
+
+  @protected
+  Styles.internal();
 
   // Initialization
 
@@ -72,28 +79,28 @@ class Styles extends Service implements NotificationsListener{
 
   @override
   Future<void> initService() async {
-    await _getCacheFile();
+    await getCacheFile();
     
     _contentMode = stylesContentModeFromString(Storage().stylesContentMode) ?? StylesContentMode.auto;
     if (_contentMode == StylesContentMode.auto) {
-      await _loadFromCache();
+      await loadFromCache();
       if (_stylesData == null) {
-        await _loadFromAssets();
+        await loadFromAssets();
       }
       if (_stylesData == null) {
-        await _loadFromNet();
+        await loadFromNet();
       }
       else {
-        _loadFromNet();
+        loadFromNet();
       }
     }
     else if (_contentMode == StylesContentMode.assets) {
-      await _loadFromAssets();
+      await loadFromAssets();
     }
     else if (_contentMode == StylesContentMode.debug) {
-      await _loadFromCache();
+      await loadFromCache();
       if (_stylesData == null) {
-        await _loadFromAssets();
+        await loadFromAssets();
       }
     }
     
@@ -112,7 +119,7 @@ class Styles extends Service implements NotificationsListener{
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config()]);
+    return {Storage(), Config()};
   }
 
   // ContentMode
@@ -131,21 +138,21 @@ class Styles extends Service implements NotificationsListener{
       Storage().stylesContentMode = stylesContentModeToString(contentMode);
 
       _stylesData = null;
-      _clearCache();
+      clearCache();
 
       if (_contentMode == StylesContentMode.auto) {
-        await _loadFromAssets();
-        await _loadFromNet(notifyUpdate: false);
+        await loadFromAssets();
+        await loadFromNet(notifyUpdate: false);
       }
       else if (_contentMode == StylesContentMode.assets) {
-        await _loadFromAssets();
+        await loadFromAssets();
       }
       else if (_contentMode == StylesContentMode.debug) {
         if (stylesContent != null) {
-          _applyContent(stylesContent, cacheContent: true);
+          applyContent(stylesContent, cacheContent: true);
         }
         else {
-          await _loadFromAssets();
+          await loadFromAssets();
         }
       }
 
@@ -153,12 +160,12 @@ class Styles extends Service implements NotificationsListener{
     }
     else if (contentMode == StylesContentMode.debug) {
       if (stylesContent != null) {
-        _applyContent(stylesContent, cacheContent: true);
+        applyContent(stylesContent, cacheContent: true);
       }
       else {
         _stylesData = null;
-        _clearCache();
-        await _loadFromAssets();
+        clearCache();
+        await loadFromAssets();
       }
       NotificationService().notify(notifyChanged, null);
     }
@@ -178,58 +185,73 @@ class Styles extends Service implements NotificationsListener{
 
   // Private
 
-  Future<void> _getCacheFile() async {
+  @protected
+  String get cacheFileName => _assetsName;
+
+  @protected
+  Future<void> getCacheFile() async {
     Directory? assetsDir = Config().assetsCacheDir;
     if ((assetsDir != null) && !await assetsDir.exists()) {
       await assetsDir.create(recursive: true);
     }
-    String? cacheFilePath = (assetsDir != null) ? join(assetsDir.path, _assetsName) : null;
+    String? cacheFilePath = (assetsDir != null) ? join(assetsDir.path, cacheFileName) : null;
     _cacheFile = (cacheFilePath != null) ? File(cacheFilePath) : null;
   }
 
-  Future<void> _loadFromCache() async {
+  @protected
+  Future<void> loadFromCache() async {
     try {
       String? stylesContent = ((_cacheFile != null) && await _cacheFile!.exists()) ? await _cacheFile!.readAsString() : null;
-      await _applyContent(stylesContent);
+      await applyContent(stylesContent);
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
-  Future<void> _clearCache() async {
+  @protected
+  Future<void> clearCache() async {
     if ((_cacheFile != null) && await _cacheFile!.exists()) {
       try { await _cacheFile!.delete(); }
-      catch (e) { print(e.toString()); }
+      catch (e) { debugPrint(e.toString()); }
     }
   }
 
-  Future<void> _loadFromAssets() async {
+  @protected
+  String get resourceAssetsKey => 'assets/$_assetsName';
+
+  @protected
+  Future<String?> loadResourceAssetsJsonString() => rootBundle.loadString(resourceAssetsKey);
+
+  @protected
+  Future<void> loadFromAssets() async {
     try {
-      String stylesContent = await rootBundle.loadString('assets/$_assetsName');
-      await _applyContent(stylesContent);
+      String? stylesContent = await loadResourceAssetsJsonString();
+      await applyContent(stylesContent);
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
-  Future<void> _loadFromNet({bool cacheContent = true, bool notifyUpdate = true}) async {
+  @protected
+  Future<void> loadFromNet({bool cacheContent = true, bool notifyUpdate = true}) async {
     try {
       http.Response? response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$_assetsName") : null;
       String? stylesContent =  ((response != null) && (response.statusCode == 200)) ? response.body : null;
       if(stylesContent != null) {
-        await _applyContent(stylesContent, cacheContent: cacheContent, notifyUpdate: notifyUpdate);
+        await applyContent(stylesContent, cacheContent: cacheContent, notifyUpdate: notifyUpdate);
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
-  Future<void> _applyContent(String? stylesContent, {bool cacheContent = false, bool notifyUpdate = false}) async {
+  @protected
+  Future<void> applyContent(String? stylesContent, {bool cacheContent = false, bool notifyUpdate = false}) async {
     try {
       Map<String, dynamic>? styles = (stylesContent != null) ? JsonUtils.decode(stylesContent) : null;
-      if ((styles != null) && styles.isNotEmpty && ((_stylesData == null) || !DeepCollectionEquality().equals(_stylesData, styles))) {
+      if ((styles != null) && styles.isNotEmpty && ((_stylesData == null) || !const DeepCollectionEquality().equals(_stylesData, styles))) {
         _stylesData = styles;
-        _buildData();
+        buildData();
         if ((_cacheFile != null) && cacheContent) {
           await _cacheFile!.writeAsString(stylesContent!, flush: true);
         }
@@ -238,20 +260,22 @@ class Styles extends Service implements NotificationsListener{
         }
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
-  void _buildData(){
-    _buildColorsData();
-    _buildFontFamiliesData();
-    _buildStylesData();
+  @protected
+  void buildData(){
+    buildColorsData();
+    buildFontFamiliesData();
+    buildStylesData();
   }
 
-  void _buildColorsData(){
+  @protected
+  void buildColorsData(){
     if(_stylesData != null) {
       dynamic colorsData = _stylesData!["color"];
-      Map<String, Color> colors = Map<String, Color>();
+      Map<String, Color> colors = <String, Color>{};
       if(colorsData is Map){
         colorsData.forEach((dynamic key, dynamic value){
           if(key is String && value is String){
@@ -271,7 +295,8 @@ class Styles extends Service implements NotificationsListener{
     }
   }
 
-  void _buildFontFamiliesData(){
+  @protected
+  void buildFontFamiliesData(){
     if(_stylesData != null) {
       dynamic familyData = _stylesData!["font_family"];
       if(familyData is Map) {
@@ -281,10 +306,11 @@ class Styles extends Service implements NotificationsListener{
     }
   }
 
-  void _buildStylesData(){
+  @protected
+  void buildStylesData(){
     if(_stylesData != null) {
       dynamic stylesData = _stylesData!["text_style"];
-      Map<String, TextStyle> styles = Map<String, TextStyle>();
+      Map<String, TextStyle> styles = <String, TextStyle>{};
       if(stylesData is Map){
         stylesData.forEach((dynamic key, dynamic value){
           if(key is String && value is Map){
@@ -318,7 +344,7 @@ class Styles extends Service implements NotificationsListener{
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if ((Config().refreshTimeout < pausedDuration.inSeconds) && (_contentMode == StylesContentMode.auto)) {
-          _loadFromNet();
+          loadFromNet();
         }
       }
     }
@@ -433,18 +459,18 @@ class UiColors {
       buffer.write(value.replaceFirst('#', ''));
 
       try { return Color(int.parse(buffer.toString(), radix: 16)); }
-      on Exception catch (e) { print(e.toString()); }
+      on Exception catch (e) { debugPrint(e.toString()); }
     }
     return null;
   }
 
   static String? toHex(Color? value, {bool leadingHashSign = true}) {
     if (value != null) {
-      return "${leadingHashSign ? '#' : ''}" +
-          "${value.alpha.toRadixString(16)}" +
-          "${value.red.toRadixString(16)}" +
-          "${value.green.toRadixString(16)}" +
-          "${value.blue.toRadixString(16)}";
+      return (leadingHashSign ? '#' : '') +
+          value.alpha.toRadixString(16) +
+          value.red.toRadixString(16) +
+          value.green.toRadixString(16) +
+          value.blue.toRadixString(16);
     }
     return null;
   }

@@ -18,9 +18,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInfoPanel.dart';
@@ -139,7 +139,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
                 if(!Storage().calendarEnabledToSave!) {
                   return;
                 }
-                setState(() { Storage().calendarCanPrompt = !Storage().calendarCanPrompt!;});
+                setState(() { Storage().calendarCanPrompt = (Storage().calendarCanPrompt != true);});
               }),
           Container(height: 29,),
         ],));

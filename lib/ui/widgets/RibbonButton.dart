@@ -15,10 +15,10 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class RibbonButton extends StatelessWidget {
   final String? label;

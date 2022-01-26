@@ -24,13 +24,13 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsSportItemWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class HomePreferredSportsWidget extends StatefulWidget {
 

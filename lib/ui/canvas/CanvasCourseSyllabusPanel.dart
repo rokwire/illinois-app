@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/canvas/CanvasSyllabusHtmlPanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class CanvasCourseSyllabusPanel extends StatefulWidget {
   final int? courseId;

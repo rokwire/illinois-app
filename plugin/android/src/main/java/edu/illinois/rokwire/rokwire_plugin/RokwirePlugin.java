@@ -123,6 +123,9 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
     else if (firstMethodComponent.equals("getEncryptionKey")) {
       result.success(getEncryptionKey(call.arguments));
     }
+    else if (firstMethodComponent.equals("dismissSafariVC")) {
+      result.success(null);
+    }
     else if (firstMethodComponent.equals("locationServices")) {
       LocationServices.getInstance().handleMethodCall(nextMethodComponents, call.arguments, result);
     }

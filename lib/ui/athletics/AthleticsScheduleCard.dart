@@ -21,14 +21,14 @@ import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsScheduleCard extends StatefulWidget {
   final Game? _game;

@@ -148,7 +148,7 @@ class Storage with Service {
     NotificationService().notify(notifySettingChanged, name);
   }
 
-  bool? getBoolWithName(String name, {bool? defaultValue = false}) {
+  bool? getBoolWithName(String name, {bool? defaultValue}) {
     return _sharedPreferences?.getBool(name) ?? defaultValue;
   }
 
@@ -161,7 +161,7 @@ class Storage with Service {
     NotificationService().notify(notifySettingChanged, name);
   }
 
-  int? getIntWithName(String name, {int? defaultValue = 0}) {
+  int? getIntWithName(String name, {int? defaultValue}) {
     return _sharedPreferences?.getInt(name) ?? defaultValue;
   }
 
@@ -174,7 +174,7 @@ class Storage with Service {
     NotificationService().notify(notifySettingChanged, name);
   }
 
-  double getDoubleWithName(String name, {double defaultValue = 0.0}) {
+  double? getDoubleWithName(String name, {double? defaultValue}) {
     return _sharedPreferences?.getDouble(name) ?? defaultValue;
   }
 
@@ -277,4 +277,27 @@ class Storage with Service {
   String get auth2CardTimeKey => 'edu.illinois.rokwire.auth2.card_time';
   int? get auth2CardTime => getIntWithName(auth2CardTimeKey);
   set auth2CardTime(int? value) => setIntWithName(auth2CardTimeKey, value);
+
+  // Http Proxy
+  String get httpProxyEnabledKey =>  'edu.illinois.rokwire.http_proxy.enabled';
+  bool? get httpProxyEnabled => getBoolWithName(httpProxyEnabledKey);
+  set httpProxyEnabled(bool? value) => setBoolWithName(httpProxyEnabledKey, value);
+
+  String get httpProxyHostKey => 'edu.illinois.rokwire.http_proxy.host';
+  String? get httpProxyHost => getStringWithName(httpProxyHostKey);
+  set httpProxyHost(String? value) =>  setStringWithName(httpProxyHostKey, value);
+  
+  String get httpProxyPortKey => 'edu.illinois.rokwire.http_proxy.port';
+  String? get httpProxyPort => getStringWithName(httpProxyPortKey);
+  set httpProxyPort(String? value) => setStringWithName(httpProxyPortKey, value);
+
+  // Language
+  String get currentLanguageKey => 'edu.illinois.rokwire.current_language';
+  String? get currentLanguage => getStringWithName(currentLanguageKey);
+  set currentLanguage(String? value) => setStringWithName(currentLanguageKey, value);
+
+  // Styles
+  String get stylesContentModeKey => 'edu.illinois.rokwire.styles.content_mode';
+  String? get stylesContentMode => getStringWithName(stylesContentModeKey);
+  set stylesContentMode(String? value) => setStringWithName(stylesContentModeKey, value);
 }
