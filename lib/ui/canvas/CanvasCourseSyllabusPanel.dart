@@ -1,21 +1,34 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
-import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/ui/canvas/CanvasSyllabusHtmlPanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class CanvasCourseSyllabusPanel extends StatefulWidget {
-  final CanvasCourse course;
-  CanvasCourseSyllabusPanel({required this.course});
+  final int? courseId;
+  CanvasCourseSyllabusPanel({this.courseId});
 
   @override
   _CanvasCourseSyllabusPanelState createState() => _CanvasCourseSyllabusPanelState();
 }
 
 class _CanvasCourseSyllabusPanelState extends State<CanvasCourseSyllabusPanel> {
+  CanvasCourse? _course;
+  int _loadingProgress = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCourse();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,28 +42,46 @@ class _CanvasCourseSyllabusPanelState extends State<CanvasCourseSyllabusPanel> {
                   letterSpacing: 1.0)
           )
       ),
-      body: Column(children: <Widget>[
-        Expanded(
-            child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: _buildSyllabusContent()
-            )
-        )
-      ]),
+      body: _buildContent(),
       backgroundColor: Styles().colors!.white,
       bottomNavigationBar: TabBarWidget(),
     );
   }
 
-  Widget _buildSyllabusContent() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      CanvasCourseCard(course: widget.course),
-      _buildButtonsContent()
-    ]);
+  Widget _buildContent() {
+    if (_isLoading) {
+      return _buildLoadingContent();
+    }
+    if (_course != null) {
+      return _buildCourseContent();
+    } else {
+      return _buildErrorContent();
+    }
+  }
+
+  Widget _buildLoadingContent() {
+    return Center(child: CircularProgressIndicator());
+  }
+
+  Widget _buildErrorContent() {
+    return Center(
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.syllabus_canvas_course.load.failed.error.msg', 'Failed to load course. Please, try again later.')!,
+            textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+  }
+
+  Widget _buildCourseContent() {
+    return SingleChildScrollView(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [CanvasCourseCard(course: _course!), _buildButtonsContent()]));
   }
 
   Widget _buildButtonsContent() {
     return Column(children: [
+      _buildDelimiter(),
+      RibbonButton(
+          label: Localization().getStringEx('panel.syllabus_canvas_course.button.syllabus.title', 'Syllabus'),
+          hint: Localization().getStringEx('panel.syllabus_canvas_course.button.syllabus.hint', ''),
+          leftIcon: 'images/icon-settings.png',
+          onTap: _onTapSyllabus),
       _buildDelimiter(),
       RibbonButton(
           label: Localization().getStringEx('panel.syllabus_canvas_course.button.modules.title', 'Modules'),
@@ -77,5 +108,36 @@ class _CanvasCourseSyllabusPanelState extends State<CanvasCourseSyllabusPanel> {
 
   Widget _buildDelimiter() {
     return Container(height: 1, color: Styles().colors!.surfaceAccent);
+  }
+
+  void _onTapSyllabus() {
+    Analytics.instance.logSelect(target: 'Syllabus');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasSyllabusHtmlPanel(courseId: widget.courseId!)));
+  }
+
+  void _loadCourse() {
+    _increaseProgress();
+    Canvas().loadCourse(widget.courseId).then((course) {
+      _course = course;
+      _decreaseProgress();
+    });
+  }
+
+  void _increaseProgress() {
+    _loadingProgress++;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _decreaseProgress() {
+    _loadingProgress--;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  bool get _isLoading {
+    return (_loadingProgress > 0);
   }
 }
