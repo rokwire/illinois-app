@@ -7,7 +7,7 @@ import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
-//TMP import 'package:rokwire_plugin/service/firebase_messaging.dart';
+import 'package:rokwire_plugin/service/firebase_messaging.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -45,7 +45,7 @@ class Inbox with Service implements NotificationsListener {
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      //TMP: FirebaseMessaging.notifyToken,
+      FirebaseMessaging.notifyToken,
       Auth2.notifyLoginChanged,
       Auth2.notifyPrepareUserDelete,
       AppLivecycle.notifyStateChanged,
@@ -70,14 +70,14 @@ class Inbox with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return { /* TMP FirebaseMessaging()*/ Storage(), Config(), Auth2() };
+    return { Storage(), Config(), Auth2(), FirebaseMessaging() };
   }
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == 'TMP' /* TMP FirebaseMessaging.notifyToken*/) {
+    if (name == FirebaseMessaging.notifyToken) {
       _processFcmToken();
     }
     else if (name == Auth2.notifyLoginChanged) {
@@ -209,7 +209,7 @@ class Inbox with Service implements NotificationsListener {
   void _processFcmToken() {
     // We call _processFcmToken when FCM token changes or when user logs in/out.
     if (_isServiceInitialized == true) {
-      String? fcmToken = Config().notificationsUrl; //TMP FirebaseMessaging().token;
+      String? fcmToken = FirebaseMessaging().token;
       String? userId = Auth2().accountId;
       if ((fcmToken != null) && (fcmToken != _fcmToken)) {
         _updateFCMToken(token: fcmToken, previousToken: _fcmToken).then((bool result) {
