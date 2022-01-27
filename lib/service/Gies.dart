@@ -5,6 +5,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class Gies with Service{
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
+  static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
 
   List<dynamic>? _pages;
   List<String>?  _navigationPages;
@@ -105,7 +106,7 @@ class Gies with Service{
         _navigationPages = [pushPageId];
       }
       Storage().giesNavPages = _navigationPages;
-      NotificationService().notify(notifyPageChanged);
+      NotificationService().notify(notifyPageChanged, pushPageId);
     }
   }
 
@@ -123,7 +124,7 @@ class Gies with Service{
       if ((pageId != null) && pageId.isNotEmpty && !Gies().completedPages!.contains(pageId)) {
           _completedPages!.add(pageId);
         Storage().giesCompletedPages = _completedPages;
-        NotificationService().notify(notifyPageChanged);
+        NotificationService().notify(notifyPageCompleted, pageId);
       }
     }
 

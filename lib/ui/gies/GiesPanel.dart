@@ -692,7 +692,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     //   _currentPage = (_pageController?.page?.toInt() ?? 0); //Refresh if needed
     // }
     _currentPage = startPageIndex;
-    NotificationService().subscribe(this, Gies.notifyPageChanged);
+    NotificationService().subscribe(this, [Gies.notifyPageChanged, Gies.notifyPageCompleted]);
   }
 
   @override
@@ -841,7 +841,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     String? swipeToId = JsonUtils.stringValue(button["swipe_page"]); //This is _StepsHorizontalListWidget action the rest are global Page actions
     if(swipeToId!=null)
       _swipeToPage(swipeToId);
-    
+
     if(widget.onTapButton!=null) {
       widget.onTapButton!(button, panelId);
     }
@@ -912,6 +912,12 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     if(name == Gies.notifyPageChanged){
       // _currentPage = 0; //Reset to default when we change the page (fix missing selected tab)
       // _pageController?.jumpToPage(_currentPage);
+      if(mounted)
+        setState(() {});
+    }
+    else if(name == Gies.notifyPageCompleted){
+      if(mounted)
+        setState(() {}); //Need to reset tab color
     }
   }
 }
