@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed  
+- Inbox and FirebaseMessaging services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Moved UIUC token and Auth Card support from rokwire plugin to application level [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 
 ## [3.2.6] - 2022-01-26
 ### Added
