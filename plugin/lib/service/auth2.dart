@@ -44,7 +44,6 @@ class Auth2 with Service implements NotificationsListener {
   Timer? _updateUserPrefsTimer;
   
   Auth2Token? _token;
-  Auth2Token? _uiucToken;
   Auth2Account? _account;
 
   String? _anonymousId;
@@ -89,7 +88,6 @@ class Auth2 with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     _token = Storage().auth2Token;
-    _uiucToken = Storage().auth2UiucToken;
     _account = Storage().auth2Account;
 
     _anonymousId = Storage().auth2AnonymousId;
@@ -181,7 +179,6 @@ class Auth2 with Service implements NotificationsListener {
   Auth2Token? get token => _token ?? _anonymousToken;
   Auth2Token? get userToken => _token;
   Auth2Token? get anonymousToken => _anonymousToken;
-  Auth2Token? get uiucToken => _uiucToken;
   Auth2Account? get account => _account;
   String? get deviceId => _deviceId;
   
@@ -364,7 +361,6 @@ class Auth2 with Service implements NotificationsListener {
 
   @protected
   Future<void> applyLogin(Auth2Account account, Auth2Token token, { Map<String, dynamic>? params }) async {
-    Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(JsonUtils.mapValue(params['oidc_token'])) : null;
 
     _refreshTonenFailCounts.remove(_token?.refreshToken);
 
@@ -374,7 +370,6 @@ class Auth2 with Service implements NotificationsListener {
     Storage().auth2Account = _account = account;
     Storage().auth2AnonymousPrefs = _anonymousPrefs = null;
     Storage().auth2AnonymousProfile = _anonymousProfile = null;
-    Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
 
     if (prefsUpdated == true) {
       _saveAccountUserPrefs();
@@ -682,7 +677,6 @@ class Auth2 with Service implements NotificationsListener {
       Storage().auth2AnonymousProfile = _anonymousProfile = Auth2UserProfile.empty();
       Storage().auth2Token = _token = null;
       Storage().auth2Account = _account = null;
-      Storage().auth2UiucToken = _uiucToken = null;
 
       _updateUserPrefsTimer?.cancel();
       _updateUserPrefsTimer = null;
@@ -740,19 +734,15 @@ class Auth2 with Service implements NotificationsListener {
           Response? response = await refreshTokenFuture;
           _refreshTokenFutures.remove(token.refreshToken);
 
-          if (response?.statusCode == 200) {
-            Map<String, dynamic>? responseJson = JsonUtils.decodeMap(response?.body);
-            Auth2Token? responseToken = (responseJson != null) ? Auth2Token.fromJson(JsonUtils.mapValue(responseJson['token'])) : null;
+          Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
+          if (responseJson != null) {
+            Auth2Token? responseToken = Auth2Token.fromJson(JsonUtils.mapValue(responseJson['token']));
             if ((responseToken != null) && responseToken.isValid) {
+              _log("Auth2: did refresh token:\nResponse Token: ${responseToken.refreshToken}\nSource Token: ${token.refreshToken}");
               _refreshTonenFailCounts.remove(token.refreshToken);
 
-              _log("Auth2: did refresh token:\nResponse Token: ${responseToken.refreshToken}\nSource Token: ${token.refreshToken}");
               if (token == _token) {
-                Storage().auth2Token = _token = responseToken;
-
-                Map<String, dynamic>? params = (responseJson != null) ? JsonUtils.mapValue(responseJson['params']) : null;
-                Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(JsonUtils.mapValue(params['oidc_token'])) : null;
-                Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
+                applyToken(responseToken, params: JsonUtils.mapValue(responseJson['params']));
                 return responseToken;
               }
               else if (token == _anonymousToken) {
@@ -783,6 +773,11 @@ class Auth2 with Service implements NotificationsListener {
       }
     }
     return null;
+  }
+
+  @protected
+  void applyToken(Auth2Token token, { Map<String, dynamic>? params }) {
+    Storage().auth2Token = _token = token;
   }
 
   static Future<Response?> _refreshToken(String? refreshToken) async {
@@ -1014,28 +1009,4 @@ class Auth2NetworkAuth extends _Auth2NetworkAuth {
   @override String? get _token => Auth2().token?.accessToken;
   @override String? get _tokenType => Auth2().token?.tokenType ?? 'Bearer';
   @override String  get _headerField => HttpHeaders.authorizationHeader;
-}
-
-class UiucIdNetworkAuth extends _Auth2NetworkAuth {
-
-  static final UiucIdNetworkAuth _instance = UiucIdNetworkAuth._internal();
-  UiucIdNetworkAuth._internal();
-  factory UiucIdNetworkAuth() => _instance;
-
-  @override String? get _token => Auth2().uiucToken?.idToken;
-  @override String? get _tokenType => Auth2().uiucToken?.tokenType ?? 'Bearer';
-  @override String  get _headerField => HttpHeaders.authorizationHeader;
-}
-
-class UiucAccessNetworkAuth extends _Auth2NetworkAuth {
-
-  static const String uiucAccessToken = 'access_token';
-
-  static final UiucAccessNetworkAuth _instance = UiucAccessNetworkAuth._internal();
-  UiucAccessNetworkAuth._internal();
-  factory UiucAccessNetworkAuth() => _instance;
-
-  @override String? get _token => Auth2().uiucToken?.accessToken;
-  @override String? get _tokenType => null;
-  @override String  get _headerField => uiucAccessToken;
 }

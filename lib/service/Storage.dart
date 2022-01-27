@@ -17,6 +17,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/storage.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -369,9 +370,12 @@ class Storage extends rokwire.Storage {
   @override String get auth2AnonymousPrefsKey => 'auth2AnonymousPrefs';
   @override String get auth2AnonymousProfileKey => 'auth2AnonymousProfile';
   @override String get auth2TokenKey => 'auth2Token';
-  @override String get auth2UiucTokenKey => 'auth2UiucToken';
   @override String get auth2AccountKey => 'auth2Account';
   
+  String get auth2UiucTokenKey => 'auth2UiucToken';
+  Auth2Token? get auth2UiucToken => Auth2Token.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(auth2UiucTokenKey)));
+  set auth2UiucToken(Auth2Token? value) => setEncryptedStringWithName(auth2UiucTokenKey, JsonUtils.encode(value?.toJson()));
+
   String get auth2CardTimeKey => 'auth2CardTime';
   int? get auth2CardTime => getIntWithName(auth2CardTimeKey);
   set auth2CardTime(int? value) => setIntWithName(auth2CardTimeKey, value);

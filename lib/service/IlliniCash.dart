@@ -29,7 +29,7 @@ import 'package:http/http.dart';
 import 'package:crypto/crypto.dart';
 import 'package:convert/convert.dart';
 
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:illinois/service/Config.dart';
