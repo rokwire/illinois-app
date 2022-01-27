@@ -21,7 +21,7 @@ import 'package:flutter/services.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/GeoFence.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';

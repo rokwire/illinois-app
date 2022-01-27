@@ -461,7 +461,6 @@ class Config with Service, NotificationsListener {
 
   // Getters: otherUniversityServices
   String? get assetsUrl                            => JsonUtils.stringValue(otherUniversityServices['assets_url']);
-  String? get iCardUrl                             => JsonUtils.stringValue(otherUniversityServices['icard_url']);
 
   // Getters: secretKeys
   String? get coreOrgId                            => JsonUtils.stringValue(secretCore['org_id']);

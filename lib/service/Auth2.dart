@@ -1,9 +1,19 @@
 
-import 'package:flutter/foundation.dart';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart' as rokwire;
+import 'package:rokwire_plugin/service/network.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
 class Auth2 extends rokwire.Auth2 {
@@ -16,9 +26,15 @@ class Auth2 extends rokwire.Auth2 {
   static String get notifyLogout            => rokwire.Auth2.notifyLogout;
   static String get notifyProfileChanged    => rokwire.Auth2.notifyProfileChanged;
   static String get notifyPrefsChanged      => rokwire.Auth2.notifyPrefsChanged;
-  static String get notifyCardChanged       => rokwire.Auth2.notifyCardChanged;
   static String get notifyUserDeleted       => rokwire.Auth2.notifyUserDeleted;
   static String get notifyPrepareUserDelete => rokwire.Auth2.notifyPrepareUserDelete;
+
+  static const String notifyCardChanged     = "edu.illinois.rokwire.auth2.card.changed";
+  
+  static const String _authCardName         = "idCard.json";
+
+  AuthCard?  _authCard;
+  File? _authCardCacheFile;
 
   // Singletone Factory
 
@@ -26,6 +42,54 @@ class Auth2 extends rokwire.Auth2 {
   Auth2.internal() : super.internal();
 
   factory Auth2() => ((rokwire.Auth2.instance is Auth2) ? (rokwire.Auth2.instance as Auth2) : (rokwire.Auth2.instance = Auth2.internal()));
+
+  // Service
+
+  @override
+  Future<void> initService() async {
+    _authCardCacheFile = await _getAuthCardCacheFile();
+    _authCard = await _loadAuthCardFromCache();
+
+    await super.initService();
+  }
+
+  @protected
+  void onAppLivecycleStateChanged(AppLifecycleState? state) {
+    super.onAppLivecycleStateChanged(state);
+    if (state == AppLifecycleState.resumed) {
+      _refreshAuthCardIfNeeded();
+    }
+  }
+  
+  @protected
+  Future<void> applyLogin(Auth2Account account, Auth2Token token, { Map<String, dynamic>? params }) async {
+    await super.applyLogin(account, token, params: params);
+    
+    String? authCardString = (StringUtils.isNotEmpty(account.authType?.uiucUser?.uin) && StringUtils.isNotEmpty(uiucToken?.accessToken)) ?
+      await _loadAuthCardStringFromNet(uin: account.authType?.uiucUser?.uin, accessToken: uiucToken?.accessToken) : null;
+    _authCard = AuthCard.fromJson(JsonUtils.decodeMap(authCardString));
+    Storage().auth2CardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
+    await _saveAuthCardStringToCache(authCardString);
+
+    NotificationService().notify(notifyCardChanged);
+  }
+
+  @protected
+  void logout({ Auth2UserPrefs? prefs }) {
+    super.logout(prefs: prefs);
+
+    if (_authCard != null) {
+      _authCard = null;
+      _saveAuthCardStringToCache(null);
+      Storage().auth2CardTime = null;
+      NotificationService().notify(notifyCardChanged);
+    }
+  }
+
+  // Getters
+  AuthCard? get authCard => _authCard;
+
+  // Overrides
 
   @override
   String? get deviceIdIdentifier => 'deviceUUID';
@@ -40,6 +104,85 @@ class Auth2 extends rokwire.Auth2 {
     excludedFoodIngredients: Storage().excludedFoodIngredientsPrefs,
     settings: FirebaseMessaging.storedSettings,
   );
+
+  // Auth Card
+
+  String get authCardName => _authCardName;
+
+  Future<File> _getAuthCardCacheFile() async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String cacheFilePath = join(appDocDir.path, authCardName);
+    return File(cacheFilePath);
+  }
+
+  Future<String?> _loadAuthCardStringFromCache() async {
+    try {
+      return ((_authCardCacheFile != null) && await _authCardCacheFile!.exists()) ? Storage().decrypt(await _authCardCacheFile!.readAsString()) : null;
+    }
+    on Exception catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  Future<void> _saveAuthCardStringToCache(String? value) async {
+    try {
+      if (_authCardCacheFile != null) {
+        if (value != null) {
+          await _authCardCacheFile!.writeAsString(Storage().encrypt(value)!, flush: true);
+        }
+        else if (await _authCardCacheFile!.exists()) {
+          await _authCardCacheFile!.delete();
+        }
+      }
+    }
+    on Exception catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<AuthCard?> _loadAuthCardFromCache() async {
+    return AuthCard.fromJson(JsonUtils.decodeMap(await _loadAuthCardStringFromCache()));
+  }
+
+  Future<String?> _loadAuthCardStringFromNet({String? uin, String? accessToken}) async {
+    String? url = Config().iCardUrl;
+    if (StringUtils.isNotEmpty(url) &&  StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(accessToken)) {
+      Response? response = await Network().post(url, headers: {
+        'UIN': uin,
+        'access_token': accessToken
+      });
+      return (response?.statusCode == 200) ? response!.body : null;
+    }
+    return null;
+  }
+
+  Future<void> _refreshAuthCardIfNeeded() async {
+    int? lastCheckTime = Storage().auth2CardTime;
+    DateTime? lastCheckDate = (lastCheckTime != null) ? DateTime.fromMillisecondsSinceEpoch(lastCheckTime) : null;
+    DateTime? lastCheckMidnight = DateTimeUtils.midnight(lastCheckDate);
+
+    DateTime now = DateTime.now();
+    DateTime? todayMidnight = DateTimeUtils.midnight(now);
+
+    // Do it one per day
+    if ((lastCheckMidnight == null) || (lastCheckMidnight.compareTo(todayMidnight!) < 0)) {
+      if (await _refreshAuthCard() != null) {
+        Storage().auth2CardTime = now.millisecondsSinceEpoch;
+      }
+    }
+  }
+
+  Future<AuthCard?> _refreshAuthCard() async {
+    String? authCardString = await _loadAuthCardStringFromNet(uin: account?.authType?.uiucUser?.uin, accessToken : uiucToken?.accessToken);
+    AuthCard? authCard = AuthCard.fromJson(JsonUtils.decodeMap((authCardString)));
+    if ((authCard != null) && (authCard != _authCard)) {
+      _authCard = authCard;
+      await _saveAuthCardStringToCache(authCardString);
+      NotificationService().notify(notifyCardChanged);
+    }
+    return authCard;
+  }
 
 }
 

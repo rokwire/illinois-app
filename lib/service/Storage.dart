@@ -371,7 +371,10 @@ class Storage extends rokwire.Storage {
   @override String get auth2TokenKey => 'auth2Token';
   @override String get auth2UiucTokenKey => 'auth2UiucToken';
   @override String get auth2AccountKey => 'auth2Account';
-  @override String get auth2CardTimeKey => 'auth2CardTime';
+  
+  String get auth2CardTimeKey => 'auth2CardTime';
+  int? get auth2CardTime => getIntWithName(auth2CardTimeKey);
+  set auth2CardTime(int? value) => setIntWithName(auth2CardTimeKey, value);
 
   //////////////////
   // Calendar

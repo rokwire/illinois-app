@@ -15,8 +15,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Auth2 with Service implements NotificationsListener {
@@ -29,11 +27,9 @@ class Auth2 with Service implements NotificationsListener {
   static const String notifyLogout            = "edu.illinois.rokwire.auth2.logout";
   static const String notifyProfileChanged    = "edu.illinois.rokwire.auth2.profile.changed";
   static const String notifyPrefsChanged      = "edu.illinois.rokwire.auth2.prefs.changed";
-  static const String notifyCardChanged       = "edu.illinois.rokwire.auth2.card.changed";
   static const String notifyUserDeleted       = "edu.illinois.rokwire.auth2.user.deleted";
   static const String notifyPrepareUserDelete = "edu.illinois.rokwire.auth2.user.prepare.delete";
 
-  static const String _authCardName           = "idCard.json";
   static const String _deviceIdIdentifier     = 'edu.illinois.rokwire.device_id';
 
   _OidcLogin? _oidcLogin;
@@ -56,9 +52,6 @@ class Auth2 with Service implements NotificationsListener {
   Auth2UserPrefs? _anonymousPrefs;
   Auth2UserProfile? _anonymousProfile;
   
-  AuthCard?  _authCard;
-  File? _authCardCacheFile;
-
   String? _deviceId;
   
   DateTime? _pausedDateTime;
@@ -104,9 +97,6 @@ class Auth2 with Service implements NotificationsListener {
     _anonymousPrefs = Storage().auth2AnonymousPrefs;
     _anonymousProfile = Storage().auth2AnonymousProfile;
 
-    _authCardCacheFile = await _getAuthCardCacheFile();
-    _authCard = await _loadAuthCardFromCache();
-
     _deviceId = await RokwirePlugin.getDeviceId(deviceIdIdentifier, deviceIdIdentifier2);
 
     if ((_account == null) && (_anonymousPrefs == null)) {
@@ -133,7 +123,7 @@ class Auth2 with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return {Storage(), Config()};
+    return { Storage(), Config() };
   }
 
   // NotificationsListener
@@ -141,23 +131,23 @@ class Auth2 with Service implements NotificationsListener {
   @override
   void onNotification(String name, dynamic param) {
     if (name == DeepLink.notifyUri) {
-      _onDeepLinkUri(param);
+      onDeepLinkUri(param);
     }
     else if (name == Auth2UserPrefs.notifyChanged) {
-      _onUserPrefsChanged(param);
+      onUserPrefsChanged(param);
     }
     else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+      onAppLivecycleStateChanged(param);
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  @protected
+  void onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
     else if (state == AppLifecycleState.resumed) {
-      _refreshAuthCardIfNeeded();
-      _createOidcAuthenticationTimerIfNeeded();
+      createOidcAuthenticationTimerIfNeeded();
 
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
@@ -169,17 +159,19 @@ class Auth2 with Service implements NotificationsListener {
     }
   }
 
-  String get _oidcRedirectUrl => '${DeepLink().appUrl}/oidc-auth';
+  @protected
+  String get oidcRedirectUrl => '${DeepLink().appUrl}/oidc-auth';
 
-  void _onDeepLinkUri(Uri? uri) {
+  @protected
+  void onDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri? redirectUri = Uri.tryParse(_oidcRedirectUrl);
+      Uri? redirectUri = Uri.tryParse(oidcRedirectUrl);
       if ((redirectUri != null) &&
           (redirectUri.scheme == uri.scheme) &&
           (redirectUri.authority == uri.authority) &&
           (redirectUri.path == uri.path))
       {
-        _handleOidcAuthentication(uri);
+        handleOidcAuthentication(uri);
       }
     }
   }
@@ -191,7 +183,6 @@ class Auth2 with Service implements NotificationsListener {
   Auth2Token? get anonymousToken => _anonymousToken;
   Auth2Token? get uiucToken => _uiucToken;
   Auth2Account? get account => _account;
-  AuthCard? get authCard => _authCard;
   String? get deviceId => _deviceId;
   
   String? get accountId => _account?.id ?? _anonymousId;
@@ -292,13 +283,13 @@ class Auth2 with Service implements NotificationsListener {
         _oidcAuthenticationCompleters = <Completer<bool?>>[];
         NotificationService().notify(notifyLoginStarted, Auth2LoginType.oidcIllinois);
 
-        _OidcLogin? oidcLogin = await _getOidcData();
+        _OidcLogin? oidcLogin = await getOidcData();
         if (oidcLogin?.loginUrl != null) {
           _oidcLogin = oidcLogin;
           await _launchUrl(_oidcLogin?.loginUrl);
         }
         else {
-          _completeOidcAuthentication(false);
+          completeOidcAuthentication(false);
           return false;
         }
       }
@@ -311,21 +302,23 @@ class Auth2 with Service implements NotificationsListener {
     return false;
   }
 
-  Future<bool> _handleOidcAuthentication(Uri uri) async {
+  @protected
+  Future<bool> handleOidcAuthentication(Uri uri) async {
     
     RokwirePlugin.dismissSafariVC();
     
-    _cancelOidcAuthenticationTimer();
+    cancelOidcAuthenticationTimer();
 
     _processingOidcAuthentication = true;
-    bool result = await _processOidcAuthentication(uri);
+    bool result = await processOidcAuthentication(uri);
     _processingOidcAuthentication = false;
 
-    _completeOidcAuthentication(result);
+    completeOidcAuthentication(result);
     return result;
   }
 
-  Future<bool> _processOidcAuthentication(Uri? uri) async {
+  @protected
+  Future<bool> processOidcAuthentication(Uri? uri) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
@@ -346,14 +339,15 @@ class Auth2 with Service implements NotificationsListener {
 
       Response? response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
-      bool result = await _processLoginResponse(responseJson);
+      bool result = await processLoginResponse(responseJson);
       _log(result ? "Auth2: login succeeded: ${response?.statusCode}\n${response?.body}" : "Auth2: login failed: ${response?.statusCode}\n${response?.body}");
       return result;
     }
     return false;
   }
 
-  Future<bool> _processLoginResponse(Map<String, dynamic>? responseJson) async {
+  @protected
+  Future<bool> processLoginResponse(Map<String, dynamic>? responseJson) async {
     if (responseJson != null) {
       Auth2Token? token = Auth2Token.fromJson(JsonUtils.mapValue(responseJson['token']));
       Auth2Account? account = Auth2Account.fromJson(JsonUtils.mapValue(responseJson['account']),
@@ -361,47 +355,42 @@ class Auth2 with Service implements NotificationsListener {
         profile: _anonymousProfile ?? Auth2UserProfile.empty());
 
       if ((token != null) && token.isValid && (account != null) && account.isValid) {
-        
-        Map<String, dynamic>? params = JsonUtils.mapValue(responseJson['params']);
-        Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(JsonUtils.mapValue(params['oidc_token'])) : null;
-
-        String? authCardString = (StringUtils.isNotEmpty(account.authType?.uiucUser?.uin) && StringUtils.isNotEmpty(uiucToken?.accessToken)) ?
-          await _loadAuthCardStringFromNet(uin: account.authType?.uiucUser?.uin, accessToken: uiucToken?.accessToken) : null;
-        AuthCard? authCard = AuthCard.fromJson(JsonUtils.decodeMap(authCardString));
-        await _saveAuthCardStringToCache(authCardString);
-
-        _refreshTonenFailCounts.remove(_token?.refreshToken);
-
-        bool? prefsUpdated = account.prefs?.apply(_anonymousPrefs);
-        bool? profileUpdated = account.profile?.apply(_anonymousProfile);
-        Storage().auth2Token = _token = token;
-        Storage().auth2Account = _account = account;
-        Storage().auth2AnonymousPrefs = _anonymousPrefs = null;
-        Storage().auth2AnonymousProfile = _anonymousProfile = null;
-        Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
-
-        _authCard = authCard;
-        Storage().auth2CardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
-
-        if (prefsUpdated == true) {
-          _saveAccountUserPrefs();
-        }
-
-        if (profileUpdated == true) {
-          _saveAccountUserProfile(account.profile);
-        }
-
-        NotificationService().notify(notifyProfileChanged);
-        NotificationService().notify(notifyPrefsChanged);
-        NotificationService().notify(notifyCardChanged);
-        NotificationService().notify(notifyLoginChanged);
+        applyLogin(account, token, params: JsonUtils.mapValue(responseJson['params']));
         return true;
       }
     }
     return false;
   }
 
-  Future<_OidcLogin?> _getOidcData() async {
+  @protected
+  Future<void> applyLogin(Auth2Account account, Auth2Token token, { Map<String, dynamic>? params }) async {
+    Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(JsonUtils.mapValue(params['oidc_token'])) : null;
+
+    _refreshTonenFailCounts.remove(_token?.refreshToken);
+
+    bool? prefsUpdated = account.prefs?.apply(_anonymousPrefs);
+    bool? profileUpdated = account.profile?.apply(_anonymousProfile);
+    Storage().auth2Token = _token = token;
+    Storage().auth2Account = _account = account;
+    Storage().auth2AnonymousPrefs = _anonymousPrefs = null;
+    Storage().auth2AnonymousProfile = _anonymousProfile = null;
+    Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
+
+    if (prefsUpdated == true) {
+      _saveAccountUserPrefs();
+    }
+
+    if (profileUpdated == true) {
+      _saveAccountUserProfile(account.profile);
+    }
+
+    NotificationService().notify(notifyProfileChanged);
+    NotificationService().notify(notifyPrefsChanged);
+    NotificationService().notify(notifyLoginChanged);
+  }
+
+  @protected
+  Future<_OidcLogin?> getOidcData() async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null)) {
 
       String url = "${Config().coreUrl}/services/auth/login-url";
@@ -413,7 +402,7 @@ class Auth2 with Service implements NotificationsListener {
         'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
-        'redirect_uri': _oidcRedirectUrl,
+        'redirect_uri': oidcRedirectUrl,
       });
       Response? response = await Network().post(url, headers: headers, body: post);
       return _OidcLogin.fromJson(JsonUtils.decodeMap(response?.body));
@@ -421,26 +410,29 @@ class Auth2 with Service implements NotificationsListener {
     return null;
   }
 
-  void _createOidcAuthenticationTimerIfNeeded() {
+  @protected
+  void createOidcAuthenticationTimerIfNeeded() {
     if ((_oidcAuthenticationCompleters != null) && (_processingOidcAuthentication != true)) {
       if (_oidcAuthenticationTimer != null) {
         _oidcAuthenticationTimer!.cancel();
       }
       _oidcAuthenticationTimer = Timer(const Duration(milliseconds: 100), () {
-        _completeOidcAuthentication(null);
+        completeOidcAuthentication(null);
         _oidcAuthenticationTimer = null;
       });
     }
   }
 
-  void _cancelOidcAuthenticationTimer() {
+  @protected
+  void cancelOidcAuthenticationTimer() {
     if(_oidcAuthenticationTimer != null){
       _oidcAuthenticationTimer!.cancel();
       _oidcAuthenticationTimer = null;
     }
   }
 
-  void _completeOidcAuthentication(bool? success) {
+  @protected
+  void completeOidcAuthentication(bool? success) {
     
     _notifyLogin(Auth2LoginType.oidcIllinois, success);
 
@@ -507,7 +499,7 @@ class Auth2 with Service implements NotificationsListener {
 
       Response? response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
-      bool result = await _processLoginResponse(responseJson);
+      bool result = await processLoginResponse(responseJson);
       _notifyLogin(Auth2LoginType.phoneTwilio, result);
       return result;
     }
@@ -541,7 +533,7 @@ class Auth2 with Service implements NotificationsListener {
 
       Response? response = await Network().post(url, headers: headers, body: post);
       if (response?.statusCode == 200) {
-        bool result = await _processLoginResponse(JsonUtils.decodeMap(response?.body));
+        bool result = await processLoginResponse(JsonUtils.decodeMap(response?.body));
         _notifyLogin(Auth2LoginType.email, result);
         return result ? Auth2EmailSignInResult.succeded : Auth2EmailSignInResult.failed;
       }
@@ -698,11 +690,6 @@ class Auth2 with Service implements NotificationsListener {
       _updateUserPrefsClient?.close();
       _updateUserPrefsClient = null;
 
-      _authCard = null;
-      _saveAuthCardStringToCache(null);
-      Storage().auth2CardTime = null;
-
-      NotificationService().notify(notifyCardChanged);
       NotificationService().notify(notifyProfileChanged);
       NotificationService().notify(notifyPrefsChanged);
       NotificationService().notify(notifyLoginChanged);
@@ -815,88 +802,10 @@ class Auth2 with Service implements NotificationsListener {
     return null;
   }
 
-  // Auth Card
-
-  String get authCardName => _authCardName;
-
-  Future<File> _getAuthCardCacheFile() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, authCardName);
-    return File(cacheFilePath);
-  }
-
-  Future<String?> _loadAuthCardStringFromCache() async {
-    try {
-      return ((_authCardCacheFile != null) && await _authCardCacheFile!.exists()) ? Storage().decrypt(await _authCardCacheFile!.readAsString()) : null;
-    }
-    on Exception catch (e) {
-      debugPrint(e.toString());
-    }
-    return null;
-  }
-
-  Future<void> _saveAuthCardStringToCache(String? value) async {
-    try {
-      if (_authCardCacheFile != null) {
-        if (value != null) {
-          await _authCardCacheFile!.writeAsString(Storage().encrypt(value)!, flush: true);
-        }
-        else if (await _authCardCacheFile!.exists()) {
-          await _authCardCacheFile!.delete();
-        }
-      }
-    }
-    on Exception catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-
-  Future<AuthCard?> _loadAuthCardFromCache() async {
-    return AuthCard.fromJson(JsonUtils.decodeMap(await _loadAuthCardStringFromCache()));
-  }
-
-  Future<String?> _loadAuthCardStringFromNet({String? uin, String? accessToken}) async {
-    String? url = Config().iCardUrl;
-    if (StringUtils.isNotEmpty(url) &&  StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(accessToken)) {
-      Response? response = await Network().post(url, headers: {
-        'UIN': uin,
-        'access_token': accessToken
-      });
-      return (response?.statusCode == 200) ? response!.body : null;
-    }
-    return null;
-  }
-
-  Future<void> _refreshAuthCardIfNeeded() async {
-    int? lastCheckTime = Storage().auth2CardTime;
-    DateTime? lastCheckDate = (lastCheckTime != null) ? DateTime.fromMillisecondsSinceEpoch(lastCheckTime) : null;
-    DateTime? lastCheckMidnight = DateTimeUtils.midnight(lastCheckDate);
-
-    DateTime now = DateTime.now();
-    DateTime? todayMidnight = DateTimeUtils.midnight(now);
-
-    // Do it one per day
-    if ((lastCheckMidnight == null) || (lastCheckMidnight.compareTo(todayMidnight!) < 0)) {
-      if (await _refreshAuthCard() != null) {
-        Storage().auth2CardTime = now.millisecondsSinceEpoch;
-      }
-    }
-  }
-
-  Future<AuthCard?> _refreshAuthCard() async {
-    String? authCardString = await _loadAuthCardStringFromNet(uin: _account?.authType?.uiucUser?.uin, accessToken : _uiucToken?.accessToken);
-    AuthCard? authCard = AuthCard.fromJson(JsonUtils.decodeMap((authCardString)));
-    if ((authCard != null) && (authCard != _authCard)) {
-      _authCard = authCard;
-      await _saveAuthCardStringToCache(authCardString);
-      NotificationService().notify(notifyCardChanged);
-    }
-    return authCard;
-  }
-
   // User Prefs
 
-  void _onUserPrefsChanged(Auth2UserPrefs? prefs) {
+  @protected
+  void onUserPrefsChanged(Auth2UserPrefs? prefs) {
     if (identical(prefs, _anonymousPrefs)) {
       Storage().auth2AnonymousPrefs = _anonymousPrefs;
       NotificationService().notify(notifyPrefsChanged);

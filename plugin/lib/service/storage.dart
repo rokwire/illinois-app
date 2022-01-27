@@ -275,10 +275,6 @@ class Storage with Service {
   Auth2Account? get auth2Account => Auth2Account.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(auth2AccountKey)));
   set auth2Account(Auth2Account? value) => setEncryptedStringWithName(auth2AccountKey, JsonUtils.encode(value?.toJson()));
 
-  String get auth2CardTimeKey => 'edu.illinois.rokwire.auth2.card_time';
-  int? get auth2CardTime => getIntWithName(auth2CardTimeKey);
-  set auth2CardTime(int? value) => setIntWithName(auth2CardTimeKey, value);
-
   // Http Proxy
   String get httpProxyEnabledKey =>  'edu.illinois.rokwire.http_proxy.enabled';
   bool? get httpProxyEnabled => getBoolWithName(httpProxyEnabledKey);
