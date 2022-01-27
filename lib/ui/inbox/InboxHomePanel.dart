@@ -207,14 +207,17 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _handleRedirectTap(InboxMessage message) {
-    FirebaseMessaging().processDataMessage(message.data, allowedTypes: {
-      FirebaseMessaging.payloadTypeEventDetail,
-      FirebaseMessaging.payloadTypeGameDetail,
-      FirebaseMessaging.payloadTypeAthleticsGameStarted,
-      FirebaseMessaging.payloadTypeAthleticsNewDetail,
-      FirebaseMessaging.payloadTypeGroup,
-    });
+    String? messageType = FirebaseMessaging.getMessageType(message.data);
+    if ((messageType == FirebaseMessaging.payloadTypeEventDetail) ||
+        (messageType == FirebaseMessaging.payloadTypeGameDetail) ||
+        (messageType == FirebaseMessaging.payloadTypeAthleticsGameStarted) ||
+        (messageType == FirebaseMessaging.payloadTypeAthleticsNewDetail) ||
+        (messageType == FirebaseMessaging.payloadTypeGroup))
+    {
+      FirebaseMessaging().processDataMessage(message.data);
+    }
   }
+  
   // Banner
   Widget _buildBanner(){ //TBD localize
     return

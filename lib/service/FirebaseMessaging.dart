@@ -232,52 +232,47 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   // Message Processing
 
   @override
-  void processDataMessage(Map<String, dynamic>? data, {Set<String>? allowedTypes}) {
-    String? type = _getMessageType(data);
-    if ((type != null) && (allowedTypes?.contains(type) ?? true)) {
-      if (type == payloadTypeConfigUpdate) {
-        _onConfigUpdate(data);
-      }
-      else if (type == payloadTypePopupMessage) {
-        NotificationService().notify(notifyPopupMessage, data);
-      }
-      else if (type == payloadTypeOpenPoll) {
-        NotificationService().notify(notifyPollOpen, data);
-      }
-      else if (type == payloadTypeEventDetail) {
-        NotificationService().notify(notifyEventDetail, data);
-      }
-      else if (type == payloadTypeGameDetail) {
-        NotificationService().notify(notifyGameDetail, data);
-      }
-      else if (type == payloadTypeAthleticsGameStarted) {
-        NotificationService().notify(notifyAthleticsGameStarted, data);
-      }
-      else if (type == payloadTypeAthleticsNewDetail) {
-        NotificationService().notify(notifyAthleticsNewsUpdated, data);
-      }
-      else if (type == payloadTypeGroup) {
-        NotificationService().notify(notifyGroupsNotification, data);
-      }
-      else if (type == payloadTypeHome) {
-        NotificationService().notify(notifyHomeNotification, data);
-      }
-      else if (type == payloadTypeInbox) {
-        NotificationService().notify(notifyInboxNotification, data);
-      }
-      else if (_isScoreTypeMessage(type)) {
-        NotificationService().notify(notifyScoreMessage, data);
-      }
-      else {
-        Log.d("FCM: unknown message type: $type");
-      }
+  void processDataMessage(Map<String, dynamic>? data) {
+    String? type = getMessageType(data);
+    if (type == payloadTypeConfigUpdate) {
+      _onConfigUpdate(data);
+    }
+    else if (type == payloadTypePopupMessage) {
+      NotificationService().notify(notifyPopupMessage, data);
+    }
+    else if (type == payloadTypeOpenPoll) {
+      NotificationService().notify(notifyPollOpen, data);
+    }
+    else if (type == payloadTypeEventDetail) {
+      NotificationService().notify(notifyEventDetail, data);
+    }
+    else if (type == payloadTypeGameDetail) {
+      NotificationService().notify(notifyGameDetail, data);
+    }
+    else if (type == payloadTypeAthleticsGameStarted) {
+      NotificationService().notify(notifyAthleticsGameStarted, data);
+    }
+    else if (type == payloadTypeAthleticsNewDetail) {
+      NotificationService().notify(notifyAthleticsNewsUpdated, data);
+    }
+    else if (type == payloadTypeGroup) {
+      NotificationService().notify(notifyGroupsNotification, data);
+    }
+    else if (type == payloadTypeHome) {
+      NotificationService().notify(notifyHomeNotification, data);
+    }
+    else if (type == payloadTypeInbox) {
+      NotificationService().notify(notifyInboxNotification, data);
+    }
+    else if (_isScoreTypeMessage(type)) {
+      NotificationService().notify(notifyScoreMessage, data);
     }
     else {
-      Log.d("FCM: undefined message type: ${JsonUtils.encode(data)}");
+      Log.d("FCM: unknown message type: ${JsonUtils.encode(data)}");
     }
   }
 
-  String? _getMessageType(Map<String, dynamic>? data) {
+  static String? getMessageType(Map<String, dynamic>? data) {
     if (data == null)
       return null;
 
