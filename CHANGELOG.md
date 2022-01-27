@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed  
 - Inbox and FirebaseMessaging services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 - Moved UIUC token and Auth Card support from rokwire plugin to application level [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- FlexUI and Onbaording services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 
 ## [3.2.6] - 2022-01-26
 ### Added
