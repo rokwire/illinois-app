@@ -16,7 +16,7 @@
 
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:illinois/model/Inbox.dart';
+import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/storage.dart' as rokwire;

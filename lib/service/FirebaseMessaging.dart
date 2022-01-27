@@ -25,7 +25,6 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Inbox.dart';
 
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -224,7 +223,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([FirebaseCore(), Storage(), NativeCommunicator(), Auth2()]);
+    return Set.from([FirebaseCore(), Storage(), Auth2()]);
   }
 
   // NotificationsListener

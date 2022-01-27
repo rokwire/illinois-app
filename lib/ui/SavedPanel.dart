@@ -21,7 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Inbox.dart';
+import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:rokwire_plugin/service/assets.dart';
