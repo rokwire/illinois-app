@@ -24,6 +24,8 @@ class GiesPanel extends StatefulWidget{
 }
 
 class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
+  GlobalKey _titleKey = GlobalKey();
+  GlobalKey _pageKey = GlobalKey();
 
   @override
   void initState() {
@@ -62,7 +64,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   Widget _buildTitle() {
     String? progress = JsonUtils.intValue(_currentPage["progress"])?.toString();
-    return Container(color: Styles().colors!.fillColorPrimary, child:
+    return Container(key: _titleKey, color: Styles().colors!.fillColorPrimary, child:
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10), child:
         Column(children: [
           Visibility( visible:  progress!=null,
@@ -169,7 +171,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   Widget _buildContent() {
     return Container(color: Colors.white, padding: EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0), child:
-      _GiesPageWidget(page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < Gies().navigationPages!.length) ? _onTapBack : null,onTapNotes: _onTapNotes, showTitle: false,),
+      _GiesPageWidget(key: _pageKey, page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < Gies().navigationPages!.length) ? _onTapBack : null,onTapNotes: _onTapNotes, showTitle: false,),
     );
   }
 
@@ -272,6 +274,11 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
   void onNotification(String name, param) {
     if(name == Gies.notifyPageChanged){
       setState(() {});
+      _pageKey = GlobalKey();// reset page
+      if(_titleKey.currentContext!=null) {
+        Scrollable.ensureVisible(
+            _titleKey.currentContext!, duration: Duration(milliseconds: 300));
+      }
     }
   }
 
@@ -297,7 +304,7 @@ class _GiesPageWidget extends StatefulWidget{
   final void Function()? onTapNotes;
   final bool showTitle;
 
-  _GiesPageWidget({this.page, this.onTapLink, this.onTapButton, this.onTapBack, this.showTitle = true, this.onTapNotes});
+  _GiesPageWidget({Key? key, this.page, this.onTapLink, this.onTapButton, this.onTapBack, this.showTitle = true, this.onTapNotes}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GiesPageState();
@@ -684,6 +691,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     // if(_currentPage != (_pageController?.page?.toInt() ?? 0)){
     //   _currentPage = (_pageController?.page?.toInt() ?? 0); //Refresh if needed
     // }
+    _currentPage = startPageIndex;
     NotificationService().subscribe(this, Gies.notifyPageChanged);
   }
 
@@ -785,7 +793,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     double pageViewport = (screenWidth - 40) / screenWidth;
 
     if (_pageController == null) {
-      _pageController = PageController(viewportFraction: pageViewport, keepPage: true);
+      _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage>=0? _currentPage : 0, keepPage: true);
     }
 
     return
@@ -889,7 +897,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     if(widget.tabs!=null) {
       for (int index = 0; index<widget.tabs!.length; index++) {
         dynamic tabData = widget.tabs![index];
-        String? pageId = tabData != null ? JsonUtils.stringValue("page_id") : null;
+        String? pageId = tabData != null ? JsonUtils.stringValue(tabData["page_id"]) : null;
         if(pageId!=null && !(Gies().completedPages?.contains(pageId) ?? false)){
           return index;
         }
@@ -902,8 +910,8 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   @override
   void onNotification(String name, param) {
     if(name == Gies.notifyPageChanged){
-      _currentPage = 0; //Reset to default when we change the page (fix missing selected tab)
-      _pageController?.jumpToPage(_currentPage);
+      // _currentPage = 0; //Reset to default when we change the page (fix missing selected tab)
+      // _pageController?.jumpToPage(_currentPage);
     }
   }
 }
