@@ -105,7 +105,7 @@ class CanvasCourse {
     ) : null;
   }
 
-  static List<CanvasCourse>? fromJsonList(List<dynamic>? jsonList) {
+  static List<CanvasCourse>? listFromJson(List<dynamic>? jsonList) {
     if (CollectionUtils.isEmpty(jsonList)) {
       return null;
     }
@@ -353,5 +353,299 @@ class CanvasEnrollment {
       }
     }
     return jsonList;
+  }
+}
+
+////////////////////////////////
+// CanvasFile
+
+class CanvasFile {
+  final int? id;
+  final String? uuid;
+  final int? folderId;
+  
+  final String? displayName;
+  final String? fileName;
+  final String? contentType;
+  final int? size;
+
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final DateTime? modifiedAt;
+  final DateTime? lockAt;
+  final DateTime? unlockAt;
+
+  final bool? locked;
+  final bool? lockedForUser;
+  final bool? hidden;
+  final bool? hiddenForUser;
+
+  final String? url;
+  final String? thumbnailUrl;
+  final String? previewUrl;
+  
+  final String? mimeClass;
+  final String? mediaEntryId;
+  
+  final String? lockInfo;
+  final String? lockExplanation;
+
+  CanvasFile({this.id, this.uuid, this.folderId, 
+    this.displayName, this.fileName, this.contentType, this.size, 
+    this.createdAt, this.updatedAt, this.modifiedAt, this.lockAt, this.unlockAt, 
+    this.locked, this.lockedForUser, this.hidden, this.hiddenForUser,
+    this.url, this.thumbnailUrl, this.previewUrl,
+    this.mimeClass, this.mediaEntryId,
+    this.lockInfo, this.lockExplanation});
+
+  static CanvasFile? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasFile(
+            id: JsonUtils.intValue(json['id']),
+            uuid: JsonUtils.stringValue(json['uuid']),
+            folderId: JsonUtils.intValue(json['folder_id']),
+
+            displayName: JsonUtils.stringValue(json['display_name']),
+            fileName: JsonUtils.stringValue(json['filename']),
+            contentType: JsonUtils.stringValue(json['content-type']),
+            size: JsonUtils.intValue(json['size']),
+
+            createdAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+            updatedAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['updated_at']), isUtc: true),
+            modifiedAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['modified_at']), isUtc: true),
+            lockAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['lock_at']), isUtc: true),
+            unlockAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['unlock_at']), isUtc: true),
+
+            locked: JsonUtils.boolValue(json['locked']),
+            lockedForUser: JsonUtils.boolValue(json['locked_for_user']),
+            hidden: JsonUtils.boolValue(json['hidden']),
+            hiddenForUser: JsonUtils.boolValue(json['hidden_for_user']),
+
+            url: JsonUtils.stringValue(json['url']),
+            thumbnailUrl: JsonUtils.stringValue(json['thumbnail_url']),
+            previewUrl: JsonUtils.stringValue(json['preview_url']),
+
+            mimeClass: JsonUtils.stringValue(json['mime_class']),
+            mediaEntryId: JsonUtils.stringValue(json['media_entry_id']),
+
+            lockInfo: JsonUtils.stringValue(json['lock_info']),
+            lockExplanation: JsonUtils.stringValue(json['lock_explanation']),
+          )
+        : null;
+  }
+
+  bool operator ==(o) =>
+    (o is CanvasFile) &&
+      (o.id == id) &&
+      (o.uuid == uuid) &&
+      (o.folderId == folderId) &&
+
+      (o.displayName == displayName) &&
+      (o.fileName == fileName) &&
+      (o.contentType == contentType) &&
+      (o.size == size) &&
+
+      (o.createdAt == createdAt) &&
+      (o.updatedAt == updatedAt) &&
+      (o.modifiedAt == modifiedAt) &&
+      (o.lockAt == lockAt) &&
+      (o.unlockAt == unlockAt) &&
+
+      (o.locked == locked) &&
+      (o.lockedForUser == lockedForUser) &&
+      (o.hidden == hidden) &&
+      (o.hiddenForUser == hiddenForUser) &&
+      
+      (o.url == url) &&
+      (o.thumbnailUrl == thumbnailUrl) &&
+      (o.previewUrl == previewUrl) &&
+      
+      (o.mimeClass == mimeClass) &&
+      (o.mediaEntryId == mediaEntryId) &&
+      
+      (o.lockInfo == lockInfo) &&
+      (o.lockExplanation == lockExplanation);
+
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (uuid?.hashCode ?? 0) ^
+    (folderId?.hashCode ?? 0) ^
+
+    (displayName?.hashCode ?? 0) ^
+    (fileName?.hashCode ?? 0) ^
+    (contentType?.hashCode ?? 0) ^
+    (size?.hashCode ?? 0) ^
+
+    (createdAt?.hashCode ?? 0) ^
+    (updatedAt?.hashCode ?? 0) ^
+    (modifiedAt?.hashCode ?? 0) ^
+    (lockAt?.hashCode ?? 0) ^
+    (unlockAt?.hashCode ?? 0) ^
+
+    (locked?.hashCode ?? 0) ^
+    (lockedForUser?.hashCode ?? 0) ^
+    (hidden?.hashCode ?? 0) ^
+    (hiddenForUser?.hashCode ?? 0) ^
+
+    (url?.hashCode ?? 0) ^
+    (thumbnailUrl?.hashCode ?? 0) ^
+    (previewUrl?.hashCode ?? 0) ^
+    
+    (mimeClass?.hashCode ?? 0) ^
+    (mediaEntryId?.hashCode ?? 0) ^
+    
+    (lockInfo?.hashCode ?? 0) ^
+    (lockExplanation?.hashCode ?? 0);
+
+  static List<CanvasFile>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasFile>? result;
+    if (jsonList != null) {
+      result = <CanvasFile>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasFile.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+}
+
+////////////////////////////////
+// CanvasFolder
+
+class CanvasFolder {
+  final int? id;
+  final int? parentFolderId;
+
+  final String? name;
+  final String? fullName;
+  
+  final int? contextId;
+  final String? contextType;
+
+  final int? position;
+  final String? filesUrl;
+  final int? filesCount;
+  final String? foldersUrl;
+  final int? foldersCount;
+
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final DateTime? lockAt;
+  final DateTime? unlockAt;
+
+  final bool? locked;
+  final bool? lockedForUser;
+  final bool? hidden;
+  final bool? hiddenForUser;
+
+  final bool? forSubmissions;
+
+  CanvasFolder({this.id, this.parentFolderId,
+    this.name, this.fullName,
+    this.contextId, this.contextType,
+    this.position, this.filesUrl, this.filesCount, this.foldersUrl, this.foldersCount,
+    this.createdAt, this.updatedAt, this.lockAt, this.unlockAt,
+    this.locked, this.lockedForUser, this.hidden, this.hiddenForUser,
+    this.forSubmissions});
+
+  static CanvasFolder? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasFolder(
+            id: JsonUtils.intValue(json['id']),
+            parentFolderId: JsonUtils.intValue(json['parent_folder_id']),
+
+            name: JsonUtils.stringValue(json['name']),
+            fullName: JsonUtils.stringValue(json['full_name']),
+
+            contextId: JsonUtils.intValue(json['context_id']),
+            contextType: JsonUtils.stringValue(json['context_type']),
+            
+            position: JsonUtils.intValue(json['position']),
+            filesUrl: JsonUtils.stringValue(json['files_url']),
+            filesCount: JsonUtils.intValue(json['files_count']),
+            foldersUrl: JsonUtils.stringValue(json['folders_url']),
+            foldersCount: JsonUtils.intValue(json['folders_count']),
+
+            createdAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+            updatedAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['updated_at']), isUtc: true),
+            lockAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['lock_at']), isUtc: true),
+            unlockAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['unlock_at']), isUtc: true),
+
+            locked: JsonUtils.boolValue(json['locked']),
+            lockedForUser: JsonUtils.boolValue(json['locked_for_user']),
+            hidden: JsonUtils.boolValue(json['hidden']),
+            hiddenForUser: JsonUtils.boolValue(json['hidden_for_user']),
+            
+            forSubmissions: JsonUtils.boolValue(json['for_submissions']),
+          )
+        : null;
+  }
+
+  bool operator ==(o) =>
+    (o is CanvasFolder) &&
+      (o.id == id) &&
+      (o.parentFolderId == parentFolderId) &&
+
+      (o.name == name) &&
+      (o.fullName == fullName) &&
+
+      (o.contextId == contextId) &&
+      (o.contextType == contextType) &&
+      
+      (o.position == position) &&
+      (o.filesUrl == filesUrl) &&
+      (o.filesCount == filesCount) &&
+      (o.foldersUrl == foldersUrl) &&
+      (o.foldersCount == foldersCount) &&
+
+      (o.createdAt == createdAt) &&
+      (o.updatedAt == updatedAt) &&
+      (o.lockAt == lockAt) &&
+      (o.unlockAt == unlockAt) &&
+
+      (o.locked == locked) &&
+      (o.lockedForUser == lockedForUser) &&
+      (o.hidden == hidden) &&
+      (o.hiddenForUser == hiddenForUser) &&
+
+      (o.forSubmissions == forSubmissions);
+
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (parentFolderId?.hashCode ?? 0) ^
+
+    (name?.hashCode ?? 0) ^
+    (fullName?.hashCode ?? 0) ^
+
+    (contextId?.hashCode ?? 0) ^
+    (contextType?.hashCode ?? 0) ^
+    
+    (position?.hashCode ?? 0) ^
+    (filesUrl?.hashCode ?? 0) ^
+    (filesCount?.hashCode ?? 0) ^
+    (foldersUrl?.hashCode ?? 0) ^
+    (foldersCount?.hashCode ?? 0) ^
+
+    (createdAt?.hashCode ?? 0) ^
+    (updatedAt?.hashCode ?? 0) ^
+    (lockAt?.hashCode ?? 0) ^
+    (unlockAt?.hashCode ?? 0) ^
+
+    (locked?.hashCode ?? 0) ^
+    (lockedForUser?.hashCode ?? 0) ^
+    (hidden?.hashCode ?? 0) ^
+    (hiddenForUser?.hashCode ?? 0) ^
+
+    (forSubmissions?.hashCode ?? 0);
+
+  static List<CanvasFolder>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasFolder>? result;
+    if (jsonList != null) {
+      result = <CanvasFolder>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasFolder.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
   }
 }
