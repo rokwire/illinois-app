@@ -690,6 +690,30 @@ class Auth2 with Service implements NotificationsListener {
     return false;
   }
 
+  Future<bool> unlinkAccountAuthType(Auth2LoginType? loginType, String identifier) async {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (loginType != null)) {
+      String url = "${Config().coreUrl}/services/auth/account/auth-type/link";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String? body = JsonUtils.encode({
+        'auth_type': auth2LoginTypeToString(loginType),
+        'app_type_identifier': Config().appPlatformId,
+        'identifier': identifier,
+      });
+
+      Response? response = await Network().delete(url, headers: headers, body: body, auth: NetworkAuth.Auth2);
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
+      List<Auth2Type>? authTypes = (responseJson != null) ? Auth2Type.listFromJson(JsonUtils.listValue(responseJson['auth_types'])) : null;
+      if (authTypes != null) {
+        Storage().auth2Account = _account = Auth2Account.fromOther(_account, authTypes: authTypes);
+        NotificationService().notify(notifyLinkChanged);
+        return true;
+      }
+    }
+    return false;
+  }
+
   // Device Info
 
   Map<String, dynamic> get _deviceInfo {

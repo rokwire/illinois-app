@@ -183,12 +183,14 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
 
     if (!_link) {
       Auth2().authenticateWithPhone(phoneNumber).then((success) => _loginByPhoneCallback(success, phoneNumber));
-    } else {
+    } else if (!Auth2().isPhoneLinked){
       Map<String, dynamic> creds = {
         "phone": phoneNumber
       };
       Map<String, dynamic> params = {};
       Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((success) => _loginByPhoneCallback(success, phoneNumber));
+    } else {
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.linked.text", "You have already linked a phone number to your account."));
     }
   }
 
@@ -227,11 +229,18 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
       if (mounted) {
         setState(() { _isLoading = false; });
         if (state != null) {
-          if (_link && state != Auth2EmailAccountState.nonExistent) {
-            setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.link_email.exists", "You have already linked this email address to your account."));
-          } else {
+          if (_link) {
+            if (state != Auth2EmailAccountState.nonExistent) {
+              setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.link.exists", "You have already linked this email address to your account."));
+              return;
+            } else if (Auth2().isEmailLinked) {
+              setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.linked.text", "You have already linked an email address to your account."));
+              return;
+            }
             Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: state, onboardingContext: widget.onboardingContext)));
+            return;
           }
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: state, onboardingContext: widget.onboardingContext)));
         }
         else {
           setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));
