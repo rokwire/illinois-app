@@ -6,6 +6,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class Gies with Service{
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
+  static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
 
   List<dynamic>? _pages;
   List<String>?  _navigationPages;
@@ -126,6 +127,11 @@ class Gies with Service{
         Storage().giesCompletedPages = _completedPages;
         NotificationService().notify(notifyPageCompleted, pageId);
       }
+    }
+
+    String? swipeToId = JsonUtils.stringValue(button["swipe_page"]); //This is _StepsHorizontalListWidget action
+    if(swipeToId!=null) {
+      NotificationService().notify(notifySwipeToPage, swipeToId);
     }
 
     String? pushPageId = JsonUtils.stringValue(button['page']);

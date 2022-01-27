@@ -683,16 +683,17 @@ class _StepsHorizontalListWidget extends StatefulWidget {
 class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implements NotificationsListener{
   PageController? _pageController;
   int _currentPage = 0;
-  bool requestRefresh = false;
+  bool requestDelayedRefresh = false;
 
   @override
   void initState() {
     super.initState();
-    // if(_currentPage != (_pageController?.page?.toInt() ?? 0)){
-    //   _currentPage = (_pageController?.page?.toInt() ?? 0); //Refresh if needed
-    // }
-    _currentPage = startPageIndex;
-    NotificationService().subscribe(this, [Gies.notifyPageChanged, Gies.notifyPageCompleted]);
+    NotificationService().subscribe(this,
+        [ Gies.notifyPageChanged,
+          Gies.notifyPageCompleted,
+          Gies.notifySwipeToPage
+        ]);
+    _currentPage = _initialPageIndex;
   }
 
   @override
@@ -838,10 +839,6 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   }
 
   void _onTapButton(Map<String, dynamic> button, String panelId,){
-    String? swipeToId = JsonUtils.stringValue(button["swipe_page"]); //This is _StepsHorizontalListWidget action the rest are global Page actions
-    if(swipeToId!=null)
-      _swipeToPage(swipeToId);
-
     if(widget.onTapButton!=null) {
       widget.onTapButton!(button, panelId);
     }
@@ -865,13 +862,15 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
 
   void _swipeToIndex(int pageIndex){
       if(pageIndex>=0) {
-        requestRefresh = true;
+        requestDelayedRefresh = true;
         _pageController?.animateToPage(
             pageIndex, duration: Duration(milliseconds: 500),
             curve: Curves.linear).
           then((value) {
-            setState(() {});
-            requestRefresh = false;
+            if(mounted) {
+              setState(() {});
+            }
+            requestDelayedRefresh = false;
         });
       }
   }
@@ -885,14 +884,14 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
 
   void _onPageChanged(int index){
     _currentPage = index;
-    if(!requestRefresh){
+    if(!requestDelayedRefresh){
       setState(() {
 
       });
     }
   }
 
-  int get startPageIndex{
+  int get _initialPageIndex{
     //Get next not completed page
     if(widget.tabs!=null) {
       for (int index = 0; index<widget.tabs!.length; index++) {
@@ -910,7 +909,9 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   @override
   void onNotification(String name, param) {
     if(name == Gies.notifyPageChanged){
-      // _currentPage = 0; //Reset to default when we change the page (fix missing selected tab)
+      // Workaround if we do not want to recreate the Page (reuse one Page with one Horizontal Scroll)
+      //Reset to default when we change the page (fix missing selected tab)
+      // _currentPage = 0;
       // _pageController?.jumpToPage(_currentPage);
       if(mounted)
         setState(() {});
@@ -918,6 +919,13 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     else if(name == Gies.notifyPageCompleted){
       if(mounted)
         setState(() {}); //Need to reset tab color
+    }
+    else if(name == Gies.notifySwipeToPage){
+      if(mounted) {
+        if (param is String){
+          _swipeToPage(param);
+        }
+      }//Need to reset tab color
     }
   }
 }
