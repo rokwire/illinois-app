@@ -23,7 +23,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Inbox.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
 
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';
@@ -648,7 +648,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   }
 
   Set<String?>? get currentTopics{
-    Set<String?>? subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
+    Set<String?>? subscribedTopics = Storage().inboxFirebaseMessagingSubscriptionTopics;
     if(Auth2().isLoggedIn){
       subscribedTopics = (Inbox().userInfo)?.topics;
     }

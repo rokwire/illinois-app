@@ -457,10 +457,11 @@ class Config with Service, NotificationsListener {
 
   // Getters: platformBuildingBlocks
   String? get coreUrl                              => JsonUtils.stringValue(platformBuildingBlocks['core_url']);
+  String? get notificationsUrl                     => JsonUtils.stringValue(platformBuildingBlocks["notifications_url"]);
 
   // Getters: otherUniversityServices
   String? get assetsUrl                            => JsonUtils.stringValue(otherUniversityServices['assets_url']);
-  String? get iCardUrl                             => JsonUtils.stringValue(otherUniversityServices['icard_url']);                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
+  String? get iCardUrl                             => JsonUtils.stringValue(otherUniversityServices['icard_url']);
 
   // Getters: secretKeys
   String? get coreOrgId                            => JsonUtils.stringValue(secretCore['org_id']);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Inbox.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';

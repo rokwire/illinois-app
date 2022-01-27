@@ -16,6 +16,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -300,4 +301,38 @@ class Storage with Service {
   String get stylesContentModeKey => 'edu.illinois.rokwire.styles.content_mode';
   String? get stylesContentMode => getStringWithName(stylesContentModeKey);
   set stylesContentMode(String? value) => setStringWithName(stylesContentModeKey, value);
+
+  // Inbox
+  String get inboxFirebaseMessagingTokenKey => 'edu.illinois.rokwire.inbox.firebase_messaging.token';
+  String? get inboxFirebaseMessagingToken => getStringWithName(inboxFirebaseMessagingTokenKey);
+  set inboxFirebaseMessagingToken(String? value) => setStringWithName(inboxFirebaseMessagingTokenKey, value);
+
+  String get inboxFirebaseMessagingUserIdKey => 'edu.illinois.rokwire.inbox.firebase_messaging.user_id';
+  String? get inboxFirebaseMessagingUserId => getStringWithName(inboxFirebaseMessagingUserIdKey);
+  set inboxFirebaseMessagingUserId(String? value) => setStringWithName(inboxFirebaseMessagingUserIdKey, value);
+
+  String get inboxUserInfoKey => 'edu.illinois.rokwire.inbox.user_info';
+  InboxUserInfo? get inboxUserInfo => InboxUserInfo.fromJson(JsonUtils.decode(getStringWithName(inboxUserInfoKey)));
+  set inboxUserInfo(InboxUserInfo? value) => setStringWithName(inboxUserInfoKey, JsonUtils.encode(value?.toJson()));
+
+  // Firebase
+  String get inboxFirebaseMessagingSubscriptionTopicsKey => 'edu.illinois.rokwire.inbox.firebase_messaging.subscription_topis';
+  Set<String>? get inboxFirebaseMessagingSubscriptionTopics => SetUtils.from(getStringListWithName(inboxFirebaseMessagingSubscriptionTopicsKey));
+  set inboxFirebaseMessagingSubscriptionTopics(Set<String>? value) => setStringListWithName(inboxFirebaseMessagingSubscriptionTopicsKey, ListUtils.from(value));
+
+  void addInboxFirebaseMessagingSubscriptionTopic(String? value) {
+    if (value != null) {
+      Set<String> topics = inboxFirebaseMessagingSubscriptionTopics ?? {};
+      topics.add(value);
+      inboxFirebaseMessagingSubscriptionTopics = topics;
+    }
+  }
+
+  void removeInboxFirebaseMessagingSubscriptionTopic(String? value) {
+    if (value != null) {
+      Set<String>? topics = inboxFirebaseMessagingSubscriptionTopics;
+      topics?.remove(value);
+      inboxFirebaseMessagingSubscriptionTopics = topics;
+    }
+  }
 }

@@ -16,7 +16,6 @@
 
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/storage.dart' as rokwire;
@@ -305,68 +304,11 @@ class Storage extends rokwire.Storage {
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
 // Replacing "firebase_subscription_topis" with "firebase_messaging_subscription_topis" key ensures that
 // all subsciptions will be applied again through Notifications BB APIs
-  static const String firebaseMessagingSubscriptionTopicsKey  = 'firebase_messaging_subscription_topis';
-  
-  Set<String>? get firebaseMessagingSubscriptionTopics {
-    List<String>? topicsList = getStringListWithName(firebaseMessagingSubscriptionTopicsKey);
-    return (topicsList != null) ? Set.from(topicsList) : null;
-  }
+  @override String get inboxFirebaseMessagingSubscriptionTopicsKey => 'firebase_messaging_subscription_topis';
 
-  set firebaseMessagingSubscriptionTopics(Set<String>? value) {
-    List<String>? topicsList = (value != null) ? List.from(value) : null;
-    setStringListWithName(firebaseMessagingSubscriptionTopicsKey, topicsList);
-  }
-
-  void addFirebaseMessagingSubscriptionTopic(String? value) {
-    if (value != null) {
-      Set<String> topics = firebaseMessagingSubscriptionTopics ?? Set();
-      topics.add(value);
-      firebaseMessagingSubscriptionTopics = topics;
-    }
-  }
-
-  void removeFirebaseMessagingSubscriptionTopic(String? value) {
-    if (value != null) {
-      Set<String>? topics = firebaseMessagingSubscriptionTopics;
-      topics?.remove(value);
-      firebaseMessagingSubscriptionTopics = topics;
-    }
-  }
-
-  static const String inboxFirebaseMessagingTokenKey  = 'inbox_firebase_messaging_token';
-
-  String? get inboxFirebaseMessagingToken {
-    return getStringWithName(inboxFirebaseMessagingTokenKey);
-  }
-
-  set inboxFirebaseMessagingToken(String? value) {
-    setStringWithName(inboxFirebaseMessagingTokenKey, value);
-  }
-
-  static const String inboxFirebaseMessagingUserIdKey  = 'inbox_firebase_messaging_user_id';
-
-  String? get inboxFirebaseMessagingUserId {
-    return getStringWithName(inboxFirebaseMessagingUserIdKey);
-  }
-
-  set inboxFirebaseMessagingUserId(String? value) {
-    setStringWithName(inboxFirebaseMessagingUserIdKey, value);
-  }
-
-  static const String inboxUserInfoKey  = 'inbox_user_info';
-
-  InboxUserInfo? get inboxUserInfo {
-    try {
-      String? jsonString = getStringWithName(inboxUserInfoKey);
-      dynamic jsonData = JsonUtils.decode(jsonString);
-      return (jsonData != null) ? InboxUserInfo.fromJson(jsonData) : null;
-    } on Exception catch (e) { print(e.toString()); }
-    return null;
-  }
-
-  set inboxUserInfo(InboxUserInfo? value) {
-    setStringWithName(inboxUserInfoKey, value != null ? json.encode(value.toJson()) : null);
-  }
+  @override String get inboxFirebaseMessagingTokenKey => 'inbox_firebase_messaging_token';
+  @override String get inboxFirebaseMessagingUserIdKey => 'inbox_firebase_messaging_user_id';
+  @override String get inboxUserInfoKey => 'inbox_user_info';
 
   //////////////
   // Polls
