@@ -4,12 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/Inbox.dart';
+import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/Inbox.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -207,14 +207,17 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _handleRedirectTap(InboxMessage message) {
-    FirebaseMessaging().processDataMessage(message.data, allowedTypes: {
-      FirebaseMessaging.payloadTypeEventDetail,
-      FirebaseMessaging.payloadTypeGameDetail,
-      FirebaseMessaging.payloadTypeAthleticsGameStarted,
-      FirebaseMessaging.payloadTypeAthleticsNewDetail,
-      FirebaseMessaging.payloadTypeGroup,
-    });
+    String? messageType = FirebaseMessaging.getMessageType(message.data);
+    if ((messageType == FirebaseMessaging.payloadTypeEventDetail) ||
+        (messageType == FirebaseMessaging.payloadTypeGameDetail) ||
+        (messageType == FirebaseMessaging.payloadTypeAthleticsGameStarted) ||
+        (messageType == FirebaseMessaging.payloadTypeAthleticsNewDetail) ||
+        (messageType == FirebaseMessaging.payloadTypeGroup))
+    {
+      FirebaseMessaging().processDataMessage(message.data);
+    }
   }
+  
   // Banner
   Widget _buildBanner(){ //TBD localize
     return

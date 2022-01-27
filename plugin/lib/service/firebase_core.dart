@@ -58,4 +58,6 @@ class FirebaseCore extends Service {
   Future<void> initFirebase() async{
     _firebaseApp ??= await google.Firebase.initializeApp();
   }
+
+  google.FirebaseApp? get app => _firebaseApp;
 }

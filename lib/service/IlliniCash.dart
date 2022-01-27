@@ -18,6 +18,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/illinicash/Transaction.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -29,7 +30,7 @@ import 'package:http/http.dart';
 import 'package:crypto/crypto.dart';
 import 'package:convert/convert.dart';
 
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:illinois/service/Config.dart';
@@ -38,10 +39,12 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart';
 
-class IlliniCash with Service implements NotificationsListener {
+class IlliniCash with Service, NetworkAuthProvider implements NotificationsListener {
 
   static const String notifyPaymentSuccess  = "edu.illinois.rokwire.illinicash.payment.success";
   static const String notifyBallanceUpdated  = "edu.illinois.rokwire.illinicash.ballance.updated";
+
+  static const String uiucAccessToken      = 'access_token';
 
   static const String analyticsUin         = 'UINxxxxxx';
   static const String analyticsFirstName   = 'FirstNameXXXXXX';
@@ -89,6 +92,7 @@ class IlliniCash with Service implements NotificationsListener {
   Set<Service> get serviceDependsOn {
     return Set.from([Storage(), Config(), Auth2()]);
   }
+  
   // NotificationsListener
 
   @override
@@ -118,6 +122,28 @@ class IlliniCash with Service implements NotificationsListener {
     }
   }
 
+  // NetworkAuthProvider
+
+  @override
+  Map<String, String>? get networkAuthHeaders {
+    String? accessToken = Auth2().uiucToken?.accessToken;
+    if ((accessToken != null) && accessToken.isNotEmpty) {
+      return { uiucAccessToken : accessToken };
+    }
+    return null;
+  }
+
+  @override
+  dynamic get networkAuthToken => Auth2().token;
+  
+  @override
+  Future<bool> refreshNetworkAuthTokenIfNeeded(BaseResponse? response, dynamic token) async {
+    if ((response?.statusCode == 401) && (token is Auth2Token) && (Auth2().token == token)) {
+      return (await Auth2().refreshToken(token) != null);
+    }
+    return false;
+  }
+
   // Ballances
 
   IlliniCashBallance? get ballance {
@@ -130,7 +156,7 @@ class IlliniCash with Service implements NotificationsListener {
       if (eligible == true) {
         String url = "${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}";
         String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/$analyticsUin";
-        Response? response = await Network().get(url, auth: UiucAccessNetworkAuth(), analyticsUrl: analyticsUrl);
+        Response? response = await Network().get(url, auth: this, analyticsUrl: analyticsUrl);
         if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
           String responseBody = response.body;
           Map<String, dynamic>? jsonData = JsonUtils.decode(responseBody);
@@ -197,7 +223,7 @@ class IlliniCash with Service implements NotificationsListener {
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
     String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$analyticsUin/$startDateFormatted/$endDateFormatted";
 
-    final response = await Network().get(transactionHistoryUrl, auth: UiucAccessNetworkAuth(), analyticsUrl: analyticsUrl );
+    final response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl );
     if (response != null && response.statusCode >= 200 && response.statusCode <= 301) {
       String responseBody = response.body;
       List<dynamic>? jsonListData = JsonUtils.decode(responseBody);
@@ -226,7 +252,7 @@ class IlliniCash with Service implements NotificationsListener {
     String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
     String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$analyticsUin/$startDateFormatted/$endDateFormatted";
-    final response = await Network().get(transactionHistoryUrl, auth: UiucAccessNetworkAuth(), analyticsUrl: analyticsUrl);
+    final response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
 
     // TMP: "[{\"Amount\":\"1\",\"Date\":\"2017-01-19 18:24:09 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-19 11:41:07 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 18:42:01 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 11:36:14 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 18:40:11 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 11:27:49 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 18:40:20 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 12:42:43 \",\"Location\":\"IKE\",\"Description\":\"Lunch\"}]";
 
@@ -260,7 +286,7 @@ class IlliniCash with Service implements NotificationsListener {
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
     String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$analyticsUin/$startDateFormatted/$endDateFormatted";
 
-    final response = await Network().get(transactionHistoryUrl, auth: UiucAccessNetworkAuth(), analyticsUrl: analyticsUrl);
+    final response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
 
     // TMP "[{\"Date\":\"1/18/2019 10:55:06 AM\",\"Description\":\"Rollover\",\"Location\":\"OFFICE-CDHAYES1\",\"Amount\":\"100.0\"}]";
 

@@ -80,6 +80,7 @@ class Config extends rokwire.Config {
   String? get userAuthUrl            => JsonUtils.stringValue(otherUniversityServices['user_auth_url']);              // "https://shibboleth.illinois.edu/idp/profile/oidc/userinfo"
   String? get assetsUrl              => JsonUtils.stringValue(otherUniversityServices['assets_url']);                 // "https://rokwire-assets.s3.us-east-2.amazonaws.com"
   String? get eatSmartUrl            => JsonUtils.stringValue(otherUniversityServices['eat_smart_url']);              // "https://eatsmart.housing.illinois.edu/NetNutrition/46"
+  String? get iCardUrl               => JsonUtils.stringValue(otherUniversityServices['icard_url']);                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
   String? get illiniCashBaseUrl      => JsonUtils.stringValue(otherUniversityServices['illini_cash_base_url']);       // "https://shibtest.housing.illinois.edu/MobileAppWS/api"
   String? get illiniCashTrustcommerceHost => JsonUtils.stringValue(otherUniversityServices['illini_cash_trustcommerce_host']); // "https://vault.trustcommerce.com"
   String? get illiniCashTokenHost    => JsonUtils.stringValue(otherUniversityServices['illini_cash_token_host']);     // "https://webservices.admin.uillinois.edu"
@@ -102,7 +103,6 @@ class Config extends rokwire.Config {
   String? get locationsUrl           => JsonUtils.stringValue(platformBuildingBlocks["locations_url"]);               // "https://api-dev.rokwire.illinois.edu/location/api";
   String? get groupsUrl              => JsonUtils.stringValue(platformBuildingBlocks["groups_url"]);                  // "https://api-dev.rokwire.illinois.edu/gr/api";
   String? get contentUrl             => JsonUtils.stringValue(platformBuildingBlocks["content_url"]);                 // "https://api-dev.rokwire.illinois.edu/content";
-  String? get notificationsUrl       => JsonUtils.stringValue(platformBuildingBlocks["notifications_url"]);           // "https://api-dev.rokwire.illinois.edu/notifications";
   
   // Getters: Third Party Services
   String? get instagramHostUrl       => JsonUtils.stringValue(thirdPartyServices['instagram_host_url']);        // "https://instagram.com/"

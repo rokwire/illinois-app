@@ -154,6 +154,10 @@ class CollectionUtils {
 }
 
 class ListUtils {
+  static List<T>? from<T>(Iterable<T>? elements) {
+    return (elements != null) ? List<T>.from(elements) : null;
+  }
+
   static void add<T>(List<T>? list, T? entry) {
     if ((list != null) && (entry != null)) {
       list.add(entry);
@@ -162,6 +166,10 @@ class ListUtils {
 }
 
 class SetUtils {
+  static Set<T>? from<T>(Iterable<T>? elements) {
+    return (elements != null) ? Set<T>.from(elements) : null;
+  }
+
   static void add<T>(Set<T>? set, T? entry) {
     if ((set != null) && (entry != null)) {
       set.add(entry);

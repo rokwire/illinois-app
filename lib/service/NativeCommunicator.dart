@@ -262,16 +262,6 @@ class NativeCommunicator with Service implements NotificationsListener {
     return result;
   }
 
-  Future<String?> queryFirebaseInfo() async {
-    String? result;
-    try {
-      result = await _platformChannel.invokeMethod('firebaseInfo');
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-    return result;
-  }
-
   Future<AuthorizationStatus?> queryNotificationsAuthorization(String method) async {
     AuthorizationStatus? result;
     try {
