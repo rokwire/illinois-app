@@ -18,15 +18,13 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:http/http.dart' as Http;
+import 'package:http/http.dart';
 
 import 'package:collection/collection.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/IlliniCash.dart';
-import 'package:rokwire_plugin/service/config.dart' as rokwire;
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -45,18 +43,19 @@ class FlexUI with Service implements NotificationsListener {
   File?                 _cacheFile;
   DateTime?             _pausedDateTime;
 
-  // Singleton Factory
+  // Singletone Factory
 
-  FlexUI._internal();
-  static final FlexUI _instance = FlexUI._internal();
+  static FlexUI? _instance;
 
-  factory FlexUI() {
-    return _instance;
-  }
+  static FlexUI? get instance => _instance;
+  
+  @protected
+  static set instance(FlexUI? value) => _instance = value;
 
-  FlexUI get instance {
-    return _instance;
-  }
+  factory FlexUI() => _instance ?? (_instance = FlexUI.internal());
+
+  @protected
+  FlexUI.internal();
 
   // Service
 
@@ -68,8 +67,8 @@ class FlexUI with Service implements NotificationsListener {
       Auth2UserPrefs.notifyRolesChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       Auth2.notifyLoginChanged,
-      Auth2.notifyCardChanged,
-      IlliniCash.notifyBallanceUpdated,
+//    Auth2.notifyCardChanged,
+//    IlliniCash.notifyBallanceUpdated,
       AppLivecycle.notifyStateChanged,
     ]);
   }
@@ -81,13 +80,13 @@ class FlexUI with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    _cacheFile = await _getCacheFile();
-    _contentSource = await _loadContentSource();
-    _content = _buildContent(_contentSource);
-    _features = _buildFeatures(_content);
+    _cacheFile = await getCacheFile();
+    _contentSource = await loadContentSource();
+    _content = buildContent(_contentSource);
+    _features = buildFeatures(_content);
     if (_content != null) {
       await super.initService();
-      _updateContentSourceFromNet();
+      updateContentSourceFromNet();
     }
     else {
       throw ServiceError(
@@ -101,7 +100,7 @@ class FlexUI with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), Auth2(), IlliniCash()]);
+    return { Config(), Auth2() };
   }
 
   // NotificationsListener
@@ -112,18 +111,17 @@ class FlexUI with Service implements NotificationsListener {
         (name == Auth2.notifyUserDeleted) ||
         (name == Auth2UserPrefs.notifyRolesChanged) ||
         (name == Auth2UserPrefs.notifyPrivacyLevelChanged) ||
-        (name == Auth2.notifyLoginChanged) ||
-        (name == Auth2.notifyCardChanged) || 
-        (name == IlliniCash.notifyBallanceUpdated))
+        (name == Auth2.notifyLoginChanged))
     {
-      _updateContent();
+      updateContent();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
-     _onAppLivecycleStateChanged(param); 
+      onAppLivecycleStateChanged(param); 
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  @protected
+  void onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
@@ -131,7 +129,7 @@ class FlexUI with Service implements NotificationsListener {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _updateContentSourceFromNet();
+          updateContentSourceFromNet();
         }
       }
     }
@@ -139,44 +137,56 @@ class FlexUI with Service implements NotificationsListener {
 
   // Flex UI
 
-  Future<File?> _getCacheFile() async {
+  @protected
+  String get cacheFileName => _flexUIName;
+
+  @protected
+  Future<File?> getCacheFile() async {
     Directory? assetsDir = Config().assetsCacheDir!;
     if (!await assetsDir.exists()) {
       await assetsDir.create(recursive: true);
     }
-    String cacheFilePath = join(assetsDir.path, _flexUIName);
+    String cacheFilePath = join(assetsDir.path, cacheFileName);
     return File(cacheFilePath);
   }
 
-  Future<String?> _loadContentSourceStringFromCache() async {
+  @protected
+  Future<String?> loadContentSourceStringFromCache() async {
     return ((_cacheFile != null) && await _cacheFile!.exists()) ? await _cacheFile!.readAsString() : null;
   }
 
-  Future<void> _saveContentSourceStringToCache(String? contentString) async {
+  @protected
+  Future<void> saveContentSourceStringToCache(String? contentString) async {
     if (contentString != null) {
       await _cacheFile?.writeAsString(contentString, flush: true);
     }
     else if ((_cacheFile != null) && (await _cacheFile!.exists())) {
-      try { _cacheFile!.delete(); } catch(e) { print(e.toString()); }
+      try { _cacheFile!.delete(); } catch(e) { debugPrint(e.toString()); }
     }
   }
 
-  Future<Map<String, dynamic>?> _loadContentSourceFromCache() async {
-    return JsonUtils.decodeMap(await _loadContentSourceStringFromCache());
+  @protected
+  Future<Map<String, dynamic>?> loadContentSourceFromCache() async {
+    return JsonUtils.decodeMap(await loadContentSourceStringFromCache());
   }
 
-  Future<Map<String, dynamic>?> _loadContentSourceFromAssets() async {
-    try { return JsonUtils.decodeMap(await rootBundle.loadString('assets/$_flexUIName')); }
-    catch(e) {print(e.toString());}
+  @protected
+  String get resourceAssetsKey => 'assets/$_flexUIName';
+
+  @protected
+  Future<Map<String, dynamic>?> loadContentSourceFromAssets() async {
+    try { return JsonUtils.decodeMap(await rootBundle.loadString(resourceAssetsKey)); }
+    catch(e) { debugPrint(e.toString());}
     return null;
   }
 
-  Future<Map<String, dynamic>?> _loadContentSource() async {
+  @protected
+  Future<Map<String, dynamic>?> loadContentSource() async {
     Map<String, dynamic>? conentSource;
-    if (_isValidContentSource(conentSource = await _loadContentSourceFromCache())) {
+    if (isValidContentSource(conentSource = await loadContentSourceFromCache())) {
       return conentSource;
     }
-    else if (_isValidContentSource(conentSource = await _loadContentSourceFromAssets())) {
+    else if (isValidContentSource(conentSource = await loadContentSourceFromAssets())) {
       return conentSource;
     }
     else {
@@ -184,46 +194,54 @@ class FlexUI with Service implements NotificationsListener {
     }
   }
 
-  Future<String?> _loadContentSourceStringFromNet() async {
-    Http.Response? response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$_flexUIName") : null;
+  @protected
+  String get networkAssetName => _flexUIName;
+
+  @protected
+  Future<String?> loadContentSourceStringFromNet() async {
+    Response? response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$networkAssetName") : null;
     return ((response != null) && (response.statusCode == 200)) ? response.body : null;
   }
 
-  Future<void> _updateContentSourceFromNet() async {
-    String? contentSourceString = await _loadContentSourceStringFromNet();
+  @protected
+  Future<void> updateContentSourceFromNet() async {
+    String? contentSourceString = await loadContentSourceStringFromNet();
     if (contentSourceString != null) { // request succeeded
       
       Map<String, dynamic>? contentSource = JsonUtils.decodeMap(contentSourceString);
-      if (!_isValidContentSource(contentSource) && (_cacheFile != null) && await _cacheFile!.exists()) { // empty JSON content
+      if (!isValidContentSource(contentSource) && (_cacheFile != null) && await _cacheFile!.exists()) { // empty JSON content
         try { _cacheFile!.delete(); }                          // clear cached content source
-        catch(e) { print(e.toString()); }
-        contentSource = await _loadContentSourceFromAssets(); // load content source from assets
+        catch(e) { debugPrint(e.toString()); }
+        contentSource = await loadContentSourceFromAssets(); // load content source from assets
         contentSourceString = null;                           // do not store this content source
       }
 
-      if (_isValidContentSource(contentSource) && ((_contentSource == null) || !DeepCollectionEquality().equals(_contentSource, contentSource))) {
+      if (isValidContentSource(contentSource) && ((_contentSource == null) || !const DeepCollectionEquality().equals(_contentSource, contentSource))) {
         _contentSource = contentSource;
-        _saveContentSourceStringToCache(contentSourceString);
-        _updateContent();
+        saveContentSourceStringToCache(contentSourceString);
+        updateContent();
       }
     }
   }
 
-  void _updateContent() {
-    Map<String, dynamic>? content = _buildContent(_contentSource);
-    if ((content != null) && ((_content == null) || !DeepCollectionEquality().equals(_content, content))) {
+  @protected
+  void updateContent() {
+    Map<String, dynamic>? content = buildContent(_contentSource);
+    if ((content != null) && ((_content == null) || !const DeepCollectionEquality().equals(_content, content))) {
       _content = content;
-      _features = _buildFeatures(_content);
+      _features = buildFeatures(_content);
       NotificationService().notify(notifyChanged, null);
     }
   }
 
-  static Set<dynamic>? _buildFeatures(Map<String, dynamic>? content) {
+  @protected
+  Set<dynamic>? buildFeatures(Map<String, dynamic>? content) {
     dynamic featuresList = (content != null) ? content['features'] : null;
     return (featuresList is Iterable) ? Set.from(featuresList) : null;
   }
 
-  static bool _isValidContentSource(Map<String, dynamic>? contentSource) {
+  @protected
+  bool isValidContentSource(Map<String, dynamic>? contentSource) {
     return (contentSource != null) && (contentSource['content'] is Map) && (contentSource['rules'] is Map);
   }
 
@@ -246,23 +264,24 @@ class FlexUI with Service implements NotificationsListener {
   }
 
   Future<void> update() async {
-    return _updateContent();
+    return updateContent();
   }
 
 // Local Build
 
-  static Map<String, dynamic>? _buildContent(Map<String, dynamic>? contentSource) {
+  @protected
+  Map<String, dynamic>? buildContent(Map<String, dynamic>? contentSource) {
     Map<String, dynamic>? result;
     if (contentSource != null) {
       Map<String, dynamic> contents = contentSource['content'];
       Map<String, dynamic>? rules = contentSource['rules'];
 
-      result = Map();
+      result = {};
       contents.forEach((String key, dynamic list) {
         if (list is List) {
           List<String> resultList = <String>[];
           for (String entry in list) {
-            if (_localeIsEntryAvailable(entry, group: key, rules: rules!)) {
+            if (localeIsEntryAvailable(entry, group: key, rules: rules!)) {
               resultList.add(entry);
             }
           }
@@ -276,40 +295,35 @@ class FlexUI with Service implements NotificationsListener {
     return result;
   }
 
-  static bool _localeIsEntryAvailable(String entry, { String? group, required Map<String, dynamic> rules }) {
+  @protected
+  bool localeIsEntryAvailable(String entry, { String? group, required Map<String, dynamic> rules }) {
 
     String? pathEntry = (group != null) ? '$group.$entry' : null;
 
     Map<String, dynamic>? roleRules = rules['roles'];
     dynamic roleRule = (roleRules != null) ? (((pathEntry != null) ? roleRules[pathEntry] : null) ?? roleRules[entry]) : null;
-    if ((roleRule != null) && !_localeEvalRoleRule(roleRule)) {
+    if ((roleRule != null) && !localeEvalRoleRule(roleRule)) {
       return false;
     }
 
     Map<String, dynamic>? privacyRules = rules['privacy'];
     dynamic privacyRule = (privacyRules != null) ? (((pathEntry != null) ? privacyRules[pathEntry] : null) ?? privacyRules[entry]) : null;
-    if ((privacyRule != null) && !_localeEvalPrivacyRule(privacyRule)) {
+    if ((privacyRule != null) && !localeEvalPrivacyRule(privacyRule)) {
       return false;
     }
     
     Map<String, dynamic>? authRules = rules['auth'];
     dynamic authRule = (authRules != null) ? (((pathEntry != null) ? authRules[pathEntry] : null) ?? authRules[entry])  : null;
-    if ((authRule != null) && !_localeEvalAuthRule(authRule)) {
+    if ((authRule != null) && !localeEvalAuthRule(authRule)) {
       return false;
     }
     
     Map<String, dynamic>? platformRules = rules['platform'];
     dynamic platformRule = (platformRules != null) ? (((pathEntry != null) ? platformRules[pathEntry] : null) ?? platformRules[entry])  : null;
-    if ((platformRule != null) && !_localeEvalPlatformRule(platformRule)) {
+    if ((platformRule != null) && !localeEvalPlatformRule(platformRule)) {
       return false;
     }
 
-    Map<String, dynamic>? illiniCashRules = rules['illini_cash'];
-    dynamic illiniCashRule = (illiniCashRules != null) ? (((pathEntry != null) ? illiniCashRules[pathEntry] : null) ?? illiniCashRules[entry])  : null;
-    if ((illiniCashRule != null) && !_localeEvalIlliniCashRule(illiniCashRule)) {
-      return false;
-    }
-    
     Map<String, dynamic>? enableRules = rules['enable'];
     dynamic enableRule = (enableRules != null) ? (((pathEntry != null) ? enableRules[pathEntry] : null) ?? enableRules[entry])  : null;
     if ((enableRule != null) && !_localeEvalEnableRule(enableRule)) {
@@ -319,7 +333,8 @@ class FlexUI with Service implements NotificationsListener {
     return true;
   }
 
-  static bool _localeEvalRoleRule(dynamic roleRule) {
+  @protected
+  bool localeEvalRoleRule(dynamic roleRule) {
     return BoolExpr.eval(roleRule, (String? argument) {
       if (argument != null) {
         bool? not, all, any;
@@ -333,14 +348,14 @@ class FlexUI with Service implements NotificationsListener {
           argument = argument.substring(0, argument.length - 1);
         }
         
-        Set<UserRole>? userRoles = _localeEvalRoleParam(argument);
+        Set<UserRole>? userRoles = localeEvalRoleParam(argument);
         if (userRoles != null) {
           if (not == true) {
             userRoles = Set.from(UserRole.values).cast<UserRole>().difference(userRoles);
           }
 
           if (all == true) {
-            return DeepCollectionEquality().equals(Auth2().prefs?.roles, userRoles);
+            return const DeepCollectionEquality().equals(Auth2().prefs?.roles, userRoles);
           }
           else if (any == true) {
             return Auth2().prefs?.roles?.intersection(userRoles).isNotEmpty ?? false;
@@ -354,10 +369,11 @@ class FlexUI with Service implements NotificationsListener {
     });
   }
 
-  static Set<UserRole>? _localeEvalRoleParam(String? roleParam) {
+  @protected
+  Set<UserRole>? localeEvalRoleParam(String? roleParam) {
     if (roleParam != null) {
       if (RegExp("{.+}").hasMatch(roleParam)) {
-        Set<UserRole> roles = Set<UserRole>();
+        Set<UserRole> roles = <UserRole>{};
         String rolesStr = roleParam.substring(1, roleParam.length - 1);
         List<String> rolesStrList = rolesStr.split(',');
         for (String roleStr in rolesStrList) {
@@ -370,29 +386,19 @@ class FlexUI with Service implements NotificationsListener {
       }
       else {
         UserRole? userRole = UserRole.fromString(roleParam);
-        return (userRole != null) ? Set.from([userRole]) : null;
+        return (userRole != null) ? { userRole } : null;
       }
     }
     return null;
   }
 
-  static bool _localeEvalIlliniCashRule(dynamic illiniCashRule) {
-    bool result = true;  // allow everything that is not defined or we do not understand
-    if (illiniCashRule is Map) {
-      illiniCashRule.forEach((dynamic key, dynamic value) {
-        if ((key is String) && (key == 'housingResidenceStatus') && (value is bool)) {
-           result = result && (IlliniCash().ballance?.housingResidenceStatus ?? false);
-        }
-      });
-    }
-    return result;
-  }
-
-  static bool _localeEvalPrivacyRule(dynamic privacyRule) {
+  @protected
+  bool localeEvalPrivacyRule(dynamic privacyRule) {
     return (privacyRule is int) ? Auth2().privacyMatch(privacyRule) : true; // allow everything that is not defined or we do not understand
   }
 
-  static bool _localeEvalAuthRule(dynamic authRule) {
+  @protected
+  bool localeEvalAuthRule(dynamic authRule) {
     bool result = true;  // allow everything that is not defined or we do not understand
     if (authRule is Map) {
       authRule.forEach((dynamic key, dynamic value) {
@@ -424,23 +430,14 @@ class FlexUI with Service implements NotificationsListener {
           else if ((key == 'stadiumPollManager') && (value is bool)) {
             result = result && (Auth2().isStadiumPollManager == value);
           }
-          
-          else if ((key == 'iCard') && (value is bool)) {
-            result = result && ((Auth2().authCard != null) == value);
-          }
-          else if ((key == 'iCardNum') && (value is bool)) {
-            result = result && ((0 < (Auth2().authCard?.cardNumber?.length ?? 0)) == value);
-          }
-          else if ((key == 'iCardLibraryNum') && (value is bool)) {
-            result = result && ((0 < (Auth2().authCard?.libraryNumber?.length ?? 0)) == value);
-          }
         }
       });
     }
     return result;
   }
 
-  static bool _localeEvalPlatformRule(dynamic platformRule) {
+  @protected
+  static bool localeEvalPlatformRule(dynamic platformRule) {
     bool result = true;  // allow everything that is not defined or we do not understand
     if (platformRule is Map) {
       platformRule.forEach((dynamic key, dynamic value) {
@@ -450,7 +447,7 @@ class FlexUI with Service implements NotificationsListener {
             target = Platform.operatingSystem;
           }
           else if (key == 'envirnment') {
-            target = rokwire.configEnvToString(Config().configEnvironment);
+            target = configEnvToString(Config().configEnvironment);
           }
           else if (key == 'build') {
             if (kReleaseMode) {

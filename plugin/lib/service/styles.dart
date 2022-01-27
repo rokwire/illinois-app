@@ -233,9 +233,12 @@ class Styles extends Service implements NotificationsListener{
   }
 
   @protected
+  String get networkAssetName => _assetsName;
+
+  @protected
   Future<void> loadFromNet({bool cacheContent = true, bool notifyUpdate = true}) async {
     try {
-      http.Response? response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$_assetsName") : null;
+      http.Response? response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$networkAssetName") : null;
       String? stylesContent =  ((response != null) && (response.statusCode == 200)) ? response.body : null;
       if(stylesContent != null) {
         await applyContent(stylesContent, cacheContent: cacheContent, notifyUpdate: notifyUpdate);

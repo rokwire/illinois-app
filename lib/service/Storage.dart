@@ -34,6 +34,8 @@ class Storage extends rokwire.Storage {
   factory Storage() => ((rokwire.Storage.instance is Storage) ? (rokwire.Storage.instance as Storage) : (rokwire.Storage.instance = Storage.internal()));
 
 
+  // Overrides
+
   @override String get configEnvKey => 'config_environment';
   @override String get reportedUpgradeVersionsKey  => 'reported_upgrade_versions';
 
