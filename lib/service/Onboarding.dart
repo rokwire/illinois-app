@@ -15,9 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/service/onboarding.dart' as rokwire;
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingGetStartedPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingAuthLocationPanel.dart';
@@ -30,162 +28,61 @@ import 'package:illinois/ui/onboarding/OnboardingSportPrefsPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 
-class Onboarding with Service implements NotificationsListener {
+class Onboarding extends rokwire.Onboarding  {
 
-  static const String notifyFinished  = "edu.illinois.rokwire.onboarding.finished";
+  static String get notifyFinished => rokwire.Onboarding.notifyFinished;
 
-  List<dynamic>? _contentCodes;
+  // Singletone Factory
 
-  // Singleton Factory
+  @protected
+  Onboarding.internal() : super.internal();
 
-  Onboarding._internal();
-  static final Onboarding _instance = Onboarding._internal();
+  factory Onboarding() => ((rokwire.Onboarding.instance is Onboarding) ? (rokwire.Onboarding.instance as Onboarding) : (rokwire.Onboarding.instance = Onboarding.internal()));
 
-  factory Onboarding() {
-    return _instance;
-  }
-
-  Onboarding get instance {
-    return _instance;
-  }
-
-  // Service
+  // Overrides
 
   @override
-  void createService() {
-    NotificationService().subscribe(this,[
-      FlexUI.notifyChanged,
-    ]);
-  }
-
-  @override
-  void destroyService() {
-    NotificationService().unsubscribe(this);
-  }
-
-  @override
-  Future<void> initService() async {
-    _contentCodes = FlexUI()['onboarding'];
-    await super.initService();
-  }
-
-  @override
-  Set<Service> get serviceDependsOn {
-    return Set.from([FlexUI()]);
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      _contentCodes = FlexUI()['onboarding'];
+  rokwire.OnboardingPanel? createPanel({String? code, Map<String, dynamic>? context}) {
+    if (code == 'get_started') {
+      return OnboardingGetStartedPanel(onboardingContext: context);
+    }
+    else if (code == 'privacy_statement') {
+      return OnboardingPrivacyStatementPanel(onboardingContext: context);
+    }
+    else if (code == 'privacy') {
+      return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.onboarding, onboardingContext: context);
+    }
+    else if (code == 'notifications_auth') {
+      return OnboardingAuthNotificationsPanel(onboardingContext: context);
+    }
+    else if (code == 'location_auth') {
+      return OnboardingAuthLocationPanel(onboardingContext: context);
+    }
+    else if (code == 'roles') {
+      return OnboardingRolesPanel(onboardingContext: context);
+    }
+    else if (code == 'login_netid') {
+      return OnboardingLoginNetIdPanel(onboardingContext: context);
+    }
+    else if (code == 'login_phone') {
+      return OnboardingLoginPhonePanel(onboardingContext: context);
+    }
+    else if (code == 'verify_phone') {
+      return OnboardingLoginPhoneVerifyPanel(onboardingContext: context);
+    }
+    else if (code == 'confirm_phone') {
+      return OnboardingLoginPhoneConfirmPanel(onboardingContext: context);
+    }
+    else if (code == 'sport_prefs') {
+      return OnboardingSportPrefsPanel(onboardingContext: context);
+    }
+    else {
+      return null;
     }
   }
 
-  // Implementation
-
-  Widget? get startPanel {
-    for (int index = 0; index < _contentCodes!.length; index++) {
-      OnboardingPanel? nextPanel = _createPanel(code: _contentCodes![index], context: {});
-      if ((nextPanel != null) && (nextPanel is Widget) && nextPanel.onboardingCanDisplay && (nextPanel is Widget)) {
-        return nextPanel as Widget;
-      }
-    }
-    return null;
-  }
-
-  void next(BuildContext context, OnboardingPanel panel, {bool replace = false}) {
-    _nextPanel(panel).then((dynamic nextPanel) {
-      if (nextPanel is Widget) {
-        if (replace) {
-          Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => nextPanel));
-        }
-        else {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
-        }
-      }
-      else if ((nextPanel is bool) && !nextPanel) {
-        finish(context);
-      }
-    });
-  }
-
-  void finish(BuildContext context) {
-    NotificationService().notify(notifyFinished, context);
-  }
-
-  Future<dynamic> _nextPanel(OnboardingPanel? panel) async {
-    if (_contentCodes != null) {
-      int? nextPanelIndex;
-      if (panel == null) {
-        nextPanelIndex = 0;
-      }
-      else {
-        String? panelCode = _getPanelCode(panel: panel);
-        int panelIndex = _contentCodes!.indexOf(panelCode);
-        if (0 <= panelIndex) {
-          nextPanelIndex = panelIndex + 1;
-        }
-      }
-
-      if (nextPanelIndex != null) {
-        while (nextPanelIndex! < _contentCodes!.length) {
-          String? nextPanelCode = _contentCodes![nextPanelIndex];
-          OnboardingPanel? nextPanel = _createPanel(code: nextPanelCode, context: panel?.onboardingContext ?? {});
-          if ((nextPanel != null) && (nextPanel is Widget) && nextPanel.onboardingCanDisplay && await nextPanel.onboardingCanDisplayAsync) {
-            return nextPanel as Widget;
-          }
-          else {
-            nextPanelIndex++;
-          }
-        }
-        return false;
-      }
-    }
-    return null;
-  }
-
-  OnboardingPanel? _createPanel({String? code, Map<String, dynamic>? context}) {
-    if (code != null) {
-      if (code == 'get_started') {
-        return OnboardingGetStartedPanel(onboardingContext: context);
-      }
-      else if (code == 'privacy_statement') {
-        return OnboardingPrivacyStatementPanel(onboardingContext: context);
-      }
-      else if (code == 'privacy') {
-        return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.onboarding, onboardingContext: context);
-      }
-      else if (code == 'notifications_auth') {
-        return OnboardingAuthNotificationsPanel(onboardingContext: context);
-      }
-      else if (code == 'location_auth') {
-        return OnboardingAuthLocationPanel(onboardingContext: context);
-      }
-      else if (code == 'roles') {
-        return OnboardingRolesPanel(onboardingContext: context);
-      }
-      else if (code == 'login_netid') {
-        return OnboardingLoginNetIdPanel(onboardingContext: context);
-      }
-      else if (code == 'login_phone') {
-        return OnboardingLoginPhonePanel(onboardingContext: context);
-      }
-      else if (code == 'verify_phone') {
-        return OnboardingLoginPhoneVerifyPanel(onboardingContext: context);
-      }
-      else if (code == 'confirm_phone') {
-        return OnboardingLoginPhoneConfirmPanel(onboardingContext: context);
-      }
-      else if (code == 'sport_prefs') {
-        return OnboardingSportPrefsPanel(onboardingContext: context);
-      }
-    }
-    return null;
-  }
-
-  static String? _getPanelCode({OnboardingPanel? panel}) {
+  @override
+  String? getPanelCode({rokwire.OnboardingPanel? panel}) {
     if (panel is OnboardingGetStartedPanel) {
       return 'get_started';
     }
@@ -222,19 +119,4 @@ class Onboarding with Service implements NotificationsListener {
     return null;
   }
 
-}
-
-abstract class OnboardingPanel {
-  
-  Map<String, dynamic>? get onboardingContext {
-    return null;
-  }
-  
-  bool get onboardingCanDisplay {
-    return true;
-  }
-
-  Future<bool> get onboardingCanDisplayAsync async {
-    return true;
-  }
 }
