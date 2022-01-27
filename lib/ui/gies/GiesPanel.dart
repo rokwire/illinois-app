@@ -24,6 +24,8 @@ class GiesPanel extends StatefulWidget{
 }
 
 class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
+  GlobalKey _titleKey = GlobalKey();
+  GlobalKey _pageKey = GlobalKey();
 
   @override
   void initState() {
@@ -62,7 +64,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   Widget _buildTitle() {
     String? progress = JsonUtils.intValue(_currentPage["progress"])?.toString();
-    return Container(color: Styles().colors!.fillColorPrimary, child:
+    return Container(key: _titleKey, color: Styles().colors!.fillColorPrimary, child:
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10), child:
         Column(children: [
           Visibility( visible:  progress!=null,
@@ -169,7 +171,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   Widget _buildContent() {
     return Container(color: Colors.white, padding: EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0), child:
-      _GiesPageWidget(page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < Gies().navigationPages!.length) ? _onTapBack : null,onTapNotes: _onTapNotes, showTitle: false,),
+      _GiesPageWidget(key: _pageKey, page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < Gies().navigationPages!.length) ? _onTapBack : null,onTapNotes: _onTapNotes, showTitle: false,),
     );
   }
 
@@ -200,7 +202,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   void _onTapButton(Map<String, dynamic> button, String pageId) {
     _processButtonPopup(button, pageId).then((_) {
-      _processButtonPage(button, callerPageId: pageId);
+      Gies().processButtonPage(button, callerPageId: pageId);
     });
   }
 
@@ -229,19 +231,6 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
       }
       else if (popupId == 'current-notes') {
         List<dynamic> notes = JsonUtils.decodeList(Storage().giesNotes) ?? [];
-        // Map<String, dynamic>? currentPage =  Gies().getPage(id: pageId);
-        // String? nodeTitle;
-        // if(currentPage!=null) {
-        //   bool isInnerStep = JsonUtils.stringValue(currentPage["tab_index"]) != null;
-        //
-        //   if (isInnerStep) {
-        //     nodeTitle = JsonUtils.stringValue(currentPage["title"]);
-        //   } else {
-        //     nodeTitle =
-        //     "${JsonUtils.intValue(currentPage!['progress'])}${JsonUtils.stringValue(currentPage['tab_index']) ?? ""} "
-        //         "${JsonUtils.stringValue(currentPage['title'])}";
-        //   }
-        // }
         String? focusNodeId =  Gies().setCurrentNotes(notes, pageId,);
         return GiesNotesWidget(notes: notes, focusNoteId: focusNodeId,);
       }
@@ -249,44 +238,6 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
         return Container();
       }
     });
-  }
-
-  void _processButtonPage(Map<String, dynamic> button, {String? callerPageId}) {
-    String? pageId = callerPageId ?? Gies().currentPageId;
-    if (Gies().pageButtonCompletes(button)) {
-      if ((pageId != null) && pageId.isNotEmpty && !Gies().completedPages!.contains(pageId)) {
-        setState(() {
-          Gies().completedPages!.add(pageId);
-        });
-        Storage().giesCompletedPages = Gies().completedPages;
-      }
-    }
-
-    String? pushPageId = JsonUtils.stringValue(button['page']);
-    if ((pushPageId != null) && pushPageId.isNotEmpty) {
-      int? currentPageProgress = Gies().getPageProgress(_currentPage);
-
-      Map<String, dynamic>? pushPage = Gies().getPage(id: pushPageId);
-      int? pushPageProgress = Gies().getPageProgress(pushPage);
-
-      if ((currentPageProgress != null) && (pushPageProgress != null) && (currentPageProgress < pushPageProgress)) {
-        while (Gies().isProgressStepCompleted(pushPageProgress)) {
-          int nextPushPageProgress = pushPageProgress! + 1;
-          Map<String, dynamic>? nextPushPage = Gies().getPage(progress: nextPushPageProgress);
-          String? nextPushPageId = (nextPushPage != null) ? JsonUtils.stringValue(nextPushPage['id']) : null;
-          if ((nextPushPageId != null) && nextPushPageId.isNotEmpty) {
-            pushPage = nextPushPage;
-            pushPageId = nextPushPageId;
-            pushPageProgress = nextPushPageProgress;
-          }
-          else {
-            break;
-          }
-        }
-      }
-
-      Gies().pushPage(pushPage);
-    }
   }
 
   String? _pagePopup(Map? page) {
@@ -310,9 +261,13 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
   void onNotification(String name, param) {
     if(name == Gies.notifyPageChanged){
       setState(() {});
+      _pageKey = GlobalKey();// reset page
+      if(_titleKey.currentContext!=null) {
+        Scrollable.ensureVisible(
+            _titleKey.currentContext!, duration: Duration(milliseconds: 300));
+      }
     }
   }
-
 
   int? get _currentPageProgress {
     return Gies().getPageProgress(_currentPage);
@@ -326,60 +281,65 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
 }
 
-class _GiesPageWidget extends StatelessWidget {
+class _GiesPageWidget extends StatefulWidget{
   final Map<String, dynamic>? page;
   final void Function(String?)? onTapLink;
   final void Function(Map<String, dynamic> button, String panelId)? onTapButton;
   final void Function()? onTapBack;
   final void Function()? onTapNotes;
-
   final bool showTitle;
 
-  _GiesPageWidget({this.page, this.onTapLink, this.onTapButton, this.onTapBack, this.showTitle = true, this.onTapNotes});
+  _GiesPageWidget({Key? key, this.page, this.onTapLink, this.onTapButton, this.onTapBack, this.showTitle = true, this.onTapNotes}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _GiesPageState();
+
+}
+
+class _GiesPageState extends State<_GiesPageWidget> {
 
   @override
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
 
-    String? titleHtml = (page != null) && showTitle? "${JsonUtils.stringValue(page!["step_title"])}: ${JsonUtils.stringValue(page!['title'])}" : null;
+    String? titleHtml = (widget.page != null) && widget.showTitle? "${JsonUtils.stringValue(widget.page!["step_title"])}: ${JsonUtils.stringValue(widget.page!['title'])}" : null;
     if (StringUtils.isNotEmpty(titleHtml)) {
       contentList.add(
-
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            (onTapBack != null) ?
-            Semantics(
-              label: Localization().getStringEx('headerbar.back.title', 'Back'),
-              hint: Localization().getStringEx('headerbar.back.hint', ''),
-              button: true,
-              child: InkWell(
-                onTap: onTapBack,
-                child: Container(height: 36, width: 36, child:
-                Image.asset('images/chevron-left-gray.png')
-                ),
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          (widget.onTapBack != null) ?
+          Semantics(
+            label: Localization().getStringEx('headerbar.back.title', 'Back'),
+            hint: Localization().getStringEx('headerbar.back.hint', ''),
+            button: true,
+            child: InkWell(
+              onTap: widget.onTapBack,
+              child: Container(height: 36, width: 36, child:
+              Image.asset('images/chevron-left-gray.png')
               ),
-            ) :
-            Padding(padding: EdgeInsets.only(left: 16), child: Container()),
-
-            Expanded(child:
-            Padding(padding: EdgeInsets.only(top: 4, bottom: 4, right: 16), child:
-            Html(data: titleHtml,
-              onLinkTap: (url, context, attributes, element) => onTapLink!(url),
-              style: {
-                "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
-              },),
             ),
-            ),
+          ) :
+          Padding(padding: EdgeInsets.only(left: 16), child: Container()),
 
-          ],));
+          Expanded(child:
+          Padding(padding: EdgeInsets.only(top: 4, bottom: 4, right: 16), child:
+          Html(data: titleHtml,
+            onLinkTap: (url, context, attributes, element) => widget.onTapLink!(url),
+            style: {
+              "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+              "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
+            },),
+          ),
+          ),
+
+        ],));
     }
 
-    String? textHtml = (page != null) ? JsonUtils.stringValue(page!['text']) : null;
+    String? textHtml = (widget.page != null) ? JsonUtils.stringValue(widget.page!['text']) : null;
     if (StringUtils.isNotEmpty(textHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
         Html(data: textHtml,
-          onLinkTap: (url, context, attributes, element) => onTapLink!(url),
+          onLinkTap: (url, context, attributes, element) => widget.onTapLink!(url),
           style: {
             "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
             "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -387,7 +347,7 @@ class _GiesPageWidget extends StatelessWidget {
         ),);
     }
 
-    List<dynamic>? content = (page != null) ? JsonUtils.listValue(page!['content']) : null;
+    List<dynamic>? content = (widget.page != null) ? JsonUtils.listValue(widget.page!['content']) : null;
     if (content != null) {
       for (dynamic contentEntry in content) {
         if (contentEntry is Map) {
@@ -398,7 +358,7 @@ class _GiesPageWidget extends StatelessWidget {
             contentEntryWidgets.add(
               Padding(padding: EdgeInsets.only(top: 4, bottom: 4), child:
               Html(data: headingHtml,
-                onLinkTap: (url, context, attributes, element) => onTapLink!(url),
+                onLinkTap: (url, context, attributes, element) => widget.onTapLink!(url),
                 style: {
                   "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
                   "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -421,7 +381,7 @@ class _GiesPageWidget extends StatelessWidget {
                     Text(bulletText, style: TextStyle(color: bulletColor, fontSize: 20),),),
                     Expanded(child:
                     Html(data: bulletEntry,
-                      onLinkTap: (url, context, attributes, element) => onTapLink!(url),
+                      onLinkTap: (url, context, attributes, element) => widget.onTapLink!(url),
                       style: {
                         "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
                         "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -451,7 +411,7 @@ class _GiesPageWidget extends StatelessWidget {
                     Text('${numberIndex + 1}.', style: TextStyle(color: numberColor, fontSize: 20),),),
                     Expanded(child:
                     Html(data: numberEntry,
-                      onLinkTap: (url, context, attributes, element) => onTapLink!(url),
+                      onLinkTap: (url, context, attributes, element) => widget.onTapLink!(url),
                       style: {
                         "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
                         "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -476,20 +436,20 @@ class _GiesPageWidget extends StatelessWidget {
         }
       }
     }
-    List<dynamic>? steps = (page != null) ? JsonUtils.listValue(page!['steps']) : null;
+    List<dynamic>? steps = (widget.page != null) ? JsonUtils.listValue(widget.page!['steps']) : null;
     if (steps != null ) {
       contentList.add(_StepsHorizontalListWidget(tabs: steps,
-          pageProgress: JsonUtils.intValue(page!["progress"]) ?? 0,
-          title:"${JsonUtils.stringValue(page!["step_title"])}: ${page!["title"]}",
-          onTapLink: onTapLink,
-          onTapButton: onTapButton,
-          onTapBack: (1 < Gies().navigationPages!.length) ? onTapBack : null,
-          onTapNotes: onTapNotes,
+          pageProgress: JsonUtils.intValue(widget.page!["progress"]) ?? 0,
+          title:"${JsonUtils.stringValue(widget.page!["step_title"])}: ${widget.page!["title"]}",
+          onTapLink: widget.onTapLink,
+          onTapButton: widget.onTapButton,
+          onTapBack: (1 < Gies().navigationPages!.length) ? widget.onTapBack : null,
+          onTapNotes: widget.onTapNotes,
       ),
       );
     }
 
-    List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page!['buttons']) : null;
+    List<dynamic>? buttons = (widget.page != null) ? JsonUtils.listValue(widget.page!['buttons']) : null;
     if (buttons != null) {
       List<Widget> buttonWidgets = <Widget>[];
       for (dynamic button in buttons) {
@@ -507,7 +467,7 @@ class _GiesPageWidget extends StatelessWidget {
                   borderWidth: 2,
                   height: 42,
                   onTap:() {
-                    try { onTapButton!(button.cast<String, dynamic>(), JsonUtils.stringValue(page?["id"])!); }
+                    try { widget.onTapButton!(button.cast<String, dynamic>(), JsonUtils.stringValue(widget.page?["id"])!); }
                     catch (e) { print(e.toString()); }
                   }
               )
@@ -689,7 +649,7 @@ class _GiesNotesWidgetState extends State<GiesNotesWidget> {
 
 }
 
-class _StepsHorizontalListWidget extends StatefulWidget{
+class _StepsHorizontalListWidget extends StatefulWidget {
   final List<dynamic>? tabs;
   final String? title;
   final int pageProgress;
@@ -705,9 +665,27 @@ class _StepsHorizontalListWidget extends StatefulWidget{
   State<StatefulWidget> createState() => _StepsHorizontalListState();
 }
 
-class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
+class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implements NotificationsListener{
   PageController? _pageController;
   int _currentPage = 0;
+  bool requestDelayedRefresh = false;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, [
+      Gies.notifyPageChanged,
+      Gies.notifyPageCompleted,
+      Gies.notifySwipeToPage
+    ]);
+    _currentPage = _initialPageIndex;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    NotificationService().unsubscribe(this);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -763,6 +741,9 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
     String? tabKey = JsonUtils.stringValue(tabData["key"]);
     String? pageId = JsonUtils.stringValue(tabData["page_id"]);
     bool isCompleted = Gies().completedPages!.contains(pageId);
+    // if(_currentPage != (_pageController?.page?.toInt() ?? 0)){
+    //   _currentPage = (_pageController?.page?.toInt() ?? 0); //Refresh if needed
+    // }
     bool isCurrentTab = _currentPage == index;
     Color textColor = Colors.white;
     String? textFamily = Styles().fontFamilies!.regular;
@@ -793,13 +774,12 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
         }
       }
     }
-
     double screenWidth = MediaQuery.of(context).size.width * 2/3;
     double pageHeight = MediaQuery.of(context).size.height * 4/7;
     double pageViewport = (screenWidth - 40) / screenWidth;
 
     if (_pageController == null) {
-      _pageController = PageController(viewportFraction: pageViewport, keepPage: true);
+      _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage>=0? _currentPage : 0, keepPage: true);
     }
 
     return
@@ -809,6 +789,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
             controller: _pageController,
             children: pages,
             onPageChanged: _onPageChanged,
+
           )
         )
       );
@@ -843,10 +824,6 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
   }
 
   void _onTapButton(Map<String, dynamic> button, String panelId,){
-    String? swipeToId = JsonUtils.stringValue(button["swipe_page"]); //This is _StepsHorizontalListWidget action the rest are global Page actions
-    if(swipeToId!=null)
-      _swipeToPage(swipeToId);
-    
     if(widget.onTapButton!=null) {
       widget.onTapButton!(button, panelId);
     }
@@ -869,8 +846,18 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
   }
 
   void _swipeToIndex(int pageIndex){
-      if(pageIndex>=0)
-        _pageController?.animateToPage(pageIndex, duration: Duration(milliseconds: 500), curve: Curves.linear);
+      if(pageIndex>=0) {
+        requestDelayedRefresh = true;
+        _pageController?.animateToPage(
+            pageIndex, duration: Duration(milliseconds: 500),
+            curve: Curves.linear).
+          then((value) {
+            if(mounted) {
+              setState(() {});
+            }
+            requestDelayedRefresh = false;
+        });
+      }
   }
 
   int _getPageIndexById(String pageId){
@@ -881,8 +868,50 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget>{
   }
 
   void _onPageChanged(int index){
-    setState(() {
-      _currentPage = index;
-    });
+    _currentPage = index;
+    if(!requestDelayedRefresh){
+      if(mounted)
+        setState(() {
+
+        });
+    }
+  }
+
+  int get _initialPageIndex{
+    //Get next not completed page
+    if(widget.tabs!=null) {
+      for (int index = 0; index<widget.tabs!.length; index++) {
+        dynamic tabData = widget.tabs![index];
+        String? pageId = tabData != null ? JsonUtils.stringValue(tabData["page_id"]) : null;
+        if(pageId!=null && !(Gies().completedPages?.contains(pageId) ?? false)){
+          return index;
+        }
+      }
+    }
+
+    return 0; //by default we are on the first tab
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if(name == Gies.notifyPageChanged){
+      // Workaround if we do not want to recreate the Page (reuse one Page with one Horizontal Scroll)
+      //Reset to default when we change the page (fix missing selected tab)
+      // _currentPage = 0;
+      // _pageController?.jumpToPage(_currentPage);
+      if(mounted)
+        setState(() {});
+    }
+    else if(name == Gies.notifyPageCompleted){
+      if(mounted)
+        setState(() {}); //Need to reset tab color
+    }
+    else if(name == Gies.notifySwipeToPage){
+      if(mounted) {
+        if (param is String){
+          _swipeToPage(param);
+        }
+      }//Need to reset tab color
+    }
   }
 }

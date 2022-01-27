@@ -205,7 +205,7 @@
   "progress-possition": 8,
   "title":"Checklist completed",
   "content":[{
-    "heading":"If you have questions as you work through your New Student Checklist, please email <a href='i-support@illinois.edu'>i-support@illinois.edu</a> or join our team for weekly new student office hours.",
+    "heading":"If you have questions as you work through your New Student Checklist, please email <a href='mailto:i-support@illinois.edu'>i-support@illinois.edu</a> or join our team for weekly new student office hours.",
     "bullets":[
       "Fridays from 9:00 – 10:00 AM CST: <a href='https://illinois.zoom.us/meeting/register/tZEqdu6sqzIvHNLI_abCyDrnxHZQgJiddf2s'>Register Here</a>"
     ]}]
