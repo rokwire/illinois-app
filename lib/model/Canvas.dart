@@ -105,7 +105,7 @@ class CanvasCourse {
     ) : null;
   }
 
-  static List<CanvasCourse>? fromJsonList(List<dynamic>? jsonList) {
+  static List<CanvasCourse>? listFromJson(List<dynamic>? jsonList) {
     if (CollectionUtils.isEmpty(jsonList)) {
       return null;
     }

@@ -59,7 +59,7 @@ class Canvas with Service {
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      List<CanvasCourse>? courses = CanvasCourse.fromJsonList(JsonUtils.decodeList(responseString));
+      List<CanvasCourse>? courses = CanvasCourse.listFromJson(JsonUtils.decodeList(responseString));
       return courses;
     } else {
       Log.w('Failed to load canvas courses. Response:\n$responseCode: $responseString');
