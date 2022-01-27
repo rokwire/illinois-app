@@ -5,6 +5,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class Gies with Service{
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
+  static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
+  static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
 
   List<dynamic>? _pages;
   List<String>?  _navigationPages;
@@ -105,7 +107,7 @@ class Gies with Service{
         _navigationPages = [pushPageId];
       }
       Storage().giesNavPages = _navigationPages;
-      NotificationService().notify(notifyPageChanged);
+      NotificationService().notify(notifyPageChanged, pushPageId);
     }
   }
 
@@ -114,6 +116,48 @@ class Gies with Service{
       _navigationPages!.removeLast();
       Storage().giesNavPages = _navigationPages;
       NotificationService().notify(notifyPageChanged);
+    }
+  }
+
+  void processButtonPage(Map<String, dynamic> button, {String? callerPageId}) {
+    String? pageId = callerPageId ?? Gies().currentPageId;
+    if (Gies().pageButtonCompletes(button)) {
+      if ((pageId != null) && pageId.isNotEmpty && !Gies().completedPages!.contains(pageId)) {
+          _completedPages!.add(pageId);
+        Storage().giesCompletedPages = _completedPages;
+        NotificationService().notify(notifyPageCompleted, pageId);
+      }
+    }
+
+    String? swipeToId = JsonUtils.stringValue(button["swipe_page"]); //This is _StepsHorizontalListWidget action
+    if(swipeToId!=null) {
+      NotificationService().notify(notifySwipeToPage, swipeToId);
+    }
+
+    String? pushPageId = JsonUtils.stringValue(button['page']);
+    if ((pushPageId != null) && pushPageId.isNotEmpty) {
+      int? currentPageProgress = Gies().getPageProgress(currentPage);
+
+      Map<String, dynamic>? pushPage = Gies().getPage(id: pushPageId);
+      int? pushPageProgress = Gies().getPageProgress(pushPage);
+
+      if ((currentPageProgress != null) && (pushPageProgress != null) && (currentPageProgress < pushPageProgress)) {
+        while (Gies().isProgressStepCompleted(pushPageProgress)) {
+          int nextPushPageProgress = pushPageProgress! + 1;
+          Map<String, dynamic>? nextPushPage = Gies().getPage(progress: nextPushPageProgress);
+          String? nextPushPageId = (nextPushPage != null) ? JsonUtils.stringValue(nextPushPage['id']) : null;
+          if ((nextPushPageId != null) && nextPushPageId.isNotEmpty) {
+            pushPage = nextPushPage;
+            pushPageId = nextPushPageId;
+            pushPageProgress = nextPushPageProgress;
+          }
+          else {
+            break;
+          }
+        }
+      }
+
+      Gies().pushPage(pushPage);
     }
   }
 
