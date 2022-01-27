@@ -158,6 +158,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
 
   @override
   void destroyService() {
+    super.destroyService();
     NotificationService().unsubscribe(this);
   }
 

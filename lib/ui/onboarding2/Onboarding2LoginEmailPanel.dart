@@ -17,7 +17,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Onboarding.dart';
+import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
