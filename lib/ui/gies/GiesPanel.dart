@@ -747,9 +747,9 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     String? tabKey = JsonUtils.stringValue(tabData["key"]);
     String? pageId = JsonUtils.stringValue(tabData["page_id"]);
     bool isCompleted = Gies().completedPages!.contains(pageId);
-    if(_currentPage != (_pageController?.page?.toInt() ?? 0)){
-      _currentPage = (_pageController?.page?.toInt() ?? 0); //Refresh if needed
-    }
+    // if(_currentPage != (_pageController?.page?.toInt() ?? 0)){
+    //   _currentPage = (_pageController?.page?.toInt() ?? 0); //Refresh if needed
+    // }
     bool isCurrentTab = _currentPage == index;
     Color textColor = Colors.white;
     String? textFamily = Styles().fontFamilies!.regular;
@@ -884,10 +884,25 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     }
   }
 
+  int get startPageIndex{
+    //Get next not completed page
+    if(widget.tabs!=null) {
+      for (int index = 0; index<widget.tabs!.length; index++) {
+        dynamic tabData = widget.tabs![index];
+        String? pageId = tabData != null ? JsonUtils.stringValue("page_id") : null;
+        if(pageId!=null && !(Gies().completedPages?.contains(pageId) ?? false)){
+          return index;
+        }
+      }
+    }
+
+    return 0; //by default we are on the first tab
+  }
+
   @override
   void onNotification(String name, param) {
     if(name == Gies.notifyPageChanged){
-      _currentPage = 0; //Reset to default when we change the page (fix missing selected tab) 
+      _currentPage = 0; //Reset to default when we change the page (fix missing selected tab)
       _pageController?.jumpToPage(_currentPage);
     }
   }
