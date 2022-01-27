@@ -248,9 +248,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"setLaunchScreenStatus"]) {
 		[self handleSetLaunchScreenStatusWithParameters:parameters result:result];
 	}
-	else if ([call.method isEqualToString:@"firebaseInfo"]) {
-		[self handleFirebaseInfoWithParameters:parameters result:result];
-	}
 	else if ([call.method isEqualToString:@"tracking_authorization"]) {
 		[self handleTrackingWithParameters:parameters result:result];
 	}
@@ -356,13 +353,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	NSString *statusText = [parameters inaStringForKey:@"status"];
 	[self setLaunchScreenStatusText:statusText];
 	result(nil);
-}
-
-- (void)handleFirebaseInfoWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-    FIRApp *firApp = [FIRApp defaultApp];
-    FIROptions *options = (firApp != nil) ? [firApp options] : nil;
-    NSString *projectID = (options != nil) ? [options projectID] : nil;
-    result(projectID);
 }
 
 - (void)handleTrackingWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {

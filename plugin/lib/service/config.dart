@@ -34,7 +34,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/utils/crypt.dart';
 
-class Config with Service, NotificationsListener {
+class Config with Service, NetworkAuthProvider, NotificationsListener {
 
   static const String notifyUpgradeRequired     = "edu.illinois.rokwire.config.upgrade.required";
   static const String notifyUpgradeAvailable    = "edu.illinois.rokwire.config.upgrade.available";
@@ -44,6 +44,8 @@ class Config with Service, NotificationsListener {
 
   static const String _configsAsset       = "configs.json.enc";
   static const String _configKeysAsset    = "config.keys.json";
+
+  static const String _rokwireApiKey       = 'ROKWIRE-API-KEY';
 
   Map<String, dynamic>? _config;
   Map<String, dynamic>? _configAsset;
@@ -131,6 +133,17 @@ class Config with Service, NotificationsListener {
     }
   }
 
+  // NetworkAuthProvider
+
+  @override
+  Map<String, String>? get networkAuthHeaders {
+    String? value = rokwireApiKey;
+    if ((value != null) && value.isNotEmpty) {
+      return { _rokwireApiKey : value };
+    }
+    return null;
+  }
+
   // Implementation
 
   @protected
@@ -176,7 +189,7 @@ class Config with Service, NotificationsListener {
   @protected
   Future<String?> loadAsStringFromNet() async {
     try {
-      http.Response? response = await Network().get(appConfigUrl, auth: ApiKeyNetworkAuth());
+      http.Response? response = await Network().get(appConfigUrl, auth: this);
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     } catch (e) {
       debugPrint(e.toString());
@@ -457,10 +470,10 @@ class Config with Service, NotificationsListener {
 
   // Getters: platformBuildingBlocks
   String? get coreUrl                              => JsonUtils.stringValue(platformBuildingBlocks['core_url']);
+  String? get notificationsUrl                     => JsonUtils.stringValue(platformBuildingBlocks["notifications_url"]);
 
   // Getters: otherUniversityServices
   String? get assetsUrl                            => JsonUtils.stringValue(otherUniversityServices['assets_url']);
-  String? get iCardUrl                             => JsonUtils.stringValue(otherUniversityServices['icard_url']);                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
 
   // Getters: secretKeys
   String? get coreOrgId                            => JsonUtils.stringValue(secretCore['org_id']);
@@ -502,23 +515,4 @@ ConfigEnvironment? configEnvFromString(String? value) {
     return null;
   }
 }
-
-class ApiKeyNetworkAuth with NetworkAuthProvider {
-
-  static const String rokwireApiKey = 'ROKWIRE-API-KEY';
-
-  static final ApiKeyNetworkAuth _instance = ApiKeyNetworkAuth._internal();
-  ApiKeyNetworkAuth._internal();
-  factory ApiKeyNetworkAuth() => _instance;
-
-  @override
-  Map<String, String>? get networkAuthHeaders {
-    String? value = Config().rokwireApiKey;
-    if ((value != null) && value.isNotEmpty) {
-      return { rokwireApiKey : value };
-    }
-    return null;
-  }
-}
-
 

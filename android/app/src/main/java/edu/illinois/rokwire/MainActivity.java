@@ -509,10 +509,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 case Constants.APP_TRACKING_AUTHORIZATION:
                     result.success("allowed"); // tracking is allowed in Android by default
                     break;
-                case Constants.FIREBASE_INFO:
-                    String projectId = FirebaseApp.getInstance().getOptions().getProjectId();
-                    result.success(projectId);
-                    break;
                 case Constants.BARCODE_KEY:
                     String barcodeImageData = handleBarcode(methodCall.arguments);
                     result.success(barcodeImageData);

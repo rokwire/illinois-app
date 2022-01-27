@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Onboarding.dart';
+import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';

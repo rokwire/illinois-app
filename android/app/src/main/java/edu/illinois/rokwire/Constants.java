@@ -31,7 +31,6 @@ public class Constants {
     static final String APP_ADD_CARD_TO_WALLET_KEY = "addToWallet";
     static final String APP_ENABLED_ORIENTATIONS_KEY = "enabledOrientations";
     static final String APP_TRACKING_AUTHORIZATION = "tracking_authorization";
-    static final String FIREBASE_INFO = "firebaseInfo";
     static final String BARCODE_KEY = "barcode";
     static final String LAUNCH_APP = "launchApp";
     static final String LAUNCH_APP_SETTINGS = "launchAppSettings";

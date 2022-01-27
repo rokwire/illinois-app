@@ -3,16 +3,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:illinois/model/Inbox.dart';
+import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/firebase_messaging.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/service/storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Inbox with Service implements NotificationsListener {
@@ -26,15 +26,19 @@ class Inbox with Service implements NotificationsListener {
   
   InboxUserInfo? _userInfo;
 
-  // Singletone instance
+  // Singletone Factory
 
-  static final Inbox _instance = Inbox._internal();
+  static Inbox? _instance;
 
-  factory Inbox() {
-    return _instance;
-  }
+  static Inbox? get instance => _instance;
+  
+  @protected
+  static set instance(Inbox? value) => _instance = value;
 
-  Inbox._internal();
+  factory Inbox() => _instance ?? (_instance = Inbox.internal());
+
+  @protected
+  Inbox.internal();
 
   // Service
 
@@ -66,7 +70,7 @@ class Inbox with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([FirebaseMessaging(), Storage(), Config(), Auth2()]);
+    return { Storage(), Config(), Auth2(), FirebaseMessaging() };
   }
 
   // NotificationsListener
@@ -143,7 +147,7 @@ class Inbox with Service implements NotificationsListener {
     dynamic body = (messageIds != null) ? JsonUtils.encode({ "ids": List.from(messageIds) }) : null;
 
     String? url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/messages$urlParams" : null;
-    Response? response = await Network().get(url, body: body, auth: Auth2NetworkAuth());
+    Response? response = await Network().get(url, body: body, auth: Auth2());
     return (response?.statusCode == 200) ? (InboxMessage.listFromJson(JsonUtils.decodeList(response?.body)) ?? []) : null;
   }
 
@@ -153,7 +157,7 @@ class Inbox with Service implements NotificationsListener {
       "ids": (messageIds != null) ? List.from(messageIds) : null
     });
 
-    Response? response = await Network().delete(url, body: body, auth: Auth2NetworkAuth());
+    Response? response = await Network().delete(url, body: body, auth: Auth2());
     return (response?.statusCode == 200);
   }
 
@@ -161,14 +165,14 @@ class Inbox with Service implements NotificationsListener {
     String? url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/message" : null;
     String? body = JsonUtils.encode(message?.toJson());
 
-    Response? response = await Network().post(url, body: body, auth: Auth2NetworkAuth());
+    Response? response = await Network().post(url, body: body, auth: Auth2());
     return (response?.statusCode == 200);
   }
 
   Future<bool> subscribeToTopic({String? topic, String? token}) async {
     _storeTopic(topic); // Store first, otherwise we have delay
     bool result = await _manageFCMSubscription(topic: topic, token: token, action: 'subscribe');
-    if(!result){
+    if (!result){
       //if failed and not already stored remove
       Log.e("Unable to subscribe to topic: $topic");
     }
@@ -179,7 +183,7 @@ class Inbox with Service implements NotificationsListener {
   Future<bool> unsubscribeFromTopic({String? topic, String? token}) async {
     _removeStoredTopic(topic); //StoreFist, otherwise we have visual delay
     bool result = await _manageFCMSubscription(topic: topic, token: token, action: 'unsubscribe');
-    if(!result){
+    if (!result){
       //if failed //TBD
       Log.e("Unable to unsubscribe from topic: $topic");
     }
@@ -193,7 +197,7 @@ class Inbox with Service implements NotificationsListener {
       String? body = JsonUtils.encode({
         'token': token
       });
-      Response? response = await Network().post(url, body: body, auth: Auth2NetworkAuth());
+      Response? response = await Network().post(url, body: body, auth: Auth2());
       //Log.d("FCMTopic_$action($topic) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
@@ -233,42 +237,38 @@ class Inbox with Service implements NotificationsListener {
         'app_platform': Platform.operatingSystem,
         'app_version': Config().appVersion,
       });
-      Response? response = await Network().post(url, body: body, auth: Auth2NetworkAuth());
+      Response? response = await Network().post(url, body: body, auth: Auth2());
       //Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) / UserId: '${Auth2().accountId}'  => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
     return false;
   }
 
-  //Topics storage
-  void _storeTopic(String? topic){
-    if(!Auth2().isLoggedIn){
-      Storage().addFirebaseMessagingSubscriptionTopic(topic);
-    } else {
-      if(userInfo!=null){
-        if(_userInfo!.topics == null){
-          _userInfo!.topics = Set<String?>();
-        }
-        userInfo!.topics!.add(topic);
-      }
+  // Topics storage
+  void _storeTopic(String? topic) {
+    if (!Auth2().isLoggedIn) {
+      Storage().addInboxFirebaseMessagingSubscriptionTopic(topic);
+    }
+    else if (userInfo != null) {
+      _userInfo?.topics ??= <String>{};
+      userInfo?.topics?.add(topic);
     }
   }
 
-  void _removeStoredTopic(String? topic){
-    if(!Auth2().isLoggedIn){
-      Storage().removeFirebaseMessagingSubscriptionTopic(topic);
-    } else {
-      if (userInfo?.topics != null) {
-        userInfo!.topics!.remove(topic);
-      }
+  void _removeStoredTopic(String? topic) {
+    if (!Auth2().isLoggedIn) {
+      Storage().removeInboxFirebaseMessagingSubscriptionTopic(topic);
+    }
+    else if (userInfo?.topics != null) {
+      userInfo?.topics?.remove(topic);
     }
   }
 
   //UserInfo
-  Future<void> _loadUserInfo() async{
+  Future<void> _loadUserInfo() async {
     try {
-      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user", auth: Auth2NetworkAuth()) : null;
-      if(response?.statusCode == 200) {
+      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user", auth: Auth2()) : null;
+      if (response?.statusCode == 200) {
         Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
         InboxUserInfo? userInfo = InboxUserInfo.fromJson(jsonData);
         _applyUserInfo(userInfo);
@@ -282,8 +282,8 @@ class Inbox with Service implements NotificationsListener {
   Future<bool> _putUserInfo(InboxUserInfo? userInfo) async {
     if (Auth2().isLoggedIn && Config().notificationsUrl != null && userInfo != null){
       String? body = JsonUtils.encode(userInfo.toJson()); // Update user API do not receive topics. Only update enable/disable notifications for now
-      Response? response = await Network().put("${Config().notificationsUrl}/api/user", auth: Auth2NetworkAuth(), body: body);
-      if(response?.statusCode == 200) {
+      Response? response = await Network().put("${Config().notificationsUrl}/api/user", auth: Auth2(), body: body);
+      if (response?.statusCode == 200) {
         Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
         InboxUserInfo? userInfo = InboxUserInfo.fromJson(jsonData);
         _applyUserInfo(userInfo);
@@ -302,20 +302,20 @@ class Inbox with Service implements NotificationsListener {
   }
   
   void _applyUserInfo(InboxUserInfo? userInfo){
-    if(_userInfo != userInfo){
+    if (_userInfo != userInfo){
       Storage().inboxUserInfo = _userInfo = userInfo;
       NotificationService().notify(notifyInboxUserInfoChanged);
     } //else it's the same
   }
 
   //Delete User
-  void _deleteUser() async{
+  void _deleteUser() async {
     try {
       String? body = JsonUtils.encode({
         'notifications_disabled': true,
       });
-      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().delete("${Config().notificationsUrl}/api/user", auth: Auth2NetworkAuth(), body: body) : null;
-      if(response?.statusCode == 200) {
+      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().delete("${Config().notificationsUrl}/api/user", auth: Auth2(), body: body) : null;
+      if (response?.statusCode == 200) {
         _applyUserInfo(null);
       }
     } catch (e) {

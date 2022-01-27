@@ -31,6 +31,8 @@ class AppDateTime extends rokwire.AppDateTime {
 
   factory AppDateTime() => ((rokwire.AppDateTime.instance is AppDateTime) ? (rokwire.AppDateTime.instance as AppDateTime) : (rokwire.AppDateTime.instance = AppDateTime.internal()));
 
+  // Overrides
+
   @protected
   Future<Uint8List?> get timezoneDatabase async {
     ByteData? byteData = await AppBundle.loadBytes('assets/timezone2019a.tzf');

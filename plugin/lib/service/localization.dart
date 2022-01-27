@@ -168,7 +168,7 @@ class Localization with Service implements NotificationsListener {
   }
 
   @protected
-  String? getCacheFileName(String language) => 'strings.$language.json';
+  String getCacheFileName(String language) => 'strings.$language.json';
 
   @protected
   String? getCacheFilePath(String language) => (_assetsDir != null) ? join(_assetsDir!.path, getCacheFileName(language)) : null;
@@ -210,10 +210,14 @@ class Localization with Service implements NotificationsListener {
       });
     }
   }
+
+  @protected
+  String getNetworkAssetName(String language) => 'strings.$language.json';
+
   Future<Map<String,dynamic>?> _updateStringsFromNet(String language, { Map<String, dynamic>? cache }) async {
     Map<String, dynamic>? jsonData;
     try {
-      String assetName = 'strings.$language.json';
+      String assetName = getNetworkAssetName(language);
       http.Response? response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$assetName") : null;
       String? jsonString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
       jsonData = (jsonString != null) ? JsonUtils.decode(jsonString) : null;

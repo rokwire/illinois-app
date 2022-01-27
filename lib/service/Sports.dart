@@ -182,7 +182,7 @@ class Sports with Service implements NotificationsListener {
 
   static Future<String?> _loadContentStringFromNet(String url) async {
     try {
-      Response? response = await Network().get(url, auth: Auth2NetworkAuth());
+      Response? response = await Network().get(url, auth: Auth2());
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     }
     catch (e) { print(e.toString()); }
@@ -420,7 +420,7 @@ class Sports with Service implements NotificationsListener {
   Future<List<Roster>?> loadRosters(String? sportKey) async {
     if (StringUtils.isNotEmpty(Config().sportsServiceUrl) && StringUtils.isNotEmpty(sportKey)) {
       final rostersUrl = "${Config().sportsServiceUrl}/api/v2/players?sport=$sportKey";
-      final response = await Network().get(rostersUrl, auth: Auth2NetworkAuth());
+      final response = await Network().get(rostersUrl, auth: Auth2());
       String? responseBody = response?.body;
       int responseCode = response?.statusCode ?? -1;
       if (responseCode == 200) {
@@ -446,7 +446,7 @@ class Sports with Service implements NotificationsListener {
   Future<List<Coach>?> loadCoaches(String? sportKey) async {
     if (StringUtils.isNotEmpty(Config().sportsServiceUrl) && StringUtils.isNotEmpty(sportKey)) {
       final coachesUrl = "${Config().sportsServiceUrl}/api/v2/coaches?sport=$sportKey";
-      final response = await Network().get(coachesUrl, auth: Auth2NetworkAuth());
+      final response = await Network().get(coachesUrl, auth: Auth2());
       String? responseBody = response?.body;
       int? responseCode = response?.statusCode;
       if (responseCode == 200) {
@@ -474,7 +474,7 @@ class Sports with Service implements NotificationsListener {
       return null;
     }
     String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-schedule?sport=$sportKey';
-    final response = await Network().get(scheduleUrl, auth: Auth2NetworkAuth());
+    final response = await Network().get(scheduleUrl, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     String? responseBody = response?.body;
     if (responseCode == 200) {
@@ -492,7 +492,7 @@ class Sports with Service implements NotificationsListener {
       return null;
     }
     String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-record?sport=$sportKey';
-    final response = await Network().get(scheduleUrl, auth: Auth2NetworkAuth());
+    final response = await Network().get(scheduleUrl, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     String? responseBody = response?.body;
     if (responseCode == 200) {
@@ -628,7 +628,7 @@ class Sports with Service implements NotificationsListener {
       gamesUrl += queryParams;
     }
 
-    final response = await Network().get(gamesUrl, auth: Auth2NetworkAuth());
+    final response = await Network().get(gamesUrl, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     String? responseBody = response?.body;
 
@@ -653,7 +653,7 @@ class Sports with Service implements NotificationsListener {
   Future<News?> loadNewsArticle(String? id) async {
     if (StringUtils.isNotEmpty(Config().sportsServiceUrl) && StringUtils.isNotEmpty(id)) {
       String newsUrl = Config().sportsServiceUrl! + '/api/v2/news?id=$id';
-      final response = await Network().get(newsUrl, auth: Auth2NetworkAuth());
+      final response = await Network().get(newsUrl, auth: Auth2());
       String? responseBody = response?.body;
       if (response?.statusCode == 200) {
         List<dynamic>? jsonData = JsonUtils.decode(responseBody);
@@ -684,7 +684,7 @@ class Sports with Service implements NotificationsListener {
         newsUrl += 'limit=$count';
       }
 
-      final response = await Network().get(newsUrl, auth: Auth2NetworkAuth());
+      final response = await Network().get(newsUrl, auth: Auth2());
       String? responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
         List<dynamic>? jsonData = JsonUtils.decode(responseBody);

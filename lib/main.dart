@@ -19,9 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/DeepLink.dart';
@@ -35,7 +33,6 @@ import 'package:illinois/service/Gies.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding.dart';
@@ -51,12 +48,10 @@ import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContentWidget.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -66,9 +61,14 @@ import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/http_proxy.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
