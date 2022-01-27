@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Inbox and FirebaseMessaging services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 - Moved UIUC token and Auth Card support from rokwire plugin to application level [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 - FlexUI and Onbaording services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Updated Gies wizard: Improved Animation and Sliding behaviour. Fixed inner TabBar issues [#1224](https://github.com/rokwire/illinois-app/issues/1224).
 ### Added
 - Canvas Files and Folders data model [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 
@@ -17,7 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Canvas Syllabus html view [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 ### Changed  
 - Localization, Assets and Styles services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
-- Updated Gies wizard: Improved Animation and Sliding behaviour. Fixed inner TabBar issues [#1224](https://github.com/rokwire/illinois-app/issues/1224).
 
 ## [3.2.5] - 2022-01-25
 ### Added
