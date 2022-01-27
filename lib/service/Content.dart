@@ -106,7 +106,7 @@ class Content /* with Service */ {
       'quality': 100.toString() // Use maximum quality - 100
     };
     StreamedResponse? response = await Network().multipartPost(
-        url: url, fileKey: 'fileName', fileName: fileName, fileBytes: imageBytes, contentType: mediaType, fields: imageRequestFields, auth: Auth2NetworkAuth());
+        url: url, fileKey: 'fileName', fileName: fileName, fileBytes: imageBytes, contentType: mediaType, fields: imageRequestFields, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     String responseString = (await response?.stream.bytesToString())!;
     if (responseCode == 200) {

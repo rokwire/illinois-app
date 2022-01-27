@@ -147,7 +147,7 @@ class Inbox with Service implements NotificationsListener {
     dynamic body = (messageIds != null) ? JsonUtils.encode({ "ids": List.from(messageIds) }) : null;
 
     String? url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/messages$urlParams" : null;
-    Response? response = await Network().get(url, body: body, auth: Auth2NetworkAuth());
+    Response? response = await Network().get(url, body: body, auth: Auth2());
     return (response?.statusCode == 200) ? (InboxMessage.listFromJson(JsonUtils.decodeList(response?.body)) ?? []) : null;
   }
 
@@ -157,7 +157,7 @@ class Inbox with Service implements NotificationsListener {
       "ids": (messageIds != null) ? List.from(messageIds) : null
     });
 
-    Response? response = await Network().delete(url, body: body, auth: Auth2NetworkAuth());
+    Response? response = await Network().delete(url, body: body, auth: Auth2());
     return (response?.statusCode == 200);
   }
 
@@ -165,7 +165,7 @@ class Inbox with Service implements NotificationsListener {
     String? url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/message" : null;
     String? body = JsonUtils.encode(message?.toJson());
 
-    Response? response = await Network().post(url, body: body, auth: Auth2NetworkAuth());
+    Response? response = await Network().post(url, body: body, auth: Auth2());
     return (response?.statusCode == 200);
   }
 
@@ -197,7 +197,7 @@ class Inbox with Service implements NotificationsListener {
       String? body = JsonUtils.encode({
         'token': token
       });
-      Response? response = await Network().post(url, body: body, auth: Auth2NetworkAuth());
+      Response? response = await Network().post(url, body: body, auth: Auth2());
       //Log.d("FCMTopic_$action($topic) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
@@ -237,7 +237,7 @@ class Inbox with Service implements NotificationsListener {
         'app_platform': Platform.operatingSystem,
         'app_version': Config().appVersion,
       });
-      Response? response = await Network().post(url, body: body, auth: Auth2NetworkAuth());
+      Response? response = await Network().post(url, body: body, auth: Auth2());
       //Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) / UserId: '${Auth2().accountId}'  => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
@@ -267,7 +267,7 @@ class Inbox with Service implements NotificationsListener {
   //UserInfo
   Future<void> _loadUserInfo() async {
     try {
-      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user", auth: Auth2NetworkAuth()) : null;
+      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user", auth: Auth2()) : null;
       if (response?.statusCode == 200) {
         Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
         InboxUserInfo? userInfo = InboxUserInfo.fromJson(jsonData);
@@ -282,7 +282,7 @@ class Inbox with Service implements NotificationsListener {
   Future<bool> _putUserInfo(InboxUserInfo? userInfo) async {
     if (Auth2().isLoggedIn && Config().notificationsUrl != null && userInfo != null){
       String? body = JsonUtils.encode(userInfo.toJson()); // Update user API do not receive topics. Only update enable/disable notifications for now
-      Response? response = await Network().put("${Config().notificationsUrl}/api/user", auth: Auth2NetworkAuth(), body: body);
+      Response? response = await Network().put("${Config().notificationsUrl}/api/user", auth: Auth2(), body: body);
       if (response?.statusCode == 200) {
         Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
         InboxUserInfo? userInfo = InboxUserInfo.fromJson(jsonData);
@@ -314,7 +314,7 @@ class Inbox with Service implements NotificationsListener {
       String? body = JsonUtils.encode({
         'notifications_disabled': true,
       });
-      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().delete("${Config().notificationsUrl}/api/user", auth: Auth2NetworkAuth(), body: body) : null;
+      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().delete("${Config().notificationsUrl}/api/user", auth: Auth2(), body: body) : null;
       if (response?.statusCode == 200) {
         _applyUserInfo(null);
       }

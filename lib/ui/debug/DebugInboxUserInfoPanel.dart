@@ -37,7 +37,7 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
   Future<void> _lodUserInfo() async{
       try {
         Response? response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user",
-            auth: Auth2NetworkAuth()) : null;
+            auth: Auth2()) : null;
         Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
         if(jsonData != null){
           setState(() {

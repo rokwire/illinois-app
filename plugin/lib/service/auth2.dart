@@ -17,7 +17,7 @@ import 'package:rokwire_plugin/service/storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Auth2 with Service implements NotificationsListener {
+class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   
   static const String notifyLoginStarted      = "edu.illinois.rokwire.auth2.login.started";
   static const String notifyLoginSucceeded    = "edu.illinois.rokwire.auth2.login.succeeded";
@@ -172,6 +172,29 @@ class Auth2 with Service implements NotificationsListener {
         handleOidcAuthentication(uri);
       }
     }
+  }
+
+  // NetworkAuthProvider
+
+  @override
+  Map<String, String>? get networkAuthHeaders {
+    String? accessToken = token?.accessToken;
+    if ((accessToken != null) && accessToken.isNotEmpty) {
+      String? tokenType = token?.tokenType ?? 'Bearer';
+      return { HttpHeaders.authorizationHeader : "$tokenType $accessToken" };
+    }
+    return null;
+  }
+
+  @override
+  dynamic get networkAuthToken => token;
+  
+  @override
+  Future<bool> refreshNetworkAuthTokenIfNeeded(BaseResponse? response, dynamic token) async {
+    if ((response?.statusCode == 401) && (token is Auth2Token) && (this.token == token)) {
+      return (await refreshToken(token) != null);
+    }
+    return false;
   }
 
   // Getters
@@ -706,7 +729,7 @@ class Auth2 with Service implements NotificationsListener {
   Future<bool> _deleteUserAccount() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account";
-      Response? response = await Network().delete(url, auth: Auth2NetworkAuth());
+      Response? response = await Network().delete(url, auth: Auth2());
       return response?.statusCode == 200;
     }
     return false;
@@ -824,7 +847,7 @@ class Auth2 with Service implements NotificationsListener {
       _updateUserPrefsClient?.close();
       _updateUserPrefsClient = client;
       
-      Response? response = await Network().put(url, auth: Auth2NetworkAuth(), headers: headers, body: post, client: _updateUserPrefsClient);
+      Response? response = await Network().put(url, auth: Auth2(), headers: headers, body: post, client: _updateUserPrefsClient);
       
       if (identical(client, _updateUserPrefsClient)) {
         if (response?.statusCode == 200) {
@@ -846,7 +869,7 @@ class Auth2 with Service implements NotificationsListener {
   Future<Auth2UserPrefs?> _loadAccountUserPrefs() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account/preferences";
-      Response? response = await Network().get(url, auth: Auth2NetworkAuth());
+      Response? response = await Network().get(url, auth: Auth2());
       return (response?.statusCode == 200) ? Auth2UserPrefs.fromJson(JsonUtils.decodeMap(response?.body)) : null;
     }
     return null;
@@ -882,7 +905,7 @@ class Auth2 with Service implements NotificationsListener {
   Future<Auth2UserProfile?> _loadAccountUserProfile() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account/profile";
-      Response? response = await Network().get(url, auth: Auth2NetworkAuth());
+      Response? response = await Network().get(url, auth: Auth2());
       return (response?.statusCode == 200) ? Auth2UserProfile.fromJson(JsonUtils.decodeMap(response?.body)) : null;
     }
     return null;
@@ -895,7 +918,7 @@ class Auth2 with Service implements NotificationsListener {
         'Content-Type': 'application/json'
       };
       String? post = JsonUtils.encode(profile!.toJson());
-      Response? response = await Network().put(url, auth: Auth2NetworkAuth(), headers: headers, body: post);
+      Response? response = await Network().put(url, auth: Auth2(), headers: headers, body: post);
       return (response?.statusCode == 200);
     }
     return false;
@@ -969,44 +992,4 @@ enum Auth2EmailSignInResult {
   failed,
   failedActivationExpired,
   failedNotActivated,
-}
-
-abstract class _Auth2NetworkAuth extends NetworkAuthProvider {
-
-  String? get _token;
-  String? get _tokenType;
-  String  get _headerField;
-
-  @override
-  Map<String, String>? get networkAuthHeaders {
-    String? token = _token;
-    if ((token != null) && token.isNotEmpty) {
-      String? tokenType = _tokenType;
-      String headerValue = ((tokenType != null) && tokenType.isNotEmpty) ? "$tokenType $token" : token;
-      return { _headerField : headerValue };
-    }
-    return null;
-  }
-
-  @override
-  dynamic get networkAuthToken => Auth2().token;
-  
-  @override
-  Future<bool> refreshNetworkAuthTokenIfNeeded(BaseResponse? response, dynamic token) async {
-    if ((response?.statusCode == 401) && (token is Auth2Token) && (Auth2().token == token)) {
-      return (await Auth2().refreshToken(token) != null);
-    }
-    return false;
-  }
-}
-
-class Auth2NetworkAuth extends _Auth2NetworkAuth {
-
-  static final Auth2NetworkAuth _instance = Auth2NetworkAuth._internal();
-  Auth2NetworkAuth._internal();
-  factory Auth2NetworkAuth() => _instance;
-
-  @override String? get _token => Auth2().token?.accessToken;
-  @override String? get _tokenType => Auth2().token?.tokenType ?? 'Bearer';
-  @override String  get _headerField => HttpHeaders.authorizationHeader;
 }
