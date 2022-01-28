@@ -65,16 +65,10 @@ class RokwirePlugin {
     catch(e) { debugPrint(e.toString()); }
   }
 
-  // Location services
+  // Compound APIs
 
-  static Future<String?> queryLocationServicesStatus() async {
-    try { return await _channel.invokeMethod('locationServices.queryStatus'); }
-    catch(e) { debugPrint(e.toString()); }
-    return null;
-  }
-
-  static Future<String?> requestLocationServicesPermisions() async {
-    try { return await _channel.invokeMethod('locationServices.requestPermision'); }
+  static Future<dynamic> locationServices(String method, [dynamic arguments]) async {
+    try { return await _channel.invokeMethod('locationServices.$method', arguments); }
     catch(e) { debugPrint(e.toString()); }
     return null;
   }

@@ -22,6 +22,7 @@ import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 enum LocationServicesStatus {
   serviceDisabled,
@@ -87,7 +88,7 @@ class LocationServices with Service implements NotificationsListener {
   }
 
   Future<LocationServicesStatus?> get status async {
-    _lastStatus = _locationServicesStatusFromString(await RokwirePlugin.queryLocationServicesStatus());
+    _lastStatus = _locationServicesStatusFromString(JsonUtils.stringValue(await RokwirePlugin.locationServices('queryStatus')));
     _updateLocationMonitor();
     return _lastStatus;
   }
@@ -105,7 +106,7 @@ class LocationServices with Service implements NotificationsListener {
   Future<LocationServicesStatus?> requestPermission() async {
     _lastStatus = await status;
     if (_lastStatus == LocationServicesStatus.permissionNotDetermined) {
-      _lastStatus = _locationServicesStatusFromString(await RokwirePlugin.requestLocationServicesPermisions());
+      _lastStatus = _locationServicesStatusFromString(JsonUtils.stringValue(await RokwirePlugin.locationServices('requestPermision')));
       _notifyStatusChanged();
     }
 
