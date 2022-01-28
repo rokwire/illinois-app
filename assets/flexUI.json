@@ -21,7 +21,7 @@
 		"browse.all": ["athletics",  "building_status", "campus_guide", "crisis_help", "dining", "events", "groups", "inbox", "privacy_center", "quick_polls", "saved", "wellness", ""],
 		"browse.content": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding"],
 
-		"settings": ["user_info", "privacy_center", "connect", "connected", "linked", "link", "privacy", "feedback"],
+		"settings": ["user_info", "privacy_center", "privacy", "connect", "connected", "linked", "link", "feedback", "delete"],
 		"settings.connect": ["netid", "phone_or_email"],
 		"settings.link": ["netid", "phone_or_email"],
 		"settings.connected": ["netid", "phone", "email"],
@@ -36,7 +36,7 @@
 		"settings.notifications": ["reminders", "athletics_updates", "dining"],
 		"settings.account": ["personal_info"],
 		"settings.privacy0": ["edit", "statement"],
-		"settings.privacy": ["buttons", "delete"],
+		"settings.privacy": ["buttons"],
 		"settings.privacy.buttons": ["personal_info", "notifications"],
 
 		"roles": ["student", "visitor", "fan", "employee", "alumni", "parent", "resident", "gies"],
