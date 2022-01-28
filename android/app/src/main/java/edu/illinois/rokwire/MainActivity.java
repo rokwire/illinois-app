@@ -57,7 +57,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import edu.illinois.rokwire.geofence.GeofenceMonitor;
 import edu.illinois.rokwire.maps.MapActivity;
 import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
@@ -84,8 +83,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private Toast statusToast;
 
-    private GeofenceMonitor geofenceMonitor;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,9 +94,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (geofenceMonitor != null) {
-            geofenceMonitor.unInit();
-        }
     }
 
     public static MainActivity getInstance() {
@@ -131,8 +125,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 .getPlatformViewsController()
                 .getRegistry()
                 .registerViewFactory("mapview", new MapViewFactory(this, flutterEngine.getDartExecutor().getBinaryMessenger()));
-
-        flutterEngine.getPlugins().add(geofenceMonitor = new GeofenceMonitor());
     }
 
     private void initScreenOrientation() {
@@ -181,10 +173,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         catch (Exception e)
         {
             Log.d(TAG, "Failed to generate uuid");
-        }
-
-        if (geofenceMonitor != null) {
-            geofenceMonitor.init();
         }
     }
 

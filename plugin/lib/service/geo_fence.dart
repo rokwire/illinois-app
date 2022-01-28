@@ -18,18 +18,19 @@ import 'dart:collection';
 import 'dart:core';
 import 'dart:io';
 import 'dart:ui';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart' as Http;
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:http/http.dart';
 
 import 'package:rokwire_plugin/model/geo_fence.dart';
+import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/service/storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -41,46 +42,37 @@ class GeoFence with Service implements NotificationsListener {
   static const String notifyCurrentRegionsUpdated  = "edu.illinois.rokwire.geofence.regions.current.updated";
   static const String notifyCurrentBeaconsUpdated  = "edu.illinois.rokwire.geofence.beacons.current.updated";
   
-  static const String _geoFenceName   = "geoFence.json";
-
-  static const String _currentRegionsName = "currentRegions";
-  static const String _monitorRegionsName = "monitorRegions";
-
-  static const String _startRangingBeaconsInRegionName = "startRangingBeaconsInRegion";
-  static const String _stopRangingBeaconsInRegionName = "stopRangingBeaconsInRegion";
-  static const String _beaconsInRegionName = "beaconsInRegion";
-
-  static const String _enterRegionName = "onEnterRegion";
-  static const String _exitRegionName = "onExitRegion";
-  static const String _currentRegionsChangedName = "onCurrentRegionsChanged";
-  static const String _beaconsInRegionChangedName = "onBeaconsInRegionChanged";
-
-  static const MethodChannel _channel = const MethodChannel('edu.illinois.rokwire/geoFence');
+  static const String _geoFenceName                = "geoFence.json";
 
   static const bool _useAssets = false;
 
   LinkedHashMap<String, GeoFenceRegion>? _regions;
-  Set<String> _currentRegions = Set();
-  Map<String, List<GeoFenceBeacon>> _currentBeacons = Map();
+  Set<String> _currentRegions = <String>{};
+  final Map<String, List<GeoFenceBeacon>> _currentBeacons = <String, List<GeoFenceBeacon>>{};
 
   File?      _cacheFile;
-  DateTime? _pausedDateTime;
+  DateTime?  _pausedDateTime;
+  int?       _debugRegionRadius;
 
-  static final GeoFence _service = GeoFence._internal();
-  GeoFence._internal() {
-    _channel.setMethodCallHandler(this._handleChannelCall);
-  }
+  // Singletone Factory
 
-  factory GeoFence() {
-    return _service;
-  }
+  static GeoFence? _instance;
+
+  static GeoFence? get instance => _instance;
+  
+  @protected
+  static set instance(GeoFence? value) => _instance = value;
+
+  factory GeoFence() => _instance ?? (_instance = GeoFence.internal());
+
+  @protected
+  GeoFence.internal();
 
   // Service
 
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      Storage.notifySettingChanged,
       AppLivecycle.notifyStateChanged,
     ]);
   }
@@ -92,39 +84,35 @@ class GeoFence with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    _cacheFile = await _getCacheFile();
+    _cacheFile = await getCacheFile();
+    _debugRegionRadius = Storage().debugGeoFenceRegionRadius;
 
-    _regions = _useAssets ? _loadRegionsFromAssets() : await _loadRegionsFromCache();
+    _regions = useAssets ? await loadRegionsFromAssets() : await loadRegionsFromCache();
     if (_regions != null) {
-      _updateRegions();
+      updateRegions();
     }
     else {
-      String? jsonString = await _loadRegionsStringFromNet();
+      String? jsonString = await loadRegionsStringFromNet();
       _regions = _regionsFromJsonString(jsonString);
       if (_regions != null) {
-        _saveRegionsStringToCache(jsonString);
+        saveRegionsStringToCache(jsonString);
       }      
     }
     
-    _monitorRegions();
+    monitorRegions();
     await super.initService();
   }
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), Auth2(), Assets()]);
+    return { Storage(), Config(), Auth2()};
   }
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Storage.notifySettingChanged) {
-      if (param == Storage.debugGeoFenceRegionRadiusKey) {
-        _monitorRegions();
-      }
-    }
-    else if (name == AppLivecycle.notifyStateChanged) {
+    if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
   }
@@ -137,7 +125,7 @@ class GeoFence with Service implements NotificationsListener {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _updateRegions();
+          updateRegions();
         }
       }
     }
@@ -175,64 +163,86 @@ class GeoFence with Service implements NotificationsListener {
   }
 
   Future<bool?> startRangingBeaconsInRegion(String regionId) async {
-    return JsonUtils.boolValue(await _channel.invokeMethod(_startRangingBeaconsInRegionName, regionId));
+    return JsonUtils.boolValue(await RokwirePlugin.geoFence('startRangingBeaconsInRegion', regionId));
   }
 
   Future<bool?> stopRangingBeaconsInRegion(String regionId) async {
-    return JsonUtils.boolValue(await _channel.invokeMethod(_stopRangingBeaconsInRegionName, regionId));
+    return JsonUtils.boolValue(await RokwirePlugin.geoFence('stopRangingBeaconsInRegion', regionId));
   }
 
   Future<List<GeoFenceBeacon>?> beaconsInRegion(String regionId) async {
-    return GeoFenceBeacon.listFromJsonList(JsonUtils.listValue( await _channel.invokeMethod(_beaconsInRegionName, regionId)));
+    return GeoFenceBeacon.listFromJsonList(JsonUtils.listValue(await RokwirePlugin.geoFence('getBeaconsInRegion', regionId)));
+  }
+
+  int? get debugRegionRadius => _debugRegionRadius;
+
+  set debugRegionRadius(int? value) {
+    if (_debugRegionRadius != value) {
+      Storage().debugGeoFenceRegionRadius = _debugRegionRadius = value;
+      monitorRegions();
+    }
   }
 
   // Implementation
 
-  Future<File> _getCacheFile() async {
+  @protected
+  bool get useAssets => _useAssets;
+
+  @protected
+  Future<File> getCacheFile() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String cacheFilePath = join(appDocDir.path, _geoFenceName);
     return File(cacheFilePath);
   }
 
-  Future<String?> _loadRegionsStringFromCache() async {
+  @protected
+  Future<String?> loadRegionsStringFromCache() async {
     return ((_cacheFile != null) && await _cacheFile!.exists()) ? await _cacheFile!.readAsString() : null;
   }
 
-  Future<void> _saveRegionsStringToCache(String? regionsString) async {
+  @protected
+  Future<void> saveRegionsStringToCache(String? regionsString) async {
     await _cacheFile?.writeAsString(regionsString ?? '', flush: true);
   }
 
-  Future<LinkedHashMap<String, GeoFenceRegion>?> _loadRegionsFromCache() async {
-    return _regionsFromJsonString(await _loadRegionsStringFromCache());
+  @protected
+  Future<LinkedHashMap<String, GeoFenceRegion>?> loadRegionsFromCache() async {
+    return _regionsFromJsonString(await loadRegionsStringFromCache());
   }
 
-  LinkedHashMap<String, GeoFenceRegion>? _loadRegionsFromAssets() {
-    return GeoFenceRegion.mapFromJsonList(Assets()['geo_fence.regions']);
+  @protected
+  String get resourceAssetsKey => 'assets/$_geoFenceName';
+
+  @protected
+  Future<LinkedHashMap<String, GeoFenceRegion>?> loadRegionsFromAssets() async {
+    return GeoFenceRegion.mapFromJsonList(JsonUtils.decodeList(await rootBundle.loadString(resourceAssetsKey)));
   }
 
 
-  Future<String?> _loadRegionsStringFromNet() async {
+  @protected
+  Future<String?> loadRegionsStringFromNet() async {
     if (_useAssets) {
       return null;
     }
     else {
       try {
-        Http.Response? response = await Network().get("${Config().locationsUrl}/regions", auth: Auth2());
+        Response? response = await Network().get("${Config().locationsUrl}/regions", auth: Auth2());
         return ((response != null) && (response.statusCode == 200)) ? response.body : null;
         } catch (e) {
-          print(e.toString());
+          debugPrint(e.toString());
         }
         return null;
       }
     }
 
-  Future<void> _updateRegions() async {
-    String? jsonString = await _loadRegionsStringFromNet();
+  @protected
+  Future<void> updateRegions() async {
+    String? jsonString = await loadRegionsStringFromNet();
     LinkedHashMap<String, GeoFenceRegion>? regions = _regionsFromJsonString(jsonString);
     if ((regions != null) && !_areRegionsEqual(_regions, regions)) { // DeepCollectionEquality().equals(_regions, regions)
       _regions = regions;
-      _monitorRegions();
-      _saveRegionsStringToCache(jsonString);
+      monitorRegions();
+      saveRegionsStringToCache(jsonString);
     }
   }
 
@@ -265,11 +275,12 @@ class GeoFence with Service implements NotificationsListener {
 
   // ignore: unused_element
   static Future<List<String>?> _currentRegionIds() async {
-    return JsonUtils.listStringsValue(await _channel.invokeMethod(_currentRegionsName));
+    return JsonUtils.listStringsValue(await RokwirePlugin.geoFence('getCurrentRegions'));
   }
 
-  Future<void> _monitorRegions() async {
-    await _channel.invokeMethod(_monitorRegionsName, GeoFenceRegion.listToJsonList(GeoFenceRegion.filterList(_regions?.values, enabled: true), locationRadius: Storage().debugGeoFenceRegionRadius?.toDouble()));
+  @protected
+  Future<void> monitorRegions() async {
+    await RokwirePlugin.geoFence('monitorRegions', GeoFenceRegion.listToJsonList(GeoFenceRegion.filterList(_regions?.values, enabled: true), locationRadius: _debugRegionRadius?.toDouble()));
   }
 
   void _updateCurrentRegions(List<String>? regionIds) {
@@ -295,39 +306,31 @@ class GeoFence with Service implements NotificationsListener {
       }
     }
     catch(e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
   // Plugin
 
-  Future<dynamic> _handleChannelCall(MethodCall call) async {
-    if (call.method == _enterRegionName) {
-      String? regionId = JsonUtils.stringValue(call.arguments);
-      print("GeoFence didEnterRegion: $regionId}");
+  Future<dynamic> onPluginNotification(String? name, dynamic arguments) async {
+    if (name == 'onEnterRegion') {
+      String? regionId = JsonUtils.stringValue(arguments);
+      debugPrint("GeoFence didEnterRegion: $regionId}");
       NotificationService().notify(notifyRegionEnter, regionId);
-      return null;
     }
-    else if (call.method == _exitRegionName) {
-      String? regionId = JsonUtils.stringValue(call.arguments);
-      print("GeoFence didExitRegion: $regionId}");
+    else if (name == 'onExitRegion') {
+      String? regionId = JsonUtils.stringValue(arguments);
+      debugPrint("GeoFence didExitRegion: $regionId}");
       NotificationService().notify(notifyRegionExit, regionId);
-      return null;
     }
-    else if (call.method == _currentRegionsChangedName) {
-      _updateCurrentRegions(JsonUtils.listStringsValue(call.arguments));
-      return null;
+    else if (name == 'onCurrentRegionsChanged') {
+      _updateCurrentRegions(JsonUtils.listStringsValue(arguments));
     }
-    else if (call.method == _beaconsInRegionChangedName) {
-      Map<String, dynamic>? params = JsonUtils.mapValue(call.arguments);
+    else if (name == 'onBeaconsInRegionChanged') {
+      Map<String, dynamic>? params = JsonUtils.mapValue(arguments);
       String? regionId = (params != null) ? JsonUtils.stringValue(params['regionId']) : null;
       List<GeoFenceBeacon>? beacons = (params != null) ? GeoFenceBeacon.listFromJsonList(params['beacons']) : null;
       _updateCurrentBeacons(regionId: regionId, beacons: beacons);
-      return null;
-    }
-    else {
-      return null;
     }
   }
-
 }

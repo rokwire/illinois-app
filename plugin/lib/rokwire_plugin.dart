@@ -4,9 +4,16 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:rokwire_plugin/service/geo_fence.dart';
 
 class RokwirePlugin {
-  static const MethodChannel _channel = MethodChannel('edu.illinois.rokwire/plugin');
+  static final MethodChannel _channel = _createChannel('edu.illinois.rokwire/plugin', _handleChannelCall);
+
+  static MethodChannel _createChannel(String name, Future<dynamic> Function(MethodCall call)? handler) {
+    MethodChannel channel = MethodChannel(name);
+    channel.setMethodCallHandler(handler);
+    return channel;
+  }
 
   static Future<String?> get platformVersion async {
     try { return await _channel.invokeMethod('getPlatformVersion'); }
@@ -58,6 +65,8 @@ class RokwirePlugin {
     catch(e) { debugPrint(e.toString()); }
   }
 
+  // Location services
+
   static Future<String?> queryLocationServicesStatus() async {
     try { return await _channel.invokeMethod('locationServices.queryStatus'); }
     catch(e) { debugPrint(e.toString()); }
@@ -68,5 +77,27 @@ class RokwirePlugin {
     try { return await _channel.invokeMethod('locationServices.requestPermision'); }
     catch(e) { debugPrint(e.toString()); }
     return null;
+  }
+
+  static Future<dynamic> geoFence(String method, [dynamic arguments]) async {
+    try { return await _channel.invokeMethod('geoFence.$method', arguments); }
+    catch(e) { debugPrint(e.toString()); }
+    return null;
+  }
+
+  // Channel call handler
+
+  static Future<dynamic> _handleChannelCall(MethodCall call) async {
+    
+    String? firstMethodComponent = call.method, nextMethodComponents;
+    int position = call.method.indexOf('.');
+    if (0 <= position) {
+      firstMethodComponent = call.method.substring(0, position);
+      nextMethodComponents = call.method.substring(position + 1, call.method.length - position - 1);
+    }
+
+    if (firstMethodComponent == 'geoFence') {
+      GeoFence().onPluginNotification(nextMethodComponents, call.arguments);
+    }
   }
 }

@@ -74,12 +74,14 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
     _channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "edu.illinois.rokwire/plugin");
     _channel.setMethodCallHandler(this);
     _flutterBinding = flutterPluginBinding;
+    GeofenceMonitor.getInstance().init();
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     _channel.setMethodCallHandler(null);
     _flutterBinding = null;
+    GeofenceMonitor.getInstance().unInit();
   }
 
   // ActivityAware
@@ -140,11 +142,21 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
     else if (firstMethodComponent.equals("dismissSafariVC")) {
       result.success(null);
     }
+    else if (firstMethodComponent.equals("geoFence")) {
+      GeofenceMonitor.getInstance().handleMethodCall(nextMethodComponents, call.arguments, result);
+    }
     else if (firstMethodComponent.equals("locationServices")) {
       LocationServices.getInstance().handleMethodCall(nextMethodComponents, call.arguments, result);
     }
     else {
       result.notImplemented();
+    }
+  }
+
+  public void notifyGeoFence​(String event, Object arguments) {
+    Activity activity = getActivity();
+    if ((activity != null) && (_channel != null)) {
+      activity.runOnUiThread(() -> _channel.invokeMethod(String.format("geoFence.%s", event), arguments));
     }
   }
 
