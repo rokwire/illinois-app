@@ -198,15 +198,6 @@ class NativeCommunicator with Service implements NotificationsListener {
     }
   }
 
-  Future<void>launchNotification({String? title, String? subtitle, String? body, bool sound = true}) async {
-    await _platformChannel.invokeMethod('showNotification', {
-      'title': title,
-      'subtitle': subtitle,
-      'body': body,
-      'sound': sound,
-    });
-  }
-
   Future<void> dismissLaunchScreen() async {
     try {
       await _platformChannel.invokeMethod('dismissLaunchScreen');

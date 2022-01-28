@@ -106,11 +106,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         return instance;
     }
 
-    public App getApp() {
-        Application application = getApplication();
-        return (application instanceof App) ? (App) application : null;
-    }
-
     public static void invokeFlutterMethod(String methodName, Object arguments) {
         if (METHOD_CHANNEL != null) {
             getInstance().runOnUiThread(() -> METHOD_CHANNEL.invokeMethod(methodName, arguments));
@@ -230,15 +225,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         Intent locationPickerIntent =  new Intent(this, MapPickLocationActivity.class);
         locationPickerIntent.putExtra("explore", explore);
         startActivityForResult(locationPickerIntent, Constants.SELECT_LOCATION_ACTIVITY_RESULT_CODE);
-    }
-
-    private void launchNotification(MethodCall methodCall) {
-        String title = methodCall.argument("title");
-        String body = methodCall.argument("body");
-        App app = getApp();
-        if (app != null) {
-            app.showNotification(title, body);
-        }
     }
 
     private List<String> handleEnabledOrientations(Object orientations) {
@@ -487,10 +473,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     Object options = methodCall.argument("options");
                     Object markers = methodCall.argument("markers");
                     launchMap(target, options,markers);
-                    result.success(true);
-                    break;
-                case Constants.SHOW_NOTIFICATION_KEY:
-                    launchNotification(methodCall);
                     result.success(true);
                     break;
                 case Constants.APP_DISMISS_LAUNCH_SCREEN_KEY:

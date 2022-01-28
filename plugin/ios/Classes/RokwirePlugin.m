@@ -2,6 +2,7 @@
 #import "LocationServices.h"
 
 #import <SafariServices/SafariServices.h>
+#import <UserNotifications/UserNotifications.h>
 
 #import "Security+RokwireUtils.h"
 #import "NSDictionary+RokwireTypedValue.h"
@@ -29,6 +30,12 @@
 
   if ([firstMethodComponent isEqualToString:@"getPlatformVersion"]) {
     result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
+  }
+  else if ([firstMethodComponent isEqualToString:@"createAndroidNotificationChannel"]) {
+    result(nil);
+  }
+  else if ([firstMethodComponent isEqualToString:@"showNotification"]) {
+  	[self showNotificationWithParameters:parameters result:result];
   }
   else if ([firstMethodComponent isEqualToString:@"getDeviceId"]) {
     result([self deviceUuidWithParameters:parameters]);
@@ -116,6 +123,33 @@
 	else {
 		result(@(NO));
 	}
+}
+
+#pragma mark Local Notification
+
+- (void)showNotificationWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+	UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
+	content.title = [parameters rokwireStringForKey:@"title"] ?: [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+	content.subtitle = [parameters rokwireStringForKey:@"subtitle"];
+	content.body = [parameters rokwireStringForKey:@"body"];
+	content.sound = [parameters rokwireBoolForKey:@"sound" defaults:true] ? [UNNotificationSound defaultSound] : nil;
+	
+	UNTimeIntervalNotificationTrigger* trigger = [UNTimeIntervalNotificationTrigger
+												  triggerWithTimeInterval:1 repeats:NO];
+	
+	UNNotificationRequest* request = [UNNotificationRequest
+									  requestWithIdentifier:@"edu.illinois.rokwire.poll.created" content:content trigger:trigger];
+	
+	UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
+	[center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
+		if (error == nil) {
+			result(@(YES));
+		}
+		else {
+			NSLog(@"%@", error.localizedDescription);
+			result(@(NO));
+		}
+	}];
 }
 
 @end

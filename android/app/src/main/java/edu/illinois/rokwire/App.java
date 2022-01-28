@@ -47,7 +47,6 @@ public class App extends Application implements LifecycleObserver, PluginRegistr
         //FlutterFirebaseMessagingService.setPluginRegistrant(this);
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
-        createNotificationChannel(this);
     }
 
 
@@ -61,44 +60,6 @@ public class App extends Application implements LifecycleObserver, PluginRegistr
     public void onMoveToBackground() {
         Log.d("App", "ON_STOP");
         inBackground = true;
-    }
-
-    private void createNotificationChannel(Context context) {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Default_channel";
-            String description = "Default notifications channel";
-            int importance = android.app.NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            android.app.NotificationManager notificationManager = context.getSystemService(android.app.NotificationManager.class);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            }
-        }
-    }
-
-    public void showNotification(String title, String contentText) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-        if (title == null) {
-            title = this.getString(R.string.app_name);
-        }
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.app_icon)
-                .setContentTitle(title)
-                .setContentText(contentText)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent);
-        Notification notification = builder.build();
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(4, notification);
     }
 
     @Override

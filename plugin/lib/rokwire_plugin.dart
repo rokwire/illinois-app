@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class RokwirePlugin {
   static const MethodChannel _channel = MethodChannel('edu.illinois.rokwire/plugin');
@@ -11,6 +12,27 @@ class RokwirePlugin {
     try { return await _channel.invokeMethod('getPlatformVersion'); }
     catch(e) { debugPrint(e.toString()); }
     return null;
+  }
+
+  static Future<bool?> createAndroidNotificationChannel(AndroidNotificationChannel channel) async {
+    try { return await _channel.invokeMethod('createAndroidNotificationChannel', {
+      'id': channel.id,
+      'name': channel.name,
+      'description': channel.description,
+      'sound': channel.playSound,
+      'importance': channel.importance.value,
+    }); }
+    catch(e) { debugPrint(e.toString()); }
+  }
+
+  static Future<bool?> showNotification({ String? title, String? subtitle, String? body, bool sound = true }) async {
+    try { return await _channel.invokeMethod('showNotification', {
+      'title': title,
+      'subtitle': subtitle,
+      'body': body,
+      'sound': sound,
+    }); }
+    catch(e) { debugPrint(e.toString()); }
   }
 
   static Future<String?> getDeviceId([String? identifier, String? identifier2]) async {

@@ -19,6 +19,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase_messaging;
+import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';
@@ -61,7 +62,9 @@ class FirebaseMessaging with Service {
   @override
   Future<void> initService() async {
 
-    await _firebaseMessaging.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(androidNotificationChannel);
+    AndroidNotificationChannel channel = androidNotificationChannel;
+    await RokwirePlugin.createAndroidNotificationChannel(channel);
+    await _firebaseMessaging.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
 
     await firebase_messaging.FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true,
@@ -103,7 +106,7 @@ class FirebaseMessaging with Service {
   @protected
   AndroidNotificationChannel get androidNotificationChannel {
     return const AndroidNotificationChannel(
-      "edu.illinois.rokwire.firebase_messaging.notification_channel", // id
+      "edu.illinois.rokwire.firebase_messaging.notification_channel",
       "Rokwire", // name
       description: "Rokwire notifications receiver",
       importance: Importance.high,
