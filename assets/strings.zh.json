@@ -1944,6 +1944,8 @@
     "panel.canvas_announcements.load.failed.error.msg": "未能加載公告. 請稍後再試.",
     "panel.canvas_announcements.empty.msg": "本課程沒有公告.",
 
+    "panel.canvas_announcement.header.title": "公告",
+
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 
 	"widget.game_detail_heading.button.live_stats.title":"实时信息",

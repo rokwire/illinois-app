@@ -1950,6 +1950,8 @@
     "panel.canvas_announcements.load.failed.error.msg": "Failed to load announcements. Please, try again later.",
     "panel.canvas_announcements.empty.msg": "There are no announcements for this course.",
 
+    "panel.canvas_announcement.header.title": "Announcement",
+
     "widget.game_day.label.its_game_day":"It's Game Day!",
 
     "widget.game_detail_heading.button.live_stats.title":"Live Stats",

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/ui/canvas/CanvasAnnouncementPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -155,8 +157,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
 
   void _onTapAnnouncement(CanvasDiscussionTopic announcement) {
     Analytics.instance.logSelect(target: "Canvas Course -> Announcement");
-    //TBD: push announcement panel
-    print('Announcement: ${announcement.title}');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAnnouncementPanel(announcement: announcement)));
   }
 
   void _loadAnnouncements() {
