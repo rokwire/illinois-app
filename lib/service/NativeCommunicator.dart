@@ -34,11 +34,6 @@ class NativeCommunicator with Service implements NotificationsListener {
   static const String notifyMapRouteStart  = "edu.illinois.rokwire.nativecommunicator.map.route.start";
   static const String notifyMapRouteFinish = "edu.illinois.rokwire.nativecommunicator.map.route.finish";
   
-  static const String notifyGeoFenceRegionsEnter     = "edu.illinois.rokwire.nativecommunicator.geofence.regions.enter";
-  static const String notifyGeoFenceRegionsExit      = "edu.illinois.rokwire.nativecommunicator.geofence.regions.exit";
-  static const String notifyGeoFenceRegionsChanged   = "edu.illinois.rokwire.nativecommunicator.geofence.regions.changed";
-  static const String notifyGeoFenceBeaconsChanged   = "edu.illinois.rokwire.nativecommunicator.geofence.beacons.changed";
-  
   final MethodChannel _platformChannel = const MethodChannel('edu.illinois.rokwire/native_call');
 
   // Singletone
@@ -329,19 +324,6 @@ class NativeCommunicator with Service implements NotificationsListener {
         _notifyMapRouteFinish(call.arguments);
         break;
       
-      case "geo_fence.regions.enter":
-        _notifyGeoFenceRegionsEnter(call.arguments);
-        break;
-      case "geo_fence.regions.exit":
-        _notifyGeoFenceRegionsExit(call.arguments);
-        break;
-      case "geo_fence.regions.changed":
-        _notifyGeoFenceRegionsChanged(call.arguments);
-        break;
-      case "geo_fence.beacons.changed":
-        _notifyGeoFenceBeaconsChanged(call.arguments);
-        break;
-
       case "firebase_message":
         //PS use firebase messaging plugin!
         //FirebaseMessaging().onMessage(call.arguments);
@@ -385,22 +367,6 @@ class NativeCommunicator with Service implements NotificationsListener {
     dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
     Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
     NotificationService().notify(notifyMapRouteFinish, params);
-  }
-
-  void _notifyGeoFenceRegionsEnter(dynamic arguments) {
-    NotificationService().notify(notifyGeoFenceRegionsEnter, arguments);
-  }
-
-  void _notifyGeoFenceRegionsExit(dynamic arguments) {
-    NotificationService().notify(notifyGeoFenceRegionsExit, arguments);
-  }
-
-  void _notifyGeoFenceRegionsChanged(dynamic arguments) {
-    NotificationService().notify(notifyGeoFenceRegionsChanged, arguments);
-  }
-
-  void _notifyGeoFenceBeaconsChanged(dynamic arguments) {
-    NotificationService().notify(notifyGeoFenceBeaconsChanged, arguments);
   }
 }
 

@@ -295,8 +295,8 @@ class Analytics with Service implements NotificationsListener {
       Network.notifyHttpResponse,
       NativeCommunicator.notifyMapRouteStart,
       NativeCommunicator.notifyMapRouteFinish,
-      NativeCommunicator.notifyGeoFenceRegionsEnter,
-      NativeCommunicator.notifyGeoFenceRegionsExit,
+      GeoFence.notifyRegionEnter,
+      GeoFence.notifyRegionExit,
     ]);
 
   }
@@ -445,10 +445,10 @@ class Analytics with Service implements NotificationsListener {
     else if (name == NativeCommunicator.notifyMapRouteFinish) {
       logMapRoute(action: LogMapRouteFinishActionName, params: param);
     }
-    else if (name == NativeCommunicator.notifyGeoFenceRegionsEnter) {
+    else if (name == GeoFence.notifyRegionEnter) {
       logGeoFenceRegion(action: LogGeoFenceRegionEnterActionName, regionId: param);
     }
-    else if (name == NativeCommunicator.notifyGeoFenceRegionsExit) {
+    else if (name == GeoFence.notifyRegionExit) {
       logGeoFenceRegion(action: LogGeoFenceRegionExitActionName, regionId: param);
     }
 }

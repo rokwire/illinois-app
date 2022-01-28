@@ -36,6 +36,8 @@ import 'package:path_provider/path_provider.dart';
 
 class GeoFence with Service implements NotificationsListener {
 
+  static const String notifyRegionEnter            = "edu.illinois.rokwire.geofence.region.enter";
+  static const String notifyRegionExit             = "edu.illinois.rokwire.geofence.region.exit";
   static const String notifyCurrentRegionsUpdated  = "edu.illinois.rokwire.geofence.regions.current.updated";
   static const String notifyCurrentBeaconsUpdated  = "edu.illinois.rokwire.geofence.beacons.current.updated";
   
@@ -275,7 +277,7 @@ class GeoFence with Service implements NotificationsListener {
       Set<String> currentRegions = Set.from(regionIds);
       if (_currentRegions != currentRegions) {
         _currentRegions = currentRegions;
-        NotificationService().notify(notifyCurrentRegionsUpdated, null);
+        NotificationService().notify(notifyCurrentRegionsUpdated);
       }
     }
   }
@@ -301,11 +303,15 @@ class GeoFence with Service implements NotificationsListener {
 
   Future<dynamic> _handleChannelCall(MethodCall call) async {
     if (call.method == _enterRegionName) {
-      print("GeoFence didEnterRegion: ${JsonUtils.stringValue(call.arguments)}");
+      String? regionId = JsonUtils.stringValue(call.arguments);
+      print("GeoFence didEnterRegion: $regionId}");
+      NotificationService().notify(notifyRegionEnter, regionId);
       return null;
     }
     else if (call.method == _exitRegionName) {
-      print("GeoFence didExitRegion: ${JsonUtils.stringValue(call.arguments)}");
+      String? regionId = JsonUtils.stringValue(call.arguments);
+      print("GeoFence didExitRegion: $regionId}");
+      NotificationService().notify(notifyRegionExit, regionId);
       return null;
     }
     else if (call.method == _currentRegionsChangedName) {
