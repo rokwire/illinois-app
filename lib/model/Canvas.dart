@@ -15,6 +15,7 @@
  */
 
 import 'package:collection/collection.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 final _canvasDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
@@ -776,6 +777,10 @@ class CanvasDiscussionTopic {
         : null;
   }
 
+  String? get postedAtDisplayDate {
+    return AppDateTime().formatDateTime(postedAt, format: _topicDateTimeFormat);
+  }
+
   static List<CanvasDiscussionTopic>? listFromJson(List<dynamic>? jsonList) {
     List<CanvasDiscussionTopic>? result;
     if (jsonList != null) {
@@ -786,6 +791,8 @@ class CanvasDiscussionTopic {
     }
     return result;
   }
+
+  static String _topicDateTimeFormat = 'MM-dd-yyyy h:mm a';
 }
 
 ////////////////////////////////

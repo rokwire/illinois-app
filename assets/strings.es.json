@@ -1942,6 +1942,10 @@
     "panel.syllabus_html.header.title": "Programa de estudios",
     "panel.syllabus_html.load.failed.error.msg": "No se pudo cargar el contenido del programa de estudios. Por favor, inténtelo de nuevo más tarde.",
 
+    "panel.canvas_announcements.header.title": "Anuncios",
+    "panel.canvas_announcements.load.failed.error.msg": "No se pudieron cargar los anuncios. Por favor, inténtelo de nuevo más tarde.",
+    "panel.canvas_announcements.empty.msg": "No hay anuncios para este curso.",
+
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 
     "widget.game_detail_heading.button.live_stats.title":"Estadísticas en vivo",
