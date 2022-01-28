@@ -1,4 +1,21 @@
+/*
+ * Copyright 2020 Board of Trustees of the University of Illinois.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import 'package:collection/collection.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 final _canvasDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
@@ -521,6 +538,7 @@ class CanvasFolder {
   
   final int? contextId;
   final String? contextType;
+  final String? uploadStatus;
 
   final int? position;
   final String? filesUrl;
@@ -542,7 +560,7 @@ class CanvasFolder {
 
   CanvasFolder({this.id, this.parentFolderId,
     this.name, this.fullName,
-    this.contextId, this.contextType,
+    this.contextId, this.contextType, this.uploadStatus,
     this.position, this.filesUrl, this.filesCount, this.foldersUrl, this.foldersCount,
     this.createdAt, this.updatedAt, this.lockAt, this.unlockAt,
     this.locked, this.lockedForUser, this.hidden, this.hiddenForUser,
@@ -559,6 +577,7 @@ class CanvasFolder {
 
             contextId: JsonUtils.intValue(json['context_id']),
             contextType: JsonUtils.stringValue(json['context_type']),
+            uploadStatus: JsonUtils.stringValue(json['upload_status']),
             
             position: JsonUtils.intValue(json['position']),
             filesUrl: JsonUtils.stringValue(json['files_url']),
@@ -591,6 +610,7 @@ class CanvasFolder {
 
       (o.contextId == contextId) &&
       (o.contextType == contextType) &&
+      (o.uploadStatus == uploadStatus) &&
       
       (o.position == position) &&
       (o.filesUrl == filesUrl) &&
@@ -619,6 +639,7 @@ class CanvasFolder {
 
     (contextId?.hashCode ?? 0) ^
     (contextType?.hashCode ?? 0) ^
+    (uploadStatus?.hashCode ?? 0) ^
     
     (position?.hashCode ?? 0) ^
     (filesUrl?.hashCode ?? 0) ^
@@ -644,6 +665,233 @@ class CanvasFolder {
       result = <CanvasFolder>[];
       for (dynamic jsonEntry in jsonList) {
         ListUtils.add(result, CanvasFolder.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+}
+
+////////////////////////////////
+// CanvasDiscussionTopic
+
+class CanvasDiscussionTopic {
+  final int? id;
+  final int? assignmentId;
+  final int? rootTopicId;
+  final bool? isSectionSpecific;
+  final String? title;
+  final DateTime? lastReplyAt;
+  final DateTime? createdAt;
+  final DateTime? delayedPostAt;
+  final DateTime? postedAt;
+  final int? position;
+  final bool? podcastHasStudentPosts;
+  final String? discussionType;
+  final DateTime? lockAt;
+  final bool? allowRating;
+  final bool? onlyGradersCanRate;
+  final bool? sortByRating;
+  final String? anonymousState;
+  final String? userName;
+  final int? discussionSubEntryCount;
+  final CanvasTopicPermissions? permissions;
+  final bool? requireInitialPost;
+  final bool? userCanSeePosts;
+  final String? podcastUrl;
+  final String? readState;
+  final int? unreadCount;
+  final bool? subscribed;
+  final List<CanvasFile>? attachments;
+  final bool? published;
+  final bool? canUnpublish;
+  final bool? locked;
+  final bool? canLock;
+  final bool? commentsDisabled;
+  final CanvasTopicAuthor? author;
+  final String? htmlUrl;
+  final String? url;
+  final bool? pinned;
+  final int? groupCategoryId;
+  final bool? canGroup;
+  final List<CanvasGroupTopic>? groupTopicChildren;
+  final bool? lockedForUser;
+  final String? message;
+  final String? subscriptionHold;
+  final DateTime? todoDate;
+
+  CanvasDiscussionTopic({this.id, this.assignmentId, this.rootTopicId, this.isSectionSpecific, this.title, this.lastReplyAt,
+    this.createdAt, this.delayedPostAt, this.postedAt, this.position, this.podcastHasStudentPosts, this.discussionType, this.lockAt,
+    this.allowRating, this.onlyGradersCanRate, this.sortByRating, this.anonymousState, this.userName, this.discussionSubEntryCount,
+    this.permissions, this.requireInitialPost, this.userCanSeePosts, this.podcastUrl, this.readState, this.unreadCount, this.subscribed,
+    this.attachments, this.published, this.canUnpublish, this.locked, this.canLock, this.commentsDisabled, this.author, this.htmlUrl,
+    this.url, this.pinned, this.groupCategoryId, this.canGroup, this.groupTopicChildren, this.lockedForUser, this.message, 
+    this.subscriptionHold, this.todoDate});
+
+  static CanvasDiscussionTopic? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasDiscussionTopic(
+            id: JsonUtils.intValue(json['id']),
+            assignmentId: JsonUtils.intValue(json['assignment_id']),
+            rootTopicId: JsonUtils.intValue(json['root_topic_id']),
+            isSectionSpecific: JsonUtils.boolValue(json['is_section_specific']),
+            title: JsonUtils.stringValue(json['title']),
+            lastReplyAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['last_reply_at']), isUtc: true),
+            createdAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+            delayedPostAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['delayed_post_at']), isUtc: true),
+            postedAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['posted_at']), isUtc: true),
+            position: JsonUtils.intValue(json['position']),
+            podcastHasStudentPosts: JsonUtils.boolValue(json['podcast_has_student_posts']),
+            discussionType: JsonUtils.stringValue(json['discussion_type']),
+            lockAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['lock_at']), isUtc: true),
+            allowRating: JsonUtils.boolValue(json['allow_rating']),
+            onlyGradersCanRate: JsonUtils.boolValue(json['only_graders_can_rate']),
+            sortByRating: JsonUtils.boolValue(json['sort_by_rating']),
+            anonymousState: JsonUtils.stringValue(json['anonymous_state']),
+            userName: JsonUtils.stringValue(json['user_name']),
+            discussionSubEntryCount: JsonUtils.intValue(json['discussion_subentry_count']),
+            permissions: CanvasTopicPermissions.fromJson(json['permissions']),
+            requireInitialPost: JsonUtils.boolValue(json['require_initial_post']),
+            userCanSeePosts: JsonUtils.boolValue(json['user_can_see_posts']),
+            podcastUrl: JsonUtils.stringValue(json['podcast_url']),
+            readState: JsonUtils.stringValue(json['read_state']),
+            unreadCount: JsonUtils.intValue(json['unread_count']),
+            subscribed: JsonUtils.boolValue(json['subscribed']),
+            attachments: CanvasFile.listFromJson(json['attachments']),
+            published: JsonUtils.boolValue(json['published']),
+            canUnpublish: JsonUtils.boolValue(json['can_unpublish']),
+            locked: JsonUtils.boolValue(json['locked']),
+            canLock: JsonUtils.boolValue(json['can_lock']),
+            commentsDisabled: JsonUtils.boolValue(json['comments_disabled']),
+            author: CanvasTopicAuthor.fromJson(json['author']),
+            htmlUrl: JsonUtils.stringValue(json['html_url']),
+            url: JsonUtils.stringValue(json['url']),
+            pinned: JsonUtils.boolValue(json['pinned']),
+            groupCategoryId: JsonUtils.intValue(json['group_category_id']),
+            canGroup: JsonUtils.boolValue(json['can_group']),
+            groupTopicChildren: CanvasGroupTopic.listFromJson(json['group_topic_children']),
+            lockedForUser: JsonUtils.boolValue(json['locked_for_user']),
+            message: JsonUtils.stringValue(json['message']),
+            subscriptionHold: JsonUtils.stringValue(json['subscription_hold']),
+            todoDate: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['todo_date']), isUtc: true),
+          )
+        : null;
+  }
+
+  String? get postedAtDisplayDate {
+    return AppDateTime().formatDateTime(postedAt, format: _topicDateTimeFormat);
+  }
+
+  static List<CanvasDiscussionTopic>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasDiscussionTopic>? result;
+    if (jsonList != null) {
+      result = <CanvasDiscussionTopic>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasDiscussionTopic.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static String _topicDateTimeFormat = 'MM-dd-yyyy h:mm a';
+}
+
+////////////////////////////////
+// CanvasTopicPermissions
+
+class CanvasTopicPermissions {
+  final bool? attach;
+  final bool? update;
+  final bool? reply;
+  final bool? delete;
+
+  CanvasTopicPermissions({this.attach, this.update, this.reply, this.delete});
+
+  static CanvasTopicPermissions? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasTopicPermissions(
+            attach: JsonUtils.boolValue(json['attach']),
+            update: JsonUtils.boolValue(json['update']),
+            reply: JsonUtils.boolValue(json['reply']),
+            delete: JsonUtils.boolValue(json['delete']),
+          )
+        : null;
+  }
+}
+
+////////////////////////////////
+// CanvasTopicAuthor
+
+class CanvasTopicAuthor {
+  final int? id;
+  final String? anonymousId;
+  final String? displayName;
+  final String? avatarImageUrl;
+  final String? htmlUrl;
+  final String? pronouns;
+
+  CanvasTopicAuthor(
+      {this.id, this.anonymousId, this.displayName, this.avatarImageUrl, this.htmlUrl, this.pronouns});
+
+  static CanvasTopicAuthor? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasTopicAuthor(
+            id: JsonUtils.intValue(json['id']),
+            anonymousId: JsonUtils.stringValue(json['anonymous_id']),
+            displayName: JsonUtils.stringValue(json['display_name']),
+            avatarImageUrl: JsonUtils.stringValue(json['avatar_image_url']),
+            htmlUrl: JsonUtils.stringValue(json['html_url']),
+            pronouns: JsonUtils.stringValue(json['pronouns']),
+          )
+        : null;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasTopicAuthor) &&
+      (o.id == id) &&
+      (o.anonymousId == anonymousId) &&
+      (o.displayName == displayName) &&
+      (o.avatarImageUrl == avatarImageUrl) &&
+      (o.htmlUrl == htmlUrl) &&
+      (o.pronouns == pronouns);
+
+  int get hashCode =>
+      (id?.hashCode ?? 0) ^
+      (anonymousId?.hashCode ?? 0) ^
+      (displayName?.hashCode ?? 0) ^
+      (avatarImageUrl?.hashCode ?? 0) ^
+      (htmlUrl?.hashCode ?? 0) ^
+      (pronouns?.hashCode ?? 0);
+}
+
+////////////////////////////////
+// CanvasGroupTopic
+
+class CanvasGroupTopic {
+  final int? id;
+  final int? groupId;
+
+  CanvasGroupTopic({this.id, this.groupId});
+
+  static CanvasGroupTopic? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasGroupTopic(
+            id: JsonUtils.intValue(json['id']),
+            groupId: JsonUtils.intValue(json['group_id']),
+          )
+        : null;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasGroupTopic) && (o.id == id) && (o.groupId == groupId);
+
+  int get hashCode => (id?.hashCode ?? 0) ^ (groupId?.hashCode ?? 0);
+
+  static List<CanvasGroupTopic>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasGroupTopic>? result;
+    if (jsonList != null) {
+      result = <CanvasGroupTopic>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasGroupTopic.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;

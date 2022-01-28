@@ -126,6 +126,23 @@ class Canvas with Service {
     }
   }
 
+  Future<List<CanvasDiscussionTopic>?> loadAnnouncementsForCourse(int courseId) async {
+    if (!_available) {
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/discussion_topics?only_announcements=true';
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasDiscussionTopic>? announcements = CanvasDiscussionTopic.listFromJson(JsonUtils.decodeList(responseString));
+      return announcements;
+    } else {
+      Log.w('Failed to load canvas course announcements. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
   Map<String, String>? get _authHeaders {
     if (!_available) {
       return null;
