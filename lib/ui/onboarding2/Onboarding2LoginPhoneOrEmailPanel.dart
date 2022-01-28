@@ -191,6 +191,9 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
       Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((success) => _loginByPhoneCallback(success, phoneNumber));
     } else {
       setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.linked.text", "You have already linked a phone number to your account."));
+      if (mounted) {
+        setState(() { _isLoading = false; });
+      }
     }
   }
 
