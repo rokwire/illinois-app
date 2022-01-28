@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 Board of Trustees of the University of Illinois.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
@@ -5,6 +21,7 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Groups.dart';
+import 'package:illinois/ui/canvas/CanvasCourseAnnouncementsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseSyllabusPanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -101,7 +118,8 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.announcements.title', 'Announcements'),
           hint: Localization().getStringEx('panel.home_canvas_course.button.announcements.hint', ''),
-          leftIcon: 'images/icon-settings.png'),
+          leftIcon: 'images/icon-settings.png',
+          onTap: _onTapAnnouncements),
       _buildDelimiter(),
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.files.title', 'Files'),
@@ -137,8 +155,13 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   }
 
   void _onTapSyllabus() {
-    Analytics.instance.logSelect(target: "Canvas Course Syllabus");
+    Analytics.instance.logSelect(target: "Canvas Course -> Syllabus");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseSyllabusPanel(courseId: widget.courseId!)));
+  }
+
+  void _onTapAnnouncements() {
+    Analytics.instance.logSelect(target: "Canvas Course -> Announcements");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAnnouncementsPanel(courseId: widget.courseId!)));
   }
 
   void _onTapInbox() {

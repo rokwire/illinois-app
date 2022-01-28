@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.8] - 2022-01-28
+### Added
+- Canvas Announcements data model and UI [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+
 ## [3.2.7] - 2022-01-27
 ### Changed  
 - Inbox and FirebaseMessaging services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
