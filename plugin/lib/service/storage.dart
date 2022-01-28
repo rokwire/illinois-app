@@ -327,4 +327,9 @@ class Storage with Service {
       inboxFirebaseMessagingSubscriptionTopics = topics;
     }
   }
+
+  // Debug
+  String get debugGeoFenceRegionRadiusKey  => 'edu.illinois.rokwire.debug.geo_fence.region_radius';
+  int? get debugGeoFenceRegionRadius => getIntWithName(debugGeoFenceRegionRadiusKey);
+  set debugGeoFenceRegionRadius(int? value) => setIntWithName(debugGeoFenceRegionRadiusKey, value);
 }

@@ -174,9 +174,6 @@ dependencies {
     implementation 'org.conscrypt:conscrypt-android:2.4.0'
     //end Meridian
 
-    //AltBeacon - Android Beacon Library
-    implementation 'org.altbeacon:android-beacon-library:2.16.4'
-
     //Zxing
     implementation 'com.google.zxing:core:3.3.0' //Use zxing 3.3.0 because we have minSdk < 24
     implementation ('com.journeyapps:zxing-android-embedded:4.1.0@aar') { transitive = false }

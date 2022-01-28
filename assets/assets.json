@@ -106,20 +106,6 @@
 		}
 	},
 
-	"geo_fence": {
-		"regions": [
-			{"id":"@Rokwire",          "types":["test"],             "name":"1301 W Springfield Ave, Urbana, IL 61801, USA", "enabled": true, "location": {"latitude": 40.112501, "longitude":  -88.226915, "radius": 200}},
-
-			{"id":"state_farm_center", "types":["stadium"],          "name":"State Farm Center",                             "enabled": true, "location": {"latitude": 40.096247, "longitude":  -88.235923, "radius": 280}},
-			{"id":"memorial_stadium",  "types":["stadium"],          "name":"Memorial Stadium",                              "enabled": true, "location": {"latitude": 40.099187, "longitude":  -88.235956, "radius": 150}},
-
-			{"id":"illini_union",      "types":["voter"],            "name":"Illini Union",                                  "enabled": true, "location": {"latitude": 40.109211, "longitude":  -88.227221, "radius": 100}},
-			{"id":"arc",               "types":["voter"],            "name":"ARC",                                           "enabled": true, "location": {"latitude": 40.100729, "longitude":  -88.235799, "radius": 150}},
-
-			{"id":"MTD",               "types":["test", "MTD"],      "name":"Champaign–Urbana MTD",                          "enabled": true, "beacon": {"uuid": "d7d5a51f-ce7f-4a4c-a944-bed73578b201"}}
-		]
-	},
-
 	"privacy": {
 		"levels":[
 			{"value":1,"title":"1"},

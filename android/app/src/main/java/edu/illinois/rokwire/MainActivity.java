@@ -57,7 +57,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import edu.illinois.rokwire.geofence.GeofenceMonitor;
 import edu.illinois.rokwire.maps.MapActivity;
 import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
@@ -84,8 +83,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private Toast statusToast;
 
-    private GeofenceMonitor geofenceMonitor;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,18 +94,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (geofenceMonitor != null) {
-            geofenceMonitor.unInit();
-        }
     }
 
     public static MainActivity getInstance() {
         return instance;
-    }
-
-    public App getApp() {
-        Application application = getApplication();
-        return (application instanceof App) ? (App) application : null;
     }
 
     public static void invokeFlutterMethod(String methodName, Object arguments) {
@@ -136,8 +125,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 .getPlatformViewsController()
                 .getRegistry()
                 .registerViewFactory("mapview", new MapViewFactory(this, flutterEngine.getDartExecutor().getBinaryMessenger()));
-
-        flutterEngine.getPlugins().add(geofenceMonitor = new GeofenceMonitor());
     }
 
     private void initScreenOrientation() {
@@ -187,10 +174,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         {
             Log.d(TAG, "Failed to generate uuid");
         }
-
-        if (geofenceMonitor != null) {
-            geofenceMonitor.init();
-        }
     }
 
     private void launchMapsDirections(Object explore, Object options) {
@@ -230,15 +213,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         Intent locationPickerIntent =  new Intent(this, MapPickLocationActivity.class);
         locationPickerIntent.putExtra("explore", explore);
         startActivityForResult(locationPickerIntent, Constants.SELECT_LOCATION_ACTIVITY_RESULT_CODE);
-    }
-
-    private void launchNotification(MethodCall methodCall) {
-        String title = methodCall.argument("title");
-        String body = methodCall.argument("body");
-        App app = getApp();
-        if (app != null) {
-            app.showNotification(title, body);
-        }
     }
 
     private List<String> handleEnabledOrientations(Object orientations) {
@@ -487,10 +461,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     Object options = methodCall.argument("options");
                     Object markers = methodCall.argument("markers");
                     launchMap(target, options,markers);
-                    result.success(true);
-                    break;
-                case Constants.SHOW_NOTIFICATION_KEY:
-                    launchNotification(methodCall);
                     result.success(true);
                     break;
                 case Constants.APP_DISMISS_LAUNCH_SCREEN_KEY:

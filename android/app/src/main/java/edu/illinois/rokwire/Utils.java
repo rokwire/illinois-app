@@ -36,7 +36,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
 
-import org.altbeacon.beacon.Beacon;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -716,49 +715,6 @@ public class Utils {
             } else {
                 return null;
             }
-        }
-    }
-
-    public static class Beacons {
-
-        public static boolean equalCollections(Collection<Beacon> collection1, Collection<Beacon> collection2) {
-            int collection1Size = collection1 != null ? collection1.size() : 0;
-            int collection2Size = collection2 != null ? collection2.size() : 0;
-            if (collection1Size != collection2Size) {
-                return false;
-            } else if (collection1Size == 0) {
-                return true;
-            }
-            Iterator<Beacon> iterator = collection2.iterator();
-            for (Beacon beacon1 : collection1) {
-                Beacon beacon2 = iterator.next();
-                if (!beacon1.equals(beacon2)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public static List<HashMap> toListMap(Collection<Beacon> beacons) {
-            if (beacons == null || beacons.isEmpty()) {
-                return null;
-            }
-            List<HashMap> beaconsResponse = new ArrayList<>();
-            for (Beacon beacon : beacons) {
-                HashMap<String, Object> beaconMap = new HashMap<>();
-                String uuid = beacon.getId1().toString();
-                beaconMap.put("uuid", uuid);
-                String major = beacon.getId2().toString();
-                if (!Utils.Str.isEmpty(major)) {
-                    beaconMap.put("major", Integer.parseInt(major));
-                }
-                String minor = beacon.getId3().toString();
-                if (!Utils.Str.isEmpty(minor)) {
-                    beaconMap.put("minor", Integer.parseInt(minor));
-                }
-                beaconsResponse.add(beaconMap);
-            }
-            return beaconsResponse;
         }
     }
 

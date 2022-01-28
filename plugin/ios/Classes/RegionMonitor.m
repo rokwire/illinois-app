@@ -19,9 +19,10 @@
 //
 
 #import "RegionMonitor.h"
+#import "RokwirePlugin.h"
 
-#import "NSDictionary+InaTypedValue.h"
-#import "NSString+InaJson.h"
+#import "NSDictionary+RokwireTypedValue.h"
+#import "NSString+RokwireJson.h"
 
 #import <CoreLocation/CoreLocation.h>
 
@@ -30,21 +31,7 @@ typedef NS_ENUM(NSInteger, InsideRegionSource) {
 	InsideRegionSource_Location,
 };
 
-// Channel Commands
-static NSString *const kCurrentRegionsName = @"currentRegions";
-static NSString *const kMonitorRegionsName = @"monitorRegions";
-
-static NSString *const kStartRangingBeaconsInRegionName = @"startRangingBeaconsInRegion";
-static NSString *const kStopRangingBeaconsInRegionName = @"stopRangingBeaconsInRegion";
-static NSString *const kBeaconsInRegionName = @"beaconsInRegion";
-
-static NSString *const kEnterRegionName = @"onEnterRegion";
-static NSString *const kExitRegionName = @"onExitRegion";
-static NSString *const kCurrentRegionsChangedName = @"onCurrentRegionsChanged";
-static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged";
-
 @interface RegionMonitor()<CLLocationManagerDelegate>
-@property (nonatomic, strong) FlutterMethodChannel* channel;
 @property (nonatomic, strong) CLLocationManager*    locationManager;
 @property (nonatomic, strong) NSMutableDictionary*  regions;
 @property (nonatomic, strong) NSMutableDictionary*  currentRegionIds;
@@ -83,10 +70,14 @@ static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged"
 
 @implementation RegionMonitor
 
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-	FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:@"edu.illinois.rokwire/geoFence" binaryMessenger:registrar.messenger];
-	RegionMonitor *instance = [[RegionMonitor alloc] initWithChannel:channel];
-	[registrar addMethodCallDelegate:instance channel:channel];
++ (instancetype)sharedInstance {
+    static RegionMonitor *_sharedInstance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _sharedInstance = [[self alloc] init];
+    });
+	
+    return _sharedInstance;
 }
 
 - (instancetype)init {
@@ -103,35 +94,28 @@ static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged"
 	return self;
 }
 
-- (instancetype)initWithChannel:(FlutterMethodChannel*)channel {
-	if (self = [self init]) {
-		_channel = channel;
-	}
-	return self;
-}
-
 #pragma mark FlutterPlugin
 
-- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)handleMethodCallWithName:(NSString*)name parameters:(id)parameters result:(FlutterResult)result {
 
-	if ([call.method isEqualToString:kCurrentRegionsName]) {
+	if ([name isEqualToString:@"currentRegions"]) {
 		result(self.currentRegionIdsList);
 	}
-	else if ([call.method isEqualToString:kMonitorRegionsName]) {
-		NSArray *regions = [call.arguments isKindOfClass:[NSArray class]] ? call.arguments : nil;
+	else if ([name isEqualToString:@"monitorRegions"]) {
+		NSArray *regions = [parameters isKindOfClass:[NSArray class]] ? parameters : nil;
 		[self monitorRegions:regions];
 		result(nil);
 	}
-	else if ([call.method isEqualToString:kStartRangingBeaconsInRegionName]) {
-		NSString *regionId = [call.arguments isKindOfClass:[NSString class]] ? call.arguments : nil;
+	else if ([name isEqualToString:@"startRangingBeaconsInRegion"]) {
+		NSString *regionId = [parameters isKindOfClass:[NSString class]] ? parameters : nil;
 		result(@([self startRangingBeaconsInRegionWithId:regionId]));
 	}
-	else if ([call.method isEqualToString:kStopRangingBeaconsInRegionName]) {
-		NSString *regionId = [call.arguments isKindOfClass:[NSString class]] ? call.arguments : nil;
+	else if ([name isEqualToString:@"stopRangingBeaconsInRegion"]) {
+		NSString *regionId = [parameters isKindOfClass:[NSString class]] ? parameters : nil;
 		result(@([self stopRangingBeaconsInRegionWithId:regionId]));
 	}
-	else if ([call.method isEqualToString:kBeaconsInRegionName]) {
-		NSString *regionId = [call.arguments isKindOfClass:[NSString class]] ? call.arguments : nil;
+	else if ([name isEqualToString:@"beaconsInRegion"]) {
+		NSString *regionId = [parameters isKindOfClass:[NSString class]] ? parameters : nil;
 		result([self beaconsInRegionWithId:regionId]);
 	}
 	else {
@@ -160,7 +144,7 @@ static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged"
 		if (![regionsSet containsObject:regionId]) {
 			[removeRegionIds addObject:regionId];
 
-			_Region *region = [_regions inaObjectForKey:regionId class:[_Region class]];
+			_Region *region = [_regions rokwireObjectForKey:regionId class:[_Region class]];
 			[self stopMonitorRegion:region];
 			[self stopRangingBeaconsInRegion:region];
 		}
@@ -179,7 +163,7 @@ static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged"
 
 - (void)updateRegionMonitor {
 	for (NSString *regionId in _regions) {
-		_Region *region = [_regions inaObjectForKey:regionId class:[_Region class]];
+		_Region *region = [_regions rokwireObjectForKey:regionId class:[_Region class]];
 		bool canMonitorRegion = region.canMonitor;
 		if (!region.monitoring && canMonitorRegion) {
 			[self startMonitorRegion:region];
@@ -219,7 +203,7 @@ static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged"
 }
 
 - (NSArray*)beaconsInRegionWithId:(NSString*)regionId {
-	NSArray *beacons = [_currentRegionBeacons inaObjectForKey:regionId class:[NSArray class]];
+	NSArray *beacons = [_currentRegionBeacons rokwireObjectForKey:regionId class:[NSArray class]];
 	NSMutableArray *beaconsJson = (beacons != nil) ? [[NSMutableArray alloc] init] : nil;
 	for (CLBeacon *beacon in beacons) {
 		[beaconsJson addObject:beacon.uiucJson];
@@ -229,8 +213,8 @@ static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged"
 
 
 - (bool)startRangingBeaconsInRegionWithId:(NSString*)regionId {
-	_Region *region = [_regions inaObjectForKey:regionId class:[_Region class]];
-	NSNumber *currentRegionSource = [_currentRegionIds inaNumberForKey:regionId];
+	_Region *region = [_regions rokwireObjectForKey:regionId class:[_Region class]];
+	NSNumber *currentRegionSource = [_currentRegionIds rokwireNumberForKey:regionId];
 	bool insideRegion = (currentRegionSource != nil) && (currentRegionSource.integerValue == InsideRegionSource_Region);
 	if (insideRegion && !region.ranging && region.isBeaconRegion && region.canRange) {
 		[_locationManager startRangingBeaconsInRegion:region.clBeaconRegion];
@@ -242,7 +226,7 @@ static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged"
 
 - (bool)stopRangingBeaconsInRegionWithId:(NSString*)regionId {
 	if (regionId != nil) {
-		_Region *region = (regionId != nil) ? [_regions inaObjectForKey:regionId class:[_Region class]] : nil;
+		_Region *region = (regionId != nil) ? [_regions rokwireObjectForKey:regionId class:[_Region class]] : nil;
 		return [self stopRangingBeaconsInRegion:region];
 	}
 	else {
@@ -275,7 +259,7 @@ static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged"
 - (void)didRangeBeacons:(NSArray<CLBeacon*>*)beacons forRegion:(CLBeaconRegion*)region {
 
 	NSString *regionId = region.identifier;
-	NSArray *currentBeacons = [_currentRegionBeacons inaObjectForKey:regionId class:[NSArray class]];
+	NSArray *currentBeacons = [_currentRegionBeacons rokwireObjectForKey:regionId class:[NSArray class]];
 	
 	if (![CLBeacon uiucBeaconsList:currentBeacons equalsToBeaconsList:beacons]) {
 		if (beacons != nil) {
@@ -304,7 +288,7 @@ static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged"
 
 - (bool)hasLocationRegions {
 	for (NSString *regionId in _regions) {
-		_Region *region = [_regions inaObjectForKey:regionId class:[_Region class]];
+		_Region *region = [_regions rokwireObjectForKey:regionId class:[_Region class]];
 		if (region.isCircularRegion) {
 			return true;
 		}
@@ -319,19 +303,19 @@ static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged"
 }
 
 - (void)_notifyCurrentRegions {
-	[_channel invokeMethod:kCurrentRegionsChangedName arguments:self.currentRegionIdsList];
+	[RokwirePlugin.sharedInstance notifyGeoFenceEvent:@"onCurrentRegionsChanged" arguments:self.currentRegionIdsList];
 }
 
 - (void)_notifyRegionEnter:(NSString*)regionId {
-	[_channel invokeMethod:kEnterRegionName arguments:regionId];
+	[RokwirePlugin.sharedInstance notifyGeoFenceEvent:@"onEnterRegion" arguments:regionId];
 }
 
 - (void)_notifyRegionExit:(NSString*)regionId {
-	[_channel invokeMethod:kExitRegionName arguments:regionId];
+	[RokwirePlugin.sharedInstance notifyGeoFenceEvent:@"onExitRegion" arguments:regionId];
 }
 
 - (void)_notifyBeacons:(NSArray*)beacons forRegionWithId:(NSString*)regionId {
-	[_channel invokeMethod:kBeaconsInRegionChangedName arguments:@{
+	[RokwirePlugin.sharedInstance notifyGeoFenceEvent:@"onBeaconsInRegionChanged" arguments:@{
 		@"regionId": regionId ?: [NSNull null],
 		@"beacons": beacons ?: [NSNull null],
 	}];
@@ -412,8 +396,8 @@ static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged"
 	
 	bool modified = false;
 	for (NSString *regionId in _regions) {
-		_Region *region = [_regions inaObjectForKey:regionId class:[_Region class]];
-		NSNumber *currentRegionSource = [_currentRegionIds inaNumberForKey:regionId];
+		_Region *region = [_regions rokwireObjectForKey:regionId class:[_Region class]];
+		NSNumber *currentRegionSource = [_currentRegionIds rokwireNumberForKey:regionId];
 		if ([region.clCircularRegion containsCoordinate:location.coordinate]) {
 			if (currentRegionSource == nil) {
 				NSLog(@"RegionMonotor location inside: %@", regionId);
@@ -475,21 +459,21 @@ static NSString *const kBeaconsInRegionChangedName = @"onBeaconsInRegionChanged"
 	if (self = [super init]) {
 		_jsonData = jsonData;
 		
-		NSString *regionId = [_jsonData inaStringForKey:@"id"];
+		NSString *regionId = [_jsonData rokwireStringForKey:@"id"];
 		
 		NSDictionary *data;
-		if ((data = [_jsonData inaDictForKey:@"location"]) != nil) {
-			CLLocationDegrees latitude = [data inaDoubleForKey:@"latitude"];
-			CLLocationDegrees longitude = [data inaDoubleForKey:@"longitude"];
-			CLLocationDistance radius = [data inaDoubleForKey:@"radius"];
+		if ((data = [_jsonData rokwireDictForKey:@"location"]) != nil) {
+			CLLocationDegrees latitude = [data rokwireDoubleForKey:@"latitude"];
+			CLLocationDegrees longitude = [data rokwireDoubleForKey:@"longitude"];
+			CLLocationDistance radius = [data rokwireDoubleForKey:@"radius"];
 			CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
 			_clRegion = [[CLCircularRegion alloc] initWithCenter:coordinate radius:radius identifier:regionId];
 		}
-		else if ((data = [_jsonData inaDictForKey:@"beacon"]) != nil) {
-			NSString *uuidString = [data inaStringForKey:@"uuid"];
+		else if ((data = [_jsonData rokwireDictForKey:@"beacon"]) != nil) {
+			NSString *uuidString = [data rokwireStringForKey:@"uuid"];
 			NSUUID *uuid = (uuidString != nil) ? [[NSUUID alloc] initWithUUIDString:uuidString] : nil;
-			NSNumber *major = [data inaNumberForKey:@"major"];
-			NSNumber *minor = [data inaNumberForKey:@"minor"];
+			NSNumber *major = [data rokwireNumberForKey:@"major"];
+			NSNumber *minor = [data rokwireNumberForKey:@"minor"];
 			if ((uuid != nil) && (major != nil) && (minor != nil)) {
 				_clRegion = [[CLBeaconRegion alloc] initWithProximityUUID:uuid major:minor.unsignedShortValue minor:minor.unsignedShortValue identifier:regionId];
 			}
