@@ -18,7 +18,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/GeoFence.dart';
+import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -353,7 +353,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     // 2. Start ranging for all current (inside) regions that are not already raning.
     for (String regionId in currentRegionIds) {
       GeoFenceRegion region = GeoFence().regions![regionId]!;
-      if ((region.regionType == GeoFenceRegionType.Beacon) && region.types!.contains('MTD') && !_rangingRegionIds.contains(regionId)) {
+      if ((region.regionType == GeoFenceRegionType.beacon) && region.types!.contains('MTD') && !_rangingRegionIds.contains(regionId)) {
         GeoFence().startRangingBeaconsInRegion(regionId).then((_) {
           _rangingRegionIds.add(regionId);
         });

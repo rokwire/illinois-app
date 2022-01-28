@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/GeoFence.dart';
+import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:illinois/model/Voter.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';

@@ -21,7 +21,7 @@ import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as Http;
 
-import 'package:illinois/model/GeoFence.dart';
+import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
