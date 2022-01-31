@@ -442,7 +442,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
   }
 
   Widget _buildComment(GroupEventComment comment){
-    String? memberName = comment.member!.name;
+    String? memberName = comment.member!.displayShortName;
     String postDate = AppDateTimeUtils.timeAgoSinceDate(comment.dateCreated!);
     return
       Semantics(
@@ -470,7 +470,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
                       flex: 5,
                       child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                         Padding(padding: EdgeInsets.only(bottom: 2), child:
-                        Text(comment.member!.name! , style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary),),
+                        Text(comment.member!.displayShortName , style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary),),
                         ),
                         Text(postDate, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textBackground),)
                       ],),),),
@@ -1069,7 +1069,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   @override
   Widget build(BuildContext context) {
-    String? memberName = widget.post?.member?.name;
+    String? memberName = widget.post?.member?.displayShortName;
     String? htmlBody = widget.post?.body;
     String? imageUrl = widget.post?.imageUrl;
     int visibleRepliesCount = getVisibleRepliesCount();
@@ -1258,7 +1258,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Semantics( child:
-                  Text(StringUtils.ensureNotEmpty(widget.reply?.member?.name),
+                  Text(StringUtils.ensureNotEmpty(widget.reply?.member?.displayShortName),
                     style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
                 ),
                 Visibility(

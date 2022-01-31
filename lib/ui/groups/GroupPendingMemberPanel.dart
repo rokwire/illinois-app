@@ -102,7 +102,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(widget.member?.name ?? "",
+                  Text(widget.member?.displayShortName ?? "",
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies!.extraBold,
                         fontSize: 20,

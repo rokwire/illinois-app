@@ -127,7 +127,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   Future<void> _removeMembership() async{
     bool success = await Groups().deleteMembership(widget.group, widget.member);
     if(!success){
-      throw sprintf(Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group")!, [_member?.name ?? ""]);
+      throw sprintf(Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group")!, [_member?.displayShortName ?? ""]);
     }
   }
 
@@ -182,7 +182,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(_member?.name ?? "",
+              Text(_member?.displayShortName ?? "",
                 style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary
                 ),
               ),
@@ -273,7 +273,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 26),
                   child: Text(
-                    sprintf(Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?")!,[_member?.name]),
+                    sprintf(Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?")!,[_member?.displayName]),
                     textAlign: TextAlign.left,
                     style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.white),
                   ),

@@ -427,7 +427,7 @@ class _PendingMemberCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    member?.name ?? "",
+                    member?.displayName ?? "",
                     style: TextStyle(
                       fontFamily: Styles().fontFamilies!.bold,
                       fontSize: 20,
