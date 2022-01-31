@@ -377,7 +377,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                   active: (_activeFilterType == _FilterType.category),
                   visible: true,
                   onTap: (){
-                    Analytics.instance.logSelect(target: "GroupFilter - Category");
+                    Analytics().logSelect(target: "GroupFilter - Category");
                     setState(() {
                       _activeFilterType = (_activeFilterType != _FilterType.category) ? _FilterType.category : _FilterType.none;
                     });
@@ -390,7 +390,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                   active: (_activeFilterType == _FilterType.tags),
                   visible: true,
                   onTap: (){
-                    Analytics.instance.logSelect(target: "GroupFilter - Tags");
+                    Analytics().logSelect(target: "GroupFilter - Tags");
                     setState(() {
                       _activeFilterType = (_activeFilterType != _FilterType.tags) ? _FilterType.tags : _FilterType.none;
                     });
@@ -409,7 +409,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                       height: 25,
                     ),
                     onPressed: () {
-                      Analytics.instance.logSelect(target: "Search");
+                      Analytics().logSelect(target: "Search");
                       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
                     },
                   ),
@@ -646,33 +646,33 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       default:
         break;
     }
-    Analytics.instance.logSelect(target: "$analyticsTarget: $entry");
+    Analytics().logSelect(target: "$analyticsTarget: $entry");
     setState(() {
       _activeFilterType = _FilterType.none;
     });
   }
 
   void _onTapAllGroups(){
-    Analytics.instance.logSelect(target: "All Groups");
+    Analytics().logSelect(target: "All Groups");
     if(_myGroupsSelected){
       switchTabSelection();
     }
   }
 
   void _onTapMyGroups(){
-    Analytics.instance.logSelect(target: "My Groups");
+    Analytics().logSelect(target: "My Groups");
     if(!_myGroupsSelected){
       switchTabSelection();
     }
   }
 
   void _onTapCreate(){
-    Analytics.instance.logSelect(target: "Create Group");
+    Analytics().logSelect(target: "Create Group");
     Navigator.push(context, MaterialPageRoute(builder: (context)=>GroupCreatePanel()));
   }
 
   Future<void> _onPullToRefresh() async {
-    Analytics.instance.logSelect(target: "Pull To Refresh");
+    Analytics().logSelect(target: "Pull To Refresh");
     List<Group>? groups = await Groups().loadGroups(myGroups: _myGroupsSelected);
     if (mounted && (groups != null)) {
       List<Group>? sortedGroups = _sortGroups(groups);

@@ -596,7 +596,7 @@ class _GiesNotesWidgetState extends State<GiesNotesWidget> {
           Semantics(
               label: Localization().getStringEx("dialog.close.title","Close"), button: true,
               child: InkWell(onTap:() {
-                Analytics.instance.logAlert(text: "Things to Remember", selection: "Close");
+                Analytics().logAlert(text: "Things to Remember", selection: "Close");
                 Navigator.of(context).pop();
               }, child:
               Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors!.white!, width: 2),), child:
@@ -647,7 +647,7 @@ class _GiesNotesWidgetState extends State<GiesNotesWidget> {
   }
 
   void _onSave() {
-    Analytics.instance.logAlert(text: "Things to Remember", selection: "Save");
+    Analytics().logAlert(text: "Things to Remember", selection: "Save");
 
     if (widget.notes != null) {
       for (dynamic note in widget.notes!) {

@@ -433,7 +433,7 @@ class _EventCard extends StatelessWidget {
   }
 
   void _onSettingsTap(BuildContext context, GroupEvent? event){
-    Analytics.instance.logSelect(target: "Settings");
+    Analytics().logSelect(target: "Settings");
     showDialog(
         context: context,
         builder: (_) => Material(
@@ -513,7 +513,7 @@ class _EventCard extends StatelessWidget {
   }
 
   void _onDeleteTap(BuildContext context, GroupEvent? event){
-    Analytics.instance.logSelect(target: "Delete");
+    Analytics().logSelect(target: "Delete");
     showDialog(
         context: context,
         builder: (_) => Material(

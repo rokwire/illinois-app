@@ -65,7 +65,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
   }
 
   Future<void> _saveQrCode() async {
-    Analytics.instance.logSelect(target: "Save Group QR Code");
+    Analytics().logSelect(target: "Save Group QR Code");
 
     if (_qrCodeBytes == null) {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_qr_code.alert.no_qr_code.msg", "There is no QR Code"));

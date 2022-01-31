@@ -86,8 +86,9 @@ public class GeofenceMonitor implements BeaconConsumer {
 
     public void init() {
         Context activityContext = RokwirePlugin.getInstance().getActivity();
-        if (ContextCompat.checkSelfPermission(activityContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(activityContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if ((activityContext != null) &&
+            (ContextCompat.checkSelfPermission(activityContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) &&
+            (ContextCompat.checkSelfPermission(activityContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
             Log.d(TAG, "Location Permissions Granted.");
             initGeofenceClient();
             initBeaconManager();
@@ -97,6 +98,10 @@ public class GeofenceMonitor implements BeaconConsumer {
     public void unInit() {
         unInitGeofenceClient();
         unInitBeaconManager();
+    }
+
+    public boolean isInitialized() {
+        return isGeofenceClientInitialized() && isBeaconManagerInitialized();
     }
 
     public void onLocationPermissionGranted() {
@@ -224,6 +229,10 @@ public class GeofenceMonitor implements BeaconConsumer {
             geofencingClient.removeGeofences(getGeofencePendingIntent());
             geofencingClient = null;
         }
+    }
+
+    private boolean isGeofenceClientInitialized() {
+        return (geofencingClient != null);
     }
 
     private void monitor(List<Map<String, Object>> geofenceEntries) {
@@ -422,6 +431,10 @@ public class GeofenceMonitor implements BeaconConsumer {
             beaconManager.unbind(this);
             beaconManager = null;
         }
+    }
+
+    private boolean isBeaconManagerInitialized() {
+        return (beaconManager != null);
     }
 
     private void startMonitorBeaconRegions(List<Region> beaconRegions) {

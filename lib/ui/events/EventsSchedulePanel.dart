@@ -287,7 +287,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   //display type
   void _selectDisplayType(ListMapDisplayType displayType) {
-    Analytics.instance.logSelect(target: displayType.toString());
+    Analytics().logSelect(target: displayType.toString());
     if (_displayType != displayType) {
       _refresh(() {
         _displayType = displayType;
@@ -347,7 +347,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                       label: filterValues[filterIndex],
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(filterIndex)),
                       onTap: () {
-                        Analytics.instance.logSelect(target: "FilterItem: ${filterValues[filterIndex]}");
+                        Analytics().logSelect(target: "FilterItem: ${filterValues[filterIndex]}");
                         _onFilterValueClick(selectedFilter!, filterIndex);
                       },
                     );
@@ -416,7 +416,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   void _onTapSearchTags() {
-    Analytics.instance.logSelect(target: "Search");
+    Analytics().logSelect(target: "Search");
     FocusScope.of(context).requestFocus(new FocusNode());
     String searchValue = _textEditingController.text;
     if (StringUtils.isEmpty(searchValue)) {
@@ -532,7 +532,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
         active: selectedFilter.active,
         visible: true,
         onTap: (){
-          Analytics.instance.logSelect(target: "Filter: $filterHeaderLabel");
+          Analytics().logSelect(target: "Filter: $filterHeaderLabel");
           return _onFilterTypeClicked(selectedFilter);},
       ));
     }
@@ -667,7 +667,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                                     borderColor: Styles().colors!.fillColorSecondary,
                                     padding: EdgeInsets.symmetric(horizontal: 24),
                                     onTap: () {
-                                      Analytics.instance.logSelect(target: 'Directions');
+                                      Analytics().logSelect(target: 'Directions');
                                       _presentMapExploreDirections(context);
                                     }),),
                                 Container(
@@ -685,7 +685,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                               borderColor: Styles().colors!.fillColorSecondary,
                               padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
-                                Analytics.instance.logSelect(target: 'Details');
+                                Analytics().logSelect(target: 'Details');
                                 _presentMapExploreDetail(context);
                               }),),
 
@@ -1117,7 +1117,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                             child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
-                                  Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
+                                  Analytics().logSelect(target: "Favorite: ${widget.event?.title}");
                                   Auth2().prefs?.toggleFavorite(widget.event);
                                 },
                                 child: Semantics(

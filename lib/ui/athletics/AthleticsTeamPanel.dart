@@ -413,7 +413,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                           label: Localization().getStringEx("panel.athletics_team.button.all_news.title", 'All News'),
                           hint: Localization().getStringEx("panel.athletics_team.button.all_news.hint", ''),
                           onTap: () {
-                            Analytics.instance.logSelect(target:"All News");
+                            Analytics().logSelect(target:"All News");
                             Navigator.push(
                               context,
                               CupertinoPageRoute(
@@ -644,7 +644,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
             child: AthleticsNewsCard(
               news: news,
               onTap: () {
-                Analytics.instance.logSelect(target:"NewsCard: "+news.title!);
+                Analytics().logSelect(target:"NewsCard: "+news.title!);
                 Navigator.push(
                     context,
                     CupertinoPageRoute(
@@ -708,7 +708,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
 
   GestureTapCallback _showRosterListPanel() {
     return () {
-      Analytics.instance.logSelect(target:"Full Rosters");
+      Analytics().logSelect(target:"Full Rosters");
       Navigator.push(
           context,
           CupertinoPageRoute(
@@ -718,7 +718,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
 
   GestureTapCallback _showCoachListPanel() {
     return () {
-      Analytics.instance.logSelect(target:"All Staff");
+      Analytics().logSelect(target:"All Staff");
       Navigator.push(
           context,
           CupertinoPageRoute(
@@ -728,7 +728,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
 
   GestureTapCallback _showScheduleListPanel() {
     return () {
-      Analytics.instance.logSelect(target:"Full Schedule List");
+      Analytics().logSelect(target:"Full Schedule List");
       Navigator.push(
           context,
           CupertinoPageRoute(
@@ -738,12 +738,12 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   }
 
   void _onTapSportPreference() {
-    Analytics.instance.logSelect(target:"Category -Favorite");
+    Analytics().logSelect(target:"Category -Favorite");
     Auth2().prefs?.toggleSportInterest(widget.sport!.shortName);
   }
 
   void _onTapRosterItem(BuildContext context, Roster roster) {
-    Analytics.instance.logSelect(target:"Roster: "+roster.name!);
+    Analytics().logSelect(target:"Roster: "+roster.name!);
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -752,7 +752,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   }
 
   void _onTapCoachItem(BuildContext context, Coach coach) {
-    Analytics.instance.logSelect(target:"Coach: "+coach.title!);
+    Analytics().logSelect(target:"Coach: "+coach.title!);
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -1016,7 +1016,7 @@ class _TeamSocialCell extends StatelessWidget {
   }
 
   void _onTap(BuildContext context) {
-    Analytics.instance.logSelect(target:"Social: "+name!);
+    Analytics().logSelect(target:"Social: "+name!);
     if (StringUtils.isNotEmpty(webUrl)) {
       Navigator.push(
           context,

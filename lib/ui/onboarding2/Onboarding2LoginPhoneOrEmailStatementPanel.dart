@@ -95,19 +95,19 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
             ],),
           )
         ]),
-        OnboardingBackButton(padding: backButtonInsets, onTap: () { Analytics.instance.logSelect(target: "Back"); Navigator.pop(context); }),
+        OnboardingBackButton(padding: backButtonInsets, onTap: () { Analytics().logSelect(target: "Back"); Navigator.pop(context); }),
         _progress ? Container(alignment: Alignment.center, child: CircularProgressIndicator(), ) : Container(),
       ],),
     );
   }
 
   void _onContinueTapped() {
-    Analytics.instance.logSelect(target: 'Continue');
+    Analytics().logSelect(target: 'Continue');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPhoneOrEmailPanel(onboardingContext: widget.onboardingContext)));
   }
 
   void _onSkipTapped() {
-    Analytics.instance.logSelect(target: 'Not right now');
+    Analytics().logSelect(target: 'Not right now');
     Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null; // Hook this panels to Onboarding2
     if (onContinue != null) {
       onContinue();

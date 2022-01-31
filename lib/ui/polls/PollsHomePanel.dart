@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/model/Poll.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -26,7 +26,7 @@ import 'package:illinois/service/Groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
@@ -38,6 +38,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/service/Polls.dart' as illinois;
 
 
 class PollsHomePanel extends StatefulWidget {
@@ -572,7 +573,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
             }
           });
         }).catchError((e) {
-          _myPollsError = e.toString();
+          _myPollsError = illinois.Polls.localizedErrorString(e);
         }).whenComplete(() {
           setState(() {
             _myPollsLoading = false;
@@ -602,7 +603,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
             }
           });
         }).catchError((e){
-          _recentPollsError = e.toString();
+          _recentPollsError = illinois.Polls.localizedErrorString(e);
         }).whenComplete((){
           setState((){
             _recentPollsLoading = false;
@@ -629,7 +630,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
             }
             setState(() {});
           }).catchError((e) {
-            _groupPollsError = e.toString();
+            _groupPollsError = illinois.Polls.localizedErrorString(e);
           }).whenComplete(() {
             _setGroupPollsLoading(false);
           });
@@ -1052,7 +1053,7 @@ class _PollCardState extends State<_PollCard>{
     _setStartButtonProgress(true);
       Polls().open(widget.poll!.pollId).then((result) => _setStartButtonProgress(false)).catchError((e){
         _setStartButtonProgress(false);
-        AppAlert.showDialogResult(context, e.toString());
+        AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
       });
   }
 
@@ -1060,7 +1061,7 @@ class _PollCardState extends State<_PollCard>{
     _setEndButtonProgress(true);
       Polls().close(widget.poll!.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
         _setEndButtonProgress(false);
-        AppAlert.showDialogResult(context, e.toString());
+        AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
       });
 
   }

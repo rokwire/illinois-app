@@ -16,16 +16,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/model/Poll.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/service/Polls.dart' as illinois;
 
 class GroupPollListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group group;
@@ -152,7 +153,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
       String? groupId = widget.group.id;
       if (StringUtils.isNotEmpty(groupId)) {
         _setGroupPollsLoading(true);
-        Polls().getGroupPolls([groupId!], cursor: _pollsCursor)!.then((PollsChunk? result) {
+        Polls().getGroupPolls([groupId!], cursor: _pollsCursor)?.then((PollsChunk? result) {
           if (result != null) {
             if (_polls == null) {
               _polls = [];
@@ -162,7 +163,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
             _pollsError = null;
           }
         }).catchError((e) {
-          _pollsError = e.toString();
+          _pollsError = illinois.Polls.localizedErrorString(e);
         }).whenComplete(() {
           _setGroupPollsLoading(false);
         });
@@ -206,7 +207,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
 
   @override
   void onNotification(String name, param) {
-    if((name == Polls.notifyStatusChanged) || (name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged)) {
+    if((name == Polls.notifyCreated) || (name == Polls.notifyStatusChanged) || (name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged)) {
       _onPollUpdated(param);
     }
   }

@@ -201,7 +201,7 @@ class _OnboardingLoginPhoneVerifyPanelState
             OnboardingBackButton(
                 padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                 onTap: () {
-                  Analytics.instance.logSelect(target: "Back");
+                  Analytics().logSelect(target: "Back");
                   Navigator.pop(context);
                 }), Align(alignment: Alignment.bottomCenter, child:
             Padding(padding: EdgeInsets.only(left: 18, right: 18, bottom: 24),child: ScalableRoundedButton(
@@ -223,7 +223,7 @@ class _OnboardingLoginPhoneVerifyPanelState
       return;
     }
 
-    Analytics.instance.logSelect(target: "Next");
+    Analytics().logSelect(target: "Next");
     _clearErrorMsg();
     _validateUserInput();
     if (StringUtils.isNotEmpty(_validationErrorMsg)) {
@@ -256,7 +256,7 @@ class _OnboardingLoginPhoneVerifyPanelState
   }
 
   void _onMethodChanged(Auth2PhoneVerificationMethod? method) {
-    Analytics.instance.logSelect(target: method?.toString());
+    Analytics().logSelect(target: method?.toString());
     FocusScope.of(context).requestFocus(new FocusNode());
     setState(() {
       _verificationMethod = method;

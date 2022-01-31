@@ -120,7 +120,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
   }
 
   void _onTagTaped(String tag) {
-    Analytics.instance.logSelect(target: "Group Tag: $tag");
+    Analytics().logSelect(target: "Group Tag: $tag");
     _hideKeyboard();
     _switchTag(tag);
     AppSemantics.announceCheckBoxStateChange(context, _isTagSelected(tag), tag);

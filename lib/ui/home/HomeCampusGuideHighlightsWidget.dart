@@ -128,7 +128,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
   }
 
   void _showAll() {
-    Analytics.instance.logSelect(target: "HomeCampusGuideHighlightsWidget View All");
+    Analytics().logSelect(target: "HomeCampusGuideHighlightsWidget View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _promotedItems, contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'))));
   }
 }

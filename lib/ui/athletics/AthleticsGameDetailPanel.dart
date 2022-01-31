@@ -204,7 +204,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        Analytics.instance.logSelect(target: "News");
+                                        Analytics().logSelect(target: "News");
                                         Navigator.push(
                                             context,
                                             CupertinoPageRoute(
@@ -242,7 +242,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        Analytics.instance.logSelect(target: "Teams");
+                                        Analytics().logSelect(target: "Teams");
                                         Navigator.push(
                                             context,
                                             CupertinoPageRoute(
@@ -360,21 +360,21 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
   }
 
   void _onTapNewsExpand() {
-    Analytics.instance.logSelect(target: "News Expand");
+    Analytics().logSelect(target: "News Expand");
     setState(() {
       _newsExpanded = !_newsExpanded;
     });
   }
 
   void _onScheduleTap() {
-    Analytics.instance.logSelect(target: "Schedule");
+    Analytics().logSelect(target: "Schedule");
     Sport? sport = game?.sport;
     SportDefinition? sportDefinition = Sports().getSportByShortName(sport?.shortName);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsSchedulePanel(sport: sportDefinition)));
   }
 
   void _onTapTickets() {
-    Analytics.instance.logSelect(target: "Tickets");
+    Analytics().logSelect(target: "Tickets");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _showTicketsPanel();

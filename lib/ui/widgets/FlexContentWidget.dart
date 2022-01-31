@@ -173,7 +173,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
   }
 
   void _onClose() {
-    Analytics.instance.logSelect(target: "Flex Content: Close");
+    Analytics().logSelect(target: "Flex Content: Close");
     if (widget.onClose != null) {
       widget.onClose!(context);
     }
@@ -186,7 +186,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
 
   void _onTapButton(Map<String, dynamic> button) {
     String? title = button['title'];
-    Analytics.instance.logSelect(target: "Flex Content: $title");
+    Analytics().logSelect(target: "Flex Content: $title");
     
     Map<String, dynamic>? linkJsonContent = button['link'];
     if (linkJsonContent == null) {

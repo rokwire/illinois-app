@@ -73,7 +73,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                           OnboardingBackButton(
                               padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                               onTap: () {
-                                Analytics.instance.logSelect(target: "Back");
+                                Analytics().logSelect(target: "Back");
                                 Navigator.pop(context);
                               }),
                         ],
@@ -139,7 +139,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
   }
 
   void _onLoginTapped() {
-    Analytics.instance.logSelect(target: 'Verify My Phone Number');
+    Analytics().logSelect(target: 'Verify My Phone Number');
     if (widget.onboardingContext != null) {
       widget.onboardingContext!['shouldVerifyPhone'] = true;
       Onboarding().next(context, widget);
@@ -150,7 +150,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
   }
 
   void _onSkipTapped() {
-    Analytics.instance.logSelect(target: 'Not right now');
+    Analytics().logSelect(target: 'Not right now');
     Function? onSuccess = widget.onboardingContext!=null? widget.onboardingContext!["onContinueAction"] : null; // Hook this panels to Onboarding2
     if(onSuccess!=null){
       onSuccess();

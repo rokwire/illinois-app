@@ -121,23 +121,17 @@ class Poll {
   }
 
   void apply(PollVote pollVote) {
-    if (results == null) {
-      results = PollVote();
-    }
+    results ??= PollVote();
     results!.apply(pollVote);
 
     _increaseUniqueVotersCount();
 
-    if (userVote == null) {
-      userVote = PollVote();
-    }
+    userVote ??= PollVote();
     userVote!.apply(pollVote);
   }
 
   void _increaseUniqueVotersCount() {
-    if (uniqueVotersCount == null) {
-      uniqueVotersCount = 0;
-    }
+    uniqueVotersCount ??= 0;
     uniqueVotersCount = uniqueVotersCount! + 1;
   }
 
@@ -336,9 +330,7 @@ class PollVote {
 
   void apply(PollVote? vote) {
     if ((vote?._votes != null) && vote!._votes!.isNotEmpty) {
-      if (_votes == null) {
-        _votes = {};
-      }
+      _votes ??= {};
       int deltaTotal = 0;
       vote._votes!.forEach((int optionIndex, int optionVotes) {
         _votes![optionIndex] = optionVotes + (_votes![optionIndex] ?? 0);

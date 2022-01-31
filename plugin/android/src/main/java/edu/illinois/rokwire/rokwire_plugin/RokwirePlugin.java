@@ -71,10 +71,18 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    _channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "edu.illinois.rokwire/plugin");
+    
+    // Use flutterPluginBinding.getFlutterEngine().getDartExecutor() to create channel, otherwise ActivityAware APIs does not get called. Source:
+    // • https://stackoverflow.com/questions/60048704/how-to-get-activity-and-context-in-flutter-plugin
+    // • https://stackoverflow.com/questions/59887901/get-activity-reference-in-flutter-plugin
+
+    _channel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor() /* flutterPluginBinding.getBinaryMessenger() */,
+      "edu.illinois.rokwire/plugin");
     _channel.setMethodCallHandler(this);
     _flutterBinding = flutterPluginBinding;
-    GeofenceMonitor.getInstance().init();
+
+    // Initialize GeofenceMonitor after we have activity available because it checks for activity permissions.
+    // GeofenceMonitor.getInstance().init();
   }
 
   @Override
@@ -306,6 +314,10 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
       if (_activityBinding != null) {
         _activityBinding.addActivityResultListener(this);
         _activityBinding.addRequestPermissionsResultListener(this);
+        
+        if (!GeofenceMonitor.getInstance().isInitialized()) {
+          GeofenceMonitor.getInstance().init();
+        }
       }
     }
   }

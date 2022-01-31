@@ -95,7 +95,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
 
   void _loadThisMonthHistory() {
     if(Auth2().isOidcLoggedIn) {
-      Analytics.instance.logSelect(target: "This Month");
+      Analytics().logSelect(target: "This Month");
       DateTime now = DateTime.now();
       DateTime lastMonth = now.subtract(Duration(
         days: 30,
@@ -526,7 +526,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   void _onTapViewHistory() {
-    Analytics.instance.logSelect(target: "View History");
+    Analytics().logSelect(target: "View History");
     _loadTransactions();
   }
 
@@ -540,7 +540,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   void _onAddIlliniCashTapped(){
-    Analytics.instance.logSelect(target: "Add Illini Cash");
+    Analytics().logSelect(target: "Add Illini Cash");
     Navigator.push(context, CupertinoPageRoute(
         settings: RouteSettings(
             name:"settings_add_illini_cash"
@@ -552,7 +552,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   void _onTapLogIn() {
-    Analytics.instance.logSelect(target: "Log in");
+    Analytics().logSelect(target: "Log in");
     if (_authLoading != true) {
       setState(() { _authLoading = true; });
       Auth2().authenticateWithOidc().then((bool? result) {
@@ -567,7 +567,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   void _onStartDateTap() {
-    Analytics.instance.logSelect(target: "Start date");
+    Analytics().logSelect(target: "Start date");
     DateTime initialDate = _startDate ?? DateTime.now();
     DateTime firstDate =
     DateTime.fromMillisecondsSinceEpoch(initialDate.millisecondsSinceEpoch)
@@ -598,7 +598,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   void _onEndDateTap() {
-    Analytics.instance.logSelect(target: "End date");
+    Analytics().logSelect(target: "End date");
     DateTime initialDate = _endDate ?? DateTime.now();
     DateTime firstDate =
     DateTime.fromMillisecondsSinceEpoch(initialDate.millisecondsSinceEpoch)
