@@ -286,7 +286,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
   }
 
   void _onEatSmartTapped(BuildContext context){
-    Analytics.instance.logSelect(target: "View full list of ingredients");
+    Analytics().logSelect(target: "View full list of ingredients");
     if (Config().eatSmartUrl != null) {
       Navigator.push(context, CupertinoPageRoute(
           builder: (context)=>WebPanel(url: Config().eatSmartUrl )

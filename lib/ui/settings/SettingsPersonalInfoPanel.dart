@@ -72,7 +72,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   }
 
   Future<void> _deleteUserData() async{
-    Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
+    Analytics().logAlert(text: "Remove My Information", selection: "Yes");
     await Auth2().deleteUser();
   }
 
@@ -374,14 +374,14 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
               children: <Widget>[
                 TextButton(
                     onPressed: () {
-                      Analytics.instance.logAlert(text: "Sign out", selection: "Yes");
+                      Analytics().logAlert(text: "Sign out", selection: "Yes");
                       Navigator.pop(context);
                       Auth2().logout();
                     },
                     child: Text(Localization().getStringEx("panel.profile_info.logout.button.yes", "Yes")!)),
                 TextButton(
                     onPressed: () {
-                      Analytics.instance.logAlert(text: "Sign out", selection: "No");
+                      Analytics().logAlert(text: "Sign out", selection: "No");
                       Navigator.pop(context);
                     },
                     child: Text(Localization().getStringEx("panel.profile_info.logout.no", "No")!))

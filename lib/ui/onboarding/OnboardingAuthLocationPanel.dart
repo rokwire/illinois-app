@@ -54,7 +54,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                       OnboardingBackButton(
                         padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                         onTap:() {
-                          Analytics.instance.logSelect(target: "Back");
+                          Analytics().logSelect(target: "Back");
                           _goBack(context);
                         }),
                     ]),
@@ -114,7 +114,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Analytics.instance.logSelect(target: 'Not right now') ;
+                        Analytics().logSelect(target: 'Not right now') ;
                         return  _goNext(context);
                       },
                       child: Semantics(
@@ -147,7 +147,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
   }
 
   void _requestLocation(BuildContext context) async {
-    Analytics.instance.logSelect(target: 'Share My locaiton') ;
+    Analytics().logSelect(target: 'Share My locaiton') ;
     await LocationServices().status.then((LocationServicesStatus? status){
       if (status == LocationServicesStatus.serviceDisabled) {
         LocationServices().requestService();
@@ -196,7 +196,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
               children: <Widget>[
                 TextButton(
                     onPressed: () {
-                      Analytics.instance.logAlert(text: message, selection:okTitle);
+                      Analytics().logAlert(text: message, selection:okTitle);
                       if (pushNext!) {
                         _goNext(context, replace : true);
                       }

@@ -165,7 +165,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
   }
 
   void _hideByUser() {
-    Analytics.instance.logSelect(target: "Voter Registration: Close");
+    Analytics().logSelect(target: "Voter Registration: Close");
     if (_voterRule?.hideForPeriod ?? false) {
       Storage().voterHiddenForPeriod = true;
     }
@@ -292,7 +292,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     if (ruleOption == null) {
       return;
     }
-    Analytics.instance.logSelect(target: "Voter Registration: ${Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent)}");
+    Analytics().logSelect(target: "Voter Registration: ${Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent)}");
     switch (ruleOption.value) {
       case 'rv_yes':
         Auth2().prefs?.voter?.registeredVoter = true;
@@ -329,7 +329,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
   }
 
   void _onTapVbmButton(String? vbmButtonTitle) {
-    Analytics.instance.logSelect(target: "Vote By Mail: ${StringUtils.ensureNotEmpty(vbmButtonTitle)}");
+    Analytics().logSelect(target: "Vote By Mail: ${StringUtils.ensureNotEmpty(vbmButtonTitle)}");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: _voterRule?.vbmUrl)));
   }
 

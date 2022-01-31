@@ -149,7 +149,7 @@ class Services {
 
 }
 
-class ServiceError {
+class ServiceError implements Exception {
   final String? title;
   final String? description;
   final Service? source;

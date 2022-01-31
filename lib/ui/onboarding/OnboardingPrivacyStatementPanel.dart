@@ -89,7 +89,7 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                         ),
                         OnboardingBackButton( padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                         onTap:() {
-                          Analytics.instance.logSelect(target: "Back");
+                          Analytics().logSelect(target: "Back");
                           _goBack(context);
                         }),
                       ],),

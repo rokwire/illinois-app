@@ -172,7 +172,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
   }
 
   void _setDisplayUpcoming(bool displayUpcoming) {
-    Analytics.instance.logSelect(target: displayUpcoming ? "Upcoming" : "Past");
+    Analytics().logSelect(target: displayUpcoming ? "Upcoming" : "Past");
     if (_displayUpcoming != displayUpcoming) {
       setState(() {
         _scrollController.jumpTo(0);

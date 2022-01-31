@@ -170,7 +170,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           borderColor: Styles().colors!.fillColorSecondary,
                           textColor: Styles().colors!.fillColorPrimary,
                           onTap: () {
-                            Analytics.instance.logAlert(text: "Buy Tickets Privacy Alert", selection: "Continue");
+                            Analytics().logAlert(text: "Buy Tickets Privacy Alert", selection: "Continue");
                             _closeModal();
                             widget.onContinueTap!();
                           },
@@ -208,13 +208,13 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
   }
 
   _onTapChangePrivacySettings() {
-    Analytics.instance.logAlert(text: "Buy Tickets Privacy Alert", selection: "Edit my privacy");
+    Analytics().logAlert(text: "Buy Tickets Privacy Alert", selection: "Edit my privacy");
     _closeModal();
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel()));
   }
 
   _onTapClose() {
-    Analytics.instance.logAlert(text: "Buy Tickets Privacy Alert", selection: "Close");
+    Analytics().logAlert(text: "Buy Tickets Privacy Alert", selection: "Close");
     _closeModal();
   }
 

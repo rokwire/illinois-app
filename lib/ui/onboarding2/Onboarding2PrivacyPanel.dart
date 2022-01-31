@@ -78,14 +78,14 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                                 Onboarding2BackButton(padding: const EdgeInsets.only(top:19,left: 17, right: 20, bottom: 19),
                                     color: Styles().colors!.white,
                                     onTap: () {
-                                      Analytics.instance.logSelect(target: "Back");
+                                      Analytics().logSelect(target: "Back");
                                       _goBack(context);
                                     }),
                                 Expanded(child: Container()),
 
 //                                GestureDetector(
 //                                  onTap: () {
-//                                    Analytics.instance.logSelect(target: 'Privacy Policy') ;
+//                                    Analytics().logSelect(target: 'Privacy Policy') ;
 //                                    _onTapPrivacyPolicy(context);
 //                                  },
 //                                  child:
@@ -546,7 +546,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
   }
 
   void _openPrivacyPolicy(){
-    Analytics.instance.logSelect(target: "Privacy Statement");
+    Analytics().logSelect(target: "Privacy Statement");
     if (Config().privacyPolicyUrl != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, hideToolBar:true, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
     }

@@ -107,7 +107,7 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
   }
 
   void _onRoomTap(LaundryRoom room) {
-    Analytics.instance.logSelect(target: "Room" + room.title!);
+    Analytics().logSelect(target: "Room" + room.title!);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryDetailPanel(room: room,)));
   }
 }

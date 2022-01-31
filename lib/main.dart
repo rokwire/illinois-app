@@ -28,7 +28,6 @@ import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:illinois/service/Gies.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Guide.dart';
@@ -43,11 +42,12 @@ import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Services.dart' as illinois;
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Voter.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Storage.dart';
+
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
@@ -69,6 +69,7 @@ import 'package:rokwire_plugin/service/http_proxy.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 

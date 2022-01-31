@@ -564,12 +564,12 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onBack() {
-    Analytics.instance.logSelect(target: "Back");
+    Analytics().logSelect(target: "Back");
     Navigator.pop(context);
   }
 
   void _onEdit() {
-    Analytics.instance.logSelect(target: "Edit");
+    Analytics().logSelect(target: "Edit");
     setState(() {
       _isEditMode = true;
       _selectedMessageIds.clear();
@@ -577,7 +577,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onDone() {
-    Analytics.instance.logSelect(target: "Done");
+    Analytics().logSelect(target: "Done");
     setState(() {
       _isEditMode = false;
       _selectedMessageIds.clear();
@@ -585,7 +585,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onSelectAll() {
-    Analytics.instance.logSelect(target: "Select All");
+    Analytics().logSelect(target: "Select All");
     setState(() {
       for (InboxMessage message in _messages) {
         if (message.messageId != null) {
@@ -596,24 +596,24 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onDeselectAll() {
-    Analytics.instance.logSelect(target: "Deselect All");
+    Analytics().logSelect(target: "Deselect All");
     setState(() {
       _selectedMessageIds.clear();
     });
   }
 
   void _onOptions() {
-    Analytics.instance.logSelect(target: "Options");
+    Analytics().logSelect(target: "Options");
     showModalBottomSheet(context: context, backgroundColor: Colors.white, isScrollControlled: true, isDismissible: true, builder: _buildOptions);
   }
 
   void _onCancelOptions(BuildContext context) {
-    Analytics.instance.logSelect(target: "Cancel");
+    Analytics().logSelect(target: "Cancel");
     Navigator.pop(context);
   }
 
   void _onDelete(BuildContext context) {
-    Analytics.instance.logSelect(target: "Delete");
+    Analytics().logSelect(target: "Delete");
     Navigator.pop(context);
 
     String message = (_selectedMessageIds.length == 1) ?
@@ -653,7 +653,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onCancelConfirmation({String? message, String? selection}) {
-    Analytics.instance.logAlert(text: "Remove My Information", selection: "No");
+    Analytics().logAlert(text: "Remove My Information", selection: "No");
     Navigator.pop(context);
   }
 
@@ -988,7 +988,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
   }
 
   void _onTapFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.message!.subject}");
+    Analytics().logSelect(target: "Favorite: ${widget.message!.subject}");
     setState(() {
       Auth2().prefs?.toggleFavorite(widget.message);
     });

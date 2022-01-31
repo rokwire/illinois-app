@@ -454,7 +454,7 @@ class _TestLocation extends StatelessWidget {
   }*/
 
   void _onTapAddress(){
-    Analytics.instance.logSelect(target: "COVID-19 Test Location");
+    Analytics().logSelect(target: "COVID-19 Test Location");
     double? lat = testLocation?.latitude;
     double? lng = testLocation?.longitude;
     if ((lat != null) && (lng != null)) {

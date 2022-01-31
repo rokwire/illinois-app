@@ -26,7 +26,7 @@ class _Onboarding2PermissionsPanelState extends State <Onboarding2PermissionsPan
   }
 
   void _requestLocation(BuildContext context) async {
-    Analytics.instance.logSelect(target: 'Share My locaiton') ;
+    Analytics().logSelect(target: 'Share My locaiton') ;
     await LocationServices().status.then((LocationServicesStatus? status){
       if (status == LocationServicesStatus.serviceDisabled) {
         LocationServices().requestService();

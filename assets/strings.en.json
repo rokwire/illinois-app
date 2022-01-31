@@ -2252,8 +2252,8 @@
 
     "logic.general.internal_error": "Internal Error Occured",
     "logic.general.unknown_error": "Unknown Error Occured",
-    "logic.general.invalid_response": "Invalid server responce",
-    "logic.general.response_error": "Response Error: %s %s",
+    "logic.general.invalid_response": "Invalid Server Responce",
+    "logic.general.response_error": "Server Response Error",
     "logic.general.login_failed": "Unable to login. Please try again later.",
 
     "app.exit_dialog.message":"Are you sure you want to exit?",

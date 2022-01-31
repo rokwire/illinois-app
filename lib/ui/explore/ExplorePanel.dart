@@ -914,7 +914,7 @@ class ExplorePanelState extends State<ExplorePanel>
                                     borderColor: Styles().colors!.fillColorSecondary,
                                     padding: EdgeInsets.symmetric(horizontal: 24),
                                     onTap: () {
-                                      Analytics.instance.logSelect(target: 'Directions');
+                                      Analytics().logSelect(target: 'Directions');
                                       _presentMapExploreDirections(context);
                                     }),),
                                 Container(
@@ -932,7 +932,7 @@ class ExplorePanelState extends State<ExplorePanel>
                               borderColor: Styles().colors!.fillColorSecondary,
                               padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
-                                Analytics.instance.logSelect(target: 'Details');
+                                Analytics().logSelect(target: 'Details');
                                 _presentMapExploreDetail(context);
                               }),),
 
@@ -1050,7 +1050,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _selectDisplayType (ListMapDisplayType displayType) {
-    Analytics.instance.logSelect(target: displayType.toString());
+    Analytics().logSelect(target: displayType.toString());
     if (_displayType != displayType) {
       _refresh((){
         _displayType = displayType;
@@ -1107,7 +1107,7 @@ class ExplorePanelState extends State<ExplorePanel>
                       subLabel: hasSubLabels ? filterSubLabels![index] : null,
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(index)),
                       onTap: () {
-                        Analytics.instance.logSelect(target: "FilterItem: ${filterValues[index]}");
+                        Analytics().logSelect(target: "FilterItem: ${filterValues[index]}");
                         _onFilterValueClick(selectedFilter!, index);
                       },
                     );
@@ -1149,7 +1149,7 @@ class ExplorePanelState extends State<ExplorePanel>
         active: selectedFilter.active,
         visible: true,
         onTap: (){
-          Analytics.instance.logSelect(target: "Filter: $filterHeaderLabel");
+          Analytics().logSelect(target: "Filter: $filterHeaderLabel");
           return _onFilterTypeClicked(selectedFilter);},
       ));
     }
@@ -1168,7 +1168,7 @@ class ExplorePanelState extends State<ExplorePanel>
   //Click listeners
 
   void _onExploreTap(Explore explore) {
-    Analytics.instance.logSelect(target: explore.exploreTitle);
+    Analytics().logSelect(target: explore.exploreTitle);
 
     Event? event = (explore is Event) ? explore : null;
 
@@ -1197,7 +1197,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _onFilterTypeClicked(ExploreFilter selectedFilter) {
-    // Analytics.instance.logSelect(target:...);
+    // Analytics().logSelect(target:...);
     List<ExploreFilter>? tabFilters = (_tabToFilterMap != null) ? _tabToFilterMap![_selectedTab] : null;
     _refresh(() {
       if (tabFilters != null) {
@@ -1247,7 +1247,7 @@ class ExplorePanelState extends State<ExplorePanel>
   @override
   void onTabClicked(int? tabIndex, RoundedTab tab) {
     if ((0 <= tabIndex!) && (tabIndex < ExploreTab.values.length)) {
-      Analytics.instance.logSelect(target: tab.title) ;
+      Analytics().logSelect(target: tab.title) ;
       selectTab(ExploreTab.values[tabIndex]);
     }
   }

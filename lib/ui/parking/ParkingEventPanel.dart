@@ -267,7 +267,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
   }
 
   void _onTapDirections() {
-    Analytics.instance.logSelect(target: 'Parking Lot Directions');
+    Analytics().logSelect(target: 'Parking Lot Directions');
     NativeCommunicator().launchExploreMapDirections(target: widget.inventory);
   }
 }

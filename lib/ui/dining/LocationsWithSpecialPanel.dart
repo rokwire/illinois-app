@@ -187,7 +187,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
   //Click listeners
 
   void _onDiningTap(Dining dining) {
-    Analytics.instance.logSelect(target: dining.exploreTitle);
+    Analytics().logSelect(target: dining.exploreTitle);
 
     Navigator.push(context, CupertinoPageRoute(
         builder: (context) =>

@@ -80,7 +80,7 @@ class _AthleticsCoachListPanelState extends State<AthleticsCoachListPanel> imple
   }
 
   void _onCoachItemTap(Coach coach){
-    Analytics.instance.logSelect(target: "Coach: "+coach.name!);
+    Analytics().logSelect(target: "Coach: "+coach.name!);
     Navigator.push(
         context,
         CupertinoPageRoute(

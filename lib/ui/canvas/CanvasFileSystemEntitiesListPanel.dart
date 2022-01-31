@@ -127,7 +127,7 @@ class _CanvasFileSystemEntitiesListPanelState extends State<CanvasFileSystemEnti
 
   void _onTapFsEntity(CanvasFileSystemEntity entity) {
     bool isFile = entity.isFile;
-    Analytics.instance.logSelect(target: "Canvas Files -> ${isFile ? 'File' : 'Folder'}");
+    Analytics().logSelect(target: "Canvas Files -> ${isFile ? 'File' : 'Folder'}");
     if (isFile) {
       String? url = (entity as CanvasFile).url;
       if (StringUtils.isNotEmpty(url)) {

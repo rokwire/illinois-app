@@ -287,7 +287,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
           child: IconButton(
               icon: Image.asset('images/block-i-orange.png'),
               onPressed: () {
-                Analytics.instance.logSelect(target: "Home");
+                Analytics().logSelect(target: "Home");
                 Navigator.of(context).popUntil((route) => route.isFirst);
 //                NativeCommunicator().launchTest();
               }
@@ -304,7 +304,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
                 child: IconButton(
                     icon: Image.asset('images/icon-search.png'),
                     onPressed: () {
-                      Analytics.instance.logSelect(target: "Search");
+                      Analytics().logSelect(target: "Search");
                       Navigator.push(
                           context,
                           CupertinoPageRoute(
@@ -320,7 +320,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
               excludeSemantics: true,
               child: InkWell(
               onTap: () {
-                Analytics.instance.logSelect(target: "Saved");
+                Analytics().logSelect(target: "Saved");
                 Navigator.push(
                     context,
                     CupertinoPageRoute(
@@ -351,7 +351,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
               child: IconButton(
                   icon: Image.asset('images/settings-white.png'),
                   onPressed: () {
-                    Analytics.instance.logSelect(target: "Settings");
+                    Analytics().logSelect(target: "Settings");
                     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
                   })))
 

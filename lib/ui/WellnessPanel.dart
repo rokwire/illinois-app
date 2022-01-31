@@ -504,7 +504,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
   }
 
   void _onTapBack() {
-    Analytics.instance.logSelect(target: "Back");
+    Analytics().logSelect(target: "Back");
     Navigator.pop(context);
   }
 

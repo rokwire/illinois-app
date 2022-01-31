@@ -154,17 +154,17 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
   }
 
   void _onTapWhoYouAre(){
-    Analytics.instance.logSelect(target: "Who are you");
+    Analytics().logSelect(target: "Who are you");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsRolesPanel()));
   }
 
   void _onTapInterests(){
-    Analytics.instance.logSelect(target: "Manage Your Interests");
+    Analytics().logSelect(target: "Manage Your Interests");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsManageInterestsPanel()));
   }
 
   void _onTapFoodFilters(){
-    Analytics.instance.logSelect(target: "Food Filters");
+    Analytics().logSelect(target: "Food Filters");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => FoodFiltersPanel()));
   }
 

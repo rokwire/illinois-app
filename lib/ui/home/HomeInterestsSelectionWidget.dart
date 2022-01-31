@@ -188,12 +188,12 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
   }
 
   void _onSeeAllClicked() {
-    Analytics.instance.logSelect(target: "HomeUpcomingEvents See all ");
+    Analytics().logSelect(target: "HomeUpcomingEvents See all ");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsManageInterestsPanel()));
   }
 
   void _onInterestClicked(String? interest) {
-    Analytics.instance.logSelect(target: "HomeInterestsSelection interest: $interest");
+    Analytics().logSelect(target: "HomeInterestsSelection interest: $interest");
     Auth2().prefs?.togglePositiveTag(interest);
   }
 
