@@ -166,8 +166,6 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
   }
 
   Widget _buildProgressContent() {
-    int completedCount =  _completedStpsCount;
-    int pagesCount = _stepsCount;//TBD
     return Padding(
         padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
         child:
@@ -176,10 +174,17 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                 borderRadius: BorderRadius.circular(5)),
             child: Column(
               children: [
+                // Row(children: [
+                //   Expanded(child:
+                //   Text(Localization().getStringEx(
+                //       'widget.gies2.message.progress', 'Completed steps')! + " $_completedStpsCount of $_stepsCount",
+                //     style: TextStyle(color: Styles().colors!.fillColorPrimary,
+                //       fontFamily: Styles().fontFamilies!.extraBold,
+                //       fontSize: 32,),),),
+                // ],),
                 Row(children: [
                   Expanded(child:
-                  Text(Localization().getStringEx(
-                      'widget.gies2.message.progress', 'Completed steps')! + " $completedCount of $pagesCount",
+                  Text("$_completedPagesNames ${Localization().getStringEx('widget.gies2.message.progress.completed', 'completed')!}",
                     style: TextStyle(color: Styles().colors!.fillColorPrimary,
                       fontFamily: Styles().fontFamilies!.extraBold,
                       fontSize: 32,),),),
@@ -222,6 +227,16 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
 
   int get _stepsCount {
     return Gies().progressSteps?.length ?? 0;
+  }
+  String get _completedPagesNames {
+    String result = "";
+    for(int stepId in Gies().progressSteps??[]){
+      if(Gies().isProgressStepCompleted(stepId)){
+        result+= StringUtils.isNotEmpty(result)? ", " : "";
+        result+= stepId.toString();
+      }
+    }
+    return result;
   }
 
   @override
