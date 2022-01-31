@@ -107,12 +107,14 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
         Color textColor;
         String? textFamily;
+        bool showCheckIcon = false;
         bool progressStepCompleted = Gies().isProgressStepCompleted(progressStep);
         bool currentStep = (currentPageProgress != null) && (progressStep == currentPageProgress);
 
         if (progressStepCompleted) {
           textColor = Colors.greenAccent;
           textFamily = Styles().fontFamilies!.medium;
+          showCheckIcon = true;
         } else {
           textColor = Colors.white;
           textFamily = Styles().fontFamilies!.regular;
@@ -120,6 +122,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
         if (currentStep) {
           textColor = Styles().colors!.fillColorPrimary!;
           textFamily = Styles().fontFamilies!.extraBold;
+          showCheckIcon = false;
         }
 
         progressWidgets.add(
@@ -128,7 +131,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
             Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
 //              Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: borderColor, width: borderWidth),), child:
 //              Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.rectangle, border: Border(bottom: BorderSide(color: borderColor, width: borderWidth)),), child:
-            Container(width: 28, height: 28, child:
+            Container(width: 35, height: 28, child:
 //                Align(alignment: Alignment.center, child:
 //                  Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,), semanticsLabel: "",),),),),),));
 /*                  Column(mainAxisSize: MainAxisSize.min, children:<Widget>[
@@ -140,11 +143,22 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
             Stack(children:<Widget>[
               Visibility(
                 visible: currentStep,
-                child:  Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white)),
+                child:  Align(alignment: Alignment.center, child: Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white))),
               ),
               Container(child:
                 Align(alignment: Alignment.center, child:
-                  Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16, decoration: TextDecoration.underline), semanticsLabel: '',),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children:[
+                    Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16, decoration: TextDecoration.underline), semanticsLabel: '',),
+                    !showCheckIcon ? Container():
+                    Container(
+                        height: 16,
+                        width: 16,
+                        child:Image.asset('images/green-check-mark.png', semanticLabel: "completed",)
+                    )
+                  ])
               )
               ),
             ]),
@@ -767,7 +781,15 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
         onTap: (){_onTapTabButton(index);},
         child: Container(
           padding: EdgeInsets.only(right: 16, top: 8, bottom: 8),
-          child: Text("${widget.pageProgress}${tabKey??""}", style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16, decoration: TextDecoration.underline),),
+          child: Row(children: [
+            Text("${widget.pageProgress}${tabKey??""}", style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16, decoration: TextDecoration.underline),),
+            !isCompleted ? Container():
+            Container(
+                height: 16,
+                width: 16,
+                child:Image.asset('images/green-check-mark.png', semanticLabel: "completed",)
+            )
+          ],)
         )
       )
     );
