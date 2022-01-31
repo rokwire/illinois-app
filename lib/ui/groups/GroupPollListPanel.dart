@@ -26,6 +26,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/service/Polls.dart' as illinois;
 
 class GroupPollListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group group;
@@ -162,7 +163,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
             _pollsError = null;
           }
         }).catchError((e) {
-          _pollsError = e.toString();
+          _pollsError = illinois.Polls.localizedErrorString(e);
         }).whenComplete(() {
           _setGroupPollsLoading(false);
         });

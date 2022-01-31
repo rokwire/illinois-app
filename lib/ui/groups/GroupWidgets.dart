@@ -46,6 +46,7 @@ import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/service/Polls.dart' as illinois;
 
 /////////////////////////////////////
 // GroupDropDownButton
@@ -2235,7 +2236,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
         });
       }
     }).catchError((e){
-      AppAlert.showDialogResult(context, e.toString());
+      AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     }).whenComplete((){
       setState(() {
         int? value = _votingOptions[optionIndex];
@@ -2313,7 +2314,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
     _setEndButtonProgress(true);
     Polls().close(widget.poll.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
       _setEndButtonProgress(false);
-      AppAlert.showDialogResult(context, e.toString());
+      AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     });
 
   }
@@ -2572,7 +2573,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
     _setStartButtonProgress(true);
     Polls().open(widget.poll!.pollId).then((result) => _setStartButtonProgress(false)).catchError((e){
       _setStartButtonProgress(false);
-      AppAlert.showDialogResult(context, e.toString());
+      AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     });
   }
 
@@ -2580,7 +2581,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
     _setEndButtonProgress(true);
     Polls().close(widget.poll!.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
       _setEndButtonProgress(false);
-      AppAlert.showDialogResult(context, e.toString());
+      AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     });
 
   }

@@ -24,6 +24,7 @@ import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/service/Polls.dart' as illinois;
 
 class PollBubblePromptPanel extends StatefulWidget {
   final String? pollId;
@@ -466,7 +467,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
         });
       }
     }).catchError((e){
-      AppAlert.showDialogResult(context, e.toString());
+      AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     }).whenComplete((){
       setState(() {
         int? value = _votingOptions[optionIndex];

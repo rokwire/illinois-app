@@ -25,9 +25,7 @@ import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
-import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -122,41 +120,36 @@ class Polls with Service implements NotificationsListener {
   @protected
   Future<PollsChunk?> getPolls(String pollsType, String? cursor, {bool includeAccountId = true, List<String>? groupIds}) async {
     if (enabled) {
-      try {
-        String? body;
-        if (CollectionUtils.isNotEmpty(groupIds)) {
-          body = json.encode({'group_ids': groupIds});
-        }
+      String? body;
+      if (CollectionUtils.isNotEmpty(groupIds)) {
+        body = json.encode({'group_ids': groupIds});
+      }
 
-        String url = '${Config().quickPollsUrl}/$pollsType';
-        if (includeAccountId) {
-          url += '/${Auth2().accountId}';
-        }
+      String url = '${Config().quickPollsUrl}/$pollsType';
+      if (includeAccountId) {
+        url += '/${Auth2().accountId}';
+      }
 
-        if (cursor != null) {
-          url += '?cursor=$cursor';
-        }
+      if (cursor != null) {
+        url += '?cursor=$cursor';
+      }
 
-        Response? response = await Network().get(url, body: body, auth: Auth2());
-        int responseCode = response?.statusCode ?? -1;
-        String? responseBody = response?.body;
-        if ((response != null) && (responseCode == 200)) {
-          Map<String, dynamic>? responseJson = JsonUtils.decode(responseBody);
-          String? pollsCursor = (responseJson != null) ? responseJson['cursor'] : null;
-          List<dynamic>? pollsJson = (responseJson != null) ? responseJson['data'] : null;
-          if (pollsJson != null) {
-            return PollsChunk(polls: Poll.fromJsonList(pollsJson), cursor: pollsCursor);
-          }
-          else {
-            throw Localization().getStringEx('logic.general.invalid_response', 'Invalid server response')!;
-          }
+      Response? response = await Network().get(url, body: body, auth: Auth2());
+      int responseCode = response?.statusCode ?? -1;
+      String? responseBody = response?.body;
+      if ((response != null) && (responseCode == 200)) {
+        Map<String, dynamic>? responseJson = JsonUtils.decode(responseBody);
+        String? pollsCursor = (responseJson != null) ? responseJson['cursor'] : null;
+        List<dynamic>? pollsJson = (responseJson != null) ? responseJson['data'] : null;
+        if (pollsJson != null) {
+          return PollsChunk(polls: Poll.fromJsonList(pollsJson), cursor: pollsCursor);
         }
         else {
-          throw sprintf(Localization().getStringEx('logic.general.response_error', 'Response Error: %s %s')!, ['$responseCode', '$responseBody']);
+          throw PollsException(PollsError.serverResponseContent);
         }
-      } on Exception catch (e) {
-        debugPrint(e.toString());
-        rethrow;
+      }
+      else {
+        throw PollsException(PollsError.serverResponse, '${response?.statusCode} ${response?.body}');
       }
     }
     return null;
@@ -170,85 +163,74 @@ class Polls with Service implements NotificationsListener {
 
   Future<void> create(Poll poll) async {
     if (enabled) {
-      try {
-        String url = '${Config().quickPollsUrl}/pollcreate';
-        Response? response = await Network().post(url, body: json.encode(poll.toJson()), auth: Auth2());
-        int responseCode = response?.statusCode ?? -1;
-        String? responseString = response?.body;
-        if ((response != null) && (response.statusCode == 200)) {
-          Map<String, dynamic>? responseJson = JsonUtils.decode(responseString);
-          String? pollId = (responseJson != null) ? responseJson['id'] : null;
-          if (pollId != null) {
-            poll.pollId = pollId;
+      String url = '${Config().quickPollsUrl}/pollcreate';
+      Response? response = await Network().post(url, body: json.encode(poll.toJson()), auth: Auth2());
+      int responseCode = response?.statusCode ?? -1;
+      String? responseString = response?.body;
+      if ((response != null) && (responseCode == 200)) {
+        Map<String, dynamic>? responseJson = JsonUtils.decode(responseString);
+        String? pollId = (responseJson != null) ? responseJson['id'] : null;
+        if (pollId != null) {
+          poll.pollId = pollId;
 
-            NotificationService().notify(notifyLifecycleCreate, poll);
+          NotificationService().notify(notifyLifecycleCreate, poll);
 
-            addPollToChunks(poll);
+          addPollToChunks(poll);
 
-            if (poll.status == PollStatus.opened) {
-              NotificationService().notify(notifyLifecycleOpen, poll);
-              /*if (poll.isFirebase) {
-                FirebaseMessaging().send(topic:'polls', message:{'type':'poll_open', 'poll_id': pollId});
-              }
-              else {
-                PollsPlugin().openPoll(poll.pollId);
-              }*/
+          if (poll.status == PollStatus.opened) {
+            NotificationService().notify(notifyLifecycleOpen, poll);
+            /*if (poll.isFirebase) {
+              FirebaseMessaging().send(topic:'polls', message:{'type':'poll_open', 'poll_id': pollId});
             }
+            else {
+              PollsPlugin().openPoll(poll.pollId);
+            }*/
+          }
 
-            Timer(const Duration(milliseconds: 500), () {
-              NotificationService().notify(notifyCreated, poll.pollId);
-              if (!poll.hasGroup) {
-                presentWaiting();
-              }
-            });
-          }
-          else {
-            //TBD
-            throw Localization().getStringEx('logic.general.invalid_response', 'Invalid server response')!;
-          }
+          Timer(const Duration(milliseconds: 500), () {
+            NotificationService().notify(notifyCreated, poll.pollId);
+            if (!poll.hasGroup) {
+              presentWaiting();
+            }
+          });
         }
         else {
-          throw sprintf(Localization().getStringEx('logic.general.response_error', 'Response Error: %s %s')!, ['$responseCode', '$responseString']);
+          throw PollsException(PollsError.serverResponseContent);
         }
-      } on Exception catch (e) {
-        debugPrint(e.toString());
-        rethrow;
+      }
+      else {
+        throw PollsException(PollsError.serverResponse, '${response?.statusCode} ${response?.body}');
       }
     }
     else {
-      throw Localization().getStringEx('logic.general.internal_error', 'Internal Error Occured')!;
+      throw PollsException(PollsError.internal);
     }
   }
 
   Future<void> open(String? pollId) async {
     if (enabled) {
       if (pollId != null) {
-        try {
-          String url = '${Config().quickPollsUrl}/pollstart/$pollId';
-          Response? response = await Network().put(url, auth: Auth2());
-          if ((response != null) && (response.statusCode == 200)) {
-            onPollStarted(pollId).then((Poll? poll) {
-              if (poll != null) {
-                NotificationService().notify(notifyLifecycleOpen, poll);
-                /*if (poll.isFirebase) {
-                  FirebaseMessaging().send(topic:'polls', message:{'type':'poll_open', 'poll_id': pollId});
-                }
-                else {
-                  PollsPlugin().openPoll(pollId);
-                }*/
+        String url = '${Config().quickPollsUrl}/pollstart/$pollId';
+        Response? response = await Network().put(url, auth: Auth2());
+        if ((response != null) && (response.statusCode == 200)) {
+          onPollStarted(pollId).then((Poll? poll) {
+            if (poll != null) {
+              NotificationService().notify(notifyLifecycleOpen, poll);
+              /*if (poll.isFirebase) {
+                FirebaseMessaging().send(topic:'polls', message:{'type':'poll_open', 'poll_id': pollId});
               }
-            });
-          }
-          else {
-            throw sprintf(Localization().getStringEx('logic.general.response_error', 'Response Error: %s %s')!, ['${response?.statusCode}', '${response?.body}']);
-          }
-        } on Exception catch (e) {
-          debugPrint(e.toString());
-          rethrow;
+              else {
+                PollsPlugin().openPoll(pollId);
+              }*/
+            }
+          });
+        }
+        else {
+          throw PollsException(PollsError.serverResponse, '${response?.statusCode} ${response?.body}');
         }
       }
       else {
-        throw Localization().getStringEx('logic.general.internal_error', 'Internal Error Occured')!;
+        throw PollsException(PollsError.internal);
       }
     }
   }
@@ -256,28 +238,23 @@ class Polls with Service implements NotificationsListener {
   Future<void> vote(String? pollId, PollVote? vote) async {
     if (enabled) {
       if ((pollId != null) && (vote != null)) {
-        try {
-          String url = '${Config().quickPollsUrl}/pollvote/$pollId';
-          Map<String, dynamic> voteJson = {
-            'userid': Auth2().accountId,
-            'answer': vote.toVotesJson(),
-          };
-          String voteString = json.encode(voteJson);
-          Response? response = await Network().post(url, body: voteString, auth: Auth2());
-          if ((response != null) && (response.statusCode == 200)) {
-            NotificationService().notify(notifyLifecycleVote, getPoll(pollId: pollId));
-            updatePollVote(pollId, vote);
-          }
-          else {
-            throw sprintf(Localization().getStringEx('logic.general.response_error', 'Response Error: %s %s')!, ['${response?.statusCode}', '${response?.body}']);
-          }
-        } on Exception catch (e) {
-          debugPrint(e.toString());
-          rethrow;
+        String url = '${Config().quickPollsUrl}/pollvote/$pollId';
+        Map<String, dynamic> voteJson = {
+          'userid': Auth2().accountId,
+          'answer': vote.toVotesJson(),
+        };
+        String voteString = json.encode(voteJson);
+        Response? response = await Network().post(url, body: voteString, auth: Auth2());
+        if ((response != null) && (response.statusCode == 200)) {
+          NotificationService().notify(notifyLifecycleVote, getPoll(pollId: pollId));
+          updatePollVote(pollId, vote);
+        }
+        else {
+          throw PollsException(PollsError.serverResponse, '${response?.statusCode} ${response?.body}');
         }
       }
       else {
-        throw Localization().getStringEx('logic.general.internal_error', 'Internal Error Occured')!;
+        throw PollsException(PollsError.internal);
       }
     }
   }
@@ -285,24 +262,19 @@ class Polls with Service implements NotificationsListener {
   Future<void> close(String? pollId) async {
     if (enabled) {
       if (pollId != null) {
-        try {
-          String url = '${Config().quickPollsUrl}/pollend/$pollId';
-          Response? response = await Network().put(url, auth: Auth2());
-          if ((response != null) && (response.statusCode == 200)) {
-            NotificationService().notify(notifyLifecycleClose, getPoll(pollId: pollId));
-            updatePollStatus(pollId, PollStatus.closed);
-            NotificationService().notify(notifyStatusChanged, pollId);
-          }
-          else {
-            throw sprintf(Localization().getStringEx('logic.general.response_error', 'Response Error: %s %s')!, ['${response?.statusCode}', '${response?.body}']);
-          }
-        } on Exception catch (e) {
-          debugPrint(e.toString());
-          rethrow;
+        String url = '${Config().quickPollsUrl}/pollend/$pollId';
+        Response? response = await Network().put(url, auth: Auth2());
+        if ((response != null) && (response.statusCode == 200)) {
+          NotificationService().notify(notifyLifecycleClose, getPoll(pollId: pollId));
+          updatePollStatus(pollId, PollStatus.closed);
+          NotificationService().notify(notifyStatusChanged, pollId);
+        }
+        else {
+          throw PollsException(PollsError.serverResponse, '${response?.statusCode} ${response?.body}');
         }
       }
       else {
-        throw Localization().getStringEx('logic.general.internal_error', 'Internal Error Occured')!;
+        throw PollsException(PollsError.internal);
       }
     }
   }
@@ -310,47 +282,38 @@ class Polls with Service implements NotificationsListener {
   Future<Poll?> load({int? pollPin}) async {
     if (enabled) {
       if (pollPin != null) {
-        try {
-          if (!Connectivity().isNotOffline) {
-            throw Localization().getStringEx('app.offline.message.title', 'You appear to be offline')!;
-          }
-          String url = '${Config().quickPollsUrl}/pinpolls/$pollPin';
-          Response? response = await Network().get(url, auth: Auth2());
-          String? responseString = response?.body;
-          Map<String, dynamic>? responseJson = JsonUtils.decode(responseString);
+        String url = '${Config().quickPollsUrl}/pinpolls/$pollPin';
+        Response? response = await Network().get(url, auth: Auth2());
+        if (response?.statusCode == 200) {
+          Map<String, dynamic>? responseJson = JsonUtils.decode(response?.body);
           List<dynamic>? responseList = (responseJson != null) ? responseJson['data'] : null;
           List<Poll>? polls = (responseList != null) ? Poll.fromJsonList(responseList) : null;
-          if (polls == null) {
-            throw responseString ?? Localization().getStringEx('logic.polls.unable_to_load_poll', 'Unable to load poll')!;
-          }
-
-          List<Poll> results = [];
-          for (Poll? poll in polls) {
-            if (!poll!.isGeoFenced || GeoFence().currentRegionIds.contains(poll.regionId)) {
-              results.add(poll);
+          if (polls != null) {
+            List<Poll> results = [];
+            for (Poll poll in polls) {
+              if (!poll.isGeoFenced || GeoFence().currentRegionIds.contains(poll.regionId)) {
+                results.add(poll);
+              }
             }
-          }
-          if (results.isEmpty) {
-            throw Localization().getStringEx('logic.polls.no_polls_with_pin', 'There are no polls with this pin')!;
-          }
-          else if (1 < results.length) {
-            throw Localization().getStringEx('logic.polls.multiple_polls_with_pin', 'There are multiple opened polls with this pin')!;
-          }
 
-          Poll? poll = polls.isNotEmpty ? polls.first : null;
-          if ((poll != null) && (_pollChunks[poll.pollId] == null)) {
-            addPollToChunks(poll);
-            NotificationService().notify(notifyCreated, poll.pollId);
-            //presentWaiting();
+            Poll? poll = polls.isNotEmpty ? polls.first : null;
+            if ((poll != null) && (_pollChunks[poll.pollId] == null)) {
+              addPollToChunks(poll);
+              NotificationService().notify(notifyCreated, poll.pollId);
+              //presentWaiting();
+            }
+            return poll;
           }
-          return poll;
-        } on Exception catch (e) {
-          debugPrint(e.toString());
-          rethrow;
+          else {
+            throw PollsException(PollsError.serverResponseContent);
+          }
+        }
+        else {
+          throw PollsException(PollsError.serverResponse, '${response?.statusCode} ${response?.body}');
         }
       }
       else {
-        throw Localization().getStringEx('logic.general.internal_error', 'Internal Error Occured')!;
+        throw PollsException(PollsError.internal);
       }
     }
     return null;
@@ -726,9 +689,13 @@ class Polls with Service implements NotificationsListener {
 
   @protected
   void launchPollNotification(Poll poll) {
-    String? creator = poll.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
-    String? wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
-    RokwirePlugin.showNotification(body: poll.title, subtitle: wantsToKnow);
+    RokwirePlugin.showNotification(body: poll.title, subtitle: getPollNotificationMessage(poll));
+  }
+
+  @protected
+  String getPollNotificationMessage(Poll poll) {
+    String creator = poll.creatorUserName ?? 'Someone';
+    return sprintf('%s wants to know', [creator]);
   }
 
   @protected
@@ -859,4 +826,35 @@ PollUIStatus? pollUIStatusFromString(String? value) {
   else {
     return null;
   }
+}
+
+enum PollsError { serverResponse, serverResponseContent, internal }
+
+class PollsException implements Exception {
+  final PollsError error;
+  final String? descrition;
+ 
+  PollsException(this.error, [this.descrition]);
+
+  @override
+  String toString() {
+    String errorText;
+    switch(error) {
+      case PollsError.serverResponse: errorText = 'Server Response Error'; break;
+      case PollsError.serverResponseContent: errorText = 'Invalid Server Response'; break;
+      case PollsError.internal: errorText = 'Internal Error Occured'; break;
+    }
+    return (descrition != null) ? '$errorText: $descrition' : errorText;
+  }
+
+  @override
+  bool operator ==(other) =>
+    (other is PollsException) &&
+      (other.error == error) &&
+      (other.descrition == descrition);
+
+  @override
+  int get hashCode =>
+    error.hashCode ^
+    (descrition?.hashCode ?? 0);
 }

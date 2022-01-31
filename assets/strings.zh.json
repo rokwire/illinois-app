@@ -2243,7 +2243,7 @@
 	"logic.general.internal_error": "发生内部错误",
 	"logic.general.unknown_error": "發生未知錯誤",
 	"logic.general.invalid_response": "无效的服务器响应",
-	"logic.general.response_error": "响应错误: %s %s",
+	"logic.general.response_error": "响应错误",
 	"logic.general.login_failed": "無法登入。 請稍後再試。",
 
 	"app.exit_dialog.message":"确定要退出吗?",

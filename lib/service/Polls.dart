@@ -15,9 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart' as rokwire;
 import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:sprintf/sprintf.dart';
 
 class Polls extends rokwire.Polls implements NotificationsListener {
 
@@ -55,6 +58,30 @@ class Polls extends rokwire.Polls implements NotificationsListener {
           onPollStarted(pollId);
         }
       }
+    }
+  }
+
+  // Implementation
+
+  @protected
+  String getPollNotificationMessage(Poll poll) {
+    // Localize prompt
+    String creator = poll.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone')!;
+    return sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
+  }
+
+  static String localizedErrorString(Object error) {
+    if (error is rokwire.PollsException) {
+      String errorText;
+      switch(error.error) {
+        case rokwire.PollsError.serverResponse: errorText = Localization().getStringEx('logic.general.response_error', 'Server Response Error')!; break;
+        case rokwire.PollsError.serverResponseContent: errorText = Localization().getStringEx('logic.general.invalid_response', 'Invalid Server Response')!; break;
+        case rokwire.PollsError.internal: errorText = Localization().getStringEx('logic.general.internal_error', 'Internal Error Occured')!; break;
+      }
+      return (error.descrition != null) ? '$errorText: ${error.descrition}' : errorText;
+    }
+    else  {
+      return error.toString();
     }
   }
 }
