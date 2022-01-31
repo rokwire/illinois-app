@@ -206,7 +206,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
 
   @override
   void onNotification(String name, param) {
-    if((name == Polls.notifyStatusChanged) || (name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged)) {
+    if((name == Polls.notifyCreated) || (name == Polls.notifyStatusChanged) || (name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged)) {
       _onPollUpdated(param);
     }
   }
