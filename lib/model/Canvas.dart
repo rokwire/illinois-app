@@ -376,7 +376,7 @@ class CanvasEnrollment {
 ////////////////////////////////
 // CanvasFile
 
-class CanvasFile {
+class CanvasFile implements CanvasFileSystemEntity {
   final int? id;
   final String? uuid;
   final int? folderId;
@@ -524,12 +524,29 @@ class CanvasFile {
     }
     return result;
   }
+
+  // CanvasFileSystemEntity
+
+  @override
+  int? get entityId => id;
+
+  @override
+  int? get parentEntityId => folderId;
+
+  @override
+  String? get entityName => displayName;
+
+  @override
+  DateTime? get createdDateTime => createdAt;
+
+  @override
+  bool get isFile => true;
 }
 
 ////////////////////////////////
 // CanvasFolder
 
-class CanvasFolder {
+class CanvasFolder implements CanvasFileSystemEntity {
   final int? id;
   final int? parentFolderId;
 
@@ -669,6 +686,31 @@ class CanvasFolder {
     }
     return result;
   }
+
+  // CanvasFileSystemEntity
+
+  @override
+  int? get entityId => id;
+
+  @override
+  int? get parentEntityId => parentFolderId;
+
+  @override
+  String? get entityName => name;
+
+  @override
+  DateTime? get createdDateTime => createdAt;
+
+  @override
+  bool get isFile => false;
+}
+
+abstract class CanvasFileSystemEntity {
+  int?      get entityId;
+  int?      get parentEntityId;
+  String?   get entityName;
+  DateTime? get createdDateTime;
+  bool      get isFile;
 }
 
 ////////////////////////////////
