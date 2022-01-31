@@ -1952,6 +1952,10 @@
 
     "panel.canvas_announcement.header.title": "Announcement",
 
+    "panel.canvas_files.header.title": "Files",
+    "panel.canvas_files.load.failed.error.msg": "Failed to load files and folders. Please, try again later.",
+    "panel.canvas_files.empty.msg": "There are no files and folders.",
+
     "widget.game_day.label.its_game_day":"It's Game Day!",
 
     "widget.game_detail_heading.button.live_stats.title":"Live Stats",

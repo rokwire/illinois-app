@@ -1946,6 +1946,10 @@
 
     "panel.canvas_announcement.header.title": "公告",
 
+    "panel.canvas_files.header.title": "文件",
+    "panel.canvas_files.load.failed.error.msg": "無法加載文件和文件夾. 請稍後再試.",
+    "panel.canvas_files.empty.msg": "沒有文件和文件夾.",
+
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 
 	"widget.game_detail_heading.button.live_stats.title":"实时信息",
