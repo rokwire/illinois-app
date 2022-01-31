@@ -25,7 +25,6 @@
 #import "MapController.h"
 #import "MapDirectionsController.h"
 #import "MapLocationPickerController.h"
-#import "RegionMonitor.h"
 
 #import "NSArray+InaTypedValue.h"
 #import "NSDictionary+InaTypedValue.h"
@@ -117,9 +116,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	MapViewFactory *factory = [[MapViewFactory alloc] initWithMessenger:registrar.messenger];
 	[registrar registerViewFactory:factory withId:@"mapview"];
 	
-	// Setup GeoFence plugin
-	[RegionMonitor registerWithRegistrar:[self registrarForPlugin:@"GeoFence"]];
-
 	// Setup supported & preffered orientation
 	_preferredInterfaceOrientation = UIInterfaceOrientationPortrait;
 	_supportedInterfaceOrientations = [NSSet setWithObject:@(_preferredInterfaceOrientation)];

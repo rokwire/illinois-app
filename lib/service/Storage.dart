@@ -251,15 +251,8 @@ class Storage extends rokwire.Storage {
     setIntWithName(debugMapThresholdDistanceKey, value);
   }
 
-  static const String debugGeoFenceRegionRadiusKey  = 'debug_geo_fence_region_radius';
-
-  int? get debugGeoFenceRegionRadius {
-    return getIntWithName(debugGeoFenceRegionRadiusKey);
-  }
-
-  set debugGeoFenceRegionRadius(int? value) {
-    setIntWithName(debugGeoFenceRegionRadiusKey, value);
-  }
+  @override
+  String get debugGeoFenceRegionRadiusKey  => 'debug_geo_fence_region_radius';
 
   static const String debugDisableLiveGameCheckKey  = 'debug_disable_live_game_check';
 

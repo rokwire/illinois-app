@@ -24,13 +24,13 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as Http;
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/GeoFence.dart';
+import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/GeoFence.dart';
+import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -295,8 +295,8 @@ class Analytics with Service implements NotificationsListener {
       Network.notifyHttpResponse,
       NativeCommunicator.notifyMapRouteStart,
       NativeCommunicator.notifyMapRouteFinish,
-      NativeCommunicator.notifyGeoFenceRegionsEnter,
-      NativeCommunicator.notifyGeoFenceRegionsExit,
+      GeoFence.notifyRegionEnter,
+      GeoFence.notifyRegionExit,
     ]);
 
   }
@@ -445,10 +445,10 @@ class Analytics with Service implements NotificationsListener {
     else if (name == NativeCommunicator.notifyMapRouteFinish) {
       logMapRoute(action: LogMapRouteFinishActionName, params: param);
     }
-    else if (name == NativeCommunicator.notifyGeoFenceRegionsEnter) {
+    else if (name == GeoFence.notifyRegionEnter) {
       logGeoFenceRegion(action: LogGeoFenceRegionEnterActionName, regionId: param);
     }
-    else if (name == NativeCommunicator.notifyGeoFenceRegionsExit) {
+    else if (name == GeoFence.notifyRegionExit) {
       logGeoFenceRegion(action: LogGeoFenceRegionExitActionName, regionId: param);
     }
 }

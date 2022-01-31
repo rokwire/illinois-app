@@ -19,11 +19,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/GeoFence.dart';
+import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/GeoFence.dart';
+import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -493,7 +493,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     // 2. Start ranging for all current (inside) regions that are not already raning.
     for (String regionId in currentRegionIds) {
       GeoFenceRegion region = GeoFence().regions![regionId]!;
-      if ((region.regionType == GeoFenceRegionType.Beacon) && !_rangingRegionIds.contains(regionId)) {
+      if ((region.regionType == GeoFenceRegionType.beacon) && !_rangingRegionIds.contains(regionId)) {
         GeoFence().startRangingBeaconsInRegion(regionId).then((_) {
           _rangingRegionIds.add(regionId);
         });

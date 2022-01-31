@@ -3,12 +3,18 @@ package edu.illinois.rokwire.rokwire_plugin;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.PendingIntent;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import java.lang.ref.WeakReference;
 
 import android.net.Uri;
@@ -58,6 +64,8 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
 
   private ActivityPluginBinding _activityBinding;
   private FlutterPluginBinding _flutterBinding;
+  private NotificationChannel _notificationChannel;
+  private int _notificationId = 0;
 
   // FlutterPlugin
 
@@ -66,12 +74,14 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
     _channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "edu.illinois.rokwire/plugin");
     _channel.setMethodCallHandler(this);
     _flutterBinding = flutterPluginBinding;
+    GeofenceMonitor.getInstance().init();
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     _channel.setMethodCallHandler(null);
     _flutterBinding = null;
+    GeofenceMonitor.getInstance().unInit();
   }
 
   // ActivityAware
@@ -117,6 +127,12 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
     if (firstMethodComponent.equals("getPlatformVersion")) {
       result.success("Android " + android.os.Build.VERSION.RELEASE);
     }
+    else if (firstMethodComponent.equals("createAndroidNotificationChannel")) {
+      result.success(createNotificationChannel(call));
+    }
+    else if (firstMethodComponent.equals("showNotification")) {
+      result.success(showNotification(call));
+    }
     else if (firstMethodComponent.equals("getDeviceId")) {
       result.success(getDeviceId(call.arguments));
     }
@@ -126,11 +142,21 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
     else if (firstMethodComponent.equals("dismissSafariVC")) {
       result.success(null);
     }
+    else if (firstMethodComponent.equals("geoFence")) {
+      GeofenceMonitor.getInstance().handleMethodCall(nextMethodComponents, call.arguments, result);
+    }
     else if (firstMethodComponent.equals("locationServices")) {
       LocationServices.getInstance().handleMethodCall(nextMethodComponents, call.arguments, result);
     }
     else {
       result.notImplemented();
+    }
+  }
+
+  public void notifyGeoFence​(String event, Object arguments) {
+    Activity activity = getActivity();
+    if ((activity != null) && (_channel != null)) {
+      activity.runOnUiThread(() -> _channel.invokeMethod(String.format("geoFence.%s", event), arguments));
     }
   }
 
@@ -179,6 +205,70 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
       Log.d(TAG, "Failed to generate uuid");
     }
     return deviceId;
+  }
+
+  private boolean createNotificationChannel(MethodCall call) {
+    // Create the NotificationChannel, but only on API 26+ because
+    // the NotificationChannel class is new and not in the support library
+    Context appContext = (_flutterBinding != null) ? _flutterBinding.getApplicationContext() : null;
+    if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) && (appContext != null)) {
+
+      try {
+        String id = call.hasArgument​("id") ? call.argument("id") : "edu.illinois.rokwire.firebase_messaging.notification_channel";
+        String name = call.hasArgument​("name") ? call.argument("name") : "Rokwire";
+        int importance = call.hasArgument​("importance") ? call.argument("importance") : android.app.NotificationManager.IMPORTANCE_DEFAULT;
+
+        NotificationChannel channel = new NotificationChannel(id, name, importance);
+        String description = call.argument("description");
+        if (description != null) {
+          channel.setDescription(description);
+        }
+
+        android.app.NotificationManager notificationManager = appContext.getSystemService(android.app.NotificationManager.class);
+        if (notificationManager != null) {
+          notificationManager.createNotificationChannel(_notificationChannel = channel);
+          return true;
+        }
+      }
+      catch (Exception e) {
+        Log.d(TAG, "Failed to create notification channel: " + e.toString()) ;
+      }
+    }
+    return false;
+  }
+
+  private boolean showNotification(MethodCall call) {
+    Activity activity = getActivity();
+    Application application = (activity != null) ? activity.getApplication() : null;
+    if ((application != null) && (_notificationChannel != null)) {
+      try {
+        String title = call.argument("title");
+        String body = call.argument("body");
+
+        Intent intent = new Intent(application, activity.getClass());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(application, 0, intent, 0);
+
+        //if (title == null) {
+        //  title = this.getString(R.string.app_name);
+        //}
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(application, _notificationChannel.getId())
+          //TBD .setSmallIcon(R.drawable.app_icon) => https://stackoverflow.com/questions/4600740/getting-app-icon-in-android
+          .setContentTitle(title)
+          .setContentText(body)
+          .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+          .setContentIntent(pendingIntent);
+        Notification notification = builder.build();
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(application);
+        notificationManager.notify(_notificationId++, notification);
+        return true;
+      }
+      catch (Exception e) {
+        Log.d(TAG, "Failed to show notification: " + e.toString()) ;
+      }
+    }
+    return false;
   }
 
   private Object getEncryptionKey(Object params) {

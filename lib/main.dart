@@ -28,7 +28,7 @@ import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/GeoFence.dart';
+import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:illinois/service/Gies.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Guide.dart';
