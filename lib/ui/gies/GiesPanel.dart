@@ -83,6 +83,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
             _buildProgress(),
             ),
             Expanded(child:
+              !Gies().supportNotes? Container() :
               Align(alignment: Alignment.centerRight, child:
                 InkWell(onTap: () => _onTapNotes(), child:
                   Padding(padding: EdgeInsets.only(top: 14, bottom: 4), child:
@@ -90,7 +91,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
                   ),
                 ),
               ),
-            ),
+            )
           ],),
         ],),
     ),);
@@ -721,13 +722,20 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
       }
     }
 
-    tabs.add(
-          GestureDetector(onTap: _onTapNotes,
-            child: Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child:
-              Text(Localization().getStringEx('widget.gies.button.notes', 'Notes')!, style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 16, decoration: TextDecoration.underline, ),), // Styles().colors.fillColorSecondary
-            ),
+    if(Gies().supportNotes) {
+      tabs.add(
+        GestureDetector(onTap: _onTapNotes,
+          child: Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child:
+          Text(Localization().getStringEx('widget.gies.button.notes', 'Notes')!,
+            style: TextStyle(color: Styles().colors!.white,
+              fontFamily: Styles().fontFamilies!.bold,
+              fontSize: 16,
+              decoration: TextDecoration
+                  .underline,),), // Styles().colors.fillColorSecondary
           ),
+        ),
       );
+    }
     return Container(
       padding: EdgeInsets.only(right: 16, left: 16,),
       color: Styles().colors!.fillColorPrimary,

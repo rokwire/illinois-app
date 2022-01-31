@@ -148,14 +148,17 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                   textColor: Styles().colors!.fillColorPrimary,
                   onTap: _onTapContinue,
                 ),
-                Container(height: 12,),
-                ScalableRoundedButton(
-                  label: Localization().getStringEx('widget.gies2.button.title.view_notes', "View My Notes"),
-                  backgroundColor: Styles().colors?.white!,
-                  borderColor: Styles().colors?.fillColorSecondary!,
-                  textColor: Styles().colors!.fillColorPrimary,
-                  onTap: _onTapViewNotes,
-                ),
+                !Gies().supportNotes ? Container() :
+                Column(children: [
+                  Container(height: 12,),
+                  ScalableRoundedButton(
+                    label: Localization().getStringEx('widget.gies2.button.title.view_notes', "View My Notes"),
+                    backgroundColor: Styles().colors?.white!,
+                    borderColor: Styles().colors?.fillColorSecondary!,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onTapViewNotes,
+                  ),
+                ],),
                 Container(height: 16,),
               ],
             ))

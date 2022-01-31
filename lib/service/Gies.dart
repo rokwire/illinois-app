@@ -245,6 +245,10 @@ class Gies with Service{
     return count;
   }
 
+  bool get supportNotes{
+    return false; //Remove Notes buttons if we don't support them anymore. Hide for now
+  }
+
   //Utils
   bool _pageCanComplete(Map? page) {
     List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
