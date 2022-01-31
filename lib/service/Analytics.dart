@@ -32,7 +32,7 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/analytics.dart' as rokwire;
 
-import 'package:illinois/model/Poll.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Auth2.dart';
 
 import 'package:illinois/main.dart';

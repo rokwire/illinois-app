@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
-import 'package:illinois/model/Poll.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/localization.dart';
