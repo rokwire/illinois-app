@@ -347,7 +347,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               padding: EdgeInsets.only(top: 4, right: _outerPadding),
                               child: Text(
                                   StringUtils.ensureNotEmpty(
-                                      _post?.member?.name ),
+                                      _post?.member?.displayShortName ),
                                   style: TextStyle(
                                       fontFamily:
                                       Styles().fontFamilies!.medium,
