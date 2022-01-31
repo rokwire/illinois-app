@@ -167,7 +167,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   }
 
   void _onTapFiles() {
-    Analytics.instance.logSelect(target: "Canvas Course -> Files");
+    Analytics().logSelect(target: "Canvas Course -> Files");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFileSystemEntitiesListPanel(courseId: widget.courseId)));
   }
 
