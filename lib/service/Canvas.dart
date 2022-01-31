@@ -143,6 +143,103 @@ class Canvas with Service {
     }
   }
 
+  Future<List<CanvasFileSystemEntity>?> loadFileSystemEntities({int? courseId, int? folderId}) async {
+    if (!_available) {
+      return null;
+    }
+    if ((courseId == null) && (folderId == null)) {
+      Log.w('Please, specify just one parameter of {courseId} or {folderId} in order to load FS entities.');
+      return null;
+    }
+    if (courseId != null) {
+      CanvasFolder? folder = await _loadRootFolder(courseId);
+      folderId = folder?.id;
+    }
+    if (folderId != null) {
+      List<CanvasFileSystemEntity> fsEntities = [];
+      List<CanvasFolder>? folders = await _loadSubFolders(folderId);
+      if (CollectionUtils.isNotEmpty(folders)) {
+        fsEntities.addAll(folders!);
+      }
+      List<CanvasFile>? files = await _loadFiles(folderId);
+      if (CollectionUtils.isNotEmpty(files)) {
+        fsEntities.addAll(files!);
+      }
+
+      // Sort by name
+      if (CollectionUtils.isNotEmpty(fsEntities)) {
+        fsEntities.sort((CanvasFileSystemEntity first, CanvasFileSystemEntity second) {
+          String? firstName = first.entityName;
+          String? secondName = second.entityName;
+          if (firstName != null && secondName != null) {
+            return firstName.toLowerCase().compareTo(secondName.toLowerCase());
+          } else if (firstName != null) {
+            return -1;
+          } else if (secondName != null) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+      }
+      return fsEntities;
+    } else {
+      Log.w('Missing canvas folderId.');
+      return null;
+    }
+  }
+
+  Future<CanvasFolder?> _loadRootFolder(int courseId) async {
+    if (!_available) {
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/folders/by_path';
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasFolder>? folders = CanvasFolder.listFromJson(JsonUtils.decodeList(responseString));
+      return CollectionUtils.isNotEmpty(folders) ? folders!.first : null;
+    } else {
+      Log.w('Failed to load canvas root folder for course {$courseId}. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  Future<List<CanvasFolder>?> _loadSubFolders(int folderId) async {
+    if (!_available) {
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/folders/$folderId/folders';
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasFolder>? folders = CanvasFolder.listFromJson(JsonUtils.decodeList(responseString));
+      return folders;
+    } else {
+      Log.w('Failed to load canvas folders for folder {$folderId}. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  Future<List<CanvasFile>?> _loadFiles(int folderId) async {
+    if (!_available) {
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/folders/$folderId/files';
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasFile>? files = CanvasFile.listFromJson(JsonUtils.decodeList(responseString));
+      return files;
+    } else {
+      Log.w('Failed to load canvas files for folder {$folderId}. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
   Map<String, String>? get _authHeaders {
     if (!_available) {
       return null;
