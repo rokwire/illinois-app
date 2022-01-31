@@ -104,7 +104,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
   }
 
   void _onTapLink(String? url) {
-    Analytics.instance.logSelect(target: 'Link: $url');
+    Analytics().logSelect(target: 'Link: $url');
     if (StringUtils.isNotEmpty(url)) {
       if (UrlUtils.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
@@ -116,12 +116,12 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
 
   void _onTapFavorite() {
     String? title = Guide().entryTitle(widget.guideEntry, stripHtmlTags: true);
-    Analytics.instance.logSelect(target: "Favorite: $title");
+    Analytics().logSelect(target: "Favorite: $title");
     Auth2().prefs?.toggleFavorite(GuideFavorite(id: guideEntryId, title: title,));
   }
 
   void _onTapEntry() {
-    Analytics.instance.logSelect(target: "Guide Entry: $guideEntryId");
+    Analytics().logSelect(target: "Guide Entry: $guideEntryId");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideEntryId,)));
   }
 

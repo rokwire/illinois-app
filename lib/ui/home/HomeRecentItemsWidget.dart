@@ -171,7 +171,7 @@ class _RecentItemsList extends StatelessWidget{
       item: recentItem,
       showDate: cardShowDate,
       onTap: () {
-        Analytics.instance.logSelect(target: "HomeRecentItemCard clicked: " + recentItem!.recentTitle!);
+        Analytics().logSelect(target: "HomeRecentItemCard clicked: " + recentItem!.recentTitle!);
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => _getDetailPanel(recentItem)));
       },);
   }
@@ -361,7 +361,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
   }
 
   void _onTapFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.item?.recentTitle}");
+    Analytics().logSelect(target: "Favorite: ${widget.item?.recentTitle}");
     Object? originalItem = widget.item!.fromOriginalJson();
     if (originalItem is Favorite) {
       Auth2().prefs?.toggleFavorite(originalItem);

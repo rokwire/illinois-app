@@ -130,7 +130,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
             ),
           ]),
         ),
-        OnboardingBackButton(padding: backButtonInsets, onTap: () { Analytics.instance.logSelect(target: "Back"); Navigator.pop(context); }),
+        OnboardingBackButton(padding: backButtonInsets, onTap: () { Analytics().logSelect(target: "Back"); Navigator.pop(context); }),
         Visibility(visible: _isLoading, child:
           Center(child:
             CircularProgressIndicator(),
@@ -143,7 +143,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
   }
 
   void _onTapNext() {
-    Analytics.instance.logSelect(target: "Next");
+    Analytics().logSelect(target: "Next");
 
     if (_isLoading != true) {
       _clearErrorMsg();

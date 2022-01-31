@@ -34,7 +34,7 @@ class AppAlert {
             TextButton(
                 child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
                 onPressed: () {
-                  Analytics.instance.logAlert(text: message, selection: "Ok");
+                  Analytics().logAlert(text: message, selection: "Ok");
                   Navigator.pop(context, true);
                 }
             ) //return dismissed 'true'
@@ -68,7 +68,7 @@ class AppAlert {
           TextButton(
               child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
               onPressed: (){
-                Analytics.instance.logAlert(text: message, selection: "OK");
+                Analytics().logAlert(text: message, selection: "OK");
                   Navigator.pop(context, true);
               }
           ) //return dismissed 'true'

@@ -47,7 +47,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
   bool _modalPhotoVisibility = false;
 
   void _onTapPhoto(){
-    Analytics.instance.logSelect(target: "Photo");
+    Analytics().logSelect(target: "Photo");
     _modalPhotoVisibility = true;
     setState(() {});
   }
@@ -116,7 +116,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
     return _modalPhotoVisibility ? ModalImageDialog(
       imageUrl: widget.coach.fullSizePhotoUrl,
       onClose: () {
-        Analytics.instance.logSelect(target: "Close");
+        Analytics().logSelect(target: "Close");
         _modalPhotoVisibility = false;
         setState(() {});
       }

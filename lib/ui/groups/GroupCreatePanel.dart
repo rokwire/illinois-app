@@ -194,7 +194,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void _onTapAddImage() async {
-    Analytics.instance.logSelect(target: "Add Image");
+    Analytics().logSelect(target: "Add Image");
     String? _imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
     if (_imageUrl != null) {
       if (mounted) {
@@ -397,7 +397,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void onTagTap(String tag){
-    Analytics.instance.logSelect(target: "Tag: $tag");
+    Analytics().logSelect(target: "Tag: $tag");
     if(_group!=null) {
       if (_group!.tags == null) {
         _group!.tags =  [];
@@ -413,7 +413,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void _onTapTags() {
-    Analytics.instance.logSelect(target: "Tags");
+    Analytics().logSelect(target: "Tags");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupTagsPanel(selectedTags: _group?.tags))).then((tags) {
       // (tags == null) means that the user hit the back button
       if (tags != null) {
@@ -525,7 +525,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void _onTapQuestions() {
-    Analytics.instance.logSelect(target: "Membership Questions");
+    Analytics().logSelect(target: "Membership Questions");
     if (_group!.questions == null) {
       _group!.questions = [];
     }
@@ -577,7 +577,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void _onTapAuthMan() {
-    Analytics.instance.logSelect(target: "AuthMan Group");
+    Analytics().logSelect(target: "AuthMan Group");
     if (_group != null) {
       _group!.authManEnabled = (_group!.authManEnabled != true);
       if (mounted) {
@@ -625,7 +625,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void _onCreateTap() {
-    Analytics.instance.logSelect(target: "Create Group");
+    Analytics().logSelect(target: "Create Group");
     if(!_creating && _canSave) {
       setState(() {
         _creating = true;

@@ -509,7 +509,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       ModalImageDialog.modalDialogContainer(
         imageUrl: _modalImageUrl,
         onClose: () {
-          Analytics.instance.logSelect(target: "Close");
+          Analytics().logSelect(target: "Close");
           _modalImageUrl = null;
           setState(() {});
         },

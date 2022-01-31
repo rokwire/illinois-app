@@ -276,7 +276,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
       Widget? tabPanel = _getTabPanelAtIndex(index);
       if (tabPanel != null) {
-        Analytics.instance.logPage(name:tabPanel.runtimeType.toString());
+        Analytics().logPage(name:tabPanel.runtimeType.toString());
       }
 
       if (mounted) {
@@ -368,7 +368,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                 children: <Widget>[
                   RoundedButton(
                       onTap: () {
-                        Analytics.instance.logAlert(
+                        Analytics().logAlert(
                             text: "Exit", selection: "Yes");
                         Navigator.of(context).pop(true);
                       },
@@ -379,7 +379,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                   Container(height: 10,),
                   RoundedButton(
                       onTap: () {
-                        Analytics.instance.logAlert(
+                        Analytics().logAlert(
                             text: "Exit", selection: "No");
                         Navigator.of(context).pop(false);
                       },
@@ -747,12 +747,12 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
   }
 
   void _onTapClose() {
-    Analytics.instance.logAlert(text: "Event Saved", selection: "close");
+    Analytics().logAlert(text: "Event Saved", selection: "close");
     Navigator.pop(context, "");
   }
 
   void _onViewAll() {
-    Analytics.instance.logAlert(text: "Event Saved", selection: "View All");
+    Analytics().logAlert(text: "Event Saved", selection: "View All");
     Navigator.pop(context, "");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
   }

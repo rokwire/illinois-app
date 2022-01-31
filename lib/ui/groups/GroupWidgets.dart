@@ -273,7 +273,7 @@ class HeaderBackButton extends StatelessWidget {
       child: IconButton(
           icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true),
           onPressed: (){
-            Analytics.instance.logSelect(target: "Back");
+            Analytics().logSelect(target: "Back");
             Navigator.pop(context);
           }),
     );
@@ -318,7 +318,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                           backgroundColor: Styles().colors!.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           onTap: (){
-                            Analytics.instance.logAlert(text: message, selection: "Back");
+                            Analytics().logAlert(text: message, selection: "Back");
                             Navigator.pop(context);
                           },
                         )),
@@ -332,7 +332,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                           backgroundColor: Styles().colors!.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           onTap: (){
-                            Analytics.instance.logAlert(text: message, selection: buttonTitle);
+                            Analytics().logAlert(text: message, selection: buttonTitle);
                             onConfirmTap!();
                           },
                       )),
@@ -625,12 +625,12 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   }
 
   void _onFavoriteTap() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
+    Analytics().logSelect(target: "Favorite: ${widget.event?.title}");
     Auth2().prefs?.toggleFavorite(widget.event);
   }
 
   void _onOptionsTap(){
-    Analytics.instance.logSelect(target: "Options");
+    Analytics().logSelect(target: "Options");
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -818,12 +818,12 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
   }
 
   void _onTapCloseImageSelection() {
-    Analytics.instance.logSelect(target: "Close image selection");
+    Analytics().logSelect(target: "Close image selection");
     Navigator.pop(context, "");
   }
 
   void _onTapUseUrl() {
-    Analytics.instance.logSelect(target: "Use Url");
+    Analytics().logSelect(target: "Use Url");
     String url = _imageUrlController.value.text;
     if (url == "") {
       AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url")!);
@@ -870,7 +870,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
   }
 
   void _onTapChooseFromDevice() {
-    Analytics.instance.logSelect(target: "Choose From Device");
+    Analytics().logSelect(target: "Choose From Device");
 
     setState(() {
       _showProgress = true;
@@ -1034,7 +1034,7 @@ class GroupCard extends StatelessWidget {
   }
 
   void _onTapCard(BuildContext context) {
-    Analytics.instance.logSelect(target: "Group: ${group!.title}");
+    Analytics().logSelect(target: "Group: ${group!.title}");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: group)));
   }
 
@@ -1178,7 +1178,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   void _onLinkTap(String? url) {
-    Analytics.instance.logSelect(target: url);
+    Analytics().logSelect(target: url);
     if (StringUtils.isNotEmpty(url)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
     }
@@ -1339,7 +1339,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
   }
 
   void _onLinkTap(String? url) {
-    Analytics.instance.logSelect(target: url);
+    Analytics().logSelect(target: url);
     if (StringUtils.isNotEmpty(url)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
     }
@@ -1771,7 +1771,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
   }
 
   void _onTapAddImage() async {
-    Analytics.instance.logSelect(target: "Add Image");
+    Analytics().logSelect(target: "Add Image");
     String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
     if (StringUtils.isNotEmpty(imageUrl) && (widget.onImageChanged != null)) {
       widget.onImageChanged!(imageUrl);

@@ -58,7 +58,7 @@ class NotificationService {
     }
   }
 
-  void unsubscribe(NotificationsListener listener, { dynamic names }) {
+  void unsubscribe(NotificationsListener listener, [dynamic names]) {
     if (names is List) {
       for (dynamic name in names) {
         if (name is String) {

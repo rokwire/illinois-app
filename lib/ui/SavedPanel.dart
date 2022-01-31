@@ -126,7 +126,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     else {
       permissionStatus = await NotificationPermissions.requestNotificationPermissions();
       if (permissionStatus == PermissionStatus.granted) {
-        Analytics.instance.updateNotificationServices();
+        Analytics().updateNotificationServices();
       }
       setState(() {
         _showNotificationPermissionPrompt = false;
@@ -418,7 +418,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
               children: <Widget>[
                 TextButton(
                     onPressed: () {
-                      Analytics.instance.logAlert(text:"Already have access", selection: "Ok");
+                      Analytics().logAlert(text:"Already have access", selection: "Ok");
                       setState(() {
                         Navigator.pop(context);
                         _showNotificationPermissionPrompt = false;
@@ -682,7 +682,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                             child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
-                                  Analytics.instance.logSelect(target: "Favorite: $title");
+                                  Analytics().logSelect(target: "Favorite: $title");
                                   Auth2().prefs?.toggleFavorite(item);
                                 },
                                 child: Semantics(

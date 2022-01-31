@@ -171,7 +171,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   _onDropDownValueChanged(dynamic value){
-    Analytics.instance.logSelect(target: "Geofence selected: $value");
+    Analytics().logSelect(target: "Geofence selected: $value");
     setState(() {
       _selectedGeofence = value;
     });

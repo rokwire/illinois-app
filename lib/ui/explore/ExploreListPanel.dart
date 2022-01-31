@@ -124,7 +124,7 @@ class _ExploreListPanelState extends State<ExploreListPanel> {
   }
 
   void _onExploreTap(Explore explore) {
-    Analytics.instance.logSelect(target: explore.exploreTitle);
+    Analytics().logSelect(target: explore.exploreTitle);
 
     //show the detail panel
     Event? event = (explore is Event) ? explore : null;

@@ -281,7 +281,7 @@ class _SearchPanelState extends State<SearchPanel> {
   }
 
   void _onTapClear() {
-    Analytics.instance.logSelect(target: "Clear");
+    Analytics().logSelect(target: "Clear");
     if (StringUtils.isEmpty(_textEditingController.text)) {
       Navigator.pop(context);
       return;
@@ -295,7 +295,7 @@ class _SearchPanelState extends State<SearchPanel> {
   }
 
   void _onTapSearch() {
-    Analytics.instance.logSelect(target: "Search");
+    Analytics().logSelect(target: "Search");
     FocusScope.of(context).requestFocus(new FocusNode());
     _setLoading(true);
     String searchValue = _textEditingController.text;

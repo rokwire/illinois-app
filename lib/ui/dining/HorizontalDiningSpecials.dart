@@ -185,7 +185,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
   }
 
   void _onOfferTap(BuildContext context) {
-    Analytics.instance.logSelect(target: "Special Offer: ${widget.special!.text}");
+    Analytics().logSelect(target: "Special Offer: ${widget.special!.text}");
 
     Navigator.push(
         context,

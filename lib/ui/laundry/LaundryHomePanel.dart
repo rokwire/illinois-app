@@ -356,7 +356,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
                                     borderColor: Styles().colors!.fillColorSecondary,
                                     padding: EdgeInsets.symmetric(horizontal: 24),
                                     onTap: () {
-                                      Analytics.instance.logSelect(target: 'Directions');
+                                      Analytics().logSelect(target: 'Directions');
                                       _presentMapLaundryDirections(context);
                                     }),
                                 Container(
@@ -373,7 +373,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
                               borderColor: Styles().colors!.fillColorSecondary,
                               padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
-                                Analytics.instance.logSelect(target: 'Details');
+                                Analytics().logSelect(target: 'Details');
                                 _presentMapLaundryDetail(context);
                               }),
 
@@ -401,7 +401,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   void _selectDisplayType(_DisplayType displayType) {
-    Analytics.instance.logSelect(target: displayType.toString());
+    Analytics().logSelect(target: displayType.toString());
     if (_displayType != displayType) {
       setState(() {
         _displayType = displayType;
@@ -417,7 +417,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   void _onRoomTap(LaundryRoom room) {
-    Analytics.instance.logSelect(target: "Room Tap: " + room.id!);
+    Analytics().logSelect(target: "Room Tap: " + room.id!);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryDetailPanel(room: room,)));
   }
 

@@ -1543,7 +1543,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onCategoryDropDownValueChanged(dynamic value) {
-    Analytics.instance.logSelect(target: "Category selected: $value");
+    Analytics().logSelect(target: "Category selected: $value");
     setState(() {
       _selectedCategory = value;
       _modified = true;
@@ -1566,7 +1566,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTimeZoneDropDownValueChanged(dynamic value) {
-    Analytics.instance.logSelect(target: "Time Zone selected: $value");
+    Analytics().logSelect(target: "Time Zone selected: $value");
     setState(() {
       _selectedTimeZone = value;
       _modified = true;
@@ -1574,7 +1574,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onPrivacyDropDownValueChanged(dynamic value) {
-    Analytics.instance.logSelect(target: "Privacy selected: $value");
+    Analytics().logSelect(target: "Privacy selected: $value");
     setState(() {
       _selectedPrivacy = value;
       _modified = true;
@@ -1582,7 +1582,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapAddImage() async {
-    Analytics.instance.logSelect(target: "Add Image");
+    Analytics().logSelect(target: "Add Image");
     String? imageUrl = await showDialog(
         context: context,
         builder: (_) => AddImageWidget()
@@ -1624,7 +1624,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }*/
 
   void _onTapSelectLocation() {
-    Analytics.instance.logSelect(target: "Select Location");
+    Analytics().logSelect(target: "Select Location");
     _performSelectLocation();
   }
 
@@ -1681,7 +1681,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapConfirmPurchaseUrl() {
-    Analytics.instance.logSelect(target: "Confirm Purchase url");
+    Analytics().logSelect(target: "Confirm Purchase url");
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -1690,7 +1690,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapConfirmCallUrl() {
-    Analytics.instance.logSelect(target: "Confirm Purchase url");
+    Analytics().logSelect(target: "Confirm Purchase url");
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -1699,7 +1699,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapConfirmWebsiteUrl() {
-    Analytics.instance.logSelect(target: "Confirm Website url");
+    Analytics().logSelect(target: "Confirm Website url");
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -1707,7 +1707,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapCancel() {
-    Analytics.instance.logSelect(target: "Cancel");
+    Analytics().logSelect(target: "Cancel");
     Navigator.pop(context);
     //TBD: prompt
   }
@@ -1741,12 +1741,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         actions: <Widget>[
           TextButton(child: Text(Localization().getStringEx("dialog.yes.title", "Yes")!),
             onPressed:(){
-              Analytics.instance.logAlert(text: message, selection: "Yes");
+              Analytics().logAlert(text: message, selection: "Yes");
               Navigator.pop(context, true);
             }),
           TextButton(child: Text(Localization().getStringEx("dialog.no.title", "No")!),
             onPressed:(){
-              Analytics.instance.logAlert(text: message, selection: "No");
+              Analytics().logAlert(text: message, selection: "No");
               Navigator.pop(context, false);
             }),
         ]
@@ -1755,7 +1755,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapPreview() async {
-    Analytics.instance.logSelect(target: "Preview");
+    Analytics().logSelect(target: "Preview");
     if (_validateWithResult()) {
       Event event = _constructEventFromData();
       Navigator.push(
@@ -1779,7 +1779,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   /// Display all group titles that event is failed to be created or linked to.
   ///
   Future<void> _onTapCreate() async {
-    Analytics.instance.logSelect(target: "Create");
+    Analytics().logSelect(target: "Create");
     if (_validateWithResult()) {
       _setLoading(true);
       bool hasGroup = (widget.group != null);
@@ -1940,7 +1940,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapStartDate() async {
-    Analytics.instance.logSelect(target: "Start Date");
+    Analytics().logSelect(target: "Start Date");
     timezone.TZDateTime? date = await _pickDate(_startDate, null);
 
     if (date != null) {
@@ -1952,7 +1952,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapStartTime() async {
-    Analytics.instance.logSelect(target: "Start Time");
+    Analytics().logSelect(target: "Start Time");
     timezone.TZDateTime start = _startDate ?? timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone!));
     TimeOfDay? time =
         await _pickTime(_startTime ?? (new TimeOfDay.fromDateTime(start)));
@@ -1964,7 +1964,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapEndDate() async {
-    Analytics.instance.logSelect(target: "End Date");
+    Analytics().logSelect(target: "End Date");
     timezone.TZDateTime? date = await _pickDate(_endDate, _startDate);
 
     if (date != null) {
@@ -1976,7 +1976,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapEndTime() async {
-    Analytics.instance.logSelect(target: "End Time");
+    Analytics().logSelect(target: "End Time");
     timezone.TZDateTime end = _endDate ?? timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone!));
     TimeOfDay? time =
         await _pickTime(_endTime ?? (new TimeOfDay.fromDateTime(end)));
@@ -2260,12 +2260,12 @@ class _AddImageWidgetState extends State<AddImageWidget> {
   }
 
   void _onTapCloseImageSelection() {
-    Analytics.instance.logSelect(target: "Close image selection");
+    Analytics().logSelect(target: "Close image selection");
     Navigator.pop(context, "");
   }
 
   void _onTapUseUrl() {
-    Analytics.instance.logSelect(target: "Use Url");
+    Analytics().logSelect(target: "Use Url");
     String url = _imageUrlController.value.text;
     if (url == "") {
       AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url")!);
@@ -2309,7 +2309,7 @@ class _AddImageWidgetState extends State<AddImageWidget> {
   }
 
   void _onTapChooseFromDevice() {
-    Analytics.instance.logSelect(target: "Choose From Device");
+    Analytics().logSelect(target: "Choose From Device");
 
     setState(() {
       _showGalleryProgress = true;

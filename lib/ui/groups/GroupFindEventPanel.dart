@@ -347,7 +347,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
       active: (_activeFilterType == filterType),
       visible: true,
       onTap: (){
-        Analytics.instance.logSelect(target: analyticsEvent);
+        Analytics().logSelect(target: analyticsEvent);
         setState(() {
           _activeFilterType = (_activeFilterType != filterType) ? filterType : FilterType.none;
         });
@@ -487,7 +487,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   }
 
   void _onTapSearch() {
-    Analytics.instance.logSelect(target: "Search");
+    Analytics().logSelect(target: "Search");
     _textFocusNode.unfocus();
     if (StringUtils.isNotEmpty(_textEditingController.text)) {
       _loadEvents();
@@ -495,7 +495,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   }
 
   void _onTapClear(){
-    Analytics.instance.logSelect(target: "Clear");
+    Analytics().logSelect(target: "Clear");
     _textFocusNode.unfocus();
     if(StringUtils.isNotEmpty(_textEditingController.text)){
       _textEditingController.text = "";

@@ -67,7 +67,7 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
                     OnboardingBackButton(
                         padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                         onTap: () {
-                          Analytics.instance.logSelect(target: "Back");
+                          Analytics().logSelect(target: "Back");
                           Navigator.pop(context);
                         }),
                   ],
@@ -152,7 +152,7 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
   }
 
   void _onLoginTapped() {
-    Analytics.instance.logSelect(target: 'Log in with NetID');
+    Analytics().logSelect(target: 'Log in with NetID');
     if (_progress != true) {
       setState(() { _progress = true; });
       Auth2().authenticateWithOidc().then((bool? result) {
@@ -176,7 +176,7 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
   }
 
   void _onSkipTapped() {
-    Analytics.instance.logSelect(target: 'Not right now');
+    Analytics().logSelect(target: 'Not right now');
     Navigator.pop(context);
   }
 

@@ -156,7 +156,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
   }
 
   void _onTapAnnouncement(CanvasDiscussionTopic announcement) {
-    Analytics.instance.logSelect(target: "Canvas Course -> Announcement");
+    Analytics().logSelect(target: "Canvas Course -> Announcement");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAnnouncementPanel(announcement: announcement)));
   }
 

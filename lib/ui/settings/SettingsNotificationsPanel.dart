@@ -230,7 +230,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
   }
 
   void _onOpenNotifications(BuildContext context) {
-    Analytics.instance.logSelect(target: 'Receive Notifications') ;
+    Analytics().logSelect(target: 'Receive Notifications') ;
 
     //Android does not need for permission for user notifications
     if (Platform.isAndroid) {
@@ -247,7 +247,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     } else {
       permissionStatus = await NotificationPermissions.requestNotificationPermissions();
       if (permissionStatus == PermissionStatus.granted) {
-        Analytics.instance.updateNotificationServices();
+        Analytics().updateNotificationServices();
       }
       _onOpenSystemSettings();
     }
@@ -260,14 +260,14 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
   void _onEventRemindersToggled() {
     if(!_notificationsEnabled)
       return ;
-    Analytics.instance.logSelect(target: "Event Reminders");
+    Analytics().logSelect(target: "Event Reminders");
     FirebaseMessaging().notifyEventReminders = !FirebaseMessaging().notifyEventReminders!;
   }
 
   void _onAthleticsUpdatesToggled() {
     if(!_notificationsEnabled)
       return ;
-    Analytics.instance.logSelect(target: "Athletics updates");
+    Analytics().logSelect(target: "Athletics updates");
     FirebaseMessaging().notifyAthleticsUpdates = !FirebaseMessaging().notifyAthleticsUpdates!;
   }
 
@@ -275,7 +275,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     if(!_athleticsSubNotificationsEnabled) {
       return;
     }
-    Analytics.instance.logSelect(target: "Athletics updates: Start");
+    Analytics().logSelect(target: "Athletics updates: Start");
     FirebaseMessaging().notifyStartAthleticsUpdates = !FirebaseMessaging().notifyStartAthleticsUpdates!;
   }
 
@@ -283,7 +283,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     if(!_athleticsSubNotificationsEnabled) {
       return;
     }
-    Analytics.instance.logSelect(target: "Athletics updates: End");
+    Analytics().logSelect(target: "Athletics updates: End");
     FirebaseMessaging().notifyEndAthleticsUpdates = !FirebaseMessaging().notifyEndAthleticsUpdates!;
   }
 
@@ -291,49 +291,49 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     if(!_athleticsSubNotificationsEnabled) {
       return;
     }
-    Analytics.instance.logSelect(target: "Athletics updates: News");
+    Analytics().logSelect(target: "Athletics updates: News");
     FirebaseMessaging().notifyNewsAthleticsUpdates = !FirebaseMessaging().notifyNewsAthleticsUpdates!;
   }
 
   void _onGroupsUpdatesToggled() {
     if(!_notificationsEnabled)
       return ;
-    Analytics.instance.logSelect(target: "Groups updates");
+    Analytics().logSelect(target: "Groups updates");
     FirebaseMessaging().notifyGroupUpdates = !FirebaseMessaging().notifyGroupUpdates!;
   }
 
   void _onPauseNotificationsToggled() {
     if(!_notificationsEnabled)
       return ;
-    Analytics.instance.logSelect(target: "Pause Notifications");
+    Analytics().logSelect(target: "Pause Notifications");
     FirebaseMessaging().notificationsPaused = !FirebaseMessaging().notificationsPaused!;
   }
 
   void _onGroupsUpdatesPostsToggled() {
     if(!_notificationsEnabled)
       return ;
-    Analytics.instance.logSelect(target: "Posts updates");
+    Analytics().logSelect(target: "Posts updates");
     FirebaseMessaging().notifyGroupPostUpdates = !FirebaseMessaging().notifyGroupPostUpdates!;
   }
 
   void _onGroupsUpdatesInvitationsToggled() {
     if(!_notificationsEnabled)
       return ;
-    Analytics.instance.logSelect(target: "Invitations updates");
+    Analytics().logSelect(target: "Invitations updates");
     FirebaseMessaging().notifyGroupInvitationsUpdates = !FirebaseMessaging().notifyGroupInvitationsUpdates!;
   }
 
   void _onGroupsUpdatesEventsToggled() {
     if(!_notificationsEnabled)
       return ;
-    Analytics.instance.logSelect(target: "Events updates");
+    Analytics().logSelect(target: "Events updates");
     FirebaseMessaging().notifyGroupEventsUpdates = !FirebaseMessaging().notifyGroupEventsUpdates!;
   }
 
 //  void _onDiningSpecialsToggled() {
 //    if(!_notificationsEnabled)
 //      return ;
-//    Analytics.instance.logSelect(target: "Dining Specials");
+//    Analytics().logSelect(target: "Dining Specials");
 //    FirebaseMessaging().notifyDiningSpecials = !FirebaseMessaging().notifyDiningSpecials;
 //  }
 

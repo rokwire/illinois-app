@@ -190,7 +190,7 @@ class _ParkingEventWidget extends StatelessWidget{
   }
 
   void _navigateEvent(BuildContext context) {
-    Analytics.instance.logSelect(target: "Event");
+    Analytics().logSelect(target: "Event");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ParkingEventPanel(event: event,)));
   }
 }

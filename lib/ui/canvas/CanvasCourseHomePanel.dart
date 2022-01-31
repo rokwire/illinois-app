@@ -155,17 +155,17 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   }
 
   void _onTapSyllabus() {
-    Analytics.instance.logSelect(target: "Canvas Course -> Syllabus");
+    Analytics().logSelect(target: "Canvas Course -> Syllabus");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseSyllabusPanel(courseId: widget.courseId!)));
   }
 
   void _onTapAnnouncements() {
-    Analytics.instance.logSelect(target: "Canvas Course -> Announcements");
+    Analytics().logSelect(target: "Canvas Course -> Announcements");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAnnouncementsPanel(courseId: widget.courseId!)));
   }
 
   void _onTapInbox() {
-    Analytics.instance.logSelect(target: "Canvas Course -> Inbox");
+    Analytics().logSelect(target: "Canvas Course -> Inbox");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => InboxHomePanel()));
   }
 

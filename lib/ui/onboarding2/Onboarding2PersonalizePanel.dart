@@ -86,7 +86,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                           Row(children:[
                             Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 15),
                                 onTap: () {
-                                  Analytics.instance.logSelect(target: "Back");
+                                  Analytics().logSelect(target: "Back");
                                   _goBack(context);
                                 }),
                           ],),

@@ -96,7 +96,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   void _loadThisMonthHistory() {
-    Analytics.instance.logSelect(target: "This Month");
+    Analytics().logSelect(target: "This Month");
     DateTime now = DateTime.now();
     DateTime lastMonth = now.subtract(Duration(
       days: 30,
@@ -541,13 +541,13 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   void _onTapViewHistory() {
-    Analytics.instance.logSelect(target: "View History");
+    Analytics().logSelect(target: "View History");
     _loadMealPlanTransactions();
     _loadCafeCreditTransactions();
   }
 
   void _onStartDateTap() {
-    Analytics.instance.logSelect(target: "Start date");
+    Analytics().logSelect(target: "Start date");
     DateTime initialDate = _startDate ?? DateTime.now();
     DateTime firstDate =
     DateTime.fromMillisecondsSinceEpoch(initialDate.millisecondsSinceEpoch)
@@ -570,7 +570,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   void _onEndDateTap() {
-    Analytics.instance.logSelect(target: "End date");
+    Analytics().logSelect(target: "End date");
     DateTime initialDate = _endDate ?? DateTime.now();
     DateTime firstDate =
     DateTime.fromMillisecondsSinceEpoch(initialDate.millisecondsSinceEpoch)
@@ -593,7 +593,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   void _onTapLogIn() {
-    Analytics.instance.logSelect(target: "Log in");
+    Analytics().logSelect(target: "Log in");
     if (_authLoading != true) {
       setState(() { _authLoading = true; });
       Auth2().authenticateWithOidc().then((bool? result) {

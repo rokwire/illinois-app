@@ -61,7 +61,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
           child: Row(children: <Widget>[
             Onboarding2BackButton(padding: const EdgeInsets.only(left: 17,),
                 onTap:() {
-                  Analytics.instance.logSelect(target: "Back");
+                  Analytics().logSelect(target: "Back");
                   Navigator.pop(context);
                 }),
             Expanded(child: Column(
@@ -139,7 +139,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
 
       UserRole role = button.data;
 
-      Analytics.instance.logSelect(target: "Role: $role");
+      Analytics().logSelect(target: "Role: $role");
 
       if (_selectedRoles!.contains(role)) {
         _selectedRoles!.remove(role);
@@ -153,7 +153,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
   }
 
   void _onGoNext() {
-    Analytics.instance.logSelect(target:"Continue");
+    Analytics().logSelect(target:"Continue");
     if (_selectedRoles != null && _selectedRoles!.isNotEmpty && !_updating) {
       Auth2().prefs?.roles = _selectedRoles;
       setState(() { _updating = true; });

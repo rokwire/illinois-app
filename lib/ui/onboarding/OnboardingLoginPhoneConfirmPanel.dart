@@ -179,7 +179,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
           OnboardingBackButton(
             padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
             onTap:() {
-              Analytics.instance.logSelect(target: "Back");
+              Analytics().logSelect(target: "Back");
               Navigator.pop(context);
             }),
 
@@ -194,7 +194,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
       return;
     }
 
-    Analytics.instance.logSelect(target: "Confirm phone number");
+    Analytics().logSelect(target: "Confirm phone number");
     _clearErrorMsg();
     _validateCode();
     if (StringUtils.isNotEmpty(_verificationErrorMsg)) {
