@@ -27,7 +27,7 @@ import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';

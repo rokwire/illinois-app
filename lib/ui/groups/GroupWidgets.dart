@@ -31,7 +31,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
@@ -2262,7 +2262,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
   void _onClose() {
     if (_votingOptions.length == 0) {
       Navigator.of(context).pop();
-      Polls().closePresent();
+      Polls().closePresenting();
     }
   }
 

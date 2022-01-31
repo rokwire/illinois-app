@@ -19,7 +19,7 @@ import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -67,7 +67,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel>  {
 
   void _onClose() {
     Navigator.of(context).pop();
-    Polls().closePresent();
+    Polls().closePresenting();
   }
 }
 
@@ -493,7 +493,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
   void _onClose() {
     if (_votingOptions.length == 0) {
       Navigator.of(context).pop();
-      Polls().closePresent();
+      Polls().closePresenting();
     }
   }
 

@@ -28,7 +28,7 @@ import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
@@ -501,14 +501,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
   
   void _showPresentPoll() {
-    Poll? presentPoll = Polls().presentPoll;
-    if (presentPoll != null) {
+    Poll? presentingPoll = Polls().presentingPoll;
+    if (presentingPoll != null) {
       Timer(Duration(milliseconds: 500), (){
-        if (presentPoll.status == PollStatus.opened) {
-          _presentPollVote(presentPoll.pollId);
+        if (presentingPoll.status == PollStatus.opened) {
+          _presentPollVote(presentingPoll.pollId);
         }
-        else if (presentPoll.status == PollStatus.closed) {
-          _presentPollResult(presentPoll.pollId);
+        else if (presentingPoll.status == PollStatus.closed) {
+          _presentPollResult(presentingPoll.pollId);
         }
       });
     }
