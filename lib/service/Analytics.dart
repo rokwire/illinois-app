@@ -19,6 +19,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Polls.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
@@ -253,6 +254,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       AppLivecycle.notifyStateChanged,
       AppNavigation.notifyEvent,
       LocationServices.notifyStatusChanged,
+      
       Auth2UserPrefs.notifyRolesChanged,
       Auth2UserPrefs.notifyFavoriteChanged,
       Auth2.notifyLoginSucceeded,
@@ -260,11 +262,19 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       Auth2.notifyLogout,
       Auth2.notifyPrefsChanged,
       Auth2.notifyUserDeleted,
+      
       Network.notifyHttpResponse,
+      
       NativeCommunicator.notifyMapRouteStart,
       NativeCommunicator.notifyMapRouteFinish,
+      
       GeoFence.notifyRegionEnter,
       GeoFence.notifyRegionExit,
+      
+      Polls.notifyLifecycleCreate,
+      Polls.notifyLifecycleOpen,
+      Polls.notifyLifecycleClose,
+      Polls.notifyLifecycleVote,
     ]);
 
   }
@@ -299,15 +309,16 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     super.onNotification(name, param);
     
-    if (name == LocationServices.notifyStatusChanged) {
-      _applyLocationServicesStatus(param);
-    }
-    else if (name == AppLivecycle.notifyStateChanged) {
+    if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
     else if (name == AppNavigation.notifyEvent) {
       _onAppNavigationEvent(param);
     }
+    else if (name == LocationServices.notifyStatusChanged) {
+      _applyLocationServicesStatus(param);
+    }
+    
     else if (name == Auth2UserPrefs.notifyRolesChanged) {
       _updateUserRoles();
     }
@@ -330,20 +341,36 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       _updateSessionUuid();
       _updateUserRoles();
     }
+    
     else if (name == Network.notifyHttpResponse) {
       logHttpResponse(param);
     }
+    
     else if (name == NativeCommunicator.notifyMapRouteStart) {
       logMapRoute(action: LogMapRouteStartActionName, params: param);
     }
     else if (name == NativeCommunicator.notifyMapRouteFinish) {
       logMapRoute(action: LogMapRouteFinishActionName, params: param);
     }
+    
     else if (name == GeoFence.notifyRegionEnter) {
       logGeoFenceRegion(action: LogGeoFenceRegionEnterActionName, regionId: param);
     }
     else if (name == GeoFence.notifyRegionExit) {
       logGeoFenceRegion(action: LogGeoFenceRegionExitActionName, regionId: param);
+    }
+    
+    else if (name == Polls.notifyLifecycleCreate) {
+      logPoll(param, LogPollCreateActionName);
+    }
+    else if (name == Polls.notifyLifecycleOpen) {
+      logPoll(param, LogPollOpenActionName);
+    }
+    else if (name == Polls.notifyLifecycleClose) {
+      logPoll(param, LogPollCloseActionName);
+    }
+    else if (name == Polls.notifyLifecycleVote) {
+      logPoll(param, LogPollVoteActionName);
     }
   }
 

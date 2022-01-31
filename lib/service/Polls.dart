@@ -21,7 +21,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Poll.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -40,12 +39,17 @@ import 'package:sprintf/sprintf.dart';
 
 class Polls with Service implements NotificationsListener {
 
-  static const String notifyCreated  = "edu.illinois.rokwire.poll.created"; // new poll created, bubble should appear
-  static const String notifyPresentVote  = "edu.illinois.rokwire.poll.present.vote"; // poll opened for voting, bubble should appear
-  static const String notifyPresentResult  = "edu.illinois.rokwire.poll.present.result"; // poll opened for voting, bubble should appear
-  static const String notifyResultsChanged  = "edu.illinois.rokwire.poll.resultschanged"; // poll updated
-  static const String notifyVoteChanged  = "edu.illinois.rokwire.poll.votechanged"; // poll updated
-  static const String notifyStatusChanged  = "edu.illinois.rokwire.poll.statuschnaged"; // poll closed, results could be presented
+  static const String notifyCreated          = "edu.illinois.rokwire.poll.created"; // new poll created, bubble should appear
+  static const String notifyPresentVote      = "edu.illinois.rokwire.poll.present.vote"; // poll opened for voting, bubble should appear
+  static const String notifyPresentResult    = "edu.illinois.rokwire.poll.present.result"; // poll opened for voting, bubble should appear
+  static const String notifyResultsChanged   = "edu.illinois.rokwire.poll.resultschanged"; // poll updated
+  static const String notifyVoteChanged      = "edu.illinois.rokwire.poll.votechanged"; // poll updated
+  static const String notifyStatusChanged    = "edu.illinois.rokwire.poll.statuschnaged"; // poll closed, results could be presented
+
+  static const String notifyLifecycleCreate  = "edu.illinois.rokwire.poll.lifecycle.create";
+  static const String notifyLifecycleOpen    = "edu.illinois.rokwire.poll.lifecycle.open";
+  static const String notifyLifecycleClose   = "edu.illinois.rokwire.poll.lifecycle.close";
+  static const String notifyLifecycleVote    = "edu.illinois.rokwire.poll.lifecycle.vote";
 
   Map<String, _PollChunk> _pollChunks = {};
 
@@ -176,12 +180,12 @@ class Polls with Service implements NotificationsListener {
           if (pollId != null) {
             poll.pollId = pollId;
 
-            Analytics().logPoll(poll, Analytics.LogPollCreateActionName);
+            NotificationService().notify(notifyLifecycleCreate, poll);
 
             _addPollToChunks(poll);
 
             if (poll.status == PollStatus.opened) {
-              Analytics().logPoll(poll, Analytics.LogPollOpenActionName);
+              NotificationService().notify(notifyLifecycleOpen, poll);
               /*if (poll.isFirebase) {
                 FirebaseMessaging().send(topic:'polls', message:{'type':'poll_open', 'poll_id': pollId});
               }
@@ -224,7 +228,7 @@ class Polls with Service implements NotificationsListener {
           if ((response != null) && (response.statusCode == 200)) {
             _onPollStarted(pollId).then((Poll? poll) {
               if (poll != null) {
-                Analytics().logPoll(poll, Analytics.LogPollOpenActionName);
+                NotificationService().notify(notifyLifecycleOpen, poll);
                 /*if (poll.isFirebase) {
                   FirebaseMessaging().send(topic:'polls', message:{'type':'poll_open', 'poll_id': pollId});
                 }
@@ -261,7 +265,7 @@ class Polls with Service implements NotificationsListener {
           String voteString = json.encode(voteJson);
           Response? response = await Network().post(url, body: voteString, auth: Auth2());
           if ((response != null) && (response.statusCode == 200)) {
-            Analytics().logPoll(getPoll(pollId: pollId), Analytics.LogPollVoteActionName);
+            NotificationService().notify(notifyLifecycleVote, getPoll(pollId: pollId));
             _updatePollVote(pollId, vote);
           }
           else {
@@ -285,7 +289,7 @@ class Polls with Service implements NotificationsListener {
           String url = '${Config().quickPollsUrl}/pollend/$pollId';
           Response? response = await Network().put(url, auth: Auth2());
           if ((response != null) && (response.statusCode == 200)) {
-            Analytics().logPoll(getPoll(pollId: pollId), Analytics.LogPollCloseActionName);
+            NotificationService().notify(notifyLifecycleClose, getPoll(pollId: pollId));
             _updatePollStatus(pollId, PollStatus.closed);
             NotificationService().notify(notifyStatusChanged, pollId);
           }
