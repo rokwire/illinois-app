@@ -80,7 +80,9 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
       "edu.illinois.rokwire/plugin");
     _channel.setMethodCallHandler(this);
     _flutterBinding = flutterPluginBinding;
-    GeofenceMonitor.getInstance().init();
+
+    // Initialize GeofenceMonitor after we have activity available because it checks for activity permissions.
+    // GeofenceMonitor.getInstance().init();
   }
 
   @Override
@@ -312,6 +314,10 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
       if (_activityBinding != null) {
         _activityBinding.addActivityResultListener(this);
         _activityBinding.addRequestPermissionsResultListener(this);
+        
+        if (!GeofenceMonitor.getInstance().isInitialized()) {
+          GeofenceMonitor.getInstance().init();
+        }
       }
     }
   }
