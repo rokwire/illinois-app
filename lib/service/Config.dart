@@ -143,13 +143,7 @@ class Config extends rokwire.Config {
     return (userAccount != null) ? JsonUtils.stringValue(userAccount['name']) : null;
   }
 
-  // Getters: Other Entries
-
-  String? deepLinkRedirectUrl(String? deepLink) {
-    Uri? assetsUri = StringUtils.isNotEmpty(assetsUrl) ? Uri.tryParse(assetsUrl!) : null;
-    String? redirectUrl = (assetsUri != null) ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
-    return StringUtils.isNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
-  }
+  // Getters: settings
 
   String get appPrivacyVersion => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
 

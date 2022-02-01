@@ -1,39 +1,33 @@
 
-import 'package:device_calendar/device_calendar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/Guide.dart';
+import 'package:rokwire_plugin/service/device_calendar.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/Event.dart' as ExploreEvent;
-import 'package:timezone/timezone.dart' as timezone;
-import 'package:collection/collection.dart';
+import 'package:illinois/service/Sports.dart';
+import 'package:illinois/service/Guide.dart';
+import 'package:illinois/service/ExploreService.dart';
+import 'package:device_calendar/device_calendar.dart';
 
-class DeviceCalendar with Service implements NotificationsListener{
-  static const String notifyPromptPopup            = "edu.illinois.rokwire.device_calendar.messaging.message.popup";
-  static const String notifyCalendarSelectionPopup = "edu.illinois.rokwire.device_calendar.messaging.calendar_selection.popup";
-  static const String notifyShowConsoleMessage     = "edu.illinois.rokwire.device_calendar.console.debug.message";
+class DeviceCalendar extends rokwire.DeviceCalendar implements NotificationsListener {
 
-  Calendar? _defaultCalendar;
-  List<Calendar>? _deviceCalendars;
-  Calendar? _selectedCalendar;
-  Map<String, String>? _calendarEventIdTable;
-  DeviceCalendarPlugin _deviceCalendarPlugin = DeviceCalendarPlugin();
+  static String get notifyPromptPopup            => rokwire.DeviceCalendar.notifyPromptPopup;
+  static String get notifyCalendarSelectionPopup => rokwire.DeviceCalendar.notifyCalendarSelectionPopup;
+  static String get notifyShowConsoleMessage     => rokwire.DeviceCalendar.notifyShowConsoleMessage;
 
-  static final DeviceCalendar _instance = DeviceCalendar._internal();
+  // Singletone Factory
 
-  factory DeviceCalendar(){
-    return _instance;
-  }
+  @protected
+  DeviceCalendar.internal() : super.internal();
 
-  DeviceCalendar._internal();
+  factory DeviceCalendar() => ((rokwire.DeviceCalendar.instance is DeviceCalendar) ? (rokwire.DeviceCalendar.instance as DeviceCalendar) : (rokwire.DeviceCalendar.instance = DeviceCalendar.internal()));
+
+  // Service
 
   @override
   void createService() {
@@ -43,227 +37,55 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   @override
-  Future<void> initService() async {
-    Map<String, String>? storedTable = Storage().calendarEventsTable;
-    _calendarEventIdTable = storedTable!=null ? Map<String, String>.from(storedTable): Map();
-    await super.initService();
-  }
-
-  @override
   void destroyService() {
     NotificationService().unsubscribe(this);
   }
 
-  Future<bool> _addEvent(_DeviceCalendarEvent event) async{
-    //User prefs
-    if(!canAddToCalendar){
-      _debugMessage("Disabled");
-      return false;
-    }
+  // NotificationsListener
 
-    //init check
-    bool initResult = await _loadDefaultCalendarIfNeeded();
-    if(!initResult){
-      _debugMessage("Unable to init plugin");
-      return false;
-    }
-    
-    if(canShowPrompt){
-      _promptPermissionDialog(event);
-      return true;
-    }
-
-    return _placeCalendarEvent(event);
-  }
-
-  Future<bool> _placeCalendarEvent(_DeviceCalendarEvent? event) async{
-    if(event == null)
-      return false;
-
-    //init check
-    bool initResult = await _loadDefaultCalendarIfNeeded();
-    if(!initResult){
-      _debugMessage("Unable to init plugin");
-      return false;
-    }
-
-    _debugMessage("Add to calendar- id:${calendar?.id}, name:${calendar?.name}, accountName:${calendar?.accountName}, accountType:${calendar?.accountType}, isReadOnly:${calendar?.isReadOnly}, isDefault:${calendar?.isDefault},");
-    //PLACE
-    if(calendar!=null) {
-      Result<String>? createEventResult = await _deviceCalendarPlugin.createOrUpdateEvent(event.toCalendarEvent(calendar?.id));
-      if(createEventResult?.data!=null){
-        _storeEventId(event.internalEventId, createEventResult?.data);
-      }
-
-      _debugMessage("result.data: ${createEventResult?.data}, result?.errors?.toString(): ${createEventResult?.errors.toString()}");
-
-      if((createEventResult == null) || !createEventResult.isSuccess) {
-        //TBD: handle UI in caller
-        AppToast.show(createEventResult?.data ?? createEventResult?.errors.toString() ?? 'Failed to create event');
-        print(createEventResult?.errors.toString());
-        return false;
-      }
-    } else {
-      _debugMessage("calendar is missing");
-    }
-
-    _debugMessage("added");
-    return true;
-  }
-
-  Future<bool> _deleteEvent(_DeviceCalendarEvent? event) async{
-    if(event == null)
-      return false;
-
-    //init check
-    bool initResult = await _loadDefaultCalendarIfNeeded();
-    if(!initResult){
-      _debugMessage("Unable to init plugin");
-      return false;
-    }
-
-    String? eventId = event.internalEventId != null && _calendarEventIdTable!= null ? _calendarEventIdTable![event.internalEventId] : null;
-    _debugMessage("Try delete eventId: ${event.internalEventId} stored with calendarId: $eventId from calendarId ${calendar!.id}");
-    if(StringUtils.isEmpty(eventId)){
-      return false;
-    }
-
-    final deleteEventResult = await _deviceCalendarPlugin.deleteEvent(calendar?.id, eventId);
-    _debugMessage("delete result.data: ${deleteEventResult.data}, result.error: ${deleteEventResult.errors.toString()}");
-    if(deleteEventResult.isSuccess){
-      _eraseEventId(event.internalEventId);
-    }
-    return deleteEventResult.isSuccess;
-  }
-
-  Future<bool> _loadDefaultCalendarIfNeeded() async{
-    if(calendar!=null)
-      return true;
-    
-    return await _loadCalendars();
-  }
-
-  Future<bool> _loadCalendars() async {
-    bool hasPermissions = await _requestPermissions();
-    if(!hasPermissions) {
-      _debugMessage("No Calendar permissions");
-      return false;
-    }
-    _debugMessage("Has permissions");
-    final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
-    List<Calendar>? calendars = calendarsResult.data;
-    _deviceCalendars = calendars!=null && calendars.isNotEmpty? calendars.where((Calendar calendar) => calendar.isReadOnly == false).toList() : null;
-    if(CollectionUtils.isNotEmpty(_deviceCalendars)) {
-      _defaultCalendar = _deviceCalendars!.firstWhereOrNull((element) => (element.isDefault == true));
-      return true;
-    }
-    _debugMessage("No Calendars");
-    return false;
-  }
-
-  Future<List<Calendar>?> refreshCalendars() async {
-    await _loadCalendars();
-    return _deviceCalendars;
-  }
-
-  Future<bool> _requestPermissions() async {
-    var permissionsGranted = await _deviceCalendarPlugin.hasPermissions();
-    if (permissionsGranted.isSuccess && !permissionsGranted.data!) {
-      permissionsGranted = await _deviceCalendarPlugin.requestPermissions();
-      if (!permissionsGranted.isSuccess || !permissionsGranted.data!) {
-        AppToast.show("Unable to save event to calendar. Permissions not granted");
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  void _storeEventId(String? exploreId, String? calendarEventId){
-    if ((_calendarEventIdTable != null) && (exploreId != null) && (calendarEventId != null)) {
-      _calendarEventIdTable![exploreId] = calendarEventId;
-      Storage().calendarEventsTable = _calendarEventIdTable;
-    }
-  }
-  
-  void _eraseEventId(String? id){
-    if (_calendarEventIdTable != null) {
-      _calendarEventIdTable!.remove(id);
+  @override
+  void onNotification(String name, param) {
+    if(name == Auth2UserPrefs.notifyFavoriteChanged){
+      _processFavorite(param);
     }
   }
 
-  void _debugMessage(String msg){
-//    NotificationService().notify(DeviceCalendar.notifyShowConsoleMessage, msg); //Disable debug console messages
-      print(msg);
-  }
-
-  void _processEvents(dynamic event){
+  void _processFavorite(dynamic event) {
     _DeviceCalendarEvent? deviceCalendarEvent = _DeviceCalendarEvent.from(event);
     if(deviceCalendarEvent==null)
       return;
 
     if (Auth2().isFavorite(event)) {
-      _addEvent(deviceCalendarEvent);
+      addEvent(deviceCalendarEvent);
     }
     else {
-      _deleteEvent(deviceCalendarEvent);
+      deleteEvent(deviceCalendarEvent);
     }
-  }
-
-  void _promptPermissionDialog(_DeviceCalendarEvent event) {
-    NotificationService().notify(DeviceCalendar.notifyPromptPopup, {"event": event});
   }
 
   @override
-  void onNotification(String name, param) {
-    if(name == Auth2UserPrefs.notifyFavoriteChanged){
-      _processEvents(param);
-    }
+  void onCreateOrUpdateEventFailed(Result<String>? createEventResult) {
+    AppToast.show(createEventResult?.data ?? createEventResult?.errors.toString() ?? Localization().getStringEx('logic.calendar.create_event_failed', 'Failed to create event.')!);
   }
 
-  void placeEvent(dynamic data) {
-    if(data!=null && data is Map){
-      _DeviceCalendarEvent? event = data["event"];
-      Calendar? calendarSelection = data["calendar"];
-
-      if(calendarSelection!=null){
-        _selectedCalendar = calendarSelection;
-      }
-      _placeCalendarEvent(event);
-    }
-  }
-  
-  bool get canAddToCalendar{
-    return Storage().calendarEnabledToSave ?? false;
-  }
-  
-  bool get canShowPrompt{
-    return Storage().calendarCanPrompt ?? false;
-  }
-  
-  Calendar? get calendar{
-    return _selectedCalendar ?? _defaultCalendar;
-  }
-
-  set calendar(Calendar? calendar){
-    _selectedCalendar = calendar;
+  @override
+  void onRequestPermisionFailed() {
+    AppToast.show(Localization().getStringEx('logic.calendar.permission_denied', 'Unable to save event to calendar. Permissions not granted.')!);
   }
 }
 
-class _DeviceCalendarEvent {
-  String? internalEventId;
-  String? title;
-  String? deepLinkUrl;
-  DateTime? startDate;
-  DateTime? endDate;
+class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
+  //String? internalEventId;
+  //String? title;
+  //String? deepLinkUrl;
+  //DateTime? startDate;
+  //DateTime? endDate;
 
-  _DeviceCalendarEvent({this.internalEventId, this.title, this.deepLinkUrl, this.startDate, this.endDate});
+  _DeviceCalendarEvent({String? internalEventId, String? title, String? deepLinkUrl, DateTime? startDate, DateTime? endDate}) :
+    super(internalEventId: internalEventId, title: title, deepLinkUrl: deepLinkUrl, startDate: startDate, endDate: endDate);
 
   static _DeviceCalendarEvent? from(dynamic data){
-    if(data==null)
-      return null;
-
-    if(data is ExploreEvent.Event){
+    if (data is ExploreEvent.Event) {
       return _DeviceCalendarEvent.fromEvent(data);
     }
     else if (data is Game){
@@ -277,56 +99,33 @@ class _DeviceCalendarEvent {
   }
 
   static _DeviceCalendarEvent? fromEvent(ExploreEvent.Event? event){
-    if(event==null)
-      return null;
-
-    return _DeviceCalendarEvent(title: event.title, internalEventId: event.id, startDate: event.startDateLocal,
-        endDate: event.endDateLocal,
-        deepLinkUrl: "${ExploreService().eventDetailUrl}?event_id=${event.id}");
+    return (event != null) ? _DeviceCalendarEvent(
+      title: event.title,
+      internalEventId: event.id,
+      startDate: event.startDateLocal,
+      endDate: event.endDateLocal,
+      deepLinkUrl: "${ExploreService().eventDetailUrl}?event_id=${event.id}"
+    ) : null;
   }
 
   static _DeviceCalendarEvent? fromGame(Game? game){
-    if(game==null)
-      return null;
-
-    return _DeviceCalendarEvent(title: game.title, internalEventId: game.id, startDate: game.dateTimeUniLocal,
-        endDate:  AppDateTime().getUniLocalTimeFromUtcTime(game.endDateTimeUtc),
-        deepLinkUrl: "${Sports().gameDetailUrl}?game_id=${game.id}%26sport=${game.sport?.shortName}");
+    return (game != null) ? _DeviceCalendarEvent(
+      title: game.title,
+      internalEventId: game.id,
+      startDate: game.dateTimeUniLocal,
+      endDate:  AppDateTime().getUniLocalTimeFromUtcTime(game.endDateTimeUtc),
+      deepLinkUrl: "${Sports().gameDetailUrl}?game_id=${game.id}%26sport=${game.sport?.shortName}"
+    ) : null;
   }
 
   static _DeviceCalendarEvent? fromGuide(GuideFavorite? guide){
-    if(guide==null)
-      return null;
-    Map<String, dynamic>? guideEntryData = Guide().entryById(guide.id);
+    Map<String, dynamic>? guideEntryData = (guide != null) ? Guide().entryById(guide.id) : null;
     //Only reminders are allowed to save
-    if (Guide().isEntryReminder(guideEntryData)){
-      return _DeviceCalendarEvent(
-        title: guide.title,
+    return (Guide().isEntryReminder(guideEntryData)) ? _DeviceCalendarEvent(
+        title: guide!.title,
         internalEventId: guide.id,
         startDate: Guide().reminderDate(guideEntryData),
         deepLinkUrl: "${Guide().guideDetailUrl}?guide_id=${guide.id}"
-      );
-    }
-
-    return null;
-  }
-
-  Event toCalendarEvent(String? calendarId){
-    Event calendarEvent = Event(calendarId);
-    calendarEvent.title = title ?? "";
-
-    if (startDate != null) {
-      calendarEvent.start = timezone.TZDateTime.from(startDate!, AppDateTime().universityLocation!);
-    }
-
-    if (endDate != null) {
-      calendarEvent.end = timezone.TZDateTime.from(endDate!, AppDateTime().universityLocation!);
-    } else if (startDate != null) {
-      calendarEvent.end = timezone.TZDateTime(AppDateTime().universityLocation!, startDate!.year, startDate!.month, startDate!.day, 24);
-    }
-
-    calendarEvent.description = Config().deepLinkRedirectUrl(deepLinkUrl);
-
-    return calendarEvent;
+      ) : null;
   }
 }

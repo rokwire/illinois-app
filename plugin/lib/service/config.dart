@@ -485,6 +485,11 @@ class Config with Service, NetworkAuthProvider, NotificationsListener {
   int get refreshTimeout                           => JsonUtils.intValue(settings['refreshTimeout'])  ?? 0;
   int get refreshTokenRetriesCount                 => JsonUtils.intValue(settings['refreshTokenRetriesCount']) ?? 3;
   
+  // Getters: other
+  String? deepLinkRedirectUrl(String? deepLink) {
+    Uri? assetsUri = StringUtils.isNotEmpty(assetsUrl) ? Uri.tryParse(assetsUrl!) : null;
+    return (assetsUri != null) ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
+  }
 }
 
 enum ConfigEnvironment { production, test, dev }

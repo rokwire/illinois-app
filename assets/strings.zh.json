@@ -2244,6 +2244,9 @@
 	"logic.polls.no_polls_with_pin": "此4位数的投票代码 # 没有投票",
 	"logic.polls.multiple_polls_with_pin": "有多个公开的投票关联到这个四位数投票代码 #",
 
+	"logic.calendar.create_event_failed": "創建活動失敗。",
+	"logic.calendar.permission_denied": "無法將事件保存到日曆。 未授予權限。",
+
 	"logic.general.internal_error": "发生内部错误",
 	"logic.general.unknown_error": "發生未知錯誤",
 	"logic.general.invalid_response": "无效的服务器响应",
