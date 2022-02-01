@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:ui';
+
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Event.dart';
@@ -22,6 +24,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 
@@ -186,6 +189,25 @@ class ExploreHelper {
         Analytics.LogAttributeLocation : explore.location?.analyticsValue,
       };
     }
+    else {
+      return null;
+    }
   }
 
+  // Analytics
+
+  static Color? uiColor(Explore? explore) {
+    if (explore is Event) {
+      return Styles().colors!.eventColor;
+    }
+    else if (explore is Dining) {
+      return Styles().colors!.diningColor;
+    }
+    else if (explore is Game) {
+      return Styles().colors!.eventColor;
+    }
+    else {
+      return null;
+    }
+  }
 }

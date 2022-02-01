@@ -860,7 +860,7 @@ class ExplorePanelState extends State<ExplorePanel>
       title = sprintf(Localization().getStringEx('panel.explore.map.popup.title.format', '%d %s')!, [_selectedMapExplore?.length, exploreName]);
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
-      exploreColor = explore?.uiColor ?? Styles().colors!.fillColorSecondary!;
+      exploreColor = ExploreHelper.uiColor(explore) ?? Styles().colors!.fillColorSecondary!;
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;

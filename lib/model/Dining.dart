@@ -21,7 +21,6 @@ import 'package:illinois/model/Explore.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
@@ -139,7 +138,6 @@ class Dining with Explore implements Favorite {
   @override String?   get exploreImageURL         { return imageURL; }
   @override String?   get explorePlaceId          { return null; }
   @override ExploreLocation? get exploreLocation  { return location; }
-  @override Color?    get uiColor                 { return Styles().colors!.diningColor; }
 
   static String favoriteKeyName = "diningPlaceIds";
   @override String? get favoriteId => exploreId;

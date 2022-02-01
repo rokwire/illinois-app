@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-import 'dart:ui';
-
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Game with Explore implements Favorite {
@@ -290,9 +287,6 @@ class Game with Explore implements Favorite {
 
   @override
   String get exploreTitle => title;
-
-  @override
-  Color? get uiColor => Styles().colors!.eventColor;
 
   @override
   Map<String, dynamic> toJson() {

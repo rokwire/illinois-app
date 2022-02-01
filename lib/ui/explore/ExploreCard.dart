@@ -473,7 +473,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget _topBorder() {
-    return widget.showTopBorder? Container(height: 7,color: widget.explore!.uiColor) : Container();
+    return widget.showTopBorder? Container(height: 7,color: ExploreHelper.uiColor(widget.explore)) : Container();
   }
 
   String _getInterestsLabelValue() {

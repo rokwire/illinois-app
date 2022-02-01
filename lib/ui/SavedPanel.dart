@@ -19,6 +19,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -747,7 +748,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 
   Color? _cardHeaderColor(Favorite? item) {
     if (item is Explore) {
-      return (item as Explore).uiColor;
+      return ExploreHelper.uiColor(item as Explore);
     } else if (item is Game) {
       return Styles().colors!.fillColorPrimary;
     } else if (item is News) {

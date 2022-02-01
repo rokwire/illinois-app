@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:ui';
-
 //////////////////////////////
 /// Explore
 
@@ -30,7 +28,6 @@ abstract class Explore {
   String?   get exploreImageURL;
   String?   get explorePlaceId;
   ExploreLocation? get exploreLocation;
-  Color?    get uiColor;
   Map<String, dynamic> toJson();
 
   static Set<ExploreJsonHandler> _jsonHandlers = {};

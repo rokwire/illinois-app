@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:ui';
-
 import 'package:illinois/model/Explore.dart';
 
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -23,7 +21,6 @@ import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'package:illinois/utils/AppUtils.dart';
@@ -582,7 +579,6 @@ class Event with Explore implements Favorite {
   @override DateTime? get exploreStartDateUtc     { return startDateGmt; }
   @override String?   get explorePlaceId          { return placeID; }
   @override ExploreLocation? get exploreLocation  { return location; }
-  @override Color?    get uiColor                 { return Styles().colors!.eventColor; }
 
   @override String?   get exploreImageURL         {
     if ((imageURL != null) && imageURL!.isNotEmpty)
