@@ -1,3 +1,4 @@
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -682,6 +683,7 @@ class _StepsHorizontalListWidget extends StatefulWidget {
 
 class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implements NotificationsListener{
   PageController? _pageController;
+  GlobalKey _tabKey = GlobalKey();
   int _currentPage = 0;
   bool requestDelayedRefresh = false;
 
@@ -751,6 +753,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
       );
     }
     return Container(
+      key: _tabKey,
       padding: EdgeInsets.only(right: 16, left: 16,),
       color: Styles().colors!.fillColorPrimary,
       child: Row(
@@ -805,7 +808,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
       }
     }
     double screenWidth = MediaQuery.of(context).size.width * 2/3;
-    double pageHeight = MediaQuery.of(context).size.height * 4/7;
+    // double pageHeight = MediaQuery.of(context).size.height * 4/7;
     double pageViewport = (screenWidth - 40) / screenWidth;
 
     if (_pageController == null) {
@@ -814,12 +817,11 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
 
     return
       Padding(padding: EdgeInsets.only(top: 10, bottom: 20), child:
-        Container(height: pageHeight, child:
-          PageView(
+        Container(child:
+        ExpandablePageView(
             controller: _pageController,
             children: pages,
             onPageChanged: _onPageChanged,
-
           )
         )
       );
@@ -834,13 +836,15 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
               boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
               borderRadius: BorderRadius.all(Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
           ),
-          child: SingleChildScrollView(
+          // child: SingleChildScrollView(
             child:_GiesPageWidget( page: Gies().getPage(id: tab!["page_id"]),
               onTapBack: widget.onTapBack,
               onTapButton: (button, id){
                 _onTapButton(button, id);
               },
-              onTapLink: widget.onTapLink,))));
+              onTapLink: widget.onTapLink,))
+    // )
+    );
   }
 
   Widget _buildSlant() {
@@ -897,14 +901,19 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     return -1;
   }
 
-  void _onPageChanged(int index){
+  void _onPageChanged(int index) {
     _currentPage = index;
-    if(!requestDelayedRefresh){
-      if(mounted)
-        setState(() {
-
-        });
+    if (mounted) {
+      _ensureTabBarVisible();
+      if (!requestDelayedRefresh) {
+        setState(() {});
+      }
     }
+  }
+
+  void _ensureTabBarVisible(){
+    Scrollable.ensureVisible(
+        _tabKey.currentContext!, duration: Duration(milliseconds: 300), alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart);
   }
 
   int get _initialPageIndex{
