@@ -246,7 +246,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   Widget _exploreTop() {
 
     String? category = _exploreCategory;
-    bool isFavorite = widget.explore!.isFavorite;
+    bool isFavorite = ExploreHelper.isFavorite(widget.explore);
     bool starVisible = Auth2().canFavorite;
     String leftLabel = "";
     TextStyle leftLabelStyle;
@@ -521,7 +521,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   void _onTapExploreCardStar() {
     Analytics().logSelect(target: "Favorite: ${widget.explore?.exploreTitle}");
-    widget.explore!.toggleFavorite();
+    ExploreHelper.toggleFavorite(widget.explore);
   }
 
   void _onTapSmallExploreCard({BuildContext? context, _EventCardType? cardType, Event? parentEvent, Event? subEvent}) {

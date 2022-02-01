@@ -180,7 +180,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   Widget _exploreHeading() {
     String? category = widget.parentEvent?.category;
-    bool isFavorite = widget.parentEvent!.isFavorite;
+    bool isFavorite = ExploreHelper.isFavorite(widget.parentEvent);
     bool starVisible = Auth2().canFavorite;
     return Padding(padding: EdgeInsets.only(top: 16, bottom: 12), child: Row(
       children: <Widget>[
@@ -564,7 +564,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   void _onTapHeaderStar() {
     Analytics().logSelect(target: "Favorite: ${widget.parentEvent?.title}");
-    widget.parentEvent!.toggleFavorite();
+    ExploreHelper.toggleFavorite(widget.parentEvent);
   }
 
   Widget _buildGroupButtons(){

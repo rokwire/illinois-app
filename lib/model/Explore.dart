@@ -17,9 +17,6 @@
 import 'dart:ui';
 
 import 'package:illinois/model/Location.dart';
-
-import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 //////////////////////////////
@@ -37,21 +34,11 @@ abstract class Explore {
   String?   get explorePlaceId;
   Location? get exploreLocation;
   Color?    get uiColor;
-  Map<String, dynamic> get analyticsAttributes;
   Map<String, dynamic> toJson();
+  Map<String, dynamic> get analyticsAttributes;
 
   Map<String, dynamic>? get analyticsSharedExploreAttributes {
     return exploreLocation?.analyticsAttributes;
-  }
-
-  bool get isFavorite {
-    return (this is Favorite) && Auth2().isFavorite(this as Favorite);
-  }
-
-  void toggleFavorite() {
-    if (this is Favorite) {
-      Auth2().prefs?.toggleFavorite(this as Favorite);
-    }
   }
 
   static Set<ExploreJsonHandler> _jsonHandlers = {};

@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
@@ -556,7 +557,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   @override
   Widget build(BuildContext context) {
 
-    bool isFavorite = widget.event!.isFavorite;
+    bool isFavorite = ExploreHelper.isFavorite(widget.event);
 
     List<Widget> content = [
       Padding(padding: EdgeInsets.only(bottom: 8, right: 8), child:

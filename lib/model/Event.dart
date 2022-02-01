@@ -608,22 +608,6 @@ class Event with Explore implements Favorite {
     return attributes;
   }
 
-  @override
-  bool get isFavorite {
-    return isRecurring ? Auth2().isListFavorite(recurringEvents?.cast<Favorite>()) : Auth2().isFavorite(this);
-  }
-
-  @override
-  void toggleFavorite() {
-    if (isRecurring) {
-      List<Favorite>? favorites = recurringEvents?.cast<Favorite>();
-      Auth2().prefs?.setListFavorite(favorites, !Auth2().isListFavorite(favorites));
-    }
-    else {
-      Auth2().prefs?.toggleFavorite(this);
-    }
-  }
-
   DateTime? get startDateLocal     { return AppDateTime().getUniLocalTimeFromUtcTime(startDateGmt); }
   DateTime? get endDateLocal       { return AppDateTime().getUniLocalTimeFromUtcTime(endDateGmt); }
 

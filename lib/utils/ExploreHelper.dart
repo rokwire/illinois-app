@@ -18,6 +18,8 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:geolocator/geolocator.dart' as Core;
@@ -131,5 +133,27 @@ class ExploreHelper {
       }
     }
     return null;
+  }
+
+  static bool isFavorite(Explore? explore) {
+    if (explore is Favorite) {
+      return ((explore is Event) && explore.isRecurring) ?
+        Auth2().isListFavorite(explore.recurringEvents?.cast<Favorite>()) :
+        Auth2().isFavorite(explore as Favorite);
+    }
+    return false;
+  }
+
+  static bool toggleFavorite(Explore? explore) {
+    if (explore is Favorite) {
+      if ((explore is Event) && explore.isRecurring) {
+        List<Favorite>? favorites = explore.recurringEvents?.cast<Favorite>();
+        Auth2().prefs?.setListFavorite(favorites, !Auth2().isListFavorite(favorites));
+      }
+      else {
+        Auth2().prefs?.toggleFavorite(explore as Favorite);
+      }
+    }
+    return false;
   }
 }
