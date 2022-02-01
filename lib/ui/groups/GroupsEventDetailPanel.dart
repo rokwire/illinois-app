@@ -195,7 +195,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventTimeDetail() {
-    String? displayTime = _event?.displayDateTime;
+    String? displayTime = EventHelper.displayDateTime(_event);
     //Newly created groups pass time in the string
     if(StringUtils.isEmpty(displayTime?.trim())){
       if(_event?.startDateString !=null || _event?.endDateString != null){

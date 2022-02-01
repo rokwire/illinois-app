@@ -1141,7 +1141,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 4, left: 28),
-                    child: Text(widget.event!.displaySuperTime, style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium)),
+                    child: Text(EventHelper.displaySuperTime(widget.event) ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium)),
                   )
                 ]),
               ),

@@ -454,7 +454,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   String? _getExploreTimeDisplayString() {
     Explore? explore = widget.explore;
     if (explore is Event) {
-      return explore.timeDisplayString;
+      return EventHelper.timeDisplayString(explore);
     } else if (explore is Game) {
       return explore.displayTime;
     } else {
@@ -477,7 +477,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   String _getInterestsLabelValue() {
-    return (!widget.hideInterests && (widget.explore is Event)) ? ((widget.explore as Event).displayInterests) : "";
+    return (!widget.hideInterests && (widget.explore is Event)) ? EventHelper.displayInterests(widget.explore as Event) : "";
   }
 
   Widget _buildCompositeEventsContent(bool isCompositeEvent) {
@@ -653,7 +653,7 @@ class _EventSmallCard extends StatelessWidget {
       case _EventCardType.sup:
         return event!.title;
       case _EventCardType.rec:
-        return event!.displayDate;
+        return EventHelper.displayDate(event);
       case _EventCardType.more:
         return Localization().getStringEx('widget.explore_card.small.view_all.title', 'View all events');
       default:
@@ -664,9 +664,9 @@ class _EventSmallCard extends StatelessWidget {
   String? get _subTitle {
     switch (type) {
       case _EventCardType.sup:
-        return event!.displaySuperTime;
+        return EventHelper.displaySuperTime(event);
       case _EventCardType.rec:
-        return event!.displayStartEndTime;
+        return EventHelper.displayStartEndTime(event);
       default:
         return '';
     }

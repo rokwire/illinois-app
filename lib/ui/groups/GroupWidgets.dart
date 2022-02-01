@@ -568,7 +568,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
       Expanded(child:
-      Text(widget.event!.timeDisplayString!,  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),)
+      Text(EventHelper.timeDisplayString(widget.event) ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),)
       ),
     ],)),);
 

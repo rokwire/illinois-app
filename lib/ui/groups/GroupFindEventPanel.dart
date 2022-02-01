@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -611,7 +612,7 @@ class _EventCardState extends State<_EventCard>{
   }
 
   Widget _exploreTimeDetail() {
-    String? displayTime = widget.event.timeDisplayString;
+    String? displayTime = EventHelper.timeDisplayString(widget.event);
     if (StringUtils.isEmpty(displayTime)) {
       return Container();
     }

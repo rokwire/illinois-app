@@ -19,12 +19,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-
-import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/service/Storage.dart';
 
 //////////////////////////////
 /// Event
@@ -599,117 +594,8 @@ class Event with Explore implements Favorite {
   @override String? get favoriteTitle => title;
   @override String get favoriteKey => favoriteKeyName;
 
-  ///
-  /// Specific for Events with 'Athletics' category
-  ///
-  /// Requirement 1 (Deprecated! since 08/11/2021):
-  /// 'When in explore/events and the category is athletics, do not show the time anymore, just the date. Also do not process it for timezone (now we go to athletics detail panel we will rely on how detail already deals with any issues)'
-  ///
-  /// Requirement 2: 'If an event is longer than 1 day, then please show the Date as (for example) Sep 26 - Sep 29.'
-  ///
-  /// Requirement 3 (Since 08/11/2021): Display start time for Athletics events
-  ///
-  String get displayDateTime {
-    final String dateFormat = 'MMM dd';
-    int eventDays = (endDateGmt?.difference(startDateGmt!).inDays ?? 0).abs();
-    bool eventIsMoreThanOneDay = (eventDays >= 1);
-    if (eventIsMoreThanOneDay) {
-      String? startDateFormatted = AppDateTime().formatDateTime(startDateGmt, format: dateFormat);
-      String? endDateFormatted = AppDateTime().formatDateTime(endDateGmt, format: dateFormat);
-      return '$startDateFormatted - $endDateFormatted';
-    } else {
-      return AppDateTimeUtils.getDisplayDateTime(startDateGmt, allDay: allDay);
-    }
-  }
 
-  String? get displayDate {
-    return AppDateTimeUtils.getDisplayDay(dateTimeUtc: startDateGmt, allDay: allDay);
-  }
 
-  String? get displayStartEndTime {
-    if (allDay!) {
-      return Localization().getStringEx('model.explore.time.all_day', 'All day');
-    }
-    String? startTime = AppDateTimeUtils.getDisplayTime(dateTimeUtc: startDateGmt, allDay: allDay);
-    String? endTime = AppDateTimeUtils.getDisplayTime(dateTimeUtc: endDateGmt, allDay: allDay);
-    String displayTime = '$startTime';
-    if (StringUtils.isNotEmpty(endTime)) {
-      displayTime += '-$endTime';
-    }
-    return displayTime;
-  }
-
-  String? get displayRecurringDates {
-    if (!isRecurring) {
-      return '';
-    }
-    Event? first = recurringEvents!.first;
-    Event? last = recurringEvents!.last;
-    return _buildDisplayDates(first, last);
-  }
-
-  String get displaySuperTime {
-    String? date = AppDateTimeUtils.getDisplayDay(dateTimeUtc: startDateGmt, allDay: allDay);
-    String? time = displayStartEndTime;
-    return '$date, $time';
-  }
-
-  String? get displaySuperDates {
-    if (isSuperEvent != true) {
-      return '';
-    }
-    if (subEvents == null || subEvents!.isEmpty) {
-      return displayDateTime;
-    }
-    Event first = subEvents!.first;
-    Event last = subEvents!.last;
-    return _buildDisplayDates(first, last);
-  }
-
-  String? get timeDisplayString {
-    if (isRecurring) {
-      return displayRecurringDates;
-    } else if (isSuperEvent == true) {
-      return displaySuperDates;
-    }
-    return displayDateTime;
-  }
-
-  String? _buildDisplayDates(Event firstEvent, Event? lastEvent) {
-    bool useDeviceLocalTime = Storage().useDeviceLocalTimeZone!;
-    DateTime? startDateTime;
-    DateTime? endDateTime;
-    if (useDeviceLocalTime) {
-      startDateTime = AppDateTime().getDeviceTimeFromUtcTime(firstEvent.startDateGmt);
-      endDateTime = AppDateTime().getDeviceTimeFromUtcTime(lastEvent!.startDateGmt);
-    } else {
-      startDateTime = AppDateTime().getUniLocalTimeFromUtcTime(firstEvent.startDateGmt);
-      endDateTime = AppDateTime().getUniLocalTimeFromUtcTime(lastEvent!.startDateGmt);
-    }
-    bool sameDay = ((startDateTime != null) && (endDateTime != null) && (startDateTime.year == endDateTime.year) &&
-        (startDateTime.month == endDateTime.month) && (startDateTime.day == endDateTime.day));
-    String? startDateString = AppDateTimeUtils.getDisplayDay(dateTimeUtc: firstEvent.startDateGmt, allDay: firstEvent.allDay);
-    if (sameDay) {
-      return startDateString;
-    }
-    String? endDateString = AppDateTimeUtils.getDisplayDay(dateTimeUtc: lastEvent.startDateGmt, allDay: lastEvent.allDay);
-    return '$startDateString - $endDateString';
-  }
-
-  String get displayInterests {
-    String interests = "";
-    if(CollectionUtils.isNotEmpty(tags)) {
-      tags!.forEach((String tag){
-          if(Auth2().prefs?.hasPositiveTag(tag) ?? false) {
-            if (interests.isNotEmpty) {
-              interests += ", ";
-            }
-            interests += tag;
-          }
-      });
-    }
-    return interests;
-  }
 
   bool get isComposite {
     return isRecurring || (isSuperEvent == true);

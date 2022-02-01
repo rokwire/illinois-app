@@ -303,7 +303,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   Widget? _exploreTimeDetail() {
     bool isParentSuper = widget.parentEvent?.isSuperEvent ?? false;
-    String? displayTime = isParentSuper ? widget.parentEvent?.displaySuperDates : widget.parentEvent?.displayRecurringDates;
+    String? displayTime = isParentSuper ? EventHelper.displaySuperDates(widget.parentEvent) : EventHelper.displayRecurringDates(widget.parentEvent);
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Semantics(
           label: displayTime,
@@ -729,8 +729,8 @@ class _EventEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isFavorite = Auth2().isFavorite(event);
     bool starVisible = Auth2().canFavorite;
-    String title = ((parentEvent?.isSuperEvent == true) ? event?.title : event?.displayDate) ?? '';
-    String subTitle = ((parentEvent?.isSuperEvent == true) ? event?.displaySuperTime : event?.displayStartEndTime) ?? '';
+    String title = ((parentEvent?.isSuperEvent == true) ? event?.title : EventHelper.displayDate(event)) ?? '';
+    String subTitle = ((parentEvent?.isSuperEvent == true) ? EventHelper.displaySuperTime(event) : EventHelper.displayStartEndTime(event)) ?? '';
     return GestureDetector(onTap: () => _onTapEvent(context), child: Container(
       decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1.0), borderRadius: BorderRadius.circular(4.0),
       ),

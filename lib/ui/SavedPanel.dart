@@ -784,7 +784,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 
   String? _cardDetailLabel(Favorite? item) {
     if (item is Event) {
-      return item.displayDateTime;
+      return EventHelper.displayDateTime(item);
     } else if (item is Dining) {
       return item.displayWorkTime;
     } else if (item is Game) {

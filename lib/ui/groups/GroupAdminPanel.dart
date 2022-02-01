@@ -20,6 +20,7 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
+import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupMembersPanel.dart';
@@ -591,7 +592,7 @@ class EventContent extends StatelessWidget {
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
       Expanded(
-        child: Text(event!.timeDisplayString!,  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),),
+        child: Text(EventHelper.timeDisplayString(event) ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),),
       )
     ],)),);
 

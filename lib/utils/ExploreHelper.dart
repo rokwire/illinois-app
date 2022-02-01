@@ -21,7 +21,10 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -194,7 +197,7 @@ class ExploreHelper {
     }
   }
 
-  // Analytics
+  // Styles
 
   static Color? uiColor(Explore? explore) {
     if (explore is Event) {
@@ -210,4 +213,147 @@ class ExploreHelper {
       return null;
     }
   }
+}
+
+//////////////////////////////
+/// EventHelper
+
+class EventHelper {
+  
+  ///
+  /// Specific for Events with 'Athletics' category
+  ///
+  /// Requirement 1 (Deprecated! since 08/11/2021):
+  /// 'When in explore/events and the category is athletics, do not show the time anymore, just the date. Also do not process it for timezone (now we go to athletics detail panel we will rely on how detail already deals with any issues)'
+  ///
+  /// Requirement 2: 'If an event is longer than 1 day, then please show the Date as (for example) Sep 26 - Sep 29.'
+  ///
+  /// Requirement 3 (Since 08/11/2021): Display start time for Athletics events
+  ///
+
+  static String? displayDateTime(Event? event) {
+    if (event != null) {
+      final String dateFormat = 'MMM dd';
+      int eventDays = (event.endDateGmt?.difference(event.startDateGmt!).inDays ?? 0).abs();
+      bool eventIsMoreThanOneDay = (eventDays >= 1);
+      if (eventIsMoreThanOneDay) {
+        String? startDateFormatted = AppDateTime().formatDateTime(event.startDateGmt, format: dateFormat);
+        String? endDateFormatted = AppDateTime().formatDateTime(event.endDateGmt, format: dateFormat);
+        return '$startDateFormatted - $endDateFormatted';
+      } else {
+        return AppDateTimeUtils.getDisplayDateTime(event.startDateGmt, allDay: event.allDay);
+      }
+    }
+    else {
+      return null;
+    }
+  }
+
+  static String? displayDate(Event? event) {
+    return (event != null) ? AppDateTimeUtils.getDisplayDay(dateTimeUtc: event.startDateGmt, allDay: event.allDay) : null;
+  }
+
+  static String? displayStartEndTime(Event? event) {
+    if (event != null) {
+      if (event.allDay!) {
+        return Localization().getStringEx('model.explore.time.all_day', 'All day');
+      }
+      String? startTime = AppDateTimeUtils.getDisplayTime(dateTimeUtc: event.startDateGmt, allDay: event.allDay);
+      String? endTime = AppDateTimeUtils.getDisplayTime(dateTimeUtc: event.endDateGmt, allDay: event.allDay);
+      String displayTime = '$startTime';
+      if (StringUtils.isNotEmpty(endTime)) {
+        displayTime += '-$endTime';
+      }
+      return displayTime;
+    }
+    else {
+      return null;
+    }
+  }
+
+  static String? displaySuperTime(Event? event) {
+    if (event != null) {
+      String? date = AppDateTimeUtils.getDisplayDay(dateTimeUtc: event.startDateGmt, allDay: event.allDay);
+      String? time = displayStartEndTime(event);
+      return '$date, $time';
+    }
+    else {
+      return null;
+    }
+  }
+
+  static String? displayRecurringDates(Event? event) {
+    if ((event != null) && (event.recurringEvents != null) && event.isRecurring) {
+      Event? first = event.recurringEvents!.first;
+      Event? last = event.recurringEvents!.last;
+      return _buildDisplayDates(first, last);
+    }
+    else {
+      return null;
+    }
+  }
+
+  static String? displaySuperDates(Event? event) {
+    if ((event != null) && (event.isSuperEvent == true)) {
+      if (event.subEvents != null && event.subEvents!.isNotEmpty) {
+        Event first = event.subEvents!.first;
+        Event last = event.subEvents!.last;
+        return _buildDisplayDates(first, last);
+      }
+      else {
+        return displayDateTime(event);
+      }
+    }
+    else {
+      return null;
+    }
+  }
+
+  static String? timeDisplayString(Event? event) {
+    if (event != null) {
+      if (event.isRecurring) {
+        return displayRecurringDates(event);
+      } else if (event.isSuperEvent == true) {
+        return displaySuperDates(event);
+      }
+    }
+    return displayDateTime(event);
+  }
+
+  static String? _buildDisplayDates(Event firstEvent, Event? lastEvent) {
+    bool useDeviceLocalTime = Storage().useDeviceLocalTimeZone!;
+    DateTime? startDateTime;
+    DateTime? endDateTime;
+    if (useDeviceLocalTime) {
+      startDateTime = AppDateTime().getDeviceTimeFromUtcTime(firstEvent.startDateGmt);
+      endDateTime = AppDateTime().getDeviceTimeFromUtcTime(lastEvent!.startDateGmt);
+    } else {
+      startDateTime = AppDateTime().getUniLocalTimeFromUtcTime(firstEvent.startDateGmt);
+      endDateTime = AppDateTime().getUniLocalTimeFromUtcTime(lastEvent!.startDateGmt);
+    }
+    bool sameDay = ((startDateTime != null) && (endDateTime != null) && (startDateTime.year == endDateTime.year) &&
+        (startDateTime.month == endDateTime.month) && (startDateTime.day == endDateTime.day));
+    String? startDateString = AppDateTimeUtils.getDisplayDay(dateTimeUtc: firstEvent.startDateGmt, allDay: firstEvent.allDay);
+    if (sameDay) {
+      return startDateString;
+    }
+    String? endDateString = AppDateTimeUtils.getDisplayDay(dateTimeUtc: lastEvent.startDateGmt, allDay: lastEvent.allDay);
+    return '$startDateString - $endDateString';
+  }
+
+  static String displayInterests(Event? event) {
+    String interests = "";
+    if ((event != null) && CollectionUtils.isNotEmpty(event.tags)) {
+      event.tags!.forEach((String tag){
+          if(Auth2().prefs?.hasPositiveTag(tag) ?? false) {
+            if (interests.isNotEmpty) {
+              interests += ", ";
+            }
+            interests += tag;
+          }
+      });
+    }
+    return interests;
+  }
+
 }

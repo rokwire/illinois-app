@@ -331,7 +331,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget? _exploreTimeDetail() {
-    String? displayTime = widget.event?.displayDateTime;
+    String? displayTime = EventHelper.displayDateTime(widget.event);
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Semantics(
         label: displayTime,
