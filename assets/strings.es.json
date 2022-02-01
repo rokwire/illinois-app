@@ -1952,6 +1952,10 @@
     "panel.canvas_files.load.failed.error.msg": "Error al cargar archivos y carpetas. Por favor, inténtelo de nuevo más tarde.",
     "panel.canvas_files.empty.msg": "No hay archivos y carpetas.",
 
+    "panel.canvas_collaborations.header.title": "Colaboraciones",
+    "panel.canvas_collaborations.load.failed.error.msg": "No se pudieron cargar las colaboraciones. Por favor, inténtelo de nuevo más tarde.",
+    "panel.canvas_collaborations.empty.msg": "No hay colaboraciones para este curso.",
+
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 
     "widget.game_detail_heading.button.live_stats.title":"Estadísticas en vivo",

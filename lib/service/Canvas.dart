@@ -48,7 +48,7 @@ class Canvas with Service {
     return Set.from([Config(), Auth2()]);
   }
 
-  // APIs
+  // Courses
 
   Future<List<CanvasCourse>?> loadCourses() async {
     if (!_available) {
@@ -92,39 +92,7 @@ class Canvas with Service {
     }
   }
 
-  Future<List<CanvasFile>?> loadFilesForCourse(int courseId) async {
-    if (!_available) {
-      return null;
-    }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/files';
-    http.Response? response = await Network().get(url, headers: _authHeaders);
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    if (responseCode == 200) {
-      List<CanvasFile>? files = CanvasFile.listFromJson(JsonUtils.decodeList(responseString));
-      return files;
-    } else {
-      Log.w('Failed to load canvas course files. Response:\n$responseCode: $responseString');
-      return null;
-    }
-  }
-
-  Future<List<CanvasFolder>?> loadFoldersForCourse(int courseId) async {
-    if (!_available) {
-      return null;
-    }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/folders';
-    http.Response? response = await Network().get(url, headers: _authHeaders);
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    if (responseCode == 200) {
-      List<CanvasFolder>? folders = CanvasFolder.listFromJson(JsonUtils.decodeList(responseString));
-      return folders;
-    } else {
-      Log.w('Failed to load canvas course folders. Response:\n$responseCode: $responseString');
-      return null;
-    }
-  }
+  // Announcements
 
   Future<List<CanvasDiscussionTopic>?> loadAnnouncementsForCourse(int courseId) async {
     if (!_available) {
@@ -142,6 +110,8 @@ class Canvas with Service {
       return null;
     }
   }
+
+  // Files and Folders
 
   Future<List<CanvasFileSystemEntity>?> loadFileSystemEntities({int? courseId, int? folderId}) async {
     if (!_available) {
@@ -239,6 +209,60 @@ class Canvas with Service {
       return null;
     }
   }
+
+  // Collaborations
+
+  Future<List<CanvasCollaboration>?> loadCollaborations(int courseId) async {
+    if (!_available) {
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/collaborations';
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasCollaboration>? collaborations = CanvasCollaboration.listFromJson(JsonUtils.decodeList(responseString));
+      return collaborations;
+    } else {
+      Log.w('Failed to load canvas collaborations. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  // Calendar
+
+  Future<List<CanvasCalendarEvent>?> loadCalendarEvents(int courseId, {DateTime? startDate, DateTime? endDate}) async {
+    if (!_available) {
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/calendar_events?context_codes[]=course_$courseId';
+    if (startDate != null) {
+      DateTime startDateUtc = startDate.toUtc();
+      String? formattedDate = DateTimeUtils.utcDateTimeToString(startDateUtc);
+      if (StringUtils.isNotEmpty(formattedDate)) {
+        url += '&start_date=$formattedDate';
+      }
+    }
+    if (endDate != null) {
+      DateTime endDateUtc = endDate.toUtc();
+      String? formattedDate = DateTimeUtils.utcDateTimeToString(endDateUtc);
+      if (StringUtils.isNotEmpty(formattedDate)) {
+        url += '&end_date=$formattedDate';
+      }
+    }
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasCalendarEvent>? calendarEvents = CanvasCalendarEvent.listFromJson(JsonUtils.decodeList(responseString));
+      return calendarEvents;
+    } else {
+      Log.w('Failed to load canvas calendar events for course {$courseId}. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  // Helpers
 
   Map<String, String>? get _authHeaders {
     if (!_available) {
