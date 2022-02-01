@@ -74,7 +74,7 @@ class _OnboardingSportPrefsPanelState extends State<OnboardingSportPrefsPanel> {
                                 child: OnboardingBackButton(
                                     padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                                     onTap: () {
-                                      Analytics.instance.logSelect(target: "Back");
+                                      Analytics().logSelect(target: "Back");
                                       Navigator.pop(context);
                                     })),
                           ],
@@ -112,7 +112,7 @@ class _OnboardingSportPrefsPanelState extends State<OnboardingSportPrefsPanel> {
   }
 
   void pushNextPanel() {
-    Analytics.instance.logSelect(target: "Explore Illinois");
+    Analytics().logSelect(target: "Explore Illinois");
     Onboarding().next(context, widget);
   }
   

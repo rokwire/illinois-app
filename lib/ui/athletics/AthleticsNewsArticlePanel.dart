@@ -208,7 +208,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
   }
 
   _shareArticle(){
-    Analytics.instance.logSelect(target: "Share Article");
+    Analytics().logSelect(target: "Share Article");
     if (StringUtils.isNotEmpty(_article?.link)) {
       Share.share(_article!.link!);
     }

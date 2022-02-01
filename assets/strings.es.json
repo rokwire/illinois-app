@@ -2249,7 +2249,7 @@
     "logic.general.internal_error": "Error interno ocurrido",
     "logic.general.unknown_error": "Ocurrió un error desconocido",
     "logic.general.invalid_response": "Servidor inválido",
-    "logic.general.response_error": "Error de respuesta: %s %s",
+    "logic.general.response_error": "Error de respuesta",
     "logic.general.login_failed": "Incapaz de iniciar sesión. Por favor, inténtelo de nuevo más tarde.",
 
     "app.exit_dialog.message":"¿Está seguro de que desea salir?",

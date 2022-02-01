@@ -136,7 +136,7 @@ class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWi
   }
 
   void _onTapBack() {
-    Analytics.instance.logSelect(target: "Back");
+    Analytics().logSelect(target: "Back");
     if (onBackPressed != null) {
       onBackPressed!();
     } else {
@@ -157,7 +157,7 @@ class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWi
   }
 
   void _onTapSearch() {
-    Analytics.instance.logSelect(target: "Search");
+    Analytics().logSelect(target: "Search");
     Navigator.push(context, CupertinoPageRoute( builder: (context) => SearchPanel()));
   }
 
@@ -216,7 +216,7 @@ class SliverToutHeaderBar extends SliverAppBar {
             padding: const EdgeInsets.all(8),
             child: GestureDetector(
               onTap: onBackTap != null ? onBackTap : (){
-                Analytics.instance.logSelect(target: "Back");
+                Analytics().logSelect(target: "Back");
                 Navigator.pop(context);
               },
               child: ClipOval(
@@ -258,7 +258,7 @@ class SliverHeaderBar extends SliverAppBar {
             child: IconButton(
                 icon: Image.asset(backIconRes, excludeFromSemantics: true),
                 onPressed: (){
-                    Analytics.instance.logSelect(target: "Back");
+                    Analytics().logSelect(target: "Back");
                     if (onBackPressed != null) {
                       onBackPressed();
                     } else {

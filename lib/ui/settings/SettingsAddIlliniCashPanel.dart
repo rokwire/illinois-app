@@ -592,7 +592,7 @@ class _SettingsAddIlliniCashPanelState
                                           checkedColor: Styles().colors!.fillColorSecondary, 
                                           size: 28,
                                           onTap: (bool? value) {
-                                            Analytics.instance.logSelect(target: "Agree");
+                                            Analytics().logSelect(target: "Agree");
                                             _agreePrivacy = !_agreePrivacy;
                                             setState(() {});
                                           },
@@ -654,7 +654,7 @@ class _SettingsAddIlliniCashPanelState
                                           textColor: Styles().colors!.fillColorPrimary,
                                           borderColor: Styles().colors!.fillColorPrimary,
                                           onTap: () {
-                                            Analytics.instance.logSelect(target: "Cancel");
+                                            Analytics().logSelect(target: "Cancel");
                                             Navigator.pop(context,);
                                           },
                                         ),
@@ -857,7 +857,7 @@ class _SettingsAddIlliniCashPanelState
     if(!_isLoading) {
       _isLoading = true;
 
-      Analytics.instance.logSelect(target: "Submit Illini Cash");
+      Analytics().logSelect(target: "Submit Illini Cash");
       try {
         _unfocus();
         _validate();
@@ -897,7 +897,7 @@ class _SettingsAddIlliniCashPanelState
                 TextButton(
                     child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
                     onPressed: () {
-                      Analytics.instance.logAlert(text: e.message, selection: "Ok");
+                      Analytics().logAlert(text: e.message, selection: "Ok");
                       Navigator.pop(context, true);
                       if (e.focusNode != null) {
                         FocusScope.of(context).requestFocus(e.focusNode);
@@ -912,7 +912,7 @@ class _SettingsAddIlliniCashPanelState
   }
 
   void _onDismissAlert() {
-    Analytics.instance.logAlert(
+    Analytics().logAlert(
         text: "Transaction successfully processed.", selection: "Ok");
     Navigator.of(context).pop();
   }

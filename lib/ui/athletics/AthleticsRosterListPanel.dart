@@ -212,7 +212,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   }
 
   void _onRosterItemTap(Roster roster){
-    Analytics.instance.logSelect(target: "Roster: "+roster.name!);
+    Analytics().logSelect(target: "Roster: "+roster.name!);
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -221,7 +221,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
 
   @override
   void onTabClicked(int? tabIndex, RoundedTab caller) {
-    Analytics.instance.logSelect(target: caller.title) ;
+    Analytics().logSelect(target: caller.title) ;
     setState(() {
       _selectedTabIndex = tabIndex;
       _tabs = _constructTabWidgets();

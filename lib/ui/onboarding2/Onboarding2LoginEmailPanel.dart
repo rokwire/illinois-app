@@ -271,7 +271,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
             ),
           ]),
         ),
-        OnboardingBackButton(padding: backButtonInsets, onTap: () { Analytics.instance.logSelect(target: "Back"); Navigator.pop(context); }),
+        OnboardingBackButton(padding: backButtonInsets, onTap: () { Analytics().logSelect(target: "Back"); Navigator.pop(context); }),
         Visibility(visible: _isLoading, child:
           Center(child:
             CircularProgressIndicator(),
@@ -291,7 +291,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   }
 
   void _onTapForgotPassword() {
-    Analytics.instance.logSelect(target: "Forgot Password");
+    Analytics().logSelect(target: "Forgot Password");
 
     if (_isLoading != true) {
       _clearErrorMsg();
@@ -320,7 +320,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   }
 
   void _onTapResendEmail() {
-    Analytics.instance.logSelect(target: "Resend Email");
+    Analytics().logSelect(target: "Resend Email");
 
     if (_isLoading != true) {
       _clearErrorMsg();
@@ -357,7 +357,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   }
 
   void _trySignUp() {
-    Analytics.instance.logSelect(target: "Sign Up");
+    Analytics().logSelect(target: "Sign Up");
 
     if (_isLoading != true) {
       _clearErrorMsg();
@@ -408,7 +408,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   }
 
   void _trySignIn() {
-    Analytics.instance.logSelect(target: "Sign In");
+    Analytics().logSelect(target: "Sign In");
 
     if (_isLoading != true) {
       _clearErrorMsg();

@@ -203,7 +203,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onTapAddImage() async {
-    Analytics.instance.logSelect(target: "Add Image");
+    Analytics().logSelect(target: "Add Image");
     String? _imageUrl = await showDialog(
         context: context,
         builder: (_) => Material(
@@ -391,7 +391,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onTapConfirmLinkUrl() {
-    Analytics.instance.logSelect(target: "Confirm Website url");
+    Analytics().logSelect(target: "Confirm Website url");
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -544,7 +544,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onTapTags(){
-    Analytics.instance.logSelect(target: "Tags");
+    Analytics().logSelect(target: "Tags");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupTagsPanel(selectedTags: _group!.tags))).then((tags) {
       // (tags == null) means that the user hit the back button
       if (tags != null) {
@@ -677,7 +677,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onTapMembershipQuestion(){
-    Analytics.instance.logSelect(target: "Membership Question");
+    Analytics().logSelect(target: "Membership Question");
     if (_group!.questions == null) {
       _group!.questions = [];
     }
@@ -741,7 +741,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onTapAuthMan() {
-    Analytics.instance.logSelect(target: "AuthMan Group");
+    Analytics().logSelect(target: "AuthMan Group");
     if (_group != null) {
       _group!.authManEnabled = (_group!.authManEnabled != true);
       if (mounted) {

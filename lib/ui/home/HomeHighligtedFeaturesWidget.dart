@@ -93,22 +93,22 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
   }
 
   void _onTapPersonalize() {
-    Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Personalize");
+    Analytics().logSelect(target: "HomeHighlightedFeatures: Personalize");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInformationPanel()));
   }
 
   void _onTapNotificationPreferences() {
-    Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Notification Preferences");
+    Analytics().logSelect(target: "HomeHighlightedFeatures: Notification Preferences");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
   }
 
   void _onTapManagePrivacy() {
-    Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Manage Privacy");
+    Analytics().logSelect(target: "HomeHighlightedFeatures: Manage Privacy");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNewPrivacyPanel(mode: SettingsPrivacyPanelMode.regular)));
   }
 
   void _onTapCampusGuide() {
-    Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Campus Guide");
+    Analytics().logSelect(target: "HomeHighlightedFeatures: Campus Guide");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
 }

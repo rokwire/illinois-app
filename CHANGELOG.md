@@ -5,11 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Changed  
-- GeoFence service moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
-- Updated Gies Widgets [#1291](https://github.com/rokwire/illinois-app/issues/1291).
+
+## [3.2.9] - 2022-01-31
 ### Added
 - Canvas Files and Folders service calls and UI [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Changed  
+- GeoFence service moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Analytics and Polls services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Updated Gies Widgets [#1291](https://github.com/rokwire/illinois-app/issues/1291).
+- Improve group member display name [#1294](https://github.com/rokwire/illinois-app/issues/1294).
+### Fixed
+- Fixed activity attachment in RokworePlugin Android native class [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 
 ## [3.2.8] - 2022-01-28
 ### Added

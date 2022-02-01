@@ -235,7 +235,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
             label: categoryName,
             selected: _preferredCategories!.contains(categoryName),
             onTap: () {
-              Analytics.instance.logSelect(target: "Category: $categoryName");
+              Analytics().logSelect(target: "Category: $categoryName");
               AppSemantics.announceCheckBoxStateChange(context, _preferredCategories!.contains(categoryName), categoryName);
               Auth2().prefs?.toggleInterestCategory(categoryName);
             }));
@@ -341,14 +341,14 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }
 
   void _onSearchTap() async {
-    Analytics.instance.logSelect(target: "Search");
+    Analytics().logSelect(target: "Search");
     setState(() {
       _tagSearchMode = true;
     });
   }
 
   void _onCancelSearchTap() async {
-    Analytics.instance.logSelect(target: "Cancel Search");
+    Analytics().logSelect(target: "Cancel Search");
     setState(() {
       _textEditingController.text = "";
       _tagSearchMode = false;
@@ -433,7 +433,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }
 
   void _onTagTaped(String tag) {
-    Analytics.instance.logSelect(target: "Tag: $tag");
+    Analytics().logSelect(target: "Tag: $tag");
     AppSemantics.announceCheckBoxStateChange(context, _isTagSelected(tag)!, tag);
     Auth2().prefs?.toggleTag(tag);
 //    switchTag(tag);
@@ -486,7 +486,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   @override
   void onTabClicked(int? tabIndex, RoundedTab caller) {
     if ((0 <= tabIndex!) && (tabIndex < _tabs.length)) {
-      Analytics.instance.logSelect(target: caller.title);
+      Analytics().logSelect(target: caller.title);
       _selectTab(_tabs[tabIndex]);
     }
   }

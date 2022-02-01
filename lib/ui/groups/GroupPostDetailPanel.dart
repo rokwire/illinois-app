@@ -120,7 +120,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           content: _buildContent(),
           imageUrl: _modalImageUrl,
           onClose: () {
-            Analytics.instance.logSelect(target: "Close");
+            Analytics().logSelect(target: "Close");
             _modalImageUrl = null;
             setState(() {});
           }
@@ -347,7 +347,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               padding: EdgeInsets.only(top: 4, right: _outerPadding),
                               child: Text(
                                   StringUtils.ensureNotEmpty(
-                                      _post?.member?.name ),
+                                      _post?.member?.displayShortName ),
                                   style: TextStyle(
                                       fontFamily:
                                       Styles().fontFamilies!.medium,
@@ -775,7 +775,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapPostLink(String? url) {
-    Analytics.instance.logSelect(target: 'link');
+    Analytics().logSelect(target: 'link');
     if (StringUtils.isNotEmpty(url)) {
       Navigator.push(context,
           CupertinoPageRoute(builder: (context) => WebPanel(url: url)));

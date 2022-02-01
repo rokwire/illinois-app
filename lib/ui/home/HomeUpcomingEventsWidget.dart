@@ -259,7 +259,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
             imageRes: 'images/icon-calendar.png',
             subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home_upcoming_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
             onSettingsTap: (){
-              Analytics.instance.logSelect(target: "Events for you - settings");
+              Analytics().logSelect(target: "Events for you - settings");
               Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsManageInterestsPanel()));
             },
           ),
@@ -331,7 +331,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   void _onTapExplore(Explore explore) {
     Favorite? favorite = explore is Favorite? explore as Favorite: null;
     String? exploreid = favorite?.favoriteId;
-    Analytics.instance.logSelect(target: "HomeUpcomingEvents event: $exploreid");
+    Analytics().logSelect(target: "HomeUpcomingEvents event: $exploreid");
 
     Event? event = (explore is Event) ? explore : null;
     if (event?.isComposite ?? false) {
@@ -346,7 +346,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   }
 
   void _navigateToExploreEvents() {
-    Analytics.instance.logSelect(target: "HomeUpcomingEvents View all events");
+    Analytics().logSelect(target: "HomeUpcomingEvents View all events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events, showHeaderBack: true,)));
   }
 }

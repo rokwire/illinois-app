@@ -332,4 +332,9 @@ class Storage with Service {
   String get debugGeoFenceRegionRadiusKey  => 'edu.illinois.rokwire.debug.geo_fence.region_radius';
   int? get debugGeoFenceRegionRadius => getIntWithName(debugGeoFenceRegionRadiusKey);
   set debugGeoFenceRegionRadius(int? value) => setIntWithName(debugGeoFenceRegionRadiusKey, value);
+
+  // Polls
+  String get activePollsKey  => 'edu.illinois.rokwire.polls.active_polls';
+  String? get activePolls => getStringWithName(activePollsKey);
+  set activePolls(String? value) => setStringWithName(activePollsKey, value);
 }

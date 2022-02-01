@@ -271,7 +271,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   void _onTapSaveGame() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget._game?.title}");
+    Analytics().logSelect(target: "Favorite: ${widget._game?.title}");
     Auth2().prefs?.toggleFavorite(widget._game);
   }
 
@@ -285,7 +285,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   void _onTapGetTickets() {
-    Analytics.instance.logSelect(target: "SchedulteCard: " + widget._game!.title + " -Tickets");
+    Analytics().logSelect(target: "SchedulteCard: " + widget._game!.title + " -Tickets");
 
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {

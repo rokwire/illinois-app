@@ -16,13 +16,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
-import 'package:illinois/model/Poll.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -171,7 +171,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   _onDropDownValueChanged(dynamic value){
-    Analytics.instance.logSelect(target: "Geofence selected: $value");
+    Analytics().logSelect(target: "Geofence selected: $value");
     setState(() {
       _selectedGeofence = value;
     });

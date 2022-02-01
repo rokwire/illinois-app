@@ -181,7 +181,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                     ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
                 child: GestureDetector(
                   onTap: () {
-                    Analytics.instance.logSelect(target: "Sport Label Tap: MEN'S SPORTS");
+                    Analytics().logSelect(target: "Sport Label Tap: MEN'S SPORTS");
                     AppSemantics.announceCheckBoxStateChange(context, !allMenSelected,
                         Localization().getStringEx("widget.athletics_teams.label.men_sports.title", "MEN'S SPORTS"));// with ! because we announce before the actual state change
                     Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_menSports, _preferredSports, !allMenSelected));
@@ -240,7 +240,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                     ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
                 child: GestureDetector(
                   onTap: () {
-                    Analytics.instance.logSelect(target: "Sport Label Tap: WOMEN'S SPORTS");
+                    Analytics().logSelect(target: "Sport Label Tap: WOMEN'S SPORTS");
                     AppSemantics.announceCheckBoxStateChange(context, !allWomenSelected,
                         Localization().getStringEx("widget.athletics_teams.label.women_sports.title", "WOMEN'S SPORTS"));// with ! because we announce before the actual state change
                     Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_womenSports, _preferredSports, !allWomenSelected));
@@ -257,7 +257,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
   }
 
   void _onTapAthleticsSportLabel(BuildContext context, SportDefinition sport) {
-    Analytics.instance.logSelect(target: "Sport Label Tap: "+sport.name!);
+    Analytics().logSelect(target: "Sport Label Tap: "+sport.name!);
     if (Connectivity().isNotOffline) {
       Navigator.push(context,
           CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(sport)));
@@ -268,7 +268,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
   }
 
   void _onTapAthleticsSportCheck(BuildContext context, SportDefinition sport) {
-    Analytics.instance.logSelect(target: "Sport Check Tap: "+sport.name!);
+    Analytics().logSelect(target: "Sport Check Tap: "+sport.name!);
     AppSemantics.announceCheckBoxStateChange(context, _preferredSports?.contains(sport.shortName) ?? false, sport.customName);
     Auth2().prefs?.toggleSportInterest(sport.shortName);
   }

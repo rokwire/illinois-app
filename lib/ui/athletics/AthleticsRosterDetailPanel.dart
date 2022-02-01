@@ -49,7 +49,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
   }
 
   void _onTapPhoto(){
-    Analytics.instance.logSelect(target: "Photo");
+    Analytics().logSelect(target: "Photo");
     _modalPhotoVisibility = true;
     setState(() {});
   }
@@ -128,7 +128,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
    return _modalPhotoVisibility ? ModalImageDialog(
      imageUrl: widget.roster.fullSizePhotoUrl,
      onClose: () {
-       Analytics.instance.logSelect(target: "Close");
+       Analytics().logSelect(target: "Close");
        _modalPhotoVisibility = false;
        setState(() {});
      }

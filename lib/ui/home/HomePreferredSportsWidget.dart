@@ -147,7 +147,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                         checked: allMenSelected,
                         child: GestureDetector(
                           onTap: () {
-                            Analytics.instance.logSelect(target: "Sport Label Tap: MEN'S SPORTS");
+                            Analytics().logSelect(target: "Sport Label Tap: MEN'S SPORTS");
                             AppSemantics.announceCheckBoxStateChange(context, !allMenSelected,
                                 Localization().getStringEx("widget.athletics_teams.label.men_sports.title", "MEN'S SPORTS"));// with ! because we announce before the actual state change
                             Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_menSports, _sportPreferences, !allMenSelected));
@@ -202,7 +202,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                           checked: allWomenSelected,
                           child: GestureDetector(
                             onTap: () {
-                              Analytics.instance.logSelect(target: "Sport Label Tap: WOMEN'S SPORTS");
+                              Analytics().logSelect(target: "Sport Label Tap: WOMEN'S SPORTS");
                               AppSemantics.announceCheckBoxStateChange(context, !allWomenSelected,
                                   Localization().getStringEx("widget.athletics_teams.label.women_sports.title", "WOMEN'S SPORTS"));// with ! because we announce before the actual state change
                               Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_womenSports, _sportPreferences, !allWomenSelected));
@@ -288,7 +288,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
   }
 
   void _onTapAthleticsSportLabel(SportDefinition sport) {
-    Analytics.instance.logSelect(target: "HomePreferedSports TapSportLabel: "+ sport.name!);
+    Analytics().logSelect(target: "HomePreferedSports TapSportLabel: "+ sport.name!);
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(sport)));
     }
@@ -298,7 +298,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
   }
 
   void _onTapAthleticsSportCheckmark(SportDefinition sport) {
-    Analytics.instance.logSelect(target: "HomePreferedSports TapSportCheckmark: "+ sport.name!);
+    Analytics().logSelect(target: "HomePreferedSports TapSportCheckmark: "+ sport.name!);
     AppSemantics.announceCheckBoxStateChange(context, _sportPreferences?.contains(sport.shortName) ?? false, sport.customName);
     Auth2().prefs?.toggleSportInterest(sport.shortName);
   }

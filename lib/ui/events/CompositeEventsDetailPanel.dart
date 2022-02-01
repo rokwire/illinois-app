@@ -505,7 +505,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _onTapVisitWebsite(String? url) {
-    Analytics.instance.logSelect(target: "Website");
+    Analytics().logSelect(target: "Website");
     _onTapWebButton(url, 'Website');
   }
 
@@ -532,7 +532,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _onTapGetTickets(String? ticketsUrl) {
-    Analytics.instance.logSelect(target: "Tickets");
+    Analytics().logSelect(target: "Tickets");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(
           context, onContinueTap: () {
@@ -557,13 +557,13 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   void _onLocationDetailTapped(){
     if(widget.parentEvent?.location?.latitude != null && widget.parentEvent?.location?.longitude != null) {
-      Analytics.instance.logSelect(target: "Location Detail");
+      Analytics().logSelect(target: "Location Detail");
       NativeCommunicator().launchExploreMapDirections(target: widget.parentEvent);
     }
   }
 
   void _onTapHeaderStar() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.parentEvent?.title}");
+    Analytics().logSelect(target: "Favorite: ${widget.parentEvent?.title}");
     widget.parentEvent!.toggleFavorite();
   }
 
@@ -598,7 +598,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _onTapAddToGroup() {
-    Analytics.instance.logSelect(target: "Add To Group");
+    Analytics().logSelect(target: "Add To Group");
     setState(() {
       _addToGroupInProgress = true;
     });
@@ -752,7 +752,7 @@ class _EventEntry extends StatelessWidget {
               child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
-                    Analytics.instance.logSelect(target: "Favorite: ${event?.title}");
+                    Analytics().logSelect(target: "Favorite: ${event?.title}");
                     Auth2().prefs?.toggleFavorite(event);
                   },
                   child: Semantics(

@@ -132,7 +132,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                       Visibility(visible: Auth2().canFavorite,
                                           child: GestureDetector(
                                             onTap: () {
-                                              Analytics.instance.logSelect(target: "Favorite: ${widget.room.title}");
+                                              Analytics().logSelect(target: "Favorite: ${widget.room.title}");
                                               Auth2().prefs?.toggleFavorite(widget.room);
                                             },
                                             child: Semantics(
@@ -378,7 +378,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   void _onTapViewMap() {
-    Analytics.instance.logSelect(target: "View Map");
+    Analytics().logSelect(target: "View Map");
     if (_detailVisible) {
       setState(() {
         _detailVisible = false;

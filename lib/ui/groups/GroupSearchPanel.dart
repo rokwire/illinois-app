@@ -215,7 +215,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
   }
 
   void _onTapSearch() {
-    Analytics.instance.logSelect(target: "Search Groups");
+    Analytics().logSelect(target: "Search Groups");
     FocusScope.of(context).requestFocus(new FocusNode());
     _setLoading(true);
     String searchValue = _searchController.text;
@@ -238,7 +238,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
   }
 
   void _onTapClear() {
-    Analytics.instance.logSelect(target: "Clear Search");
+    Analytics().logSelect(target: "Clear Search");
     if (StringUtils.isEmpty(_searchController.text)) {
       Navigator.pop(context);
       return;

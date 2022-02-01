@@ -265,7 +265,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
 
   //Click listeners
   void _onNewsTap(News news) {
-    Analytics.instance.logSelect(target: "news: "+news.title!);
+    Analytics().logSelect(target: "news: "+news.title!);
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -273,14 +273,14 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   }
 
   void _onFilterTypeClicked() {
-    Analytics.instance.logSelect(target: "Filter");
+    Analytics().logSelect(target: "Filter");
     setState(() {
         _filterOptionsVisible = !_filterOptionsVisible;
     });
   }
 
   void _onFilterValueClick(int newValueIndex) {
-    Analytics.instance.logSelect(target: "Filter: ${_filters[newValueIndex]}") ;
+    Analytics().logSelect(target: "Filter: ${_filters[newValueIndex]}") ;
     setState(() {
       _selectedFilterIndex = newValueIndex;
       _filterOptionsVisible = false;

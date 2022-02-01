@@ -466,7 +466,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            Analytics.instance.logSelect(target: "Favorite: ${_event?.title}");
+            Analytics().logSelect(target: "Favorite: ${_event?.title}");
             Auth2().prefs?.toggleFavorite(_event);
             setState(() {});
           },
@@ -544,7 +544,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onTapWebButton(String? url, { String? analyticsName }) {
     if (analyticsName != null) {
-      Analytics.instance.logSelect(target: analyticsName);
+      Analytics().logSelect(target: analyticsName);
     }
     if(StringUtils.isNotEmpty(url)){
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsName: "WebPanel($analyticsName)",)));
@@ -552,7 +552,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onTapRegistration(String? registrationUrl) {
-    Analytics.instance.logSelect(target: "Registration");
+    Analytics().logSelect(target: "Registration");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _onTapWebButton(registrationUrl);
@@ -570,7 +570,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         _onTapWebButton(url, analyticsName: "Event Link");
       }
     } else if(_event?.location?.latitude != null && _event?.location?.longitude != null) {
-      Analytics.instance.logSelect(target: "Location Detail");
+      Analytics().logSelect(target: "Location Detail");
       NativeCommunicator().launchExploreMapDirections(target: _event);
     }
   }

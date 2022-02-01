@@ -20,7 +20,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/model/Poll.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -31,7 +31,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
@@ -46,6 +46,7 @@ import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/service/Polls.dart' as illinois;
 
 /////////////////////////////////////
 // GroupDropDownButton
@@ -273,7 +274,7 @@ class HeaderBackButton extends StatelessWidget {
       child: IconButton(
           icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true),
           onPressed: (){
-            Analytics.instance.logSelect(target: "Back");
+            Analytics().logSelect(target: "Back");
             Navigator.pop(context);
           }),
     );
@@ -318,7 +319,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                           backgroundColor: Styles().colors!.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           onTap: (){
-                            Analytics.instance.logAlert(text: message, selection: "Back");
+                            Analytics().logAlert(text: message, selection: "Back");
                             Navigator.pop(context);
                           },
                         )),
@@ -332,7 +333,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                           backgroundColor: Styles().colors!.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           onTap: (){
-                            Analytics.instance.logAlert(text: message, selection: buttonTitle);
+                            Analytics().logAlert(text: message, selection: buttonTitle);
                             onConfirmTap!();
                           },
                       )),
@@ -441,7 +442,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
   }
 
   Widget _buildComment(GroupEventComment comment){
-    String? memberName = comment.member!.name;
+    String? memberName = comment.member!.displayShortName;
     String postDate = AppDateTimeUtils.timeAgoSinceDate(comment.dateCreated!);
     return
       Semantics(
@@ -469,7 +470,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
                       flex: 5,
                       child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                         Padding(padding: EdgeInsets.only(bottom: 2), child:
-                        Text(comment.member!.name! , style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary),),
+                        Text(comment.member!.displayShortName , style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary),),
                         ),
                         Text(postDate, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textBackground),)
                       ],),),),
@@ -625,12 +626,12 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   }
 
   void _onFavoriteTap() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
+    Analytics().logSelect(target: "Favorite: ${widget.event?.title}");
     Auth2().prefs?.toggleFavorite(widget.event);
   }
 
   void _onOptionsTap(){
-    Analytics.instance.logSelect(target: "Options");
+    Analytics().logSelect(target: "Options");
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -818,12 +819,12 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
   }
 
   void _onTapCloseImageSelection() {
-    Analytics.instance.logSelect(target: "Close image selection");
+    Analytics().logSelect(target: "Close image selection");
     Navigator.pop(context, "");
   }
 
   void _onTapUseUrl() {
-    Analytics.instance.logSelect(target: "Use Url");
+    Analytics().logSelect(target: "Use Url");
     String url = _imageUrlController.value.text;
     if (url == "") {
       AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url")!);
@@ -870,7 +871,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
   }
 
   void _onTapChooseFromDevice() {
-    Analytics.instance.logSelect(target: "Choose From Device");
+    Analytics().logSelect(target: "Choose From Device");
 
     setState(() {
       _showProgress = true;
@@ -1034,7 +1035,7 @@ class GroupCard extends StatelessWidget {
   }
 
   void _onTapCard(BuildContext context) {
-    Analytics.instance.logSelect(target: "Group: ${group!.title}");
+    Analytics().logSelect(target: "Group: ${group!.title}");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: group)));
   }
 
@@ -1068,7 +1069,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   @override
   Widget build(BuildContext context) {
-    String? memberName = widget.post?.member?.name;
+    String? memberName = widget.post?.member?.displayShortName;
     String? htmlBody = widget.post?.body;
     String? imageUrl = widget.post?.imageUrl;
     int visibleRepliesCount = getVisibleRepliesCount();
@@ -1178,7 +1179,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   void _onLinkTap(String? url) {
-    Analytics.instance.logSelect(target: url);
+    Analytics().logSelect(target: url);
     if (StringUtils.isNotEmpty(url)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
     }
@@ -1257,7 +1258,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Semantics( child:
-                  Text(StringUtils.ensureNotEmpty(widget.reply?.member?.name),
+                  Text(StringUtils.ensureNotEmpty(widget.reply?.member?.displayShortName),
                     style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
                 ),
                 Visibility(
@@ -1339,7 +1340,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
   }
 
   void _onLinkTap(String? url) {
-    Analytics.instance.logSelect(target: url);
+    Analytics().logSelect(target: url);
     if (StringUtils.isNotEmpty(url)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
     }
@@ -1771,7 +1772,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
   }
 
   void _onTapAddImage() async {
-    Analytics.instance.logSelect(target: "Add Image");
+    Analytics().logSelect(target: "Add Image");
     String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
     if (StringUtils.isNotEmpty(imageUrl) && (widget.onImageChanged != null)) {
       widget.onImageChanged!(imageUrl);
@@ -2235,7 +2236,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
         });
       }
     }).catchError((e){
-      AppAlert.showDialogResult(context, e.toString());
+      AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     }).whenComplete((){
       setState(() {
         int? value = _votingOptions[optionIndex];
@@ -2262,7 +2263,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
   void _onClose() {
     if (_votingOptions.length == 0) {
       Navigator.of(context).pop();
-      Polls().closePresent();
+      Polls().closePresenting();
     }
   }
 
@@ -2313,7 +2314,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
     _setEndButtonProgress(true);
     Polls().close(widget.poll.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
       _setEndButtonProgress(false);
-      AppAlert.showDialogResult(context, e.toString());
+      AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     });
 
   }
@@ -2572,7 +2573,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
     _setStartButtonProgress(true);
     Polls().open(widget.poll!.pollId).then((result) => _setStartButtonProgress(false)).catchError((e){
       _setStartButtonProgress(false);
-      AppAlert.showDialogResult(context, e.toString());
+      AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     });
   }
 
@@ -2580,7 +2581,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
     _setEndButtonProgress(true);
     Polls().close(widget.poll!.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
       _setEndButtonProgress(false);
-      AppAlert.showDialogResult(context, e.toString());
+      AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     });
 
   }

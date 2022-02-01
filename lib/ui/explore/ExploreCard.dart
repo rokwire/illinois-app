@@ -519,7 +519,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   void _onTapExploreCardStar() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.explore?.exploreTitle}");
+    Analytics().logSelect(target: "Favorite: ${widget.explore?.exploreTitle}");
     widget.explore!.toggleFavorite();
   }
 
@@ -614,7 +614,7 @@ class _EventSmallCard extends StatelessWidget {
                       visible: starVisible, child: GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () {
-                          Analytics.instance.logSelect(target: "Favorite: ${event?.title}");
+                          Analytics().logSelect(target: "Favorite: ${event?.title}");
                           Auth2().prefs?.toggleFavorite(favorite);
                         },
                         child: Semantics(

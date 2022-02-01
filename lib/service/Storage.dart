@@ -309,15 +309,8 @@ class Storage extends rokwire.Storage {
   //////////////
   // Polls
 
-  static const String activePollsKey  = 'active_polls';
-
-  String? get activePolls {
-    return getStringWithName(activePollsKey);
-  }
-
-  set activePolls(String? value) {
-    setStringWithName(activePollsKey, value);
-  }
+  
+  @override String get activePollsKey  => 'active_polls';
 
   /////////////
   // Styles

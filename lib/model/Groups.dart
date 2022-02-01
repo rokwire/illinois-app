@@ -345,6 +345,7 @@ String? groupPrivacyToString(GroupPrivacy? value) {
 class Member {
 	String?            id;
   String?            userId;
+  String?            externalId;
 	String?            name;
 	String?            email;
 	String?            photoURL;
@@ -369,6 +370,7 @@ class Member {
     List<dynamic>? _answers = json['member_answers'];
     try { id          = json['id'];      } catch(e) { print(e.toString()); }
     try { userId      = json['user_id'];      } catch(e) { print(e.toString()); }
+    try { externalId  = json['external_id'];      } catch(e) { print(e.toString()); }
     try { name        = json['name'];     } catch(e) { print(e.toString()); }
     try { email       = json['email'];     } catch(e) { print(e.toString()); }
     try { photoURL    = json['photo_url']; } catch(e) { print(e.toString()); }
@@ -386,6 +388,8 @@ class Member {
 
   void _initFromOther(Member? other) {
     id             = other?.id;
+    userId         = other?.userId;
+    externalId     = other?.externalId;
     name           = other?.name;
     photoURL       = other?.photoURL;
     status         = other?.status;
@@ -407,6 +411,7 @@ class Member {
     Map<String, dynamic> json = {};
     json['id']                  = id;
     json['user_id']             = userId;
+    json['external_id']         = externalId;
     json['name']                = name;
     json['email']               = email;
     json['photo_url']           = photoURL;
@@ -430,13 +435,34 @@ class Member {
       }
       displayName += email!;
     }
+    if (StringUtils.isNotEmpty(externalId)) {
+      if (StringUtils.isNotEmpty(displayName)) {
+        displayName += ' ';
+      }
+      displayName += externalId!;
+    }
     return displayName;
   }
+
+  String get displayShortName {
+    if (StringUtils.isNotEmpty(name)) {
+      return name!;
+    }
+    if (StringUtils.isNotEmpty(email)) {
+      return email!;
+    }
+    if (StringUtils.isNotEmpty(externalId)) {
+      return externalId!;
+    }
+    return "";
+  }
+
 
   bool operator == (dynamic o) {
     return (o is Member) &&
            (o.id == id) &&
            (o.userId == userId) &&
+           (o.externalId == externalId) &&
            (o.name == name) &&
            (o.email == email) &&
            (o.photoURL == photoURL) &&
@@ -450,6 +476,7 @@ class Member {
   int get hashCode {
     return (id?.hashCode ?? 0) ^
            (userId?.hashCode ?? 0) ^
+           (externalId?.hashCode ?? 0) ^
            (name?.hashCode ?? 0) ^
            (email?.hashCode ?? 0) ^
            (photoURL?.hashCode ?? 0) ^

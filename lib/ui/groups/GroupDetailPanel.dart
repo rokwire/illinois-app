@@ -18,7 +18,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/model/Poll.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -27,7 +27,7 @@ import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
@@ -509,7 +509,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       ModalImageDialog.modalDialogContainer(
         imageUrl: _modalImageUrl,
         onClose: () {
-          Analytics.instance.logSelect(target: "Close");
+          Analytics().logSelect(target: "Close");
           _modalImageUrl = null;
           setState(() {});
         },

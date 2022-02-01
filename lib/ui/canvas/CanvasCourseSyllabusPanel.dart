@@ -127,7 +127,7 @@ class _CanvasCourseSyllabusPanelState extends State<CanvasCourseSyllabusPanel> {
   }
 
   void _onTapSyllabus() {
-    Analytics.instance.logSelect(target: 'Syllabus');
+    Analytics().logSelect(target: 'Syllabus');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasSyllabusHtmlPanel(courseId: widget.courseId!)));
   }
 

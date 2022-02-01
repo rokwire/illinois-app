@@ -212,7 +212,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
   }
 
   void _onTapSave() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.news?.title}");
+    Analytics().logSelect(target: "Favorite: ${widget.news?.title}");
     Auth2().prefs?.toggleFavorite(widget.news);
   }
 
