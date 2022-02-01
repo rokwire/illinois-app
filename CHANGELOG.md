@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Gies Widgets [#1291](https://github.com/rokwire/illinois-app/issues/1291).
 - Improve group member display name [#1294](https://github.com/rokwire/illinois-app/issues/1294).
 ### Fixed
-- Fixed activity attachment in RokworePlugin Android native class [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Fixed activity attachment in RokwirePlugin Android native class [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 
 ## [3.2.8] - 2022-01-28
 ### Added
