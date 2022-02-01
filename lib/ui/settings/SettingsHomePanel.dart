@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -920,7 +921,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _onLinkNetIdClicked() {
-    Analytics.instance.logSelect(target: "Link Illinois NetID");
+    Analytics().logSelect(target: "Link Illinois NetID");
     if (Connectivity().isNotOffline) {
       Auth2().authenticateWithOidc(link: true).then((bool? result) {
         if (result == false) {
@@ -933,7 +934,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _onLinkPhoneOrEmailClicked() {
-    Analytics.instance.logSelect(target: "Link Phone or Email");
+    Analytics().logSelect(target: "Link Phone or Email");
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(
         settings: RouteSettings(),
@@ -952,7 +953,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _unlinkAuthType(Auth2LoginType loginType, String identifier) {
-    Analytics.instance.logSelect(target: "Unlink auth type");
+    Analytics().logSelect(target: "Unlink auth type");
     if (Connectivity().isNotOffline) {
       Auth2().unlinkAccountAuthType(loginType, identifier).then((bool? result) {
         if (mounted && result == false) {

@@ -25,6 +25,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   static const String notifyLoginChanged      = "edu.illinois.rokwire.auth2.login.changed";
   static const String notifyLoginFinished     = "edu.illinois.rokwire.auth2.login.finished";
   static const String notifyLogout            = "edu.illinois.rokwire.auth2.logout";
+  static const String notifyLinkChanged       = "edu.illinois.rokwire.auth2.link.changed";
   static const String notifyProfileChanged    = "edu.illinois.rokwire.auth2.profile.changed";
   static const String notifyPrefsChanged      = "edu.illinois.rokwire.auth2.prefs.changed";
   static const String notifyUserDeleted       = "edu.illinois.rokwire.auth2.user.deleted";
@@ -33,6 +34,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   static const String _deviceIdIdentifier     = 'edu.illinois.rokwire.device_id';
 
   _OidcLogin? _oidcLogin;
+  bool? _oidcLink;
   List<Completer<bool?>>? _oidcAuthenticationCompleters;
   bool? _processingOidcAuthentication;
   Timer? _oidcAuthenticationTimer;
@@ -215,6 +217,14 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
   bool get isPhoneLoggedIn => (_account?.authType?.loginType == Auth2LoginType.phoneTwilio);
   bool get isEmailLoggedIn => (_account?.authType?.loginType == Auth2LoginType.email);
 
+  bool get isOidcLinked => _account?.isAuthTypeLinked(Auth2LoginType.oidcIllinois) ?? false;
+  bool get isPhoneLinked => _account?.isAuthTypeLinked(Auth2LoginType.phoneTwilio) ?? false;
+  bool get isEmailLinked => _account?.isAuthTypeLinked(Auth2LoginType.email) ?? false;
+
+  List<String> get linkedOidcIds => _account?.getLinkedIdsForAuthType(Auth2LoginType.oidcIllinois) ?? [];
+  List<String> get linkedPhoneIds => _account?.getLinkedIdsForAuthType(Auth2LoginType.phoneTwilio) ?? [];
+  List<String> get linkedEmailIds => _account?.getLinkedIdsForAuthType(Auth2LoginType.email) ?? [];
+
   bool get hasUin => (0 < (uin?.length ?? 0));
   String? get uin => _account?.authType?.uiucUser?.uin;
   String? get netId => _account?.authType?.uiucUser?.netId;
@@ -296,7 +306,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
 
   // OIDC Authentication
 
-  Future<bool?> authenticateWithOidc() async {
+  Future<bool?> authenticateWithOidc({bool? link}) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null)) {
 
       if (_oidcAuthenticationCompleters == null) {
@@ -306,6 +316,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
         _OidcLogin? oidcLogin = await getOidcData();
         if (oidcLogin?.loginUrl != null) {
           _oidcLogin = oidcLogin;
+          _oidcLink = link;
           await _launchUrl(_oidcLogin?.loginUrl);
         }
         else {
@@ -330,7 +341,9 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
     cancelOidcAuthenticationTimer();
 
     _processingOidcAuthentication = true;
-    bool result = await processOidcAuthentication(uri);
+    bool result = (_oidcLink == true) ?
+      await linkAccountAuthType(Auth2LoginType.oidcIllinois, uri.toString(), _oidcLogin?.params) :
+      await processOidcAuthentication(uri);
     _processingOidcAuthentication = false;
 
     completeOidcAuthentication(result);
@@ -455,6 +468,7 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
     _notifyLogin(Auth2LoginType.oidcIllinois, success);
 
     _oidcLogin = null;
+    _oidcLink = null;
 
     if (_oidcAuthenticationCompleters != null) {
       List<Completer<bool?>> loginCompleters = _oidcAuthenticationCompleters!;
@@ -678,6 +692,57 @@ class Auth2 with Service, NetworkAuthProvider implements NotificationsListener {
     }
   }
 
+  // Account Linking
+
+  Future<bool> linkAccountAuthType(Auth2LoginType? loginType, dynamic creds, Map<String, dynamic>? params) async {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (loginType != null)) {
+      String url = "${Config().coreUrl}/services/auth/account/auth-type/link";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String? post = JsonUtils.encode({
+        'auth_type': auth2LoginTypeToString(loginType),
+        'app_type_identifier': Config().appPlatformId,
+        'creds': creds,
+        'params': params,
+      });
+      _oidcLink = null;
+
+      Response? response = await Network().post(url, headers: headers, body: post, auth: Auth2());
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
+      List<Auth2Type>? authTypes = (responseJson != null) ? Auth2Type.listFromJson(JsonUtils.listValue(responseJson['auth_types'])) : null;
+      if (authTypes != null) {
+        Storage().auth2Account = _account = Auth2Account.fromOther(_account, authTypes: authTypes);
+        NotificationService().notify(notifyLinkChanged);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Future<bool> unlinkAccountAuthType(Auth2LoginType? loginType, String identifier) async {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (loginType != null)) {
+      String url = "${Config().coreUrl}/services/auth/account/auth-type/link";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String? body = JsonUtils.encode({
+        'auth_type': auth2LoginTypeToString(loginType),
+        'app_type_identifier': Config().appPlatformId,
+        'identifier': identifier,
+      });
+
+      Response? response = await Network().delete(url, headers: headers, body: body, auth: Auth2());
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
+      List<Auth2Type>? authTypes = (responseJson != null) ? Auth2Type.listFromJson(JsonUtils.listValue(responseJson['auth_types'])) : null;
+      if (authTypes != null) {
+        Storage().auth2Account = _account = Auth2Account.fromOther(_account, authTypes: authTypes);
+        NotificationService().notify(notifyLinkChanged);
+        return true;
+      }
+    }
+    return false;
+  }
 
   // Device Info
 
