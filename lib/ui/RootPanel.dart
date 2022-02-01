@@ -423,8 +423,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
               onPressed: () {
                 Navigator.of(context).pop();
-                  NotificationService().notify(
-                      DeviceCalendar.notifyPlaceEvent, data);
+                DeviceCalendar().placeEvent(data);
               }),
           TextButton(
               child: Text(Localization().getStringEx('dialog.no.title', 'No')!),

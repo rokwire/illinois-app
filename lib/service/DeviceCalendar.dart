@@ -19,7 +19,6 @@ import 'package:collection/collection.dart';
 class DeviceCalendar with Service implements NotificationsListener{
   static const String notifyPromptPopup            = "edu.illinois.rokwire.device_calendar.messaging.message.popup";
   static const String notifyCalendarSelectionPopup = "edu.illinois.rokwire.device_calendar.messaging.calendar_selection.popup";
-  static const String notifyPlaceEvent             = "edu.illinois.rokwire.device_calendar.messaging.place.event";
   static const String notifyShowConsoleMessage     = "edu.illinois.rokwire.device_calendar.console.debug.message";
 
   Calendar? _defaultCalendar;
@@ -39,8 +38,7 @@ class DeviceCalendar with Service implements NotificationsListener{
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      Auth2UserPrefs.notifyFavoriteChanged,
-      DeviceCalendar.notifyPlaceEvent
+      Auth2UserPrefs.notifyFavoriteChanged
     ]);
   }
 
@@ -221,16 +219,17 @@ class DeviceCalendar with Service implements NotificationsListener{
     if(name == Auth2UserPrefs.notifyFavoriteChanged){
       _processEvents(param);
     }
-    else if(name == DeviceCalendar.notifyPlaceEvent){
-      if(param!=null && param is Map){
-        _DeviceCalendarEvent? event = param["event"];
-        Calendar? calendarSelection = param["calendar"];
+  }
 
-        if(calendarSelection!=null){
-          _selectedCalendar = calendarSelection;
-        }
-        _placeCalendarEvent(event);
+  void placeEvent(dynamic data) {
+    if(data!=null && data is Map){
+      _DeviceCalendarEvent? event = data["event"];
+      Calendar? calendarSelection = data["calendar"];
+
+      if(calendarSelection!=null){
+        _selectedCalendar = calendarSelection;
       }
+      _placeCalendarEvent(event);
     }
   }
   
