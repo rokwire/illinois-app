@@ -18,7 +18,8 @@ import 'package:collection/collection.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-final _canvasDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
+final String _canvasServerDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
+final String _canvasDisplayDateTimeFormat = 'MM-dd-yyyy h:mm a';
 
 ////////////////////////////////
 // CanvasCourse
@@ -154,9 +155,9 @@ class CanvasCourse {
       'course_color': courseColor,
       'time_zone': timezone,
       
-      'created_at': DateTimeUtils.utcDateTimeToString(createdAt, format: _canvasDateFormat),
-      'start_at': DateTimeUtils.utcDateTimeToString(startAt, format: _canvasDateFormat),
-      'end_at': DateTimeUtils.utcDateTimeToString(endAt, format: _canvasDateFormat),
+      'created_at': DateTimeUtils.utcDateTimeToString(createdAt, format: _canvasServerDateFormat),
+      'start_at': DateTimeUtils.utcDateTimeToString(startAt, format: _canvasServerDateFormat),
+      'end_at': DateTimeUtils.utcDateTimeToString(endAt, format: _canvasServerDateFormat),
 
       'is_public': isPublic,
       'is_public_to_auth_users': isPublicToAuthUsers,
@@ -820,7 +821,7 @@ class CanvasDiscussionTopic {
   }
 
   String? get postedAtDisplayDate {
-    return AppDateTime().formatDateTime(postedAt, format: _topicDateTimeFormat);
+    return AppDateTime().formatDateTime(postedAt, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasDiscussionTopic>? listFromJson(List<dynamic>? jsonList) {
@@ -833,8 +834,6 @@ class CanvasDiscussionTopic {
     }
     return result;
   }
-
-  static String _topicDateTimeFormat = 'MM-dd-yyyy h:mm a';
 }
 
 ////////////////////////////////
@@ -934,6 +933,99 @@ class CanvasGroupTopic {
       result = <CanvasGroupTopic>[];
       for (dynamic jsonEntry in jsonList) {
         ListUtils.add(result, CanvasGroupTopic.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+}
+
+////////////////////////////////
+// CanvasCollaboration
+
+class CanvasCollaboration {
+  final int? id;
+  final String? collaborationType;
+  final String? documentId;
+  final int? userId;
+  final int? contextId;
+  final String? contextType;
+  final String? url;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final String? description;
+  final String? title;
+  final String? type;
+  final String? updateUrl;
+  final String? userName;
+
+  CanvasCollaboration({this.id, this.collaborationType, this.documentId, this.userId,
+    this.contextId, this.contextType, this.url, this.createdAt, this.updatedAt, this.description,
+    this.title, this.type, this.updateUrl, this.userName});
+
+  static CanvasCollaboration? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasCollaboration(
+            id: JsonUtils.intValue(json['id']),
+            collaborationType: JsonUtils.stringValue(json['collaboration_type']),
+            documentId: JsonUtils.stringValue(json['document_id']),
+            userId: JsonUtils.intValue(json['user_id']),
+            contextId: JsonUtils.intValue(json['context_id']),
+            contextType: JsonUtils.stringValue(json['context_type']),
+            url: JsonUtils.stringValue(json['url']),
+            createdAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+            updatedAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['updated_at']), isUtc: true),
+            description: JsonUtils.stringValue(json['description']),
+            title: JsonUtils.stringValue(json['title']),
+            type: JsonUtils.stringValue(json['type']),
+            updateUrl: JsonUtils.stringValue(json['update_url']),
+            userName: JsonUtils.stringValue(json['user_name']),
+          )
+        : null;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasCollaboration) &&
+      (o.id == id) &&
+      (o.collaborationType == collaborationType) &&
+      (o.documentId == documentId) &&
+      (o.userId == userId) &&
+      (o.contextId == contextId) &&
+      (o.contextType == contextType) &&
+      (o.url == url) &&
+      (o.createdAt == createdAt) &&
+      (o.updatedAt == updatedAt) &&
+      (o.description == description) &&
+      (o.title == title) &&
+      (o.type == type) &&
+      (o.updateUrl == updateUrl) &&
+      (o.userName == userName);
+
+  int get hashCode =>
+      (id?.hashCode ?? 0) ^
+      (collaborationType?.hashCode ?? 0) ^
+      (documentId?.hashCode ?? 0) ^
+      (userId?.hashCode ?? 0) ^
+      (contextId?.hashCode ?? 0) ^
+      (contextType?.hashCode ?? 0) ^
+      (url?.hashCode ?? 0) ^
+      (createdAt?.hashCode ?? 0) ^
+      (updatedAt?.hashCode ?? 0) ^
+      (description?.hashCode ?? 0) ^
+      (title?.hashCode ?? 0) ^
+      (type?.hashCode ?? 0) ^
+      (updateUrl?.hashCode ?? 0) ^
+      (userName?.hashCode ?? 0);
+
+  String? get createdAtDisplayDate {
+    return AppDateTime().formatDateTime(createdAt, format: _canvasDisplayDateTimeFormat);
+  }
+
+  static List<CanvasCollaboration>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasCollaboration>? result;
+    if (jsonList != null) {
+      result = <CanvasCollaboration>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasCollaboration.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;

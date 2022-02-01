@@ -48,7 +48,7 @@ class Canvas with Service {
     return Set.from([Config(), Auth2()]);
   }
 
-  // APIs
+  // Courses
 
   Future<List<CanvasCourse>?> loadCourses() async {
     if (!_available) {
@@ -92,6 +92,7 @@ class Canvas with Service {
     }
   }
 
+  // Announcements
 
   Future<List<CanvasDiscussionTopic>?> loadAnnouncementsForCourse(int courseId) async {
     if (!_available) {
@@ -109,6 +110,8 @@ class Canvas with Service {
       return null;
     }
   }
+
+  // Files and Folders
 
   Future<List<CanvasFileSystemEntity>?> loadFileSystemEntities({int? courseId, int? folderId}) async {
     if (!_available) {
@@ -206,6 +209,27 @@ class Canvas with Service {
       return null;
     }
   }
+
+  // Collaborations
+
+  Future<List<CanvasCollaboration>?> loadCollaborations(int courseId) async {
+    if (!_available) {
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/collaborations';
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasCollaboration>? collaborations = CanvasCollaboration.listFromJson(JsonUtils.decodeList(responseString));
+      return collaborations;
+    } else {
+      Log.w('Failed to load canvas collaborations. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  // Helpers
 
   Map<String, String>? get _authHeaders {
     if (!_available) {
