@@ -1950,6 +1950,10 @@
     "panel.canvas_files.load.failed.error.msg": "無法加載文件和文件夾. 請稍後再試.",
     "panel.canvas_files.empty.msg": "沒有文件和文件夾.",
 
+    "panel.canvas_collaborations.header.title": "合作",
+    "panel.canvas_collaborations.load.failed.error.msg": "未能加載協作. 請稍後再試.",
+    "panel.canvas_collaborations.empty.msg": "本課程沒有合作.",
+
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 
 	"widget.game_detail_heading.button.live_stats.title":"实时信息",

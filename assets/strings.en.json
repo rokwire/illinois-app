@@ -1956,6 +1956,10 @@
     "panel.canvas_files.load.failed.error.msg": "Failed to load files and folders. Please, try again later.",
     "panel.canvas_files.empty.msg": "There are no files and folders.",
 
+    "panel.canvas_collaborations.header.title": "Collaborations",
+    "panel.canvas_collaborations.load.failed.error.msg": "Failed to load collaborations. Please, try again later.",
+    "panel.canvas_collaborations.empty.msg": "There are no collaborations for this course.",
+
     "widget.game_day.label.its_game_day":"It's Game Day!",
 
     "widget.game_detail_heading.button.live_stats.title":"Live Stats",

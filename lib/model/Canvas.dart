@@ -18,7 +18,8 @@ import 'package:collection/collection.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-final _canvasDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
+final String _canvasServerDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
+final String _canvasDisplayDateTimeFormat = 'MM-dd-yyyy h:mm a';
 
 ////////////////////////////////
 // CanvasCourse
@@ -154,9 +155,9 @@ class CanvasCourse {
       'course_color': courseColor,
       'time_zone': timezone,
       
-      'created_at': DateTimeUtils.utcDateTimeToString(createdAt, format: _canvasDateFormat),
-      'start_at': DateTimeUtils.utcDateTimeToString(startAt, format: _canvasDateFormat),
-      'end_at': DateTimeUtils.utcDateTimeToString(endAt, format: _canvasDateFormat),
+      'created_at': DateTimeUtils.utcDateTimeToString(createdAt, format: _canvasServerDateFormat),
+      'start_at': DateTimeUtils.utcDateTimeToString(startAt, format: _canvasServerDateFormat),
+      'end_at': DateTimeUtils.utcDateTimeToString(endAt, format: _canvasServerDateFormat),
 
       'is_public': isPublic,
       'is_public_to_auth_users': isPublicToAuthUsers,
@@ -820,7 +821,7 @@ class CanvasDiscussionTopic {
   }
 
   String? get postedAtDisplayDate {
-    return AppDateTime().formatDateTime(postedAt, format: _topicDateTimeFormat);
+    return AppDateTime().formatDateTime(postedAt, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasDiscussionTopic>? listFromJson(List<dynamic>? jsonList) {
@@ -833,8 +834,6 @@ class CanvasDiscussionTopic {
     }
     return result;
   }
-
-  static String _topicDateTimeFormat = 'MM-dd-yyyy h:mm a';
 }
 
 ////////////////////////////////
@@ -937,5 +936,488 @@ class CanvasGroupTopic {
       }
     }
     return result;
+  }
+}
+
+////////////////////////////////
+// CanvasCollaboration
+
+class CanvasCollaboration {
+  final int? id;
+  final String? collaborationType;
+  final String? documentId;
+  final int? userId;
+  final int? contextId;
+  final String? contextType;
+  final String? url;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final String? description;
+  final String? title;
+  final String? type;
+  final String? updateUrl;
+  final String? userName;
+
+  CanvasCollaboration({this.id, this.collaborationType, this.documentId, this.userId,
+    this.contextId, this.contextType, this.url, this.createdAt, this.updatedAt, this.description,
+    this.title, this.type, this.updateUrl, this.userName});
+
+  static CanvasCollaboration? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasCollaboration(
+            id: JsonUtils.intValue(json['id']),
+            collaborationType: JsonUtils.stringValue(json['collaboration_type']),
+            documentId: JsonUtils.stringValue(json['document_id']),
+            userId: JsonUtils.intValue(json['user_id']),
+            contextId: JsonUtils.intValue(json['context_id']),
+            contextType: JsonUtils.stringValue(json['context_type']),
+            url: JsonUtils.stringValue(json['url']),
+            createdAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+            updatedAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['updated_at']), isUtc: true),
+            description: JsonUtils.stringValue(json['description']),
+            title: JsonUtils.stringValue(json['title']),
+            type: JsonUtils.stringValue(json['type']),
+            updateUrl: JsonUtils.stringValue(json['update_url']),
+            userName: JsonUtils.stringValue(json['user_name']),
+          )
+        : null;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasCollaboration) &&
+      (o.id == id) &&
+      (o.collaborationType == collaborationType) &&
+      (o.documentId == documentId) &&
+      (o.userId == userId) &&
+      (o.contextId == contextId) &&
+      (o.contextType == contextType) &&
+      (o.url == url) &&
+      (o.createdAt == createdAt) &&
+      (o.updatedAt == updatedAt) &&
+      (o.description == description) &&
+      (o.title == title) &&
+      (o.type == type) &&
+      (o.updateUrl == updateUrl) &&
+      (o.userName == userName);
+
+  int get hashCode =>
+      (id?.hashCode ?? 0) ^
+      (collaborationType?.hashCode ?? 0) ^
+      (documentId?.hashCode ?? 0) ^
+      (userId?.hashCode ?? 0) ^
+      (contextId?.hashCode ?? 0) ^
+      (contextType?.hashCode ?? 0) ^
+      (url?.hashCode ?? 0) ^
+      (createdAt?.hashCode ?? 0) ^
+      (updatedAt?.hashCode ?? 0) ^
+      (description?.hashCode ?? 0) ^
+      (title?.hashCode ?? 0) ^
+      (type?.hashCode ?? 0) ^
+      (updateUrl?.hashCode ?? 0) ^
+      (userName?.hashCode ?? 0);
+
+  String? get createdAtDisplayDate {
+    return AppDateTime().formatDateTime(createdAt, format: _canvasDisplayDateTimeFormat);
+  }
+
+  static List<CanvasCollaboration>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasCollaboration>? result;
+    if (jsonList != null) {
+      result = <CanvasCollaboration>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasCollaboration.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+}
+
+////////////////////////////////
+// CanvasCalendarEvent
+
+class CanvasCalendarEvent {
+  final int? id;
+  final String? title;
+  final DateTime? startAt;
+  final DateTime? endAt;
+  final String? description;
+  final String? locationName;
+  final String? locationAddress;
+  final String? contextCode;
+  final String? effectiveContextCode;
+  final String? contextName;
+  final String? allContextCodes;
+  final String? workflowState;
+  final bool? hidden;
+  final int? parentEventId;
+  final int? childEventsCount;
+  final List<int>? childEvents;
+  final String? url;
+  final String? htmlUrl;
+  final String? allDayDate;
+  final bool? allDay;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int? appointmentGroupId;
+  final String? appointmentGroupUrl;
+  final bool? ownReservation;
+  final String? reserveUrl;
+  final bool? reserved;
+  final String? participantType;
+  final int? participantsPerAppointment;
+  final int? availableSlots;
+  final CanvasUser? user;
+  final CanvasGroup? group;
+  final bool? importantDates;
+
+  CanvasCalendarEvent({this.id, this.title, this.startAt, this.endAt, this.description, this.locationName,
+    this.locationAddress, this.contextCode, this.effectiveContextCode, this.contextName, this.allContextCodes, this.workflowState,
+    this.hidden, this.parentEventId, this.childEventsCount, this.childEvents, this.url, this.htmlUrl,
+    this.allDayDate, this.allDay, this.createdAt, this.updatedAt, this.appointmentGroupId, this.appointmentGroupUrl,
+    this.ownReservation, this.reserveUrl, this.reserved, this.participantType, this.participantsPerAppointment, 
+    this.availableSlots, this.user, this.group, this.importantDates});
+
+  static CanvasCalendarEvent? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasCalendarEvent(
+            id: JsonUtils.intValue(json['id']),
+            title: JsonUtils.stringValue(json['title']),
+            startAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['start_at']), isUtc: true),
+            endAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['end_at']), isUtc: true),
+            description: JsonUtils.stringValue(json['description']),
+            locationName: JsonUtils.stringValue(json['location_name']),
+            locationAddress: JsonUtils.stringValue(json['location_address']),
+            contextCode: JsonUtils.stringValue(json['context_code']),
+            effectiveContextCode: JsonUtils.stringValue(json['effective_context_code']),
+            contextName: JsonUtils.stringValue(json['context_name']),
+            allContextCodes: JsonUtils.stringValue(json['all_context_codes']),
+            workflowState: JsonUtils.stringValue(json['workflow_state']),
+            hidden: JsonUtils.boolValue(json['hidden']),
+            parentEventId: JsonUtils.intValue(json['parent_event_id']),
+            childEventsCount: JsonUtils.intValue(json['child_events_count']),
+            childEvents: JsonUtils.listValue(json['child_events'])?.cast<int>(),
+            url: JsonUtils.stringValue(json['url']),
+            htmlUrl: JsonUtils.stringValue(json['html_url']),
+            allDayDate: JsonUtils.stringValue(json['all_day_date']),
+            allDay: JsonUtils.boolValue(json['all_day']),
+            createdAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+            updatedAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['updated_at']), isUtc: true),
+            appointmentGroupId: JsonUtils.intValue(json['appointment_group_id']),
+            appointmentGroupUrl: JsonUtils.stringValue(json['appointment_group_url']),
+            ownReservation: JsonUtils.boolValue(json['own_reservation']),
+            reserveUrl: JsonUtils.stringValue(json['reserve_url']),
+            reserved: JsonUtils.boolValue(json['reserved']),
+            participantType: JsonUtils.stringValue(json['participant_type']),
+            participantsPerAppointment: JsonUtils.intValue(json['participants_per_appointment']),
+            availableSlots: JsonUtils.intValue(json['available_slots']),
+            user: CanvasUser.fromJson(json['user']),
+            group: CanvasGroup.fromJson(json['group']),
+            importantDates: JsonUtils.boolValue(json['important_dates']))
+        : null;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasCalendarEvent) &&
+      (o.id == id) &&
+      (o.title == title) &&
+      (o.startAt == startAt) &&
+      (o.endAt == endAt) &&
+      (o.description == description) &&
+      (o.locationName == locationName) &&
+      (o.locationAddress == locationAddress) &&
+      (o.contextCode == contextCode) &&
+      (o.effectiveContextCode == effectiveContextCode) &&
+      (o.contextName == contextName) &&
+      (o.allContextCodes == allContextCodes) &&
+      (o.workflowState == workflowState) &&
+      (o.hidden == hidden) &&
+      (o.parentEventId == parentEventId) &&
+      (o.childEventsCount == childEventsCount) &&
+      (o.childEvents == childEvents) &&
+      (o.url == url) &&
+      (o.htmlUrl == htmlUrl) &&
+      (o.allDayDate == allDayDate) &&
+      (o.allDay == allDay) &&
+      (o.createdAt == createdAt) &&
+      (o.updatedAt == updatedAt) &&
+      (o.appointmentGroupId == appointmentGroupId) &&
+      (o.appointmentGroupUrl == appointmentGroupUrl) &&
+      (o.ownReservation == ownReservation) &&
+      (o.reserveUrl == reserveUrl) &&
+      (o.reserved == reserved) &&
+      (o.participantType == participantType) &&
+      (o.participantsPerAppointment == participantsPerAppointment) &&
+      (o.availableSlots == availableSlots) &&
+      (o.user == user) &&
+      (o.group == group) &&
+      (o.importantDates == importantDates);
+
+  int get hashCode =>
+      (id?.hashCode ?? 0) ^
+      (title?.hashCode ?? 0) ^
+      (startAt?.hashCode ?? 0) ^
+      (endAt?.hashCode ?? 0) ^
+      (description?.hashCode ?? 0) ^
+      (locationName?.hashCode ?? 0) ^
+      (locationAddress?.hashCode ?? 0) ^
+      (contextCode?.hashCode ?? 0) ^
+      (effectiveContextCode?.hashCode ?? 0) ^
+      (contextName?.hashCode ?? 0) ^
+      (allContextCodes?.hashCode ?? 0) ^
+      (workflowState?.hashCode ?? 0) ^
+      (hidden?.hashCode ?? 0) ^
+      (parentEventId?.hashCode ?? 0) ^
+      (childEventsCount?.hashCode ?? 0) ^
+      (childEvents?.hashCode ?? 0) ^
+      (url?.hashCode ?? 0) ^
+      (htmlUrl?.hashCode ?? 0) ^
+      (allDayDate?.hashCode ?? 0) ^
+      (allDay?.hashCode ?? 0) ^
+      (createdAt?.hashCode ?? 0) ^
+      (updatedAt?.hashCode ?? 0) ^
+      (appointmentGroupId?.hashCode ?? 0) ^
+      (appointmentGroupUrl?.hashCode ?? 0) ^
+      (ownReservation?.hashCode ?? 0) ^
+      (reserveUrl?.hashCode ?? 0) ^
+      (reserved?.hashCode ?? 0) ^
+      (participantType?.hashCode ?? 0) ^
+      (participantsPerAppointment?.hashCode ?? 0) ^
+      (availableSlots?.hashCode ?? 0) ^
+      (user?.hashCode ?? 0) ^
+      (group?.hashCode ?? 0) ^
+      (importantDates?.hashCode ?? 0);
+
+  static List<CanvasCalendarEvent>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasCalendarEvent>? result;
+    if (jsonList != null) {
+      result = <CanvasCalendarEvent>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasCalendarEvent.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+}
+
+
+
+////////////////////////////////
+// CanvasUser
+
+class CanvasUser {
+  final int? id;
+  final String? name;
+  final String? sortableName;
+  final String? lastName;
+  final String? firstName;
+  final String? shortName;
+  final String? sisUserId;
+  final int? sisImportId;
+  final String? integrationId;
+  final String? loginId;
+  final String? avatarUrl;
+  final List<CanvasEnrollment>? enrollments;
+  final String? email;
+  final String? locale;
+  final DateTime? lastLogin;
+  final String? timeZone;
+  final String? bio;
+
+  CanvasUser({this.id, this.name, this.sortableName, this.lastName, this.firstName, this.shortName,
+    this.sisUserId, this.sisImportId, this.integrationId, this.loginId, this.avatarUrl, this.enrollments,
+    this.email, this.locale, this.lastLogin, this.timeZone, this.bio});
+
+  static CanvasUser? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasUser(
+            id: JsonUtils.intValue(json['id']),
+            name: JsonUtils.stringValue(json['name']),
+            sortableName: JsonUtils.stringValue(json['sortable_name']),
+            lastName: JsonUtils.stringValue(json['last_name']),
+            firstName: JsonUtils.stringValue(json['first_name']),
+            shortName: JsonUtils.stringValue(json['short_name']),
+            sisUserId: JsonUtils.stringValue(json['sis_user_id']),
+            sisImportId: JsonUtils.intValue(json['sis_import_id']),
+            integrationId: JsonUtils.stringValue(json['integration_id']),
+            loginId: JsonUtils.stringValue(json['login_id']),
+            avatarUrl: JsonUtils.stringValue(json['avatar_url']),
+            enrollments: CanvasEnrollment.listFromJson(JsonUtils.listValue(json['enrollments'])),
+            email: JsonUtils.stringValue(json['email']),
+            locale: JsonUtils.stringValue(json['locale']),
+            lastLogin: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['last_login']), isUtc: true),
+            timeZone: JsonUtils.stringValue(json['time_zone']),
+            bio: JsonUtils.stringValue(json['bio']),
+          )
+        : null;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasUser) &&
+      (o.id == id) &&
+      (o.name == name) &&
+      (o.sortableName == sortableName) &&
+      (o.lastName == lastName) &&
+      (o.firstName == firstName) &&
+      (o.shortName == shortName) &&
+      (o.sisUserId == sisUserId) &&
+      (o.sisImportId == sisImportId) &&
+      (o.integrationId == integrationId) &&
+      (o.loginId == loginId) &&
+      (o.avatarUrl == avatarUrl) &&
+      (o.enrollments == enrollments) &&
+      (o.email == email) &&
+      (o.locale == locale) &&
+      (o.lastLogin == lastLogin) &&
+      (o.timeZone == timeZone) &&
+      (o.bio == bio);
+
+  int get hashCode =>
+      (id?.hashCode ?? 0) ^
+      (name?.hashCode ?? 0) ^
+      (sortableName?.hashCode ?? 0) ^
+      (lastName?.hashCode ?? 0) ^
+      (firstName?.hashCode ?? 0) ^
+      (shortName?.hashCode ?? 0) ^
+      (sisUserId?.hashCode ?? 0) ^
+      (sisImportId?.hashCode ?? 0) ^
+      (integrationId?.hashCode ?? 0) ^
+      (loginId?.hashCode ?? 0) ^
+      (avatarUrl?.hashCode ?? 0) ^
+      (enrollments?.hashCode ?? 0) ^
+      (email?.hashCode ?? 0) ^
+      (locale?.hashCode ?? 0) ^
+      (lastLogin?.hashCode ?? 0) ^
+      (timeZone?.hashCode ?? 0) ^
+      (bio?.hashCode ?? 0);
+
+  static List<CanvasUser>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasUser>? result;
+    if (jsonList != null) {
+      result = <CanvasUser>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasUser.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+}
+
+////////////////////////////////
+// CanvasGroup
+
+class CanvasGroup {
+  final int? id;
+  final String? name;
+  final String? description;
+  final bool? isPublic;
+  final bool? followedByUser;
+  final String? joinLevel;
+  final int? membersCount;
+  final String? avatarUrl;
+  final String? contextType;
+  final int? courseId;
+  final String? role;
+  final int? groupCategoryId;
+  final String? sisGroupId;
+  final int? sisImportId;
+  final int? storageQuotaMb;
+  final CanvasGroupPermissions? permissions;
+  final List<CanvasUser>? users;
+
+  CanvasGroup({this.id, this.name, this.description, this.isPublic, this.followedByUser, this.joinLevel,
+    this.membersCount, this.avatarUrl, this.contextType, this.courseId, this.role, this.groupCategoryId,
+    this.sisGroupId, this.sisImportId, this.storageQuotaMb, this.permissions, this.users});
+
+  static CanvasGroup? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasGroup(
+            id: JsonUtils.intValue(json['id']),
+            name: JsonUtils.stringValue(json['name']),
+            description: JsonUtils.stringValue(json['description']),
+            isPublic: JsonUtils.boolValue(json['is_public']),
+            followedByUser: JsonUtils.boolValue(json['followed_by_user']),
+            joinLevel: JsonUtils.stringValue(json['join_level']),
+            membersCount: JsonUtils.intValue(json['members_count']),
+            avatarUrl: JsonUtils.stringValue(json['avatar_url']),
+            contextType: JsonUtils.stringValue(json['context_type']),
+            courseId: JsonUtils.intValue(json['course_id']),
+            role: JsonUtils.stringValue(json['role']),
+            groupCategoryId: JsonUtils.intValue(json['group_category_id']),
+            sisGroupId: JsonUtils.stringValue(json['sis_group_id']),
+            sisImportId: JsonUtils.intValue(json['sis_import_id']),
+            storageQuotaMb: JsonUtils.intValue(json['storage_quota_mb']),
+            permissions: CanvasGroupPermissions.fromJson(json['permissions']),
+            users: CanvasUser.listFromJson(JsonUtils.listValue(json['users']))
+          )
+        : null;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasGroup) &&
+      (o.id == id) &&
+      (o.name == name) &&
+      (o.description == description) &&
+      (o.isPublic == isPublic) &&
+      (o.followedByUser == followedByUser) &&
+      (o.joinLevel == joinLevel) &&
+      (o.membersCount == membersCount) &&
+      (o.avatarUrl == avatarUrl) &&
+      (o.contextType == contextType) &&
+      (o.courseId == courseId) &&
+      (o.role == role) &&
+      (o.groupCategoryId == groupCategoryId) &&
+      (o.sisGroupId == sisGroupId) &&
+      (o.sisImportId == sisImportId) &&
+      (o.storageQuotaMb == storageQuotaMb) &&
+      (o.permissions == permissions) &&
+      (o.users == users);
+
+  int get hashCode =>
+      (id?.hashCode ?? 0) ^
+      (name?.hashCode ?? 0) ^
+      (description?.hashCode ?? 0) ^
+      (isPublic?.hashCode ?? 0) ^
+      (followedByUser?.hashCode ?? 0) ^
+      (joinLevel?.hashCode ?? 0) ^
+      (membersCount?.hashCode ?? 0) ^
+      (avatarUrl?.hashCode ?? 0) ^
+      (contextType?.hashCode ?? 0) ^
+      (courseId?.hashCode ?? 0) ^
+      (role?.hashCode ?? 0) ^
+      (groupCategoryId?.hashCode ?? 0) ^
+      (sisGroupId?.hashCode ?? 0) ^
+      (sisImportId?.hashCode ?? 0) ^
+      (storageQuotaMb?.hashCode ?? 0) ^
+      (permissions?.hashCode ?? 0) ^
+      (users?.hashCode ?? 0);
+
+  static List<CanvasGroup>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasGroup>? result;
+    if (jsonList != null) {
+      result = <CanvasGroup>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasGroup.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+}
+
+////////////////////////////////
+// CanvasGroupPermissions
+
+class CanvasGroupPermissions {
+  final bool? createDiscussionTopic;
+  final bool? createAnnouncement;
+
+  CanvasGroupPermissions({this.createDiscussionTopic, this.createAnnouncement});
+
+  static CanvasGroupPermissions? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasGroupPermissions(
+            createDiscussionTopic: JsonUtils.boolValue(json['create_discussion_topic']),
+            createAnnouncement: JsonUtils.boolValue(json['create_announcement']),
+          )
+        : null;
   }
 }

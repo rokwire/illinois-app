@@ -22,6 +22,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/ui/canvas/CanvasCourseAnnouncementsPanel.dart';
+import 'package:illinois/ui/canvas/CanvasCourseCollaborationsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseSyllabusPanel.dart';
 import 'package:illinois/ui/canvas/CanvasFileSystemEntitiesListPanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
@@ -131,7 +132,8 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.collaborations.title', 'Collaborations'),
           hint: Localization().getStringEx('panel.home_canvas_course.button.collaborations.hint', ''),
-          leftIcon: 'images/icon-settings.png'),
+          leftIcon: 'images/icon-settings.png',
+          onTap: _onTapCollaborations),
       _buildDelimiter(),
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.calendar.title', 'Calendar'),
@@ -169,6 +171,11 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   void _onTapFiles() {
     Analytics().logSelect(target: "Canvas Course -> Files");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFileSystemEntitiesListPanel(courseId: widget.courseId)));
+  }
+
+  void _onTapCollaborations() {
+    Analytics().logSelect(target: "Canvas Course -> Collaborations");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseCollaborationsPanel(courseId: widget.courseId!)));
   }
 
   void _onTapInbox() {
