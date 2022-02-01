@@ -92,39 +92,6 @@ class Canvas with Service {
     }
   }
 
-  Future<List<CanvasFile>?> loadFilesForCourse(int courseId) async {
-    if (!_available) {
-      return null;
-    }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/files';
-    http.Response? response = await Network().get(url, headers: _authHeaders);
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    if (responseCode == 200) {
-      List<CanvasFile>? files = CanvasFile.listFromJson(JsonUtils.decodeList(responseString));
-      return files;
-    } else {
-      Log.w('Failed to load canvas course files. Response:\n$responseCode: $responseString');
-      return null;
-    }
-  }
-
-  Future<List<CanvasFolder>?> loadFoldersForCourse(int courseId) async {
-    if (!_available) {
-      return null;
-    }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/folders';
-    http.Response? response = await Network().get(url, headers: _authHeaders);
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    if (responseCode == 200) {
-      List<CanvasFolder>? folders = CanvasFolder.listFromJson(JsonUtils.decodeList(responseString));
-      return folders;
-    } else {
-      Log.w('Failed to load canvas course folders. Response:\n$responseCode: $responseString');
-      return null;
-    }
-  }
 
   Future<List<CanvasDiscussionTopic>?> loadAnnouncementsForCourse(int courseId) async {
     if (!_available) {
