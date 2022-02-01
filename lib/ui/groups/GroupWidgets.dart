@@ -613,14 +613,14 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
               )
             ],),
             Visibility(visible:
-                StringUtils.isNotEmpty(widget.event?.exploreImageURL),
+                StringUtils.isNotEmpty(EventHelper.exploreImageURL(widget.event)),
                 child: Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 8),
                   child: SizedBox(
                     width: _smallImageSize,
                     height: _smallImageSize,
                     child: Image.network(
-                      widget.event!.exploreImageURL!, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),),)),
+                      EventHelper.exploreImageURL(widget.event) ?? '', excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),),)),
                 ])
                 )
     ],);

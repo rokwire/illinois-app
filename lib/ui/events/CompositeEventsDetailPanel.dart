@@ -120,7 +120,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                 slivers: <Widget>[
                   SliverToutHeaderBar(
                     context: context,
-                    imageUrl: widget.parentEvent!.exploreImageURL,
+                    imageUrl: EventHelper.exploreImageURL(widget.parentEvent),
                   ),
                   SliverList(
                     delegate: SliverChildListDelegate(

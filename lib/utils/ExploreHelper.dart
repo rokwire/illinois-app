@@ -25,6 +25,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -213,6 +214,12 @@ class ExploreHelper {
       return null;
     }
   }
+
+  // Image
+
+  static String? exploreImageURL(Explore? explore) {
+    return (explore is Event) ? EventHelper.exploreImageURL(explore) : explore?.exploreImageURL;
+  }
 }
 
 //////////////////////////////
@@ -354,6 +361,25 @@ class EventHelper {
       });
     }
     return interests;
+  }
+
+  static String? exploreImageURL(Event? event) {
+    String? imageUrl = event?.exploreImageURL;
+    if (StringUtils.isEmpty(imageUrl)) {
+      imageUrl = randomImageURL(event);
+    }
+    return imageUrl;
+  }
+
+  static String? randomImageURL(Event? event) {
+    if (event != null) {
+      if (event.randomImageURL == null) {
+        String listKey = ((event.category == "Athletics" || event.category == "Recreation") && (event.registrationLabel != null && event.registrationLabel!.isNotEmpty)) ?
+          'images.random.sports.${event.registrationLabel}' : 'images.random.events.${event.category}';
+        event.randomImageURL = Assets().randomStringFromListWithKey(listKey);
+      }
+    }
+    return event?.randomImageURL;
   }
 
 }

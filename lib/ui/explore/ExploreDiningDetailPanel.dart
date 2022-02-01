@@ -145,7 +145,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                   slivers: <Widget>[
                     SliverToutHeaderBar(
                       context: context,
-                      imageUrl: dining!.exploreImageURL,
+                      imageUrl: ExploreHelper.exploreImageURL(dining),
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate(

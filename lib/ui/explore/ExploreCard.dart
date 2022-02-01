@@ -100,7 +100,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     bool isGame = (widget.explore is Game);
     Event? event = isEvent ? widget.explore as Event : null;
     bool isCompositeEvent = event?.isComposite ?? false;
-    String imageUrl = StringUtils.ensureNotEmpty(widget.explore!.exploreImageURL);
+    String imageUrl = StringUtils.ensureNotEmpty(ExploreHelper.exploreImageURL(widget.explore));
     String interestsLabelValue = _getInterestsLabelValue();
 
     return Semantics(

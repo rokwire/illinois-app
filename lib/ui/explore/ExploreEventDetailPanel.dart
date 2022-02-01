@@ -118,7 +118,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   slivers: <Widget>[
                     SliverToutHeaderBar(
                       context: context,
-                      imageUrl: widget.event!.exploreImageURL,
+                      imageUrl: EventHelper.exploreImageURL(widget.event),
                       leftTriangleColor: Colors.white
                     ),
                     SliverList(

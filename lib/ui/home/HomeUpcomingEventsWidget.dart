@@ -18,10 +18,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -301,19 +301,10 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
             applyHorizontalPadding: false,
             child: _buildItemCard(
                 context: context, item: event, showSmallImage: (i != 0)),
-            imageUrl: i == 0 ? _getImage(event) : null));
+            imageUrl: i == 0 ? ExploreHelper.exploreImageURL(event) : null));
       }
     }
     return widgets;
-  }
-
-  String? _getImage(dynamic item) {
-    if (item != null && item is Event) {
-      return item.exploreImageURL;
-    } else if (item != null && item is Game) {
-      return item.imageUrl;
-    }
-    return null;
   }
 
   Widget _buildItemCard({BuildContext? context, Explore? item, bool? showSmallImage}) {

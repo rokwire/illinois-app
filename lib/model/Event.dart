@@ -17,7 +17,6 @@
 import 'package:illinois/model/Explore.dart';
 
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -572,42 +571,20 @@ class Event with Explore implements Favorite {
   @override String?   get exploreShortDescription { return shortDescription; }
   @override String?   get exploreLongDescription  { return longDescription; }
   @override DateTime? get exploreStartDateUtc     { return startDateGmt; }
+  @override String?   get exploreImageURL         { return StringUtils.isNotEmpty(imageURL) ? imageURL : randomImageURL; }
   @override String?   get explorePlaceId          { return placeID; }
   @override ExploreLocation? get exploreLocation  { return location; }
 
-  @override String?   get exploreImageURL         {
-    if ((imageURL != null) && imageURL!.isNotEmpty)
-      return imageURL;
-
-    if (randomImageURL == null)
-      randomImageURL = _createRandomImageUrl();
-
-    return randomImageURL!.isNotEmpty ? randomImageURL : null;
-  }
-
   DateTime? get startDateLocal     { return AppDateTime().getUniLocalTimeFromUtcTime(startDateGmt); }
   DateTime? get endDateLocal       { return AppDateTime().getUniLocalTimeFromUtcTime(endDateGmt); }
-
 
   static String favoriteKeyName = "eventIds";
   @override String? get favoriteId => exploreId;
   @override String? get favoriteTitle => title;
   @override String get favoriteKey => favoriteKeyName;
 
-
-
-
   bool get isComposite {
     return isRecurring || (isSuperEvent == true);
-  }
-
-  String _createRandomImageUrl() {
-    //create sports random image when athletics
-    if ((category == "Athletics" || category == "Recreation") &&
-        (registrationLabel != null && registrationLabel!.isNotEmpty))
-      return Assets().randomStringFromListWithKey('images.random.sports.$registrationLabel') ?? '';
-
-    return Assets().randomStringFromListWithKey('images.random.events.$category') ?? '';
   }
 }
 
