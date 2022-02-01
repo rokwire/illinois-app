@@ -17,7 +17,6 @@
 import 'dart:ui';
 
 import 'package:illinois/model/Location.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 //////////////////////////////
 /// Explore
@@ -87,42 +86,5 @@ abstract class Explore {
 abstract class ExploreJsonHandler {
   bool canJson(Map<String, dynamic>? json) => false;
   Explore? fromJson(Map<String, dynamic>? json) => null;
-}
-
-//////////////////////////////
-/// ExploreCategory
-
-class ExploreCategory {
-
-  final String? name;
-  final List<String>? subCategories;
-
-  ExploreCategory({this.name, this.subCategories});
-
-  static ExploreCategory? fromJson(Map<String, dynamic>? json) {
-    return (json != null) ? ExploreCategory(
-      name: json['category'],
-      subCategories: JsonUtils.listStringsValue(json['subcategories'])
-    ) : null;
-  }
-
-  toJson(){
-    return{
-      'category': name,
-      'subcategories': subCategories
-    };
-  }
-
-  static List<ExploreCategory>? listFromJson(List<dynamic>? jsonList) {
-    List<ExploreCategory>? result;
-    if (jsonList is List) {
-      result = <ExploreCategory>[];
-      for (dynamic jsonEntry in jsonList) {
-        ListUtils.add(result, ExploreCategory.fromJson(JsonUtils.mapValue(jsonEntry)));
-      }
-    }
-    return result;
-  }
-
 }
 

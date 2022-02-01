@@ -799,6 +799,43 @@ class Contact {
   }
 }
 
+//////////////////////////////
+/// EventCategory
+
+class EventCategory {
+
+  final String? name;
+  final List<String>? subCategories;
+
+  EventCategory({this.name, this.subCategories});
+
+  static EventCategory? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? EventCategory(
+      name: json['category'],
+      subCategories: JsonUtils.listStringsValue(json['subcategories'])
+    ) : null;
+  }
+
+  toJson(){
+    return{
+      'category': name,
+      'subcategories': subCategories
+    };
+  }
+
+  static List<EventCategory>? listFromJson(List<dynamic>? jsonList) {
+    List<EventCategory>? result;
+    if (jsonList is List) {
+      result = <EventCategory>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, EventCategory.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+}
+
 enum EventTimeFilter{today, thisWeekend, next7Day, next30Days, upcoming,}
 
 

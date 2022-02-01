@@ -19,7 +19,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -142,11 +141,11 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   void _loadEventCategories() {
     if (Connectivity().isNotOffline) {
       setState(() {_isCategoryLoading = true;});
-      ExploreService().loadEventCategoriesEx().then((List<ExploreCategory>? result) {
+      ExploreService().loadEventCategoriesEx().then((List<EventCategory>? result) {
         _eventCategories = [];
         _eventCategories.add(_allCategoriesConst);
         if(CollectionUtils.isNotEmpty(result)){
-          for (ExploreCategory category in result!) {
+          for (EventCategory category in result!) {
             ListUtils.add(_eventCategories, category.name);
           }
         }

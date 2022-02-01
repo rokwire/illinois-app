@@ -259,7 +259,7 @@ class ExploreService with Service implements NotificationsListener, ExploreJsonH
     return null;
   }
 
-  Future<List<ExploreCategory>?> loadEventCategoriesEx() async {
+  Future<List<EventCategory>?> loadEventCategoriesEx() async {
     http.Response? response;
     if(_enabled) {
       try {
@@ -271,7 +271,7 @@ class ExploreService with Service implements NotificationsListener, ExploreJsonH
       }
       String? responseBody = response?.body;
       if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
-        return ExploreCategory.listFromJson(JsonUtils.decodeList(responseBody));
+        return EventCategory.listFromJson(JsonUtils.decodeList(responseBody));
       } else {
         Log.e('Failed to load event categories');
         Log.e(responseBody);
