@@ -34,11 +34,6 @@ abstract class Explore {
   Location? get exploreLocation;
   Color?    get uiColor;
   Map<String, dynamic> toJson();
-  Map<String, dynamic> get analyticsAttributes;
-
-  Map<String, dynamic>? get analyticsSharedExploreAttributes {
-    return exploreLocation?.analyticsAttributes;
-  }
 
   static Set<ExploreJsonHandler> _jsonHandlers = {};
   static void addJsonHandler(ExploreJsonHandler handler) => _jsonHandlers.add(handler);
@@ -47,7 +42,7 @@ abstract class Explore {
   static ExploreJsonHandler? _getJsonHandler(Map<String, dynamic>? json) {
     if (json != null) {
       for (ExploreJsonHandler handler in _jsonHandlers) {
-        if (handler.canJson(json)) {
+        if (handler.exploreCanJson(json)) {
           return handler;
         }
       }
@@ -55,7 +50,7 @@ abstract class Explore {
     return null;
   }
 
-  static Explore? fromJson(Map<String, dynamic>? json) => _getJsonHandler(json)?.fromJson(json);
+  static Explore? fromJson(Map<String, dynamic>? json) => _getJsonHandler(json)?.exploreFromJson(json);
 
   static List<Explore>? listFromJson(List<dynamic>? jsonList) {
     List<Explore>? explores;
@@ -84,7 +79,7 @@ abstract class Explore {
 }
 
 abstract class ExploreJsonHandler {
-  bool canJson(Map<String, dynamic>? json) => false;
-  Explore? fromJson(Map<String, dynamic>? json) => null;
+  bool exploreCanJson(Map<String, dynamic>? json) => false;
+  Explore? exploreFromJson(Map<String, dynamic>? json) => null;
 }
 

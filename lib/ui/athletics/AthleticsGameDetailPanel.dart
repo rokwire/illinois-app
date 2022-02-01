@@ -19,6 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
@@ -53,7 +54,7 @@ class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAt
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes {
-    return game?.analyticsAttributes;
+    return ExploreHelper.analyticsAttributes(game);
   }
 }
 

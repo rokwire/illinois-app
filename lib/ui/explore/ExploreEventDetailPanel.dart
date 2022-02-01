@@ -60,7 +60,7 @@ class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAtt
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes {
-    return event?.analyticsAttributes;
+    return ExploreHelper.analyticsAttributes(event);
   }
 }
 

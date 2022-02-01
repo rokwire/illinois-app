@@ -94,8 +94,8 @@ class ExploreService with Service implements NotificationsListener, ExploreJsonH
   }
 
   // ExploreJsonHandler
-  @override bool canJson(Map<String, dynamic>? json) => Event.canJson(json);
-  @override Explore? fromJson(Map<String, dynamic>? json) => Event.fromJson(json);
+  @override bool exploreCanJson(Map<String, dynamic>? json) => Event.canJson(json);
+  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Event.fromJson(json);
 
   // Implementation
 

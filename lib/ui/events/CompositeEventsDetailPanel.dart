@@ -62,7 +62,7 @@ class CompositeEventsDetailPanel extends StatefulWidget implements AnalyticsPage
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes {
-    return parentEvent?.analyticsAttributes;
+    return ExploreHelper.analyticsAttributes(parentEvent);
   }
 }
 

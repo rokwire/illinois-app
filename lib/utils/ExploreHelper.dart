@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -135,6 +137,8 @@ class ExploreHelper {
     return null;
   }
 
+  // Favorites
+
   static bool isFavorite(Explore? explore) {
     if (explore is Favorite) {
       return ((explore is Event) && explore.isRecurring) ?
@@ -156,4 +160,33 @@ class ExploreHelper {
     }
     return false;
   }
+
+  // Analytics
+
+  static Map<String, dynamic>? analyticsAttributes(Explore? explore) {
+    if (explore is Event) {
+      return {
+        Analytics.LogAttributeEventId:   explore.exploreId,
+        Analytics.LogAttributeEventName: explore.exploreTitle,
+        Analytics.LogAttributeEventCategory: explore.category,
+        Analytics.LogAttributeRecurrenceId: explore.recurrenceId,
+        Analytics.LogAttributeLocation : explore.location?.analyticsValue,
+      };
+    }
+    else if (explore is Dining) {
+      return {
+        Analytics.LogAttributeDiningId:   explore.exploreId,
+        Analytics.LogAttributeDiningName: explore.exploreTitle,
+        Analytics.LogAttributeLocation : explore.location?.analyticsValue,
+      };
+    }
+    else if (explore is Game) {
+      return {
+        Analytics.LogAttributeGameId: explore.id,
+        Analytics.LogAttributeGameName: explore.title,
+        Analytics.LogAttributeLocation : explore.location?.analyticsValue,
+      };
+    }
+  }
+
 }

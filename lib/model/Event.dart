@@ -28,7 +28,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 
 //////////////////////////////
@@ -594,18 +593,6 @@ class Event with Explore implements Favorite {
       randomImageURL = _createRandomImageUrl();
 
     return randomImageURL!.isNotEmpty ? randomImageURL : null;
-  }
-
-  @override
-  Map<String, dynamic> get analyticsAttributes {
-    Map<String, dynamic> attributes = {
-      Analytics.LogAttributeEventId:   exploreId,
-      Analytics.LogAttributeEventName: exploreTitle,
-      Analytics.LogAttributeEventCategory: category,
-      Analytics.LogAttributeRecurrenceId: recurrenceId,
-    };
-    attributes.addAll(analyticsSharedExploreAttributes ?? {});
-    return attributes;
   }
 
   DateTime? get startDateLocal     { return AppDateTime().getUniLocalTimeFromUtcTime(startDateGmt); }

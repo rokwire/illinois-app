@@ -24,6 +24,7 @@ import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/ExploreHelper.dart';
 
 class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttributes {
   final Explore? explore;
@@ -34,7 +35,7 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes {
-    return explore?.analyticsAttributes;
+    return ExploreHelper.analyticsAttributes(explore);
   }
 
   @override

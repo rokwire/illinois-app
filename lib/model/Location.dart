@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 //////////////////////////////
@@ -137,16 +136,16 @@ class Location {
     return displayText;
   }
 
-  Map<String, dynamic> get analyticsAttributes {
-    String? value;
+  String? get analyticsValue {
     if ((name != null) && name!.isNotEmpty) {
-      value = name;
+      return name;
     }
     else if ((description != null) && description!.isNotEmpty) {
-      value = description;
+      return description;
     }
-
-    return { Analytics.LogAttributeLocation : value };
+    else {
+      return null;
+    }
   }
 }
 

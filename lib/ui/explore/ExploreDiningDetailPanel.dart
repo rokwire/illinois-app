@@ -59,7 +59,7 @@ class ExploreDiningDetailPanel extends StatefulWidget implements AnalyticsPageAt
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes {
-    return dining?.analyticsAttributes;
+    return ExploreHelper.analyticsAttributes(dining);
   }
 }
 

@@ -62,8 +62,8 @@ class DiningService  with Service implements ExploreJsonHandler {
   }
 
   // ExploreJsonHandler
-  @override bool canJson(Map<String, dynamic>? json) => Dining.canJson(json);
-  @override Explore? fromJson(Map<String, dynamic>? json) => Dining.fromJson(json);
+  @override bool exploreCanJson(Map<String, dynamic>? json) => Dining.canJson(json);
+  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Dining.fromJson(json);
 
   Future<List<Dining>?> loadBackendDinings(bool onlyOpened, PaymentType? paymentType, Position? locationData) async {
     if(_enabled) {

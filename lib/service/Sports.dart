@@ -138,8 +138,8 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
   }
 
   // ExploreJsonHandler
-  @override bool canJson(Map<String, dynamic>? json) => Game.canJson(json);
-  @override Explore? fromJson(Map<String, dynamic>? json) => Game.fromJson(json);
+  @override bool exploreCanJson(Map<String, dynamic>? json) => Game.canJson(json);
+  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Game.fromJson(json);
 
   // Accessories
 
