@@ -23,8 +23,8 @@ import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 
 //////////////////////////////

@@ -18,19 +18,21 @@ import 'dart:async';
 import 'dart:core';
 
 import 'package:http/http.dart';
-import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/service/Analytics.dart';
-//import 'package:flutter/services.dart' show rootBundle;
+
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
-import 'package:illinois/service/ExploreService.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
+
+import 'package:illinois/model/Event.dart';
+import 'package:illinois/service/ExploreService.dart';
 
 class Groups with Service implements NotificationsListener {
 
@@ -491,7 +493,7 @@ class Groups with Service implements NotificationsListener {
   /// 
   /// value - events (limited or not)
   ///
-  Future<Map<int, List<GroupEvent>>?> loadEvents(Group? group, {int limit = -1}) async {
+  Future<Map<int, List<GroupEvent>>?> loadEvents (Group? group, {int limit = -1}) async {
     await _waitForLogin();
     if (group != null) {
       List<dynamic>? eventIds = await loadEventIds(group.id);
