@@ -183,7 +183,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
 
     if (!_link) {
       Auth2().authenticateWithPhone(phoneNumber).then((success) => _loginByPhoneCallback(success, phoneNumber));
-    } else if (!Auth2().isPhoneLinked){
+    } else if (!Auth2().isPhoneLinked){ // at most one phone number may be linked at a time
       Map<String, dynamic> creds = {
         "phone": phoneNumber
       };
@@ -236,7 +236,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
             if (state != Auth2EmailAccountState.nonExistent) {
               setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.link.exists", "You have already linked this email address to your account."));
               return;
-            } else if (Auth2().isEmailLinked) {
+            } else if (Auth2().isEmailLinked) { // at most one email address may be linked at a time
               setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.linked.text", "You have already linked an email address to your account."));
               return;
             }
