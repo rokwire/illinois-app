@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -26,7 +26,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
 import 'package:illinois/model/Roster.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 
 class AthleticsRosterListPanel extends StatefulWidget {
@@ -212,7 +212,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   }
 
   void _onRosterItemTap(Roster roster){
-    Analytics.instance.logSelect(target: "Roster: "+roster.name!);
+    Analytics().logSelect(target: "Roster: "+roster.name!);
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -221,7 +221,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
 
   @override
   void onTabClicked(int? tabIndex, RoundedTab caller) {
-    Analytics.instance.logSelect(target: caller.title) ;
+    Analytics().logSelect(target: caller.title) ;
     setState(() {
       _selectedTabIndex = tabIndex;
       _tabs = _constructTabWidgets();

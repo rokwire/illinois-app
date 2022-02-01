@@ -15,15 +15,16 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Poll.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/service/Polls.dart' as illinois;
 
 class PollBubblePromptPanel extends StatefulWidget {
   final String? pollId;
@@ -67,7 +68,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel>  {
 
   void _onClose() {
     Navigator.of(context).pop();
-    Polls().closePresent();
+    Polls().closePresenting();
   }
 }
 
@@ -466,7 +467,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
         });
       }
     }).catchError((e){
-      AppAlert.showDialogResult(context, e.toString());
+      AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     }).whenComplete((){
       setState(() {
         int? value = _votingOptions[optionIndex];
@@ -493,7 +494,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
   void _onClose() {
     if (_votingOptions.length == 0) {
       Navigator.of(context).pop();
-      Polls().closePresent();
+      Polls().closePresenting();
     }
   }
 

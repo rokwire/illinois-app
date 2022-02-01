@@ -18,14 +18,14 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/model/GeoFence.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/GeoFence.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/geo_fence.dart';
+import 'package:rokwire_plugin/service/firebase_core.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -41,7 +41,8 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/config.dart' as rokwire;
 
 class DebugHomePanel extends StatefulWidget {
   @override
@@ -51,7 +52,7 @@ class DebugHomePanel extends StatefulWidget {
 class _DebugHomePanelState extends State<DebugHomePanel> implements NotificationsListener {
 
   DateTime? _offsetDate;
-  ConfigEnvironment? _selectedEnv;
+  rokwire.ConfigEnvironment? _selectedEnv;
   Set<String> _rangingRegionIds = Set();
 
   final TextEditingController _mapThresholdDistanceController = TextEditingController();
@@ -117,7 +118,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   Widget build(BuildContext context) {
     String? userUuid = Auth2().accountId;
     String? pid = Auth2().profile?.id;
-    String? firebaseProjectId = FirebaseMessaging().projectID;
+    String? firebaseProjectId = FirebaseCore().app?.options.projectId;
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
@@ -192,11 +193,11 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       separatorBuilder: (context, index) => Divider(color: Colors.transparent),
-                      itemCount: ConfigEnvironment.values.length,
+                      itemCount: rokwire.ConfigEnvironment.values.length,
                       itemBuilder: (context, index) {
-                        ConfigEnvironment environment = ConfigEnvironment.values[index];
+                        rokwire.ConfigEnvironment environment = rokwire.ConfigEnvironment.values[index];
                         RadioListTile widget = RadioListTile(
-                            title: Text(configEnvToString(environment)!), value: environment, groupValue: _selectedEnv, onChanged: _onConfigChanged);
+                            title: Text(rokwire.configEnvToString(environment)!), value: environment, groupValue: _selectedEnv, onChanged: _onConfigChanged);
                         return widget;
                       },
                     )
@@ -308,7 +309,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             borderColor: Styles().colors!.fillColorPrimary,
                             onTap: _onTapClearVoting)),
                     Visibility(
-                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
@@ -320,7 +321,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               onTap: _onTapGuide))
                     ),
                     Visibility(
-                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
@@ -341,7 +342,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             borderColor: Styles().colors!.fillColorPrimary,
                             onTap: _onTapRefreshToken)),
                     Visibility(
-                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
@@ -492,7 +493,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     // 2. Start ranging for all current (inside) regions that are not already raning.
     for (String regionId in currentRegionIds) {
       GeoFenceRegion region = GeoFence().regions![regionId]!;
-      if ((region.regionType == GeoFenceRegionType.Beacon) && !_rangingRegionIds.contains(regionId)) {
+      if ((region.regionType == GeoFenceRegionType.beacon) && !_rangingRegionIds.contains(regionId)) {
         GeoFence().startRangingBeaconsInRegion(regionId).then((_) {
           _rangingRegionIds.add(regionId);
         });
@@ -509,7 +510,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onDisableLiveGameCheckToggled() {
     setState(() {
-      Storage().debugDisableLiveGameCheck = !Storage().debugDisableLiveGameCheck!;
+      Storage().debugDisableLiveGameCheck = (Storage().debugDisableLiveGameCheck != true);
     });
   }
 
@@ -608,7 +609,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onConfigChanged(dynamic env) {
-    if (env is ConfigEnvironment) {
+    if (env is rokwire.ConfigEnvironment) {
       setState(() {
         Config().configEnvironment = env;
         _selectedEnv = Config().configEnvironment;
@@ -617,7 +618,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onTapHttpProxy() {
-    if(Config().configEnvironment == ConfigEnvironment.dev) {
+    if(Config().configEnvironment == rokwire.ConfigEnvironment.dev) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHttpProxyPanel()));
     }
   }

@@ -6,17 +6,17 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -151,7 +151,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(_event?.exploreImageURL) ?  Positioned.fill(child:Image.network(widget.event!.exploreImageURL!, fit: BoxFit.cover, headers: Network.authApiKeyHeader, excludeFromSemantics: true)) : Container(),
+          StringUtils.isNotEmpty(_event?.exploreImageURL) ?  Positioned.fill(child:Image.network(widget.event!.exploreImageURL!, fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false),
             child: Container(
@@ -466,7 +466,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            Analytics.instance.logSelect(target: "Favorite: ${_event?.title}");
+            Analytics().logSelect(target: "Favorite: ${_event?.title}");
             Auth2().prefs?.toggleFavorite(_event);
             setState(() {});
           },
@@ -544,7 +544,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onTapWebButton(String? url, { String? analyticsName }) {
     if (analyticsName != null) {
-      Analytics.instance.logSelect(target: analyticsName);
+      Analytics().logSelect(target: analyticsName);
     }
     if(StringUtils.isNotEmpty(url)){
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsName: "WebPanel($analyticsName)",)));
@@ -552,7 +552,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onTapRegistration(String? registrationUrl) {
-    Analytics.instance.logSelect(target: "Registration");
+    Analytics().logSelect(target: "Registration");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _onTapWebButton(registrationUrl);
@@ -570,7 +570,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         _onTapWebButton(url, analyticsName: "Event Link");
       }
     } else if(_event?.location?.latitude != null && _event?.location?.longitude != null) {
-      Analytics.instance.logSelect(target: "Location Detail");
+      Analytics().logSelect(target: "Location Detail");
       NativeCommunicator().launchExploreMapDirections(target: _event);
     }
   }

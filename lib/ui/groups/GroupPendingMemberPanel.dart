@@ -19,13 +19,13 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupPendingMemberPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -102,7 +102,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(widget.member?.name ?? "",
+                  Text(widget.member?.displayShortName ?? "",
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies!.extraBold,
                         fontSize: 20,

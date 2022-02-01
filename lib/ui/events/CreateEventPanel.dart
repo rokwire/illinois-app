@@ -25,11 +25,10 @@ import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -41,9 +40,10 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as timezone;
+import 'package:rokwire_plugin/service/config.dart';
 
 
 class CreateEventPanel extends StatefulWidget {
@@ -183,7 +183,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             alignment: Alignment.bottomCenter,
                             children: <Widget>[
                               StringUtils.isNotEmpty(_imageUrl)
-                                  ? Positioned.fill(child: Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Network.authApiKeyHeader))
+                                  ? Positioned.fill(child: Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))
                                   : Container(),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.white), child: Container(height: 30)),
@@ -1489,10 +1489,18 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       _isOnline = event.isVirtual ?? false;
       _isFree = event.isEventFree?? false;
       _location = event.location;
-      _eventDescriptionController.text = event.longDescription!;
-      _eventPurchaseUrlController.text = event.registrationUrl!;
-      _eventWebsiteController.text = event.titleUrl!;
-      _eventPriceController.text = event.cost!;
+      if (event.longDescription != null) {
+        _eventDescriptionController.text = event.longDescription!;
+      }
+      if (event.registrationUrl != null) {
+        _eventPurchaseUrlController.text = event.registrationUrl!;
+      }
+      if (event.titleUrl != null) {
+        _eventWebsiteController.text = event.titleUrl!;
+      }
+      if (event.cost != null) {
+        _eventPriceController.text = event.cost!;
+      }
       _selectedPrivacy = (event.isGroupPrivate??false) ? eventPrivacyPrivate : eventPrivacyPublic;
       if(event.location!=null){
         if (_isOnline) {
@@ -1535,7 +1543,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onCategoryDropDownValueChanged(dynamic value) {
-    Analytics.instance.logSelect(target: "Category selected: $value");
+    Analytics().logSelect(target: "Category selected: $value");
     setState(() {
       _selectedCategory = value;
       _modified = true;
@@ -1558,7 +1566,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTimeZoneDropDownValueChanged(dynamic value) {
-    Analytics.instance.logSelect(target: "Time Zone selected: $value");
+    Analytics().logSelect(target: "Time Zone selected: $value");
     setState(() {
       _selectedTimeZone = value;
       _modified = true;
@@ -1566,7 +1574,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onPrivacyDropDownValueChanged(dynamic value) {
-    Analytics.instance.logSelect(target: "Privacy selected: $value");
+    Analytics().logSelect(target: "Privacy selected: $value");
     setState(() {
       _selectedPrivacy = value;
       _modified = true;
@@ -1574,7 +1582,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapAddImage() async {
-    Analytics.instance.logSelect(target: "Add Image");
+    Analytics().logSelect(target: "Add Image");
     String? imageUrl = await showDialog(
         context: context,
         builder: (_) => AddImageWidget()
@@ -1616,7 +1624,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }*/
 
   void _onTapSelectLocation() {
-    Analytics.instance.logSelect(target: "Select Location");
+    Analytics().logSelect(target: "Select Location");
     _performSelectLocation();
   }
 
@@ -1651,7 +1659,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       }
 
       _location!.name = locationName;
-      _eventLocationController.text = locationName!;
+      _eventLocationController.text = StringUtils.ensureNotEmpty(locationName);
 
       if(StringUtils.isNotEmpty(_location!.description)){
         if (_isOnline) {
@@ -1673,7 +1681,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapConfirmPurchaseUrl() {
-    Analytics.instance.logSelect(target: "Confirm Purchase url");
+    Analytics().logSelect(target: "Confirm Purchase url");
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -1682,7 +1690,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapConfirmCallUrl() {
-    Analytics.instance.logSelect(target: "Confirm Purchase url");
+    Analytics().logSelect(target: "Confirm Purchase url");
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -1691,7 +1699,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapConfirmWebsiteUrl() {
-    Analytics.instance.logSelect(target: "Confirm Website url");
+    Analytics().logSelect(target: "Confirm Website url");
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -1699,7 +1707,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapCancel() {
-    Analytics.instance.logSelect(target: "Cancel");
+    Analytics().logSelect(target: "Cancel");
     Navigator.pop(context);
     //TBD: prompt
   }
@@ -1733,12 +1741,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         actions: <Widget>[
           TextButton(child: Text(Localization().getStringEx("dialog.yes.title", "Yes")!),
             onPressed:(){
-              Analytics.instance.logAlert(text: message, selection: "Yes");
+              Analytics().logAlert(text: message, selection: "Yes");
               Navigator.pop(context, true);
             }),
           TextButton(child: Text(Localization().getStringEx("dialog.no.title", "No")!),
             onPressed:(){
-              Analytics.instance.logAlert(text: message, selection: "No");
+              Analytics().logAlert(text: message, selection: "No");
               Navigator.pop(context, false);
             }),
         ]
@@ -1747,7 +1755,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapPreview() async {
-    Analytics.instance.logSelect(target: "Preview");
+    Analytics().logSelect(target: "Preview");
     if (_validateWithResult()) {
       Event event = _constructEventFromData();
       Navigator.push(
@@ -1771,7 +1779,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   /// Display all group titles that event is failed to be created or linked to.
   ///
   Future<void> _onTapCreate() async {
-    Analytics.instance.logSelect(target: "Create");
+    Analytics().logSelect(target: "Create");
     if (_validateWithResult()) {
       _setLoading(true);
       bool hasGroup = (widget.group != null);
@@ -1932,7 +1940,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapStartDate() async {
-    Analytics.instance.logSelect(target: "Start Date");
+    Analytics().logSelect(target: "Start Date");
     timezone.TZDateTime? date = await _pickDate(_startDate, null);
 
     if (date != null) {
@@ -1944,7 +1952,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapStartTime() async {
-    Analytics.instance.logSelect(target: "Start Time");
+    Analytics().logSelect(target: "Start Time");
     timezone.TZDateTime start = _startDate ?? timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone!));
     TimeOfDay? time =
         await _pickTime(_startTime ?? (new TimeOfDay.fromDateTime(start)));
@@ -1956,7 +1964,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapEndDate() async {
-    Analytics.instance.logSelect(target: "End Date");
+    Analytics().logSelect(target: "End Date");
     timezone.TZDateTime? date = await _pickDate(_endDate, _startDate);
 
     if (date != null) {
@@ -1968,7 +1976,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapEndTime() async {
-    Analytics.instance.logSelect(target: "End Time");
+    Analytics().logSelect(target: "End Time");
     timezone.TZDateTime end = _endDate ?? timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone!));
     TimeOfDay? time =
         await _pickTime(_endTime ?? (new TimeOfDay.fromDateTime(end)));
@@ -2252,12 +2260,12 @@ class _AddImageWidgetState extends State<AddImageWidget> {
   }
 
   void _onTapCloseImageSelection() {
-    Analytics.instance.logSelect(target: "Close image selection");
+    Analytics().logSelect(target: "Close image selection");
     Navigator.pop(context, "");
   }
 
   void _onTapUseUrl() {
-    Analytics.instance.logSelect(target: "Use Url");
+    Analytics().logSelect(target: "Use Url");
     String url = _imageUrlController.value.text;
     if (url == "") {
       AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url")!);
@@ -2301,7 +2309,7 @@ class _AddImageWidgetState extends State<AddImageWidget> {
   }
 
   void _onTapChooseFromDevice() {
-    Analytics.instance.logSelect(target: "Choose From Device");
+    Analytics().logSelect(target: "Choose From Device");
 
     setState(() {
       _showGalleryProgress = true;
@@ -2358,9 +2366,10 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
 
   @override
   Widget build(BuildContext context) {
-    BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
-    return Dialog(
-        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+    return AlertDialog(
+      contentPadding: EdgeInsets.zero,
+        scrollable: true,
+        content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
       Container(
           decoration: BoxDecoration(
             color: Styles().colors!.fillColorPrimary,
@@ -2375,18 +2384,7 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
           ])),
       Padding(
           padding: EdgeInsets.all(10),
-          child: CollectionUtils.isNotEmpty(widget.groups)
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) => ToggleRibbonButton(
-                      borderRadius: _topRounding,
-                      label: widget.groups![index].title,
-                      toggled: _isGroupSelected(index),
-                      context: context,
-                      onTap: () => _onTapGroup(index),
-                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
-                  itemCount: widget.groups!.length)
-              : Container()),
+          child: _buildGroupsList()),
       Semantics(
         container: true,
         child:Padding(
@@ -2398,6 +2396,26 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
               textColor: Styles().colors!.fillColorPrimary,
               onTap: _onTapSelect)))
     ]));
+  }
+
+  Widget _buildGroupsList() {
+    if (CollectionUtils.isNotEmpty(widget.groups)) {
+      return Container();
+    }
+    List<Widget> groupWidgetList = [];
+    for (int index = 0; index < widget.groups!.length; index++) {
+      Group group = widget.groups![index];
+      Widget groupSelectionWidget = ToggleRibbonButton(
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+          label: group.title,
+          toggled: _isGroupSelected(index),
+          context: context,
+          onTap: () => _onTapGroup(index),
+          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold));
+
+      groupWidgetList.add(groupSelectionWidget);
+    }
+    return Column(children: groupWidgetList);
   }
 
   void _onTapGroup(int index) {

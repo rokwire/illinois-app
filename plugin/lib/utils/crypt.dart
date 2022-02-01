@@ -18,8 +18,8 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import "package:asn1lib/asn1lib.dart";
 import 'package:flutter/foundation.dart';
+import "package:asn1lib/asn1lib.dart";
 import "package:pointycastle/export.dart";
 import 'package:encrypt/encrypt.dart' as encrypt_package;
 
@@ -36,9 +36,7 @@ class AESCrypt {
         return encrypter.encrypt(plainText, iv: encrypterIV).base64;
       }
       catch(e) {
-        if (kDebugMode) {
-          print(e.toString());
-        }
+        debugPrint(e.toString());
       }
     }
     return null;
@@ -53,9 +51,7 @@ class AESCrypt {
         return encrypter.decrypt(encrypt_package.Encrypted.fromBase64(cipherBase64), iv: encrypterIV);
       }
       catch(e) {
-        if (kDebugMode) {
-          print(e.toString());
-        }
+        debugPrint(e.toString());
       }
     }
     return null;
@@ -100,9 +96,7 @@ class RSACrypt {
         return encrypter.encrypt(plainText).base64;
       }
       catch(e) {
-        if (kDebugMode) {
-          print(e.toString());
-        }
+        debugPrint(e.toString());
       }
       return null;
   }
@@ -113,9 +107,7 @@ class RSACrypt {
         return encrypter.decrypt(encrypt_package.Encrypted.fromBase64(cipherBase64));
       }
       catch(e) {
-        if (kDebugMode) {
-          print(e.toString());
-        }
+        debugPrint(e.toString());
       }
       return null;
   }

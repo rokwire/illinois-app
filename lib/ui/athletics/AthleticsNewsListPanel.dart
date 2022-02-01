@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
@@ -30,7 +30,7 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 import 'AthleticsNewsArticlePanel.dart';
 
@@ -265,7 +265,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
 
   //Click listeners
   void _onNewsTap(News news) {
-    Analytics.instance.logSelect(target: "news: "+news.title!);
+    Analytics().logSelect(target: "news: "+news.title!);
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -273,14 +273,14 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   }
 
   void _onFilterTypeClicked() {
-    Analytics.instance.logSelect(target: "Filter");
+    Analytics().logSelect(target: "Filter");
     setState(() {
         _filterOptionsVisible = !_filterOptionsVisible;
     });
   }
 
   void _onFilterValueClick(int newValueIndex) {
-    Analytics.instance.logSelect(target: "Filter: ${_filters[newValueIndex]}") ;
+    Analytics().logSelect(target: "Filter: ${_filters[newValueIndex]}") ;
     setState(() {
       _selectedFilterIndex = newValueIndex;
       _filterOptionsVisible = false;

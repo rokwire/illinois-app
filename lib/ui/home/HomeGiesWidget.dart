@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
@@ -803,7 +803,7 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
                       Semantics(
                         label: Localization().getStringEx("dialog.close.title","Close"), button: true,
                         child: InkWell(onTap:() {
-                          Analytics.instance.logAlert(text: "Things to Remember", selection: "Close");
+                          Analytics().logAlert(text: "Things to Remember", selection: "Close");
                           Navigator.of(context).pop();
                         }, child:
                         Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors!.white!, width: 2),), child:
@@ -854,7 +854,7 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
   }
 
   void _onSave() {
-    Analytics.instance.logAlert(text: "Things to Remember", selection: "Save");
+    Analytics().logAlert(text: "Things to Remember", selection: "Save");
 
     if (widget.notes != null) {
       for (dynamic note in widget.notes!) {

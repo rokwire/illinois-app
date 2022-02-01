@@ -16,12 +16,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/model/Poll.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/service/Polls.dart' as illinois;
 
 class PollBubblePinPanel extends StatefulWidget {
 
@@ -299,30 +301,36 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
 
   void _onContinue() {
     if(_validate()) {
-      setState(() {
-        _loading = true;
-      });
-      
-      Polls().load(pollPin: _pinInt).then((Poll? poll) {
-        if (poll == null) {
-          AppAlert.showDialogResult(context, Localization().getStringEx('panel.poll_pin_bouble.unable_to_load_poll', 'Unable to load poll'));
-        }
-        else if (poll.status == PollStatus.created) {
-          AppAlert.showDialogResult(context, Localization().getStringEx('panel.poll_pin_bouble.poll_not_opened', 'Poll is not opened yet'));
-        }
-        else if (poll.status == PollStatus.closed) {
-          AppAlert.showDialogResult(context, Localization().getStringEx('panel.poll_pin_bouble.poll_closed', 'Poll is already closed'));
-        }
-        else {
-          Navigator.of(context).pop(poll);
-        }
-      }).catchError((e){
-        AppAlert.showDialogResult(context, e.toString());
-      }).whenComplete((){
+
+      if (!Connectivity().isNotOffline) {
+        AppAlert.showDialogResult(context, Localization().getStringEx('app.offline.message.title', 'You appear to be offline'));
+      }
+      else {
         setState(() {
-          _loading = false;
+          _loading = true;
         });
-      });
+        
+        Polls().load(pollPin: _pinInt).then((Poll? poll) {
+          if (poll == null) {
+            AppAlert.showDialogResult(context, Localization().getStringEx('panel.poll_pin_bouble.unable_to_load_poll', 'Unable to load poll'));
+          }
+          else if (poll.status == PollStatus.created) {
+            AppAlert.showDialogResult(context, Localization().getStringEx('panel.poll_pin_bouble.poll_not_opened', 'Poll is not opened yet'));
+          }
+          else if (poll.status == PollStatus.closed) {
+            AppAlert.showDialogResult(context, Localization().getStringEx('panel.poll_pin_bouble.poll_closed', 'Poll is already closed'));
+          }
+          else {
+            Navigator.of(context).pop(poll);
+          }
+        }).catchError((e){
+          AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
+        }).whenComplete((){
+          setState(() {
+            _loading = false;
+          });
+        });
+      }
     }
   }
 

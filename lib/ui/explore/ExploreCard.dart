@@ -17,11 +17,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Sports.dart';
@@ -29,12 +29,12 @@ import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class ExploreCard extends StatefulWidget {
   final GestureTapCallback? onTap;
@@ -145,7 +145,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                                     width: _smallImageSize,
                                     height: _smallImageSize,
                                     child: Image.network(
-                                      imageUrl, excludeFromSemantics: true, fit: BoxFit.fill, headers: Network.authApiKeyHeader),),)),
+                                      imageUrl, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),),)),
                           ],),
                           _explorePaymentTypes(),
                           _buildConvergeButton(),
@@ -519,7 +519,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   void _onTapExploreCardStar() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.explore?.exploreTitle}");
+    Analytics().logSelect(target: "Favorite: ${widget.explore?.exploreTitle}");
     widget.explore!.toggleFavorite();
   }
 
@@ -614,7 +614,7 @@ class _EventSmallCard extends StatelessWidget {
                       visible: starVisible, child: GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () {
-                          Analytics.instance.logSelect(target: "Favorite: ${event?.title}");
+                          Analytics().logSelect(target: "Favorite: ${event?.title}");
                           Auth2().prefs?.toggleFavorite(favorite);
                         },
                         child: Semantics(

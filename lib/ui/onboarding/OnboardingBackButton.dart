@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 
 class OnboardingBackButton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;

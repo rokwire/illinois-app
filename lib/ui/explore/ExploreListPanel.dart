@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -26,7 +26,7 @@ import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
 class ExploreListPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -124,7 +124,7 @@ class _ExploreListPanelState extends State<ExploreListPanel> {
   }
 
   void _onExploreTap(Explore explore) {
-    Analytics.instance.logSelect(target: explore.exploreTitle);
+    Analytics().logSelect(target: explore.exploreTitle);
 
     //show the detail panel
     Event? event = (explore is Event) ? explore : null;

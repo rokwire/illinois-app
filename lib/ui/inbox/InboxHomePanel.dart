@@ -3,17 +3,17 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/model/Inbox.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/Inbox.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -207,14 +207,17 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _handleRedirectTap(InboxMessage message) {
-    FirebaseMessaging().processDataMessage(message.data, allowedTypes: {
-      FirebaseMessaging.payloadTypeEventDetail,
-      FirebaseMessaging.payloadTypeGameDetail,
-      FirebaseMessaging.payloadTypeAthleticsGameStarted,
-      FirebaseMessaging.payloadTypeAthleticsNewDetail,
-      FirebaseMessaging.payloadTypeGroup,
-    });
+    String? messageType = FirebaseMessaging.getMessageType(message.data);
+    if ((messageType == FirebaseMessaging.payloadTypeEventDetail) ||
+        (messageType == FirebaseMessaging.payloadTypeGameDetail) ||
+        (messageType == FirebaseMessaging.payloadTypeAthleticsGameStarted) ||
+        (messageType == FirebaseMessaging.payloadTypeAthleticsNewDetail) ||
+        (messageType == FirebaseMessaging.payloadTypeGroup))
+    {
+      FirebaseMessaging().processDataMessage(message.data);
+    }
   }
+  
   // Banner
   Widget _buildBanner(){ //TBD localize
     return
@@ -561,12 +564,12 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onBack() {
-    Analytics.instance.logSelect(target: "Back");
+    Analytics().logSelect(target: "Back");
     Navigator.pop(context);
   }
 
   void _onEdit() {
-    Analytics.instance.logSelect(target: "Edit");
+    Analytics().logSelect(target: "Edit");
     setState(() {
       _isEditMode = true;
       _selectedMessageIds.clear();
@@ -574,7 +577,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onDone() {
-    Analytics.instance.logSelect(target: "Done");
+    Analytics().logSelect(target: "Done");
     setState(() {
       _isEditMode = false;
       _selectedMessageIds.clear();
@@ -582,7 +585,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onSelectAll() {
-    Analytics.instance.logSelect(target: "Select All");
+    Analytics().logSelect(target: "Select All");
     setState(() {
       for (InboxMessage message in _messages) {
         if (message.messageId != null) {
@@ -593,24 +596,24 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onDeselectAll() {
-    Analytics.instance.logSelect(target: "Deselect All");
+    Analytics().logSelect(target: "Deselect All");
     setState(() {
       _selectedMessageIds.clear();
     });
   }
 
   void _onOptions() {
-    Analytics.instance.logSelect(target: "Options");
+    Analytics().logSelect(target: "Options");
     showModalBottomSheet(context: context, backgroundColor: Colors.white, isScrollControlled: true, isDismissible: true, builder: _buildOptions);
   }
 
   void _onCancelOptions(BuildContext context) {
-    Analytics.instance.logSelect(target: "Cancel");
+    Analytics().logSelect(target: "Cancel");
     Navigator.pop(context);
   }
 
   void _onDelete(BuildContext context) {
-    Analytics.instance.logSelect(target: "Delete");
+    Analytics().logSelect(target: "Delete");
     Navigator.pop(context);
 
     String message = (_selectedMessageIds.length == 1) ?
@@ -650,7 +653,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onCancelConfirmation({String? message, String? selection}) {
-    Analytics.instance.logAlert(text: "Remove My Information", selection: "No");
+    Analytics().logAlert(text: "Remove My Information", selection: "No");
     Navigator.pop(context);
   }
 
@@ -985,7 +988,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
   }
 
   void _onTapFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.message!.subject}");
+    Analytics().logSelect(target: "Favorite: ${widget.message!.subject}");
     setState(() {
       Auth2().prefs?.toggleFavorite(widget.message);
     });

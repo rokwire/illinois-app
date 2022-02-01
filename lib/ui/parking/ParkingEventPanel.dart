@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Parking.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/TransportationService.dart';
@@ -26,7 +26,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class ParkingEventPanel extends StatefulWidget{
 
@@ -267,7 +267,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
   }
 
   void _onTapDirections() {
-    Analytics.instance.logSelect(target: 'Parking Lot Directions');
+    Analytics().logSelect(target: 'Parking Lot Directions');
     NativeCommunicator().launchExploreMapDirections(target: widget.inventory);
   }
 }

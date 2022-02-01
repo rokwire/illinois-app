@@ -1,9 +1,9 @@
 
 import 'package:device_calendar/device_calendar.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -14,6 +14,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/model/Event.dart' as ExploreEvent;
 import 'package:timezone/timezone.dart' as timezone;
+import 'package:collection/collection.dart';
 
 class DeviceCalendar with Service implements NotificationsListener{
   static const String notifyPromptPopup            = "edu.illinois.rokwire.device_calendar.messaging.message.popup";
@@ -155,7 +156,7 @@ class DeviceCalendar with Service implements NotificationsListener{
     List<Calendar>? calendars = calendarsResult.data;
     _deviceCalendars = calendars!=null && calendars.isNotEmpty? calendars.where((Calendar calendar) => calendar.isReadOnly == false).toList() : null;
     if(CollectionUtils.isNotEmpty(_deviceCalendars)) {
-      _defaultCalendar = (_deviceCalendars as List<Calendar?>).firstWhere((element) => (element?.isDefault == true), orElse: () => null);
+      _defaultCalendar = _deviceCalendars!.firstWhereOrNull((element) => (element.isDefault == true));
       return true;
     }
     _debugMessage("No Calendars");

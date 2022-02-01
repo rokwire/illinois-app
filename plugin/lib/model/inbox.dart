@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:intl/intl.dart';
@@ -92,10 +92,10 @@ class InboxMessage with Favorite {
   // Accessies
 
   String get displaySender {
-    if (sender?.type == InboxSenderType.System) {
+    if (sender?.type == InboxSenderType.system) {
       return 'System';
     }
-    else if (sender?.type == InboxSenderType.User) {
+    else if (sender?.type == InboxSenderType.user) {
       return sender?.user?.name ?? 'Unknown';
     }
     else {
@@ -247,14 +247,14 @@ class InboxSenderUser {
   }
 }
 
-enum InboxSenderType { System, User }
+enum InboxSenderType { system, user }
 
 InboxSenderType? inboxSenderTypeFromString(String? value) {
   if (value == 'system') {
-    return InboxSenderType.System;
+    return InboxSenderType.system;
   }
   else if (value == 'user') {
-    return InboxSenderType.User;
+    return InboxSenderType.user;
   }
   else {
     return null;
@@ -262,10 +262,10 @@ InboxSenderType? inboxSenderTypeFromString(String? value) {
 }
 
 String? inboxSenderTypeToString(InboxSenderType? value) {
-  if(value == InboxSenderType.System) {
+  if(value == InboxSenderType.system) {
     return 'system';
   }
-  else if (value == InboxSenderType.User) {
+  else if (value == InboxSenderType.user) {
     return 'user';
   }
   else {
@@ -302,18 +302,20 @@ class InboxUserInfo{
     };
   }
 
-  bool operator ==(o) =>
-    (o is InboxUserInfo) &&
-      (o.userId == userId) &&
-      (o.dateCreated == dateCreated) &&
-      (o.dateUpdated == dateUpdated) &&
-      (o.notificationsDisabled == notificationsDisabled)&&
-      (DeepCollectionEquality().equals(o.topics, topics));
+  @override
+  bool operator ==(other) =>
+    (other is InboxUserInfo) &&
+      (other.userId == userId) &&
+      (other.dateCreated == dateCreated) &&
+      (other.dateUpdated == dateUpdated) &&
+      (other.notificationsDisabled == notificationsDisabled)&&
+      (const DeepCollectionEquality().equals(other.topics, topics));
 
+  @override
   int get hashCode =>
     (userId?.hashCode ?? 0) ^
     (dateCreated?.hashCode ?? 0) ^
     (dateUpdated?.hashCode ?? 0) ^
     (notificationsDisabled?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(topics));
+    (const DeepCollectionEquality().hash(topics));
 }

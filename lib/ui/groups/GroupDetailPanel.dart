@@ -18,17 +18,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/model/Poll.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
@@ -44,7 +43,7 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
@@ -510,7 +509,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       ModalImageDialog.modalDialogContainer(
         imageUrl: _modalImageUrl,
         onClose: () {
-          Analytics.instance.logSelect(target: "Close");
+          Analytics().logSelect(target: "Close");
           _modalImageUrl = null;
           setState(() {});
         },
@@ -537,7 +536,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Network.authApiKeyHeader)) : Container(),
+          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false),
             child: Container(
@@ -760,23 +759,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       tabs.add(tabWidget);
     }
 
-    if (_canLeaveGroup) {
-      Widget leaveButton = GestureDetector(
-          onTap: _onTapLeave,
-          child: Padding(
-              padding: EdgeInsets.only(left: 24, top: 10, bottom: 10),
-              child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave')!,
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: Styles().fontFamilies!.regular,
-                      color: Styles().colors!.fillColorPrimary,
-                      decoration: TextDecoration.underline,
-                      decorationColor: Styles().colors!.fillColorSecondary,
-                      decorationThickness: 1.5))));
-      tabs.add(leaveButton);
-    }
+    Widget leaveButton = GestureDetector(
+        onTap: _onTapLeave,
+        child: Padding(
+            padding: EdgeInsets.only(left: 24, top: 10, bottom: 10),
+            child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave')!,
+                style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: Styles().fontFamilies!.regular,
+                    color: Styles().colors!.fillColorPrimary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: Styles().colors!.fillColorSecondary,
+                    decorationThickness: 1.5))));
 
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: tabs)));
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: tabs)),
+      Visibility(visible: _canLeaveGroup, child: Padding(padding: EdgeInsets.only(top: 5), child: Row(children: [Expanded(child: Container()), leaveButton])))
+    ]));
   }
 
   Widget _buildEvents() {

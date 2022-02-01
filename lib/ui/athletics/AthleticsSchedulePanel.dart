@@ -18,14 +18,14 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/model/sport/Team.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsScheduleCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsSchedulePanel extends StatefulWidget {
   final SportDefinition? sport;
@@ -172,7 +172,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
   }
 
   void _setDisplayUpcoming(bool displayUpcoming) {
-    Analytics.instance.logSelect(target: displayUpcoming ? "Upcoming" : "Past");
+    Analytics().logSelect(target: displayUpcoming ? "Upcoming" : "Past");
     if (_displayUpcoming != displayUpcoming) {
       setState(() {
         _scrollController.jumpTo(0);

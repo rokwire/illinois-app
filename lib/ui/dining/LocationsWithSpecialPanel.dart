@@ -20,12 +20,12 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DiningService.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:geolocator/geolocator.dart';
 
 class LocationsWithSpecialPanel extends StatefulWidget {
@@ -187,7 +187,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
   //Click listeners
 
   void _onDiningTap(Dining dining) {
-    Analytics.instance.logSelect(target: dining.exploreTitle);
+    Analytics().logSelect(target: dining.exploreTitle);
 
     Navigator.push(context, CupertinoPageRoute(
         builder: (context) =>

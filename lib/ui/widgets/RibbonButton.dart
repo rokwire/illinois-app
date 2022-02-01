@@ -15,10 +15,10 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class RibbonButton extends StatelessWidget {
   final String? label;
@@ -64,7 +64,12 @@ class RibbonButton extends StatelessWidget {
   Widget _content() {
     Widget? image = getImage();
     return GestureDetector(
-      onTap: () { onTap!(); anaunceChange(); },
+      onTap: () {
+        if (onTap != null) {
+          onTap!();
+          anaunceChange();
+        }
+      },
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[ Expanded(
         child: Container(
           decoration: BoxDecoration(color: backgroundColor, border:border, borderRadius: borderRadius, boxShadow: shadow),

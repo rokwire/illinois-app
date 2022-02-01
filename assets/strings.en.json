@@ -113,6 +113,7 @@
     "panel.home.connect.not_logged_in.netid.description.part_3": " or ",
     "panel.home.connect.not_logged_in.netid.description.part_4": "employee",
     "panel.home.connect.not_logged_in.netid.description.part_5": "? Sign in with your NetID.",
+    "panel.home.connect.not_logged_in.netid.description.part_6": " (A NetID sign-in is REQUIRED to be able to use the Building Access feature).",
     "panel.home.connect.not_logged_in.netid.title": "Connect your NetID",
     "panel.home.connect.not_logged_in.phone_or_email.description.part_1": "Don't have a NetID? ",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
@@ -905,7 +906,6 @@
 
     "panel.settings.feedback.label.title": "Provide Feedback",
     "panel.settings.faqs.label.title": "FAQs",
-    "panel.settings.crisis_help.label.title": "Crisis Help",
 
     "panel.settings.privacy_statement.label.title": "Privacy Statement",
 
@@ -1710,6 +1710,9 @@
     "panel.manage_members.button.see_all_requests.hint": "",
     "panel.manage_members.label.filter_by": "Filter by",
     "panel.manage_members.label.filter_by.all_members": "All members (#)",
+    "panel.manage_members.field.search.title": "Search",
+    "panel.manage_members.button.search.clear.title": "Clear",
+    "panel.manage_members.button.search.title": "Search",
 
     "panel.pending_member_detail.button.add.title": "Add",
     "panel.pending_member_detail.button.add.hint": "",
@@ -1950,6 +1953,41 @@
 	"panel.home.safer.test_locations.wait_time.status.label.yellow": "Medium wait time",
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
+    "panel.home_canvas_course.header.title": "Course",
+    "panel.home_canvas_course.load.failed.error.msg": "Failed to load course. Please, try again later.",
+    "panel.home_canvas_course.button.syllabus.title": "Syllabus",
+    "panel.home_canvas_course.button.announcements.title": "Announcements",
+    "panel.home_canvas_course.button.files.title": "Files",
+    "panel.home_canvas_course.button.collaborations.title": "Collaborations",
+    "panel.home_canvas_course.button.calendar.title": "Calendar",
+    "panel.home_canvas_course.button.notifications.title": "Notifications",
+    "panel.home_canvas_course.button.inbox.title": "Inbox",
+
+    "panel.syllabus_canvas_course.header.title": "Syllabus",
+    "panel.syllabus_canvas_course.load.failed.error.msg": "Failed to load course. Please, try again later.",
+    "panel.syllabus_canvas_course.button.syllabus.title": "Syllabus",
+    "panel.syllabus_canvas_course.button.modules.title": "Modules",
+    "panel.syllabus_canvas_course.button.assignments.title": "Assignments",
+    "panel.syllabus_canvas_course.button.zoom.title": "Zoom Meeting",
+    "panel.syllabus_canvas_course.button.grades.title": "Grades",
+
+    "panel.syllabus_html.header.title": "Syllabus",
+    "panel.syllabus_html.load.failed.error.msg": "Failed to load syllabus content. Please, try again later.",
+
+    "panel.canvas_announcements.header.title": "Announcements",
+    "panel.canvas_announcements.load.failed.error.msg": "Failed to load announcements. Please, try again later.",
+    "panel.canvas_announcements.empty.msg": "There are no announcements for this course.",
+
+    "panel.canvas_announcement.header.title": "Announcement",
+
+    "panel.canvas_files.header.title": "Files",
+    "panel.canvas_files.load.failed.error.msg": "Failed to load files and folders. Please, try again later.",
+    "panel.canvas_files.empty.msg": "There are no files and folders.",
+
+    "panel.canvas_collaborations.header.title": "Collaborations",
+    "panel.canvas_collaborations.load.failed.error.msg": "Failed to load collaborations. Please, try again later.",
+    "panel.canvas_collaborations.empty.msg": "There are no collaborations for this course.",
+
     "widget.game_day.label.its_game_day":"It's Game Day!",
 
     "widget.game_detail_heading.button.live_stats.title":"Live Stats",
@@ -1969,7 +2007,7 @@
     "widget.game_detail_heading.button.roster.title":"Roster",
     "widget.game_detail_heading.button.roster.hint": "Tap to view the roster",
 
-    "widget.home_campus_reminders.label.campus_reminders":"CAMPUS REMINDERS",
+    "widget.home_campus_reminders.label.campus_reminders": "Campus Reminders",
     "widget.home_campus_reminders.button.more.title": "View All",
     "widget.home_campus_reminders.button.more.hint": "Tap to view all reminders",
 
@@ -2115,6 +2153,8 @@
     "widget.home.interest_selection.description": "See events based on topics you chose",
     "widget.home.interest_selection.button.see_all": "See all",
 
+    "widget.home_canvas_courses.header.label": "Courses",
+
     "widget.add_image.heading": "Select Image",
     "widget.add_image.description":"Select an image type",
     "widget.add_image.field.image_url.label":"Image url",
@@ -2155,7 +2195,7 @@
     "widget.privacy_level_slider.label.right.title": "Most Features",
 
     "widget.favorites_saved_dialog.title":"This starred item has been added to your saved list" ,
-    "widget.favorites_saved_dialog.calendar.title":" and also your calendar." ,
+    "widget.favorites_saved_dialog.calendar.title": " and if it is an event, also your calendar" ,
     "widget.favorites_saved_dialog.button.view":"View saved" ,
 
     "widget.explore_card.small.view_all.title": "View all events",
@@ -2244,8 +2284,8 @@
 
     "logic.general.internal_error": "Internal Error Occured",
     "logic.general.unknown_error": "Unknown Error Occured",
-    "logic.general.invalid_response": "Invalid server responce",
-    "logic.general.response_error": "Response Error: %s %s",
+    "logic.general.invalid_response": "Invalid Server Responce",
+    "logic.general.response_error": "Server Response Error",
     "logic.general.login_failed": "Unable to login. Please try again later.",
 
     "app.exit_dialog.message":"Are you sure you want to exit?",

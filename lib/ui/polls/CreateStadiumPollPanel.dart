@@ -15,20 +15,20 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/GeoFence.dart';
-import 'package:illinois/model/Poll.dart';
+import 'package:rokwire_plugin/model/geo_fence.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/GeoFence.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/geo_fence.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 
 class CreateStadiumPollPanel extends StatefulWidget {
@@ -171,7 +171,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   _onDropDownValueChanged(dynamic value){
-    Analytics.instance.logSelect(target: "Geofence selected: $value");
+    Analytics().logSelect(target: "Geofence selected: $value");
     setState(() {
       _selectedGeofence = value;
     });

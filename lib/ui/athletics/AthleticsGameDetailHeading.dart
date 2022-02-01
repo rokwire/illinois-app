@@ -16,14 +16,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/LiveStats.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
@@ -33,7 +33,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -84,7 +84,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     bool showParking = widget.game?.parkingUrl != null;
     bool showGameDayGuide = widget.game?.isHomeGame ?? false;
     bool hasScores = sportDefinition?.hasScores ?? false;
-    bool hasLiveGame = Storage().debugDisableLiveGameCheck! ? true : LiveStats().hasLiveGame(widget.game?.id);
+    bool hasLiveGame = (Storage().debugDisableLiveGameCheck == true) || LiveStats().hasLiveGame(widget.game?.id);
     bool showScore = hasScores && (widget.game?.isGameDay ?? false) && hasLiveGame;
     bool isGameFavorite = Auth2().isFavorite(widget.game);
     String? liveStatsUrl = widget.game?.links?.liveStats;
@@ -361,7 +361,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         textColor: Styles().colors!.fillColorPrimary,
                         borderColor: Styles().colors!.fillColorSecondary,
                         onTap: () {
-                          Analytics.instance.logSelect(target: "Roster");
+                          Analytics().logSelect(target: "Roster");
                           Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsRosterListPanel(sportDefinition, null)));
                         },
                       )
@@ -428,12 +428,12 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   }
 
   void _onTapSwitchFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.game?.title}");
+    Analytics().logSelect(target: "Favorite: ${widget.game?.title}");
     Auth2().prefs?.toggleFavorite(widget.game);
   }
 
   void _onTapGetTickets() {
-    Analytics.instance.logSelect(target: "Get Tickets");
+    Analytics().logSelect(target: "Get Tickets");
 
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
@@ -449,13 +449,13 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   }
 
   void _onTapParking() {
-    Analytics.instance.logSelect(target: "Parking");
+    Analytics().logSelect(target: "Parking");
 
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game?.parkingUrl)));
   }
 
   void _onTapGameDayGuide() {
-    Analytics.instance.logSelect(target: "Game Day");
+    Analytics().logSelect(target: "Game Day");
     String? sportKey = widget.game?.sport?.shortName;
     String? url = Sports.getGameDayGuideUrl(sportKey);
     if (url != null) {
@@ -464,14 +464,14 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   }
 
   void _onTapListen(String? audioUrl) {
-    Analytics.instance.logSelect(target: "Listen");
+    Analytics().logSelect(target: "Listen");
     if (StringUtils.isNotEmpty(audioUrl)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: audioUrl)));
     }
   }
 
   void _onTapWatch(String? videoUrl) {
-    Analytics.instance.logSelect(target: "Watch");
+    Analytics().logSelect(target: "Watch");
     if (StringUtils.isNotEmpty(videoUrl)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: videoUrl)));
     }

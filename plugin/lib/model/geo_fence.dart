@@ -55,10 +55,10 @@ class GeoFenceRegion {
 
   GeoFenceRegionType? get regionType {
     if (data is GeoFenceLocation) {
-      return GeoFenceRegionType.Location;
+      return GeoFenceRegionType.location;
     }
     else if (data is GeoFenceBeacon) {
-      return GeoFenceRegionType.Beacon;
+      return GeoFenceRegionType.beacon;
     }
     else {
       return null;
@@ -76,7 +76,8 @@ class GeoFenceRegion {
   static LinkedHashMap<String, GeoFenceRegion>? mapFromJsonList(List<dynamic>? values) {
     LinkedHashMap<String, GeoFenceRegion>? regions;
     if (values != null) {
-      regions = LinkedHashMap();
+      // ignore: prefer_collection_literals
+      regions = LinkedHashMap<String, GeoFenceRegion>();
       for (dynamic value in values) {
         GeoFenceRegion? region = GeoFenceRegion.fromJson(value);
         if (region?.id != null) {
@@ -126,15 +127,15 @@ class GeoFenceRegion {
   }
 
   @override
-  bool operator==(dynamic obj) {
-    return (obj is GeoFenceRegion) &&
-      (id == obj.id) &&
-      DeepCollectionEquality().equals(types, obj.types) &&
-      (name == obj.name) &&
-      (enabled == obj.enabled) &&
+  bool operator==(dynamic other) {
+    return (other is GeoFenceRegion) &&
+      (id == other.id) &&
+      const DeepCollectionEquality().equals(types, other.types) &&
+      (name == other.name) &&
+      (enabled == other.enabled) &&
       (
-        ((data == null) && (obj.data == null)) ||
-        ((data != null) && (obj.data != null) && (data == obj.data))
+        ((data == null) && (other.data == null)) ||
+        ((data != null) && (other.data != null) && (data == other.data))
       );
   }
 
@@ -149,7 +150,7 @@ class GeoFenceRegion {
   }
 }
 
-enum GeoFenceRegionType {Location, Beacon}
+enum GeoFenceRegionType { location, beacon}
 
 class GeoFenceLocation {
   final double? latitude;
@@ -175,11 +176,11 @@ class GeoFenceLocation {
   }
 
   @override
-  bool operator==(dynamic obj) {
-    bool value = (obj is GeoFenceLocation) &&
-      (latitude == obj.latitude) &&
-      (longitude == obj.longitude) &&
-      (radius == obj.radius);
+  bool operator==(dynamic other) {
+    bool value = (other is GeoFenceLocation) &&
+      (latitude == other.latitude) &&
+      (longitude == other.longitude) &&
+      (radius == other.radius);
       return value;
   }
 
@@ -224,11 +225,11 @@ class GeoFenceBeacon {
   }
 
   @override
-  bool operator==(dynamic obj) {
-    bool value = (obj is GeoFenceBeacon) &&
-      (uuid == obj.uuid) &&
-      (major == obj.major) &&
-      (minor == obj.minor);
+  bool operator==(dynamic other) {
+    bool value = (other is GeoFenceBeacon) &&
+      (uuid == other.uuid) &&
+      (major == other.major) &&
+      (minor == other.minor);
       return value;
   }
 

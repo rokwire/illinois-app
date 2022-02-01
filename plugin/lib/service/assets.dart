@@ -19,16 +19,16 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:path/path.dart';
-import 'package:http/http.dart' as http;
-
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:path/path.dart';
+import 'package:http/http.dart' as http;
 
 class Assets with Service implements NotificationsListener {
 
@@ -42,18 +42,19 @@ class Assets with Service implements NotificationsListener {
   DateTime?  _pausedDateTime;
 
 
-  // Singleton Factory
+  // Singletone Factory
 
-  Assets._internal();
-  static final Assets _instance = Assets._internal();
+  static Assets? _instance;
 
-  factory Assets() {
-    return _instance;
-  }
+  static Assets? get instance => _instance;
+  
+  @protected
+  static set instance(Assets? value) => _instance = value;
 
-  Assets get instance {
-    return _instance;
-  }
+  factory Assets() => _instance ?? (_instance = Assets.internal());
+
+  @protected
+  Assets.internal();
 
   // Initialization
 
@@ -69,13 +70,13 @@ class Assets with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    _cacheFile = await _getCacheFile();
-    _internalContent = await _loadFromAssets();
-    _externalContent = await _loadFromCache();
+    _cacheFile = await getCacheFile();
+    _internalContent = await loadFromAssets();
+    _externalContent = await loadFromCache();
 
     if (_internalContent != null) {
       await super.initService();
-      _updateFromNet();
+      updateFromNet();
     }
     else {
       throw ServiceError(
@@ -89,7 +90,7 @@ class Assets with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config()]);
+    return {Config()};
   }
 
   // NotificationsListener
@@ -109,7 +110,7 @@ class Assets with Service implements NotificationsListener {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _updateFromNet();
+          updateFromNet();
         }
       }
     }
@@ -123,56 +124,72 @@ class Assets with Service implements NotificationsListener {
 
   String? randomStringFromListWithKey(dynamic key) {
     dynamic list = this[key];
-    dynamic entry = ((list != null) && (list is List) && (0 < list.length)) ? list[Random().nextInt(list.length)] : null;
+    dynamic entry = ((list != null) && (list is List) && list.isNotEmpty) ? list[Random().nextInt(list.length)] : null;
     return ((entry != null) && (entry is String)) ? entry : null;
   }
 
   // Implementation
+  @protected
+  String get cacheFileName => _assetsName;
 
-  Future<File?> _getCacheFile() async {
+  @protected
+  Future<File?> getCacheFile() async {
     Directory? assetsDir = Config().assetsCacheDir;
     if ((assetsDir != null) && !await assetsDir.exists()) {
       await assetsDir.create(recursive: true);
     }
-    String? cacheFilePath = (assetsDir != null) ? join(assetsDir.path, _assetsName) : null;
+    String? cacheFilePath = (assetsDir != null) ? join(assetsDir.path, cacheFileName) : null;
     return (cacheFilePath != null) ? File(cacheFilePath) : null;
   }
 
-  Future<Map<String, dynamic>?> _loadFromCache() async {
+  @protected
+  Future<Map<String, dynamic>?> loadFromCache() async {
     try {
       String? assetsContent = ((_cacheFile != null) && await _cacheFile!.exists()) ? await _cacheFile!.readAsString() : null;
       return JsonUtils.decodeMap(assetsContent);
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
     return null;
   }
 
-  Future<Map<String, dynamic>?> _loadFromAssets() async {
+  @protected
+  String get resourceAssetsKey => 'assets/$_assetsName';
+
+  @protected
+  Future<String> loadResourceAssetsJsonString() => rootBundle.loadString(resourceAssetsKey);
+
+  @protected
+  Future<Map<String, dynamic>?> loadFromAssets() async {
     try {
-      String assetsContent = await rootBundle.loadString('assets/$_assetsName');
+      String assetsContent = await loadResourceAssetsJsonString();
       return JsonUtils.decodeMap(assetsContent);
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
     return null;
   }
 
-  Future<String?> _loadContentStringFromNet() async {
+  @protected
+  String get networkAssetName => _assetsName;
+
+  @protected
+  Future<String?> loadContentStringFromNet() async {
     try {
-      http.Response? response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$_assetsName") : null;
+      http.Response? response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$networkAssetName") : null;
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
     return null;
   }
 
-  Future<void> _updateFromNet() async {
+  @protected
+  Future<void> updateFromNet() async {
     try {
-      String? externalContentString = await _loadContentStringFromNet();
+      String? externalContentString = await loadContentStringFromNet();
       Map<String, dynamic>? externalContent = JsonUtils.decodeMap(externalContentString);
-      if ((externalContent != null) && !DeepCollectionEquality().equals(_externalContent, externalContent)) {
+      if ((externalContent != null) && !const DeepCollectionEquality().equals(_externalContent, externalContent)) {
         if (externalContent.isNotEmpty) {
           _externalContent = externalContent;
           await _cacheFile?.writeAsString(externalContentString!, flush: true);
@@ -184,7 +201,7 @@ class Assets with Service implements NotificationsListener {
         NotificationService().notify(notifyChanged);
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 }

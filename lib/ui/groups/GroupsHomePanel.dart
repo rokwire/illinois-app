@@ -18,9 +18,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
@@ -30,7 +30,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class GroupsHomePanel extends StatefulWidget{
   _GroupsHomePanelState createState() => _GroupsHomePanelState();
@@ -261,11 +261,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       return groups;
     }
     groups!.sort((group1, group2) {
-      int cmp = group1.category!.compareTo(group2.category!);
+      int cmp = group1.category!.toLowerCase().compareTo(group2.category!.toLowerCase());
       if (cmp != 0) {
         return cmp;
       } else {
-        return group1.title!.compareTo(group2.title!);
+        return group1.title!.toLowerCase().compareTo(group2.title!.toLowerCase());
       }
     });
     return groups;
@@ -377,7 +377,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                   active: (_activeFilterType == _FilterType.category),
                   visible: true,
                   onTap: (){
-                    Analytics.instance.logSelect(target: "GroupFilter - Category");
+                    Analytics().logSelect(target: "GroupFilter - Category");
                     setState(() {
                       _activeFilterType = (_activeFilterType != _FilterType.category) ? _FilterType.category : _FilterType.none;
                     });
@@ -390,7 +390,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                   active: (_activeFilterType == _FilterType.tags),
                   visible: true,
                   onTap: (){
-                    Analytics.instance.logSelect(target: "GroupFilter - Tags");
+                    Analytics().logSelect(target: "GroupFilter - Tags");
                     setState(() {
                       _activeFilterType = (_activeFilterType != _FilterType.tags) ? _FilterType.tags : _FilterType.none;
                     });
@@ -409,7 +409,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                       height: 25,
                     ),
                     onPressed: () {
-                      Analytics.instance.logSelect(target: "Search");
+                      Analytics().logSelect(target: "Search");
                       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
                     },
                   ),
@@ -646,33 +646,33 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       default:
         break;
     }
-    Analytics.instance.logSelect(target: "$analyticsTarget: $entry");
+    Analytics().logSelect(target: "$analyticsTarget: $entry");
     setState(() {
       _activeFilterType = _FilterType.none;
     });
   }
 
   void _onTapAllGroups(){
-    Analytics.instance.logSelect(target: "All Groups");
+    Analytics().logSelect(target: "All Groups");
     if(_myGroupsSelected){
       switchTabSelection();
     }
   }
 
   void _onTapMyGroups(){
-    Analytics.instance.logSelect(target: "My Groups");
+    Analytics().logSelect(target: "My Groups");
     if(!_myGroupsSelected){
       switchTabSelection();
     }
   }
 
   void _onTapCreate(){
-    Analytics.instance.logSelect(target: "Create Group");
+    Analytics().logSelect(target: "Create Group");
     Navigator.push(context, MaterialPageRoute(builder: (context)=>GroupCreatePanel()));
   }
 
   Future<void> _onPullToRefresh() async {
-    Analytics.instance.logSelect(target: "Pull To Refresh");
+    Analytics().logSelect(target: "Pull To Refresh");
     List<Group>? groups = await Groups().loadGroups(myGroups: _myGroupsSelected);
     if (mounted && (groups != null)) {
       List<Group>? sortedGroups = _sortGroups(groups);

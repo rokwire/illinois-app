@@ -20,7 +20,7 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupMembersPanel.dart';
 import 'package:illinois/ui/groups/GroupSettingsPanel.dart';
@@ -32,7 +32,7 @@ import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 import 'GroupFindEventPanel.dart';
@@ -351,7 +351,7 @@ class _EventCard extends StatelessWidget {
                     flex: 5,
                     child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Padding(padding: EdgeInsets.only(bottom: 2), child:
-                    Text(comment.member!.name!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary),),
+                    Text(comment.member!.displayShortName, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary),),
                     ),
                     Row(children: <Widget>[
                       Padding(padding: EdgeInsets.only(right: 2), child:
@@ -433,7 +433,7 @@ class _EventCard extends StatelessWidget {
   }
 
   void _onSettingsTap(BuildContext context, GroupEvent? event){
-    Analytics.instance.logSelect(target: "Settings");
+    Analytics().logSelect(target: "Settings");
     showDialog(
         context: context,
         builder: (_) => Material(
@@ -513,7 +513,7 @@ class _EventCard extends StatelessWidget {
   }
 
   void _onDeleteTap(BuildContext context, GroupEvent? event){
-    Analytics.instance.logSelect(target: "Delete");
+    Analytics().logSelect(target: "Delete");
     showDialog(
         context: context,
         builder: (_) => Material(

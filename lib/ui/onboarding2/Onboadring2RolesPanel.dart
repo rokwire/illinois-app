@@ -16,14 +16,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyStatementPanel.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
 import 'Onboarding2Widgets.dart';
@@ -61,7 +61,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
           child: Row(children: <Widget>[
             Onboarding2BackButton(padding: const EdgeInsets.only(left: 17,),
                 onTap:() {
-                  Analytics.instance.logSelect(target: "Back");
+                  Analytics().logSelect(target: "Back");
                   Navigator.pop(context);
                 }),
             Expanded(child: Column(
@@ -139,7 +139,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
 
       UserRole role = button.data;
 
-      Analytics.instance.logSelect(target: "Role: $role");
+      Analytics().logSelect(target: "Role: $role");
 
       if (_selectedRoles!.contains(role)) {
         _selectedRoles!.remove(role);
@@ -153,7 +153,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
   }
 
   void _onGoNext() {
-    Analytics.instance.logSelect(target:"Continue");
+    Analytics().logSelect(target:"Continue");
     if (_selectedRoles != null && _selectedRoles!.isNotEmpty && !_updating) {
       Auth2().prefs?.roles = _selectedRoles;
       setState(() { _updating = true; });

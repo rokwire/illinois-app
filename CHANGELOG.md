@@ -7,10 +7,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Link multiple authentication types to one account [#1233](https://github.com/rokwire/illinois-app/issues/1233).
+
+## [3.2.10] - 2022-02-01
+### Added
+- Canvas Collaborations and Calendar Events (data model only) [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 ### Changed
+- Updated Gies Widgets: remove scroll from sub pages [#1291](https://github.com/rokwire/illinois-app/issues/1291).
+
+## [3.2.9] - 2022-01-31
+### Added
+- Canvas Files and Folders service calls and UI [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Changed  
+- GeoFence service moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Analytics and Polls services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Updated Gies Widgets [#1291](https://github.com/rokwire/illinois-app/issues/1291).
+- Improve group member display name [#1294](https://github.com/rokwire/illinois-app/issues/1294).
+### Fixed
+- Fixed activity attachment in RokwirePlugin Android native class [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+
+## [3.2.8] - 2022-01-28
+### Added
+- Canvas Announcements data model and UI [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+
+## [3.2.7] - 2022-01-27
+### Changed  
+- Inbox and FirebaseMessaging services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Moved UIUC token and Auth Card support from rokwire plugin to application level [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- FlexUI and Onbaording services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Updated Gies wizard: Improved Animation and Sliding behaviour. Fixed inner TabBar issues [#1224](https://github.com/rokwire/illinois-app/issues/1224).
+### Added
+- Canvas Files and Folders data model [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+
+## [3.2.6] - 2022-01-26
+### Added
+- Canvas Syllabus html view [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Changed  
+- Localization, Assets and Styles services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+
+## [3.2.5] - 2022-01-25
+### Added
+- Canvas Courses initial view [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Changed  
+- Auth2 service moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Updated Gies wizard [#1224](https://github.com/rokwire/illinois-app/issues/1224).
+
+## [3.2.4] - 2022-01-24
+### Changed  
+- Storage and Config services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Network service moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Update Gies wizard [#1224](https://github.com/rokwire/illinois-app/issues/1224).
+
+## [3.2.3] - 2022-01-18
+### Changed  
 - FirebaseCore and FirebaseCrashlytics moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 - AppDateTime split to service and utils parts, service moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 - Utils moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Location Services moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 
 ## [3.2.2] - 2022-01-17
 ### Added
@@ -26,6 +78,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update Browse panel layout [#1217](https://github.com/rokwire/illinois-app/issues/1217).
 - Update "Campus Resources" Layout [#1219](https://github.com/rokwire/illinois-app/issues/1219).
 - Remove margin from Group Post body in GroupPostDetailPanel [#1227](https://github.com/rokwire/illinois-app/issues/1227).
+
+## [3.1.15] - 2022-01-21
+### Fixed
+- Crash when editing group event [#1262](https://github.com/rokwire/illinois-app/issues/1262).
+- Differ checkboxes for voted and non-voted answers in polls [#1264](https://github.com/rokwire/illinois-app/issues/1264).
+- Place "Leave" group button below the tabs [#1265](https://github.com/rokwire/illinois-app/issues/1265).
+- Fixed UIUC token refresh.
+
+## [3.1.14] - 2022-01-20
+### Changed
+- Use external browser for "Crisis Help" [#1255](https://github.com/rokwire/illinois-app/issues/1255).
+- Styling of Campus Reminders [#1240](https://github.com/rokwire/illinois-app/issues/1240).
+### Added
+- Descriptive text for "Building access" to HomeLoginWidget [#1221](https://github.com/rokwire/illinois-app/issues/1221).
+- Implemented Search for GroupMembersPanel [#1252](https://github.com/rokwire/illinois-app/issues/1252).
+### Fixed
+- Case insensitive sorting of groups [#1239](https://github.com/rokwire/illinois-app/issues/1239).
+
+## [3.1.13] - 2022-01-19
+### Fixed
+- Improved Accessibility [#1213](https://github.com/rokwire/illinois-app/issues/1213).
+- Fix tapping on a Group created Event in the Inbox [#1241](https://github.com/rokwire/illinois-app/issues/1241).
+- Show common label for saved items [#1235](https://github.com/rokwire/illinois-app/issues/1235).
+- Display events in Explore Panel [#1236](https://github.com/rokwire/illinois-app/issues/1236).
+- Populating lat/long in CreateEventPanel [#1237](https://github.com/rokwire/illinois-app/issues/1237).
+- Fixed IdCardPanel layout order [#1201](https://github.com/rokwire/illinois-app/issues/1201).
+- Acknowledge reminder dates in university timezone [#1246](https://github.com/rokwire/illinois-app/issues/1246).
+- Remove margin from Group Post body in GroupPostDetailPanel [#1227](https://github.com/rokwire/illinois-app/issues/1227).
+- Update Browse panel layout [#1217](https://github.com/rokwire/illinois-app/issues/1217).
+- Update "Campus Resources" Layout [#1219](https://github.com/rokwire/illinois-app/issues/1219).
+- Make _GroupSelectionPopup to be scrollable [#1238](https://github.com/rokwire/illinois-app/issues/1238).
 
 ## [3.1.12] - 2022-01-13
 ### Fixed

@@ -20,13 +20,22 @@ import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
 class FirebaseCrashlytics with Service {
-  static final FirebaseCrashlytics _crashlytics = FirebaseCrashlytics._internal();
+  
+  // Singletone Factory
 
-  factory FirebaseCrashlytics() {
-    return _crashlytics;
-  }
+  static FirebaseCrashlytics? _instance;
 
-  FirebaseCrashlytics._internal();
+  static FirebaseCrashlytics? get instance => _instance;
+
+  @protected
+  static set instance(FirebaseCrashlytics? value) => _instance = value;
+
+  factory FirebaseCrashlytics() => _instance ?? (_instance = FirebaseCrashlytics.internal());
+
+  @protected
+  FirebaseCrashlytics.internal();
+  
+  // Service
 
   @override
   Future<void> initService() async{
@@ -46,16 +55,12 @@ class FirebaseCrashlytics with Service {
   }
 
   void handleZoneError(dynamic exception, StackTrace stack) {
-    if (kDebugMode) {
-      print(exception);
-    }
+    debugPrint(exception?.toString());
     google.FirebaseCrashlytics.instance.recordError(exception, stack);
   }
 
   void recordError(dynamic exception, StackTrace? stack) {
-    if (kDebugMode) {
-      print(exception);
-    }
+    debugPrint(exception?.toString());
     google.FirebaseCrashlytics.instance.recordError(exception, stack);
   }
 

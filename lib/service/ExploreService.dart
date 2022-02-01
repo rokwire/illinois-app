@@ -19,15 +19,15 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:http/http.dart' as http;
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -39,6 +39,9 @@ class ExploreService with Service implements NotificationsListener {
   static const String notifyEventDetail  = "edu.illinois.rokwire.explore.event.detail";
   static const String notifyEventCreated = "edu.illinois.rokwire.explore.event.created";
   static const String notifyEventUpdated = "edu.illinois.rokwire.explore.event.updated";
+
+  static const String RokwireUserUuid = 'ROKWIRE-USER-UUID';
+  static const String RokwireUserPrivacyLevel = 'ROKWIRE-USER-PRIVACY-LEVEL';
 
   static final int _defaultLocationRadiusInMeters = 1000;
 
@@ -102,7 +105,7 @@ class ExploreService with Service implements NotificationsListener {
           recurrenceId,
           limit);
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}$queryParameters', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}$queryParameters', auth: Auth2(), headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load events');
         Log.e(e.toString());
@@ -132,7 +135,7 @@ class ExploreService with Service implements NotificationsListener {
       }
       http.Response? response;
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/$eventId', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/$eventId', auth: Auth2(), headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to retrieve event with id: $eventId');
         Log.e(e.toString());
@@ -159,7 +162,7 @@ class ExploreService with Service implements NotificationsListener {
         dynamic body = json.encode(event.toNotNullJson());
         response = (Config().eventsUrl != null) ? await Network().post(Config().eventsUrl, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
-            auth: NetworkAuth.Auth2) : null;
+            auth: Auth2()) : null;
         Map<String, dynamic>? jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? JsonUtils.decode(response?.body) : null;
         String? eventId = (jsonData != null) ? JsonUtils.stringValue(jsonData["id"]) : null;
         if (eventId != null) {
@@ -182,7 +185,7 @@ class ExploreService with Service implements NotificationsListener {
         String url = Config().eventsUrl! + "/" + event.id!;
         response = (Config().eventsUrl != null) ? await Network().put(url, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
-            auth: NetworkAuth.Auth2) : null;
+            auth: Auth2()) : null;
         Map<String, dynamic>? jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? JsonUtils.decode(response?.body) : null;
         String? eventId = (jsonData != null) ? JsonUtils.stringValue(jsonData["id"]) : null;
         if (eventId != null) {
@@ -204,7 +207,7 @@ class ExploreService with Service implements NotificationsListener {
         String url = Config().eventsUrl! + "/" + eventId;
         response = (Config().eventsUrl != null) ? await Network().delete(url,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
-            auth: NetworkAuth.Auth2) : null;
+            auth: Auth2()) : null;
     Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
     return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201|| response.statusCode == 202));
     } catch (e) {
@@ -231,7 +234,7 @@ class ExploreService with Service implements NotificationsListener {
       String url = '${Config().eventsUrl}?$idsQueryParam&$timeQueryParams';
       http.Response? response;
       try {
-        response = (Config().eventsUrl != null) ? await Network().get(url, auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get(url, auth: Auth2(), headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load events by ids.');
         Log.e(e.toString());
@@ -254,7 +257,7 @@ class ExploreService with Service implements NotificationsListener {
     http.Response? response;
     if(_enabled) {
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: Auth2(), headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load event categories');
         Log.e(e.toString());
@@ -277,7 +280,7 @@ class ExploreService with Service implements NotificationsListener {
     if(_enabled) {
       http.Response? response;
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: Auth2(), headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load event categories');
         Log.e(e.toString());
@@ -300,7 +303,7 @@ class ExploreService with Service implements NotificationsListener {
     if(_enabled) {
       http.Response? response;
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/tags', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/tags', auth: Auth2(), headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e(e.toString());
         return null;
@@ -559,7 +562,7 @@ class ExploreService with Service implements NotificationsListener {
     http.Response? response;
     try {
       response = (Config().eventsUrl != null) ? await Network().get(
-          '${Config().eventsUrl}$queryParameters', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
+          '${Config().eventsUrl}$queryParameters', auth: Auth2(), headers: _stdEventsHeaders) : null;
     } catch (e) {
       Log.e('Failed to load super event sub events');
       Log.e(e.toString());
@@ -597,20 +600,15 @@ class ExploreService with Service implements NotificationsListener {
     if (headers == null) {
       headers = Map<String, String>();
     }
-    headers[Network.RokwireUserUuid] = Auth2().accountId ?? "null";
-    headers[Network.RokwireUserPrivacyLevel] = Auth2().prefs?.privacyLevel?.toString() ?? "null";
+    headers[RokwireUserUuid] = Auth2().accountId ?? "null";
+    headers[RokwireUserPrivacyLevel] = Auth2().prefs?.privacyLevel?.toString() ?? "null";
     return headers;
   }
 
   /////////////////////////
   // Enabled
 
-  bool get _enabled => StringUtils.isNotEmpty(Config().eventsOrConvergeUrl)
-      && StringUtils.isNotEmpty(Config().eventsUrl);
-
-  NetworkAuth get _userOrAppAuth{
-    return NetworkAuth.Auth2;
-  }
+  bool get _enabled => StringUtils.isNotEmpty(Config().eventsUrl);
 
   /////////////////////////
   // DeepLinks

@@ -17,16 +17,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/model/Poll.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/GeoFence.dart';
+import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
@@ -36,8 +36,9 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/service/Polls.dart' as illinois;
 
 
 class PollsHomePanel extends StatefulWidget {
@@ -572,7 +573,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
             }
           });
         }).catchError((e) {
-          _myPollsError = e.toString();
+          _myPollsError = illinois.Polls.localizedErrorString(e);
         }).whenComplete(() {
           setState(() {
             _myPollsLoading = false;
@@ -602,7 +603,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
             }
           });
         }).catchError((e){
-          _recentPollsError = e.toString();
+          _recentPollsError = illinois.Polls.localizedErrorString(e);
         }).whenComplete((){
           setState((){
             _recentPollsLoading = false;
@@ -629,7 +630,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
             }
             setState(() {});
           }).catchError((e) {
-            _groupPollsError = e.toString();
+            _groupPollsError = illinois.Polls.localizedErrorString(e);
           }).whenComplete(() {
             _setGroupPollsLoading(false);
           });
@@ -941,7 +942,7 @@ class _PollCardState extends State<_PollCard>{
       bool useCustomColor = isClosed && maxValueIndex == optionIndex;
       String option = widget.poll!.options![optionIndex];
       bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
-      String checkboxImage = 'images/checkbox-unselected.png'; // 'images/checkbox-selected.png'
+      String checkboxImage = didVote ? 'images/deselected-dark.png' : 'images/checkbox-unselected.png';
 
       String? votesString;
       int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
@@ -1052,7 +1053,7 @@ class _PollCardState extends State<_PollCard>{
     _setStartButtonProgress(true);
       Polls().open(widget.poll!.pollId).then((result) => _setStartButtonProgress(false)).catchError((e){
         _setStartButtonProgress(false);
-        AppAlert.showDialogResult(context, e.toString());
+        AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
       });
   }
 
@@ -1060,7 +1061,7 @@ class _PollCardState extends State<_PollCard>{
     _setEndButtonProgress(true);
       Polls().close(widget.poll!.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
         _setEndButtonProgress(false);
-        AppAlert.showDialogResult(context, e.toString());
+        AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
       });
 
   }

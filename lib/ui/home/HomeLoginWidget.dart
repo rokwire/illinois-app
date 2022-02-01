@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
@@ -90,7 +90,8 @@ class _HomeLoginNetIdWidgetState extends State<HomeLoginNetIdWidget> {
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "university student"), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_3", " or ")),
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_4", "employee"), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_5", "? Sign in with your NetID."))
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_5", "? Sign in with your NetID.")),
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_6", " (A NetID sign-in is REQUIRED to be able to use the Building Access feature)."))
           ],),
           )),
           Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),
@@ -123,7 +124,7 @@ class _HomeLoginNetIdWidgetState extends State<HomeLoginNetIdWidget> {
 
 
   void _onTapConnectNetIdClicked(BuildContext context) {
-    Analytics.instance.logSelect(target: "Connect netId");
+    Analytics().logSelect(target: "Connect netId");
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context,"");
     }
@@ -178,7 +179,7 @@ class HomeLoginPhoneOrEmailWidget extends StatelessWidget{
   }
 
   void _onTapPhoneOrEmailClicked(BuildContext context) {
-    Analytics.instance.logSelect(target: "Phone or Email Login");
+    Analytics().logSelect(target: "Phone or Email Login");
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(
         settings: RouteSettings(),

@@ -19,17 +19,17 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class HomeInterestsSelectionWidget extends StatefulWidget {
   final StreamController<void>? refreshController;
@@ -188,12 +188,12 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
   }
 
   void _onSeeAllClicked() {
-    Analytics.instance.logSelect(target: "HomeUpcomingEvents See all ");
+    Analytics().logSelect(target: "HomeUpcomingEvents See all ");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsManageInterestsPanel()));
   }
 
   void _onInterestClicked(String? interest) {
-    Analytics.instance.logSelect(target: "HomeInterestsSelection interest: $interest");
+    Analytics().logSelect(target: "HomeInterestsSelection interest: $interest");
     Auth2().prefs?.togglePositiveTag(interest);
   }
 

@@ -23,10 +23,9 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/WellnessPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -181,33 +180,33 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   }
 
   void _onTapEvents() {
-    Analytics.instance.logSelect(target: "Events");
+    Analytics().logSelect(target: "Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialTab: ExploreTab.Events, showHeaderBack: true,); } ));
   }
     
   void _onTapDining() {
-    Analytics.instance.logSelect(target: "Dining");
+    Analytics().logSelect(target: "Dining");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialTab: ExploreTab.Dining, showHeaderBack: true,); } ));
   }
 
   void _onTapAthletics() {
-    Analytics.instance.logSelect(target: "Athletics");
+    Analytics().logSelect(target: "Athletics");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
   void _onTapLaundry() {
-    Analytics.instance.logSelect(target: "Laundry");
+    Analytics().logSelect(target: "Laundry");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
   }
 
   void _onTapIlliniCash() {
-    Analytics.instance.logSelect(target: "Illini Cash");
+    Analytics().logSelect(target: "Illini Cash");
     Navigator.push(
         context, CupertinoPageRoute(settings: RouteSettings(name: SettingsIlliniCashPanel.routeName), builder: (context) => SettingsIlliniCashPanel()));
   }
 
   void _onTapMyIllini() {
-    Analytics.instance.logSelect(target: "My Illini");
+    Analytics().logSelect(target: "My Illini");
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     }
@@ -236,22 +235,18 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   }
 
   void _onTapWellness() {
-    Analytics.instance.logSelect(target: "Wellness");
+    Analytics().logSelect(target: "Wellness");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessPanel()));
 
   }
   void _onTapCrisisHelp() {
-    Analytics.instance.logSelect(target: "Crisis Help");
+    Analytics().logSelect(target: "Crisis Help");
     String? url = Config().crisisHelpUrl;
-    if(StringUtils.isNotEmpty(url)) {
-      String? panelTitle = Localization().getStringEx('panel.settings.crisis_help.label.title', 'Crisis Help');
-      Navigator.push(
-          context, CupertinoPageRoute(
-            builder: (context) => WebPanel(url: url, title: panelTitle,)));
+    if (StringUtils.isNotEmpty(url)) {
+      launch(url!);
     } else {
       Log.e("Missing Config().crisisHelpUrl");
     }
-
   }
 }
 

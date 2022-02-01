@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -25,7 +25,7 @@ import 'package:illinois/model/Roster.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/ModalImageDialog.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -49,7 +49,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
   }
 
   void _onTapPhoto(){
-    Analytics.instance.logSelect(target: "Photo");
+    Analytics().logSelect(target: "Photo");
     _modalPhotoVisibility = true;
     setState(() {});
   }
@@ -128,7 +128,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
    return _modalPhotoVisibility ? ModalImageDialog(
      imageUrl: widget.roster.fullSizePhotoUrl,
      onClose: () {
-       Analytics.instance.logSelect(target: "Close");
+       Analytics().logSelect(target: "Close");
        _modalPhotoVisibility = false;
        setState(() {});
      }

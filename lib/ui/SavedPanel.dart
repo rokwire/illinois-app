@@ -19,20 +19,20 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Inbox.dart';
+import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
-import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/service/Inbox.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:illinois/service/LaundryService.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
@@ -52,7 +52,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:notification_permissions/notification_permissions.dart';
 
 import 'athletics/AthleticsNewsArticlePanel.dart';
@@ -126,7 +126,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     else {
       permissionStatus = await NotificationPermissions.requestNotificationPermissions();
       if (permissionStatus == PermissionStatus.granted) {
-        Analytics.instance.updateNotificationServices();
+        Analytics().updateNotificationServices();
       }
       setState(() {
         _showNotificationPermissionPrompt = false;
@@ -418,7 +418,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
               children: <Widget>[
                 TextButton(
                     onPressed: () {
-                      Analytics.instance.logAlert(text:"Already have access", selection: "Ok");
+                      Analytics().logAlert(text:"Already have access", selection: "Ok");
                       setState(() {
                         Navigator.pop(context);
                         _showNotificationPermissionPrompt = false;
@@ -682,7 +682,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                             child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
-                                  Analytics.instance.logSelect(target: "Favorite: $title");
+                                  Analytics().logSelect(target: "Favorite: $title");
                                   Auth2().prefs?.toggleFavorite(item);
                                 },
                                 child: Semantics(

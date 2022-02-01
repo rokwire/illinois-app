@@ -15,14 +15,14 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Onboarding.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/onboarding.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:sprintf/sprintf.dart';
 
@@ -179,7 +179,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
           OnboardingBackButton(
             padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
             onTap:() {
-              Analytics.instance.logSelect(target: "Back");
+              Analytics().logSelect(target: "Back");
               Navigator.pop(context);
             }),
 
@@ -194,7 +194,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
       return;
     }
 
-    Analytics.instance.logSelect(target: "Confirm phone number");
+    Analytics().logSelect(target: "Confirm phone number");
     _clearErrorMsg();
     _validateCode();
     if (StringUtils.isNotEmpty(_verificationErrorMsg)) {

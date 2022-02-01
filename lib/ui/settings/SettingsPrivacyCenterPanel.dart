@@ -17,12 +17,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/settings/SettingsNewPrivacyPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
@@ -388,29 +388,29 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
 
 
   void _onTapVerifyIdentity(){
-    Analytics.instance.logSelect(target: "Verify Identity");
+    Analytics().logSelect(target: "Verify Identity");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVerifyIdentityPanel()));
   }
 
   void _onTapPersonalInformation(){
-    Analytics.instance.logSelect(target: "Personal Information");
+    Analytics().logSelect(target: "Personal Information");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInformationPanel()));
   }
 
   void _onTapNotifications(){
-    Analytics.instance.logSelect(target: "Notifications");
+    Analytics().logSelect(target: "Notifications");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
   }
 
   void _onTapPrivacyPolicy(){
-    Analytics.instance.logSelect(target: "Privacy Statement");
+    Analytics().logSelect(target: "Privacy Statement");
     if (Config().privacyPolicyUrl != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, title: Localization().getStringEx("panel.settings.privacy_statement.label.title", "Privacy Statement"),)));
     }
   }
 
   void _onTapManagePrivacy(){
-    Analytics.instance.logSelect(target: "Manage Privacy");
+    Analytics().logSelect(target: "Manage Privacy");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNewPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
   }
 
@@ -448,7 +448,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
   }
 
   Future<void> _deleteUserData() async{
-    Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
+    Analytics().logAlert(text: "Remove My Information", selection: "Yes");
     await Auth2().deleteUser();
   }
 
@@ -457,7 +457,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
   }
 
   void _onTapBack() {
-    Analytics.instance.logSelect(target: "Back");
+    Analytics().logSelect(target: "Back");
     Navigator.pop(context);
   }
 

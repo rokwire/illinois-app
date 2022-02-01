@@ -20,11 +20,13 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
+import 'package:illinois/ui/home/HomeGies2Widget.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/Assets.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/LiveStats.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
@@ -48,7 +50,7 @@ import 'package:illinois/ui/home/HomeVoterRegistrationWidget.dart';
 import 'package:illinois/ui/home/HomeUpcomingEventsWidget.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/FlexContentWidget.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 
 class HomePanel extends StatefulWidget {
@@ -155,8 +157,14 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       else if (code == 'twitter') {
         widget = HomeTwitterWidget(refreshController: _refreshController);
       }
-      else if (code == 'gies') {
+      else if (code == 'gies') { //TBD deprecate and use gies2 instead
         widget = HomeGiesWidget(key: _giesWidgetKey, refreshController: _refreshController);
+      }
+      else if (code == 'gies2') {
+        widget = HomeGies2Widget(refreshController: _refreshController);
+      }
+      else if (code == 'canvas_courses') {
+        widget = HomeCanvasCoursesWidget(refreshController: _refreshController);
       }
       else if (code == 'voter_registration') {
         widget = HomeVoterRegistrationWidget();
@@ -279,7 +287,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
           child: IconButton(
               icon: Image.asset('images/block-i-orange.png'),
               onPressed: () {
-                Analytics.instance.logSelect(target: "Home");
+                Analytics().logSelect(target: "Home");
                 Navigator.of(context).popUntil((route) => route.isFirst);
 //                NativeCommunicator().launchTest();
               }
@@ -296,7 +304,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
                 child: IconButton(
                     icon: Image.asset('images/icon-search.png'),
                     onPressed: () {
-                      Analytics.instance.logSelect(target: "Search");
+                      Analytics().logSelect(target: "Search");
                       Navigator.push(
                           context,
                           CupertinoPageRoute(
@@ -312,7 +320,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
               excludeSemantics: true,
               child: InkWell(
               onTap: () {
-                Analytics.instance.logSelect(target: "Saved");
+                Analytics().logSelect(target: "Saved");
                 Navigator.push(
                     context,
                     CupertinoPageRoute(
@@ -343,7 +351,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
               child: IconButton(
                   icon: Image.asset('images/settings-white.png'),
                   onPressed: () {
-                    Analytics.instance.logSelect(target: "Settings");
+                    Analytics().logSelect(target: "Settings");
                     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
                   })))
 

@@ -21,20 +21,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/main.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/model/Poll.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/SavedPanel.dart';
@@ -54,7 +54,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/PopupDialog.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 enum RootTab { Home, Athletics, Explore, Wallet, Browse }
 
@@ -276,7 +276,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
       Widget? tabPanel = _getTabPanelAtIndex(index);
       if (tabPanel != null) {
-        Analytics.instance.logPage(name:tabPanel.runtimeType.toString());
+        Analytics().logPage(name:tabPanel.runtimeType.toString());
       }
 
       if (mounted) {
@@ -368,7 +368,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                 children: <Widget>[
                   RoundedButton(
                       onTap: () {
-                        Analytics.instance.logAlert(
+                        Analytics().logAlert(
                             text: "Exit", selection: "Yes");
                         Navigator.of(context).pop(true);
                       },
@@ -379,7 +379,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                   Container(height: 10,),
                   RoundedButton(
                       onTap: () {
-                        Analytics.instance.logAlert(
+                        Analytics().logAlert(
                             text: "Exit", selection: "No");
                         Navigator.of(context).pop(false);
                       },
@@ -501,14 +501,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
   
   void _showPresentPoll() {
-    Poll? presentPoll = Polls().presentPoll;
-    if (presentPoll != null) {
+    Poll? presentingPoll = Polls().presentingPoll;
+    if (presentingPoll != null) {
       Timer(Duration(milliseconds: 500), (){
-        if (presentPoll.status == PollStatus.opened) {
-          _presentPollVote(presentPoll.pollId);
+        if (presentingPoll.status == PollStatus.opened) {
+          _presentPollVote(presentingPoll.pollId);
         }
-        else if (presentPoll.status == PollStatus.closed) {
-          _presentPollResult(presentPoll.pollId);
+        else if (presentingPoll.status == PollStatus.closed) {
+          _presentPollResult(presentingPoll.pollId);
         }
       });
     }
@@ -614,12 +614,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onFirebaseGroupsNotification(param) {
     if (param is Map<String, dynamic>) {
-      String? operation = param['operation'];
-      // Do not present GroupDetail panel when the admin creates event. This breakes the navigation stack when the creator receives FCM notification.
-      if (operation != 'event_created') {
-        String? groupId = param["entity_id"];
-        _presentGroupDetailPanel(groupId);
-      }
+      String? groupId = param["entity_id"];
+      _presentGroupDetailPanel(groupId);
     }
   }
 
@@ -679,7 +675,7 @@ class _FavoritesSavedDialog extends StatefulWidget {
   }
 
   static void show(BuildContext? context) {
-    bool favoriteDialogWasShown = Storage().favoritesDialogWasVisible!;
+    bool favoriteDialogWasShown = (Storage().favoritesDialogWasVisible == true);
     if (favoriteDialogWasShown || context == null) {
       return;
     }
@@ -718,7 +714,7 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                           flex: 5,
                           child: Text(
                             Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')!
-                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title"," and also your calendar.")! :""),
+                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title", " and if it is an event, also your calendar")! :"") + ".",
                             style: TextStyle(
                               color: Styles().colors!.white,
                               fontSize: 16,
@@ -751,12 +747,12 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
   }
 
   void _onTapClose() {
-    Analytics.instance.logAlert(text: "Event Saved", selection: "close");
+    Analytics().logAlert(text: "Event Saved", selection: "close");
     Navigator.pop(context, "");
   }
 
   void _onViewAll() {
-    Analytics.instance.logAlert(text: "Event Saved", selection: "View All");
+    Analytics().logAlert(text: "Event Saved", selection: "View All");
     Navigator.pop(context, "");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
   }

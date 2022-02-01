@@ -16,16 +16,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsPersonalInfoPanel extends StatefulWidget {
@@ -72,7 +72,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   }
 
   Future<void> _deleteUserData() async{
-    Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
+    Analytics().logAlert(text: "Remove My Information", selection: "Yes");
     await Auth2().deleteUser();
   }
 
@@ -374,14 +374,14 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
               children: <Widget>[
                 TextButton(
                     onPressed: () {
-                      Analytics.instance.logAlert(text: "Sign out", selection: "Yes");
+                      Analytics().logAlert(text: "Sign out", selection: "Yes");
                       Navigator.pop(context);
                       Auth2().logout();
                     },
                     child: Text(Localization().getStringEx("panel.profile_info.logout.button.yes", "Yes")!)),
                 TextButton(
                     onPressed: () {
-                      Analytics.instance.logAlert(text: "Sign out", selection: "No");
+                      Analytics().logAlert(text: "Sign out", selection: "No");
                       Navigator.pop(context);
                     },
                     child: Text(Localization().getStringEx("panel.profile_info.logout.no", "No")!))

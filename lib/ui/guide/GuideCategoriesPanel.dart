@@ -4,10 +4,10 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -176,12 +176,12 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
   }
 
   void _onTapCategory(String category) {
-    Analytics.instance.logSelect(target: category);
+    Analytics().logSelect(target: category);
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(category: category,)));
   }
 
   void _onTapSection(GuideSection section, {String? category}) {
-    Analytics.instance.logSelect(target: "$category / ${section.name}");
+    Analytics().logSelect(target: "$category / ${section.name}");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(category: category, section: section,)));
   }
 }

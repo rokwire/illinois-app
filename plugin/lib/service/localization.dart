@@ -19,11 +19,11 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/service/storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:path/path.dart';
@@ -34,14 +34,18 @@ class Localization with Service implements NotificationsListener {
   static const String notifyLocaleChanged   = "edu.illinois.rokwire.localization.locale.updated";
   static const String notifyStringsUpdated  = "edu.illinois.rokwire.localization.strings.updated";
 
-  // Singleton Factory
-  static final Localization _logic = Localization._internal();
+  // Singletone Factory
+  static Localization? _instance;
 
-  factory Localization() {
-    return _logic;
-  }
+  static Localization? get instance => _instance;
+  
+  @protected
+  static set instance(Localization? value) => _instance = value;
 
-  Localization._internal();
+  factory Localization() => _instance ?? (_instance = Localization.internal());
+
+  @protected
+  Localization.internal();
 
   // Multilanguage support
   final List<String> defaultSupportedLanguages = ['en', 'es','zh'];
@@ -78,16 +82,16 @@ class Localization with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
 
-    _assetsDir = await _getAssetsDir();
+    _assetsDir = await getAssetsDir();
     
     String defaultLanguage = supportedLanguages[0];
     _defaultLocale = Locale.fromSubtags(languageCode : defaultLanguage);
-    await _initDefaultStirngs(defaultLanguage);
+    await initDefaultStirngs(defaultLanguage);
 
     String? curentLanguage = Storage().currentLanguage;
     if (curentLanguage != null) {
       _currentLocale = Locale.fromSubtags(languageCode : curentLanguage);
-      await _initLocaleStirngs(curentLanguage);
+      await initLocaleStirngs(curentLanguage);
     }
 
     await super.initService();
@@ -95,7 +99,7 @@ class Localization with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config() ]);
+    return { Storage(), Config() };
   }
 
   // Locale
@@ -116,7 +120,7 @@ class Localization with Service implements NotificationsListener {
     else if ((_currentLocale == null) || (_currentLocale!.languageCode != value.languageCode)) {
       _currentLocale = value;
       Storage().currentLanguage = value.languageCode;
-      _initLocaleStirngs(value.languageCode);
+      initLocaleStirngs(value.languageCode);
       //Notyfy when we change the locale (valid change)
       NotificationService().notify(notifyLocaleChanged, null);
     }
@@ -124,7 +128,8 @@ class Localization with Service implements NotificationsListener {
 
   // Load / Update
 
-  Future<Directory?> _getAssetsDir() async {
+  @protected
+  Future<Directory?> getAssetsDir() async {
     Directory? assetsDir = Config().assetsCacheDir;
     if ((assetsDir != null) && !await assetsDir.exists()) {
       await assetsDir.create(recursive: true);
@@ -132,40 +137,57 @@ class Localization with Service implements NotificationsListener {
     return assetsDir;
   }
 
-  Future<void> _initDefaultStirngs(String language) async {
+  @protected
+  Future<void> initDefaultStirngs(String language) async {
     _defaultStrings = _buildStrings(
-      asset: _defaultAssetsStrings = await _loadAssetsStrings(language),
-      cache: _defaultCachedStrings = await _loadCachedStrings(language));
-    _updateDefaultStrings();
+      asset: _defaultAssetsStrings = await loadAssetsStrings(language),
+      cache: _defaultCachedStrings = await loadCachedStrings(language));
+    updateDefaultStrings();
   }
 
-  Future<void> _initLocaleStirngs(String language) async {
+  @protected
+  Future<void> initLocaleStirngs(String language) async {
     _localeStrings = _buildStrings(
-      asset: _localeAssetsStrings = await _loadAssetsStrings(language),
-      cache: _localeCachedStrings = await _loadCachedStrings(language));
-    _updateLocaleStrings();
+      asset: _localeAssetsStrings = await loadAssetsStrings(language),
+      cache: _localeCachedStrings = await loadCachedStrings(language));
+    updateLocaleStrings();
   }
 
-  Future<Map<String,dynamic>?> _loadAssetsStrings(String language) async {
+  @protected
+  String getResourceAssetsKey(language) => 'assets/strings.$language.json';
+
+  @protected
+  Future<String?> loadResourceAssetsJsonString(String language) => rootBundle.loadString(getResourceAssetsKey(language));
+
+  @protected
+  Future<Map<String, dynamic>?> loadAssetsStrings(String language) async {
     dynamic jsonData;
-    try {jsonData = JsonUtils.decode(await rootBundle.loadString('assets/strings.$language.json')); }
-    catch (e) { print(e.toString()); }
+    try {jsonData = JsonUtils.decode(await loadResourceAssetsJsonString(language)); }
+    catch (e) { debugPrint(e.toString()); }
     return ((jsonData != null) && (jsonData is Map<String,dynamic>)) ? jsonData : null;
   }
 
-  Future<Map<String,dynamic>?> _loadCachedStrings(String language) async {
+  @protected
+  String getCacheFileName(String language) => 'strings.$language.json';
+
+  @protected
+  String? getCacheFilePath(String language) => (_assetsDir != null) ? join(_assetsDir!.path, getCacheFileName(language)) : null;
+
+  @protected
+  Future<Map<String,dynamic>?> loadCachedStrings(String language) async {
     dynamic jsonData;
     try { 
-      String? cacheFilePath = (_assetsDir != null) ? join(_assetsDir!.path, 'strings.$language.json') : null;
+      String? cacheFilePath = getCacheFilePath(language);
       File? cacheFile = (cacheFilePath != null) ? File(cacheFilePath) : null;
       
       String? jsonString = ((cacheFile != null) && await cacheFile.exists()) ? await cacheFile.readAsString() : null;
       jsonData = JsonUtils.decode(jsonString);
-    } catch (e) { print(e.toString()); }
+    } catch (e) { debugPrint(e.toString()); }
     return ((jsonData != null) && (jsonData is Map<String,dynamic>)) ? jsonData : null;
   }
 
-  void _updateDefaultStrings() {
+  @protected
+  void updateDefaultStrings() {
     if (_defaultLocale != null) {
       _updateStringsFromNet(_defaultLocale!.languageCode, cache: _defaultCachedStrings).then((Map<String,dynamic>? update) {
         if (update != null) {
@@ -176,7 +198,8 @@ class Localization with Service implements NotificationsListener {
     }
   }
 
-  void _updateLocaleStrings() {
+  @protected
+  void updateLocaleStrings() {
     if (_currentLocale != null) {
      final String requestedLocale = _currentLocale!.languageCode;
      _updateStringsFromNet(_currentLocale!.languageCode, cache: _localeCachedStrings).then((Map<String,dynamic>? update) {
@@ -187,14 +210,18 @@ class Localization with Service implements NotificationsListener {
       });
     }
   }
+
+  @protected
+  String getNetworkAssetName(String language) => 'strings.$language.json';
+
   Future<Map<String,dynamic>?> _updateStringsFromNet(String language, { Map<String, dynamic>? cache }) async {
     Map<String, dynamic>? jsonData;
     try {
-      String assetName = 'strings.$language.json';
+      String assetName = getNetworkAssetName(language);
       http.Response? response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$assetName") : null;
       String? jsonString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
       jsonData = (jsonString != null) ? JsonUtils.decode(jsonString) : null;
-      if ((jsonData != null) && ((cache == null) || !DeepCollectionEquality().equals(jsonData, cache))) {
+      if ((jsonData != null) && ((cache == null) || !const DeepCollectionEquality().equals(jsonData, cache))) {
         String? cacheFilePath = (_assetsDir != null) ? join(_assetsDir!.path, assetName) : null;
         File? cacheFile = (cacheFilePath != null) ? File(cacheFilePath) : null;
         if (cacheFile != null) {
@@ -202,17 +229,17 @@ class Localization with Service implements NotificationsListener {
         }
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
     return jsonData;
   }
 
   static Map<String, dynamic> _buildStrings({Map<String, dynamic>? asset, Map<String, dynamic>? cache}) {
-    Map<String, dynamic> strings = Map<String, dynamic>();
-    if ((asset != null) && (0 < asset.length)) {
+    Map<String, dynamic> strings = <String, dynamic>{};
+    if ((asset != null) && asset.isNotEmpty) {
       strings.addAll(asset);
     }
-    if ((cache != null) && (0 < cache.length)) {
+    if ((cache != null) && cache.isNotEmpty) {
       strings.addAll(cache);
     }
     return strings;
@@ -235,8 +262,8 @@ class Localization with Service implements NotificationsListener {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _updateDefaultStrings();
-          _updateLocaleStrings();
+          updateDefaultStrings();
+          updateLocaleStrings();
         }
       }
     }

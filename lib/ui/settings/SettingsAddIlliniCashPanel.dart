@@ -17,11 +17,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 
@@ -29,7 +30,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
@@ -591,7 +592,7 @@ class _SettingsAddIlliniCashPanelState
                                           checkedColor: Styles().colors!.fillColorSecondary, 
                                           size: 28,
                                           onTap: (bool? value) {
-                                            Analytics.instance.logSelect(target: "Agree");
+                                            Analytics().logSelect(target: "Agree");
                                             _agreePrivacy = !_agreePrivacy;
                                             setState(() {});
                                           },
@@ -653,7 +654,7 @@ class _SettingsAddIlliniCashPanelState
                                           textColor: Styles().colors!.fillColorPrimary,
                                           borderColor: Styles().colors!.fillColorPrimary,
                                           onTap: () {
-                                            Analytics.instance.logSelect(target: "Cancel");
+                                            Analytics().logSelect(target: "Cancel");
                                             Navigator.pop(context,);
                                           },
                                         ),
@@ -756,7 +757,7 @@ class _SettingsAddIlliniCashPanelState
 
   bool get _isAmountValid{
     double? ammount = _amountInDolars;
-    double minAmount = (kReleaseMode && (Config().configEnvironment != ConfigEnvironment.dev)) ? 5.00 : 0.00;
+    double minAmount = (kReleaseMode && (Config().configEnvironment != rokwire.ConfigEnvironment.dev)) ? 5.00 : 0.00;
     return (ammount != null) && (ammount >= minAmount);
   }
 
@@ -856,7 +857,7 @@ class _SettingsAddIlliniCashPanelState
     if(!_isLoading) {
       _isLoading = true;
 
-      Analytics.instance.logSelect(target: "Submit Illini Cash");
+      Analytics().logSelect(target: "Submit Illini Cash");
       try {
         _unfocus();
         _validate();
@@ -896,7 +897,7 @@ class _SettingsAddIlliniCashPanelState
                 TextButton(
                     child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
                     onPressed: () {
-                      Analytics.instance.logAlert(text: e.message, selection: "Ok");
+                      Analytics().logAlert(text: e.message, selection: "Ok");
                       Navigator.pop(context, true);
                       if (e.focusNode != null) {
                         FocusScope.of(context).requestFocus(e.focusNode);
@@ -911,7 +912,7 @@ class _SettingsAddIlliniCashPanelState
   }
 
   void _onDismissAlert() {
-    Analytics.instance.logAlert(
+    Analytics().logAlert(
         text: "Transaction successfully processed.", selection: "Ok");
     Navigator.of(context).pop();
   }

@@ -15,12 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Onboarding.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/onboarding.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/PrivacyData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -32,7 +32,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 enum SettingsPrivacyPanelMode { regular, onboarding, update }
 
@@ -350,7 +350,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
               RoundedButton(
                   onTap: () {
                     Navigator.pop(context);
-                    Analytics.instance.logAlert(text: "Update privacy", selection: "Yes");
+                    Analytics().logAlert(text: "Update privacy", selection: "Yes");
                     _save();
                   },
                   backgroundColor: Colors.transparent,
@@ -362,7 +362,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
               ),
               RoundedButton(
                   onTap: () {
-                    Analytics.instance.logAlert(text: "Update privacy", selection: "No");
+                    Analytics().logAlert(text: "Update privacy", selection: "No");
                     Navigator.pop(context);
                   },
                   backgroundColor: Colors.transparent,
@@ -400,7 +400,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
 
   void _onSaveClicked() {
     if (!_disabled) {
-      Analytics.instance.logSelect(target: 'Set Privacy');
+      Analytics().logSelect(target: 'Set Privacy');
       if ((widget.mode == SettingsPrivacyPanelMode.regular) && (_sliderValue!.toInt() < this._privacyLevel)) {
         AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.all(0), contentWidget: _buildUpdatePrivacyDialog(context));
       }
@@ -440,7 +440,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   OnboardingBackButton(
                       padding: const EdgeInsets.only(left: 10, top: 10, right: 20, bottom: 5),
                       onTap: () {
-                        Analytics.instance.logSelect(target: "Back");
+                        Analytics().logSelect(target: "Back");
                         Navigator.pop(context);
                       }),
                 ])))
