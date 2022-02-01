@@ -34,7 +34,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 
 
-class ExploreService with Service implements NotificationsListener {
+class ExploreService with Service implements NotificationsListener, ExploreJsonHandler {
 
   static const String notifyEventDetail  = "edu.illinois.rokwire.explore.event.detail";
   static const String notifyEventCreated = "edu.illinois.rokwire.explore.event.created";
@@ -60,6 +60,7 @@ class ExploreService with Service implements NotificationsListener {
 
   @override
   void createService() {
+    Explore.addJsonHandler(this);
     NotificationService().subscribe(this,[
       DeepLink.notifyUri,
     ]);
@@ -68,7 +69,9 @@ class ExploreService with Service implements NotificationsListener {
 
   @override
   void destroyService() {
+    Explore.removeJsonHandler(this);
     NotificationService().unsubscribe(this);
+    super.destroyService();
   }
 
   @override
@@ -90,6 +93,9 @@ class ExploreService with Service implements NotificationsListener {
     }
   }
 
+  // ExploreJsonHandler
+  @override bool canJson(Map<String, dynamic>? json) => Event.canJson(json);
+  @override Explore? fromJson(Map<String, dynamic>? json) => Event.fromJson(json);
 
   // Implementation
 

@@ -16,8 +16,6 @@
 
 import 'dart:ui';
 
-import 'package:illinois/model/Dining.dart';
-import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Location.dart';
 
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -56,19 +54,22 @@ abstract class Explore {
     }
   }
 
-  static bool canJson(Map<String, dynamic> json) {
-    return false;
-  }
+  static Set<ExploreJsonHandler> _jsonHandlers = {};
+  static void addJsonHandler(ExploreJsonHandler handler) => _jsonHandlers.add(handler);
+  static void removeJsonHandler(ExploreJsonHandler handler) => _jsonHandlers.remove(handler);
 
-  static Explore? fromJson(Map<String, dynamic>? json) {
-    if (Event.canJson(json)) {
-      return Event.fromJson(json);
-    }
-    else if (Dining.canJson(json)) {
-      return Dining.fromJson(json);
+  static ExploreJsonHandler? _getJsonHandler(Map<String, dynamic>? json) {
+    if (json != null) {
+      for (ExploreJsonHandler handler in _jsonHandlers) {
+        if (handler.canJson(json)) {
+          return handler;
+        }
+      }
     }
     return null;
   }
+
+  static Explore? fromJson(Map<String, dynamic>? json) => _getJsonHandler(json)?.fromJson(json);
 
   static List<Explore>? listFromJson(List<dynamic>? jsonList) {
     List<Explore>? explores;
@@ -94,7 +95,11 @@ abstract class Explore {
     }
     return result;
   }
+}
 
+abstract class ExploreJsonHandler {
+  bool canJson(Map<String, dynamic>? json) => false;
+  Explore? fromJson(Map<String, dynamic>? json) => null;
 }
 
 //////////////////////////////

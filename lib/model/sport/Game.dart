@@ -109,6 +109,10 @@ class Game with Explore implements Favorite {
     ) : null;
   }
 
+  static bool canJson(Map<String, dynamic>? json) {
+    return (json != null) && (json['sport'] != null) && (json['id'] != null);
+  }
+
   String get title {
     String? opponentName = opponent?.name;
     String cancelledLabel = Localization().getStringEx("app.common.label.cancelled", "Cancelled") ?? '';
@@ -296,10 +300,6 @@ class Game with Explore implements Favorite {
     Map<String, dynamic> attributes = {Analytics.LogAttributeGameId: id, Analytics.LogAttributeGameName: title};
     attributes.addAll(location?.analyticsAttributes ?? {});
     return attributes;
-  }
-
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) && (json['id'] != null);
   }
 
   @override
