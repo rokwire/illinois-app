@@ -17,17 +17,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:illinois/service/AppNavigation.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/app_navigation.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
@@ -43,7 +44,7 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:package_info/package_info.dart';
 
 import 'SettingsManageInterestsPanel.dart';
@@ -142,7 +143,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
     }
 
-    if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
+    if (kDebugMode || (Config().configEnvironment == rokwire.ConfigEnvironment.dev)) {
       contentList.add(_buildDebug());
       actionsList.add(_buildHeaderBarDebug());
     }
@@ -188,7 +189,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   Widget _buildPrivacyCenterButton(){
     return GestureDetector(
         onTap: (){
-          Analytics.instance.logSelect(target: "Privacy Center");
+          Analytics().logSelect(target: "Privacy Center");
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
         },
         child: Semantics(
@@ -334,7 +335,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _onConnectNetIdClicked() {
-    Analytics.instance.logSelect(target: "Connect netId");
+    Analytics().logSelect(target: "Connect netId");
     if (_connectingNetId != true) {
       setState(() { _connectingNetId = true; });
       Auth2().authenticateWithOidc().then((bool? result) {
@@ -349,8 +350,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _onPhoneOrEmailLoginClicked() {
-    Analytics.instance.logSelect(target: "Phone or Email Login");
-    Analytics.instance.logSelect(target: "Phone or Email Login");
+    Analytics().logSelect(target: "Phone or Email Login");
+    Analytics().logSelect(target: "Phone or Email Login");
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(
         settings: RouteSettings(),
@@ -417,17 +418,17 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _onWhoAreYouClicked() {
-    Analytics.instance.logSelect(target: "Who are you");
+    Analytics().logSelect(target: "Who are you");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsRolesPanel()));
   }
 
   void _onManageInterestsClicked() {
-    Analytics.instance.logSelect(target: "Manage Your Interests");
+    Analytics().logSelect(target: "Manage Your Interests");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsManageInterestsPanel()));
   }
 
   void _onFoodFlitersClicked() {
-    Analytics.instance.logSelect(target: "Food Filters");
+    Analytics().logSelect(target: "Food Filters");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => FoodFiltersPanel()));
   }
 
@@ -600,11 +601,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   void _onDisconnectNetIdClicked() {
     if(Auth2().isOidcLoggedIn) {
-      Analytics.instance.logSelect(target: "Disconnect netId");
+      Analytics().logSelect(target: "Disconnect netId");
     } if(Auth2().isPhoneLoggedIn) {
-      Analytics.instance.logSelect(target: "Disconnect phone");
+      Analytics().logSelect(target: "Disconnect phone");
     } if(Auth2().isEmailLoggedIn) {
-      Analytics.instance.logSelect(target: "Disconnect email");
+      Analytics().logSelect(target: "Disconnect email");
     }
     showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
   }
@@ -633,14 +634,14 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               children: <Widget>[
                 TextButton(
                     onPressed: () {
-                      Analytics.instance.logAlert(text: "Sign out", selection: "Yes");
+                      Analytics().logAlert(text: "Sign out", selection: "Yes");
                       Navigator.pop(context);
                       Auth2().logout();
                     },
                     child: Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes")!)),
                 TextButton(
                     onPressed: () {
-                      Analytics.instance.logAlert(text: "Sign out", selection: "No");
+                      Analytics().logAlert(text: "Sign out", selection: "No");
                       Navigator.pop(context);
                     },
                     child: Text(Localization().getStringEx("panel.settings.home.logout.no", "No")!))
@@ -693,17 +694,17 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _onEventRemindersToggled() {
-    Analytics.instance.logSelect(target: "Event Reminders");
+    Analytics().logSelect(target: "Event Reminders");
     FirebaseMessaging().notifyEventReminders = !FirebaseMessaging().notifyEventReminders!;
   }
 
   void _onAthleticsUpdatesToggled() {
-    Analytics.instance.logSelect(target: "Athletics updates");
+    Analytics().logSelect(target: "Athletics updates");
     FirebaseMessaging().notifyAthleticsUpdates = !FirebaseMessaging().notifyAthleticsUpdates!;
   }
 
   void _onDiningSpecialsToggled() {
-    Analytics.instance.logSelect(target: "Dining Specials");
+    Analytics().logSelect(target: "Dining Specials");
     FirebaseMessaging().notifyDiningSpecials = !FirebaseMessaging().notifyDiningSpecials!;
   }
 
@@ -742,12 +743,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _onPrivacyClicked() {
-    Analytics.instance.logSelect(target: "Edit my privacy");
+    Analytics().logSelect(target: "Edit my privacy");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel()));
   }
 
   void _onPrivacyStatementClicked() {
-    Analytics.instance.logSelect(target: "Privacy Statement");
+    Analytics().logSelect(target: "Privacy Statement");
     if (Config().privacyPolicyUrl != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, title: Localization().getStringEx("panel.settings.privacy_statement.label.title", "Privacy Statement"),)));
     }
@@ -866,12 +867,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _onTapPersonalInformation() {
-    Analytics.instance.logSelect(target: "Personal Information");
+    Analytics().logSelect(target: "Personal Information");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInformationPanel()));
   }
 
   void _onTapNotifications() {
-    Analytics.instance.logSelect(target: "Notifications");
+    Analytics().logSelect(target: "Notifications");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
   }
 
@@ -911,7 +912,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   Future<void> _deleteUserData() async{
-    Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
+    Analytics().logAlert(text: "Remove My Information", selection: "Yes");
     await Auth2().deleteUser();
   }
 
@@ -940,7 +941,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _onPersonalInfoClicked() {
-    Analytics.instance.logSelect(target: "Personal Info");
+    Analytics().logSelect(target: "Personal Info");
     if (Auth2().isLoggedIn) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInfoPanel()));
     }
@@ -999,7 +1000,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _onFeedbackClicked() {
-    Analytics.instance.logSelect(target: "Provide Feedback");
+    Analytics().logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
       String? email = Auth2().email;
@@ -1041,7 +1042,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _onDebugClicked() {
-    Analytics.instance.logSelect(target: "Debug");
+    Analytics().logSelect(target: "Debug");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
   }
 

@@ -17,17 +17,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Onboarding.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/onboarding.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class OnboardingLoginPhoneVerifyPanel extends StatefulWidget with OnboardingPanel {
 
@@ -201,7 +201,7 @@ class _OnboardingLoginPhoneVerifyPanelState
             OnboardingBackButton(
                 padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                 onTap: () {
-                  Analytics.instance.logSelect(target: "Back");
+                  Analytics().logSelect(target: "Back");
                   Navigator.pop(context);
                 }), Align(alignment: Alignment.bottomCenter, child:
             Padding(padding: EdgeInsets.only(left: 18, right: 18, bottom: 24),child: ScalableRoundedButton(
@@ -223,7 +223,7 @@ class _OnboardingLoginPhoneVerifyPanelState
       return;
     }
 
-    Analytics.instance.logSelect(target: "Next");
+    Analytics().logSelect(target: "Next");
     _clearErrorMsg();
     _validateUserInput();
     if (StringUtils.isNotEmpty(_validationErrorMsg)) {
@@ -256,7 +256,7 @@ class _OnboardingLoginPhoneVerifyPanelState
   }
 
   void _onMethodChanged(Auth2PhoneVerificationMethod? method) {
-    Analytics.instance.logSelect(target: method?.toString());
+    Analytics().logSelect(target: method?.toString());
     FocusScope.of(context).requestFocus(new FocusNode());
     setState(() {
       _verificationMethod = method;

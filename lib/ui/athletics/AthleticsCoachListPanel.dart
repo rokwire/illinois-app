@@ -17,14 +17,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsCoachDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/model/Coach.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 
 class AthleticsCoachListPanel extends StatefulWidget {
@@ -80,7 +80,7 @@ class _AthleticsCoachListPanelState extends State<AthleticsCoachListPanel> imple
   }
 
   void _onCoachItemTap(Coach coach){
-    Analytics.instance.logSelect(target: "Coach: "+coach.name!);
+    Analytics().logSelect(target: "Coach: "+coach.name!);
     Navigator.push(
         context,
         CupertinoPageRoute(

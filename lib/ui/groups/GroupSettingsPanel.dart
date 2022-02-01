@@ -18,11 +18,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -31,7 +31,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupSettingsPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -169,7 +169,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Network.authApiKeyHeader)) : Container(),
+          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false),
             child: Container(
@@ -203,7 +203,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onTapAddImage() async {
-    Analytics.instance.logSelect(target: "Add Image");
+    Analytics().logSelect(target: "Add Image");
     String? _imageUrl = await showDialog(
         context: context,
         builder: (_) => Material(
@@ -391,7 +391,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onTapConfirmLinkUrl() {
-    Analytics.instance.logSelect(target: "Confirm Website url");
+    Analytics().logSelect(target: "Confirm Website url");
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -544,7 +544,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onTapTags(){
-    Analytics.instance.logSelect(target: "Tags");
+    Analytics().logSelect(target: "Tags");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupTagsPanel(selectedTags: _group!.tags))).then((tags) {
       // (tags == null) means that the user hit the back button
       if (tags != null) {
@@ -677,7 +677,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onTapMembershipQuestion(){
-    Analytics.instance.logSelect(target: "Membership Question");
+    Analytics().logSelect(target: "Membership Question");
     if (_group!.questions == null) {
       _group!.questions = [];
     }
@@ -741,7 +741,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onTapAuthMan() {
-    Analytics.instance.logSelect(target: "AuthMan Group");
+    Analytics().logSelect(target: "AuthMan Group");
     if (_group != null) {
       _group!.authManEnabled = (_group!.authManEnabled != true);
       if (mounted) {

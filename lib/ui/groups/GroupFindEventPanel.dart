@@ -24,13 +24,13 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class GroupEventsContext {
   StreamController<void> eventsController = StreamController<void>();
@@ -347,7 +347,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
       active: (_activeFilterType == filterType),
       visible: true,
       onTap: (){
-        Analytics.instance.logSelect(target: analyticsEvent);
+        Analytics().logSelect(target: analyticsEvent);
         setState(() {
           _activeFilterType = (_activeFilterType != filterType) ? filterType : FilterType.none;
         });
@@ -487,7 +487,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   }
 
   void _onTapSearch() {
-    Analytics.instance.logSelect(target: "Search");
+    Analytics().logSelect(target: "Search");
     _textFocusNode.unfocus();
     if (StringUtils.isNotEmpty(_textEditingController.text)) {
       _loadEvents();
@@ -495,7 +495,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   }
 
   void _onTapClear(){
-    Analytics.instance.logSelect(target: "Clear");
+    Analytics().logSelect(target: "Clear");
     _textFocusNode.unfocus();
     if(StringUtils.isNotEmpty(_textEditingController.text)){
       _textEditingController.text = "";

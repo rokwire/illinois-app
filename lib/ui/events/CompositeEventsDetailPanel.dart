@@ -18,13 +18,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';
@@ -37,7 +37,7 @@ import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
@@ -98,7 +98,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   Future<void> _loadCurrentLocation() async {
-    _locationData = Auth2().privacyMatch(2) ? await LocationServices.instance.location : null;
+    _locationData = Auth2().privacyMatch(2) ? await LocationServices().location : null;
   }
 
   void _updateCurrentLocation() {
@@ -505,7 +505,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _onTapVisitWebsite(String? url) {
-    Analytics.instance.logSelect(target: "Website");
+    Analytics().logSelect(target: "Website");
     _onTapWebButton(url, 'Website');
   }
 
@@ -532,7 +532,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _onTapGetTickets(String? ticketsUrl) {
-    Analytics.instance.logSelect(target: "Tickets");
+    Analytics().logSelect(target: "Tickets");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(
           context, onContinueTap: () {
@@ -557,13 +557,13 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   void _onLocationDetailTapped(){
     if(widget.parentEvent?.location?.latitude != null && widget.parentEvent?.location?.longitude != null) {
-      Analytics.instance.logSelect(target: "Location Detail");
+      Analytics().logSelect(target: "Location Detail");
       NativeCommunicator().launchExploreMapDirections(target: widget.parentEvent);
     }
   }
 
   void _onTapHeaderStar() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.parentEvent?.title}");
+    Analytics().logSelect(target: "Favorite: ${widget.parentEvent?.title}");
     widget.parentEvent!.toggleFavorite();
   }
 
@@ -598,7 +598,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _onTapAddToGroup() {
-    Analytics.instance.logSelect(target: "Add To Group");
+    Analytics().logSelect(target: "Add To Group");
     setState(() {
       _addToGroupInProgress = true;
     });
@@ -752,7 +752,7 @@ class _EventEntry extends StatelessWidget {
               child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
-                    Analytics.instance.logSelect(target: "Favorite: ${event?.title}");
+                    Analytics().logSelect(target: "Favorite: ${event?.title}");
                     Auth2().prefs?.toggleFavorite(event);
                   },
                   child: Semantics(

@@ -18,26 +18,27 @@ import 'package:flutter/foundation.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/service/service.dart' as rokwire;
 
-class IlliniServices extends Services {
-  @protected
-  IlliniServices.internal() : super.internal();
-
-  factory IlliniServices() {
-    return ((Services.instance is IlliniServices) ? (Services.instance as IlliniServices) : (Services.instance = IlliniServices.internal()));
-  }
-
+class Services extends rokwire.Services {
+  
   bool _offlineChecked = false;
 
+  // Singletone Factory
+  
+  @protected
+  Services.internal() : super.internal();
+
+  factory Services() =>  ((rokwire.Services.instance is Services) ? (rokwire.Services.instance as Services) : (rokwire.Services.instance = Services.internal()));
+
   @override
-  Future<ServiceError?> initService(Service service) async {
+  Future<rokwire.ServiceError?> initService(rokwire.Service service) async {
     
     if ((_offlineChecked != true) && Storage().isInitialized && Connectivity().isInitialized) {
       if ((Storage().lastRunVersion == null) && Connectivity().isOffline) {
-        return ServiceError(
+        return rokwire.ServiceError(
           source: null,
-          severity: ServiceErrorSeverity.fatal,
+          severity: rokwire.ServiceErrorSeverity.fatal,
           title: 'Initialization Failed',
           description: 'You must be online when you start this product for first time.',
         );
@@ -51,7 +52,7 @@ class IlliniServices extends Services {
       await NativeCommunicator().setLaunchScreenStatus(service.runtimeType.toString());
     }
 
-    ServiceError? error;
+    rokwire.ServiceError? error;
     try { error = await super.initService(service); }
     catch(e) { print(e.toString()); }
 

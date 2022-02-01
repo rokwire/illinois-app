@@ -18,12 +18,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Parking.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/ui/parking/ParkingEventPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class ParkingEventsPanel extends StatefulWidget{
 
@@ -190,7 +190,7 @@ class _ParkingEventWidget extends StatelessWidget{
   }
 
   void _navigateEvent(BuildContext context) {
-    Analytics.instance.logSelect(target: "Event");
+    Analytics().logSelect(target: "Event");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ParkingEventPanel(event: event,)));
   }
 }

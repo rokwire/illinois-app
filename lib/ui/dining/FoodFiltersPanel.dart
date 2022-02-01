@@ -15,14 +15,14 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/DiningService.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 
 class FoodFiltersPanel extends StatefulWidget{
@@ -202,7 +202,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
   }
 
   void _onFoodTypePrefTapped(String? foodOption){
-    Analytics.instance.logSelect(target: "FoodType: $foodOption");
+    Analytics().logSelect(target: "FoodType: $foodOption");
     if(foodOption != null) {
       if(_selectedTypesPrefs == null) {
         _selectedTypesPrefs = <String>{ foodOption };
@@ -220,7 +220,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
   }
 
   void _onFoodIngredientPrefTapped(String? foodOption){
-    Analytics.instance.logSelect(target: "FoodIngredient: $foodOption");
+    Analytics().logSelect(target: "FoodIngredient: $foodOption");
     if(foodOption != null) {
       if(_selectedIngredientsPrefs == null){
         _selectedIngredientsPrefs = <String>{ foodOption };

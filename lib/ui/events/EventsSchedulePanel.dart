@@ -17,15 +17,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -39,7 +39,7 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 enum _EventTab { All, Saved }
@@ -287,7 +287,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   //display type
   void _selectDisplayType(ListMapDisplayType displayType) {
-    Analytics.instance.logSelect(target: displayType.toString());
+    Analytics().logSelect(target: displayType.toString());
     if (_displayType != displayType) {
       _refresh(() {
         _displayType = displayType;
@@ -347,7 +347,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                       label: filterValues[filterIndex],
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(filterIndex)),
                       onTap: () {
-                        Analytics.instance.logSelect(target: "FilterItem: ${filterValues[filterIndex]}");
+                        Analytics().logSelect(target: "FilterItem: ${filterValues[filterIndex]}");
                         _onFilterValueClick(selectedFilter!, filterIndex);
                       },
                     );
@@ -416,7 +416,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   void _onTapSearchTags() {
-    Analytics.instance.logSelect(target: "Search");
+    Analytics().logSelect(target: "Search");
     FocusScope.of(context).requestFocus(new FocusNode());
     String searchValue = _textEditingController.text;
     if (StringUtils.isEmpty(searchValue)) {
@@ -532,7 +532,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
         active: selectedFilter.active,
         visible: true,
         onTap: (){
-          Analytics.instance.logSelect(target: "Filter: $filterHeaderLabel");
+          Analytics().logSelect(target: "Filter: $filterHeaderLabel");
           return _onFilterTypeClicked(selectedFilter);},
       ));
     }
@@ -667,7 +667,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                                     borderColor: Styles().colors!.fillColorSecondary,
                                     padding: EdgeInsets.symmetric(horizontal: 24),
                                     onTap: () {
-                                      Analytics.instance.logSelect(target: 'Directions');
+                                      Analytics().logSelect(target: 'Directions');
                                       _presentMapExploreDirections(context);
                                     }),),
                                 Container(
@@ -685,7 +685,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                               borderColor: Styles().colors!.fillColorSecondary,
                               padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
-                                Analytics.instance.logSelect(target: 'Details');
+                                Analytics().logSelect(target: 'Details');
                                 _presentMapExploreDetail(context);
                               }),),
 
@@ -788,7 +788,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   bool _userLocationEnabled() {
-    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
+    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
   //EventsLoading
@@ -931,11 +931,11 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   //LocationServices
   _initLocationService(){
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
-        if (_locationServicesStatus == LocationServicesStatus.PermissionNotDetermined) {
-          LocationServices.instance.requestPermission().then((LocationServicesStatus? locationServicesStatus) {
+        if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
+          LocationServices().requestPermission().then((LocationServicesStatus? locationServicesStatus) {
             _locationServicesStatus = locationServicesStatus;
             _refresh((){});
           });
@@ -979,7 +979,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   _onPrivacyLevelChanged(){
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _refresh((){});
       });
@@ -1117,7 +1117,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                             child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
-                                  Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
+                                  Analytics().logSelect(target: "Favorite: ${widget.event?.title}");
                                   Auth2().prefs?.toggleFavorite(widget.event);
                                 },
                                 child: Semantics(

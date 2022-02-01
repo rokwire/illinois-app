@@ -17,14 +17,14 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/main.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/wallet/WalletSheet.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class TabBarWidget extends StatefulWidget {
 

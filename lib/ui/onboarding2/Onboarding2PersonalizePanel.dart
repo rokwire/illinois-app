@@ -16,13 +16,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ImprovePanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 
 import 'Onboarding2PrivacyPanel.dart';
@@ -86,7 +86,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                           Row(children:[
                             Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 15),
                                 onTap: () {
-                                  Analytics.instance.logSelect(target: "Back");
+                                  Analytics().logSelect(target: "Back");
                                   _goBack(context);
                                 }),
                           ],),

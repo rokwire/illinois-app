@@ -17,10 +17,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/SearchPanel.dart';
 import 'package:illinois/ui/explore/ExploreViewTypeTab.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 enum ListMapDisplayType { List, Map }
 
@@ -72,7 +72,7 @@ class ExploreDisplayTypeHeader extends StatelessWidget {
                     IconButton(
                       icon: Image.asset('images/icon-search.png', excludeFromSemantics: true),
                       onPressed: () {
-                        Analytics.instance.logSelect(target: "Search");
+                        Analytics().logSelect(target: "Search");
                         Navigator.push(context, CupertinoPageRoute(builder: (context) => SearchPanel(searchData:additionalData ))).
                           then(
                             (value){

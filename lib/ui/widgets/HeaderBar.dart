@@ -18,13 +18,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Network.dart';
-//import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/SearchPanel.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class HeaderBar extends AppBar {
   final BuildContext context;
@@ -137,7 +136,7 @@ class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWi
   }
 
   void _onTapBack() {
-    Analytics.instance.logSelect(target: "Back");
+    Analytics().logSelect(target: "Back");
     if (onBackPressed != null) {
       onBackPressed!();
     } else {
@@ -158,7 +157,7 @@ class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWi
   }
 
   void _onTapSearch() {
-    Analytics.instance.logSelect(target: "Search");
+    Analytics().logSelect(target: "Search");
     Navigator.push(context, CupertinoPageRoute( builder: (context) => SearchPanel()));
   }
 
@@ -192,7 +191,7 @@ class SliverToutHeaderBar extends SliverAppBar {
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: <Widget>[
-                StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl!, fit: BoxFit.cover, headers: Network.authApiKeyHeader, excludeFromSemantics: true)) : Container(),
+                StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl!, fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
                 CustomPaint(
                   painter: TrianglePainter(painterColor: rightTriangleColor ?? Styles().colors!.fillColorSecondaryTransparent05, left: false),
                   child: Container(
@@ -217,7 +216,7 @@ class SliverToutHeaderBar extends SliverAppBar {
             padding: const EdgeInsets.all(8),
             child: GestureDetector(
               onTap: onBackTap != null ? onBackTap : (){
-                Analytics.instance.logSelect(target: "Back");
+                Analytics().logSelect(target: "Back");
                 Navigator.pop(context);
               },
               child: ClipOval(
@@ -259,7 +258,7 @@ class SliverHeaderBar extends SliverAppBar {
             child: IconButton(
                 icon: Image.asset(backIconRes, excludeFromSemantics: true),
                 onPressed: (){
-                    Analytics.instance.logSelect(target: "Back");
+                    Analytics().logSelect(target: "Back");
                     if (onBackPressed != null) {
                       onBackPressed();
                     } else {

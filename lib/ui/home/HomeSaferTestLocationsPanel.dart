@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/network.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -126,7 +127,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
     String? contentUrl = Config().contentUrl;
     if ((contentUrl != null)) {
       String url = "$contentUrl/health_locations";
-      Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
+      Response? response = await Network().get(url, auth: Auth2());
       return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(JsonUtils.decode(response!.body)) : null;
     }
     return null;
@@ -138,12 +139,12 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
       
       // Ensure current location, if available
       if (_currentLocation == null) {
-        LocationServicesStatus? status = await LocationServices.instance.status;
-        if (status == LocationServicesStatus.PermissionNotDetermined) {
-          status = await LocationServices.instance.requestPermission();
+        LocationServicesStatus? status = await LocationServices().status;
+        if (status == LocationServicesStatus.permissionNotDetermined) {
+          status = await LocationServices().requestPermission();
         }
-        if (status == LocationServicesStatus.PermissionAllowed) {
-          _currentLocation = await LocationServices.instance.location;
+        if (status == LocationServicesStatus.permissionAllowed) {
+          _currentLocation = await LocationServices().location;
         }
       }
 
@@ -453,7 +454,7 @@ class _TestLocation extends StatelessWidget {
   }*/
 
   void _onTapAddress(){
-    Analytics.instance.logSelect(target: "COVID-19 Test Location");
+    Analytics().logSelect(target: "COVID-19 Test Location");
     double? lat = testLocation?.latitude;
     double? lng = testLocation?.longitude;
     if ((lat != null) && (lng != null)) {

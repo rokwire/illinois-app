@@ -17,8 +17,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsBluetoothPanel.dart';
 import 'package:illinois/ui/settings/SettingsLocationPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
@@ -78,16 +78,16 @@ class SettingsNotificationsPreferencesPanel extends StatelessWidget{
 
 
   void _onTapLocation(BuildContext context) {
-    Analytics.instance.logSelect(target: "Location");
+    Analytics().logSelect(target: "Location");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLocationPanel()));
   }
 
   void _onTapNotifications(BuildContext context) {
-    Analytics.instance.logSelect(target: "Notifications");
+    Analytics().logSelect(target: "Notifications");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));  }
 
   void _onTapBluetooth(BuildContext context) {
-    Analytics.instance.logSelect(target: "Bluetooth");
+    Analytics().logSelect(target: "Bluetooth");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsBluetoothPanel()));
   }
 }

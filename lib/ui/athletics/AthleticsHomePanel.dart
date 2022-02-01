@@ -16,13 +16,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -37,7 +37,7 @@ import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -103,7 +103,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
           rightButtonVisible: true,
           rightButtonText: Localization().getStringEx('headerbar.teams.title', 'Teams')!,
           onRightButtonTap: () {
-            Analytics.instance.logSelect(target: "Teams");
+            Analytics().logSelect(target: "Teams");
             Navigator.push(
                 context,
                 CupertinoPageRoute(
@@ -453,7 +453,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   void _onTapMoreUpcomingEvents() {
-    Analytics.instance.logSelect(target: "More Events");
+    Analytics().logSelect(target: "More Events");
     if (Connectivity().isNotOffline) {
       ExploreFilter initialFilter = ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3});
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events, initialFilter: initialFilter, showHeaderBack: true,)));
@@ -464,7 +464,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   void _onTapNews() {
-    Analytics.instance.logSelect(target:"News");
+    Analytics().logSelect(target:"News");
     if (Connectivity().isNotOffline) {
       Navigator.push(
           context,
@@ -479,7 +479,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   void _onTapTickets() {
-    Analytics.instance.logSelect(target:"Tickets");
+    Analytics().logSelect(target:"Tickets");
     if (Connectivity().isNotOffline && (Config().ticketsUrl != null)) {
       Navigator.push(
           context,
@@ -495,7 +495,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   void _onTapGameDayGuide() {
-    Analytics.instance.logSelect(target:"Game Day Guide");
+    Analytics().logSelect(target:"Game Day Guide");
     if (Connectivity().isNotOffline && (Config().gameDayAllUrl != null)) {
         Navigator.push(
             context,
@@ -511,7 +511,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   void _onTapAthleticsGame(BuildContext context, Game game) {
-    Analytics.instance.logSelect(target: "Game: "+game.title);
+    Analytics().logSelect(target: "Game: "+game.title);
     if (Connectivity().isNotOffline) {
       Navigator.push(
           context,
@@ -795,7 +795,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   }
 
   void _onTapGetTickets() {
-    Analytics.instance.logSelect(
+    Analytics().logSelect(
         target: "AthleticsCard:Item:${widget.game.title} -Get Tickets");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
@@ -917,12 +917,12 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   }
 
   void _onTapSave() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.game.title}");
+    Analytics().logSelect(target: "Favorite: ${widget.game.title}");
     Auth2().prefs?.toggleFavorite(widget.game);
   }
 
   void _onTapSportCategory(SportDefinition? sport) {
-    Analytics.instance.logSelect(target: "AthleticsCard:Item:${widget.game.title} -category: ${sport?.name}");
+    Analytics().logSelect(target: "AthleticsCard:Item:${widget.game.title} -category: ${sport?.name}");
     if (sport != null) {
       if (Connectivity().isNotOffline) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(sport)));

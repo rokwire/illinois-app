@@ -17,12 +17,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 
 import 'Onboarding2PersonalizePanel.dart';
@@ -86,7 +86,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                         Row(children:[
                           Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27),
                               onTap: () {
-                                Analytics.instance.logSelect(target: "Back");
+                                Analytics().logSelect(target: "Back");
                                 _goBack(context);
                               }),
                         ],),
@@ -216,13 +216,13 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
 
   Future<void> _requestLocationPermissionsIfNeeded() async {
     if (_toggled) {
-      LocationServicesStatus? status = await LocationServices.instance.status;
+      LocationServicesStatus? status = await LocationServices().status;
       /* This seems nonsence:
-      if (status == LocationServicesStatus.ServiceDisabled) {
-        status = await LocationServices.instance.requestService();
+      if (status == LocationServicesStatus.serviceDisabled) {
+        status = await LocationServices().requestService();
       }*/
-      if (status == LocationServicesStatus.PermissionNotDetermined) {
-        await LocationServices.instance.requestPermission();
+      if (status == LocationServicesStatus.permissionNotDetermined) {
+        await LocationServices().requestPermission();
       }
     }
   }

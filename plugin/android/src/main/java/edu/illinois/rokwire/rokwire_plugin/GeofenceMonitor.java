@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.illinois.rokwire.geofence;
+package edu.illinois.rokwire.rokwire_plugin;
 
 import android.Manifest;
 import android.app.PendingIntent;
@@ -51,8 +51,6 @@ import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import edu.illinois.rokwire.MainActivity;
-import edu.illinois.rokwire.Utils;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -60,14 +58,12 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class GeofenceMonitor implements BeaconConsumer, MethodChannel.MethodCallHandler, FlutterPlugin {
+public class GeofenceMonitor implements BeaconConsumer {
 
     private static final String TAG = GeofenceMonitor.class.getCanonicalName();
     private static final int BEACON_INVALID_VALUE = -420000;
 
     private static GeofenceMonitor instance = null;
-
-    private MethodChannel methodChannel;
 
     private GeofencingClient geofencingClient;
     private PendingIntent geofencePendingIntent;
@@ -89,9 +85,10 @@ public class GeofenceMonitor implements BeaconConsumer, MethodChannel.MethodCall
     //region Public API
 
     public void init() {
-        Context activityContext = MainActivity.getInstance();
-        if (ContextCompat.checkSelfPermission(activityContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(activityContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        Context activityContext = RokwirePlugin.getInstance().getActivity();
+        if ((activityContext != null) &&
+            (ContextCompat.checkSelfPermission(activityContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) &&
+            (ContextCompat.checkSelfPermission(activityContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
             Log.d(TAG, "Location Permissions Granted.");
             initGeofenceClient();
             initBeaconManager();
@@ -101,6 +98,10 @@ public class GeofenceMonitor implements BeaconConsumer, MethodChannel.MethodCall
     public void unInit() {
         unInitGeofenceClient();
         unInitBeaconManager();
+    }
+
+    public boolean isInitialized() {
+        return isGeofenceClientInitialized() && isBeaconManagerInitialized();
     }
 
     public void onLocationPermissionGranted() {
@@ -210,7 +211,7 @@ public class GeofenceMonitor implements BeaconConsumer, MethodChannel.MethodCall
             return;
         }
 
-        geofencingClient = LocationServices.getGeofencingClient(MainActivity.getInstance());
+        geofencingClient = LocationServices.getGeofencingClient(RokwirePlugin.getInstance().getActivity());
         if (geofenceRegions != null && !geofenceRegions.isEmpty()) {
             List<EntryGeofenceMap> entryGeofenceMaps = new ArrayList<>(geofenceRegions.values());
             if (!entryGeofenceMaps.isEmpty()) {
@@ -228,6 +229,10 @@ public class GeofenceMonitor implements BeaconConsumer, MethodChannel.MethodCall
             geofencingClient.removeGeofences(getGeofencePendingIntent());
             geofencingClient = null;
         }
+    }
+
+    private boolean isGeofenceClientInitialized() {
+        return (geofencingClient != null);
     }
 
     private void monitor(List<Map<String, Object>> geofenceEntries) {
@@ -358,28 +363,23 @@ public class GeofenceMonitor implements BeaconConsumer, MethodChannel.MethodCall
         if (geofencePendingIntent != null) {
             return geofencePendingIntent;
         }
-        Intent intent = new Intent(MainActivity.getInstance(), GeofenceBroadcastReceiver.class);
-        geofencePendingIntent = PendingIntent.getBroadcast(MainActivity.getInstance(), 0,
+        Intent intent = new Intent(RokwirePlugin.getInstance().getActivity(), GeofenceBroadcastReceiver.class);
+        geofencePendingIntent = PendingIntent.getBroadcast(RokwirePlugin.getInstance().getActivity(), 0,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return geofencePendingIntent;
     }
 
     private void notifyCurrentGeofencesUpdated() {
-        if (methodChannel != null) {
-            MainActivity.getInstance().runOnUiThread(() -> methodChannel.invokeMethod("onCurrentRegionsChanged", getCurrentIds()));
-        }
+        //TBD
+        RokwirePlugin.getInstance().notifyGeoFence​("onCurrentRegionsChanged", getCurrentIds());
     }
 
     private void notifyRegionEnter(String regionId) {
-        if (methodChannel != null) {
-            MainActivity.getInstance().runOnUiThread(() -> methodChannel.invokeMethod("onEnterRegion", regionId));
-        }
+        RokwirePlugin.getInstance().notifyGeoFence​("onEnterRegion", regionId);
     }
 
     private void notifyRegionExit(String regionId) {
-        if (methodChannel != null) {
-            MainActivity.getInstance().runOnUiThread(() -> methodChannel.invokeMethod("onExitRegion", regionId));
-        }
+        RokwirePlugin.getInstance().notifyGeoFence​("onExitRegion", regionId);
     }
 
     //region Add Geofences Listeners
@@ -411,7 +411,7 @@ public class GeofenceMonitor implements BeaconConsumer, MethodChannel.MethodCall
             Log.d(TAG, "initBeaconManager() -> Monitoring already started");
             return;
         }
-        beaconManager = BeaconManager.getInstanceForApplication(MainActivity.getInstance());
+        beaconManager = BeaconManager.getInstanceForApplication(RokwirePlugin.getInstance().getActivity());
         // Layout for iBeacons
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
         beaconManager.bind(this);
@@ -431,6 +431,10 @@ public class GeofenceMonitor implements BeaconConsumer, MethodChannel.MethodCall
             beaconManager.unbind(this);
             beaconManager = null;
         }
+    }
+
+    private boolean isBeaconManagerInitialized() {
+        return (beaconManager != null);
     }
 
     private void startMonitorBeaconRegions(List<Region> beaconRegions) {
@@ -520,9 +524,7 @@ public class GeofenceMonitor implements BeaconConsumer, MethodChannel.MethodCall
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("regionId", regionId);
         parameters.put("beacons", beaconsList);
-        if (methodChannel != null) {
-            MainActivity.getInstance().runOnUiThread(() -> methodChannel.invokeMethod("onBeaconsInRegionChanged", parameters));
-        }
+        RokwirePlugin.getInstance().notifyGeoFence​("onBeaconsInRegionChanged", parameters);
     }
 
     @Override
@@ -595,8 +597,8 @@ public class GeofenceMonitor implements BeaconConsumer, MethodChannel.MethodCall
     @Override
     public Context getApplicationContext() {
         Log.i(TAG, "BeaconScanner.getApplicationContext");
-        if (MainActivity.getInstance() != null) {
-            return MainActivity.getInstance().getApplicationContext();
+        if (RokwirePlugin.getInstance() != null) {
+            return RokwirePlugin.getInstance().getApplicationContext();
         }
         return null;
     }
@@ -614,45 +616,26 @@ public class GeofenceMonitor implements BeaconConsumer, MethodChannel.MethodCall
 
     //endregion
 
-    //region Flutter Plugin
-
-    @Override
-    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-        if (methodChannel == null) {
-            methodChannel = new MethodChannel(binding.getBinaryMessenger(), "edu.illinois.rokwire/geoFence");
-            methodChannel.setMethodCallHandler(this);
-        }
-    }
-
-    @Override
-    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-        if (methodChannel != null) {
-            methodChannel.setMethodCallHandler(null);
-            methodChannel = null;
-        }
-    }
-
-    @Override
-    public void onMethodCall(MethodCall call, @NonNull MethodChannel.Result result) {
+    public void handleMethodCall(String name, Object params, MethodChannel.Result result) {
         try {
-            if ("currentRegions".equals(call.method)) {
+            if ("currentRegions".equals(name)) {
                 result.success(getCurrentIds());
             }
-            else if ("monitorRegions".equals(call.method)) {
-                List<Map<String, Object>> geoFencesList = (call.arguments instanceof List) ? (List<Map<String, Object>>) call.arguments : null;
+            else if ("monitorRegions".equals(name)) {
+                List<Map<String, Object>> geoFencesList = (params instanceof List) ? (List<Map<String, Object>>) params : null;
                 monitorRegions(geoFencesList);
                 result.success(null);
             }
-            else if ("startRangingBeaconsInRegion".equals(call.method)) {
-                String regionId = (call.arguments instanceof String) ? (String) call.arguments : null;
+            else if ("startRangingBeaconsInRegion".equals(name)) {
+                String regionId = (params instanceof String) ? (String) params : null;
                 result.success(startRangingBeaconsInRegion(regionId));
             }
-            else if ("stopRangingBeaconsInRegion".equals(call.method)) {
-                String regionId = (call.arguments instanceof String) ? (String) call.arguments : null;
+            else if ("stopRangingBeaconsInRegion".equals(name)) {
+                String regionId = (params instanceof String) ? (String) params : null;
                 result.success(stopRangingBeaconsInRegion(regionId));
             }
-            else if("beaconsInRegion".equals(call.method)) {
-                String regionId = (call.arguments instanceof String) ? (String) call.arguments : null;
+            else if("beaconsInRegion".equals(name)) {
+                String regionId = (params instanceof String) ? (String) params : null;
                 result.success(getBeaconsInRegion(regionId));
             }
             else {
@@ -665,8 +648,6 @@ public class GeofenceMonitor implements BeaconConsumer, MethodChannel.MethodCall
         }
     }
 
-
-    //endregion
 
     private static class EntryGeofenceMap {
         private Map<String, Object> entry;

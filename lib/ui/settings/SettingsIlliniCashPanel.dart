@@ -20,9 +20,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/illinicash/Transaction.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -33,7 +33,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class SettingsIlliniCashPanel extends StatefulWidget {
 
@@ -95,7 +95,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
 
   void _loadThisMonthHistory() {
     if(Auth2().isOidcLoggedIn) {
-      Analytics.instance.logSelect(target: "This Month");
+      Analytics().logSelect(target: "This Month");
       DateTime now = DateTime.now();
       DateTime lastMonth = now.subtract(Duration(
         days: 30,
@@ -526,7 +526,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   void _onTapViewHistory() {
-    Analytics.instance.logSelect(target: "View History");
+    Analytics().logSelect(target: "View History");
     _loadTransactions();
   }
 
@@ -540,7 +540,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   void _onAddIlliniCashTapped(){
-    Analytics.instance.logSelect(target: "Add Illini Cash");
+    Analytics().logSelect(target: "Add Illini Cash");
     Navigator.push(context, CupertinoPageRoute(
         settings: RouteSettings(
             name:"settings_add_illini_cash"
@@ -552,7 +552,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   void _onTapLogIn() {
-    Analytics.instance.logSelect(target: "Log in");
+    Analytics().logSelect(target: "Log in");
     if (_authLoading != true) {
       setState(() { _authLoading = true; });
       Auth2().authenticateWithOidc().then((bool? result) {
@@ -567,7 +567,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   void _onStartDateTap() {
-    Analytics.instance.logSelect(target: "Start date");
+    Analytics().logSelect(target: "Start date");
     DateTime initialDate = _startDate ?? DateTime.now();
     DateTime firstDate =
     DateTime.fromMillisecondsSinceEpoch(initialDate.millisecondsSinceEpoch)
@@ -598,7 +598,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   void _onEndDateTap() {
-    Analytics.instance.logSelect(target: "End date");
+    Analytics().logSelect(target: "End date");
     DateTime initialDate = _endDate ?? DateTime.now();
     DateTime firstDate =
     DateTime.fromMillisecondsSinceEpoch(initialDate.millisecondsSinceEpoch)

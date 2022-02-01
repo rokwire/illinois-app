@@ -1,8 +1,8 @@
 //
-//  RegionMonitor.h
-//  Runner
+//  NSString+RokwireJson.h
+//  InaUtils
 //
-//  Created by Mihail Varbanov on 12/11/19.
+//  Created by Mihail Varbanov on 5/9/19.
 //  Copyright 2020 Board of Trustees of the University of Illinois.
     
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,9 +19,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Flutter/Flutter.h>
 
-@interface RegionMonitor : NSObject<FlutterPlugin>
-
-- (instancetype)initWithChannel:(FlutterMethodChannel*)_channel;
+@interface NSString(RokwireJson)
+- (id)rokwireObjectFromJsonString;
+- (NSDictionary*)rokwireDictFromJsonString;
+- (NSArray*)rokwireArrayFromJsonString;
 @end
+
+@interface NSObject(RokwireJson)
+- (NSString*)rokwireJsonString;
+@end
+
+

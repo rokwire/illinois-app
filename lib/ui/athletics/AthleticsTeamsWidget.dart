@@ -16,18 +16,18 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsSportItemWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 typedef void SportsTapListener (String  sport);
 class AthleticsTeamsWidget extends StatefulWidget {
@@ -181,7 +181,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                     ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
                 child: GestureDetector(
                   onTap: () {
-                    Analytics.instance.logSelect(target: "Sport Label Tap: MEN'S SPORTS");
+                    Analytics().logSelect(target: "Sport Label Tap: MEN'S SPORTS");
                     AppSemantics.announceCheckBoxStateChange(context, !allMenSelected,
                         Localization().getStringEx("widget.athletics_teams.label.men_sports.title", "MEN'S SPORTS"));// with ! because we announce before the actual state change
                     Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_menSports, _preferredSports, !allMenSelected));
@@ -240,7 +240,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                     ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
                 child: GestureDetector(
                   onTap: () {
-                    Analytics.instance.logSelect(target: "Sport Label Tap: WOMEN'S SPORTS");
+                    Analytics().logSelect(target: "Sport Label Tap: WOMEN'S SPORTS");
                     AppSemantics.announceCheckBoxStateChange(context, !allWomenSelected,
                         Localization().getStringEx("widget.athletics_teams.label.women_sports.title", "WOMEN'S SPORTS"));// with ! because we announce before the actual state change
                     Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_womenSports, _preferredSports, !allWomenSelected));
@@ -257,7 +257,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
   }
 
   void _onTapAthleticsSportLabel(BuildContext context, SportDefinition sport) {
-    Analytics.instance.logSelect(target: "Sport Label Tap: "+sport.name!);
+    Analytics().logSelect(target: "Sport Label Tap: "+sport.name!);
     if (Connectivity().isNotOffline) {
       Navigator.push(context,
           CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(sport)));
@@ -268,7 +268,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
   }
 
   void _onTapAthleticsSportCheck(BuildContext context, SportDefinition sport) {
-    Analytics.instance.logSelect(target: "Sport Check Tap: "+sport.name!);
+    Analytics().logSelect(target: "Sport Check Tap: "+sport.name!);
     AppSemantics.announceCheckBoxStateChange(context, _preferredSports?.contains(sport.shortName) ?? false, sport.customName);
     Auth2().prefs?.toggleSportInterest(sport.shortName);
   }

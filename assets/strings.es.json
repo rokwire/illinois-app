@@ -114,6 +114,7 @@
     "panel.home.connect.not_logged_in.netid.description.part_3": " or ",
     "panel.home.connect.not_logged_in.netid.description.part_4": "employee",
     "panel.home.connect.not_logged_in.netid.description.part_5": "? Sign in with your NetID.",
+    "panel.home.connect.not_logged_in.netid.description.part_6": " (A NetID sign-in is REQUIRED to be able to use the Building Access feature).",
     "panel.home.connect.not_logged_in.netid.title": "Connect your NetID",
     "panel.home.connect.not_logged_in.phone_or_email.description.part_1": "Don't have a NetID? ",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
@@ -899,7 +900,6 @@
 
     "panel.settings.feedback.label.title": "Proporcionar comentarios",
     "panel.settings.faqs.label.title": "FAQs",
-    "panel.settings.crisis_help.label.title": "Crisis Help",
 
     "panel.settings.privacy_statement.label.title": "Declaración de privacidad",
 
@@ -1679,6 +1679,9 @@
     "panel.manage_members.button.see_all_requests.hint": "",
     "panel.manage_members.label.filter_by": "Filter by",
     "panel.manage_members.label.filter_by.all_members": "Todos los miembros (#)",
+    "panel.manage_members.field.search.title": "Búsqueda",
+    "panel.manage_members.button.search.clear.title": "Claro",
+    "panel.manage_members.button.search.title": "Búsqueda",
 
     "panel.pending_member_detail.button.add.title": "Añadir",
     "panel.pending_member_detail.button.add.hint": "",
@@ -1918,6 +1921,41 @@
 	"panel.home.safer.test_locations.wait_time.status.label.yellow": "Medium wait time",
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
+    "panel.home_canvas_course.header.title": "Curso",
+    "panel.home_canvas_course.load.failed.error.msg": "No se ha podido cargar el curso. Vuelve a intentarlo más tarde.",
+    "panel.home_canvas_course.button.syllabus.title": "Programa de estudios",
+    "panel.home_canvas_course.button.announcements.title": "Anuncios",
+    "panel.home_canvas_course.button.files.title": "Archivos",
+    "panel.home_canvas_course.button.collaborations.title": "Colaboraciones",
+    "panel.home_canvas_course.button.calendar.title": "Calendario",
+    "panel.home_canvas_course.button.notifications.title": "Notificaciones",
+    "panel.home_canvas_course.button.inbox.title": "Bandeja de entrada",
+
+    "panel.syllabus_canvas_course.header.title": "Programa de estudios",
+    "panel.syllabus_canvas_course.load.failed.error.msg": "No se ha podido cargar el curso. Vuelve a intentarlo más tarde.",
+    "panel.syllabus_canvas_course.button.syllabus.title": "Programa de estudios",
+    "panel.syllabus_canvas_course.button.modules.title": "Módulos",
+    "panel.syllabus_canvas_course.button.assignments.title": "Tareas",
+    "panel.syllabus_canvas_course.button.zoom.title": "Reunión Zoom",
+    "panel.syllabus_canvas_course.button.grades.title": "Los grados",
+
+    "panel.syllabus_html.header.title": "Programa de estudios",
+    "panel.syllabus_html.load.failed.error.msg": "No se pudo cargar el contenido del programa de estudios. Por favor, inténtelo de nuevo más tarde.",
+
+    "panel.canvas_announcements.header.title": "Anuncios",
+    "panel.canvas_announcements.load.failed.error.msg": "No se pudieron cargar los anuncios. Por favor, inténtelo de nuevo más tarde.",
+    "panel.canvas_announcements.empty.msg": "No hay anuncios para este curso.",
+
+    "panel.canvas_announcement.header.title": "Anuncio",
+
+    "panel.canvas_files.header.title": "Archivos",
+    "panel.canvas_files.load.failed.error.msg": "Error al cargar archivos y carpetas. Por favor, inténtelo de nuevo más tarde.",
+    "panel.canvas_files.empty.msg": "No hay archivos y carpetas.",
+
+    "panel.canvas_collaborations.header.title": "Colaboraciones",
+    "panel.canvas_collaborations.load.failed.error.msg": "No se pudieron cargar las colaboraciones. Por favor, inténtelo de nuevo más tarde.",
+    "panel.canvas_collaborations.empty.msg": "No hay colaboraciones para este curso.",
+
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 
     "widget.game_detail_heading.button.live_stats.title":"Estadísticas en vivo",
@@ -1937,7 +1975,7 @@
     "widget.game_detail_heading.button.roster.title":"Lista",
     "widget.game_detail_heading.button.roster.hint": "Toca para ver la lista",
 
-    "widget.home_campus_reminders.label.campus_reminders":"RECORDATORIOS DE CAMPUS",
+    "widget.home_campus_reminders.label.campus_reminders": "Recordatorios de Campus",
     "widget.home_campus_reminders.button.more.title": "Ver todo",
     "widget.home_campus_reminders.button.more.hint": "Toca para ver todos los recordatorios",
 
@@ -2083,6 +2121,8 @@
     "widget.home.interest_selection.description": "Ver eventos según los temas que elegiste",
     "widget.home.interest_selection.button.see_all": "Ver todo",
 
+    "widget.home_canvas_courses.header.label": "Cursos",
+
     "widget.add_image.heading": "Seleccionar imagen",
     "widget.add_image.description":"Seleccione un tipo de imagen",
     "widget.add_image.field.image_url.label":"URL de imagen",
@@ -2123,7 +2163,7 @@
     "widget.privacy_level_slider.label.right.title": "La mayoría de las funciones",
 
     "widget.favorites_saved_dialog.title":"This starred item has been added to your saved list" ,
-    "widget.favorites_saved_dialog.calendar.title":" and also your calendar." ,
+    "widget.favorites_saved_dialog.calendar.title": " and if it is an event, also your calendar" ,
     "widget.favorites_saved_dialog.button.view":"View saved" ,
 
     "widget.explore_card.small.view_all.title": "Ver todos los eventos",
@@ -2213,7 +2253,7 @@
     "logic.general.internal_error": "Error interno ocurrido",
     "logic.general.unknown_error": "Ocurrió un error desconocido",
     "logic.general.invalid_response": "Servidor inválido",
-    "logic.general.response_error": "Error de respuesta: %s %s",
+    "logic.general.response_error": "Error de respuesta",
     "logic.general.login_failed": "Incapaz de iniciar sesión. Por favor, inténtelo de nuevo más tarde.",
 
     "app.exit_dialog.message":"¿Está seguro de que desea salir?",

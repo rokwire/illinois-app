@@ -23,7 +23,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -37,7 +37,7 @@ import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/OptionSelectionCell.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Game? game;
@@ -204,7 +204,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        Analytics.instance.logSelect(target: "News");
+                                        Analytics().logSelect(target: "News");
                                         Navigator.push(
                                             context,
                                             CupertinoPageRoute(
@@ -242,7 +242,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        Analytics.instance.logSelect(target: "Teams");
+                                        Analytics().logSelect(target: "Teams");
                                         Navigator.push(
                                             context,
                                             CupertinoPageRoute(
@@ -360,21 +360,21 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
   }
 
   void _onTapNewsExpand() {
-    Analytics.instance.logSelect(target: "News Expand");
+    Analytics().logSelect(target: "News Expand");
     setState(() {
       _newsExpanded = !_newsExpanded;
     });
   }
 
   void _onScheduleTap() {
-    Analytics.instance.logSelect(target: "Schedule");
+    Analytics().logSelect(target: "Schedule");
     Sport? sport = game?.sport;
     SportDefinition? sportDefinition = Sports().getSportByShortName(sport?.shortName);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsSchedulePanel(sport: sportDefinition)));
   }
 
   void _onTapTickets() {
-    Analytics.instance.logSelect(target: "Tickets");
+    Analytics().logSelect(target: "Tickets");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _showTicketsPanel();

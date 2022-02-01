@@ -23,10 +23,10 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -120,7 +120,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           content: _buildContent(),
           imageUrl: _modalImageUrl,
           onClose: () {
-            Analytics.instance.logSelect(target: "Close");
+            Analytics().logSelect(target: "Close");
             _modalImageUrl = null;
             setState(() {});
           }
@@ -347,7 +347,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               padding: EdgeInsets.only(top: 4, right: _outerPadding),
                               child: Text(
                                   StringUtils.ensureNotEmpty(
-                                      _post?.member?.name ),
+                                      _post?.member?.displayShortName ),
                                   style: TextStyle(
                                       fontFamily:
                                       Styles().fontFamilies!.medium,
@@ -775,7 +775,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapPostLink(String? url) {
-    Analytics.instance.logSelect(target: 'link');
+    Analytics().logSelect(target: 'link');
     if (StringUtils.isNotEmpty(url)) {
       Navigator.push(context,
           CupertinoPageRoute(builder: (context) => WebPanel(url: url)));

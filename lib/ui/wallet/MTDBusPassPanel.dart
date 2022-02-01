@@ -18,20 +18,19 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/GeoFence.dart';
+import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/GeoFence.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:rokwire_plugin/service/geo_fence.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class MTDBusPassPanel extends StatefulWidget {
   _MTDBusPassPanelState createState() => _MTDBusPassPanelState();
@@ -289,7 +288,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   void _loadBusPass() async {
-    String? deviceId = await NativeCommunicator().getDeviceId(); //TMP: '1234'
+    String? deviceId = Auth2().deviceId; //TMP: '1234'
     Map<String, dynamic>? beaconData = (_currentBeacon != null) ? {
       'uuid': _currentBeacon!.uuid,
       'major': _currentBeacon!.major.toString(),
@@ -354,7 +353,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     // 2. Start ranging for all current (inside) regions that are not already raning.
     for (String regionId in currentRegionIds) {
       GeoFenceRegion region = GeoFence().regions![regionId]!;
-      if ((region.regionType == GeoFenceRegionType.Beacon) && region.types!.contains('MTD') && !_rangingRegionIds.contains(regionId)) {
+      if ((region.regionType == GeoFenceRegionType.beacon) && region.types!.contains('MTD') && !_rangingRegionIds.contains(regionId)) {
         GeoFence().startRangingBeaconsInRegion(regionId).then((_) {
           _rangingRegionIds.add(regionId);
         });

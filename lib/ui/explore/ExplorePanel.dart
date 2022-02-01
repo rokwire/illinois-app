@@ -16,9 +16,9 @@
 
 import 'package:flutter/semantics.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/DiningService.dart';
@@ -37,9 +37,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
@@ -50,7 +50,7 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
 enum ExploreTab { All, NearMe, Events, Dining }
@@ -277,11 +277,11 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _initTabs() {
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
-        if (_locationServicesStatus == LocationServicesStatus.PermissionNotDetermined) {
-          LocationServices.instance.requestPermission().then((LocationServicesStatus? locationServicesStatus) {
+        if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
+          LocationServices().requestPermission().then((LocationServicesStatus? locationServicesStatus) {
             _locationServicesStatus = locationServicesStatus;
             _updateTabs();
           });
@@ -325,7 +325,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   bool _userLocationEnabled() {
-    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
+    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
   void _initFilters() {
@@ -466,8 +466,8 @@ class ExplorePanelState extends State<ExplorePanel>
         case ExploreTab.Events: 
           {
             if (_initialSelectedFilter != null) {
-              ExploreFilter? filter = (CollectionUtils.isNotEmpty(selectedFilterList)) ? (selectedFilterList as List<ExploreFilter?>).firstWhere((selectedFilter) =>
-              selectedFilter?.type == _initialSelectedFilter?.type, orElse: () => null) : null;
+              ExploreFilter? filter = (CollectionUtils.isNotEmpty(selectedFilterList)) ? (selectedFilterList as List<ExploreFilter?>).firstWhereOrNull((selectedFilter) =>
+              selectedFilter?.type == _initialSelectedFilter?.type) : null;
               if (filter != null) {
                 int filterIndex = selectedFilterList!.indexOf(filter);
                 selectedFilterList.remove(filter);
@@ -533,7 +533,7 @@ class ExplorePanelState extends State<ExplorePanel>
     Set<String?>? categories = _getSelectedCategories(selectedFilterList);
     Set<String>? tags = _getSelectedEventTags(selectedFilterList);
     EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
-    _locationData = _userLocationEnabled() ? await LocationServices.instance.location : null;
+    _locationData = _userLocationEnabled() ? await LocationServices().location : null;
     // Do not load games here, because they do not have proper location data (lat, long)
     return (_locationData != null) ? ExploreService().loadEvents(locationData: _locationData, categories: categories, tags: tags, eventFilter: eventFilter) : null;
   }
@@ -563,7 +563,7 @@ class ExplorePanelState extends State<ExplorePanel>
     PaymentType? paymentType = _getSelectedPaymentType(selectedFilterList);
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
 
-    _locationData = _userLocationEnabled() ? await LocationServices.instance.location : null;
+    _locationData = _userLocationEnabled() ? await LocationServices().location : null;
     _diningSpecials = await DiningService().loadDiningSpecials();
 
     return DiningService().loadBackendDinings(onlyOpened, paymentType, _locationData);
@@ -914,7 +914,7 @@ class ExplorePanelState extends State<ExplorePanel>
                                     borderColor: Styles().colors!.fillColorSecondary,
                                     padding: EdgeInsets.symmetric(horizontal: 24),
                                     onTap: () {
-                                      Analytics.instance.logSelect(target: 'Directions');
+                                      Analytics().logSelect(target: 'Directions');
                                       _presentMapExploreDirections(context);
                                     }),),
                                 Container(
@@ -932,7 +932,7 @@ class ExplorePanelState extends State<ExplorePanel>
                               borderColor: Styles().colors!.fillColorSecondary,
                               padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
-                                Analytics.instance.logSelect(target: 'Details');
+                                Analytics().logSelect(target: 'Details');
                                 _presentMapExploreDetail(context);
                               }),),
 
@@ -1050,7 +1050,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _selectDisplayType (ListMapDisplayType displayType) {
-    Analytics.instance.logSelect(target: displayType.toString());
+    Analytics().logSelect(target: displayType.toString());
     if (_displayType != displayType) {
       _refresh((){
         _displayType = displayType;
@@ -1107,7 +1107,7 @@ class ExplorePanelState extends State<ExplorePanel>
                       subLabel: hasSubLabels ? filterSubLabels![index] : null,
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(index)),
                       onTap: () {
-                        Analytics.instance.logSelect(target: "FilterItem: ${filterValues[index]}");
+                        Analytics().logSelect(target: "FilterItem: ${filterValues[index]}");
                         _onFilterValueClick(selectedFilter!, index);
                       },
                     );
@@ -1149,7 +1149,7 @@ class ExplorePanelState extends State<ExplorePanel>
         active: selectedFilter.active,
         visible: true,
         onTap: (){
-          Analytics.instance.logSelect(target: "Filter: $filterHeaderLabel");
+          Analytics().logSelect(target: "Filter: $filterHeaderLabel");
           return _onFilterTypeClicked(selectedFilter);},
       ));
     }
@@ -1168,7 +1168,7 @@ class ExplorePanelState extends State<ExplorePanel>
   //Click listeners
 
   void _onExploreTap(Explore explore) {
-    Analytics.instance.logSelect(target: explore.exploreTitle);
+    Analytics().logSelect(target: explore.exploreTitle);
 
     Event? event = (explore is Event) ? explore : null;
 
@@ -1197,7 +1197,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _onFilterTypeClicked(ExploreFilter selectedFilter) {
-    // Analytics.instance.logSelect(target:...);
+    // Analytics().logSelect(target:...);
     List<ExploreFilter>? tabFilters = (_tabToFilterMap != null) ? _tabToFilterMap![_selectedTab] : null;
     _refresh(() {
       if (tabFilters != null) {
@@ -1247,7 +1247,7 @@ class ExplorePanelState extends State<ExplorePanel>
   @override
   void onTabClicked(int? tabIndex, RoundedTab tab) {
     if ((0 <= tabIndex!) && (tabIndex < ExploreTab.values.length)) {
-      Analytics.instance.logSelect(target: tab.title) ;
+      Analytics().logSelect(target: tab.title) ;
       selectTab(ExploreTab.values[tabIndex]);
     }
   }
@@ -1397,7 +1397,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _onPrivacyLevelChanged() {
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _updateTabs();
       });

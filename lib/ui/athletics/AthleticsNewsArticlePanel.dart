@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/RecentItem.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/News.dart';
@@ -29,7 +29,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:share/share.dart';
 import 'package:html/dom.dart' as dom;
 
@@ -208,7 +208,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
   }
 
   _shareArticle(){
-    Analytics.instance.logSelect(target: "Share Article");
+    Analytics().logSelect(target: "Share Article");
     if (StringUtils.isNotEmpty(_article?.link)) {
       Share.share(_article!.link!);
     }

@@ -16,12 +16,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/main.dart';
-import 'package:illinois/service/Onboarding.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/onboarding.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
   
@@ -107,7 +107,7 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
   }
 
   void _goNext(BuildContext context) {
-    Analytics.instance.logSelect(target: "Get Started") ;
+    Analytics().logSelect(target: "Get Started") ;
     return Onboarding().next(context, this);
   }
 }

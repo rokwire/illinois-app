@@ -16,19 +16,19 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsScheduleCard extends StatefulWidget {
   final Game? _game;
@@ -271,7 +271,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   void _onTapSaveGame() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget._game?.title}");
+    Analytics().logSelect(target: "Favorite: ${widget._game?.title}");
     Auth2().prefs?.toggleFavorite(widget._game);
   }
 
@@ -285,7 +285,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   void _onTapGetTickets() {
-    Analytics.instance.logSelect(target: "SchedulteCard: " + widget._game!.title + " -Tickets");
+    Analytics().logSelect(target: "SchedulteCard: " + widget._game!.title + " -Tickets");
 
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {

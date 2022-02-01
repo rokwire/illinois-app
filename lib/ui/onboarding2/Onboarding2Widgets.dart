@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -234,7 +234,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
   }
 
   void _openPrivacyPolicy(){
-    Analytics.instance.logSelect(target: "Privacy Policy");
+    Analytics().logSelect(target: "Privacy Policy");
     if (Config().privacyPolicyUrl != null) {
       Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, hideToolBar:true, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
     }

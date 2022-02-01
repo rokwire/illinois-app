@@ -16,10 +16,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Onboarding.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/onboarding.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'dart:io' show Platform;
@@ -62,7 +62,7 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                         OnboardingBackButton(
                           padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                           onTap:() {
-                            Analytics.instance.logSelect(target: "Back");
+                            Analytics().logSelect(target: "Back");
                             _goBack(context);
                           }),
                       ]),
@@ -116,7 +116,7 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                       ),
                       GestureDetector(
                         onTap: () {
-                          Analytics.instance.logSelect(target: 'Not right now') ;
+                          Analytics().logSelect(target: 'Not right now') ;
                           return _goNext(context);
                         },
                         child: Semantics(
@@ -146,7 +146,7 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
   }
 
   void _onReceiveNotifications(BuildContext context) {
-    Analytics.instance.logSelect(target: 'Receive Notifications') ;
+    Analytics().logSelect(target: 'Receive Notifications') ;
 
     //Android does not need for permission for user notifications
     if (Platform.isAndroid) {
@@ -163,7 +163,7 @@ void _requestAuthorization(BuildContext context) async {
     } else {
       permissionStatus = await NotificationPermissions.requestNotificationPermissions();
       if (permissionStatus == PermissionStatus.granted) {
-        Analytics.instance.updateNotificationServices();
+        Analytics().updateNotificationServices();
       }
       _goNext(context);
     }
@@ -203,7 +203,7 @@ void _requestAuthorization(BuildContext context) async {
               children: <Widget>[
                 TextButton(
                     onPressed: () {
-                      Analytics.instance.logAlert(text:"Already have access", selection: "Ok");
+                      Analytics().logAlert(text:"Already have access", selection: "Ok");
                       Navigator.of(context).pop();
                       if (permissionStatus == PermissionStatus.granted) {
                         _goNext(context);

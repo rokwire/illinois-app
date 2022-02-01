@@ -17,17 +17,16 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:firebase_messaging/firebase_messaging.dart' as firebase_messaging;
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Inbox.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
+import 'package:rokwire_plugin/service/firebase_messaging.dart' as rokwire;
 
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -35,13 +34,12 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-const String _channelId = "Notifications_Channel_ID";
 
-class FirebaseMessaging with Service implements NotificationsListener {
+class FirebaseMessaging extends rokwire.FirebaseMessaging implements NotificationsListener {
 
+  static String get notifyToken                  => rokwire.FirebaseMessaging.notifyToken;
+  static String get notifyForegroundMessage      => rokwire.FirebaseMessaging.notifyForegroundMessage;
 
-  static const String notifyToken                 = "edu.illinois.rokwire.firebase.messaging.token";
-  static const String notifyForegroundMessage     = "edu.illinois.rokwire.firebase.messaging.message.foreground";
   static const String notifyPopupMessage          = "edu.illinois.rokwire.firebase.messaging.message.popup";
   static const String notifyScoreMessage          = "edu.illinois.rokwire.firebase.messaging.message.score";
   static const String notifyConfigUpdate          = "edu.illinois.rokwire.firebase.messaging.config.update";
@@ -132,41 +130,21 @@ class FirebaseMessaging with Service implements NotificationsListener {
   static const String payloadTypeHome = 'home';
   static const String payloadTypeInbox = 'inbox';
 
-  final AndroidNotificationChannel _channel = AndroidNotificationChannel(
-    _channelId, // id
-    "Illinois",
-    description: "Receive notifications",
-    importance: Importance.high,
-  );
 
-  String?   _token;
-  String?   _projectID;
   DateTime? _pausedDateTime;
   
-  // Singletone instance
+  // Singletone Factory
 
-  FirebaseMessaging._internal();
-  static final FirebaseMessaging _firebase = FirebaseMessaging._internal();
-  final FlutterLocalNotificationsPlugin _firebaseMessaging = FlutterLocalNotificationsPlugin();
+  @protected
+  FirebaseMessaging.internal() : super.internal();
 
-  factory FirebaseMessaging() {
-    return _firebase;
-  }
-
-  static FirebaseMessaging get instance {
-    return _firebase;
-  }
-
-  // Public getters
-
-  String? get token => _token;
-  String? get projectID => _projectID;
-  bool get hasToken => StringUtils.isNotEmpty(_token);
+  factory FirebaseMessaging() => ((rokwire.FirebaseMessaging.instance is FirebaseMessaging) ? (rokwire.FirebaseMessaging.instance as FirebaseMessaging) : (rokwire.FirebaseMessaging.instance = FirebaseMessaging.internal()));
 
   // Service
 
   @override
   void createService() {
+    super.createService();
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyRolesChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
@@ -180,57 +158,15 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   @override
   void destroyService() {
+    super.destroyService();
     NotificationService().unsubscribe(this);
   }
 
   @override
-  Future<void> initService() async {
-
-    await _firebaseMessaging.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(_channel);
-
-    await firebase_messaging.FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    firebase_messaging.FirebaseMessaging.onMessage.listen((firebase_messaging.RemoteMessage message) {
-      Log.d('FCM: onMessage');
-      _onFirebaseMessage(message);
-    });
-
-    firebase_messaging.FirebaseMessaging.onMessageOpenedApp.listen((firebase_messaging.RemoteMessage message) {
-      Log.d('FCM: onMessageOpenedApp');
-      _onFirebaseMessage(message);
-    });
-
-    firebase_messaging.FirebaseMessaging.instance.getToken().then((String? token) {
-      _token = token;
-      Log.d('FCM: token: $token');
-      NotificationService().notify(notifyToken, null);
-      _updateSubscriptions();
-    });
-    
-    //The project id is not given via the lib so we need to get it via NativeCommunicator
-    NativeCommunicator().queryFirebaseInfo().then((String? info) {
-      _projectID = info;
-    });
-
-    await super.initService();
-  }
-
-  @override
-  void initServiceUI() {
-    firebase_messaging.FirebaseMessaging.instance.getInitialMessage().then((message) {
-      if (message != null) {
-        processDataMessage(message.data);
-      }
-    });
-  }
-
-  @override
   Set<Service> get serviceDependsOn {
-    return Set.from([FirebaseCore(), Storage(), NativeCommunicator(), Auth2()]);
+    Set<Service> services = super.serviceDependsOn;
+    services.add(Auth2());
+    return services;
   }
 
   // NotificationsListener
@@ -274,92 +210,70 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  // Subscription APIs
+  // AndroidNotificationChannel
 
-  Future<bool> subscribeToTopic(String? topic) async {
-    return await Inbox().subscribeToTopic(topic: topic, token: _token);
+  @override
+  AndroidNotificationChannel get androidNotificationChannel {
+    return const AndroidNotificationChannel(
+      "Notifications_Channel_ID", // id
+      "Illinois", // name
+      description: "Receive notifications",
+      importance: Importance.high,
+    );
   }
 
-  Future<bool> unsubscribeFromTopic(String? topic) async {
-    return await Inbox().unsubscribeFromTopic(topic: topic, token: _token);
+  // Token
+
+  @override
+  void applyToken(String? token) {
+    super.applyToken(token);
+    _updateSubscriptions();
   }
 
   // Message Processing
 
-  Future<dynamic> _onFirebaseMessage(firebase_messaging.RemoteMessage message) async {
-    Log.d("FCM: onFirebaseMessage");
-    _processMessage(message);
-  }
-
-  void _processMessage(firebase_messaging.RemoteMessage? message) {
-    Log.d("FCM: onMessageProcess: $message");
-    if (message?.data != null) {
-      try {
-        if(AppLivecycle.instance.state == AppLifecycleState.resumed &&
-          StringUtils.isNotEmpty(message?.notification?.body)
-        ){
-          NotificationService().notify(notifyForegroundMessage, {
-            "body": message?.notification?.body,
-            "onComplete": (){
-              processDataMessage(message!.data);
-            }
-          });
-        } else {
-          processDataMessage(message!.data);
-        }
-      }
-      catch(e) {
-        print(e.toString());
-      }
+  @override
+  void processDataMessage(Map<String, dynamic>? data) {
+    String? type = getMessageType(data);
+    if (type == payloadTypeConfigUpdate) {
+      _onConfigUpdate(data);
     }
-  }
-
-  void processDataMessage(Map<String, dynamic>? data, {Set<String>? allowedTypes}) {
-    String? type = _getMessageType(data);
-    if ((type != null) && (allowedTypes?.contains(type) ?? true)) {
-      if (type == payloadTypeConfigUpdate) {
-        _onConfigUpdate(data);
-      }
-      else if (type == payloadTypePopupMessage) {
-        NotificationService().notify(notifyPopupMessage, data);
-      }
-      else if (type == payloadTypeOpenPoll) {
-        NotificationService().notify(notifyPollOpen, data);
-      }
-      else if (type == payloadTypeEventDetail) {
-        NotificationService().notify(notifyEventDetail, data);
-      }
-      else if (type == payloadTypeGameDetail) {
-        NotificationService().notify(notifyGameDetail, data);
-      }
-      else if (type == payloadTypeAthleticsGameStarted) {
-        NotificationService().notify(notifyAthleticsGameStarted, data);
-      }
-      else if (type == payloadTypeAthleticsNewDetail) {
-        NotificationService().notify(notifyAthleticsNewsUpdated, data);
-      }
-      else if (type == payloadTypeGroup) {
-        NotificationService().notify(notifyGroupsNotification, data);
-      }
-      else if (type == payloadTypeHome) {
-        NotificationService().notify(notifyHomeNotification, data);
-      }
-      else if (type == payloadTypeInbox) {
-        NotificationService().notify(notifyInboxNotification, data);
-      }
-      else if (_isScoreTypeMessage(type)) {
-        NotificationService().notify(notifyScoreMessage, data);
-      }
-      else {
-        Log.d("FCM: unknown message type: $type");
-      }
+    else if (type == payloadTypePopupMessage) {
+      NotificationService().notify(notifyPopupMessage, data);
+    }
+    else if (type == payloadTypeOpenPoll) {
+      NotificationService().notify(notifyPollOpen, data);
+    }
+    else if (type == payloadTypeEventDetail) {
+      NotificationService().notify(notifyEventDetail, data);
+    }
+    else if (type == payloadTypeGameDetail) {
+      NotificationService().notify(notifyGameDetail, data);
+    }
+    else if (type == payloadTypeAthleticsGameStarted) {
+      NotificationService().notify(notifyAthleticsGameStarted, data);
+    }
+    else if (type == payloadTypeAthleticsNewDetail) {
+      NotificationService().notify(notifyAthleticsNewsUpdated, data);
+    }
+    else if (type == payloadTypeGroup) {
+      NotificationService().notify(notifyGroupsNotification, data);
+    }
+    else if (type == payloadTypeHome) {
+      NotificationService().notify(notifyHomeNotification, data);
+    }
+    else if (type == payloadTypeInbox) {
+      NotificationService().notify(notifyInboxNotification, data);
+    }
+    else if (_isScoreTypeMessage(type)) {
+      NotificationService().notify(notifyScoreMessage, data);
     }
     else {
-      Log.d("FCM: undefined message type: ${JsonUtils.encode(data)}");
+      Log.d("FCM: unknown message type: ${JsonUtils.encode(data)}");
     }
   }
 
-  String? _getMessageType(Map<String, dynamic>? data) {
+  static String? getMessageType(Map<String, dynamic>? data) {
     if (data == null)
       return null;
 
@@ -655,7 +569,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   }
 
   Set<String?>? get currentTopics{
-    Set<String?>? subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
+    Set<String?>? subscribedTopics = Storage().inboxFirebaseMessagingSubscriptionTopics;
     if(Auth2().isLoggedIn){
       subscribedTopics = (Inbox().userInfo)?.topics;
     }

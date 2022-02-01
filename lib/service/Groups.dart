@@ -22,12 +22,12 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 //import 'package:flutter/services.dart' show rootBundle;
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -166,7 +166,7 @@ class Groups with Service implements NotificationsListener {
         if ((Config().groupsUrl != null) && Auth2().isLoggedIn) {
           try {
             String url = '${Config().groupsUrl}/user/login';
-            await Network().get(url, auth: NetworkAuth.Auth2,);
+            await Network().get(url, auth: Auth2(),);
 
             // we need just to be sure the request is made no matter for the result at this point
           } catch (e) {
@@ -183,7 +183,7 @@ class Groups with Service implements NotificationsListener {
     if ((Config().groupsUrl != null) && ((myGroups != true) || Auth2().isLoggedIn)) {
       try {
         String url = myGroups ? '${Config().groupsUrl}/user/groups' : '${Config().groupsUrl}/groups';
-        Response? response = await Network().get(url, auth: NetworkAuth.Auth2,);
+        Response? response = await Network().get(url, auth: Auth2(),);
         int responseCode = response?.statusCode ?? -1;
         String? responseBody = response?.body;
         List<dynamic>? groupsJson = ((responseBody != null) && (responseCode == 200)) ? JsonUtils.decodeList(responseBody) : null;
@@ -203,7 +203,7 @@ class Groups with Service implements NotificationsListener {
     }
     String encodedTExt = Uri.encodeComponent(searchText);
     String url = '${Config().groupsUrl}/groups?title=$encodedTExt';
-    Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
+    Response? response = await Network().get(url, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     String? responseBody = response?.body;
     if (responseCode == 200) {
@@ -220,11 +220,33 @@ class Groups with Service implements NotificationsListener {
     if(StringUtils.isNotEmpty(groupId)) {
       String url = '${Config().groupsUrl}/groups/$groupId';
       try {
-        Response? response = await Network().get(url, auth: NetworkAuth.Auth2,);
+        Response? response = await Network().get(url, auth: Auth2(),);
         int responseCode = response?.statusCode ?? -1;
         String? responseBody = response?.body;
         Map<String, dynamic>? groupsJson = ((responseBody != null) && (responseCode == 200)) ? JsonUtils.decodeMap(responseBody) : null;
         return groupsJson != null ? Group.fromJson(groupsJson) : null;
+      } catch (e) {
+        print(e);
+      }
+    }
+    return null;
+  }
+
+  //TBD sync with backend team, update group model and UI
+  Future<Group?> loadGroupByCanvasCourseId(int? courseId) async {
+    await _waitForLogin();
+    if (courseId != null) {
+      String url = '${Config().groupsUrl}/groups/canvas_course/$courseId';
+      try {
+        Response? response = await Network().get(url, auth: Auth2());
+        int responseCode = response?.statusCode ?? -1;
+        String? responseBody = response?.body;
+        if (responseCode == 200) {
+          Map<String, dynamic>? groupJson = JsonUtils.decodeMap(responseBody);
+          return Group.fromJson(groupJson);
+        } else {
+          Log.d('Failed to load group by canvas course id. Reason: \n$responseCode: $responseBody');
+        }
       } catch (e) {
         print(e);
       }
@@ -242,7 +264,7 @@ class Groups with Service implements NotificationsListener {
         json["creator_name"] = Auth2().account?.profile?.fullName ?? "";
         json["creator_photo_url"] = "";
         String? body = JsonUtils.encode(json);
-        Response? response = await Network().post(url, auth: NetworkAuth.Auth2, body: body);
+        Response? response = await Network().post(url, auth: Auth2(), body: body);
         int responseCode = response?.statusCode ?? -1;
         Map<String, dynamic>? jsonData = JsonUtils.decodeMap(response?.body);
         if (responseCode == 200) {
@@ -274,7 +296,7 @@ class Groups with Service implements NotificationsListener {
       try {
         Map<String, dynamic> json = group.toJson();
         String? body = JsonUtils.encode(json);
-        Response? response = await Network().put(url, auth: NetworkAuth.Auth2, body: body);
+        Response? response = await Network().put(url, auth: Auth2(), body: body);
         int responseCode = response?.statusCode ?? -1;
         if(responseCode == 200){
           NotificationService().notify(notifyGroupUpdated, group.id);
@@ -300,7 +322,7 @@ class Groups with Service implements NotificationsListener {
       return false;
     }
     String url = '${Config().groupsUrl}/group/$groupId';
-    Response? response = await Network().delete(url, auth: NetworkAuth.Auth2);
+    Response? response = await Network().delete(url, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
       NotificationService().notify(notifyGroupDeleted, null);
@@ -325,7 +347,7 @@ class Groups with Service implements NotificationsListener {
         json["member_answers"] = CollectionUtils.isNotEmpty(answers) ? answers!.map((e) => e.toJson()).toList() : [];
 
         String? body = JsonUtils.encode(json);
-        Response? response = await Network().post(url, auth: NetworkAuth.Auth2, body: body);
+        Response? response = await Network().post(url, auth: Auth2(), body: body);
         if((response?.statusCode ?? -1) == 200){
           Analytics().logGroup(action: Analytics.LogGroupMembershipRequested, attributes: group.analyticsAttributes);
           NotificationService().notify(notifyGroupUpdated, group.id);
@@ -343,7 +365,7 @@ class Groups with Service implements NotificationsListener {
     if(group?.id != null) {
       String url = '${Config().groupsUrl}/group/${group!.id}/pending-members';
       try {
-        Response? response = await Network().delete(url, auth: NetworkAuth.Auth2,);
+        Response? response = await Network().delete(url, auth: Auth2(),);
         if((response?.statusCode ?? -1) == 200){
           Analytics().logGroup(action: Analytics.LogGroupMembershipRequestCanceled, attributes: group.analyticsAttributes);
           NotificationService().notify(notifyGroupUpdated, group.id);
@@ -362,7 +384,7 @@ class Groups with Service implements NotificationsListener {
       return false;
     }
     String url = '${Config().groupsUrl}/group/${group!.id}/members';
-    Response? response = await Network().delete(url, auth: NetworkAuth.Auth2);
+    Response? response = await Network().delete(url, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
       Analytics().logGroup(action: Analytics.LogGroupMembershipQuit, attributes: group.analyticsAttributes);
@@ -382,7 +404,7 @@ class Groups with Service implements NotificationsListener {
       String? body = JsonUtils.encode(bodyMap);
       String url = '${Config().groupsUrl}/memberships/${member!.id}/approval';
       try {
-        Response? response = await Network().put(url, auth: NetworkAuth.Auth2, body: body);
+        Response? response = await Network().put(url, auth: Auth2(), body: body);
         if((response?.statusCode ?? -1) == 200){
           Analytics().logGroup(action: decision ? Analytics.LogGroupMembershipApproved : Analytics.LogGroupMembershipRejected, attributes: group!.analyticsAttributes);    
           NotificationService().notify(notifyGroupUpdated, group.id);
@@ -402,7 +424,7 @@ class Groups with Service implements NotificationsListener {
       String? body = JsonUtils.encode(bodyMap);
       String url = '${Config().groupsUrl}/memberships/${member!.id}';
       try {
-        Response? response = await Network().put(url, auth: NetworkAuth.Auth2, body: body);
+        Response? response = await Network().put(url, auth: Auth2(), body: body);
         if((response?.statusCode ?? -1) == 200){
           if (status == GroupMemberStatus.admin) {
             Analytics().logGroup(action: Analytics.LogGroupMembershipSwitchToAdmin, attributes: group!.analyticsAttributes);    
@@ -425,7 +447,7 @@ class Groups with Service implements NotificationsListener {
     if(StringUtils.isNotEmpty(group?.id) && StringUtils.isNotEmpty(member?.id)) {
       String url = '${Config().groupsUrl}/memberships/${member!.id}';
       try {
-        Response? response = await Network().delete(url, auth: NetworkAuth.Auth2,);
+        Response? response = await Network().delete(url, auth: Auth2(),);
         if((response?.statusCode ?? -1) == 200){
           Analytics().logGroup(action: Analytics.LogGroupMembershipRemoved, attributes: group!.analyticsAttributes);    
           NotificationService().notify(notifyGroupUpdated, group.id);
@@ -445,7 +467,7 @@ class Groups with Service implements NotificationsListener {
     if(StringUtils.isNotEmpty(groupId)) {
       String url = '${Config().groupsUrl}/group/$groupId/events';
       try {
-        Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
+        Response? response = await Network().get(url, auth: Auth2());
         if((response?.statusCode ?? -1) == 200){
           //Successfully loaded ids
           int responseCode = response?.statusCode ?? -1;
@@ -504,7 +526,7 @@ class Groups with Service implements NotificationsListener {
       try {
         Map<String, dynamic> bodyMap = {"event_id":eventId};
         String? body = JsonUtils.encode(bodyMap);
-        Response? response = await Network().post(url, auth: NetworkAuth.Auth2,body: body);
+        Response? response = await Network().post(url, auth: Auth2(),body: body);
         if((response?.statusCode ?? -1) == 200){
           NotificationService().notify(notifyGroupUpdated, groupId);
           return true;
@@ -521,7 +543,7 @@ class Groups with Service implements NotificationsListener {
     if(StringUtils.isNotEmpty(groupId) && StringUtils.isNotEmpty(eventId)) {
       String url = '${Config().groupsUrl}/group/$groupId/event/$eventId';
       try {
-        Response? response = await Network().delete(url, auth: NetworkAuth.Auth2);
+        Response? response = await Network().delete(url, auth: Auth2());
         if((response?.statusCode ?? -1) == 200){
           NotificationService().notify(notifyGroupUpdated, groupId);
           return true;
@@ -571,7 +593,7 @@ class Groups with Service implements NotificationsListener {
     }
     String? requestBody = JsonUtils.encode(post.toJson(create: true));
     String requestUrl = '${Config().groupsUrl}/group/$groupId/posts';
-    Response? response = await Network().post(requestUrl, auth: NetworkAuth.Auth2, body: requestBody);
+    Response? response = await Network().post(requestUrl, auth: Auth2(), body: requestBody);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
       NotificationService().notify(notifyGroupPostsUpdated, (post.parentId == null) ? 1 : null);
@@ -589,7 +611,7 @@ class Groups with Service implements NotificationsListener {
     }
     String? requestBody = JsonUtils.encode(post!.toJson(update: true));
     String requestUrl = '${Config().groupsUrl}/group/$groupId/posts/${post.id}';
-    Response? response = await Network().put(requestUrl, auth: NetworkAuth.Auth2, body: requestBody);
+    Response? response = await Network().put(requestUrl, auth: Auth2(), body: requestBody);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
       NotificationService().notify(notifyGroupPostsUpdated);
@@ -606,7 +628,7 @@ class Groups with Service implements NotificationsListener {
       return false;
     }
     String requestUrl = '${Config().groupsUrl}/group/$groupId/posts/${post!.id}';
-    Response? response = await Network().delete(requestUrl, auth: NetworkAuth.Auth2);
+    Response? response = await Network().delete(requestUrl, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
       NotificationService().notify(notifyGroupPostsUpdated, (post.parentId == null) ? -1 : null);
@@ -638,7 +660,7 @@ class Groups with Service implements NotificationsListener {
     }
     
     String requestUrl = '${Config().groupsUrl}/group/$groupId/posts$urlParams';
-    Response? response = await Network().get(requestUrl, auth: NetworkAuth.Auth2);
+    Response? response = await Network().get(requestUrl, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -653,7 +675,7 @@ class Groups with Service implements NotificationsListener {
   //Delete User
   void deleteUserData() async{
     try {
-      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().delete("${Config().groupsUrl}/user", auth: NetworkAuth.Auth2) : null;
+      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().delete("${Config().groupsUrl}/user", auth: Auth2()) : null;
       if(response?.statusCode == 200) {
         Log.d('Successfully deleted groups user data');
       }
@@ -665,7 +687,7 @@ class Groups with Service implements NotificationsListener {
 
   Future<Map<String, dynamic>?> loadUserStats() async {
     try {
-      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().get("${Config().groupsUrl}/user/stats", auth: NetworkAuth.Auth2) : null;
+      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().get("${Config().groupsUrl}/user/stats", auth: Auth2()) : null;
       if(response?.statusCode == 200) {
         return  JsonUtils.decodeMap(response?.body);
       }

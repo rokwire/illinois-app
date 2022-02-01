@@ -113,7 +113,8 @@
 	"panel.home.connect.not_logged_in.netid.description.part_2": "university student",
 	"panel.home.connect.not_logged_in.netid.description.part_3": " or ",
 	"panel.home.connect.not_logged_in.netid.description.part_4": "employee",
-"panel.home.connect.not_logged_in.netid.description.part_5": "? Sign in with your NetID.",
+	"panel.home.connect.not_logged_in.netid.description.part_5": "? Sign in with your NetID.",
+	"panel.home.connect.not_logged_in.netid.description.part_6": " (A NetID sign-in is REQUIRED to be able to use the Building Access feature).",
 	"panel.home.connect.not_logged_in.netid.title": "Connect your NetID",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_1": "Don't have a NetID? ",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
@@ -899,7 +900,6 @@
 
 	"panel.settings.feedback.label.title":"提供反馈",
 	"panel.settings.faqs.label.title": "FAQs",
-	"panel.settings.crisis_help.label.title": "Crisis Help",
 
 	"panel.settings.privacy_statement.label.title":"隐私声明",
 
@@ -1677,6 +1677,9 @@
 	"panel.manage_members.button.see_all_requests.hint": "",
 	"panel.manage_members.label.filter_by": "筛选依据",
 	"panel.manage_members.label.filter_by.all_members": "所有成员（#）",
+	"panel.manage_members.field.search.title": "搜索",
+	"panel.manage_members.button.search.clear.title": "清除",
+	"panel.manage_members.button.search.title": "搜索",
 
 	"panel.pending_member_detail.button.add.title": "添加",
 	"panel.pending_member_detail.button.add.hint": "",
@@ -1916,6 +1919,41 @@
 	"panel.home.safer.test_locations.wait_time.status.label.yellow": "Medium wait time",
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
+	"panel.home_canvas_course.header.title": "課程",
+	"panel.home_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",
+	"panel.home_canvas_course.button.syllabus.title": "教學大綱",
+	"panel.home_canvas_course.button.announcements.title": "公告",
+	"panel.home_canvas_course.button.files.title": "文件",
+	"panel.home_canvas_course.button.collaborations.title": "合作",
+	"panel.home_canvas_course.button.calendar.title": "日曆",
+	"panel.home_canvas_course.button.notifications.title": "通知",
+	"panel.home_canvas_course.button.inbox.title": "收件箱",
+
+	"panel.syllabus_canvas_course.header.title": "教學大綱",
+	"panel.syllabus_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",
+	"panel.syllabus_canvas_course.button.syllabus.title": "教學大綱",
+	"panel.syllabus_canvas_course.button.modules.title": "模塊",
+	"panel.syllabus_canvas_course.button.assignments.title": "作業",
+	"panel.syllabus_canvas_course.button.zoom.title": "變焦會議",
+	"panel.syllabus_canvas_course.button.grades.title": "成績",
+
+	"panel.syllabus_html.header.title": "教學大綱",
+	"panel.syllabus_html.load.failed.error.msg": "未能加載課程內容. 請稍後再試.",
+
+    "panel.canvas_announcements.header.title": "公告",
+    "panel.canvas_announcements.load.failed.error.msg": "未能加載公告. 請稍後再試.",
+    "panel.canvas_announcements.empty.msg": "本課程沒有公告.",
+
+    "panel.canvas_announcement.header.title": "公告",
+
+    "panel.canvas_files.header.title": "文件",
+    "panel.canvas_files.load.failed.error.msg": "無法加載文件和文件夾. 請稍後再試.",
+    "panel.canvas_files.empty.msg": "沒有文件和文件夾.",
+
+    "panel.canvas_collaborations.header.title": "合作",
+    "panel.canvas_collaborations.load.failed.error.msg": "未能加載協作. 請稍後再試.",
+    "panel.canvas_collaborations.empty.msg": "本課程沒有合作.",
+
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 
 	"widget.game_detail_heading.button.live_stats.title":"实时信息",
@@ -2081,6 +2119,8 @@
 	"widget.home.interest_selection.description":"查看基于您选择的主题的活动",
 	"widget.home.interest_selection.button.see_all":"查看全部",
 
+	"widget.home_canvas_courses.header.label": "培訓班",
+
 	"widget.add_image.heading":"选择图像",
 	"widget.add_image.description":"选择图像类型",
 	"widget.add_image.field.image_url.label":"图片地址",
@@ -2121,7 +2161,7 @@
 	"widget.privacy_level_slider.label.right.title":"大多数功能",
 
 	"widget.favorites_saved_dialog.title":"This starred item has been added to your saved list" ,
-	"widget.favorites_saved_dialog.calendar.title":" and also your calendar." ,
+	"widget.favorites_saved_dialog.calendar.title": " and if it is an event, also your calendar" ,
 	"widget.favorites_saved_dialog.button.view":"View saved" ,
 
 	"widget.explore_card.small.view_all.title": "查看所有活動",
@@ -2211,7 +2251,7 @@
 	"logic.general.internal_error": "发生内部错误",
 	"logic.general.unknown_error": "發生未知錯誤",
 	"logic.general.invalid_response": "无效的服务器响应",
-	"logic.general.response_error": "响应错误: %s %s",
+	"logic.general.response_error": "响应错误",
 	"logic.general.login_failed": "無法登入。 請稍後再試。",
 
 	"app.exit_dialog.message":"确定要退出吗?",

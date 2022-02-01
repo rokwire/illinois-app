@@ -18,17 +18,17 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
@@ -40,7 +40,7 @@ import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class HomeUpcomingEventsWidget extends StatefulWidget {
 
@@ -259,7 +259,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
             imageRes: 'images/icon-calendar.png',
             subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home_upcoming_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
             onSettingsTap: (){
-              Analytics.instance.logSelect(target: "Events for you - settings");
+              Analytics().logSelect(target: "Events for you - settings");
               Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsManageInterestsPanel()));
             },
           ),
@@ -331,7 +331,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   void _onTapExplore(Explore explore) {
     Favorite? favorite = explore is Favorite? explore as Favorite: null;
     String? exploreid = favorite?.favoriteId;
-    Analytics.instance.logSelect(target: "HomeUpcomingEvents event: $exploreid");
+    Analytics().logSelect(target: "HomeUpcomingEvents event: $exploreid");
 
     Event? event = (explore is Event) ? explore : null;
     if (event?.isComposite ?? false) {
@@ -346,7 +346,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   }
 
   void _navigateToExploreEvents() {
-    Analytics.instance.logSelect(target: "HomeUpcomingEvents View all events");
+    Analytics().logSelect(target: "HomeUpcomingEvents View all events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events, showHeaderBack: true,)));
   }
 }

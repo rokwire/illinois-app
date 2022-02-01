@@ -17,7 +17,8 @@
 import 'dart:typed_data';
 import 'package:http/http.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime_type/mime_type.dart';
@@ -105,7 +106,7 @@ class Content /* with Service */ {
       'quality': 100.toString() // Use maximum quality - 100
     };
     StreamedResponse? response = await Network().multipartPost(
-        url: url, fileKey: 'fileName', fileName: fileName, fileBytes: imageBytes, contentType: mediaType, fields: imageRequestFields, auth: NetworkAuth.Auth2);
+        url: url, fileKey: 'fileName', fileName: fileName, fileBytes: imageBytes, contentType: mediaType, fields: imageRequestFields, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     String responseString = (await response?.stream.bytesToString())!;
     if (responseCode == 200) {

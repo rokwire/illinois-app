@@ -15,10 +15,10 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/LaundryService.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -27,7 +27,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class LaundryDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -132,7 +132,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                       Visibility(visible: Auth2().canFavorite,
                                           child: GestureDetector(
                                             onTap: () {
-                                              Analytics.instance.logSelect(target: "Favorite: ${widget.room.title}");
+                                              Analytics().logSelect(target: "Favorite: ${widget.room.title}");
                                               Auth2().prefs?.toggleFavorite(widget.room);
                                             },
                                             child: Semantics(
@@ -378,7 +378,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   void _onTapViewMap() {
-    Analytics.instance.logSelect(target: "View Map");
+    Analytics().logSelect(target: "View Map");
     if (_detailVisible) {
       setState(() {
         _detailVisible = false;

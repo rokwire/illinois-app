@@ -15,12 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/HttpProxy.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/service/http_proxy.dart';
 
 class DebugHttpProxyPanel extends StatefulWidget{
   _DebugHttpProxyPanelState createState() => _DebugHttpProxyPanelState();
@@ -36,9 +36,9 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
   @override
   void initState() {
     super.initState();
-    _proxyEnabled = HttpProxy().httpProxyEnabled;
-    _hostController.text = HttpProxy().httpProxyHost!;
-    _portController.text = HttpProxy().httpProxyPort!;
+    _proxyEnabled = HttpProxy().httpProxyEnabled ?? false;
+    _hostController.text = HttpProxy().httpProxyHost ?? '';
+    _portController.text = HttpProxy().httpProxyPort ?? '';
   }
 
   @override
@@ -66,7 +66,7 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
             children: [
               ToggleRibbonButton(label: Localization().getStringEx("panel.debug_http_proxy_enable.button.save.title", "Http Proxy Enabled"), toggled: _proxyEnabled, onTap: (){
                 setState(() {
-                  _proxyEnabled = !_proxyEnabled!;
+                  _proxyEnabled = (_proxyEnabled != true);
                 });
               }),
               Padding(

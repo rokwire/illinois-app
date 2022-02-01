@@ -16,11 +16,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/LocationServices.dart';
-import 'package:illinois/service/Onboarding.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
+import 'package:rokwire_plugin/service/onboarding.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 
@@ -54,7 +54,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                       OnboardingBackButton(
                         padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                         onTap:() {
-                          Analytics.instance.logSelect(target: "Back");
+                          Analytics().logSelect(target: "Back");
                           _goBack(context);
                         }),
                     ]),
@@ -114,7 +114,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Analytics.instance.logSelect(target: 'Not right now') ;
+                        Analytics().logSelect(target: 'Not right now') ;
                         return  _goNext(context);
                       },
                       child: Semantics(
@@ -147,21 +147,21 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
   }
 
   void _requestLocation(BuildContext context) async {
-    Analytics.instance.logSelect(target: 'Share My locaiton') ;
-    await LocationServices.instance.status.then((LocationServicesStatus? status){
-      if (status == LocationServicesStatus.ServiceDisabled) {
-        LocationServices.instance.requestService();
+    Analytics().logSelect(target: 'Share My locaiton') ;
+    await LocationServices().status.then((LocationServicesStatus? status){
+      if (status == LocationServicesStatus.serviceDisabled) {
+        LocationServices().requestService();
       }
-      else if (status == LocationServicesStatus.PermissionNotDetermined) {
-        LocationServices.instance.requestPermission().then((LocationServicesStatus? status) {
+      else if (status == LocationServicesStatus.permissionNotDetermined) {
+        LocationServices().requestPermission().then((LocationServicesStatus? status) {
           _goNext(context);
         });
       }
-      else if (status == LocationServicesStatus.PermissionDenied) {
+      else if (status == LocationServicesStatus.permissionDenied) {
         String? message = Localization().getStringEx('panel.onboarding.location.label.access_denied', 'You have already denied access to this app.');
         showDialog(context: context, builder: (context) => _buildDialogWidget(context, message:message!, pushNext : false ));
       }
-      else if (status == LocationServicesStatus.PermissionAllowed) {
+      else if (status == LocationServicesStatus.permissionAllowed) {
         String? message = Localization().getStringEx('panel.onboarding.location.label.access_granted', 'You have already granted access to this app.');
         showDialog(context: context, builder: (context) => _buildDialogWidget(context, message:message!, pushNext : true ));
       }
@@ -196,7 +196,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
               children: <Widget>[
                 TextButton(
                     onPressed: () {
-                      Analytics.instance.logAlert(text: message, selection:okTitle);
+                      Analytics().logAlert(text: message, selection:okTitle);
                       if (pushNext!) {
                         _goNext(context, replace : true);
                       }

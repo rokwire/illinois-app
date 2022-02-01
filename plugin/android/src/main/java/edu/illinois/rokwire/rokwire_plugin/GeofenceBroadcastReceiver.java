@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.illinois.rokwire.geofence;
+package edu.illinois.rokwire.rokwire_plugin;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

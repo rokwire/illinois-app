@@ -19,15 +19,15 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Guide.dart';
@@ -39,7 +39,7 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class HomeRecentItemsWidget extends StatefulWidget {
 
@@ -171,7 +171,7 @@ class _RecentItemsList extends StatelessWidget{
       item: recentItem,
       showDate: cardShowDate,
       onTap: () {
-        Analytics.instance.logSelect(target: "HomeRecentItemCard clicked: " + recentItem!.recentTitle!);
+        Analytics().logSelect(target: "HomeRecentItemCard clicked: " + recentItem!.recentTitle!);
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => _getDetailPanel(recentItem)));
       },);
   }
@@ -361,7 +361,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
   }
 
   void _onTapFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.item?.recentTitle}");
+    Analytics().logSelect(target: "Favorite: ${widget.item?.recentTitle}");
     Object? originalItem = widget.item!.fromOriginalJson();
     if (originalItem is Favorite) {
       Auth2().prefs?.toggleFavorite(originalItem);

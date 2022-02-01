@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('rokwire_plugin');
+  const MethodChannel channel = MethodChannel('edu.illinois.rokwire/plugin');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 

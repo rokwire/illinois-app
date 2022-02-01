@@ -19,14 +19,14 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /*
@@ -173,7 +173,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
   }
 
   void _onClose() {
-    Analytics.instance.logSelect(target: "Flex Content: Close");
+    Analytics().logSelect(target: "Flex Content: Close");
     if (widget.onClose != null) {
       widget.onClose!(context);
     }
@@ -186,7 +186,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
 
   void _onTapButton(Map<String, dynamic> button) {
     String? title = button['title'];
-    Analytics.instance.logSelect(target: "Flex Content: $title");
+    Analytics().logSelect(target: "Flex Content: $title");
     
     Map<String, dynamic>? linkJsonContent = button['link'];
     if (linkJsonContent == null) {

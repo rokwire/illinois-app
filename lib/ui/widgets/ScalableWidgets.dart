@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class ScalableRoundedButton extends StatelessWidget {
   final String? label;
