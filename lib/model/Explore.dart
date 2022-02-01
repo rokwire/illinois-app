@@ -16,8 +16,6 @@
 
 import 'dart:ui';
 
-import 'package:illinois/model/Location.dart';
-
 //////////////////////////////
 /// Explore
 
@@ -31,7 +29,7 @@ abstract class Explore {
   DateTime? get exploreStartDateUtc;
   String?   get exploreImageURL;
   String?   get explorePlaceId;
-  Location? get exploreLocation;
+  ExploreLocation? get exploreLocation;
   Color?    get uiColor;
   Map<String, dynamic> toJson();
 
@@ -81,5 +79,138 @@ abstract class Explore {
 abstract class ExploreJsonHandler {
   bool exploreCanJson(Map<String, dynamic>? json) => false;
   Explore? exploreFromJson(Map<String, dynamic>? json) => null;
+}
+
+//////////////////////////////
+/// ExploreLocation
+
+class ExploreLocation {
+  String? locationId;
+  String? name;
+  String? building;
+  String? address;
+  String? city;
+  String? state;
+  String? zip;
+  num? latitude;
+  num? longitude;
+  int? floor;
+  String? description;
+
+  ExploreLocation(
+      {this.locationId,
+      this.name,
+      this.building,
+      this.address,
+      this.city,
+      this.state,
+      this.zip,
+      this.latitude,
+      this.longitude,
+      this.floor,
+      this.description});
+
+  toJson() {
+    return {
+      "locationId": locationId,
+      "name": name,
+      "building": building,
+      "address": address,
+      "city": city,
+      "state": state,
+      "zip": zip,
+      "latitude": latitude,
+      "longitude": longitude,
+      "floor": floor,
+      "description": description
+    };
+  }
+
+  static ExploreLocation? fromJSON(Map<String, dynamic>? json) {
+    if (json == null || json.isEmpty) {
+      return null;
+    }
+    return ExploreLocation(
+        locationId: json['locationId'],
+        name: json['name'],
+        building: json['building'],
+        address: json['address'],
+        city: json['city'],
+        state: json['state'],
+        zip: json['zip'],
+        latitude: json['latitude'],
+        longitude: json['longitude'],
+        floor: json['floor'],
+        description: json['description']);
+  }
+
+  String getDisplayName() {
+    String displayText = "";
+
+    if ((name != null) && (0 < name!.length)) {
+      if (0 < displayText.length) {
+        displayText += ", ";
+      }
+      displayText += name!;
+    }
+
+    if ((building != null) && (0 < building!.length)) {
+      if (0 < displayText.length) {
+        displayText += ", ";
+      }
+      displayText += building!;
+    }
+
+    return displayText;
+  }
+
+  String getDisplayAddress() {
+    String displayText = "";
+
+    if ((address != null) && (0 < address!.length)) {
+      if (0 < displayText.length) {
+        displayText += ", ";
+      }
+      displayText += address!;
+    }
+
+    if ((city != null) && (0 < city!.length)) {
+      if (0 < displayText.length) {
+        displayText += ", ";
+      }
+      displayText += city!;
+    }
+
+    String delimiter = ", ";
+
+    if ((state != null) && (0 < state!.length)) {
+      if (0 < displayText.length) {
+        displayText += ", ";
+      }
+      displayText += state!;
+      delimiter = " ";
+    }
+
+    if ((zip != null) && (0 < zip!.length)) {
+      if (0 < displayText.length) {
+        displayText += delimiter;
+      }
+      displayText += zip!;
+    }
+
+    return displayText;
+  }
+
+  String? get analyticsValue {
+    if ((name != null) && name!.isNotEmpty) {
+      return name;
+    }
+    else if ((description != null) && description!.isNotEmpty) {
+      return description;
+    }
+    else {
+      return null;
+    }
+  }
 }
 

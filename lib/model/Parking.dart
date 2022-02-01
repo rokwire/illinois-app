@@ -16,7 +16,6 @@
 
 import 'dart:math';
 
-import 'package:illinois/model/Location.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -220,5 +219,53 @@ class ParkingLot {
       }
     }
     return jsonList;
+  }
+}
+
+//////////////////////////////
+/// LatLng
+
+class LatLng {
+  num? latitude;
+  num? longitude;
+
+  LatLng({this.latitude, this.longitude});
+
+  static LatLng? fromJson(Map<String, dynamic>? json) {
+    if (json == null || json.isEmpty) {
+      return null;
+    }
+    return LatLng(
+        latitude: json['latitude'],
+        longitude: json['longitude']);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "latitude": latitude,
+      "longitude": longitude
+    };
+  }
+
+  static List<LatLng>? listFromJson(List<dynamic>? json) {
+    List<LatLng>? values;
+    if (json != null) {
+      values = [];
+      for (dynamic entry in json) {
+        ListUtils.add(values, LatLng.fromJson(JsonUtils.mapValue(entry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<LatLng>? values) {
+    List<dynamic>? json;
+    if (values != null) {
+      json = [];
+      for (LatLng value in values) {
+        json.add(value.toJson());
+      }
+    }
+    return json;
   }
 }

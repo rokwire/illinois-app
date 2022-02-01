@@ -17,7 +17,6 @@
 import 'dart:ui';
 
 import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Location.dart';
 
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/assets.dart';
@@ -42,7 +41,7 @@ class Event with Explore implements Favorite {
   String? imageURL;
   String? placeID;
 
-  Location? location;
+  ExploreLocation? location;
   
   int? convergeScore;
   String? convergeUrl;
@@ -122,7 +121,7 @@ class Event with Explore implements Favorite {
     longDescription = json.containsKey("description") ? json["description"] : json['longDescription']; /*Back compatibility keep until we use longDescription */
     imageURL = json['imageURL'];
     placeID = json['placeID'];
-    location = Location.fromJSON(json['location']);
+    location = ExploreLocation.fromJSON(json['location']);
     eventId = json['eventId'];
     startDateString = json['startDate'];
     endDateString = json['endDate'];
@@ -582,7 +581,7 @@ class Event with Explore implements Favorite {
   @override String?   get exploreLongDescription  { return longDescription; }
   @override DateTime? get exploreStartDateUtc     { return startDateGmt; }
   @override String?   get explorePlaceId          { return placeID; }
-  @override Location? get exploreLocation         { return location; }
+  @override ExploreLocation? get exploreLocation  { return location; }
   @override Color?    get uiColor                 { return Styles().colors!.eventColor; }
 
   @override String?   get exploreImageURL         {

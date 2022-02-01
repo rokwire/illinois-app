@@ -27,7 +27,7 @@ import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Location.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
@@ -76,7 +76,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
   bool _allDay = false;
-  Location? _location;
+  ExploreLocation? _location;
   bool _isOnline = false;
   bool _isFree = false;
   String? _selectedPrivacy = eventPrivacyPublic;
@@ -1639,7 +1639,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           locationSelectionResult.isNotEmpty) {
         Map<String, dynamic>? locationData = locationSelectionResult["location"];
         if (locationData != null) {
-          _location = Location.fromJSON(locationData);
+          _location = ExploreLocation.fromJSON(locationData);
           _modified = true;
           _populateLocationField();
           setState(() {});
@@ -1891,7 +1891,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   
   Event _populateEventWithData(Event event){
     if(_location==null) {
-      _location = new Location();
+      _location = new ExploreLocation();
     }
     _location!.description = _isOnline? (_eventCallUrlController.text.toString()) : (_eventLocationController.text.toString());
     String? longitude = !_isOnline? (_eventLongitudeController.text.toString()) : null;

@@ -17,7 +17,6 @@
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -33,7 +32,7 @@ class ExploreHelper {
 
   static String? getShortDisplayLocation(Explore? explore, Core.Position? locationData) {
     if (explore != null) {
-      Location? location = explore.exploreLocation;
+      ExploreLocation? location = explore.exploreLocation;
       if (location != null) {
         if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
           double distance = LocationUtils.distance(location.latitude!.toDouble(), location.longitude!.toDouble(), locationData.latitude, locationData.longitude);
@@ -65,7 +64,7 @@ class ExploreHelper {
   static String? getLongDisplayLocation(Explore? explore, Core.Position? locationData) {
     if (explore != null) {
       String displayText = "";
-      Location? location = explore.exploreLocation;
+      ExploreLocation? location = explore.exploreLocation;
       if (location != null) {
         if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
           double distance = LocationUtils.distance(location.latitude!.toDouble(), location.longitude!.toDouble(), locationData.latitude, locationData.longitude);

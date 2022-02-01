@@ -18,7 +18,6 @@ import 'dart:ui';
 
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Location.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -241,11 +240,11 @@ class Game with Explore implements Favorite {
     return randomImageURL!.isNotEmpty ? randomImageURL : null;
   }
 
-  Location? get _exploreLocation {
+  ExploreLocation? get _exploreLocation {
     if (location == null) {
       return null;
     }
-    return Location(description: location!.location);
+    return ExploreLocation(description: location!.location);
   }
 
   ////////////////////////////
@@ -272,7 +271,7 @@ class Game with Explore implements Favorite {
   String? get exploreImageURL => imageUrl;
 
   @override
-  Location? get exploreLocation => _exploreLocation;
+  ExploreLocation? get exploreLocation => _exploreLocation;
 
   @override
   String? get exploreLongDescription => longDescription;
