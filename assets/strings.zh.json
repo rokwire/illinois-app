@@ -2240,10 +2240,6 @@
 	"logic.date_time.greeting.afternoon": "下午好",
 	"logic.date_time.greeting.evening": "晚上好",
 
-	"logic.polls.unable_to_load_poll": "无法加载投票",
-	"logic.polls.no_polls_with_pin": "此4位数的投票代码 # 没有投票",
-	"logic.polls.multiple_polls_with_pin": "有多个公开的投票关联到这个四位数投票代码 #",
-
 	"logic.calendar.create_event_failed": "創建活動失敗。",
 	"logic.calendar.permission_denied": "無法將事件保存到日曆。 未授予權限。",
 
