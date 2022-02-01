@@ -229,6 +229,39 @@ class Canvas with Service {
     }
   }
 
+  // Calendar
+
+  Future<List<CanvasCalendarEvent>?> loadCalendarEvents(int courseId, {DateTime? startDate, DateTime? endDate}) async {
+    if (!_available) {
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/calendar_events?context_codes[]=course_$courseId';
+    if (startDate != null) {
+      DateTime startDateUtc = startDate.toUtc();
+      String? formattedDate = DateTimeUtils.utcDateTimeToString(startDateUtc);
+      if (StringUtils.isNotEmpty(formattedDate)) {
+        url += '&start_date=$formattedDate';
+      }
+    }
+    if (endDate != null) {
+      DateTime endDateUtc = endDate.toUtc();
+      String? formattedDate = DateTimeUtils.utcDateTimeToString(endDateUtc);
+      if (StringUtils.isNotEmpty(formattedDate)) {
+        url += '&end_date=$formattedDate';
+      }
+    }
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasCalendarEvent>? calendarEvents = CanvasCalendarEvent.listFromJson(JsonUtils.decodeList(responseString));
+      return calendarEvents;
+    } else {
+      Log.w('Failed to load canvas calendar events for course {$courseId}. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
   // Helpers
 
   Map<String, String>? get _authHeaders {
