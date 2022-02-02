@@ -19,7 +19,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/sport/Team.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/News.dart';

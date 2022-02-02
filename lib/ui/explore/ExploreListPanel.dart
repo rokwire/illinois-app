@@ -20,7 +20,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';

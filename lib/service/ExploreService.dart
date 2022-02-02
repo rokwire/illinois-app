@@ -29,7 +29,7 @@ import 'package:rokwire_plugin/service/service.dart';
 
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 

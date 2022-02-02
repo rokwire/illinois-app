@@ -30,7 +30,7 @@ abstract class Explore {
   ExploreLocation? get exploreLocation;
   Map<String, dynamic> toJson();
 
-  static Set<ExploreJsonHandler> _jsonHandlers = {};
+  static final Set<ExploreJsonHandler> _jsonHandlers = {};
   static void addJsonHandler(ExploreJsonHandler handler) => _jsonHandlers.add(handler);
   static void removeJsonHandler(ExploreJsonHandler handler) => _jsonHandlers.remove(handler);
 
@@ -144,15 +144,15 @@ class ExploreLocation {
   String getDisplayName() {
     String displayText = "";
 
-    if ((name != null) && (0 < name!.length)) {
-      if (0 < displayText.length) {
+    if ((name != null) && name!.isNotEmpty) {
+      if (displayText.isNotEmpty) {
         displayText += ", ";
       }
       displayText += name!;
     }
 
-    if ((building != null) && (0 < building!.length)) {
-      if (0 < displayText.length) {
+    if ((building != null) && building!.isNotEmpty) {
+      if (displayText.isNotEmpty) {
         displayText += ", ";
       }
       displayText += building!;
@@ -164,15 +164,15 @@ class ExploreLocation {
   String getDisplayAddress() {
     String displayText = "";
 
-    if ((address != null) && (0 < address!.length)) {
-      if (0 < displayText.length) {
+    if ((address != null) && address!.isNotEmpty) {
+      if (displayText.isNotEmpty) {
         displayText += ", ";
       }
       displayText += address!;
     }
 
-    if ((city != null) && (0 < city!.length)) {
-      if (0 < displayText.length) {
+    if ((city != null) && city!.isNotEmpty) {
+      if (displayText.isNotEmpty) {
         displayText += ", ";
       }
       displayText += city!;
@@ -180,16 +180,16 @@ class ExploreLocation {
 
     String delimiter = ", ";
 
-    if ((state != null) && (0 < state!.length)) {
-      if (0 < displayText.length) {
+    if ((state != null) && state!.isNotEmpty) {
+      if (displayText.isNotEmpty) {
         displayText += ", ";
       }
       displayText += state!;
       delimiter = " ";
     }
 
-    if ((zip != null) && (0 < zip!.length)) {
-      if (0 < displayText.length) {
+    if ((zip != null) && zip!.isNotEmpty) {
+      if (displayText.isNotEmpty) {
         displayText += delimiter;
       }
       displayText += zip!;

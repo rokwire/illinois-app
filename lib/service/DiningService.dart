@@ -17,7 +17,7 @@
 import 'dart:io';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/model/Dining.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
