@@ -20,7 +20,7 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/LaundryService.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/model/Location.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -273,7 +273,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   Widget _buildLocationWidget() {
-    Location? laundryLocationDetails = widget.room.location;
+    ExploreLocation? laundryLocationDetails = widget.room.location;
     if (laundryLocationDetails == null) {
       return Container();
     }

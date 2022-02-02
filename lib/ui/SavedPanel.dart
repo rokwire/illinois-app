@@ -19,8 +19,9 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
@@ -35,7 +36,7 @@ import 'package:illinois/service/Sports.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/model/Dining.dart';
-import 'package:illinois/model/Event.dart';
+import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -45,7 +46,7 @@ import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -227,7 +228,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       setState(() {
         _progress++;
       });
-      ExploreService().loadEventsByIds(favoriteEventIds).then((List<Event>? events) {
+      Events().loadEventsByIds(favoriteEventIds).then((List<Event>? events) {
         setState(() {
           _progress--;
           _events = _buildFilteredItems(events, favoriteEventIds);
@@ -747,7 +748,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 
   Color? _cardHeaderColor(Favorite? item) {
     if (item is Explore) {
-      return (item as Explore).uiColor;
+      return ExploreHelper.uiColor(item as Explore);
     } else if (item is Game) {
       return Styles().colors!.fillColorPrimary;
     } else if (item is News) {
@@ -783,7 +784,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 
   String? _cardDetailLabel(Favorite? item) {
     if (item is Event) {
-      return item.displayDateTime;
+      return EventHelper.displayDateTime(item);
     } else if (item is Dining) {
       return item.displayWorkTime;
     } else if (item is Game) {

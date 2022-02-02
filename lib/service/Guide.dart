@@ -312,7 +312,7 @@ class Guide with Service implements NotificationsListener {
       }
 
       remindersList.sort((Map<String, dynamic>? entry1, Map<String, dynamic>? entry2) {
-        return SortUtils.compareDateTimes(Guide().reminderDate(entry1), Guide().reminderDate(entry2));
+        return SortUtils.compare(Guide().reminderDate(entry1), Guide().reminderDate(entry2));
       });
 
       return remindersList;

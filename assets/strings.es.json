@@ -2246,9 +2246,8 @@
     "logic.date_time.greeting.afternoon": "Buenas tardes",
     "logic.date_time.greeting.evening": "Buena noches",
 
-    "logic.polls.unable_to_load_poll": "No se puede cargar la encuesta",
-    "logic.polls.no_polls_with_pin": "No hay encuestas con esta encuesta de 4 dígitos #",
-    "logic.polls.multiple_polls_with_pin": "Hay varias encuestas abiertas con esta encuesta de 4 dígitos #",
+    "logic.calendar.create_event_failed": "No se pudo crear el evento.",
+    "logic.calendar.permission_denied": "No se puede guardar el evento en el calendario. Permisos no concedidos.",
 
     "logic.general.internal_error": "Error interno ocurrido",
     "logic.general.unknown_error": "Ocurrió un error desconocido",

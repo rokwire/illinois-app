@@ -15,11 +15,11 @@
  */
 
 import 'dart:async';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
-import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart' as xml;
@@ -35,7 +35,7 @@ class LaundryService /* with Service */ {
   LaundryService._internal();
 
   Future<List<LaundryRoom>?> getRoomData() async {
-    Map<String, Location>? locationMapping = _loadLaundryLocationMapping();
+    Map<String, ExploreLocation>? locationMapping = _loadLaundryLocationMapping();
     bool mappingExists =
         ((locationMapping != null) && locationMapping.isNotEmpty);
     List<LaundryRoom>? rooms;
@@ -53,7 +53,7 @@ class LaundryService /* with Service */ {
         String? name =
             _getValueFromXmlItem(item.findElements("laundry_room_name"));
         String? statusValue = _getValueFromXmlItem(item.findElements("status"));
-        Location? roomLocationDetails;
+        ExploreLocation? roomLocationDetails;
         if (mappingExists) {
           roomLocationDetails = locationMapping[location];
         }
@@ -152,16 +152,16 @@ class LaundryService /* with Service */ {
     return laundryRoomAppliances;
   }
 
-  Map<String, Location>? _loadLaundryLocationMapping() {
+  Map<String, ExploreLocation>? _loadLaundryLocationMapping() {
     List<dynamic>? jsonData = Assets()['laundry.locations'];
     if (CollectionUtils.isEmpty(jsonData)) {
       return null;
     }
-    Map<String, Location> locationMapping = Map();
+    Map<String, ExploreLocation> locationMapping = Map();
     for (dynamic jsonEntry in jsonData!) {
       String? locationIdentifier = jsonEntry['laundry_location'];
-      Location? locationDetails =
-          Location.fromJSON(jsonEntry['location_details']);
+      ExploreLocation? locationDetails =
+          ExploreLocation.fromJSON(jsonEntry['location_details']);
       if ((locationIdentifier != null) && (locationDetails != null)) {
         locationMapping.putIfAbsent(locationIdentifier, () => locationDetails);
       }

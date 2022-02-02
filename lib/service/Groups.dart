@@ -18,19 +18,21 @@ import 'dart:async';
 import 'dart:core';
 
 import 'package:http/http.dart';
-import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/service/Analytics.dart';
-//import 'package:flutter/services.dart' show rootBundle;
+
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
-import 'package:illinois/service/ExploreService.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
+
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/service/events.dart';
 
 class Groups with Service implements NotificationsListener {
 
@@ -118,7 +120,7 @@ class Groups with Service implements NotificationsListener {
   // Categories APIs
 
   Future<List<String>?> loadCategories() async {
-    List<dynamic>? categoriesJsonArray = await ExploreService().loadEventCategories();
+    List<dynamic>? categoriesJsonArray = await Events().loadEventCategories();
     if (CollectionUtils.isNotEmpty(categoriesJsonArray)) {
       List<String> categoriesList = categoriesJsonArray!.map((e) => e['category'].toString()).toList();
       return categoriesList;
@@ -130,7 +132,7 @@ class Groups with Service implements NotificationsListener {
   // Tags APIs
 
   Future<List<String>?> loadTags() async {
-    return ExploreService().loadEventTags();
+    return Events().loadEventTags();
   }
 
   // Groups APIs
@@ -491,11 +493,11 @@ class Groups with Service implements NotificationsListener {
   /// 
   /// value - events (limited or not)
   ///
-  Future<Map<int, List<GroupEvent>>?> loadEvents(Group? group, {int limit = -1}) async {
+  Future<Map<int, List<GroupEvent>>?> loadEvents (Group? group, {int limit = -1}) async {
     await _waitForLogin();
     if (group != null) {
       List<dynamic>? eventIds = await loadEventIds(group.id);
-      List<Event>? allEvents = CollectionUtils.isNotEmpty(eventIds) ? await ExploreService().loadEventsByIds(Set<String>.from(eventIds!)) : null;
+      List<Event>? allEvents = CollectionUtils.isNotEmpty(eventIds) ? await Events().loadEventsByIds(Set<String>.from(eventIds!)) : null;
       if (CollectionUtils.isNotEmpty(allEvents)) {
         List<Event> currentUserEvents = [];
         bool isCurrentUserMemberOrAdmin = group.currentUserIsMemberOrAdmin;
@@ -506,7 +508,7 @@ class Groups with Service implements NotificationsListener {
           }
         }
         int eventsCount = currentUserEvents.length;
-        ExploreService().sortEvents(currentUserEvents);
+        SortUtils.sort(currentUserEvents);
         //limit the result count // limit available events
         List<Event> visibleEvents = ((limit > 0) && (eventsCount > limit)) ? currentUserEvents.sublist(0, limit) : currentUserEvents;
         List<GroupEvent> groupEvents = <GroupEvent>[];
@@ -557,7 +559,7 @@ class Groups with Service implements NotificationsListener {
 
   Future<String?> updateGroupEvents(Event event) async {
     await _waitForLogin();
-    String? id = await ExploreService().updateEvent(event);
+    String? id = await Events().updateEvent(event);
     if (StringUtils.isNotEmpty(id)) {
       NotificationService().notify(Groups.notifyGroupEventsUpdated);
     }
@@ -571,7 +573,7 @@ class Groups with Service implements NotificationsListener {
     if(creatorGroupId!=null){
       Group? creatorGroup = await loadGroup(creatorGroupId);
       if(creatorGroup!=null && creatorGroup.currentUserIsAdmin){
-        deleteResult = await ExploreService().deleteEvent(event.id);
+        deleteResult = await Events().deleteEvent(event.id);
       }
     }
     NotificationService().notify(Groups.notifyGroupEventsUpdated);

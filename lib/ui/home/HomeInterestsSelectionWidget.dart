@@ -23,7 +23,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
@@ -122,7 +122,7 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
 
   void _loadAllInterests() async {
     if (Connectivity().isNotOffline) {
-      ExploreService().loadEventTags().then((List<String>? tagList) {
+      Events().loadEventTags().then((List<String>? tagList) {
         if (mounted) {
           setState(() {
             _allInterests = tagList;

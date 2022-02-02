@@ -17,6 +17,7 @@
 package edu.illinois.rokwire.rokwire_plugin;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -211,7 +212,13 @@ public class GeofenceMonitor implements BeaconConsumer {
             return;
         }
 
-        geofencingClient = LocationServices.getGeofencingClient(RokwirePlugin.getInstance().getActivity());
+        Activity activity = RokwirePlugin.getInstance().getActivity();
+        if (activity == null) {
+            Log.d(TAG, "initGeofenceClient() -> No binded activity");
+            return;
+        }
+
+        geofencingClient = LocationServices.getGeofencingClient(activity);
         if (geofenceRegions != null && !geofenceRegions.isEmpty()) {
             List<EntryGeofenceMap> entryGeofenceMaps = new ArrayList<>(geofenceRegions.values());
             if (!entryGeofenceMaps.isEmpty()) {
@@ -411,7 +418,12 @@ public class GeofenceMonitor implements BeaconConsumer {
             Log.d(TAG, "initBeaconManager() -> Monitoring already started");
             return;
         }
-        beaconManager = BeaconManager.getInstanceForApplication(RokwirePlugin.getInstance().getActivity());
+        Context context = RokwirePlugin.getInstance().getActivity();
+        if (context == null) {
+            Log.d(TAG, "initBeaconManager() -> No binded activity");
+            return;
+        }
+        beaconManager = BeaconManager.getInstanceForApplication(context);
         // Layout for iBeacons
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
         beaconManager.bind(this);

@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -36,7 +37,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
-import 'package:illinois/model/Explore.dart';
 import 'package:illinois/ui/dining/FoodDetailPanel.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -59,7 +59,7 @@ class ExploreDiningDetailPanel extends StatefulWidget implements AnalyticsPageAt
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes {
-    return dining?.analyticsAttributes;
+    return ExploreHelper.analyticsAttributes(dining);
   }
 }
 
@@ -145,7 +145,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                   slivers: <Widget>[
                     SliverToutHeaderBar(
                       context: context,
-                      imageUrl: dining!.exploreImageURL,
+                      imageUrl: ExploreHelper.exploreImageURL(dining),
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate(

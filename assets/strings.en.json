@@ -2278,9 +2278,8 @@
     "logic.date_time.greeting.afternoon": "Good afternoon",
     "logic.date_time.greeting.evening": "Good evening",
 
-    "logic.polls.unable_to_load_poll": "Unable to load poll",
-    "logic.polls.no_polls_with_pin": "There are no polls with this 4 Digit Poll #",
-    "logic.polls.multiple_polls_with_pin": "There are multiple opened polls with this 4 Digit Poll #",
+    "logic.calendar.create_event_failed": "Failed to create event.",
+    "logic.calendar.permission_denied": "Unable to save event to calendar. Permissions not granted.",
 
     "logic.general.internal_error": "Internal Error Occured",
     "logic.general.unknown_error": "Unknown Error Occured",

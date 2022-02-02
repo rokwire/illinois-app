@@ -7,12 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Link multiple authentication types to one account [#1233](https://github.com/rokwire/illinois-app/issues/1233).
+### Changed
+- Updated Gies Widgets: remove scroll from sub pages [#1291](https://github.com/rokwire/illinois-app/issues/1291).
 
 ## [3.2.10] - 2022-02-01
 ### Added
 - Canvas Collaborations and Calendar Events (data model only) [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 ### Changed
-- Updated Gies Widgets: remove scroll from sub pages [#1291](https://github.com/rokwire/illinois-app/issues/1291).
+- Events service and model moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 
 ## [3.2.9] - 2022-01-31
 ### Added

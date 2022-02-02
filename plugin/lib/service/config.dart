@@ -474,6 +474,7 @@ class Config with Service, NetworkAuthProvider, NotificationsListener {
   String? get locationsUrl                         => JsonUtils.stringValue(platformBuildingBlocks["locations_url"]);
   String? get loggingUrl                           => JsonUtils.stringValue(platformBuildingBlocks['logging_url']);
   String? get quickPollsUrl                        => JsonUtils.stringValue(platformBuildingBlocks["polls_url"]);
+  String? get eventsUrl                            => JsonUtils.stringValue(platformBuildingBlocks['events_url']);
 
   // Getters: otherUniversityServices
   String? get assetsUrl                            => JsonUtils.stringValue(otherUniversityServices['assets_url']);
@@ -485,6 +486,11 @@ class Config with Service, NetworkAuthProvider, NotificationsListener {
   int get refreshTimeout                           => JsonUtils.intValue(settings['refreshTimeout'])  ?? 0;
   int get refreshTokenRetriesCount                 => JsonUtils.intValue(settings['refreshTokenRetriesCount']) ?? 3;
   
+  // Getters: other
+  String? deepLinkRedirectUrl(String? deepLink) {
+    Uri? assetsUri = StringUtils.isNotEmpty(assetsUrl) ? Uri.tryParse(assetsUrl!) : null;
+    return (assetsUri != null) ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
+  }
 }
 
 enum ConfigEnvironment { production, test, dev }
