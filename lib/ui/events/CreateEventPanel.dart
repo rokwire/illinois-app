@@ -19,7 +19,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:rokwire_plugin/service/events.dart';

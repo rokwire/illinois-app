@@ -20,7 +20,8 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -1163,7 +1164,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             child: Semantics(child: Container(
                               padding: EdgeInsets.only(left: 6),
                               child: Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime),
-                                semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
+                                semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
                                 textAlign: TextAlign.right,
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),
                           )),
@@ -1326,7 +1327,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       Expanded(
                           child: Container(
                             child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
-                                semanticsLabel: "Updated ${widget.reply?.getDisplayDateTime() ?? ""} ago",
+                                semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),)),
                       Visibility(
                         visible: isRepliesLabelVisible,

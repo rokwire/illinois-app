@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';

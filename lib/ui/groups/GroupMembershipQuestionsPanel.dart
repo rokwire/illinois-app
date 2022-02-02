@@ -17,7 +17,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';

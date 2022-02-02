@@ -18,7 +18,7 @@ import 'dart:async';
 import 'dart:core';
 
 import 'package:http/http.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
 
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -30,6 +30,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ext/Group.dart';
 
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/service/events.dart';
