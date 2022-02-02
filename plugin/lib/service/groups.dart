@@ -17,22 +17,20 @@
 import 'dart:async';
 import 'dart:core';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:rokwire_plugin/model/event.dart';
 
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
-
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
-
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Groups with Service implements NotificationsListener {
 
@@ -44,20 +42,37 @@ class Groups with Service implements NotificationsListener {
   static const String notifyGroupPostsUpdated       = "edu.illinois.rokwire.group.posts.updated";
   static const String notifyGroupDetail             = "edu.illinois.rokwire.group.detail";
 
-  Map<String, Member>? _userMembership;
+  static const String notifyGroupMembershipRequested      = "edu.illinois.rokwire.group.membership.requested";
+  static const String notifyGroupMembershipCanceled       = "edu.illinois.rokwire.group.membership.canceled";
+  static const String notifyGroupMembershipQuit           = "edu.illinois.rokwire.group.membership.quit";
+  static const String notifyGroupMembershipApproved       = "edu.illinois.rokwire.group.membership.approved";
+  static const String notifyGroupMembershipRejected       = "edu.illinois.rokwire.group.membership.rejected";
+  static const String notifyGroupMembershipRemoved        = "edu.illinois.rokwire.group.membership.removed";
+  static const String notifyGroupMembershipSwitchToAdmin  = "edu.illinois.rokwire.group.membership.switch_to_admin";
+  static const String notifyGroupMembershipSwitchToMember = "edu.illinois.rokwire.group.membership.switch_to_member";
+  
   List<Map<String, dynamic>>? _groupDetailsCache;
+  List<Map<String, dynamic>>? get groupDetailsCache => _groupDetailsCache;
 
   final List<Completer<void>> _loginCompleters = [];
+  List<Completer<void>> get loginCompleters => _loginCompleters;
+
   bool _loggedIn = false;
+  bool get loggedIn => _loggedIn;
 
-  // Singletone instance
+  // Singletone Factory
 
-  static final Groups _service = Groups._internal();
-  Groups._internal();
+  static Groups? _instance;
 
-  factory Groups() {
-    return _service;
-  }
+  static Groups? get instance => _instance;
+  
+  @protected
+  static set instance(Groups? value) => _instance = value;
+
+  factory Groups() => _instance ?? (_instance = Groups.internal());
+
+  @protected
+  Groups.internal();
 
   // Service
 
@@ -80,17 +95,17 @@ class Groups with Service implements NotificationsListener {
   Future<void> initService() async{
     await super.initService();
 
-    _waitForLogin();
+    waitForLogin();
   }
 
   @override
   void initServiceUI() {
-    _processCachedGroupDetails();
+    processCachedGroupDetails();
   }
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([DeepLink(), Config(), Auth2()]);
+    return { DeepLink(), Config(), Auth2() };
   }
 
   // NotificationsListener
@@ -98,19 +113,15 @@ class Groups with Service implements NotificationsListener {
   @override
   void onNotification(String name, dynamic param) {
     if (name == DeepLink.notifyUri) {
-      _onDeepLinkUri(param);
+      onDeepLinkUri(param);
     } if(name == Auth2.notifyLoginSucceeded){
-      _waitForLogin();
+      waitForLogin();
     } if(name == Auth2.notifyLogout){
       _loggedIn = false;
     }
   }
 
   // Current User Membership
-
-  Member? getUserMembership(String? groupId) {
-    return (_userMembership != null) ? _userMembership![groupId] : null;
-  }
 
   Future<bool> isAdminForGroup(String groupId) async{
     Group? group = await loadGroup(groupId);
@@ -137,7 +148,8 @@ class Groups with Service implements NotificationsListener {
 
   // Groups APIs
 
-  Future<void> _waitForLogin() async{
+  @protected
+  Future<void> waitForLogin() async{
     if(!_loggedIn && Auth2().isLoggedIn) {
       try {
         if (_loginCompleters.isEmpty) {
@@ -145,9 +157,9 @@ class Groups with Service implements NotificationsListener {
           _loginCompleters.add(completer);
           _login().whenComplete(() {
             _loggedIn = true;
-            _loginCompleters.forEach((completer) {
+            for (var completer in _loginCompleters) {
               completer.complete();
-            });
+            }
             _loginCompleters.clear();
           });
           return completer.future;
@@ -158,7 +170,7 @@ class Groups with Service implements NotificationsListener {
         }
       } catch(err){
         Log.e("Failed to invoke groups login API");
-        print(err);
+        debugPrint(err.toString());
       }
     }
   }
@@ -172,16 +184,16 @@ class Groups with Service implements NotificationsListener {
 
             // we need just to be sure the request is made no matter for the result at this point
           } catch (e) {
-            print(e);
+            debugPrint(e.toString());
           }
         }
       } catch (err) {
-        print(err);
+        debugPrint(err.toString());
       }
   }
 
   Future<List<Group>?> loadGroups({bool myGroups = false}) async {
-    await _waitForLogin();
+    await waitForLogin();
     if ((Config().groupsUrl != null) && ((myGroups != true) || Auth2().isLoggedIn)) {
       try {
         String url = myGroups ? '${Config().groupsUrl}/user/groups' : '${Config().groupsUrl}/groups';
@@ -191,7 +203,7 @@ class Groups with Service implements NotificationsListener {
         List<dynamic>? groupsJson = ((responseBody != null) && (responseCode == 200)) ? JsonUtils.decodeList(responseBody) : null;
         return (groupsJson != null) ? Group.listFromJson(groupsJson) : null;
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
     
@@ -199,7 +211,7 @@ class Groups with Service implements NotificationsListener {
   }
 
   Future<List<Group>?> searchGroups(String searchText) async {
-    await _waitForLogin();
+    await waitForLogin();
     if (StringUtils.isEmpty(searchText)) {
       return null;
     }
@@ -211,14 +223,14 @@ class Groups with Service implements NotificationsListener {
     if (responseCode == 200) {
       return Group.listFromJson(JsonUtils.decodeList(responseBody));
     } else {
-      print('Failed to search for groups. Reason: ');
-      print(responseBody);
+      debugPrint('Failed to search for groups. Reason: ');
+      debugPrint(responseBody);
       return null;
     }
   }
 
   Future<Group?> loadGroup(String? groupId) async {
-    await _waitForLogin();
+    await waitForLogin();
     if(StringUtils.isNotEmpty(groupId)) {
       String url = '${Config().groupsUrl}/groups/$groupId';
       try {
@@ -228,7 +240,7 @@ class Groups with Service implements NotificationsListener {
         Map<String, dynamic>? groupsJson = ((responseBody != null) && (responseCode == 200)) ? JsonUtils.decodeMap(responseBody) : null;
         return groupsJson != null ? Group.fromJson(groupsJson) : null;
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
     return null;
@@ -236,7 +248,7 @@ class Groups with Service implements NotificationsListener {
 
   //TBD sync with backend team, update group model and UI
   Future<Group?> loadGroupByCanvasCourseId(int? courseId) async {
-    await _waitForLogin();
+    await waitForLogin();
     if (courseId != null) {
       String url = '${Config().groupsUrl}/groups/canvas_course/$courseId';
       try {
@@ -250,14 +262,14 @@ class Groups with Service implements NotificationsListener {
           Log.d('Failed to load group by canvas course id. Reason: \n$responseCode: $responseBody');
         }
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
     return null;
   }
 
   Future<GroupError?> createGroup(Group? group) async {
-    await _waitForLogin();
+    await waitForLogin();
     if(group != null) {
       String url = '${Config().groupsUrl}/groups';
       try {
@@ -283,7 +295,7 @@ class Groups with Service implements NotificationsListener {
           }
         }
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
     return GroupError(); // generic error
@@ -291,7 +303,7 @@ class Groups with Service implements NotificationsListener {
 
   Future<GroupError?> updateGroup(Group? group) async {
 
-    await _waitForLogin();
+    await waitForLogin();
 
     if(group != null) {
       String url = '${Config().groupsUrl}/groups/${group.id}';
@@ -312,14 +324,14 @@ class Groups with Service implements NotificationsListener {
           }
         }
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
     return GroupError(); // generic error
   }
 
   Future<bool> deleteGroup(String? groupId) async {
-    await _waitForLogin();
+    await waitForLogin();
     if (StringUtils.isEmpty(groupId)) {
       return false;
     }
@@ -338,7 +350,7 @@ class Groups with Service implements NotificationsListener {
   // Members APIs
 
   Future<bool> requestMembership(Group? group, List<GroupMembershipAnswer>? answers) async{
-    await _waitForLogin();
+    await waitForLogin();
     if(group != null) {
       String url = '${Config().groupsUrl}/group/${group.id}/pending-members';
       try {
@@ -351,37 +363,37 @@ class Groups with Service implements NotificationsListener {
         String? body = JsonUtils.encode(json);
         Response? response = await Network().post(url, auth: Auth2(), body: body);
         if((response?.statusCode ?? -1) == 200){
-          Analytics().logGroup(action: Analytics.LogGroupMembershipRequested, attributes: group.analyticsAttributes);
+          NotificationService().notify(notifyGroupMembershipRequested, group);
           NotificationService().notify(notifyGroupUpdated, group.id);
           return true;
         }
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
     return false; // fail
   }
 
   Future<bool> cancelRequestMembership(Group? group) async{
-    await _waitForLogin();
+    await waitForLogin();
     if(group?.id != null) {
       String url = '${Config().groupsUrl}/group/${group!.id}/pending-members';
       try {
         Response? response = await Network().delete(url, auth: Auth2(),);
         if((response?.statusCode ?? -1) == 200){
-          Analytics().logGroup(action: Analytics.LogGroupMembershipRequestCanceled, attributes: group.analyticsAttributes);
+          NotificationService().notify(notifyGroupMembershipCanceled, group);
           NotificationService().notify(notifyGroupUpdated, group.id);
           return true;
         }
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
     return false; // fail
   }
 
   Future<bool> leaveGroup(Group? group) async {
-    await _waitForLogin();
+    await waitForLogin();
     if (StringUtils.isEmpty(group?.id)) {
       return false;
     }
@@ -389,18 +401,18 @@ class Groups with Service implements NotificationsListener {
     Response? response = await Network().delete(url, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
-      Analytics().logGroup(action: Analytics.LogGroupMembershipQuit, attributes: group.analyticsAttributes);
+      NotificationService().notify(notifyGroupMembershipQuit, group);
       NotificationService().notify(notifyGroupUpdated, group.id);
       return true;
     } else {
       String? responseString = response?.body;
-      print(responseString);
+      debugPrint(responseString);
       return false;
     }
   }
 
   Future<bool> acceptMembership(Group? group, Member? member, bool? decision, String? reason) async{
-    await _waitForLogin();
+    await waitForLogin();
     if(StringUtils.isNotEmpty(group?.id) && StringUtils.isNotEmpty(member?.id) && decision != null) {
       Map<String, dynamic> bodyMap = {"approve": decision, "reject_reason": reason};
       String? body = JsonUtils.encode(bodyMap);
@@ -408,19 +420,19 @@ class Groups with Service implements NotificationsListener {
       try {
         Response? response = await Network().put(url, auth: Auth2(), body: body);
         if((response?.statusCode ?? -1) == 200){
-          Analytics().logGroup(action: decision ? Analytics.LogGroupMembershipApproved : Analytics.LogGroupMembershipRejected, attributes: group!.analyticsAttributes);    
-          NotificationService().notify(notifyGroupUpdated, group.id);
+          NotificationService().notify(decision ? notifyGroupMembershipApproved : notifyGroupMembershipRejected, group);
+          NotificationService().notify(notifyGroupUpdated, group?.id);
           return true;
         }
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
     return false; // fail
   }
 
   Future<bool> updateMembership(Group? group, Member? member, GroupMemberStatus status) async{
-    await _waitForLogin();
+    await waitForLogin();
     if(StringUtils.isNotEmpty(group?.id) && StringUtils.isNotEmpty(member?.id)) {
       Map<String, dynamic> bodyMap = {"status":groupMemberStatusToString(status)};
       String? body = JsonUtils.encode(bodyMap);
@@ -429,34 +441,34 @@ class Groups with Service implements NotificationsListener {
         Response? response = await Network().put(url, auth: Auth2(), body: body);
         if((response?.statusCode ?? -1) == 200){
           if (status == GroupMemberStatus.admin) {
-            Analytics().logGroup(action: Analytics.LogGroupMembershipSwitchToAdmin, attributes: group!.analyticsAttributes);    
+            NotificationService().notify(notifyGroupMembershipSwitchToAdmin, group);
           }
           else if (status == GroupMemberStatus.member) {
-            Analytics().logGroup(action: Analytics.LogGroupMembershipSwitchToMember, attributes: group!.analyticsAttributes);    
+            NotificationService().notify(notifyGroupMembershipSwitchToMember, group);
           }
           NotificationService().notify(notifyGroupUpdated, group!.id);
           return true;
         }
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
     return false; // fail
   }
 
   Future<bool> deleteMembership(Group? group, Member? member) async{
-    await _waitForLogin();
+    await waitForLogin();
     if(StringUtils.isNotEmpty(group?.id) && StringUtils.isNotEmpty(member?.id)) {
       String url = '${Config().groupsUrl}/memberships/${member!.id}';
       try {
         Response? response = await Network().delete(url, auth: Auth2(),);
         if((response?.statusCode ?? -1) == 200){
-          Analytics().logGroup(action: Analytics.LogGroupMembershipRemoved, attributes: group!.analyticsAttributes);    
-          NotificationService().notify(notifyGroupUpdated, group.id);
+          NotificationService().notify(notifyGroupMembershipRemoved, group);
+          NotificationService().notify(notifyGroupUpdated, group?.id);
           return true;
         }
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
     return false; // fail
@@ -465,7 +477,7 @@ class Groups with Service implements NotificationsListener {
 
 // Events
   Future<List<dynamic>?> loadEventIds(String? groupId) async{
-    await _waitForLogin();
+    await waitForLogin();
     if(StringUtils.isNotEmpty(groupId)) {
       String url = '${Config().groupsUrl}/group/$groupId/events';
       try {
@@ -478,7 +490,7 @@ class Groups with Service implements NotificationsListener {
           return eventIdsJson;
         }
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
     return null; // fail
@@ -494,7 +506,7 @@ class Groups with Service implements NotificationsListener {
   /// value - events (limited or not)
   ///
   Future<Map<int, List<GroupEvent>>?> loadEvents (Group? group, {int limit = -1}) async {
-    await _waitForLogin();
+    await waitForLogin();
     if (group != null) {
       List<dynamic>? eventIds = await loadEventIds(group.id);
       List<Event>? allEvents = CollectionUtils.isNotEmpty(eventIds) ? await Events().loadEventsByIds(Set<String>.from(eventIds!)) : null;
@@ -522,7 +534,7 @@ class Groups with Service implements NotificationsListener {
   }
 
   Future<bool> linkEventToGroup({String? groupId, String? eventId}) async {
-    await _waitForLogin();
+    await waitForLogin();
     if(StringUtils.isNotEmpty(groupId) && StringUtils.isNotEmpty(eventId)) {
       String url = '${Config().groupsUrl}/group/$groupId/events';
       try {
@@ -534,14 +546,14 @@ class Groups with Service implements NotificationsListener {
           return true;
         }
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
     return false; // fail
   }
 
   Future<bool> removeEventFromGroup({String? groupId, String? eventId}) async {
-    await _waitForLogin();
+    await waitForLogin();
     if(StringUtils.isNotEmpty(groupId) && StringUtils.isNotEmpty(eventId)) {
       String url = '${Config().groupsUrl}/group/$groupId/event/$eventId';
       try {
@@ -551,14 +563,14 @@ class Groups with Service implements NotificationsListener {
           return true;
         }
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
     return false;
   }
 
   Future<String?> updateGroupEvents(Event event) async {
-    await _waitForLogin();
+    await waitForLogin();
     String? id = await Events().updateEvent(event);
     if (StringUtils.isNotEmpty(id)) {
       NotificationService().notify(Groups.notifyGroupEventsUpdated);
@@ -583,13 +595,13 @@ class Groups with Service implements NotificationsListener {
   // Event Comments
 
   Future<bool> postEventComment(String groupId, String eventId, GroupEventComment comment) {
-    return Future<bool>.delayed(Duration(seconds: 1), (){ return true; });
+    return Future<bool>.delayed(const Duration(seconds: 1), (){ return true; });
   }
 
   // Group Posts and Replies
 
   Future<bool> createPost(String? groupId, GroupPost? post) async {
-    await _waitForLogin();
+    await waitForLogin();
     if (StringUtils.isEmpty(groupId) || (post == null)) {
       return false;
     }
@@ -607,7 +619,7 @@ class Groups with Service implements NotificationsListener {
   }
 
   Future<bool> updatePost(String? groupId, GroupPost? post) async {
-    await _waitForLogin();
+    await waitForLogin();
     if (StringUtils.isEmpty(groupId) || StringUtils.isEmpty(post?.id)) {
       return false;
     }
@@ -625,7 +637,7 @@ class Groups with Service implements NotificationsListener {
   }
 
   Future<bool> deletePost(String? groupId, GroupPost? post) async {
-    await _waitForLogin();
+    await waitForLogin();
     if (StringUtils.isEmpty(groupId) || StringUtils.isEmpty(post?.id)) {
       return false;
     }
@@ -642,7 +654,7 @@ class Groups with Service implements NotificationsListener {
   }
 
   Future<List<GroupPost>?> loadGroupPosts(String? groupId, {int? offset, int? limit, GroupSortOrder? order}) async {
-    await _waitForLogin();
+    await waitForLogin();
     if (StringUtils.isEmpty(groupId)) {
       return null;
     }
@@ -711,7 +723,8 @@ class Groups with Service implements NotificationsListener {
 
   String get groupDetailUrl => '${DeepLink().appUrl}/group_detail';
 
-  void _onDeepLinkUri(Uri? uri) {
+  @protected
+  void onDeepLinkUri(Uri? uri) {
     if (uri != null) {
       Uri? eventUri = Uri.tryParse(groupDetailUrl);
       if ((eventUri != null) &&
@@ -719,38 +732,42 @@ class Groups with Service implements NotificationsListener {
           (eventUri.authority == uri.authority) &&
           (eventUri.path == uri.path))
       {
-        try { _handleGroupDetail(uri.queryParameters.cast<String, dynamic>()); }
-        catch (e) { print(e.toString()); }
+        try { handleGroupDetail(uri.queryParameters.cast<String, dynamic>()); }
+        catch (e) { debugPrint(e.toString()); }
       }
     }
   }
 
-  void _handleGroupDetail(Map<String, dynamic>? params) {
+  @protected
+  void handleGroupDetail(Map<String, dynamic>? params) {
     if ((params != null) && params.isNotEmpty) {
       if (_groupDetailsCache != null) {
-        _cacheGroupDetail(params);
+        cacheGroupDetail(params);
       }
       else {
-        _processGroupDetail(params);
+        processGroupDetail(params);
       }
     }
   }
 
-  void _processGroupDetail(Map<String, dynamic> params) {
+  @protected
+  void processGroupDetail(Map<String, dynamic> params) {
     NotificationService().notify(notifyGroupDetail, params);
   }
 
-  void _cacheGroupDetail(Map<String, dynamic> params) {
+  @protected
+  void cacheGroupDetail(Map<String, dynamic> params) {
     _groupDetailsCache?.add(params);
   }
 
-  void _processCachedGroupDetails() {
+  @protected
+  void processCachedGroupDetails() {
     if (_groupDetailsCache != null) {
       List<Map<String, dynamic>> groupDetailsCache = _groupDetailsCache!;
       _groupDetailsCache = null;
 
       for (Map<String, dynamic> groupDetail in groupDetailsCache) {
-        _processGroupDetail(groupDetail);
+        processGroupDetail(groupDetail);
       }
     }
   }

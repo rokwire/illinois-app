@@ -20,14 +20,15 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -376,8 +377,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
       content2.add(
           Container(
               padding: EdgeInsets.symmetric(vertical: 16),
-              child:_buildAddPostButton(photoUrl: Groups().getUserMembership(widget.group?.id)?.photoURL,
-                  onTap: (){
+              child:_buildAddPostButton(onTap: (){
                     Analytics().logSelect(target: "Add post");
                     //TBD: remove if not used
                     // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.group?.id,)));
@@ -1163,7 +1163,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             child: Semantics(child: Container(
                               padding: EdgeInsets.only(left: 6),
                               child: Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime),
-                                semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
+                                semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
                                 textAlign: TextAlign.right,
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),
                           )),
@@ -1326,7 +1326,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       Expanded(
                           child: Container(
                             child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
-                                semanticsLabel: "Updated ${widget.reply?.getDisplayDateTime() ?? ""} ago",
+                                semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),)),
                       Visibility(
                         visible: isRepliesLabelVisible,

@@ -17,9 +17,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
@@ -32,6 +32,7 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
@@ -381,8 +382,7 @@ class _EventCard extends StatelessWidget {
     content.add(
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child:_buildAddPostButton(photoUrl: Groups().getUserMembership(groupId)?.photoURL,
-          onTap: (){
+          child:_buildAddPostButton(onTap: (){
             Analytics().logSelect(target: "Add post");
             // TBD: remove if not used
             // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: groupEvent,groupId: groupId,)));

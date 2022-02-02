@@ -56,7 +56,7 @@ class Assets with Service implements NotificationsListener {
   @protected
   Assets.internal();
 
-  // Initialization
+  // Service
 
   @override
   void createService() {
@@ -115,6 +115,13 @@ class Assets with Service implements NotificationsListener {
       }
     }
   }
+
+  // data
+
+  @protected Map<String, dynamic>? get internalContent => _internalContent;
+  @protected Map<String, dynamic>? get externalContent => _externalContent;
+  @protected File? get cacheFile => _cacheFile;
+  @protected DateTime? get pausedDateTime => _pausedDateTime;
 
   // Assets
 
