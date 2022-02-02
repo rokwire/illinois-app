@@ -17,10 +17,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -610,7 +611,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       exploreColor = _selectedMapExplore.uiColor;
     }
     else if  (_selectedMapExplore is List<Event>) {
-      String? exploreName = ExploreHelper.getExploresListDisplayTitle(_selectedMapExplore);
+      String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
       title = sprintf(Localization().getStringEx('panel.events_schedule.map.popup.title.format', '%d %s')!, [_selectedMapExplore?.length, exploreName]);
       description = _selectedMapExplore?.first?.exploreLocation?.description;
       exploreColor = _selectedMapExplore.first?.uiColor;
@@ -1141,7 +1142,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 4, left: 28),
-                    child: Text(EventHelper.displaySuperTime(widget.event) ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium)),
+                    child: Text(widget.event?.displaySuperTime ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium)),
                   )
                 ]),
               ),

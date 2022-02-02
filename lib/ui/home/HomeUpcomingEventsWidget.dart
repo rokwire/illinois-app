@@ -18,9 +18,9 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -300,7 +300,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
             applyHorizontalPadding: false,
             child: _buildItemCard(
                 context: context, item: event, showSmallImage: (i != 0)),
-            imageUrl: i == 0 ? ExploreHelper.exploreImageURL(event) : null));
+            imageUrl: i == 0 ? event.eventImageUrl : null));
       }
     }
     return widgets;

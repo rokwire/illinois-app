@@ -20,7 +20,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
-import 'package:illinois/utils/ExploreHelper.dart';
+import 'package:illinois/ext/Dining.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -54,13 +55,10 @@ class ExploreDiningDetailPanel extends StatefulWidget implements AnalyticsPageAt
   ExploreDiningDetailPanel({this.dining, this.initialLocationData});
 
   @override
-  _DiningDetailPanelState createState() =>
-      _DiningDetailPanelState(dining);
+  _DiningDetailPanelState createState() => _DiningDetailPanelState(dining);
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return ExploreHelper.analyticsAttributes(dining);
-  }
+  Map<String, dynamic>? get analyticsPageAttributes => dining?.analyticsAttributes;
 }
 
 class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements NotificationsListener {
@@ -145,7 +143,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                   slivers: <Widget>[
                     SliverToutHeaderBar(
                       context: context,
-                      imageUrl: ExploreHelper.exploreImageURL(dining),
+                      imageUrl: dining?.exploreImageUrl,
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate(
@@ -390,7 +388,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   Widget? _exploreLocationDetail() {
-    String? locationText = ExploreHelper.getLongDisplayLocation(dining, _locationData);
+    String? locationText = dining?.getLongDisplayLocation(_locationData);
     if ((locationText != null) && locationText.isNotEmpty) {
       return GestureDetector(
         onTap: _onLoacationDetailTapped,

@@ -16,7 +16,7 @@
 
 import 'package:flutter/semantics.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:illinois/utils/ExploreHelper.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -856,11 +856,11 @@ class ExplorePanelState extends State<ExplorePanel>
       exploreColor = _selectedMapExplore.uiColor;
     }
     else if  (_selectedMapExplore is List<Explore>) {
-      String? exploreName = ExploreHelper.getExploresListDisplayTitle(_selectedMapExplore);
+      String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
       title = sprintf(Localization().getStringEx('panel.explore.map.popup.title.format', '%d %s')!, [_selectedMapExplore?.length, exploreName]);
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
-      exploreColor = ExploreHelper.uiColor(explore) ?? Styles().colors!.fillColorSecondary!;
+      exploreColor = explore?.uiColor ?? Styles().colors!.fillColorSecondary!;
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;

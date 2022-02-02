@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:illinois/utils/ExploreHelper.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -557,7 +557,8 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   @override
   Widget build(BuildContext context) {
 
-    bool isFavorite = ExploreHelper.isFavorite(widget.event);
+    bool isFavorite = widget.event?.isFavorite ?? false;
+    String? imageUrl = widget.event?.eventImageUrl;
 
     List<Widget> content = [
       Padding(padding: EdgeInsets.only(bottom: 8, right: 8), child:
@@ -568,7 +569,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
       Expanded(child:
-      Text(EventHelper.timeDisplayString(widget.event) ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),)
+      Text(widget.event?.timeDisplayString ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),)
       ),
     ],)),);
 
@@ -613,14 +614,14 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
               )
             ],),
             Visibility(visible:
-                StringUtils.isNotEmpty(EventHelper.exploreImageURL(widget.event)),
+                StringUtils.isNotEmpty(imageUrl),
                 child: Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 8),
                   child: SizedBox(
                     width: _smallImageSize,
                     height: _smallImageSize,
                     child: Image.network(
-                      EventHelper.exploreImageURL(widget.event) ?? '', excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),),)),
+                      imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),),)),
                 ])
                 )
     ],);
