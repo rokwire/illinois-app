@@ -119,6 +119,18 @@ class Auth2Account {
   
   Auth2Account({this.id, this.profile, this.prefs, this.permissions, this.roles, this.groups, this.authTypes});
 
+  factory Auth2Account.fromOther(Auth2Account? other, {String? id, Auth2UserProfile? profile, Auth2UserPrefs? prefs, List<Auth2StringEntry>? permissions, List<Auth2StringEntry>? roles, List<Auth2StringEntry>? groups, List<Auth2Type>? authTypes}) {
+    return Auth2Account(
+      id: id ?? other?.id,
+      profile: profile ?? other?.profile,
+      prefs: prefs ?? other?.prefs,
+      permissions: permissions ?? other?.permissions,
+      roles: roles ?? other?.roles,
+      groups: groups ?? other?.groups,
+      authTypes: authTypes ?? other?.authTypes,
+    );
+  }
+
   static Auth2Account? fromJson(Map<String, dynamic>? json, { Auth2UserPrefs? prefs, Auth2UserProfile? profile }) {
     return (json != null) ? Auth2Account(
       id: JsonUtils.stringValue(json['id']),
@@ -168,6 +180,29 @@ class Auth2Account {
 
   Auth2Type? get authType {
     return ((authTypes != null) && authTypes!.isNotEmpty) ? authTypes?.first : null;
+  }
+
+  bool isAuthTypeLinked(Auth2LoginType loginType) {
+    if (authTypes != null) {
+      for (Auth2Type authType in authTypes!) {
+        if (authType.loginType == loginType) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  List<String> getLinkedIdsForAuthType(Auth2LoginType loginType) {
+    List<String> ids = [];
+    if (authTypes != null) {
+      for (Auth2Type authType in authTypes!) {
+        if (authType.loginType == loginType && authType.identifier != null) {
+          ids.add(authType.identifier!);
+        }
+      }
+    }
+    return ids;
   }
 
   bool hasRole(String role) => (Auth2StringEntry.findInList(roles, name: role) != null);

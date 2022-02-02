@@ -63,7 +63,7 @@ class FlexUI extends rokwire.FlexUI {
   @override
   void onNotification(String name, dynamic param) {
     super.onNotification(name, param);
-    if ((name == Auth2.notifyCardChanged) || 
+    if ((name == Auth2.notifyCardChanged) ||
         (name == IlliniCash.notifyBallanceUpdated))
     {
       updateContent();
