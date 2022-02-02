@@ -111,7 +111,7 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
 
   void _loadSyllabusBody() {
     _increaseProgress();
-    Canvas().loadCourse(widget.courseId).then((course) {
+    Canvas().loadCourse(widget.courseId, includeInfo: CanvasIncludeInfo.syllabus).then((course) {
       _syllabusBody = course?.syllabusBody;
       _decreaseProgress();
     });
