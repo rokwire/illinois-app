@@ -64,7 +64,6 @@ class Events with Service implements NotificationsListener, ExploreJsonHandler {
 
   // Service
 
-
   @override
   void createService() {
     Explore.addJsonHandler(this);
