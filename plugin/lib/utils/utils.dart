@@ -567,24 +567,20 @@ class MapPathKey {
 
 class SortUtils {
 
-  static int compare<T>(T? v1, T? v2) {
+  static int compare<T>(T? v1, T? v2, { bool descending = false}) {
+    int result;
     if (v1 is Comparable<T>) {
-      if (v2 is Comparable<T>) {
-        return v1.compareTo(v2);
-      }
-      else {
-        return -1;
-      }
-    }
-    else if (v2 != null) {
-      return 1;
+      result = (v2 is Comparable<T>) ? v1.compareTo(v2) : -1;
     }
     else {
-      return 0;
+      result = (v2 is Comparable<T>) ? 1 : 0;
     }
+    return descending ? -result : result;
   }
 
-  static int compareDateTimes(DateTime? v1, DateTime? v2) => compare(v1, v2);
+  static void sort<T>(List<T>? list, { bool descending = false}) {
+    list?.sort((T t1, T t2) => compare(t1, t2, descending: descending));
+  }
 }
 
 class GeometryUtils {

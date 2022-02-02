@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+import 'package:rokwire_plugin/utils/utils.dart';
+
 //////////////////////////////
 /// Explore
 
-abstract class Explore {
+abstract class Explore implements Comparable<Explore> {
 
   String?   get exploreId;
   String?   get exploreTitle;
@@ -30,6 +32,10 @@ abstract class Explore {
   ExploreLocation? get exploreLocation;
   Map<String, dynamic> toJson();
 
+  @override
+  int compareTo(Explore other) => SortUtils.compare(exploreStartDateUtc, other.exploreStartDateUtc);
+
+  // ExploreJsonHandler
   static final Set<ExploreJsonHandler> _jsonHandlers = {};
   static void addJsonHandler(ExploreJsonHandler handler) => _jsonHandlers.add(handler);
   static void removeJsonHandler(ExploreJsonHandler handler) => _jsonHandlers.remove(handler);
@@ -47,6 +53,8 @@ abstract class Explore {
 
   static Explore? fromJson(Map<String, dynamic>? json) => _getJsonHandler(json)?.exploreFromJson(json);
 
+  // List
+  
   static List<Explore>? listFromJson(List<dynamic>? jsonList) {
     List<Explore>? explores;
     if (jsonList is List) {
@@ -71,7 +79,11 @@ abstract class Explore {
     }
     return result;
   }
+
 }
+
+//////////////////////////////
+/// ExploreJsonHandler
 
 abstract class ExploreJsonHandler {
   bool exploreCanJson(Map<String, dynamic>? json) => false;

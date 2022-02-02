@@ -487,6 +487,12 @@ class Event with Explore implements Favorite {
     return toJson().toString();
   }
 
+  @override
+  int compareTo(Explore other) {
+    int result = (other is Event) ? SortUtils.compare(convergeScore, other.convergeScore, descending: true) : 0; //Descending order by score
+    return (result != 0) ? result : super.compareTo(other);
+  }
+
   bool get isGameEvent {
     bool isAthletics = (category == "Athletics" || category == "Recreation");
     bool hasGameId = StringUtils.isNotEmpty(speaker);

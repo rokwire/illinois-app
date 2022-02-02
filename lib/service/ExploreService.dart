@@ -17,22 +17,22 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'package:geolocator/geolocator.dart' as Core;
-import 'package:http/http.dart' as http;
-import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
+
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-
 import 'package:rokwire_plugin/service/network.dart';
-import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/model/explore.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
+import 'package:geolocator/geolocator.dart' as Core;
+import 'package:http/http.dart' as http;
 
 class ExploreService with Service implements NotificationsListener, ExploreJsonHandler {
 
@@ -325,32 +325,6 @@ class ExploreService with Service implements NotificationsListener, ExploreJsonH
       }
     }
     return null;
-  }
-
-  void sortEvents(List<Explore>? events) {
-    if (CollectionUtils.isEmpty(events) || (events!.length == 1)) {
-      return;
-    }
-    events.sort((Explore first, Explore second) => _compareEvents(first, second));
-  }
-
-  int _compareEvents(Explore? first, Explore? second) {
-    if (first is Event && second is Event) {
-      int firstScore = first.convergeScore ?? -1;
-      int secondScore = second.convergeScore ?? -1;
-      int comparedScore = secondScore.compareTo(firstScore); //Descending order by score
-      if (comparedScore == 0) {
-        if (first.startDateGmt == null || second.startDateGmt == null) {
-          return 0;
-        } else {
-          return (first.startDateGmt!.isBefore(second.startDateGmt!)) ? -1 : 1;
-        }
-      } else {
-        return comparedScore;
-      }
-    } else {
-      return 0;
-    }
   }
 
   String _buildEventsQueryParameters(String? searchText, Core.Position? locationData, EventTimeFilter? eventTimeFilter, Set<String?>? categories, Set<String>? tags, int? recurrenceId, int limit) {

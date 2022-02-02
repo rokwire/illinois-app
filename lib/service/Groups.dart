@@ -508,7 +508,7 @@ class Groups with Service implements NotificationsListener {
           }
         }
         int eventsCount = currentUserEvents.length;
-        ExploreService().sortEvents(currentUserEvents);
+        SortUtils.sort(currentUserEvents);
         //limit the result count // limit available events
         List<Event> visibleEvents = ((limit > 0) && (eventsCount > limit)) ? currentUserEvents.sublist(0, limit) : currentUserEvents;
         List<GroupEvent> groupEvents = <GroupEvent>[];
