@@ -1954,6 +1954,10 @@
     "panel.canvas_collaborations.load.failed.error.msg": "未能加載協作. 請稍後再試.",
     "panel.canvas_collaborations.empty.msg": "本課程沒有合作.",
 
+    "panel.canvas_calendar.header.title": "日曆",
+    "panel.canvas_calendar.load.failed.error.msg": "未能加載事件. 請稍後再試.",
+    "panel.canvas_calendar.empty.msg": "今天沒有活動.",
+
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 
 	"widget.game_detail_heading.button.live_stats.title":"实时信息",
