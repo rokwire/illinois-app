@@ -1,7 +1,7 @@
 {
     "app.title": "Illinois",
     "app.team_name": "Illinois",
-    "app.offline.message.title": "You appear to be offline",
+    "app.offline.message.title": "Pareces estar desconectado",
     "generic.minutes": "minutes",
     "generic.hours": "hours",
     "generic.days": "days",
