@@ -566,9 +566,10 @@ class MapPathKey {
 }
 
 class SortUtils {
-  static int compareIntegers(int? v1, int? v2) {
-    if (v1 != null) {
-      if (v2 != null) {
+
+  static int compare<T>(T? v1, T? v2) {
+    if (v1 is Comparable<T>) {
+      if (v2 is Comparable<T>) {
         return v1.compareTo(v2);
       }
       else {
@@ -583,22 +584,7 @@ class SortUtils {
     }
   }
 
-  static int compareDateTimes(DateTime? v1, DateTime? v2) {
-    if (v1 != null) {
-      if (v2 != null) {
-        return v1.compareTo(v2);
-      }
-      else {
-        return -1;
-      }
-    }
-    else if (v2 != null) {
-      return 1;
-    }
-    else {
-      return 0;
-    }
-  }
+  static int compareDateTimes(DateTime? v1, DateTime? v2) => compare(v1, v2);
 }
 
 class GeometryUtils {
