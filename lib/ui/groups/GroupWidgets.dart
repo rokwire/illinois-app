@@ -377,8 +377,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
       content2.add(
           Container(
               padding: EdgeInsets.symmetric(vertical: 16),
-              child:_buildAddPostButton(photoUrl: Groups().getUserMembership(widget.group?.id)?.photoURL,
-                  onTap: (){
+              child:_buildAddPostButton(onTap: (){
                     Analytics().logSelect(target: "Add post");
                     //TBD: remove if not used
                     // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.group?.id,)));

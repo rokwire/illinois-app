@@ -51,8 +51,6 @@ class Groups with Service implements NotificationsListener {
   static const String notifyGroupMembershipSwitchToAdmin  = "edu.illinois.rokwire.group.membership.switch_to_admin";
   static const String notifyGroupMembershipSwitchToMember = "edu.illinois.rokwire.group.membership.switch_to_member";
   
-
-  Map<String, Member>? _userMembership;
   List<Map<String, dynamic>>? _groupDetailsCache;
 
   final List<Completer<void>> _loginCompleters = [];
@@ -120,10 +118,6 @@ class Groups with Service implements NotificationsListener {
   }
 
   // Current User Membership
-
-  Member? getUserMembership(String? groupId) {
-    return (_userMembership != null) ? _userMembership![groupId] : null;
-  }
 
   Future<bool> isAdminForGroup(String groupId) async{
     Group? group = await loadGroup(groupId);

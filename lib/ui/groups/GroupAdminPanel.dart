@@ -382,8 +382,7 @@ class _EventCard extends StatelessWidget {
     content.add(
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child:_buildAddPostButton(photoUrl: Groups().getUserMembership(groupId)?.photoURL,
-          onTap: (){
+          child:_buildAddPostButton(onTap: (){
             Analytics().logSelect(target: "Add post");
             // TBD: remove if not used
             // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: groupEvent,groupId: groupId,)));
