@@ -22,7 +22,7 @@ import 'package:flutter/services.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Content.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Events.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -1523,7 +1523,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _loadEventCategories() async {
     _setLoading(true);
-    _eventCategories = await ExploreService().loadEventCategories();
+    _eventCategories = await Events().loadEventCategories();
     _setLoading(false);
   }
 
@@ -1798,7 +1798,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       }
 
       // Save the initial event and link it to group if it's part of such one.
-      String? mainEventId = await ExploreService().postNewEvent(mainEvent);
+      String? mainEventId = await Events().postNewEvent(mainEvent);
       if (StringUtils.isNotEmpty(mainEventId)) {
         // Succeeded to create the main event
         if (hasGroup) {
@@ -1824,7 +1824,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         for (Group group in otherGroupsToSave!) {
           Event? groupEvent = Event.fromOther(mainEvent);
           groupEvent?.createdByGroupId = group.id;
-          String? groupEventId = await ExploreService().postNewEvent(groupEvent);
+          String? groupEventId = await Events().postNewEvent(groupEvent);
           if (StringUtils.isNotEmpty(groupEventId)) {
             bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent?.createdByGroupId, eventId: groupEventId);
             if (eventLinkedToGroup) {

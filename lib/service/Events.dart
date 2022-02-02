@@ -34,7 +34,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:http/http.dart' as http;
 
-class ExploreService with Service implements NotificationsListener, ExploreJsonHandler {
+class Events with Service implements NotificationsListener, ExploreJsonHandler {
 
   static const String notifyEventDetail  = "edu.illinois.rokwire.explore.event.detail";
   static const String notifyEventCreated = "edu.illinois.rokwire.explore.event.created";
@@ -48,13 +48,13 @@ class ExploreService with Service implements NotificationsListener, ExploreJsonH
   List<Map<String, dynamic>>? _eventDetailsCache;
   
   // Singletone Factory
-  static final ExploreService _instance = ExploreService._internal();
+  static final Events _instance = Events._internal();
 
-  factory ExploreService() {
+  factory Events() {
     return _instance;
   }
 
-  ExploreService._internal();
+  Events._internal();
 
   // Service
 

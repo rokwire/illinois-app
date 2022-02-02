@@ -22,7 +22,7 @@ import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Events.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -829,7 +829,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   void _onTapPublish() async{
     Analytics().logSelect(target: "Publish");
-    ExploreService().postNewEvent(widget.event).then((String? eventId){
+    Events().postNewEvent(widget.event).then((String? eventId){
         if(eventId!=null){
           AppToast.show("Event successfully created");
           Navigator.pop(context,true);

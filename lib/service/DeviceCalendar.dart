@@ -11,7 +11,7 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/model/event.dart' as ExploreEvent;
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Events.dart';
 import 'package:device_calendar/device_calendar.dart';
 
 class DeviceCalendar extends rokwire.DeviceCalendar implements NotificationsListener {
@@ -104,7 +104,7 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
       internalEventId: event.id,
       startDate: event.startDateLocal,
       endDate: event.endDateLocal,
-      deepLinkUrl: "${ExploreService().eventDetailUrl}?event_id=${event.id}"
+      deepLinkUrl: "${Events().eventDetailUrl}?event_id=${event.id}"
     ) : null;
   }
 

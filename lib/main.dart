@@ -25,7 +25,7 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/DiningService.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Events.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Gies.dart';
@@ -121,7 +121,7 @@ void main() async {
     Guide(),
     Inbox(),
     DeviceCalendar(),
-    ExploreService(),
+    Events(),
     Groups(),
     Gies(),
     Canvas(),

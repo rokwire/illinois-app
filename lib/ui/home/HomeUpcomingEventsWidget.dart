@@ -26,7 +26,7 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -66,8 +66,8 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyTagsChanged,
       Auth2UserPrefs.notifyInterestsChanged,
-      ExploreService.notifyEventCreated,
-      ExploreService.notifyEventUpdated,
+      Events.notifyEventCreated,
+      Events.notifyEventUpdated,
       AppLivecycle.notifyStateChanged,
     ]);
     if (widget.refreshController != null) {
@@ -98,10 +98,10 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     else if (name == Auth2UserPrefs.notifyInterestsChanged) {
       _loadEvents();
     }
-    else if (name == ExploreService.notifyEventCreated) {
+    else if (name == Events.notifyEventCreated) {
       _loadEvents();
     }
-    else if (name == ExploreService.notifyEventUpdated) {
+    else if (name == Events.notifyEventUpdated) {
       _loadEvents();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
@@ -125,7 +125,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
 
   void _loadAvailableCategories() {
     if (Connectivity().isNotOffline) {
-      ExploreService().loadEventCategories().then((List<dynamic>? categories) {
+      Events().loadEventCategories().then((List<dynamic>? categories) {
         _applyAvailableCategories(categories);
         _loadEvents();
       });
@@ -166,7 +166,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       Set<String>? tagsFilter = ((userTags != null) && userTags.isNotEmpty) ? userTags : null;
 
       _loadingEvents = true;
-      ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming, categories: categoriesFilter, tags: tagsFilter).then((List<Event>? events) {
+      Events().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming, categories: categoriesFilter, tags: tagsFilter).then((List<Event>? events) {
 
         bool haveEvents = (events != null) && events.isNotEmpty;
         bool haveTagsFilters = (tagsFilter != null) && tagsFilter.isNotEmpty;
@@ -184,7 +184,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
           }
         }
         else {
-          ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming).then((List<Event>? events) {
+          Events().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming).then((List<Event>? events) {
             _loadingEvents = false;
             setState(() {
               _tagsFilter = null;

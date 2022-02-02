@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Events.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -68,7 +68,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     }
 
     if (0 < eventIds.length) {
-      ExploreService().loadEventsByIds(eventIds).then((List<Event>? events) {
+      Events().loadEventsByIds(eventIds).then((List<Event>? events) {
         if (events != null) {
           for (Event event in events) {
             if (event.id != null) {

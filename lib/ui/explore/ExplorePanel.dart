@@ -37,7 +37,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Events.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -97,9 +97,9 @@ class ExplorePanel extends StatefulWidget {
   }
 
   static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
-    List<Event>? events = (eventId != null) ? await ExploreService().loadEventsByIds(Set.from([eventId])) : null;
+    List<Event>? events = (eventId != null) ? await Events().loadEventsByIds(Set.from([eventId])) : null;
     Event? event = ((events != null) && (0 < events.length)) ? events.first : null;
-    //Explore explore = (eventId != null) ? await ExploreService().getEventById(eventId) : null;
+    //Explore explore = (eventId != null) ? await Events().getEventById(eventId) : null;
     //Event event = (explore is Event) ? explore : null;
     if (event != null) {
       if (event.isComposite) {
@@ -374,7 +374,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _loadEventCategories() {
     if (Connectivity().isNotOffline) {
-      ExploreService().loadEventCategories().then((List<dynamic>? result) {
+      Events().loadEventCategories().then((List<dynamic>? result) {
         _refresh(() {
           _eventCategories = result;
         });
@@ -515,7 +515,7 @@ class ExplorePanelState extends State<ExplorePanel>
   Future<List<Explore>> _loadAll(List<ExploreFilter>? selectedFilterList) async {
     Set<String?>? categories = _getSelectedCategories(selectedFilterList);
     List<Explore> explores = [];
-    List<Explore>? events = await ExploreService().loadEvents(categories: categories, eventFilter: EventTimeFilter.upcoming);
+    List<Explore>? events = await Events().loadEvents(categories: categories, eventFilter: EventTimeFilter.upcoming);
     if (CollectionUtils.isNotEmpty(events)) {
       explores.addAll(events!);
     }
@@ -536,7 +536,7 @@ class ExplorePanelState extends State<ExplorePanel>
     EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
     _locationData = _userLocationEnabled() ? await LocationServices().location : null;
     // Do not load games here, because they do not have proper location data (lat, long)
-    return (_locationData != null) ? ExploreService().loadEvents(locationData: _locationData, categories: categories, tags: tags, eventFilter: eventFilter) : null;
+    return (_locationData != null) ? Events().loadEvents(locationData: _locationData, categories: categories, tags: tags, eventFilter: eventFilter) : null;
   }
 
   Future<List<Explore>> _loadEvents(List<ExploreFilter>? selectedFilterList) async {
@@ -544,7 +544,7 @@ class ExplorePanelState extends State<ExplorePanel>
     Set<String>? tags = _getSelectedEventTags(selectedFilterList);
     EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
     List<Explore> explores = [];
-    List<Explore>? events = await ExploreService().loadEvents(categories: categories, tags: tags, eventFilter: eventFilter);
+    List<Explore>? events = await Events().loadEvents(categories: categories, tags: tags, eventFilter: eventFilter);
     if (CollectionUtils.isNotEmpty(events)) {
       explores.addAll(events!);
     }

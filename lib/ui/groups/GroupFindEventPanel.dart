@@ -23,7 +23,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
@@ -142,7 +142,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   void _loadEventCategories() {
     if (Connectivity().isNotOffline) {
       setState(() {_isCategoryLoading = true;});
-      ExploreService().loadEventCategoriesEx().then((List<EventCategory>? result) {
+      Events().loadEventCategoriesEx().then((List<EventCategory>? result) {
         _eventCategories = [];
         _eventCategories.add(_allCategoriesConst);
         if(CollectionUtils.isNotEmpty(result)){
@@ -171,7 +171,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
         eventFilter = EventTimeFilter.next30Days;
       }
 
-      ExploreService().loadEvents(searchText: _textEditingController.text, eventFilter: eventFilter).then((List<Event>? result) {
+      Events().loadEvents(searchText: _textEditingController.text, eventFilter: eventFilter).then((List<Event>? result) {
         _events = result;
         _isEventLoading = false;
         _applyFilter();

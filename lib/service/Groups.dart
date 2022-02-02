@@ -32,7 +32,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Events.dart';
 
 class Groups with Service implements NotificationsListener {
 
@@ -120,7 +120,7 @@ class Groups with Service implements NotificationsListener {
   // Categories APIs
 
   Future<List<String>?> loadCategories() async {
-    List<dynamic>? categoriesJsonArray = await ExploreService().loadEventCategories();
+    List<dynamic>? categoriesJsonArray = await Events().loadEventCategories();
     if (CollectionUtils.isNotEmpty(categoriesJsonArray)) {
       List<String> categoriesList = categoriesJsonArray!.map((e) => e['category'].toString()).toList();
       return categoriesList;
@@ -132,7 +132,7 @@ class Groups with Service implements NotificationsListener {
   // Tags APIs
 
   Future<List<String>?> loadTags() async {
-    return ExploreService().loadEventTags();
+    return Events().loadEventTags();
   }
 
   // Groups APIs
@@ -497,7 +497,7 @@ class Groups with Service implements NotificationsListener {
     await _waitForLogin();
     if (group != null) {
       List<dynamic>? eventIds = await loadEventIds(group.id);
-      List<Event>? allEvents = CollectionUtils.isNotEmpty(eventIds) ? await ExploreService().loadEventsByIds(Set<String>.from(eventIds!)) : null;
+      List<Event>? allEvents = CollectionUtils.isNotEmpty(eventIds) ? await Events().loadEventsByIds(Set<String>.from(eventIds!)) : null;
       if (CollectionUtils.isNotEmpty(allEvents)) {
         List<Event> currentUserEvents = [];
         bool isCurrentUserMemberOrAdmin = group.currentUserIsMemberOrAdmin;
@@ -559,7 +559,7 @@ class Groups with Service implements NotificationsListener {
 
   Future<String?> updateGroupEvents(Event event) async {
     await _waitForLogin();
-    String? id = await ExploreService().updateEvent(event);
+    String? id = await Events().updateEvent(event);
     if (StringUtils.isNotEmpty(id)) {
       NotificationService().notify(Groups.notifyGroupEventsUpdated);
     }
@@ -573,7 +573,7 @@ class Groups with Service implements NotificationsListener {
     if(creatorGroupId!=null){
       Group? creatorGroup = await loadGroup(creatorGroupId);
       if(creatorGroup!=null && creatorGroup.currentUserIsAdmin){
-        deleteResult = await ExploreService().deleteEvent(event.id);
+        deleteResult = await Events().deleteEvent(event.id);
       }
     }
     NotificationService().notify(Groups.notifyGroupEventsUpdated);
