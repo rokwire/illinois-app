@@ -30,7 +30,7 @@ class Auth2 extends rokwire.Auth2 {
   static String get notifyPrepareUserDelete => rokwire.Auth2.notifyPrepareUserDelete;
 
   static const String notifyCardChanged     = "edu.illinois.rokwire.auth2.card.changed";
-  
+
   static const String _authCardName         = "idCard.json";
 
   Auth2Token? _uiucToken;
@@ -70,11 +70,11 @@ class Auth2 extends rokwire.Auth2 {
       _refreshAuthCardIfNeeded();
     }
   }
-  
+
   @override
   Future<void> applyLogin(Auth2Account account, Auth2Token token, { Map<String, dynamic>? params }) async {
     await super.applyLogin(account, token, params: params);
-    
+
     Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(JsonUtils.mapValue(params['oidc_token'])) : null;
     Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
 
