@@ -6,7 +6,8 @@ import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/utils/ExploreHelper.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -146,13 +147,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventImageHeader(){
+    String? imageUrl = widget.event?.eventImageUrl;
     return Container(
       height: 200,
       color: Styles().colors!.background,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(EventHelper.exploreImageURL(_event)) ?  Positioned.fill(child:Image.network(EventHelper.exploreImageURL(widget.event) ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
+          StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false),
             child: Container(
@@ -196,7 +198,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventTimeDetail() {
-    String? displayTime = EventHelper.displayDateTime(_event);
+    String? displayTime = _event?.displayDateTime;
     //Newly created groups pass time in the string
     if(StringUtils.isEmpty(displayTime?.trim())){
       if(_event?.startDateString !=null || _event?.endDateString != null){
@@ -236,7 +238,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventLocationDetail() {
-    String? locationText = ExploreHelper.getLongDisplayLocation(_event, null); //TBD decide if we need distance calculation - pass _locationData
+    String? locationText = _event?.getLongDisplayLocation(null); //TBD decide if we need distance calculation - pass _locationData
     bool isVirtual = _event?.isVirtual ?? false;
     String eventType = isVirtual? Localization().getStringEx('panel.groups_event_detail.label.online_event', "Online event")! : Localization().getStringEx('panel.groups_event_detail.label.in_person_event', "In-person event")!;
     bool hasEventUrl = StringUtils.isNotEmpty(_event?.location?.description);

@@ -1025,6 +1025,10 @@ class Auth2UserPrefs {
     }
   }
 
+  void toggleListFavorite(List<Favorite>? favorites, {Favorite? sourceFavorite}) {
+    setListFavorite(favorites, !isListFavorite(favorites), sourceFavorite: sourceFavorite);
+  }
+
   bool get hasFavorites {
     bool result = false;
     _favorites?.forEach((String key, Set<String> values) {

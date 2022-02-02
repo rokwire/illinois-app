@@ -19,7 +19,8 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/utils/ExploreHelper.dart';
+import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -748,7 +749,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 
   Color? _cardHeaderColor(Favorite? item) {
     if (item is Explore) {
-      return ExploreHelper.uiColor(item as Explore);
+      return (item as Explore).uiColor;
     } else if (item is Game) {
       return Styles().colors!.fillColorPrimary;
     } else if (item is News) {
@@ -784,7 +785,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 
   String? _cardDetailLabel(Favorite? item) {
     if (item is Event) {
-      return EventHelper.displayDateTime(item);
+      return item.displayDateTime;
     } else if (item is Dining) {
       return item.displayWorkTime;
     } else if (item is Game) {

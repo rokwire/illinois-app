@@ -24,7 +24,7 @@ import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/ExploreHelper.dart';
+import 'package:illinois/ext/Explore.dart';
 
 class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttributes {
   final Explore? explore;
@@ -34,9 +34,7 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
   ExploreDetailPanel({this.explore, this.initialLocationData, this.browseGroupId});
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return ExploreHelper.analyticsAttributes(explore);
-  }
+  Map<String, dynamic>? get analyticsPageAttributes => explore?.analyticsAttributes;
 
   @override
   Widget build(BuildContext context) {
