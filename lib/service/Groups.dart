@@ -28,9 +28,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/ext/Group.dart';
 
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/service/events.dart';
@@ -44,6 +42,15 @@ class Groups with Service implements NotificationsListener {
   static const String notifyGroupDeleted            = "edu.illinois.rokwire.group.deleted";
   static const String notifyGroupPostsUpdated       = "edu.illinois.rokwire.group.posts.updated";
   static const String notifyGroupDetail             = "edu.illinois.rokwire.group.detail";
+
+  static const String notifyGroupMembershipRequested = "edu.illinois.rokwire.group.membership.requested";
+  static const String notifyGroupMembershipCanceled = "edu.illinois.rokwire.group.membership.canceled";
+  static const String notifyGroupMembershipQuit = "edu.illinois.rokwire.group.membership.quit";
+  static const String notifyGroupMembershipApproved = "edu.illinois.rokwire.group.membership.approved";
+  static const String notifyGroupMembershipRemoved = "edu.illinois.rokwire.group.membership.removed";
+  static const String notifyGroupMembershipSwitchToAdmin = "edu.illinois.rokwire.group.membership.switch_to_admin";
+  static const String notifyGroupMembershipSwitchToMember = "edu.illinois.rokwire.group.membership.switch_to_member";
+  
 
   Map<String, Member>? _userMembership;
   List<Map<String, dynamic>>? _groupDetailsCache;
@@ -352,7 +359,7 @@ class Groups with Service implements NotificationsListener {
         String? body = JsonUtils.encode(json);
         Response? response = await Network().post(url, auth: Auth2(), body: body);
         if((response?.statusCode ?? -1) == 200){
-          Analytics().logGroup(action: Analytics.LogGroupMembershipRequested, attributes: group.analyticsAttributes);
+          NotificationService().notify(notifyGroupMembershipRequested, group);
           NotificationService().notify(notifyGroupUpdated, group.id);
           return true;
         }
@@ -370,7 +377,7 @@ class Groups with Service implements NotificationsListener {
       try {
         Response? response = await Network().delete(url, auth: Auth2(),);
         if((response?.statusCode ?? -1) == 200){
-          Analytics().logGroup(action: Analytics.LogGroupMembershipRequestCanceled, attributes: group.analyticsAttributes);
+          NotificationService().notify(notifyGroupMembershipCanceled, group);
           NotificationService().notify(notifyGroupUpdated, group.id);
           return true;
         }
@@ -390,7 +397,7 @@ class Groups with Service implements NotificationsListener {
     Response? response = await Network().delete(url, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
-      Analytics().logGroup(action: Analytics.LogGroupMembershipQuit, attributes: group.analyticsAttributes);
+      NotificationService().notify(notifyGroupMembershipQuit, group);
       NotificationService().notify(notifyGroupUpdated, group.id);
       return true;
     } else {
@@ -409,8 +416,8 @@ class Groups with Service implements NotificationsListener {
       try {
         Response? response = await Network().put(url, auth: Auth2(), body: body);
         if((response?.statusCode ?? -1) == 200){
-          Analytics().logGroup(action: decision ? Analytics.LogGroupMembershipApproved : Analytics.LogGroupMembershipRejected, attributes: group!.analyticsAttributes);    
-          NotificationService().notify(notifyGroupUpdated, group.id);
+          NotificationService().notify(notifyGroupMembershipApproved, group);
+          NotificationService().notify(notifyGroupUpdated, group?.id);
           return true;
         }
       } catch (e) {
@@ -430,10 +437,10 @@ class Groups with Service implements NotificationsListener {
         Response? response = await Network().put(url, auth: Auth2(), body: body);
         if((response?.statusCode ?? -1) == 200){
           if (status == GroupMemberStatus.admin) {
-            Analytics().logGroup(action: Analytics.LogGroupMembershipSwitchToAdmin, attributes: group!.analyticsAttributes);    
+            NotificationService().notify(notifyGroupMembershipSwitchToAdmin, group);
           }
           else if (status == GroupMemberStatus.member) {
-            Analytics().logGroup(action: Analytics.LogGroupMembershipSwitchToMember, attributes: group!.analyticsAttributes);    
+            NotificationService().notify(notifyGroupMembershipSwitchToMember, group);
           }
           NotificationService().notify(notifyGroupUpdated, group!.id);
           return true;
@@ -452,8 +459,8 @@ class Groups with Service implements NotificationsListener {
       try {
         Response? response = await Network().delete(url, auth: Auth2(),);
         if((response?.statusCode ?? -1) == 200){
-          Analytics().logGroup(action: Analytics.LogGroupMembershipRemoved, attributes: group!.analyticsAttributes);    
-          NotificationService().notify(notifyGroupUpdated, group.id);
+          NotificationService().notify(notifyGroupMembershipRemoved, group);
+          NotificationService().notify(notifyGroupUpdated, group?.id);
           return true;
         }
       } catch (e) {
