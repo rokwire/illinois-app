@@ -47,6 +47,7 @@ class Groups with Service implements NotificationsListener {
   static const String notifyGroupMembershipCanceled = "edu.illinois.rokwire.group.membership.canceled";
   static const String notifyGroupMembershipQuit = "edu.illinois.rokwire.group.membership.quit";
   static const String notifyGroupMembershipApproved = "edu.illinois.rokwire.group.membership.approved";
+  static const String notifyGroupMembershipRejected = "edu.illinois.rokwire.group.membership.rejected";
   static const String notifyGroupMembershipRemoved = "edu.illinois.rokwire.group.membership.removed";
   static const String notifyGroupMembershipSwitchToAdmin = "edu.illinois.rokwire.group.membership.switch_to_admin";
   static const String notifyGroupMembershipSwitchToMember = "edu.illinois.rokwire.group.membership.switch_to_member";
@@ -416,7 +417,7 @@ class Groups with Service implements NotificationsListener {
       try {
         Response? response = await Network().put(url, auth: Auth2(), body: body);
         if((response?.statusCode ?? -1) == 200){
-          NotificationService().notify(notifyGroupMembershipApproved, group);
+          NotificationService().notify(decision ? notifyGroupMembershipApproved : notifyGroupMembershipRejected, group);
           NotificationService().notify(notifyGroupUpdated, group?.id);
           return true;
         }

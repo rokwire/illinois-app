@@ -283,6 +283,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       Groups.notifyGroupMembershipCanceled,
       Groups.notifyGroupMembershipQuit,
       Groups.notifyGroupMembershipApproved,
+      Groups.notifyGroupMembershipRejected,
       Groups.notifyGroupMembershipRemoved,
       Groups.notifyGroupMembershipSwitchToAdmin,
       Groups.notifyGroupMembershipSwitchToMember,
@@ -395,6 +396,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
     else if (name == Groups.notifyGroupMembershipApproved) {
       logGroup(action: LogGroupMembershipApproved, attributes: (param as Group).analyticsAttributes);
+    }
+    else if (name == Groups.notifyGroupMembershipRejected) {
+      logGroup(action: LogGroupMembershipRejected, attributes: (param as Group).analyticsAttributes);
     }
     else if (name == Groups.notifyGroupMembershipRemoved) {
       logGroup(action: LogGroupMembershipRemoved, attributes: (param as Group).analyticsAttributes);
