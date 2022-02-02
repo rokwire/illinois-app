@@ -9,7 +9,7 @@ import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Events.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';

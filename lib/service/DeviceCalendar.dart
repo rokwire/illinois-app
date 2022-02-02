@@ -11,7 +11,7 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/model/event.dart' as ExploreEvent;
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/Events.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:device_calendar/device_calendar.dart';
 
 class DeviceCalendar extends rokwire.DeviceCalendar implements NotificationsListener {

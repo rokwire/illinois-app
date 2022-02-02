@@ -37,7 +37,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/service/Events.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';

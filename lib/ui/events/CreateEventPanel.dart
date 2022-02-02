@@ -22,7 +22,7 @@ import 'package:flutter/services.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Content.dart';
-import 'package:illinois/service/Events.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';

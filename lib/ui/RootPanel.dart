@@ -24,7 +24,7 @@ import 'package:illinois/main.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
-import 'package:illinois/service/Events.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Groups.dart';

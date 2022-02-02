@@ -96,7 +96,6 @@ class Config extends rokwire.Config {
   // Getters: Platform Building Blocks
   String? get rokwireAuthUrl         => JsonUtils.stringValue(platformBuildingBlocks['rokwire_auth_url']);            // "https://api-dev.rokwire.illinois.edu/authentication"
   String? get sportsServiceUrl       => JsonUtils.stringValue(platformBuildingBlocks['sports_service_url']);          // "https://api-dev.rokwire.illinois.edu/sports-service";
-  String? get eventsUrl              => JsonUtils.stringValue(platformBuildingBlocks['events_url']);                  // "https://api-dev.rokwire.illinois.edu/events"
   String? get transportationUrl      => JsonUtils.stringValue(platformBuildingBlocks["transportation_url"]);          // "https://api-dev.rokwire.illinois.edu/transportation"
   String? get groupsUrl              => JsonUtils.stringValue(platformBuildingBlocks["groups_url"]);                  // "https://api-dev.rokwire.illinois.edu/gr/api";
   String? get contentUrl             => JsonUtils.stringValue(platformBuildingBlocks["content_url"]);                 // "https://api-dev.rokwire.illinois.edu/content";

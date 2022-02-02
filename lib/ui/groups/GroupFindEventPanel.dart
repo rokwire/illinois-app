@@ -23,7 +23,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/Events.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
