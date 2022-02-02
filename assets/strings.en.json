@@ -1960,6 +1960,10 @@
     "panel.canvas_collaborations.load.failed.error.msg": "Failed to load collaborations. Please, try again later.",
     "panel.canvas_collaborations.empty.msg": "There are no collaborations for this course.",
 
+    "panel.canvas_calendar.header.title": "Calendar",
+    "panel.canvas_calendar.load.failed.error.msg": "Failed to load events. Please, try again later.",
+    "panel.canvas_calendar.empty.msg": "There are no events today.",
+
     "widget.game_day.label.its_game_day":"It's Game Day!",
 
     "widget.game_detail_heading.button.live_stats.title":"Live Stats",
