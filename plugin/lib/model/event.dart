@@ -78,8 +78,8 @@ class Event with Explore implements Favorite {
 
   bool? isEventFree;
 
-  static final String dateTimeFormat = 'E, dd MMM yyyy HH:mm:ss v';
-  static final String serverRequestDateTimeFormat =  'yyyy/MM/ddTHH:mm:ss';
+  static const String dateTimeFormat = 'E, dd MMM yyyy HH:mm:ss v';
+  static const String serverRequestDateTimeFormat =  'yyyy/MM/ddTHH:mm:ss';
 
 
   Event({Map<String, dynamic>? json, Event? other}) {
@@ -262,7 +262,7 @@ class Event with Explore implements Favorite {
 
   //add only not null values
   Map<String, dynamic> toNotNullJson(){
-    Map<String, dynamic> result = Map();
+    Map<String, dynamic> result = {};
     if(id!=null) {
       result["id"]= id;
     }
@@ -285,7 +285,7 @@ class Event with Explore implements Favorite {
       result["placeID"] = placeID;
     }
     if(location!=null) {
-      Map<String, dynamic> locationJson = Map();
+      Map<String, dynamic> locationJson = {};
       if(location!.locationId!=null) {
         locationJson["locationId"] = location!.locationId;
       }
@@ -463,9 +463,9 @@ class Event with Explore implements Favorite {
   List<dynamic> _encodeContacts(){
     List<dynamic> result = [];
     if(contacts!=null && contacts!.isNotEmpty) {
-      contacts!.forEach((Contact? contact) {
-        result.add(contact!.toJson());
-      });
+      for (var contact in contacts!) {
+        result.add(contact.toJson());
+      }
     }
 
     return result;
@@ -476,12 +476,13 @@ class Event with Explore implements Favorite {
       return null;
     }
     List<dynamic> eventsList = [];
-    recurringEvents!.forEach((Event? event) {
-      eventsList.add(event!.toJson());
-    });
+    for (var event in recurringEvents!) {
+      eventsList.add(event.toJson());
+    }
     return eventsList;
   }
 
+  @override
   String toString() {
     return toJson().toString();
   }
@@ -498,9 +499,7 @@ class Event with Explore implements Favorite {
   }
 
   void addRecurrentEvent(Event event) {
-    if (recurringEvents == null) {
-      recurringEvents = [];
-    }
+    recurringEvents ??= [];
     recurringEvents!.add(event);
   }
 
@@ -530,9 +529,7 @@ class Event with Explore implements Favorite {
     if (isSuperEvent != true) {
       return;
     }
-    if (_subEvents == null) {
-      _subEvents = [];
-    }
+    _subEvents ??= [];
     _subEvents!.add(event);
   }
 
@@ -544,9 +541,7 @@ class Event with Explore implements Favorite {
     if (isSuperEvent != true) {
       return;
     }
-    if (_featuredEvents == null) {
-      _featuredEvents = [];
-    }
+    _featuredEvents ??= [];
     _featuredEvents!.add(event);
   }
 

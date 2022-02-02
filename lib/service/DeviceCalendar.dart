@@ -8,7 +8,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/device_calendar.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/model/Event.dart' as ExploreEvent;
+import 'package:rokwire_plugin/model/event.dart' as ExploreEvent;
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/ExploreService.dart';
