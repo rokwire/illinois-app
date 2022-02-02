@@ -20,7 +20,7 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:illinois/ui/canvas/CanvasCourseAnnouncementsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseCollaborationsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseSyllabusPanel.dart';
