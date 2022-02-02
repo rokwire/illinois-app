@@ -19,7 +19,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
@@ -188,7 +188,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   //Categories
   void _initCategories() {
-    ExploreService().loadEventCategories().then((List<dynamic>? categories) {
+    Events().loadEventCategories().then((List<dynamic>? categories) {
       if (mounted) {
         setState(() {
           _categories = categories != null ? categories : [];
@@ -248,7 +248,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   //Tags
   void _initTags() {
-    ExploreService().loadEventTags().then((List<String>? tagList) {
+    Events().loadEventTags().then((List<String>? tagList) {
       if (mounted) {
         setState(() {
           _tags = tagList ?? [];

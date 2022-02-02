@@ -67,6 +67,7 @@ class FlexUI with Service implements NotificationsListener {
       Auth2UserPrefs.notifyRolesChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       Auth2.notifyLoginChanged,
+      Auth2.notifyLinkChanged,
 //    Auth2.notifyCardChanged,
 //    IlliniCash.notifyBallanceUpdated,
       AppLivecycle.notifyStateChanged,
@@ -111,7 +112,8 @@ class FlexUI with Service implements NotificationsListener {
         (name == Auth2.notifyUserDeleted) ||
         (name == Auth2UserPrefs.notifyRolesChanged) ||
         (name == Auth2UserPrefs.notifyPrivacyLevelChanged) ||
-        (name == Auth2.notifyLoginChanged))
+        (name == Auth2.notifyLoginChanged) ||
+        (name == Auth2.notifyLinkChanged))
     {
       updateContent();
     }
@@ -417,6 +419,15 @@ class FlexUI with Service implements NotificationsListener {
           }
           else if ((key == 'phoneOrEmailLoggedIn') && (value is bool)) {
             result = result && ((Auth2().isPhoneLoggedIn || Auth2().isEmailLoggedIn) == value) ;
+          }
+          else if ((key == 'shibbolethLinked') && (value is bool)) {
+            result = result && (Auth2().isOidcLinked == value);
+          }
+          else if ((key == 'phoneLinked') && (value is bool)) {
+            result = result && (Auth2().isPhoneLinked == value);
+          }
+          else if ((key == 'emailLinked') && (value is bool)) {
+            result = result && (Auth2().isEmailLinked == value);
           }
           else if ((key == 'accountRole') && (value is String)) {
             result = result && Auth2().hasRole(value);

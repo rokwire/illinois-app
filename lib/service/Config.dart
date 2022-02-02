@@ -96,9 +96,7 @@ class Config extends rokwire.Config {
   // Getters: Platform Building Blocks
   String? get rokwireAuthUrl         => JsonUtils.stringValue(platformBuildingBlocks['rokwire_auth_url']);            // "https://api-dev.rokwire.illinois.edu/authentication"
   String? get sportsServiceUrl       => JsonUtils.stringValue(platformBuildingBlocks['sports_service_url']);          // "https://api-dev.rokwire.illinois.edu/sports-service";
-  String? get eventsUrl              => JsonUtils.stringValue(platformBuildingBlocks['events_url']);                  // "https://api-dev.rokwire.illinois.edu/events"
   String? get transportationUrl      => JsonUtils.stringValue(platformBuildingBlocks["transportation_url"]);          // "https://api-dev.rokwire.illinois.edu/transportation"
-  String? get groupsUrl              => JsonUtils.stringValue(platformBuildingBlocks["groups_url"]);                  // "https://api-dev.rokwire.illinois.edu/gr/api";
   String? get contentUrl             => JsonUtils.stringValue(platformBuildingBlocks["content_url"]);                 // "https://api-dev.rokwire.illinois.edu/content";
   
   // Getters: Third Party Services
@@ -143,13 +141,7 @@ class Config extends rokwire.Config {
     return (userAccount != null) ? JsonUtils.stringValue(userAccount['name']) : null;
   }
 
-  // Getters: Other Entries
-
-  String? deepLinkRedirectUrl(String? deepLink) {
-    Uri? assetsUri = StringUtils.isNotEmpty(assetsUrl) ? Uri.tryParse(assetsUrl!) : null;
-    String? redirectUrl = (assetsUri != null) ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
-    return StringUtils.isNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
-  }
+  // Getters: settings
 
   String get appPrivacyVersion => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
 

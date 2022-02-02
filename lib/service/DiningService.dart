@@ -17,7 +17,7 @@
 import 'dart:io';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/model/Dining.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -31,7 +31,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 
-class DiningService  with Service {
+class DiningService  with Service implements ExploreJsonHandler {
 
   static final String _olddiningsFileName = 'dinings_schedules.json';
 
@@ -41,18 +41,29 @@ class DiningService  with Service {
   String? _diningSpecialsResponse;
   DateTime? _lastDiningSpecialsRequestTime;
 
-  static final DiningService _logic = DiningService._internal();
+  static final DiningService _instance = DiningService._internal();
 
-  factory DiningService() {
-    return _logic;
-  }
+  factory DiningService() => _instance;
+  
+  DiningService._internal();
 
+  // Service
+  @override
   void createService() {
     super.createService();
+    Explore.addJsonHandler(this);
     _cleanDinigsCacheFile();
   }
 
-  DiningService._internal();
+  @override
+  void destroyService() {
+    Explore.removeJsonHandler(this);
+    super.destroyService();
+  }
+
+  // ExploreJsonHandler
+  @override bool exploreCanJson(Map<String, dynamic>? json) => Dining.canJson(json);
+  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Dining.fromJson(json);
 
   Future<List<Dining>?> loadBackendDinings(bool onlyOpened, PaymentType? paymentType, Position? locationData) async {
     if(_enabled) {

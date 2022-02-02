@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-import 'dart:ui';
-
 import 'package:collection/collection.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/service/Analytics.dart';
+import 'package:flutter/foundation.dart';
+import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/styles.dart';
-import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:sprintf/sprintf.dart';
+import 'package:intl/intl.dart';
 
 //////////////////////////////
 // Group
@@ -69,23 +64,23 @@ class Group {
   }
 
   void _initFromJson(Map<String, dynamic> json) {
-    try { id                = json['id'];         } catch(e) { print(e.toString()); }
-    try { category          = json['category'];   } catch(e) { print(e.toString()); }
-    try { type              = json['type'];       } catch(e) { print(e.toString()); }
-    try { title             = json['title'];      } catch(e) { print(e.toString()); }
-    try { description       = json['description'];  } catch(e) { print(e.toString()); }
-    try { privacy           = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
-    try { certified         = json['certified']; } catch(e) { print(e.toString()); }
-    try { authManEnabled    = json['authman_enabled']; } catch(e) { print(e.toString()); }
-    try { authManGroupName  = json['authman_group']; } catch(e) { print(e.toString()); }
-    try { dateCreatedUtc    = groupUtcDateTimeFromString(json['date_created']); } catch(e) { print(e.toString()); }
-    try { dateUpdatedUtc    = groupUtcDateTimeFromString(json['date_updated']); } catch(e) { print(e.toString()); }
-    try { imageURL          = json['image_url'];     } catch(e) { print(e.toString()); }
-    try { webURL            = json['web_url'];       } catch(e) { print(e.toString()); }
-    try { tags              = JsonUtils.listStringsValue(json['tags']); } catch(e) { print(e.toString()); }
-    try { membershipQuest   = GroupMembershipQuest.fromJson(json['membershipQuest']); } catch(e) { print(e.toString()); }
-    try { members           = Member.listFromJson(json['members']); } catch(e) { print(e.toString()); }
-    try { questions         = GroupMembershipQuestion.listFromStringList(JsonUtils.stringListValue(json['membership_questions'])); } catch(e) { print(e.toString()); }
+    try { id                = json['id'];         } catch(e) { debugPrint(e.toString()); }
+    try { category          = json['category'];   } catch(e) { debugPrint(e.toString()); }
+    try { type              = json['type'];       } catch(e) { debugPrint(e.toString()); }
+    try { title             = json['title'];      } catch(e) { debugPrint(e.toString()); }
+    try { description       = json['description'];  } catch(e) { debugPrint(e.toString()); }
+    try { privacy           = groupPrivacyFromString(json['privacy']); } catch(e) { debugPrint(e.toString()); }
+    try { certified         = json['certified']; } catch(e) { debugPrint(e.toString()); }
+    try { authManEnabled    = json['authman_enabled']; } catch(e) { debugPrint(e.toString()); }
+    try { authManGroupName  = json['authman_group']; } catch(e) { debugPrint(e.toString()); }
+    try { dateCreatedUtc    = groupUtcDateTimeFromString(json['date_created']); } catch(e) { debugPrint(e.toString()); }
+    try { dateUpdatedUtc    = groupUtcDateTimeFromString(json['date_updated']); } catch(e) { debugPrint(e.toString()); }
+    try { imageURL          = json['image_url'];     } catch(e) { debugPrint(e.toString()); }
+    try { webURL            = json['web_url'];       } catch(e) { debugPrint(e.toString()); }
+    try { tags              = JsonUtils.listStringsValue(json['tags']); } catch(e) { debugPrint(e.toString()); }
+    try { membershipQuest   = GroupMembershipQuest.fromJson(json['membershipQuest']); } catch(e) { debugPrint(e.toString()); }
+    try { members           = Member.listFromJson(json['members']); } catch(e) { debugPrint(e.toString()); }
+    try { questions         = GroupMembershipQuestion.listFromStringList(JsonUtils.stringListValue(json['membership_questions'])); } catch(e) { debugPrint(e.toString()); }
   }
 
   Map<String, dynamic> toJson({bool withId = true}) {
@@ -130,13 +125,6 @@ class Group {
     tags              = (other?.tags != null) ? List.from(other!.tags!) : null;
     questions         = GroupMembershipQuestion.listFromOthers(other?.questions);
     membershipQuest   = GroupMembershipQuest.fromOther(other?.membershipQuest);
-  }
-
-  Map<String, dynamic> get analyticsAttributes {
-    return {
-      Analytics.LogAttributeGroupId : id,
-      Analytics.LogAttributeGroupName : title
-    };
   }
 
   List<Member> getMembersByStatus(GroupMemberStatus? status){
@@ -190,22 +178,6 @@ class Group {
     return (currentUserAsMember == null) && (authManEnabled != true);
   }
 
-  Color? get currentUserStatusColor{
-    Member? member = currentUserAsMember;
-    if(member?.status != null){
-      return groupMemberStatusToColor(member!.status);
-    }
-    return Styles().colors!.white;
-  }
-
-  String? get currentUserStatusText{
-    Member? member = currentUserAsMember;
-    if(member?.status != null){
-      return groupMemberStatusToDisplayString(member!.status);
-    }
-    return "";
-  }
-
   int get adminsCount{
     int adminsCount = 0;
     if(CollectionUtils.isNotEmpty(members)){
@@ -240,51 +212,6 @@ class Group {
       }
     }
     return membersCount;
-  }
-
-  String? get displayUpdateTime {
-    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateUpdatedUtc);
-    if (deviceDateTime != null) {
-      DateTime now = DateTime.now();
-      if (deviceDateTime.compareTo(now) < 0) {
-        Duration difference = DateTime.now().difference(deviceDateTime);
-        if (difference.inSeconds < 60) {
-          return Localization().getStringEx('model.group.updated.now', 'Updated now');
-        }
-        else if (difference.inMinutes < 60) {
-          return sprintf((difference.inMinutes != 1) ?
-            Localization().getStringEx('model.group.updated.minutes', 'Updated about %s minutes ago')! :
-            Localization().getStringEx('model.group.updated.minute', 'Updated about a minute ago')!,
-            [difference.inMinutes]);
-        }
-        else if (difference.inHours < 24) {
-          return sprintf((difference.inHours != 1) ?
-            Localization().getStringEx('model.group.updated.hours', 'Updated about %s hours ago')! :
-            Localization().getStringEx('model.group.updated.hour', 'Updated about an hour ago')!,
-            [difference.inHours]);
-        }
-        else if (difference.inDays < 30) {
-          return sprintf((difference.inDays != 1) ?
-            Localization().getStringEx('model.group.updated.days', 'Updated about %s days ago')! :
-            Localization().getStringEx('model.group.updated.day', 'Updated about a day ago')!,
-            [difference.inDays]);
-        }
-        else {
-          int differenceInMonths = difference.inDays ~/ 30;
-          if (differenceInMonths < 12) {
-            return sprintf((differenceInMonths != 1) ?
-              Localization().getStringEx('model.group.updated.months', 'Updated about %s months ago')! :
-              Localization().getStringEx('model.group.updated.month', 'Updated about a month ago')!,
-              [differenceInMonths]);
-          }
-        }
-      }
-      String value = DateFormat("MMM dd, yyyy").format(deviceDateTime);
-      return sprintf(
-        Localization().getStringEx('model.group.updated.date', 'Updated on %s')!,
-        [value]);
-    }
-    return null;
   }
 
   static List<Group>? listFromJson(List<dynamic>? json) {
@@ -368,22 +295,22 @@ class Member {
 
   void _initFromJson(Map<String, dynamic> json) {
     List<dynamic>? _answers = json['member_answers'];
-    try { id          = json['id'];      } catch(e) { print(e.toString()); }
-    try { userId      = json['user_id'];      } catch(e) { print(e.toString()); }
-    try { externalId  = json['external_id'];      } catch(e) { print(e.toString()); }
-    try { name        = json['name'];     } catch(e) { print(e.toString()); }
-    try { email       = json['email'];     } catch(e) { print(e.toString()); }
-    try { photoURL    = json['photo_url']; } catch(e) { print(e.toString()); }
-    try { status       = groupMemberStatusFromString(json['status']); } catch(e) { print(e.toString()); }
-    try { officerTitle = json['officerTitle']; } catch(e) { print(e.toString()); }
+    try { id          = json['id'];      } catch(e) { debugPrint(e.toString()); }
+    try { userId      = json['user_id'];      } catch(e) { debugPrint(e.toString()); }
+    try { externalId  = json['external_id'];      } catch(e) { debugPrint(e.toString()); }
+    try { name        = json['name'];     } catch(e) { debugPrint(e.toString()); }
+    try { email       = json['email'];     } catch(e) { debugPrint(e.toString()); }
+    try { photoURL    = json['photo_url']; } catch(e) { debugPrint(e.toString()); }
+    try { status       = groupMemberStatusFromString(json['status']); } catch(e) { debugPrint(e.toString()); }
+    try { officerTitle = json['officerTitle']; } catch(e) { debugPrint(e.toString()); }
     try {
       answers = GroupMembershipAnswer.listFromJson(_answers);
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
 
-    try { dateCreatedUtc    = groupUtcDateTimeFromString(json['date_created']); } catch(e) { print(e.toString()); }
-    try { dateUpdatedUtc    = groupUtcDateTimeFromString(json['date_updated']); } catch(e) { print(e.toString()); }
+    try { dateCreatedUtc    = groupUtcDateTimeFromString(json['date_created']); } catch(e) { debugPrint(e.toString()); }
+    try { dateUpdatedUtc    = groupUtcDateTimeFromString(json['date_updated']); } catch(e) { debugPrint(e.toString()); }
   }
 
   void _initFromOther(Member? other) {
@@ -458,21 +385,23 @@ class Member {
   }
 
 
-  bool operator == (dynamic o) {
-    return (o is Member) &&
-           (o.id == id) &&
-           (o.userId == userId) &&
-           (o.externalId == externalId) &&
-           (o.name == name) &&
-           (o.email == email) &&
-           (o.photoURL == photoURL) &&
-           (o.status == status) &&
-           (o.officerTitle == officerTitle) &&
-           (o.dateCreatedUtc == dateCreatedUtc) &&
-           (o.dateUpdatedUtc == dateUpdatedUtc) &&
-            DeepCollectionEquality().equals(o.answers, answers);
+  @override
+  bool operator == (dynamic other) {
+    return (other is Member) &&
+           (other.id == id) &&
+           (other.userId == userId) &&
+           (other.externalId == externalId) &&
+           (other.name == name) &&
+           (other.email == email) &&
+           (other.photoURL == photoURL) &&
+           (other.status == status) &&
+           (other.officerTitle == officerTitle) &&
+           (other.dateCreatedUtc == dateCreatedUtc) &&
+           (other.dateUpdatedUtc == dateUpdatedUtc) &&
+            const DeepCollectionEquality().equals(other.answers, answers);
   }
 
+  @override
   int get hashCode {
     return (id?.hashCode ?? 0) ^
            (userId?.hashCode ?? 0) ^
@@ -550,33 +479,6 @@ String? groupMemberStatusToString(GroupMemberStatus? value) {
   return null;
 }
 
-String? groupMemberStatusToDisplayString(GroupMemberStatus? value) {
-  if (value != null) {
-    if (value == GroupMemberStatus.pending) {
-      return Localization().getStringEx('model.groups.member.status.pending', 'Pending');
-    } else if (value == GroupMemberStatus.member) {
-      return Localization().getStringEx('model.groups.member.status.member', 'Member');
-    } else if (value == GroupMemberStatus.admin) {
-      return Localization().getStringEx('model.groups.member.status.admin', 'Admin');
-    } else if (value == GroupMemberStatus.rejected) {
-      return Localization().getStringEx('model.groups.member.status.rejected', 'Denied');
-    }
-  }
-  return null;
-}
-
-Color? groupMemberStatusToColor(GroupMemberStatus? value) {
-  if (value != null) {
-    switch(value){
-      case GroupMemberStatus.admin    :  return Styles().colors!.fillColorSecondary;
-      case GroupMemberStatus.member   :  return Styles().colors!.fillColorPrimary;
-      case GroupMemberStatus.pending  :  return Styles().colors!.mediumGray1;
-      case GroupMemberStatus.rejected :  return Styles().colors!.mediumGray1;
-    }
-  }
-  return null;
-}
-
 //////////////////////////////
 // GroupMembershipQuest
 
@@ -593,7 +495,7 @@ class GroupMembershipQuest {
   }
 
   void _initFromJson(Map<String, dynamic> json) {
-    try { steps     = GroupMembershipStep.listFromJson(json['steps']); } catch(e) { print(e.toString()); }
+    try { steps     = GroupMembershipStep.listFromJson(json['steps']); } catch(e) { debugPrint(e.toString()); }
   }
 
   void _initFromOther(GroupMembershipQuest other) {
@@ -632,8 +534,8 @@ class GroupMembershipStep {
   }
 
   void _initFromJson(Map<String, dynamic> json) {
-    try { description = json['description'];   } catch(e) { print(e.toString()); }
-    try { eventIds    = JsonUtils.stringListValue(json['eventIds']); } catch(e) { print(e.toString()); }
+    try { description = json['description'];   } catch(e) { debugPrint(e.toString()); }
+    try { eventIds    = JsonUtils.stringListValue(json['eventIds']); } catch(e) { debugPrint(e.toString()); }
   }
 
   void _initFromOther(GroupMembershipStep? other) {
@@ -798,13 +700,14 @@ class GroupEvent extends Event {
   }
 
   void _initFromJson(Map<String, dynamic> json) {
-    try { comments = GroupEventComment.listFromJson(json['comments']); } catch(e) { print(e.toString()); }
+    try { comments = GroupEventComment.listFromJson(json['comments']); } catch(e) { debugPrint(e.toString()); }
   }
 
   static GroupEvent? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? GroupEvent(json: json) : null;
   }
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = super.toJson();
     json['comments']  = GroupEventComment.listToJson(comments);
@@ -827,9 +730,9 @@ class GroupEventComment {
   }
 
   void _initFromJson(Map<String, dynamic> json) {
-    try { member      = Member.fromJson(json['member']); } catch(e) { print(e.toString()); }
-    try { dateCreated = DateTimeUtils.dateTimeFromString(json['dateCreated'], format: AppDateTime.iso8601DateTimeFormat); } catch(e) { print(e.toString()); }
-    try { text         = json['text']; } catch(e) { print(e.toString()); }
+    try { member      = Member.fromJson(json['member']); } catch(e) { debugPrint(e.toString()); }
+    try { dateCreated = DateTimeUtils.dateTimeFromString(json['dateCreated'], format: AppDateTime.iso8601DateTimeFormat); } catch(e) { debugPrint(e.toString()); }
+    try { text         = json['text']; } catch(e) { debugPrint(e.toString()); }
   }
 
   static GroupEventComment? fromJson(Map<String, dynamic>? json) {
@@ -916,42 +819,8 @@ class GroupPost {
     return json;
   }
 
-  String? get displayDateTime {
-    return getDisplayDateTime();
-  }
-
   bool get isUpdated {
     return (dateUpdatedUtc != null) && (dateCreatedUtc != dateUpdatedUtc);
-  }
-
-  String? getDisplayDateTime(){
-    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
-    if (deviceDateTime != null) {
-      DateTime now = DateTime.now();
-      if (deviceDateTime.compareTo(now) < 0) {
-        Duration difference = DateTime.now().difference(deviceDateTime);
-        if (difference.inSeconds < 60) {
-          return "now";
-        }
-        else if (difference.inMinutes < 60) {
-          return "${difference.inMinutes} ${Localization().getStringEx("generic.minutes", "minutes")}";
-        }
-        else if (difference.inHours < 24) {
-          return "${difference.inHours} ${Localization().getStringEx("generic.hours", "hours")}";
-        }
-        else if (difference.inDays < 30) {
-          return "${difference.inDays} ${Localization().getStringEx("generic.days", "days")}";
-        }
-        else {
-          int differenceInMonths = difference.inDays ~/ 30;
-          if (differenceInMonths < 12) {
-            return "$differenceInMonths ${Localization().getStringEx("generic.months", "months")}";
-          }
-        }
-      }
-      return DateFormat("MMM dd, yyyy").format(deviceDateTime);
-    }
-    return null;
   }
 
   static List<GroupPost>? fromJsonList(List<dynamic>? jsonList) {
@@ -1006,7 +875,7 @@ DateTime? groupUtcDateTimeFromString(String? dateTimeString) {
 String? groupUtcDateTimeToString(DateTime? dateTime) {
   if (dateTime != null) {
     try { return DateFormat("yyyy-MM-ddTHH:mm:ss").format(dateTime) + 'Z'; }
-    catch (e) { print(e.toString()); }
+    catch (e) { debugPrint(e.toString()); }
   }
   return null;
 }

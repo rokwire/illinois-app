@@ -643,7 +643,7 @@
     "panel.onboarding2.email.sign_in.failed.text": "Sign in failed.",
     "panel.onboarding2.email.sign_up.failed.text": "Sign up failed.",
     "panel.onboarding2.email.sign_in.failed.not_activated.text": "Your account is not activated yet. Please confirm the email sent to your email address.",
-    "panel.onboarding2.email.sign_in.failed.activation_expired.text": "Your activation link has already expired. Please resend verification email again and cofirm it in order to activate your account.",
+    "panel.onboarding2.email.sign_in.failed.activation_expired.text": "Your activation link has already expired. Please resend verification email again and confirm it in order to activate your account.",
     "panel.onboarding2.email.sign_up.failed.account_exists.text": "Sign up failed. This account already exists.",
 	"panel.onboarding2.email.sign_up.succeeded.text": "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential.",
 	"panel.onboarding2.email.label.forgot_password.text": "Forgot Password?",
@@ -2250,9 +2250,8 @@
     "logic.date_time.greeting.afternoon": "Buenas tardes",
     "logic.date_time.greeting.evening": "Buena noches",
 
-    "logic.polls.unable_to_load_poll": "No se puede cargar la encuesta",
-    "logic.polls.no_polls_with_pin": "No hay encuestas con esta encuesta de 4 dígitos #",
-    "logic.polls.multiple_polls_with_pin": "Hay varias encuestas abiertas con esta encuesta de 4 dígitos #",
+    "logic.calendar.create_event_failed": "No se pudo crear el evento.",
+    "logic.calendar.permission_denied": "No se puede guardar el evento en el calendario. Permisos no concedidos.",
 
     "logic.general.internal_error": "Error interno ocurrido",
     "logic.general.unknown_error": "Ocurrió un error desconocido",

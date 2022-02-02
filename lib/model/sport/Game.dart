@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-import 'dart:ui';
-
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Location.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Game with Explore implements Favorite {
@@ -107,6 +102,10 @@ class Game with Explore implements Favorite {
       results: GameResult.listFromJson(JsonUtils.listValue(json['results'])),
       jsonData: json,
     ) : null;
+  }
+
+  static bool canJson(Map<String, dynamic>? json) {
+    return (json != null) && (json['sport'] != null) && (json['id'] != null);
   }
 
   String get title {
@@ -238,11 +237,11 @@ class Game with Explore implements Favorite {
     return randomImageURL!.isNotEmpty ? randomImageURL : null;
   }
 
-  Location? get _exploreLocation {
+  ExploreLocation? get _exploreLocation {
     if (location == null) {
       return null;
     }
-    return Location(description: location!.location);
+    return ExploreLocation(description: location!.location);
   }
 
   ////////////////////////////
@@ -269,7 +268,7 @@ class Game with Explore implements Favorite {
   String? get exploreImageURL => imageUrl;
 
   @override
-  Location? get exploreLocation => _exploreLocation;
+  ExploreLocation? get exploreLocation => _exploreLocation;
 
   @override
   String? get exploreLongDescription => longDescription;
@@ -288,19 +287,6 @@ class Game with Explore implements Favorite {
 
   @override
   String get exploreTitle => title;
-
-  @override
-  Color? get uiColor => Styles().colors!.eventColor;
-
-  Map<String, dynamic> get analyticsAttributes {
-    Map<String, dynamic> attributes = {Analytics.LogAttributeGameId: id, Analytics.LogAttributeGameName: title};
-    attributes.addAll(location?.analyticsAttributes ?? {});
-    return attributes;
-  }
-
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) && (json['id'] != null);
-  }
 
   @override
   Map<String, dynamic> toJson() {
@@ -373,9 +359,7 @@ class GameLocation {
     return GameLocation(location: json['location'], han: json['HAN']);
   }
 
-  Map<String, dynamic> get analyticsAttributes {
-    return {Analytics.LogAttributeLocation: location};
-  }
+  String? get analyticsValue => location;
 }
 
 class Links {

@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/sport/Team.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/News.dart';
@@ -26,10 +27,10 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 
-import 'package:illinois/model/Coach.dart';
+import 'package:illinois/model/sport/Coach.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/model/Roster.dart';
+import 'package:illinois/model/sport/Roster.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -40,7 +41,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-class Sports with Service implements NotificationsListener {
+class Sports with Service implements NotificationsListener, ExploreJsonHandler {
 
   static const String notifyChanged  = "edu.illinois.rokwire.sports.changed";
   static const String notifySocialMediasChanged  = "edu.illinois.rokwire.sports.social.medias.changed";
@@ -70,6 +71,8 @@ class Sports with Service implements NotificationsListener {
 
   @override
   void createService() {
+    super.createService();
+    Explore.addJsonHandler(this);
     NotificationService().subscribe(this,[
       DeepLink.notifyUri,
       AppLivecycle.notifyStateChanged,
@@ -79,7 +82,9 @@ class Sports with Service implements NotificationsListener {
 
   @override
   void destroyService() {
+    Explore.removeJsonHandler(this);
     NotificationService().unsubscribe(this);
+    super.destroyService();
   }
 
   @override
@@ -131,6 +136,10 @@ class Sports with Service implements NotificationsListener {
       _updateSportSocialMediaFromNet();
     }
   }
+
+  // ExploreJsonHandler
+  @override bool exploreCanJson(Map<String, dynamic>? json) => Game.canJson(json);
+  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Game.fromJson(json);
 
   // Accessories
 

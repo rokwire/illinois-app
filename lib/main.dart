@@ -25,11 +25,9 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/DiningService.dart';
-import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Gies.dart';
-import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/LiveStats.dart';
@@ -70,6 +68,8 @@ import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
+import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
@@ -121,7 +121,7 @@ void main() async {
     Guide(),
     Inbox(),
     DeviceCalendar(),
-    ExploreService(),
+    Events(),
     Groups(),
     Gies(),
     Canvas(),

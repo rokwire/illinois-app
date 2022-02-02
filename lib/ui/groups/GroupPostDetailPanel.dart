@@ -20,9 +20,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -363,7 +364,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               child: Text(
                                   StringUtils.ensureNotEmpty(
                                       _post?.displayDateTime),
-                                  semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
+                                  semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
                                   style: TextStyle(
                                       fontFamily:
                                       Styles().fontFamilies!.medium,

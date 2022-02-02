@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -30,9 +31,9 @@ import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Dining.dart';
-import 'package:illinois/model/Event.dart';
+import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -99,7 +100,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     bool isGame = (widget.explore is Game);
     Event? event = isEvent ? widget.explore as Event : null;
     bool isCompositeEvent = event?.isComposite ?? false;
-    String imageUrl = StringUtils.ensureNotEmpty(widget.explore!.exploreImageURL);
+    String imageUrl = StringUtils.ensureNotEmpty(ExploreHelper.exploreImageURL(widget.explore));
     String interestsLabelValue = _getInterestsLabelValue();
 
     return Semantics(
@@ -245,7 +246,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   Widget _exploreTop() {
 
     String? category = _exploreCategory;
-    bool isFavorite = widget.explore!.isFavorite;
+    bool isFavorite = ExploreHelper.isFavorite(widget.explore);
     bool starVisible = Auth2().canFavorite;
     String leftLabel = "";
     TextStyle leftLabelStyle;
@@ -453,7 +454,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   String? _getExploreTimeDisplayString() {
     Explore? explore = widget.explore;
     if (explore is Event) {
-      return explore.timeDisplayString;
+      return EventHelper.timeDisplayString(explore);
     } else if (explore is Game) {
       return explore.displayTime;
     } else {
@@ -472,11 +473,11 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget _topBorder() {
-    return widget.showTopBorder? Container(height: 7,color: widget.explore!.uiColor) : Container();
+    return widget.showTopBorder? Container(height: 7,color: ExploreHelper.uiColor(widget.explore)) : Container();
   }
 
   String _getInterestsLabelValue() {
-    return (!widget.hideInterests && (widget.explore is Event)) ? ((widget.explore as Event).displayInterests) : "";
+    return (!widget.hideInterests && (widget.explore is Event)) ? EventHelper.displayInterests(widget.explore as Event) : "";
   }
 
   Widget _buildCompositeEventsContent(bool isCompositeEvent) {
@@ -520,7 +521,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   void _onTapExploreCardStar() {
     Analytics().logSelect(target: "Favorite: ${widget.explore?.exploreTitle}");
-    widget.explore!.toggleFavorite();
+    ExploreHelper.toggleFavorite(widget.explore);
   }
 
   void _onTapSmallExploreCard({BuildContext? context, _EventCardType? cardType, Event? parentEvent, Event? subEvent}) {
@@ -652,7 +653,7 @@ class _EventSmallCard extends StatelessWidget {
       case _EventCardType.sup:
         return event!.title;
       case _EventCardType.rec:
-        return event!.displayDate;
+        return EventHelper.displayDate(event);
       case _EventCardType.more:
         return Localization().getStringEx('widget.explore_card.small.view_all.title', 'View all events');
       default:
@@ -663,9 +664,9 @@ class _EventSmallCard extends StatelessWidget {
   String? get _subTitle {
     switch (type) {
       case _EventCardType.sup:
-        return event!.displaySuperTime;
+        return EventHelper.displaySuperTime(event);
       case _EventCardType.rec:
-        return event!.displayStartEndTime;
+        return EventHelper.displayStartEndTime(event);
       default:
         return '';
     }

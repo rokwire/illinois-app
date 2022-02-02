@@ -24,10 +24,10 @@ import 'package:illinois/main.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -112,7 +112,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyGroupsNotification,
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyInboxNotification,
-      ExploreService.notifyEventDetail,
+      Events.notifyEventDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
       Guide.notifyGuideDetail,
@@ -183,7 +183,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if(name == FirebaseMessaging.notifyAthleticsGameStarted) {
       _showAthleticsGameDetail(param);
     }
-    else if (name == ExploreService.notifyEventDetail) {
+    else if (name == Events.notifyEventDetail) {
       _onFirebaseEventDetail(param);
     }
     else if (name == Sports.notifyGameDetail) {
@@ -423,8 +423,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
               onPressed: () {
                 Navigator.of(context).pop();
-                  NotificationService().notify(
-                      DeviceCalendar.notifyPlaceEvent, data);
+                DeviceCalendar().placeEvent(data);
               }),
           TextButton(
               child: Text(Localization().getStringEx('dialog.no.title', 'No')!),

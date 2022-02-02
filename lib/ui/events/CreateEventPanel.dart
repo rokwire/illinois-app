@@ -19,15 +19,15 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Content.dart';
-import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Location.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
@@ -76,7 +76,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
   bool _allDay = false;
-  Location? _location;
+  ExploreLocation? _location;
   bool _isOnline = false;
   bool _isFree = false;
   String? _selectedPrivacy = eventPrivacyPublic;
@@ -1523,7 +1523,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _loadEventCategories() async {
     _setLoading(true);
-    _eventCategories = await ExploreService().loadEventCategories();
+    _eventCategories = await Events().loadEventCategories();
     _setLoading(false);
   }
 
@@ -1639,7 +1639,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           locationSelectionResult.isNotEmpty) {
         Map<String, dynamic>? locationData = locationSelectionResult["location"];
         if (locationData != null) {
-          _location = Location.fromJSON(locationData);
+          _location = ExploreLocation.fromJSON(locationData);
           _modified = true;
           _populateLocationField();
           setState(() {});
@@ -1798,7 +1798,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       }
 
       // Save the initial event and link it to group if it's part of such one.
-      String? mainEventId = await ExploreService().postNewEvent(mainEvent);
+      String? mainEventId = await Events().postNewEvent(mainEvent);
       if (StringUtils.isNotEmpty(mainEventId)) {
         // Succeeded to create the main event
         if (hasGroup) {
@@ -1824,7 +1824,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         for (Group group in otherGroupsToSave!) {
           Event? groupEvent = Event.fromOther(mainEvent);
           groupEvent?.createdByGroupId = group.id;
-          String? groupEventId = await ExploreService().postNewEvent(groupEvent);
+          String? groupEventId = await Events().postNewEvent(groupEvent);
           if (StringUtils.isNotEmpty(groupEventId)) {
             bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent?.createdByGroupId, eventId: groupEventId);
             if (eventLinkedToGroup) {
@@ -1891,7 +1891,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   
   Event _populateEventWithData(Event event){
     if(_location==null) {
-      _location = new Location();
+      _location = new ExploreLocation();
     }
     _location!.description = _isOnline? (_eventCallUrlController.text.toString()) : (_eventLocationController.text.toString());
     String? longitude = !_isOnline? (_eventLongitudeController.text.toString()) : null;

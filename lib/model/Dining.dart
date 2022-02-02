@@ -17,13 +17,10 @@
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Location.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/DiningService.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
@@ -42,7 +39,7 @@ class Dining with Explore implements Favorite {
   Map<String, dynamic>? onlineOrder;
   String? placeID;
 
-  Location? location;
+  ExploreLocation? location;
   List<PaymentType>? paymentTypes;
   List<DiningSchedule>? diningSchedules;
 
@@ -90,7 +87,7 @@ class Dining with Explore implements Favorite {
         longDescription: json['MoreInfo'],
         imageURL: json['ImageUrl'],
         onlineOrder: json['OnLineOrder'],
-        location: Location(
+        location: ExploreLocation(
           description: addressInfo,
           latitude: json["Lat"],
           longitude: json["Long"],
@@ -140,19 +137,7 @@ class Dining with Explore implements Favorite {
   @override DateTime? get exploreStartDateUtc     { return null; }
   @override String?   get exploreImageURL         { return imageURL; }
   @override String?   get explorePlaceId          { return null; }
-  @override Location? get exploreLocation         { return location; }
-  @override Color?    get uiColor                 { return Styles().colors!.diningColor; }
-
-  @override
-  Map<String, dynamic> get analyticsAttributes {
-    Map<String, dynamic> attributes = {
-      Analytics.LogAttributeDiningId:   exploreId,
-      Analytics.LogAttributeDiningName: exploreTitle,
-    };
-    attributes.addAll(analyticsSharedExploreAttributes ?? {});
-    return attributes;
-  }
-
+  @override ExploreLocation? get exploreLocation  { return location; }
 
   static String favoriteKeyName = "diningPlaceIds";
   @override String? get favoriteId => exploreId;

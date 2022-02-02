@@ -469,22 +469,29 @@ class Config with Service, NetworkAuthProvider, NotificationsListener {
   List<dynamic>? get supportedLocales              => JsonUtils.listValue(content['languages']);
 
   // Getters: platformBuildingBlocks
-  String? get coreUrl                              => JsonUtils.stringValue(platformBuildingBlocks['core_url']);
-  String? get notificationsUrl                     => JsonUtils.stringValue(platformBuildingBlocks["notifications_url"]);
-  String? get locationsUrl                         => JsonUtils.stringValue(platformBuildingBlocks["locations_url"]);
-  String? get loggingUrl                           => JsonUtils.stringValue(platformBuildingBlocks['logging_url']);
-  String? get quickPollsUrl                        => JsonUtils.stringValue(platformBuildingBlocks["polls_url"]);
+  String? get coreUrl          => JsonUtils.stringValue(platformBuildingBlocks['core_url']);
+  String? get notificationsUrl => JsonUtils.stringValue(platformBuildingBlocks["notifications_url"]);
+  String? get locationsUrl     => JsonUtils.stringValue(platformBuildingBlocks["locations_url"]);
+  String? get loggingUrl       => JsonUtils.stringValue(platformBuildingBlocks['logging_url']);
+  String? get quickPollsUrl    => JsonUtils.stringValue(platformBuildingBlocks["polls_url"]);
+  String? get eventsUrl        => JsonUtils.stringValue(platformBuildingBlocks['events_url']);
+  String? get groupsUrl        => JsonUtils.stringValue(platformBuildingBlocks["groups_url"]);
 
   // Getters: otherUniversityServices
-  String? get assetsUrl                            => JsonUtils.stringValue(otherUniversityServices['assets_url']);
+  String? get assetsUrl => JsonUtils.stringValue(otherUniversityServices['assets_url']);
 
   // Getters: secretKeys
-  String? get coreOrgId                            => JsonUtils.stringValue(secretCore['org_id']);
+  String? get coreOrgId => JsonUtils.stringValue(secretCore['org_id']);
 
   // Getters: settings
-  int get refreshTimeout                           => JsonUtils.intValue(settings['refreshTimeout'])  ?? 0;
-  int get refreshTokenRetriesCount                 => JsonUtils.intValue(settings['refreshTokenRetriesCount']) ?? 3;
+  int get refreshTimeout           => JsonUtils.intValue(settings['refreshTimeout'])  ?? 0;
+  int get refreshTokenRetriesCount => JsonUtils.intValue(settings['refreshTokenRetriesCount']) ?? 3;
   
+  // Getters: other
+  String? deepLinkRedirectUrl(String? deepLink) {
+    Uri? assetsUri = StringUtils.isNotEmpty(assetsUrl) ? Uri.tryParse(assetsUrl!) : null;
+    return (assetsUri != null) ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
+  }
 }
 
 enum ConfigEnvironment { production, test, dev }

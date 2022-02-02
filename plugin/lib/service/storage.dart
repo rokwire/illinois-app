@@ -337,4 +337,21 @@ class Storage with Service {
   String get activePollsKey  => 'edu.illinois.rokwire.polls.active_polls';
   String? get activePolls => getStringWithName(activePollsKey);
   set activePolls(String? value) => setStringWithName(activePollsKey, value);
+
+  // Calendar
+
+  String get calendarEventsTableKey => 'edu.illinois.rokwire.calendar.events_table';
+  Map<String, String>? get calendarEventsTable {
+    try { return JsonUtils.decodeMap(getStringWithName(calendarEventsTableKey))?.cast<String, String>(); }
+    catch(e) { debugPrint(e.toString()); return null; }
+  }
+  set calendarEventsTable(Map<String, String>? table) => setStringWithName(calendarEventsTableKey, JsonUtils.encode(table));
+
+  String get calendarEnableSaveKey => 'edu.illinois.rokwire.calendar.save_enabled';
+  bool? get calendarEnabledToSave => getBoolWithName(calendarEnableSaveKey, defaultValue: true);
+  set calendarEnabledToSave(bool? value) => setBoolWithName(calendarEnableSaveKey, value);
+
+  String get calendarEnablePromptKey => 'edu.illinois.rokwire.calendar.prompt_enabled';
+  bool? get calendarCanPrompt => getBoolWithName(calendarEnablePromptKey, defaultValue: false);
+  set calendarCanPrompt(bool? value) => setBoolWithName(calendarEnablePromptKey, value);
 }

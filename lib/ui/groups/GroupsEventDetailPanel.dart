@@ -2,15 +2,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -151,7 +152,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(_event?.exploreImageURL) ?  Positioned.fill(child:Image.network(widget.event!.exploreImageURL!, fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
+          StringUtils.isNotEmpty(EventHelper.exploreImageURL(_event)) ?  Positioned.fill(child:Image.network(EventHelper.exploreImageURL(widget.event) ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false),
             child: Container(
@@ -195,7 +196,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventTimeDetail() {
-    String? displayTime = _event?.displayDateTime;
+    String? displayTime = EventHelper.displayDateTime(_event);
     //Newly created groups pass time in the string
     if(StringUtils.isEmpty(displayTime?.trim())){
       if(_event?.startDateString !=null || _event?.endDateString != null){
@@ -681,7 +682,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   @override
   void onNotification(String name, param) {
     if (name == Groups.notifyGroupEventsUpdated) {
-      ExploreService().getEventById(_event?.eventId).then((event) {
+      Events().getEventById(_event?.eventId).then((event) {
         setState(() {
           if (event != null)
             event = _event;

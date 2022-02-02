@@ -18,12 +18,12 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/ExploreHelper.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
@@ -142,11 +142,11 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   void _loadEventCategories() {
     if (Connectivity().isNotOffline) {
       setState(() {_isCategoryLoading = true;});
-      ExploreService().loadEventCategoriesEx().then((List<ExploreCategory>? result) {
+      Events().loadEventCategoriesEx().then((List<EventCategory>? result) {
         _eventCategories = [];
         _eventCategories.add(_allCategoriesConst);
         if(CollectionUtils.isNotEmpty(result)){
-          for (ExploreCategory category in result!) {
+          for (EventCategory category in result!) {
             ListUtils.add(_eventCategories, category.name);
           }
         }
@@ -171,7 +171,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
         eventFilter = EventTimeFilter.next30Days;
       }
 
-      ExploreService().loadEvents(searchText: _textEditingController.text, eventFilter: eventFilter).then((List<Event>? result) {
+      Events().loadEvents(searchText: _textEditingController.text, eventFilter: eventFilter).then((List<Event>? result) {
         _events = result;
         _isEventLoading = false;
         _applyFilter();
@@ -612,7 +612,7 @@ class _EventCardState extends State<_EventCard>{
   }
 
   Widget _exploreTimeDetail() {
-    String? displayTime = widget.event.timeDisplayString;
+    String? displayTime = EventHelper.timeDisplayString(widget.event);
     if (StringUtils.isEmpty(displayTime)) {
       return Container();
     }

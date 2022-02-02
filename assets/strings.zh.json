@@ -643,7 +643,7 @@
 	"panel.onboarding2.email.sign_in.failed.text": "Sign in failed.",
 	"panel.onboarding2.email.sign_up.failed.text": "Sign up failed.",
 	"panel.onboarding2.email.sign_in.failed.not_activated.text": "Your account is not activated yet. Please confirm the email sent to your email address.",
-	"panel.onboarding2.email.sign_in.failed.activation_expired.text": "Your activation link has already expired. Please resend verification email again and cofirm it in order to activate your account.",
+	"panel.onboarding2.email.sign_in.failed.activation_expired.text": "Your activation link has already expired. Please resend verification email again and confirm it in order to activate your account.",
 	"panel.onboarding2.email.sign_up.failed.account_exists.text": "Sign up failed. This account already exists.",
 	"panel.onboarding2.email.sign_up.succeeded.text": "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential.",
 	"panel.onboarding2.email.label.forgot_password.text": "Forgot Password?",
@@ -2248,9 +2248,8 @@
 	"logic.date_time.greeting.afternoon": "下午好",
 	"logic.date_time.greeting.evening": "晚上好",
 
-	"logic.polls.unable_to_load_poll": "无法加载投票",
-	"logic.polls.no_polls_with_pin": "此4位数的投票代码 # 没有投票",
-	"logic.polls.multiple_polls_with_pin": "有多个公开的投票关联到这个四位数投票代码 #",
+	"logic.calendar.create_event_failed": "創建活動失敗。",
+	"logic.calendar.permission_denied": "無法將事件保存到日曆。 未授予權限。",
 
 	"logic.general.internal_error": "发生内部错误",
 	"logic.general.unknown_error": "發生未知錯誤",
