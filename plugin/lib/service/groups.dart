@@ -52,9 +52,13 @@ class Groups with Service implements NotificationsListener {
   static const String notifyGroupMembershipSwitchToMember = "edu.illinois.rokwire.group.membership.switch_to_member";
   
   List<Map<String, dynamic>>? _groupDetailsCache;
+  List<Map<String, dynamic>>? get groupDetailsCache => _groupDetailsCache;
 
   final List<Completer<void>> _loginCompleters = [];
+  List<Completer<void>> get loginCompleters => _loginCompleters;
+
   bool _loggedIn = false;
+  bool get loggedIn => _loggedIn;
 
   // Singletone Factory
 
