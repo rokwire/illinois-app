@@ -156,6 +156,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isAdmin || _isMember;
   }
 
+  bool get _canCreatePoll{
+    return _isAdmin;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -919,9 +923,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         SectionTitlePrimary(
             title: Localization().getStringEx('panel.group_detail.label.polls', 'Polls')!,
             iconPath: 'images/icon-calendar.png',
-            rightIconPath: 'images/icon-add-20x18.png',
-            rightIconAction: _onTapCreatePoll,
-            rightIconLabel: Localization().getStringEx('panel.group_detail.button.create_poll.title', 'Create Poll'),//TBD Localization
+            rightIconPath: _canCreatePoll? 'images/icon-add-20x18.png' : null,
+            rightIconAction: _canCreatePoll? _onTapCreatePoll : null,
+            rightIconLabel: _canCreatePoll? Localization().getStringEx('panel.group_detail.button.create_poll.title', 'Create Poll') : null,//TBD Localization
             children: pollsContentList)
       ]),
       _pollsLoading

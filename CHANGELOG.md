@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Link multiple authentication types to one account [#1233](https://github.com/rokwire/illinois-app/issues/1233).
 ### Changed
 - Updated Gies Widgets: remove scroll from sub pages [#1291](https://github.com/rokwire/illinois-app/issues/1291).
+- GroupDetailPanel: Allow only Admin to create Poll [#1280](https://github.com/rokwire/illinois-app/issues/1280).
 
 ## [3.2.10] - 2022-02-01
 ### Added
