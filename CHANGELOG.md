@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tracking authorization support moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 - launchApp and launchAppSettings APIs to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 
-## [3.2.11] - 2022-02-01
+## [3.2.11] - 2022-02-02
 ### Added
 - Link multiple authentication types to one account [#1233](https://github.com/rokwire/illinois-app/issues/1233).
 - Canvas Calendar sample UI (in progress) [#1274](https://github.com/rokwire/illinois-app/issues/1274).
