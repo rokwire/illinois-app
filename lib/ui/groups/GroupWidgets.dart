@@ -26,7 +26,7 @@ import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
-import 'package:illinois/service/Content.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -854,13 +854,13 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
         ImagesResultType? resultType = logicResult.resultType;
         switch (resultType) {
-          case ImagesResultType.CANCELLED:
+          case ImagesResultType.cancelled:
           //do nothing
             break;
-          case ImagesResultType.ERROR_OCCURRED:
-            AppToast.show(logicResult.errorMessage!);
+          case ImagesResultType.error:
+            AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
             break;
-          case ImagesResultType.SUCCEEDED:
+          case ImagesResultType.succeeded:
           //ready
             AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
             Navigator.pop(context, logicResult.data);
@@ -888,13 +888,13 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
       ImagesResultType? resultType = logicResult!.resultType;
       switch (resultType) {
-        case ImagesResultType.CANCELLED:
+        case ImagesResultType.cancelled:
         //do nothing
           break;
-        case ImagesResultType.ERROR_OCCURRED:
-          AppToast.show(logicResult.errorMessage!);
+        case ImagesResultType.error:
+          AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
           break;
-        case ImagesResultType.SUCCEEDED:
+        case ImagesResultType.succeeded:
         //ready
           AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
           Navigator.pop(context, logicResult.data);

@@ -21,7 +21,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/TransportationService.dart';
+import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -54,7 +54,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
     setState(() {
       _isLoading = true;
     });
-    TransportationService().loadParkingEventInventory(widget.event!.id).then((List<ParkingLot>? eventLots){
+    Transportation().loadParkingEventInventory(widget.event!.id).then((List<ParkingLot>? eventLots){
       _eventLots = eventLots;
       setState(() {
         _isLoading = false;

@@ -39,7 +39,6 @@
 #import <Firebase/Firebase.h>
 #import <ZXingObjC/ZXingObjC.h>
 
-#import <AppTrackingTransparency/AppTrackingTransparency.h>
 #import <UserNotifications/UserNotifications.h>
 #import <PassKit/PassKit.h>
 
@@ -79,9 +78,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 // Interface Orientations
 @property (nonatomic) NSSet *supportedInterfaceOrientations;
 @property (nonatomic) UIInterfaceOrientation preferredInterfaceOrientation;
-
-// Tracking Authorization
-@property (nonatomic) NSMutableSet<FlutterResult> *trackingAuthorizationResults;
 
 @end
 
@@ -235,23 +231,14 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"map"]) {
 		[self handleMapWithParameters:parameters result:result];
 	}
-	else if ([call.method isEqualToString:@"showNotification"]) {
-		[self handleShowNotificationWithParameters:parameters result:result];
-	}
 	else if ([call.method isEqualToString:@"dismissLaunchScreen"]) {
 		[self handleDismissLaunchScreenWithParameters:parameters result:result];
 	}
 	else if ([call.method isEqualToString:@"setLaunchScreenStatus"]) {
 		[self handleSetLaunchScreenStatusWithParameters:parameters result:result];
 	}
-	else if ([call.method isEqualToString:@"tracking_authorization"]) {
-		[self handleTrackingWithParameters:parameters result:result];
-	}
 	else if ([call.method isEqualToString:@"addToWallet"]) {
 		[self handleAddToWalletWithParameters:parameters result:result];
-	}
-	else if ([call.method isEqualToString:@"deviceId"]) {
-		[self handleDeviceIdWithParameters:parameters result:result];
 	}
 	else if ([call.method isEqualToString:@"enabledOrientations"]) {
 		[self handleEnabledOrientationsWithParameters:parameters result:result];
@@ -261,12 +248,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 	else if ([call.method isEqualToString:@"test"]) {
 		[self handleTestWithParameters:parameters result:result];
-	}
-	else if ([call.method isEqualToString:@"launchApp"]) {
-		[self handleLaunchApp:parameters result:result];
-	}
-	else if ([call.method isEqualToString:@"launchAppSettings"]) {
-		[self handleLaunchAppSettings:parameters result:result];
 	}
 }
 
@@ -319,27 +300,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	[self.navigationViewController pushViewController:mapController animated:YES];
 }
 
-- (void)handleShowNotificationWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
-	content.title = [parameters inaStringForKey:@"title"] ?: [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
-	content.subtitle = [parameters inaStringForKey:@"subtitle"];
-	content.body = [parameters inaStringForKey:@"body"];
-	content.sound = [parameters inaBoolForKey:@"sound" defaults:true] ? [UNNotificationSound defaultSound] : nil;
-	
-	UNTimeIntervalNotificationTrigger* trigger = [UNTimeIntervalNotificationTrigger
-												  triggerWithTimeInterval:1 repeats:NO];
-	
-	UNNotificationRequest* request = [UNNotificationRequest
-									  requestWithIdentifier:@"Poll_Created" content:content trigger:trigger];
-	
-	UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
-	[center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
-		if (error != nil) {
-			NSLog(@"%@", error.localizedDescription);
-		}
-	}];
-}
-
 - (void)handleDismissLaunchScreenWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	[self removeLaunchScreen];
 	result(nil);
@@ -351,19 +311,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	result(nil);
 }
 
-- (void)handleTrackingWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	NSString *method = [parameters inaStringForKey:@"method"];
-	if ([method isEqualToString:@"query"]) {
-		[self queryTrackingAuthorizationWithFlutterResult:result];
-	}
-	else if ([method isEqualToString:@"request"]) {
-		[self requestTrackingAuthorizationWithFlutterResult:result];
-	}
-	else {
-		result(nil);
-	}
-}
-
 - (void)handleAddToWalletWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	NSString *base64CardData = [parameters inaStringForKey:@"cardBase64Data"];
 	NSData *cardData = [[NSData alloc] initWithBase64EncodedString:base64CardData options:0];
@@ -371,35 +318,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	result(nil);
 }
 
-- (void)handleDeviceIdWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	result(self.deviceUUID.UUIDString);
-}
-
 - (void)handleTestWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	result(nil);
-}
-
-- (void)handleLaunchApp:(NSDictionary*)parameters result:(FlutterResult)result {
-	NSString *deepLink = [parameters inaStringForKey:@"deep_link"];
-	NSURL *deepLinkUrl = deepLink != nil ? [NSURL URLWithString:deepLink] : nil;
-	if([UIApplication.sharedApplication canOpenURL:deepLinkUrl]){
-		[UIApplication.sharedApplication openURL:deepLinkUrl options:@{} completionHandler:^(BOOL success) {
-			result([NSNumber numberWithBool:success]);
-		}];
-	} else {
-		result([NSNumber numberWithBool:NO]);
-	}
-}
-
-- (void)handleLaunchAppSettings:(NSDictionary*)parameters result:(FlutterResult)result {
-	NSURL *settingsUrl = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-	if ([UIApplication.sharedApplication canOpenURL:settingsUrl]){
-		[UIApplication.sharedApplication openURL:settingsUrl options:@{} completionHandler:^(BOOL success) {
-			result([NSNumber numberWithBool:success]);
-		}];
-	} else {
-		result([NSNumber numberWithBool:NO]);
-	}
 }
 
 #pragma mark Barcode
@@ -598,58 +518,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	NSLog(@"UIApplication didFailToRegisterForRemoteNotificationsWithError: %@", error);
 }
 
-#pragma mark Tracking
-
-- (void)queryTrackingAuthorizationWithFlutterResult:(FlutterResult)result {
-
-	if (@available(iOS 14, *)) {
-		result([self.class trackingPermisionFromTrackingManagerAuthorizationStatus:[ATTrackingManager trackingAuthorizationStatus]]);
-	} else {
-		result(@"allowed");
-	}
-}
-
-- (void)requestTrackingAuthorizationWithFlutterResult:(FlutterResult)result {
-
-	if (@available(iOS 14, *)) {
-		ATTrackingManagerAuthorizationStatus status = [ATTrackingManager trackingAuthorizationStatus];
-		if (status == ATTrackingManagerAuthorizationStatusNotDetermined) {
-			if (_trackingAuthorizationResults != nil) {
-				[_trackingAuthorizationResults addObject:result];
-			}
-			else {
-				__weak typeof(self) weakSelf = self;
-				_trackingAuthorizationResults = [[NSMutableSet alloc] initWithObjects:result, nil];
-				[ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
-					NSSet<FlutterResult> *flutterResults = weakSelf.trackingAuthorizationResults;
-					weakSelf.trackingAuthorizationResults = nil;
-					
-					for(FlutterResult flutterResult in flutterResults) {
-						flutterResult([self.class trackingPermisionFromTrackingManagerAuthorizationStatus:status]);
-					}
-				}];
-			}
-		}
-		else {
-			result([self.class trackingPermisionFromTrackingManagerAuthorizationStatus:status]);
-		}
-	} else {
-		result(@"allowed");
-	}
-}
-
-+ (NSString*)trackingPermisionFromTrackingManagerAuthorizationStatus:(NSUInteger)authorizationStatus {
-	if (@available(iOS 14, *)) {
-		switch (authorizationStatus) {
-			case ATTrackingManagerAuthorizationStatusNotDetermined:       return @"not_determined";
-			case ATTrackingManagerAuthorizationStatusRestricted:          return @"restricted";
-			case ATTrackingManagerAuthorizationStatusDenied:              return @"denied";
-			case ATTrackingManagerAuthorizationStatusAuthorized:          return @"allowed";
-		}
-	}
-	return nil;
-}
-
 #pragma mark Deep Links
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
@@ -698,27 +566,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 }
 
-
-#pragma mark Device UUID
-
-- (NSUUID*)deviceUUID {
-	static NSString* const deviceUUID = @"deviceUUID";
-	NSData *data = uiucSecStorageData(deviceUUID, deviceUUID, nil);
-	if ([data isKindOfClass:[NSData class]] && (data.length == sizeof(uuid_t))) {
-		return [[NSUUID alloc] initWithUUIDBytes:data.bytes];
-	}
-	else {
-		uuid_t uuidData;
-		int rndStatus = SecRandomCopyBytes(kSecRandomDefault, sizeof(uuidData), uuidData);
-		if (rndStatus == errSecSuccess) {
-			NSNumber *result = uiucSecStorageData(deviceUUID, deviceUUID, [NSData dataWithBytes:uuidData length:sizeof(uuidData)]);
-			if ([result isKindOfClass:[NSNumber class]] && [result boolValue]) {
-				return [[NSUUID alloc] initWithUUIDBytes:uuidData];
-			}
-		}
-	}
-	return nil;
-}
 
 #pragma mark PKAddPassesViewControllerDelegate
 

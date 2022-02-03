@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -157,11 +157,11 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   Widget _buildFoodTypes(){
     List<Widget> list = [];
-    List<String>? foodTypes = DiningService().foodTypes;
+    List<String>? foodTypes = Dinings().foodTypes;
     if (foodTypes != null) {
       for(String foodType in foodTypes){
         bool selected = _selectedTypesPrefs?.contains(foodType) ?? false;
-        String? foodLabel = DiningService().getLocalizedString(foodType);
+        String? foodLabel = Dinings().getLocalizedString(foodType);
         list.add(
             ToggleRibbonButton(
               height: null,
@@ -180,11 +180,11 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   Widget _buildFoodIngredients(){
     List<Widget> list = [];
-    List<String>? foodIngredients = DiningService().foodIngredients;
+    List<String>? foodIngredients = Dinings().foodIngredients;
     if (foodIngredients != null) {
       for(String foodIngredient in foodIngredients){
         bool selected = _selectedIngredientsPrefs?.contains(foodIngredient) ?? false;
-        String? ingredientLabel = DiningService().getLocalizedString(foodIngredient);
+        String? ingredientLabel = Dinings().getLocalizedString(foodIngredient);
         list.add(
             ToggleRibbonButton(
               height: null,
@@ -257,8 +257,8 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   _onSaveChangesClicked(){
     //Store when save clicked
-    DiningService().setIncludedFoodTypesPrefs(_selectedTypesPrefs.toList());
-    DiningService().setExcludedFoodIngredientsPrefs(_selectedIngredientsPrefs.toList());
+    Dinings().setIncludedFoodTypesPrefs(_selectedTypesPrefs.toList());
+    Dinings().setExcludedFoodIngredientsPrefs(_selectedIngredientsPrefs.toList());
     Navigator.pop(context);
   }
 

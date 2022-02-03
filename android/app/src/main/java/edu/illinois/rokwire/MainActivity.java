@@ -376,36 +376,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         return barcodeImageData;
     }
 
-    private boolean handleLaunchApp(Object params) {
-        String deepLink = Utils.Map.getValueFromPath(params, "deep_link", null);
-        Uri deepLinkUri = !Utils.Str.isEmpty(deepLink) ? Uri.parse(deepLink) : null;
-        if (deepLinkUri == null) {
-            Log.d(TAG, "Invalid deep link: " + deepLink);
-            return false;
-        }
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, deepLinkUri);
-        boolean activityExists = appIntent.resolveActivityInfo(getPackageManager(), 0) != null;
-        if (activityExists) {
-            startActivity(appIntent);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean handleLaunchAppSettings(Object params) {
-        Uri settingsUri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
-        Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, settingsUri);
-        settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        boolean activityExists = settingsIntent.resolveActivityInfo(getPackageManager(), 0) != null;
-        if (activityExists) {
-            startActivity(settingsIntent);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     private void handleSetLaunchScreenStatus(Object params) {
         String statusText = Utils.Map.getValueFromPath(params, "status", null);
 
@@ -464,6 +434,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     result.success(true);
                     break;
                 case Constants.APP_DISMISS_LAUNCH_SCREEN_KEY:
+                    result.success(false);
+                    break;
                 case Constants.APP_SET_LAUNCH_SCREEN_STATUS_KEY:
                     handleSetLaunchScreenStatus(methodCall.arguments);
                     result.success(true);
@@ -476,20 +448,12 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     List<String> orientationsList = handleEnabledOrientations(orientations);
                     result.success(orientationsList);
                     break;
-                case Constants.APP_TRACKING_AUTHORIZATION:
-                    result.success("allowed"); // tracking is allowed in Android by default
-                    break;
                 case Constants.BARCODE_KEY:
                     String barcodeImageData = handleBarcode(methodCall.arguments);
                     result.success(barcodeImageData);
                     break;
-                case Constants.LAUNCH_APP:
-                    boolean appLaunched = handleLaunchApp(methodCall.arguments);
-                    result.success(appLaunched);
-                    break;
-                case Constants.LAUNCH_APP_SETTINGS:
-                    boolean settingsLaunched = handleLaunchAppSettings(methodCall.arguments);
-                    result.success(settingsLaunched);
+                case Constants.TEST_KEY:
+                    result.success(false);
                     break;
                 default:
                     result.notImplemented();
