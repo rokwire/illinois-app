@@ -24,6 +24,7 @@ import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -599,7 +600,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if (StringUtils.isEmpty(deepLink)) {
       return;
     }
-    bool? appLaunched = await NativeCommunicator().launchApp({"deep_link": deepLink});
+    bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": deepLink});
     if (appLaunched != true) {
       String storeUrl = orderOnlineDetails!['store_url'];
       url_launcher.launch(storeUrl);

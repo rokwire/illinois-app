@@ -246,12 +246,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"barcode"]) {
 		[self handleBarcodeWithParameters:parameters result:result];
 	}
-	else if ([call.method isEqualToString:@"launchApp"]) {
-		[self handleLaunchApp:parameters result:result];
-	}
-	else if ([call.method isEqualToString:@"launchAppSettings"]) {
-		[self handleLaunchAppSettings:parameters result:result];
-	}
 	else if ([call.method isEqualToString:@"test"]) {
 		[self handleTestWithParameters:parameters result:result];
 	}
@@ -326,29 +320,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 - (void)handleTestWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	result(nil);
-}
-
-- (void)handleLaunchApp:(NSDictionary*)parameters result:(FlutterResult)result {
-	NSString *deepLink = [parameters inaStringForKey:@"deep_link"];
-	NSURL *deepLinkUrl = deepLink != nil ? [NSURL URLWithString:deepLink] : nil;
-	if([UIApplication.sharedApplication canOpenURL:deepLinkUrl]){
-		[UIApplication.sharedApplication openURL:deepLinkUrl options:@{} completionHandler:^(BOOL success) {
-			result([NSNumber numberWithBool:success]);
-		}];
-	} else {
-		result([NSNumber numberWithBool:NO]);
-	}
-}
-
-- (void)handleLaunchAppSettings:(NSDictionary*)parameters result:(FlutterResult)result {
-	NSURL *settingsUrl = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-	if ([UIApplication.sharedApplication canOpenURL:settingsUrl]){
-		[UIApplication.sharedApplication openURL:settingsUrl options:@{} completionHandler:^(BOOL success) {
-			result([NSNumber numberWithBool:success]);
-		}];
-	} else {
-		result([NSNumber numberWithBool:NO]);
-	}
 }
 
 #pragma mark Barcode

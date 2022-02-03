@@ -65,6 +65,12 @@ static RokwirePlugin *_sharedInstance = nil;
   else if ([firstMethodComponent isEqualToString:@"dismissSafariVC"]) {
   	[self dismissSafariViewControllerWithParameters:parameters result:result];
   }
+  else if ([firstMethodComponent isEqualToString:@"launchApp"]) {
+    [self launchAppWithParameters:parameters result:result];
+  }
+  else if ([firstMethodComponent isEqualToString:@"launchAppSettings"]) {
+    [self launchAppSettingsWithParameters:parameters result:result];
+  }
   else if ([firstMethodComponent isEqualToString:@"locationServices"]) {
     [LocationServices.sharedInstance handleMethodCallWithName:nextMethodComponents parameters:call.arguments result:result];
   }
@@ -151,6 +157,39 @@ static RokwirePlugin *_sharedInstance = nil;
 	}
 	else {
 		result(@(NO));
+	}
+}
+
+#pragma mark Launch
+
+- (void)launchAppWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+	NSString *deepLink = [parameters rokwireStringForKey:@"deep_link"];
+	NSURL *deepLinkUrl = deepLink != nil ? [NSURL URLWithString:deepLink] : nil;
+	if([UIApplication.sharedApplication canOpenURL:deepLinkUrl]) {
+		if (@available(iOS 10, *)) {
+			[UIApplication.sharedApplication openURL:deepLinkUrl options:@{} completionHandler:^(BOOL success) {
+				result([NSNumber numberWithBool:success]);
+			}];
+		} else {
+			result([NSNumber numberWithBool:[UIApplication.sharedApplication openURL:deepLinkUrl]]);
+		}
+	} else {
+		result([NSNumber numberWithBool:NO]);
+	}
+}
+
+- (void)launchAppSettingsWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+	NSURL *settingsUrl = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+	if ([UIApplication.sharedApplication canOpenURL:settingsUrl]) {
+		if (@available(iOS 10, *)) {
+			[UIApplication.sharedApplication openURL:settingsUrl options:@{} completionHandler:^(BOOL success) {
+				result([NSNumber numberWithBool:success]);
+			}];
+		} else {
+			result([NSNumber numberWithBool:[UIApplication.sharedApplication openURL:settingsUrl]]);
+		}
+	} else {
+		result([NSNumber numberWithBool:NO]);
 	}
 }
 

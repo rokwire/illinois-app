@@ -30,8 +30,6 @@ public class Constants {
     static final String APP_ADD_CARD_TO_WALLET_KEY = "addToWallet";
     static final String APP_ENABLED_ORIENTATIONS_KEY = "enabledOrientations";
     static final String BARCODE_KEY = "barcode";
-    static final String LAUNCH_APP_KEY = "launchApp";
-    static final String LAUNCH_APP_SETTINGS_KEY = "launchAppSettings";
     static final String TEST_KEY = "test";
 
     //Maps

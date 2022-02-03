@@ -63,6 +63,19 @@ class RokwirePlugin {
   static Future<bool?> dismissSafariVC() async {
     try { return await _channel.invokeMethod('dismissSafariVC'); }
     catch(e) { debugPrint(e.toString()); }
+    return false;
+  }
+
+  static Future<bool?> launchApp(Map<String, dynamic> params) async {
+    try { return await _channel.invokeMethod('launchApp', params); }
+    catch(e) { debugPrint(e.toString()); }
+    return false;
+  }
+
+  static Future<bool?> launchAppSettings() async {
+    try { return await _channel.invokeMethod('launchAppSettings'); }
+    catch(e) { debugPrint(e.toString()); }
+    return false;
   }
 
   // Compound APIs

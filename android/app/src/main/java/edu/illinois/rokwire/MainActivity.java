@@ -376,36 +376,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         return barcodeImageData;
     }
 
-    private boolean handleLaunchApp(Object params) {
-        String deepLink = Utils.Map.getValueFromPath(params, "deep_link", null);
-        Uri deepLinkUri = !Utils.Str.isEmpty(deepLink) ? Uri.parse(deepLink) : null;
-        if (deepLinkUri == null) {
-            Log.d(TAG, "Invalid deep link: " + deepLink);
-            return false;
-        }
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, deepLinkUri);
-        boolean activityExists = appIntent.resolveActivityInfo(getPackageManager(), 0) != null;
-        if (activityExists) {
-            startActivity(appIntent);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean handleLaunchAppSettings(Object params) {
-        Uri settingsUri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
-        Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, settingsUri);
-        settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        boolean activityExists = settingsIntent.resolveActivityInfo(getPackageManager(), 0) != null;
-        if (activityExists) {
-            startActivity(settingsIntent);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     private void handleSetLaunchScreenStatus(Object params) {
         String statusText = Utils.Map.getValueFromPath(params, "status", null);
 
@@ -481,14 +451,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 case Constants.BARCODE_KEY:
                     String barcodeImageData = handleBarcode(methodCall.arguments);
                     result.success(barcodeImageData);
-                    break;
-                case Constants.LAUNCH_APP_KEY:
-                    boolean appLaunched = handleLaunchApp(methodCall.arguments);
-                    result.success(appLaunched);
-                    break;
-                case Constants.LAUNCH_APP_SETTINGS_KEY:
-                    boolean settingsLaunched = handleLaunchAppSettings(methodCall.arguments);
-                    result.success(settingsLaunched);
                     break;
                 case Constants.TEST_KEY:
                     result.success(false);
