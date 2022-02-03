@@ -255,7 +255,7 @@ class Canvas with Service {
     String? responseString = response?.body;
     if (responseCode == 200) {
       List<CanvasCalendarEvent>? calendarEvents = CanvasCalendarEvent.listFromJson(JsonUtils.decodeList(responseString));
-      return calendarEvents;
+      return calendarEvents?.where((element) => (element.hidden == false)).toList();
     } else {
       Log.w('Failed to load canvas calendar events for course {$courseId}. Response:\n$responseCode: $responseString');
       return null;
