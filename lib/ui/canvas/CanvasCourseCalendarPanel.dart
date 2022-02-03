@@ -119,15 +119,81 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
       return _buildLoadingContent();
     }
     if (_events != null) {
-      if (_events!.isNotEmpty) {
-        //TBD: implement
-        return Container(width: 60, height: 70, color: Colors.green);
+      List<CanvasCalendarEvent>? visibleEvents = _visibleEvents;
+      if (CollectionUtils.isNotEmpty(visibleEvents)) {
+        return _buildVisibleEventsContent(visibleEvents!);
       } else {
         return _buildEmptyContent();
       }
     } else {
       return _buildErrorContent();
     }
+  }
+
+  Widget _buildVisibleEventsContent(List<CanvasCalendarEvent> visibleEvents) {
+    List<Widget> eventsWidgetList = [];
+    eventsWidgetList.add(_buildEventDelimiter());
+    for (CanvasCalendarEvent event in visibleEvents) {
+      eventsWidgetList.add(_buildEventCard(event));
+    }
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: eventsWidgetList));
+  }
+
+  Widget _buildEventCard(CanvasCalendarEvent event) {
+    return GestureDetector(
+        onTap: () => _onTapEvent(event),
+        child: Column(children: [
+          Container(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 15), child: Image.asset('images/icon-news.png')),
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(StringUtils.ensureNotEmpty(event.contextName), textAlign: TextAlign.start, maxLines: 3, overflow: TextOverflow.ellipsis,
+                        style:
+                            TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
+                    Text(StringUtils.ensureNotEmpty(event.title),
+                        style:
+                            TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
+                    Text(StringUtils.ensureNotEmpty(event.startAtDisplayDate),
+                        style: TextStyle(color: Styles().colors!.disabledTextColor, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
+                  ])
+                ]),
+                Expanded(child: Container()),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Image.asset('images/chevron-right.png'),
+                )
+              ])),
+          _buildEventDelimiter()
+        ]));
+  }
+
+  Widget _buildEventDelimiter() {
+    return Container(color: Styles().colors!.lightGray, height: 1);
+  }
+
+  void _onTapEvent(CanvasCalendarEvent event) {
+    //TBD: implement
+  }
+
+  List<CanvasCalendarEvent>? get _visibleEvents {
+    if (CollectionUtils.isEmpty(_events)) {
+      return null;
+    }
+    List<CanvasCalendarEvent> visibleEvents = [];
+    for (CanvasCalendarEvent event in _events!) {
+      DateTime? eventStartDateLocal = event.startAtLocal;
+      if ((eventStartDateLocal != null) &&
+          (eventStartDateLocal.year == _selectedDate.year) &&
+          (eventStartDateLocal.month == _selectedDate.month) &&
+          (eventStartDateLocal.day == _selectedDate.day)) {
+        visibleEvents.add(event);
+      }
+    }
+    return visibleEvents;
   }
 
   Widget _buildYearDropDown() {
