@@ -25,7 +25,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
@@ -107,7 +107,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if(!dining!.hasDiningSchedules){
       _isDiningLoading = true;
 
-      DiningService().loadBackendDinings(false, null, _locationData).then((List<Dining>? dinings){
+      Dinings().loadBackendDinings(false, null, _locationData).then((List<Dining>? dinings){
         if(dinings != null){
           Dining? foundDining = Dining.entryInList(dinings, id: dining!.id);
           if(foundDining != null){
@@ -724,7 +724,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
   void _loadOffers(){
-    DiningService().loadDiningSpecials().then((List<DiningSpecial>? offers){
+    Dinings().loadDiningSpecials().then((List<DiningSpecial>? offers){
       if(offers != null && offers.isNotEmpty){
         _specials = offers.where((entry)=>entry.locationIds!.contains(widget.dining!.id)).toList();
         setState((){});
@@ -736,7 +736,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
     if(hasMenuData) {
       _isLoading = true;
       DateTime? filterDate = _filterDates![_selectedDateFilterIndex];
-      DiningService().loadMenuItemsForDate(widget.dining!.id, filterDate).then((
+      Dinings().loadMenuItemsForDate(widget.dining!.id, filterDate).then((
           List<DiningProductItem>? items) {
         _productItems = items;
         _productItemsMapping = Map<String, DiningProductItem>();

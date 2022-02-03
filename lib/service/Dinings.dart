@@ -31,7 +31,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 
-class DiningService  with Service implements ExploreJsonHandler {
+class Dinings  with Service implements ExploreJsonHandler {
 
   static final String _olddiningsFileName = 'dinings_schedules.json';
 
@@ -41,11 +41,11 @@ class DiningService  with Service implements ExploreJsonHandler {
   String? _diningSpecialsResponse;
   DateTime? _lastDiningSpecialsRequestTime;
 
-  static final DiningService _instance = DiningService._internal();
+  static final Dinings _instance = Dinings._internal();
 
-  factory DiningService() => _instance;
+  factory Dinings() => _instance;
   
-  DiningService._internal();
+  Dinings._internal();
 
   // Service
   @override

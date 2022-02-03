@@ -22,7 +22,7 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
@@ -565,9 +565,9 @@ class ExplorePanelState extends State<ExplorePanel>
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
 
     _locationData = _userLocationEnabled() ? await LocationServices().location : null;
-    _diningSpecials = await DiningService().loadDiningSpecials();
+    _diningSpecials = await Dinings().loadDiningSpecials();
 
-    return DiningService().loadBackendDinings(onlyOpened, paymentType, _locationData);
+    return Dinings().loadBackendDinings(onlyOpened, paymentType, _locationData);
   }
 
   ///

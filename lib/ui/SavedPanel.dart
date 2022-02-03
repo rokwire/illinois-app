@@ -29,7 +29,7 @@ import 'package:illinois/model/News.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:illinois/service/LaundryService.dart';
@@ -249,7 +249,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       setState(() {
         _progress++;
       });
-      DiningService().loadBackendDinings(false, null, null).then((List<Dining>? items) {
+      Dinings().loadBackendDinings(false, null, null).then((List<Dining>? items) {
         setState(() {
           _progress--;
           _dinings = _buildFilteredItems(items, favoriteDiningIds);

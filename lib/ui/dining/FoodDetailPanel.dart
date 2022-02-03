@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -54,7 +54,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
     setState(() {
       _isLoading = true;
     });
-    DiningService().loadNutritionItemWithId(widget.productItem.itemID).then((item){
+    Dinings().loadNutritionItemWithId(widget.productItem.itemID).then((item){
       _nutritionItem = item;
       setState(() {
         _isLoading = false;
@@ -174,7 +174,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       list.add(_FactItem(label: Localization().getStringEx('com.illinois.nutrition_type.entry.Serving', 'Serving'), value: _nutritionItem!.serving));
 
       for(NutritionNameValuePair nutritionEntry in _nutritionItem!.nutritionList!){
-        String? foodTypeLabel = DiningService().getLocalizedString(nutritionEntry.name);
+        String? foodTypeLabel = Dinings().getLocalizedString(nutritionEntry.name);
         list.add(_FactItem(label: foodTypeLabel, value: nutritionEntry.value));
       }
     }
@@ -224,7 +224,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       for (String entry in ingredients) {
         entry = entry.trim();
         if(entry.isNotEmpty) {
-          String? ingredientLabel = DiningService().getLocalizedString(entry);
+          String? ingredientLabel = Dinings().getLocalizedString(entry);
           list.add(_IngredientItem(label: ingredientLabel));
         }
       }
@@ -274,7 +274,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       for (String entry in preferences) {
         entry = entry.trim();
         if(entry.isNotEmpty) {
-          String? ingredientLabel = DiningService().getLocalizedString(entry);
+          String? ingredientLabel = Dinings().getLocalizedString(entry);
           list.add(_IngredientItem(label: ingredientLabel));
         }
       }
