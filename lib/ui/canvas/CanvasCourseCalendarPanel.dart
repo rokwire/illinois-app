@@ -148,24 +148,26 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
           Container(
               padding: EdgeInsets.symmetric(vertical: 10),
               child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Expanded(
+                    child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Padding(padding: EdgeInsets.symmetric(horizontal: 15), child: Image.asset('images/icon-news.png')),
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(StringUtils.ensureNotEmpty(event.contextName), textAlign: TextAlign.start, maxLines: 3, overflow: TextOverflow.ellipsis,
+                  Expanded(
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(StringUtils.ensureNotEmpty(event.contextName),
+                        textAlign: TextAlign.start,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style:
                             TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
                     Text(StringUtils.ensureNotEmpty(event.title),
-                        style:
-                            TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
                     Text(StringUtils.ensureNotEmpty(event.startAtDisplayDate),
-                        style: TextStyle(color: Styles().colors!.disabledTextColor, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
-                  ])
-                ]),
-                Expanded(child: Container()),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Image.asset('images/chevron-right.png'),
-                )
+                        style: TextStyle(color: Styles().colors!.disabledTextColor, fontFamily: Styles().fontFamilies!.bold, fontSize: 18))
+                  ]))
+                ])),
+                Image.asset('images/chevron-right.png')
               ])),
           _buildEventDelimiter()
         ]));
