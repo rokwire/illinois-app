@@ -184,23 +184,40 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
     DateTime weekEndDate = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day).add(Duration(days: (7 - selectedWeekDay)));
 
     List<Widget> dayWidgetList = [];
-    BoxDecoration selectedDayDecoration =
-        BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2));
     for (int i = 0; i < weekEndDate.weekday; i++) {
       Widget dayWidget = Container(
         padding: EdgeInsets.all(10),
-          decoration: (_isSelectedDay(weekStartDate) ? selectedDayDecoration : null),
+          decoration: _weekDayBoxDecoration(weekStartDate),
           child: Column(children: [
             Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(weekStartDate, format: 'E')),
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+                style: TextStyle(color: _weekDayTextColor(weekStartDate), fontFamily: Styles().fontFamilies!.bold)),
             Container(width: 10),
             Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(weekStartDate, format: 'd')),
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))
+                style: TextStyle(color: _weekDayTextColor(weekStartDate), fontSize: 18))
           ]));
       dayWidgetList.add(dayWidget);
       weekStartDate = weekStartDate.add(Duration(days: 1));
     }
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: dayWidgetList);
+  }
+
+  BoxDecoration _weekDayBoxDecoration(DateTime date) {
+    bool isToday = _isToday(date);
+    bool isSelectedDate = _isSelectedDay(date);
+
+    return BoxDecoration(
+        color: (isToday ? Styles().colors!.fillColorPrimary : null),
+        shape: BoxShape.circle,
+        border: (isSelectedDate ? Border.all(color: Styles().colors!.fillColorPrimary!, width: 2) : null));
+  }
+
+  Color _weekDayTextColor(DateTime date) {
+    return _isToday(date) ? Styles().colors!.white! : Styles().colors!.fillColorPrimary!;
+  }
+
+  bool _isToday(DateTime currentDate) {
+    DateTime now = DateTime.now();
+    return (currentDate.year == now.year) && (currentDate.month == now.month) && (currentDate.day == now.day);
   }
 
   bool _isSelectedDay(DateTime currentDate) {
