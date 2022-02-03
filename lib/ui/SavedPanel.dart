@@ -32,7 +32,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
-import 'package:illinois/service/LaundryService.dart';
+import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Guide.dart';
@@ -312,7 +312,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       setState(() {
         _progress++;
       });
-      LaundryService().getRoomData().then((List<LaundryRoom>? laundries) {
+      Laundries().getRoomData().then((List<LaundryRoom>? laundries) {
         setState(() {
           _progress--;
           _laundries = _buildFilteredItems(laundries, favoriteLaundryIds);

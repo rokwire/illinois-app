@@ -127,7 +127,7 @@ void main() async {
     Canvas(),
 
     // These do not rely on Service initialization API so they are not registered as services.
-    // LaundryService(),
+    // Laundries(),
     // Content(),
   ]);
   
