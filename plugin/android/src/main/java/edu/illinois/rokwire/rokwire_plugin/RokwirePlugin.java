@@ -148,13 +148,16 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
       result.success(getEncryptionKey(call.arguments));
     }
     else if (firstMethodComponent.equals("dismissSafariVC")) {
-      result.success(null);
-    }
-    else if (firstMethodComponent.equals("geoFence")) {
-      GeofenceMonitor.getInstance().handleMethodCall(nextMethodComponents, call.arguments, result);
+      result.success(null); // Safari VV not available in Android
     }
     else if (firstMethodComponent.equals("locationServices")) {
       LocationServices.getInstance().handleMethodCall(nextMethodComponents, call.arguments, result);
+    }
+    else if (firstMethodComponent.equals("trackingServices")) {
+      result.success("allowed"); // tracking is allowed in Android by default
+    }
+    else if (firstMethodComponent.equals("geoFence")) {
+      GeofenceMonitor.getInstance().handleMethodCall(nextMethodComponents, call.arguments, result);
     }
     else {
       result.notImplemented();

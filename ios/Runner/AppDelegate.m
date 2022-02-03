@@ -39,7 +39,6 @@
 #import <Firebase/Firebase.h>
 #import <ZXingObjC/ZXingObjC.h>
 
-#import <AppTrackingTransparency/AppTrackingTransparency.h>
 #import <UserNotifications/UserNotifications.h>
 #import <PassKit/PassKit.h>
 
@@ -79,9 +78,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 // Interface Orientations
 @property (nonatomic) NSSet *supportedInterfaceOrientations;
 @property (nonatomic) UIInterfaceOrientation preferredInterfaceOrientation;
-
-// Tracking Authorization
-@property (nonatomic) NSMutableSet<FlutterResult> *trackingAuthorizationResults;
 
 @end
 
@@ -247,9 +243,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"enabledOrientations"]) {
 		[self handleEnabledOrientationsWithParameters:parameters result:result];
 	}
-	else if ([call.method isEqualToString:@"tracking_authorization"]) {
-		[self handleTrackingWithParameters:parameters result:result];
-	}
 	else if ([call.method isEqualToString:@"barcode"]) {
 		[self handleBarcodeWithParameters:parameters result:result];
 	}
@@ -322,19 +315,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	NSString *statusText = [parameters inaStringForKey:@"status"];
 	[self setLaunchScreenStatusText:statusText];
 	result(nil);
-}
-
-- (void)handleTrackingWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	NSString *method = [parameters inaStringForKey:@"method"];
-	if ([method isEqualToString:@"query"]) {
-		[self queryTrackingAuthorizationWithFlutterResult:result];
-	}
-	else if ([method isEqualToString:@"request"]) {
-		[self requestTrackingAuthorizationWithFlutterResult:result];
-	}
-	else {
-		result(nil);
-	}
 }
 
 - (void)handleAddToWalletWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
@@ -565,58 +545,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
 	NSLog(@"UIApplication didFailToRegisterForRemoteNotificationsWithError: %@", error);
-}
-
-#pragma mark Tracking
-
-- (void)queryTrackingAuthorizationWithFlutterResult:(FlutterResult)result {
-
-	if (@available(iOS 14, *)) {
-		result([self.class trackingPermisionFromTrackingManagerAuthorizationStatus:[ATTrackingManager trackingAuthorizationStatus]]);
-	} else {
-		result(@"allowed");
-	}
-}
-
-- (void)requestTrackingAuthorizationWithFlutterResult:(FlutterResult)result {
-
-	if (@available(iOS 14, *)) {
-		ATTrackingManagerAuthorizationStatus status = [ATTrackingManager trackingAuthorizationStatus];
-		if (status == ATTrackingManagerAuthorizationStatusNotDetermined) {
-			if (_trackingAuthorizationResults != nil) {
-				[_trackingAuthorizationResults addObject:result];
-			}
-			else {
-				__weak typeof(self) weakSelf = self;
-				_trackingAuthorizationResults = [[NSMutableSet alloc] initWithObjects:result, nil];
-				[ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
-					NSSet<FlutterResult> *flutterResults = weakSelf.trackingAuthorizationResults;
-					weakSelf.trackingAuthorizationResults = nil;
-					
-					for(FlutterResult flutterResult in flutterResults) {
-						flutterResult([self.class trackingPermisionFromTrackingManagerAuthorizationStatus:status]);
-					}
-				}];
-			}
-		}
-		else {
-			result([self.class trackingPermisionFromTrackingManagerAuthorizationStatus:status]);
-		}
-	} else {
-		result(@"allowed");
-	}
-}
-
-+ (NSString*)trackingPermisionFromTrackingManagerAuthorizationStatus:(NSUInteger)authorizationStatus {
-	if (@available(iOS 14, *)) {
-		switch (authorizationStatus) {
-			case ATTrackingManagerAuthorizationStatusNotDetermined:       return @"not_determined";
-			case ATTrackingManagerAuthorizationStatusRestricted:          return @"restricted";
-			case ATTrackingManagerAuthorizationStatusDenied:              return @"denied";
-			case ATTrackingManagerAuthorizationStatusAuthorized:          return @"allowed";
-		}
-	}
-	return nil;
 }
 
 #pragma mark Deep Links

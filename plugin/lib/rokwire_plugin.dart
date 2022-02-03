@@ -73,6 +73,12 @@ class RokwirePlugin {
     return null;
   }
 
+  static Future<dynamic> trackingServices(String method, [dynamic arguments]) async {
+    try { return await _channel.invokeMethod('trackingServices.$method', arguments); }
+    catch(e) { debugPrint(e.toString()); }
+    return null;
+  }
+
   static Future<dynamic> geoFence(String method, [dynamic arguments]) async {
     try { return await _channel.invokeMethod('geoFence.$method', arguments); }
     catch(e) { debugPrint(e.toString()); }

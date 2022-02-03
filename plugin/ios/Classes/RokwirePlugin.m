@@ -1,5 +1,6 @@
 #import "RokwirePlugin.h"
 #import "LocationServices.h"
+#import "TrackingServices.h"
 #import "RegionMonitor.h"
 
 #import <SafariServices/SafariServices.h>
@@ -66,6 +67,9 @@ static RokwirePlugin *_sharedInstance = nil;
   }
   else if ([firstMethodComponent isEqualToString:@"locationServices"]) {
     [LocationServices.sharedInstance handleMethodCallWithName:nextMethodComponents parameters:call.arguments result:result];
+  }
+  else if ([firstMethodComponent isEqualToString:@"trackingServices"]) {
+    [TrackingServices.sharedInstance handleMethodCallWithName:nextMethodComponents parameters:call.arguments result:result];
   }
   else if ([firstMethodComponent isEqualToString:@"geoFence"]) {
     [RegionMonitor.sharedInstance handleMethodCallWithName:nextMethodComponents parameters:call.arguments result:result];

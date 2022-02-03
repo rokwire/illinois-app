@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:flutter_html/flutter_html.dart' as FlutterHtml;
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/tracking_services.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -193,11 +194,11 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
   }
 
   static Future<bool> _getTrackingEnabled() async {
-    AuthorizationStatus? status = await NativeCommunicator().queryTrackingAuthorization('query');
-    if (status == AuthorizationStatus.NotDetermined) {
-      status = await NativeCommunicator().queryTrackingAuthorization('request');
+    TrackingAuthorizationStatus? status = await TrackingServices.queryAuthorizationStatus();
+    if (status == TrackingAuthorizationStatus.undetermined) {
+      status = await TrackingServices.requestAuthorization();
     }
-    return (status == AuthorizationStatus.Allowed);
+    return (status == TrackingAuthorizationStatus.allowed);
   }
 
   PreferredSizeWidget _getHeaderBar() {

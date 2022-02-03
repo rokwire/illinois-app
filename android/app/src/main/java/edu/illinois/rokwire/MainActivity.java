@@ -478,9 +478,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     List<String> orientationsList = handleEnabledOrientations(orientations);
                     result.success(orientationsList);
                     break;
-                case Constants.APP_TRACKING_AUTHORIZATION_KEY:
-                    result.success("allowed"); // tracking is allowed in Android by default
-                    break;
                 case Constants.BARCODE_KEY:
                     String barcodeImageData = handleBarcode(methodCall.arguments);
                     result.success(barcodeImageData);

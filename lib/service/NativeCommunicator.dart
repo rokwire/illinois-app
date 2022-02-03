@@ -232,16 +232,6 @@ class NativeCommunicator with Service implements NotificationsListener {
     return result;
   }
 
-  Future<AuthorizationStatus?> queryTrackingAuthorization(String method) async {
-    AuthorizationStatus? result;
-    try {
-      result = _authorizationStatusFromString(await _platformChannel.invokeMethod('tracking_authorization', {"method": method }));
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-    return result;
-  }
-
   Future<Uint8List?> getBarcodeImageData(Map<String, dynamic> params) async {
     Uint8List? result;
     try {
@@ -341,31 +331,6 @@ class NativeCommunicator with Service implements NotificationsListener {
     dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
     Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
     NotificationService().notify(notifyMapRouteFinish, params);
-  }
-}
-
-enum AuthorizationStatus {
-  NotDetermined,
-  Restricted,
-  Denied,
-  Allowed
-}
-
-AuthorizationStatus? _authorizationStatusFromString(String? value){
-  if("not_determined" == value) {
-    return AuthorizationStatus.NotDetermined;
-  }
-  else if("restricted" == value) {
-    return AuthorizationStatus.Denied;
-  }
-  else if("denied" == value) {
-    return AuthorizationStatus.Denied;
-  }
-  else if("allowed" == value) {
-    return AuthorizationStatus.Allowed;
-  }
-  else {
-    return null;
   }
 }
 
