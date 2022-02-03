@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Parking.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/TransportationService.dart';
+import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/ui/parking/ParkingEventPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -47,7 +47,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
     setState(() {
       _isLoading = true;
     });
-    TransportationService().loadParkingEvents().then((List<ParkingEvent>? events){
+    Transportation().loadParkingEvents().then((List<ParkingEvent>? events){
       _events = events;
       setState(() {
         _isLoading = false;

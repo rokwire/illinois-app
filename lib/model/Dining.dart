@@ -19,7 +19,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -546,12 +546,12 @@ class DiningProductItem {
   }
 
   List<String> get ingredients{
-    List<String>? foodTypes = DiningService().foodTypes;
+    List<String>? foodTypes = Dinings().foodTypes;
     return traitList.where((entry)=>!foodTypes!.contains(entry)).toList();
   }
 
   List<String> get dietaryPreferences{
-    List<String>? foodTypes = DiningService().foodTypes;
+    List<String>? foodTypes = Dinings().foodTypes;
     return traitList.where((entry)=>foodTypes!.contains(entry)).toList();
   }
 

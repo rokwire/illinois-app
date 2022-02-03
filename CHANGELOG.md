@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Content service moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Tracking authorization support moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- launchApp and launchAppSettings APIs to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 
 ## [3.2.11] - 2022-02-01
 ### Added

@@ -27,7 +27,7 @@ import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/TransportationService.dart';
+import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -294,7 +294,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
       'major': _currentBeacon!.major.toString(),
       'minor': _currentBeacon!.minor.toString(),
     } : null;
-    TransportationService().loadBusPass(deviceId: deviceId, userId: Auth2().accountId, iBeaconData: beaconData).then((dynamic result){
+    Transportation().loadBusPass(deviceId: deviceId, userId: Auth2().accountId, iBeaconData: beaconData).then((dynamic result){
 
       if (result is Map) {
         setState(() {

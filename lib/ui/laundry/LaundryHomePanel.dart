@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/LaundryService.dart';
+import 'package:illinois/service/Laundries.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -165,7 +165,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   void _refreshRooms() {
-    LaundryService().getRoomData().then((List<LaundryRoom>? laundryRooms) {
+    Laundries().getRoomData().then((List<LaundryRoom>? laundryRooms) {
       setState(() {
         _rooms = laundryRooms;
       });
@@ -387,7 +387,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
 
   void _loadRooms() {
     _setLoading(true);
-    LaundryService()
+    Laundries()
         .getRoomData()
         .then((laundryRooms) => _onRoomsLoaded(laundryRooms));
   }

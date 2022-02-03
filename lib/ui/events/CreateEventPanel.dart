@@ -21,14 +21,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/service/Content.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/groups.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -2290,13 +2290,13 @@ class _AddImageWidgetState extends State<AddImageWidget> {
 
         ImagesResultType? resultType = logicResult.resultType;
         switch (resultType) {
-          case ImagesResultType.CANCELLED:
+          case ImagesResultType.cancelled:
           //do nothing
             break;
-          case ImagesResultType.ERROR_OCCURRED:
-            AppToast.show(logicResult.errorMessage ?? '');
+          case ImagesResultType.error:
+            AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
             break;
-          case ImagesResultType.SUCCEEDED:
+          case ImagesResultType.succeeded:
           //ready
             AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
             Navigator.pop(context, logicResult.data);
@@ -2324,13 +2324,13 @@ class _AddImageWidgetState extends State<AddImageWidget> {
 
       ImagesResultType? resultType = logicResult!.resultType;
       switch (resultType) {
-        case ImagesResultType.CANCELLED:
+        case ImagesResultType.cancelled:
         //do nothing
           break;
-        case ImagesResultType.ERROR_OCCURRED:
-          AppToast.show(logicResult.errorMessage ?? '');
+        case ImagesResultType.error:
+          AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
           break;
-        case ImagesResultType.SUCCEEDED:
+        case ImagesResultType.succeeded:
         //ready
           AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
           Navigator.pop(context, logicResult.data);

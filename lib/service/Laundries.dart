@@ -24,15 +24,15 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart' as xml;
 
-// LaundryService does rely on Service initialization API so it does not override service interfaces and is not registered in Services..
-class LaundryService /* with Service */ {
-  static final LaundryService _logic = LaundryService._internal();
+// Laundries does rely on Service initialization API so it does not override service interfaces and is not registered in Services..
+class Laundries /* with Service */ {
+  static final Laundries _logic = Laundries._internal();
 
-  factory LaundryService() {
+  factory Laundries() {
     return _logic;
   }
 
-  LaundryService._internal();
+  Laundries._internal();
 
   Future<List<LaundryRoom>?> getRoomData() async {
     Map<String, ExploreLocation>? locationMapping = _loadLaundryLocationMapping();

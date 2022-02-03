@@ -48,14 +48,14 @@
 	return nil;
 }
 
-- (void)requestLocationServicesPermisionWithFlutterResult:(FlutterResult)flutterResult {
+- (void)requestLocationServicesPermisionWithFlutterResult:(FlutterResult)result {
 	if ([CLLocationManager locationServicesEnabled]) {
 		CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
 		if (status == kCLAuthorizationStatusNotDetermined) {
 			if (_locationFlutterResults == nil) {
 				_locationFlutterResults = [[NSMutableSet alloc] init];
 			}
-			[_locationFlutterResults addObject:flutterResult];
+			[_locationFlutterResults addObject:result];
 
 			if (_clLocationManager == nil) {
 				_clLocationManager = [[CLLocationManager alloc] init];
@@ -64,11 +64,11 @@
 			}
 		}
 		else {
-			flutterResult([self.class locationServicesPermisionFromAuthorizationStatus:status]);
+			result([self.class locationServicesPermisionFromAuthorizationStatus:status]);
 		}
 	}
 	else {
-		flutterResult([self.class locationServicesPermisionFromAuthorizationStatus:kCLAuthorizationStatusRestricted]);
+		result([self.class locationServicesPermisionFromAuthorizationStatus:kCLAuthorizationStatusRestricted]);
 	}
 }
 

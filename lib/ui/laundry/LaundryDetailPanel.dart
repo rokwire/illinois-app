@@ -17,7 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/LaundryService.dart';
+import 'package:illinois/service/Laundries.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -361,8 +361,8 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   void _load() {
-    LaundryService().getNumAvailable(widget.room.id).then((roomAvailability) => _onAvailabilityLoaded(roomAvailability));
-    LaundryService().getAppliances(widget.room.id).then((roomAppliances) => _onAppliancesLoaded(roomAppliances));
+    Laundries().getNumAvailable(widget.room.id).then((roomAvailability) => _onAvailabilityLoaded(roomAvailability));
+    Laundries().getAppliances(widget.room.id).then((roomAppliances) => _onAppliancesLoaded(roomAppliances));
   }
 
   void _onAvailabilityLoaded(LaundryRoomAvailability? availability) {

@@ -148,13 +148,22 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
       result.success(getEncryptionKey(call.arguments));
     }
     else if (firstMethodComponent.equals("dismissSafariVC")) {
-      result.success(null);
+      result.success(null); // Safari VV not available in Android
     }
-    else if (firstMethodComponent.equals("geoFence")) {
-      GeofenceMonitor.getInstance().handleMethodCall(nextMethodComponents, call.arguments, result);
+    else if (firstMethodComponent.equals("launchApp")) {
+      result.success(launchApp(methodCall.arguments));
+    }
+    else if (firstMethodComponent.equals("launchAppSettings")) {
+      result.success(launchAppSettings(methodCall.arguments));
     }
     else if (firstMethodComponent.equals("locationServices")) {
       LocationServices.getInstance().handleMethodCall(nextMethodComponents, call.arguments, result);
+    }
+    else if (firstMethodComponent.equals("trackingServices")) {
+      result.success("allowed"); // tracking is allowed in Android by default
+    }
+    else if (firstMethodComponent.equals("geoFence")) {
+      GeofenceMonitor.getInstance().handleMethodCall(nextMethodComponents, call.arguments, result);
     }
     else {
       result.notImplemented();
@@ -277,6 +286,49 @@ public class RokwirePlugin implements FlutterPlugin, MethodCallHandler, Activity
       }
     }
     return false;
+  }
+
+  private boolean launchApp(Object params) {
+    Activity activity = getActivity();
+    if (activity == null) {
+      Log.d(TAG, "No activity connected");
+      return false;
+    }
+
+    String deepLink = Utils.Map.getValueFromPath(params, "deep_link", null);
+    Uri deepLinkUri = !Utils.Str.isEmpty(deepLink) ? Uri.parse(deepLink) : null;
+    if (deepLinkUri == null) {
+      Log.d(TAG, "Invalid deep link: " + deepLink);
+      return false;
+    }
+
+    Intent appIntent = new Intent(Intent.ACTION_VIEW, deepLinkUri);
+    boolean activityExists = appIntent.resolveActivityInfo(activity.getPackageManager(), 0) != null;
+    if (activityExists) {
+      activity.startActivity(appIntent);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private boolean launchAppSettings(Object params) {
+    Activity activity = getActivity();
+    if (activity == null) {
+      Log.d(TAG, "No activity connected");
+      return false;
+    }
+
+    Uri settingsUri = Uri.fromParts("package", activity.getPackageName(), null);
+    Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, settingsUri);
+    settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    boolean activityExists = settingsIntent.resolveActivityInfo(activity.getPackageManager(), 0) != null;
+    if (!activityExists) {
+      activity.startActivity(settingsIntent);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private Object getEncryptionKey(Object params) {
