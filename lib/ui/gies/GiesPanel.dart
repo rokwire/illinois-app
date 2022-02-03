@@ -30,8 +30,8 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Gies.notifyPageChanged]);
     super.initState();
+    NotificationService().subscribe(this, [Gies.notifyPageChanged]);
 
   }
 
@@ -71,7 +71,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
           Visibility( visible:  progress!=null,
             child:Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
               Expanded(child:
-              Text(JsonUtils.stringValue(_currentPage["step_title"]) ?? "", textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20,),),),
+                Semantics(child:Text(JsonUtils.stringValue(_currentPage["step_title"]) ?? "", textAlign: TextAlign.center,style: TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20,),),)),
           ],)),
           Container(height: 8,),
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -473,7 +473,8 @@ class _GiesPageState extends State<_GiesPageWidget> {
           String? title = JsonUtils.stringValue(button['title']);
           buttonWidgets.add(
             Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              RoundedButton(label: title,
+              Semantics(container: true,
+                child: RoundedButton(label: title,
                   backgroundColor: Styles().colors!.white,
                   textColor: Styles().colors!.fillColorPrimary,
                   fontFamily: Styles().fontFamilies!.bold,
@@ -486,7 +487,7 @@ class _GiesPageState extends State<_GiesPageWidget> {
                     try { widget.onTapButton!(button.cast<String, dynamic>(), JsonUtils.stringValue(widget.page?["id"])!); }
                     catch (e) { print(e.toString()); }
                   }
-              )
+              ))
             ]),
           );
         }
