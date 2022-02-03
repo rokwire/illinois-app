@@ -18,22 +18,22 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:illinois/model/Parking.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class TransportationService /* with Service */ {
+class Transportation /* with Service */ {
 
-  static final TransportationService _logic = TransportationService._internal();
+  static final Transportation _logic = Transportation._internal();
 
-  factory TransportationService() {
+  factory Transportation() {
     return _logic;
   }
 
-  TransportationService._internal();
+  Transportation._internal();
 
   Future<List<ParkingEvent>?> loadParkingEvents() async {
     final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/events" : null;

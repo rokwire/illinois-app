@@ -25,7 +25,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/TransportationService.dart';
+import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -108,7 +108,7 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   Future<Color?> _loadActiveColor() async{
     String? deviceId = Auth2().deviceId;
-    return await TransportationService().loadBusColor(deviceId: deviceId, userId: Auth2().accountId);
+    return await Transportation().loadBusColor(deviceId: deviceId, userId: Auth2().accountId);
   }
 
   Future<bool?> _loadBuildingAccess() async {
