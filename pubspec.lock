@@ -561,7 +561,7 @@ packages:
     source: hosted
     version: "4.0.0"
   image_picker:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: image_picker
       url: "https://pub.dartlang.org"
@@ -645,7 +645,7 @@ packages:
     source: hosted
     version: "1.0.1"
   mime_type:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: mime_type
       url: "https://pub.dartlang.org"

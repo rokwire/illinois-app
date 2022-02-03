@@ -476,6 +476,7 @@ class Config with Service, NetworkAuthProvider, NotificationsListener {
   String? get quickPollsUrl    => JsonUtils.stringValue(platformBuildingBlocks["polls_url"]);
   String? get eventsUrl        => JsonUtils.stringValue(platformBuildingBlocks['events_url']);
   String? get groupsUrl        => JsonUtils.stringValue(platformBuildingBlocks["groups_url"]);
+  String? get contentUrl       => JsonUtils.stringValue(platformBuildingBlocks["content_url"]);
 
   // Getters: otherUniversityServices
   String? get assetsUrl => JsonUtils.stringValue(otherUniversityServices['assets_url']);

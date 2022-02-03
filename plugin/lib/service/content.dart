@@ -15,8 +15,9 @@
  */
 
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -27,13 +28,22 @@ import 'package:uuid/uuid.dart';
 
 // Content service does rely on Service initialization API so it does not override service interfaces and is not registered in Services.
 class Content /* with Service */ {
-  static final Content _instance = Content._internal();
+  
+  // Singletone Factory
 
-  factory Content() {
-    return _instance;
-  }
+  static Content? _instance;
 
-  Content._internal();
+  static Content? get instance => _instance;
+  
+  @protected
+  static set instance(Content? value) => _instance = value;
+
+  factory Content() => _instance ?? (_instance = Content.internal());
+
+  @protected
+  Content.internal();
+
+  // Implementation
 
   Future<ImagesResult> useUrl({String? storageDir, required String url, int? width}) async {
     // 1. first check if the url gives an image
@@ -49,13 +59,13 @@ class Content /* with Service */ {
         Response response = await get(Uri.parse(url));
         Uint8List imageContent = response.bodyBytes;
         // 3. call the Content service api
-        String fileName = new Uuid().v1();
+        String fileName = const Uuid().v1();
         return _uploadImage(storagePath: storageDir, imageBytes: imageContent, fileName: fileName, width: width, mediaType: contentType);
       } else {
-        return ImagesResult.error("The provided content type is not supported");
+        return ImagesResult.error(ImagesErrorType.contentTypeNotSupported, "The provided content type is not supported");
       }
     } else {
-      return ImagesResult.error("Error on checking the resource content type");
+      return ImagesResult.error(ImagesErrorType.headerFailed, "Error on checking the resource content type");
     }
   }
 
@@ -74,7 +84,7 @@ class Content /* with Service */ {
       }
     }
     catch(e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
     return null;
   }
@@ -82,22 +92,22 @@ class Content /* with Service */ {
   Future<ImagesResult> _uploadImage({List<int>? imageBytes, String? fileName, String? storagePath, int? width, String? mediaType}) async {
     String? serviceUrl = Config().contentUrl;
     if (StringUtils.isEmpty(serviceUrl)) {
-      return ImagesResult.error('Missing images BB url.');
+      return ImagesResult.error(ImagesErrorType.serviceNotAvailable, 'Missing images BB url.');
     }
     if (CollectionUtils.isEmpty(imageBytes)) {
-      return ImagesResult.error('No file bytes.');
+      return ImagesResult.error(ImagesErrorType.contentNotSupplied, 'No file bytes.');
     }
     if (StringUtils.isEmpty(fileName)) {
-      return ImagesResult.error('Missing file name.');
+      return ImagesResult.error(ImagesErrorType.fileNameNotSupplied, 'Missing file name.');
     }
     if (StringUtils.isEmpty(storagePath)) {
-      return ImagesResult.error('Missing storage path.');
+      return ImagesResult.error(ImagesErrorType.storagePathNotSupplied, 'Missing storage path.');
     }
     if ((width == null) || (width <= 0)) {
-      return ImagesResult.error('Invalid image width. Please, provide positive number.');
+      return ImagesResult.error(ImagesErrorType.dimensionsNotSupplied, 'Invalid image width. Please, provide positive number.');
     }
     if (StringUtils.isEmpty(mediaType)) {
-      return ImagesResult.error('Missing media type.');
+      return ImagesResult.error(ImagesErrorType.mediaTypeNotSupplied, 'Missing media type.');
     }
     String url = "$serviceUrl/image";
     Map<String, String> imageRequestFields = {
@@ -114,9 +124,8 @@ class Content /* with Service */ {
       String? imageUrl = (json != null) ? json['url'] : null;
       return ImagesResult.succeed(imageUrl);
     } else {
-      String error = "Failed to upload image. Reason: $responseString";
-      print(error);
-      return ImagesResult.error(error);
+      debugPrint("Failed to upload image. Reason: $responseCode $responseString");
+      return ImagesResult.error(ImagesErrorType.uploadFailed, "Failed to upload image.", response);
     }
   }
 
@@ -126,24 +135,31 @@ class Content /* with Service */ {
   }
 }
 
-enum ImagesResultType { ERROR_OCCURRED, CANCELLED, SUCCEEDED }
+enum ImagesResultType { error, cancelled, succeeded }
+enum ImagesErrorType {
+  headerFailed,
+  contentTypeNotSupported,
+  serviceNotAvailable,
+  contentNotSupplied,
+  fileNameNotSupplied,
+  storagePathNotSupplied,
+  dimensionsNotSupplied,
+  mediaTypeNotSupplied,
+  uploadFailed,
+}
 
 class ImagesResult {
   ImagesResultType? resultType;
+  ImagesErrorType? errorType;
   String? errorMessage;
   dynamic data;
 
-  ImagesResult.error(String errorMessage) {
-    this.resultType = ImagesResultType.ERROR_OCCURRED;
-    this.errorMessage = errorMessage;
-  }
+  ImagesResult.error(this.errorType, this.errorMessage, [this.data]) :
+    resultType = ImagesResultType.error;
 
-  ImagesResult.cancel() {
-    this.resultType = ImagesResultType.CANCELLED;
-  }
+  ImagesResult.cancel() :
+    resultType = ImagesResultType.cancelled;
 
-  ImagesResult.succeed(dynamic data) {
-    this.resultType = ImagesResultType.SUCCEEDED;
-    this.data = data;
-  }
+  ImagesResult.succeed(this.data) :
+    resultType = ImagesResultType.succeeded;
 }
