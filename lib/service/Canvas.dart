@@ -235,7 +235,7 @@ class Canvas with Service {
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/calendar_events?context_codes[]=course_$courseId';
+    String url = '${Config().canvasUrl}/api/v1/calendar_events?context_codes[]=course_$courseId&per_page=50';
     if (startDate != null) {
       DateTime startDateUtc = startDate.toUtc();
       String? formattedDate = DateTimeUtils.utcDateTimeToString(startDateUtc);
@@ -255,7 +255,7 @@ class Canvas with Service {
     String? responseString = response?.body;
     if (responseCode == 200) {
       List<CanvasCalendarEvent>? calendarEvents = CanvasCalendarEvent.listFromJson(JsonUtils.decodeList(responseString));
-      return calendarEvents;
+      return calendarEvents?.where((element) => (element.hidden == false)).toList();
     } else {
       Log.w('Failed to load canvas calendar events for course {$courseId}. Response:\n$responseCode: $responseString');
       return null;
