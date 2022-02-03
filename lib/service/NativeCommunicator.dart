@@ -220,38 +220,12 @@ class NativeCommunicator with Service implements NotificationsListener {
     }
   }
 
-  Future<dynamic> geoFence({List<dynamic>? regions, Map<String, dynamic>? beacons}) async {
-    try {
-      Map<String, dynamic> params = {};
-      if (regions != null) {
-        params['regions'] = regions;
-      }
-      else if (beacons != null) {
-        params['beacons'] = beacons;
-      }
-      return await _platformChannel.invokeMethod('geoFence', params);
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-    return null;
-  }
-
   Future<List<DeviceOrientation>?> enabledOrientations(List<DeviceOrientation> orientationsList) async {
     List<DeviceOrientation>? result;
     try {
       dynamic inputStringsList = _deviceOrientationListToStringList(orientationsList);
       dynamic outputStringsList = await _platformChannel.invokeMethod('enabledOrientations', { "orientations" : inputStringsList });
       result = _deviceOrientationListFromStringList(outputStringsList);
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-    return result;
-  }
-
-  Future<AuthorizationStatus?> queryNotificationsAuthorization(String method) async {
-    AuthorizationStatus? result;
-    try {
-      result = _authorizationStatusFromString(await _platformChannel.invokeMethod('notifications_authorization', {"method": method }));
     } on PlatformException catch (e) {
       print(e.message);
     }

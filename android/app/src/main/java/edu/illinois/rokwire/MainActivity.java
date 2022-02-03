@@ -464,6 +464,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     result.success(true);
                     break;
                 case Constants.APP_DISMISS_LAUNCH_SCREEN_KEY:
+                    result.success(false);
+                    break;
                 case Constants.APP_SET_LAUNCH_SCREEN_STATUS_KEY:
                     handleSetLaunchScreenStatus(methodCall.arguments);
                     result.success(true);
@@ -476,20 +478,23 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     List<String> orientationsList = handleEnabledOrientations(orientations);
                     result.success(orientationsList);
                     break;
-                case Constants.APP_TRACKING_AUTHORIZATION:
+                case Constants.APP_TRACKING_AUTHORIZATION_KEY:
                     result.success("allowed"); // tracking is allowed in Android by default
                     break;
                 case Constants.BARCODE_KEY:
                     String barcodeImageData = handleBarcode(methodCall.arguments);
                     result.success(barcodeImageData);
                     break;
-                case Constants.LAUNCH_APP:
+                case Constants.LAUNCH_APP_KEY:
                     boolean appLaunched = handleLaunchApp(methodCall.arguments);
                     result.success(appLaunched);
                     break;
-                case Constants.LAUNCH_APP_SETTINGS:
+                case Constants.LAUNCH_APP_SETTINGS_KEY:
                     boolean settingsLaunched = handleLaunchAppSettings(methodCall.arguments);
                     result.success(settingsLaunched);
+                    break;
+                case Constants.TEST_KEY:
+                    result.success(false);
                     break;
                 default:
                     result.notImplemented();
