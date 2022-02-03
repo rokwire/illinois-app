@@ -424,7 +424,7 @@ class Config with Service, NetworkAuthProvider, NotificationsListener {
     return _configEnvironment;
   }
 
-  static ConfigEnvironment get defaultConfigEnvironment {
+  ConfigEnvironment get defaultConfigEnvironment {
     return kReleaseMode ? ConfigEnvironment.production : ConfigEnvironment.dev;
   }
 
