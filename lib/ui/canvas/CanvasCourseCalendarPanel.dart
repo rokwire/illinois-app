@@ -19,6 +19,7 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -67,19 +68,34 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
   }
 
   Widget _buildContent() {
-    return SingleChildScrollView(
-        child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(
-                padding: EdgeInsets.only(bottom: 20),
-                child: Row(
-                  children: [_buildYearDropDown(), Container(width: 16), _buildMonthDropDown()],
-                )
-              ),
-              Padding(padding: EdgeInsets.only(bottom: 20), child: _buildWeekDaysWidget()),
-              _buildEventsContent()
-            ])));
+    return SwipeDetector(
+        onSwipeLeft: _onSwipeLeft,
+        onSwipeRight: _onSwipeRight,
+        child: Column(children: [
+          Expanded(
+              child: SingleChildScrollView(
+                  child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Padding(
+                            padding: EdgeInsets.only(bottom: 20),
+                            child: Row(
+                              children: [_buildYearDropDown(), Container(width: 16), _buildMonthDropDown()],
+                            )),
+                        Padding(padding: EdgeInsets.only(bottom: 20), child: _buildWeekDaysWidget()),
+                        _buildEventsContent()
+                      ]))))
+        ]));
+  }
+
+  void _onSwipeLeft() {
+    DateTime newDate = _selectedDate.add(Duration(days: 7)); // Swipe to next week
+    _changeSelectedDate(year: newDate.year, month: newDate.month, day: newDate.day);
+  }
+
+  void _onSwipeRight() {
+    DateTime newDate = _selectedDate.subtract(Duration(days: 7)); // Swipe to previous week
+    _changeSelectedDate(year: newDate.year, month: newDate.month, day: newDate.day);
   }
 
   Widget _buildLoadingContent() {
