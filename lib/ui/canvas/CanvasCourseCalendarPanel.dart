@@ -248,8 +248,12 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
   void _initCalendarDates() {
     DateTime now = DateTime.now();
     _selectedDate = DateTime(now.year, now.month, now.day);
-    _startDateTime = DateTime(now.year, now.month, 1);
-    _endDateTime = DateTime(now.year, (now.month + 1), 0); // gives the last day of month
+    _initEventsTimeFrame();
+  }
+
+  void _initEventsTimeFrame() {
+    _startDateTime = DateTime(_selectedDate.year, _selectedDate.month, 1);
+    _endDateTime = DateTime(_selectedDate.year, (_selectedDate.month + 1), 1).subtract(Duration(milliseconds: 1));
   }
 
   void _changeSelectedDate({int? year, int? month, int? day}) {
@@ -257,9 +261,10 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
     int newMonth = (month != null) ? month : _selectedDate.month;
     int newDay = (day != null) ? day : _selectedDate.day;
     _selectedDate = DateTime(newYear, newMonth, newDay);
-    if(mounted) {
+    if (mounted) {
       setState(() {});
     }
+    _loadEventsIfNeeded();
   }
 
   void _loadEvents() {
@@ -268,6 +273,13 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
       _events = events;
       _decreaseProgress();
     });
+  }
+
+  void _loadEventsIfNeeded() {
+    if (_selectedDate.isBefore(_startDateTime) || _selectedDate.isAfter(_endDateTime)) {
+      _initEventsTimeFrame();
+      _loadEvents();
+    }
   }
 
   void _increaseProgress() {
