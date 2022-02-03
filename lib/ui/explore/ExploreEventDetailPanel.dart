@@ -18,7 +18,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
-import 'package:illinois/utils/ExploreHelper.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -55,13 +56,10 @@ class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAtt
   ExploreEventDetailPanel({this.event, this.previewMode = false, this.initialLocationData, this.superEventTitle, this.browseGroupId});
 
   @override
-  _EventDetailPanelState createState() =>
-      _EventDetailPanelState();
+  _EventDetailPanelState createState() => _EventDetailPanelState();
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return ExploreHelper.analyticsAttributes(event);
-  }
+  Map<String, dynamic>? get analyticsPageAttributes => event?.analyticsAttributes;
 }
 
 class _EventDetailPanelState extends State<ExploreEventDetailPanel>
@@ -118,7 +116,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   slivers: <Widget>[
                     SliverToutHeaderBar(
                       context: context,
-                      imageUrl: EventHelper.exploreImageURL(widget.event),
+                      imageUrl: widget.event?.eventImageUrl,
                       leftTriangleColor: Colors.white
                     ),
                     SliverList(
@@ -331,7 +329,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget? _exploreTimeDetail() {
-    String? displayTime = EventHelper.displayDateTime(widget.event);
+    String? displayTime = widget.event?.displayDateTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Semantics(
         label: displayTime,
@@ -359,7 +357,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget? _exploreLocationDetail() {
-    String locationText = ExploreHelper.getLongDisplayLocation(widget.event, _locationData)??"";
+    String locationText = widget.event?.getLongDisplayLocation(_locationData)??"";
     bool isVirtual = widget.event?.isVirtual ?? false;
     String eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event")! : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event")!;
     bool hasEventUrl = StringUtils.isNotEmpty(widget.event?.location?.description);

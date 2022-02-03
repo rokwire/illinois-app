@@ -19,7 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/utils/ExploreHelper.dart';
+import 'package:illinois/ext/Game.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
@@ -49,13 +49,10 @@ class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAt
   AthleticsGameDetailPanel({this.game, this.gameId, this.sportName});
 
   @override
-  _AthleticsGameDetailPanelState createState() =>
-      _AthleticsGameDetailPanelState(game);
+  _AthleticsGameDetailPanelState createState() => _AthleticsGameDetailPanelState(game);
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return ExploreHelper.analyticsAttributes(game);
-  }
+  Map<String, dynamic>? get analyticsPageAttributes => game?.analyticsAttributes;
 }
 
 class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {

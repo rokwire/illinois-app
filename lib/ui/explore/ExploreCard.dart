@@ -17,7 +17,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
-import 'package:illinois/utils/ExploreHelper.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -80,16 +81,16 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     if (StringUtils.isNotEmpty(category) && StringUtils.isNotEmpty(sportName)) {
       category = '$category - $sportName';
     }
-    dynamic explore = widget.explore;
+    Explore? explore = widget.explore;
     String title = widget.explore?.exploreTitle ?? "";
     String? time = _getExploreTimeDisplayString();
-    String locationText = ExploreHelper.getShortDisplayLocation(widget.explore, widget.locationData) ?? "";
+    String locationText = widget.explore?.getShortDisplayLocation(widget.locationData) ?? "";
     String workTime = ((explore is Dining) ? explore.displayWorkTime : null) ?? "";
     int? eventConvergeScore = (explore is Event) ? explore.convergeScore : null;
     String convergeScore = ((eventConvergeScore != null) ? (eventConvergeScore.toString() + '%') : null) ?? "";
     String interests = ((explore is Event) ? _getInterestsLabelValue() : null) ?? "";
     interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')!) : "";
-    String eventType = ExploreHelper.getExploreTypeText(explore)??"";
+    String eventType = explore?.typeDisplayString??"";
 
     return "$category, $title, $time, $locationText, $workTime, $convergeScore, $interests, $eventType";
   }
@@ -100,7 +101,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     bool isGame = (widget.explore is Game);
     Event? event = isEvent ? widget.explore as Event : null;
     bool isCompositeEvent = event?.isComposite ?? false;
-    String imageUrl = StringUtils.ensureNotEmpty(ExploreHelper.exploreImageURL(widget.explore));
+    String imageUrl = StringUtils.ensureNotEmpty(widget.explore?.exploreImageUrl);
     String interestsLabelValue = _getInterestsLabelValue();
 
     return Semantics(
@@ -246,7 +247,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   Widget _exploreTop() {
 
     String? category = _exploreCategory;
-    bool isFavorite = ExploreHelper.isFavorite(widget.explore);
+    bool isFavorite = widget.explore?.isFavorite ?? false;
     bool starVisible = Auth2().canFavorite;
     String leftLabel = "";
     TextStyle leftLabelStyle;
@@ -369,7 +370,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
       iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
     }
-    String? locationText = eventType ?? ExploreHelper.getShortDisplayLocation(widget.explore, widget.locationData);
+    String? locationText = eventType ?? widget.explore?.getShortDisplayLocation(widget.locationData);
     if ((locationText != null) && locationText.isNotEmpty) {
       return Semantics(label: locationText, child:Padding(
         padding: _detailPadding,
@@ -454,7 +455,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   String? _getExploreTimeDisplayString() {
     Explore? explore = widget.explore;
     if (explore is Event) {
-      return EventHelper.timeDisplayString(explore);
+      return explore.timeDisplayString;
     } else if (explore is Game) {
       return explore.displayTime;
     } else {
@@ -473,11 +474,11 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget _topBorder() {
-    return widget.showTopBorder? Container(height: 7,color: ExploreHelper.uiColor(widget.explore)) : Container();
+    return widget.showTopBorder? Container(height: 7,color: widget.explore?.uiColor) : Container();
   }
 
   String _getInterestsLabelValue() {
-    return (!widget.hideInterests && (widget.explore is Event)) ? EventHelper.displayInterests(widget.explore as Event) : "";
+    return (!widget.hideInterests && (widget.explore is Event)) ? (widget.explore as Event).displayInterests : "";
   }
 
   Widget _buildCompositeEventsContent(bool isCompositeEvent) {
@@ -521,7 +522,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   void _onTapExploreCardStar() {
     Analytics().logSelect(target: "Favorite: ${widget.explore?.exploreTitle}");
-    ExploreHelper.toggleFavorite(widget.explore);
+    widget.explore?.toggleFavorite();
   }
 
   void _onTapSmallExploreCard({BuildContext? context, _EventCardType? cardType, Event? parentEvent, Event? subEvent}) {
@@ -653,7 +654,7 @@ class _EventSmallCard extends StatelessWidget {
       case _EventCardType.sup:
         return event!.title;
       case _EventCardType.rec:
-        return EventHelper.displayDate(event);
+        return event?.displayDate;
       case _EventCardType.more:
         return Localization().getStringEx('widget.explore_card.small.view_all.title', 'View all events');
       default:
@@ -664,9 +665,9 @@ class _EventSmallCard extends StatelessWidget {
   String? get _subTitle {
     switch (type) {
       case _EventCardType.sup:
-        return EventHelper.displaySuperTime(event);
+        return event?.displaySuperTime;
       case _EventCardType.rec:
-        return EventHelper.displayStartEndTime(event);
+        return event?.displayStartEndTime;
       default:
         return '';
     }

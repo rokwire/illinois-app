@@ -18,7 +18,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
-import 'package:illinois/utils/ExploreHelper.dart';
+import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -57,13 +58,10 @@ class CompositeEventsDetailPanel extends StatefulWidget implements AnalyticsPage
   CompositeEventsDetailPanel({this.parentEvent, this.initialLocationData, this.browseGroupId});
 
   @override
-  _CompositeEventsDetailPanelState createState() =>
-      _CompositeEventsDetailPanelState();
+  _CompositeEventsDetailPanelState createState() => _CompositeEventsDetailPanelState();
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return ExploreHelper.analyticsAttributes(parentEvent);
-  }
+  Map<String, dynamic>? get analyticsPageAttributes => parentEvent?.analyticsAttributes;
 }
 
 class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
@@ -120,7 +118,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                 slivers: <Widget>[
                   SliverToutHeaderBar(
                     context: context,
-                    imageUrl: EventHelper.exploreImageURL(widget.parentEvent),
+                    imageUrl: widget.parentEvent?.eventImageUrl,
                   ),
                   SliverList(
                     delegate: SliverChildListDelegate(
@@ -180,7 +178,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   Widget _exploreHeading() {
     String? category = widget.parentEvent?.category;
-    bool isFavorite = ExploreHelper.isFavorite(widget.parentEvent);
+    bool isFavorite = widget.parentEvent?.isFavorite ?? false;
     bool starVisible = Auth2().canFavorite;
     return Padding(padding: EdgeInsets.only(top: 16, bottom: 12), child: Row(
       children: <Widget>[
@@ -303,7 +301,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   Widget? _exploreTimeDetail() {
     bool isParentSuper = widget.parentEvent?.isSuperEvent ?? false;
-    String? displayTime = isParentSuper ? EventHelper.displaySuperDates(widget.parentEvent) : EventHelper.displayRecurringDates(widget.parentEvent);
+    String? displayTime = isParentSuper ? widget.parentEvent?.displaySuperDates : widget.parentEvent?.displayRecurringDates;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Semantics(
           label: displayTime,
@@ -331,7 +329,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   Widget? _exploreLocationDetail() {
-    String? locationText = ExploreHelper.getLongDisplayLocation(widget.parentEvent, _locationData);
+    String? locationText = widget.parentEvent?.getLongDisplayLocation(_locationData);
     if (!(widget.parentEvent?.isVirtual ?? false) && widget.parentEvent?.location != null && (locationText != null) && locationText.isNotEmpty) {
       return GestureDetector(
         onTap: _onLocationDetailTapped,
@@ -564,7 +562,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   void _onTapHeaderStar() {
     Analytics().logSelect(target: "Favorite: ${widget.parentEvent?.title}");
-    ExploreHelper.toggleFavorite(widget.parentEvent);
+    widget.parentEvent?.toggleFavorite();
   }
 
   Widget _buildGroupButtons(){
@@ -729,8 +727,8 @@ class _EventEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isFavorite = Auth2().isFavorite(event);
     bool starVisible = Auth2().canFavorite;
-    String title = ((parentEvent?.isSuperEvent == true) ? event?.title : EventHelper.displayDate(event)) ?? '';
-    String subTitle = ((parentEvent?.isSuperEvent == true) ? EventHelper.displaySuperTime(event) : EventHelper.displayStartEndTime(event)) ?? '';
+    String title = ((parentEvent?.isSuperEvent == true) ? event?.title : event?.displayDate) ?? '';
+    String subTitle = ((parentEvent?.isSuperEvent == true) ? event?.displaySuperTime : event?.displayStartEndTime) ?? '';
     return GestureDetector(onTap: () => _onTapEvent(context), child: Container(
       decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1.0), borderRadius: BorderRadius.circular(4.0),
       ),
