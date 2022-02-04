@@ -5,12 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.2.12] - 2022-02-03
+### Added
+- Canvas Calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 ### Changed
 - Content service moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 - Tracking authorization support moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 - launchApp and launchAppSettings APIs to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 
-## [3.2.11] - 2022-02-01
+## [3.2.11] - 2022-02-02
 ### Added
 - Link multiple authentication types to one account [#1233](https://github.com/rokwire/illinois-app/issues/1233).
 - Canvas Calendar sample UI (in progress) [#1274](https://github.com/rokwire/illinois-app/issues/1274).

@@ -1187,6 +1187,18 @@ class CanvasCalendarEvent {
       (group?.hashCode ?? 0) ^
       (importantDates?.hashCode ?? 0);
 
+  DateTime? get startAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(startAt);
+  }
+
+  DateTime? get endAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(endAt);
+  }
+
+  String? get startAtDisplayDate {
+    return AppDateTime().formatDateTime(startAt, format: _canvasDisplayDateTimeFormat);
+  }
+
   static List<CanvasCalendarEvent>? listFromJson(List<dynamic>? jsonList) {
     List<CanvasCalendarEvent>? result;
     if (jsonList != null) {

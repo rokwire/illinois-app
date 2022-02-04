@@ -19,6 +19,7 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -67,19 +68,34 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
   }
 
   Widget _buildContent() {
-    return SingleChildScrollView(
-        child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(
-                padding: EdgeInsets.only(bottom: 20),
-                child: Row(
-                  children: [_buildYearDropDown(), Container(width: 16), _buildMonthDropDown()],
-                )
-              ),
-              Padding(padding: EdgeInsets.only(bottom: 20), child: _buildWeekDaysWidget()),
-              _buildEventsContent()
-            ])));
+    return SwipeDetector(
+        onSwipeLeft: _onSwipeLeft,
+        onSwipeRight: _onSwipeRight,
+        child: Column(children: [
+          Expanded(
+              child: SingleChildScrollView(
+                  child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Padding(
+                            padding: EdgeInsets.only(bottom: 20),
+                            child: Row(
+                              children: [_buildYearDropDown(), Container(width: 16), _buildMonthDropDown()],
+                            )),
+                        Padding(padding: EdgeInsets.only(bottom: 20), child: _buildWeekDaysWidget()),
+                        _buildEventsContent()
+                      ]))))
+        ]));
+  }
+
+  void _onSwipeLeft() {
+    DateTime newDate = _selectedDate.add(Duration(days: 7)); // Swipe to next week
+    _changeSelectedDate(year: newDate.year, month: newDate.month, day: newDate.day);
+  }
+
+  void _onSwipeRight() {
+    DateTime newDate = _selectedDate.subtract(Duration(days: 7)); // Swipe to previous week
+    _changeSelectedDate(year: newDate.year, month: newDate.month, day: newDate.day);
   }
 
   Widget _buildLoadingContent() {
@@ -103,15 +119,83 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
       return _buildLoadingContent();
     }
     if (_events != null) {
-      if (_events!.isNotEmpty) {
-        //TBD: implement
-        return Container(width: 60, height: 70, color: Colors.green);
+      List<CanvasCalendarEvent>? visibleEvents = _visibleEvents;
+      if (CollectionUtils.isNotEmpty(visibleEvents)) {
+        return _buildVisibleEventsContent(visibleEvents!);
       } else {
         return _buildEmptyContent();
       }
     } else {
       return _buildErrorContent();
     }
+  }
+
+  Widget _buildVisibleEventsContent(List<CanvasCalendarEvent> visibleEvents) {
+    List<Widget> eventsWidgetList = [];
+    eventsWidgetList.add(_buildEventDelimiter());
+    for (CanvasCalendarEvent event in visibleEvents) {
+      eventsWidgetList.add(_buildEventCard(event));
+    }
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: eventsWidgetList));
+  }
+
+  Widget _buildEventCard(CanvasCalendarEvent event) {
+    return GestureDetector(
+        onTap: () => _onTapEvent(event),
+        child: Column(children: [
+          Container(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Expanded(
+                    child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 15), child: Image.asset('images/icon-news.png')),
+                  Expanded(
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(StringUtils.ensureNotEmpty(event.contextName),
+                        textAlign: TextAlign.start,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style:
+                            TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
+                    Text(StringUtils.ensureNotEmpty(event.title),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
+                    Text(StringUtils.ensureNotEmpty(event.startAtDisplayDate),
+                        style: TextStyle(color: Styles().colors!.disabledTextColor, fontFamily: Styles().fontFamilies!.bold, fontSize: 18))
+                  ]))
+                ])),
+                Image.asset('images/chevron-right.png')
+              ])),
+          _buildEventDelimiter()
+        ]));
+  }
+
+  Widget _buildEventDelimiter() {
+    return Container(color: Styles().colors!.lightGray, height: 1);
+  }
+
+  void _onTapEvent(CanvasCalendarEvent event) {
+    //TBD: implement
+  }
+
+  List<CanvasCalendarEvent>? get _visibleEvents {
+    if (CollectionUtils.isEmpty(_events)) {
+      return null;
+    }
+    List<CanvasCalendarEvent> visibleEvents = [];
+    for (CanvasCalendarEvent event in _events!) {
+      DateTime? eventStartDateLocal = event.startAtLocal;
+      if ((eventStartDateLocal != null) &&
+          (eventStartDateLocal.year == _selectedDate.year) &&
+          (eventStartDateLocal.month == _selectedDate.month) &&
+          (eventStartDateLocal.day == _selectedDate.day)) {
+        visibleEvents.add(event);
+      }
+    }
+    return visibleEvents;
   }
 
   Widget _buildYearDropDown() {
@@ -179,39 +263,65 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
 
   Widget _buildWeekDaysWidget() {
     int selectedWeekDay = _selectedDate.weekday;
-    DateTime weekStartDate =
+    DateTime currentWeekDate =
         DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day).subtract(Duration(days: (selectedWeekDay - 1)));
-    DateTime weekEndDate = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day).add(Duration(days: (7 - selectedWeekDay)));
 
     List<Widget> dayWidgetList = [];
-    BoxDecoration selectedDayDecoration =
-        BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2));
-    for (int i = 0; i < weekEndDate.weekday; i++) {
-      Widget dayWidget = Container(
+    for (int i = 1; i < 8; i++) {
+      Widget dayWidget = GestureDetector(onTap: () => _onTapWeekDay(i), child: Container(
         padding: EdgeInsets.all(10),
-          decoration: (_isSelectedDay(weekStartDate) ? selectedDayDecoration : null),
+          decoration: _weekDayBoxDecoration(currentWeekDate),
           child: Column(children: [
-            Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(weekStartDate, format: 'E')),
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+            Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'E')),
+                style: TextStyle(color: _weekDayTextColor(currentWeekDate), fontFamily: Styles().fontFamilies!.bold)),
             Container(width: 10),
-            Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(weekStartDate, format: 'd')),
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))
-          ]));
+            Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'd')),
+                style: TextStyle(color: _weekDayTextColor(currentWeekDate), fontSize: 18))
+          ])));
       dayWidgetList.add(dayWidget);
-      weekStartDate = weekStartDate.add(Duration(days: 1));
+      currentWeekDate = currentWeekDate.add(Duration(days: 1));
     }
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: dayWidgetList);
+  }
+
+  BoxDecoration _weekDayBoxDecoration(DateTime date) {
+    bool isToday = _isToday(date);
+    bool isSelectedDate = _isSelectedDay(date);
+
+    return BoxDecoration(
+        color: (isToday ? Styles().colors!.fillColorPrimary : null),
+        shape: BoxShape.circle,
+        border: Border.all(color: (isSelectedDate ? Styles().colors!.fillColorPrimary! : Colors.transparent), width: 2));
+  }
+
+  Color _weekDayTextColor(DateTime date) {
+    return _isToday(date) ? Styles().colors!.white! : Styles().colors!.fillColorPrimary!;
+  }
+
+  bool _isToday(DateTime currentDate) {
+    DateTime now = DateTime.now();
+    return (currentDate.year == now.year) && (currentDate.month == now.month) && (currentDate.day == now.day);
   }
 
   bool _isSelectedDay(DateTime currentDate) {
     return (currentDate.year == _selectedDate.year) && (currentDate.month == _selectedDate.month) && (currentDate.day == _selectedDate.day);
   }
 
+  void _onTapWeekDay(int weekDay) {
+    int daysDiff = weekDay - _selectedDate.weekday;
+    DateTime newDate = _selectedDate.add(Duration(days: (daysDiff)));
+    _changeSelectedDate(year: newDate.year, month: newDate.month, day: newDate.day);
+  }
+
   void _initCalendarDates() {
     DateTime now = DateTime.now();
     _selectedDate = DateTime(now.year, now.month, now.day);
-    _startDateTime = DateTime(now.year, now.month, 1);
-    _endDateTime = DateTime(now.year, (now.month + 1), 0); // gives the last day of month
+    _initEventsTimeFrame();
+  }
+
+  void _initEventsTimeFrame() {
+    _startDateTime = DateTime(_selectedDate.year, _selectedDate.month, 1);
+    _endDateTime = DateTime(_selectedDate.year, (_selectedDate.month + 1), 1).subtract(Duration(milliseconds: 1));
   }
 
   void _changeSelectedDate({int? year, int? month, int? day}) {
@@ -219,9 +329,10 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
     int newMonth = (month != null) ? month : _selectedDate.month;
     int newDay = (day != null) ? day : _selectedDate.day;
     _selectedDate = DateTime(newYear, newMonth, newDay);
-    if(mounted) {
+    if (mounted) {
       setState(() {});
     }
+    _loadEventsIfNeeded();
   }
 
   void _loadEvents() {
@@ -230,6 +341,13 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
       _events = events;
       _decreaseProgress();
     });
+  }
+
+  void _loadEventsIfNeeded() {
+    if (_selectedDate.isBefore(_startDateTime) || _selectedDate.isAfter(_endDateTime)) {
+      _initEventsTimeFrame();
+      _loadEvents();
+    }
   }
 
   void _increaseProgress() {
