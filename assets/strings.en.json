@@ -1998,6 +1998,10 @@
 
     "panel.canvas_notification.header.title": "Notification",
 
+    "panel.canvas_calendar_event.header.title": "Calendar Event",
+    "panel.canvas_calendar_event.calendar.label": "Calendar:",
+    "panel.canvas_calendar_event.date_time.label": "Date & Time:",
+
     "widget.game_day.label.its_game_day":"It's Game Day!",
 
     "widget.game_detail_heading.button.live_stats.title":"Live Stats",

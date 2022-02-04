@@ -1964,6 +1964,10 @@
 
     "panel.canvas_notification.header.title": "通知",
 
+    "panel.canvas_calendar_event.header.title": "日曆事件",
+    "panel.canvas_calendar_event.calendar.label": "日曆:",
+    "panel.canvas_calendar_event.date_time.label": "約會時間:",
+
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 
 	"widget.game_detail_heading.button.live_stats.title":"实时信息",

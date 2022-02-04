@@ -1966,6 +1966,10 @@
 
     "panel.canvas_notification.header.title": "Notificación",
 
+    "panel.canvas_calendar_event.header.title": "Evento de calendario",
+    "panel.canvas_calendar_event.calendar.label": "Calendario:",
+    "panel.canvas_calendar_event.date_time.label": "Fecha y hora:",
+
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 
     "widget.game_detail_heading.button.live_stats.title":"Estadísticas en vivo",

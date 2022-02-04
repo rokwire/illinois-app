@@ -1207,6 +1207,25 @@ class CanvasCalendarEvent {
     return AppDateTime().formatDateTime(startAtLocal, format: _canvasDisplayDateTimeFormat);
   }
 
+  String? get endAtDisplayDate {
+    return AppDateTime().formatDateTime(endAtLocal, format: _canvasDisplayDateTimeFormat);
+  }
+
+  String? get displayDateTime {
+    const String emptyTime = 'N/A';
+    const dayFormat = 'MMM d';
+    const timeFormat = 'h:mma';
+    String? startTime = AppDateTime().formatDateTime(startAtLocal, format: '$dayFormat $timeFormat');
+    String endTimeFormat = timeFormat;
+    if (startAtLocal?.day != endAtLocal?.day) {
+      endTimeFormat = '$dayFormat ' + endTimeFormat;
+    }
+    String? endTime = AppDateTime().formatDateTime(endAtLocal, format: endTimeFormat);
+    return StringUtils.ensureNotEmpty(startTime, defaultValue: emptyTime) +
+        ' - ' +
+        StringUtils.ensureNotEmpty(endTime, defaultValue: emptyTime);
+  }
+
   static List<CanvasCalendarEvent>? listFromJson(List<dynamic>? jsonList) {
     List<CanvasCalendarEvent>? result;
     if (jsonList != null) {
