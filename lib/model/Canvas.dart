@@ -1196,7 +1196,7 @@ class CanvasCalendarEvent {
   }
 
   String? get startAtDisplayDate {
-    return AppDateTime().formatDateTime(startAt, format: _canvasDisplayDateTimeFormat);
+    return AppDateTime().formatDateTime(startAtLocal, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasCalendarEvent>? listFromJson(List<dynamic>? jsonList) {
