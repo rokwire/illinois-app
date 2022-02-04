@@ -780,23 +780,26 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     if(isCurrentTab){
       textFamily = Styles().fontFamilies!.extraBold;
     }
+
+    String tabName = "${widget.pageProgress}${tabKey??""}";
     return Container(
-      child: GestureDetector(
-        onTap: (){_onTapTabButton(index);},
-        child: Container(
-          padding: EdgeInsets.only(right: 16, top: 8, bottom: 8),
-          child: Row(children: [
-            Text("${widget.pageProgress}${tabKey??""}", style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16, decoration: TextDecoration.underline),),
-            !isCompleted ? Container():
-            Container(
-                height: 16,
-                width: 16,
-                child:Image.asset('images/green-check-mark.png', semanticLabel: "completed",)
-            )
-          ],)
+      child: Semantics(label: "Page ${tabName.toString()}", button: true, hint: "${isCompleted? "Completed" : "Not Completed" } ${(isCurrentTab)? ", Current page" : ""}", child:
+       GestureDetector(
+          onTap: (){_onTapTabButton(index);},
+          child: Container(
+            padding: EdgeInsets.only(right: 16, top: 8, bottom: 8),
+            child: Row(children: [
+              Text(tabName, style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16, decoration: TextDecoration.underline), semanticsLabel: "",),
+              !isCompleted ? Container():
+              Container(
+                  height: 16,
+                  width: 16,
+                  child:Image.asset('images/green-check-mark.png', semanticLabel: "completed",)
+              )
+            ],)
+          )
         )
-      )
-    );
+      ));
   }
 
   Widget _buildViewPager(){
@@ -935,7 +938,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   @override
   void onNotification(String name, param) {
     if(name == Gies.notifyPageChanged){
-      // Workaround if we do not want to recreate the Page (reuse one Page with one Horizontal Scroll)
+      // Workaround if we do not want to recreate the Page (reuse one Page with one Horizontal  Scroll)
       //Reset to default when we change the page (fix missing selected tab)
       // _currentPage = 0;
       // _pageController?.jumpToPage(_currentPage);
