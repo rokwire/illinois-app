@@ -262,6 +262,25 @@ class Canvas with Service {
     }
   }
 
+  // Account Notifications
+
+  Future<List<CanvasAccountNotification>?> loadAccountNotifications() async {
+    if (!_available) {
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/accounts/2/users/self/account_notifications';
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasAccountNotification>? calendarEvents = CanvasAccountNotification.listFromJson(JsonUtils.decodeList(responseString));
+      return calendarEvents;
+    } else {
+      Log.w('Failed to load canvas user notifications. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
   // Helpers
 
   Map<String, String>? get _authHeaders {

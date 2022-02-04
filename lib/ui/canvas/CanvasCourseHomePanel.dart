@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/ui/canvas/CanvasAccountNotificationsPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -145,7 +146,8 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.notifications.title', 'Notifications'),
           hint: Localization().getStringEx('panel.home_canvas_course.button.notifications.hint', ''),
-          leftIcon: 'images/icon-settings.png'),
+          leftIcon: 'images/icon-settings.png',
+          onTap: _onTapNotifications),
       _buildDelimiter(),
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.inbox.title', 'Inbox'),
@@ -183,6 +185,11 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   void _onTapCalendar() {
     Analytics().logSelect(target: "Canvas Course -> Calendar");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseCalendarPanel(courseId: widget.courseId!)));
+  }
+
+  void _onTapNotifications() {
+    Analytics().logSelect(target: "Canvas Course -> Notifications");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAccountNotificationsPanel()));
   }
 
   void _onTapInbox() {

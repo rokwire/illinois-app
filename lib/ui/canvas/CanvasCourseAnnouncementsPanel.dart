@@ -20,7 +20,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
-import 'package:illinois/ui/canvas/CanvasAnnouncementPanel.dart';
+import 'package:illinois/ui/canvas/CanvasAnnouncementDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -157,7 +157,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
 
   void _onTapAnnouncement(CanvasDiscussionTopic announcement) {
     Analytics().logSelect(target: "Canvas Course -> Announcement");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAnnouncementPanel(announcement: announcement)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAnnouncementDetailPanel(announcement: announcement)));
   }
 
   void _loadAnnouncements() {

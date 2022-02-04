@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -178,7 +181,8 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
   }
 
   void _onTapEvent(CanvasCalendarEvent event) {
-    //TBD: implement
+    Analytics().logSelect(target: "Canvas Calendar Event");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(event: event)));
   }
 
   List<CanvasCalendarEvent>? get _visibleEvents {

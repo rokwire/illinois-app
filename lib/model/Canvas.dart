@@ -820,8 +820,12 @@ class CanvasDiscussionTopic {
         : null;
   }
 
+  DateTime? get postedAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(postedAt);
+  }
+
   String? get postedAtDisplayDate {
-    return AppDateTime().formatDateTime(postedAt, format: _canvasDisplayDateTimeFormat);
+    return AppDateTime().formatDateTime(postedAtLocal, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasDiscussionTopic>? listFromJson(List<dynamic>? jsonList) {
@@ -1016,8 +1020,12 @@ class CanvasCollaboration {
       (updateUrl?.hashCode ?? 0) ^
       (userName?.hashCode ?? 0);
 
+  DateTime? get createdAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(createdAt);
+  }
+
   String? get createdAtDisplayDate {
-    return AppDateTime().formatDateTime(createdAt, format: _canvasDisplayDateTimeFormat);
+    return AppDateTime().formatDateTime(createdAtLocal, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasCollaboration>? listFromJson(List<dynamic>? jsonList) {
@@ -1196,7 +1204,26 @@ class CanvasCalendarEvent {
   }
 
   String? get startAtDisplayDate {
-    return AppDateTime().formatDateTime(startAt, format: _canvasDisplayDateTimeFormat);
+    return AppDateTime().formatDateTime(startAtLocal, format: _canvasDisplayDateTimeFormat);
+  }
+
+  String? get endAtDisplayDate {
+    return AppDateTime().formatDateTime(endAtLocal, format: _canvasDisplayDateTimeFormat);
+  }
+
+  String? get displayDateTime {
+    const String emptyTime = 'N/A';
+    const dayFormat = 'MMM d';
+    const timeFormat = 'h:mma';
+    String? startTime = AppDateTime().formatDateTime(startAtLocal, format: '$dayFormat $timeFormat');
+    String endTimeFormat = timeFormat;
+    if (startAtLocal?.day != endAtLocal?.day) {
+      endTimeFormat = '$dayFormat ' + endTimeFormat;
+    }
+    String? endTime = AppDateTime().formatDateTime(endAtLocal, format: endTimeFormat);
+    return StringUtils.ensureNotEmpty(startTime, defaultValue: emptyTime) +
+        ' - ' +
+        StringUtils.ensureNotEmpty(endTime, defaultValue: emptyTime);
   }
 
   static List<CanvasCalendarEvent>? listFromJson(List<dynamic>? jsonList) {
@@ -1431,5 +1458,79 @@ class CanvasGroupPermissions {
             createAnnouncement: JsonUtils.boolValue(json['create_announcement']),
           )
         : null;
+  }
+}
+
+////////////////////////////////
+// CanvasAccountNotification
+
+class CanvasAccountNotification {
+  final int? id;
+  final String? subject;
+  final String? message;
+  final DateTime? startAt;
+  final DateTime? endAt;
+  final String? icon;
+  final List<String>? roles;
+  final List<int>? roleIds;
+
+  CanvasAccountNotification({this.id, this.subject, this.message, this.startAt, this.endAt, this.icon, this.roles, this.roleIds});
+
+  static CanvasAccountNotification? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasAccountNotification(
+            id: JsonUtils.intValue(json['id']),
+            subject: JsonUtils.stringValue(json['subject']),
+            message: JsonUtils.stringValue(json['message']),
+            startAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['start_at']), isUtc: true),
+            endAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['end_at']), isUtc: true),
+            icon: JsonUtils.stringValue(json['icon']),
+            roles: JsonUtils.listValue(json['roles'])?.cast<String>(),
+            roleIds: JsonUtils.listValue(json['role_ids'])?.cast<int>())
+        : null;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasAccountNotification) &&
+      (o.id == id) &&
+      (o.subject == subject) &&
+      (o.message == message) &&
+      (o.startAt == startAt) &&
+      (o.endAt == endAt) &&
+      (o.icon == icon) &&
+      (o.roles == roles) &&
+      (o.roleIds == roleIds);
+
+  int get hashCode =>
+      (id?.hashCode ?? 0) ^
+      (subject?.hashCode ?? 0) ^
+      (message?.hashCode ?? 0) ^
+      (startAt?.hashCode ?? 0) ^
+      (endAt?.hashCode ?? 0) ^
+      (icon?.hashCode ?? 0) ^
+      (roles?.hashCode ?? 0) ^
+      (roleIds?.hashCode ?? 0);
+
+  DateTime? get startAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(startAt);
+  }
+
+  DateTime? get endAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(endAt);
+  }
+
+  String? get startAtDisplayDate {
+    return AppDateTime().formatDateTime(startAtLocal, format: _canvasDisplayDateTimeFormat);
+  }
+
+  static List<CanvasAccountNotification>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasAccountNotification>? result;
+    if (jsonList != null) {
+      result = <CanvasAccountNotification>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasAccountNotification.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
   }
 }
