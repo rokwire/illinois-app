@@ -30,8 +30,8 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Gies.notifyPageChanged]);
     super.initState();
+    NotificationService().subscribe(this, [Gies.notifyPageChanged]);
 
   }
 
@@ -71,7 +71,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
           Visibility( visible:  progress!=null,
             child:Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
               Expanded(child:
-              Text(JsonUtils.stringValue(_currentPage["step_title"]) ?? "", textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20,),),),
+                Semantics(child:Text(JsonUtils.stringValue(_currentPage["step_title"]) ?? "", textAlign: TextAlign.center,style: TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20,),),)),
           ],)),
           Container(height: 8,),
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -473,7 +473,8 @@ class _GiesPageState extends State<_GiesPageWidget> {
           String? title = JsonUtils.stringValue(button['title']);
           buttonWidgets.add(
             Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              RoundedButton(label: title,
+              Semantics(container: true,
+                child: RoundedButton(label: title,
                   backgroundColor: Styles().colors!.white,
                   textColor: Styles().colors!.fillColorPrimary,
                   fontFamily: Styles().fontFamilies!.bold,
@@ -486,7 +487,7 @@ class _GiesPageState extends State<_GiesPageWidget> {
                     try { widget.onTapButton!(button.cast<String, dynamic>(), JsonUtils.stringValue(widget.page?["id"])!); }
                     catch (e) { print(e.toString()); }
                   }
-              )
+              ))
             ]),
           );
         }
@@ -779,23 +780,26 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     if(isCurrentTab){
       textFamily = Styles().fontFamilies!.extraBold;
     }
+
+    String tabName = "${widget.pageProgress}${tabKey??""}";
     return Container(
-      child: GestureDetector(
-        onTap: (){_onTapTabButton(index);},
-        child: Container(
-          padding: EdgeInsets.only(right: 16, top: 8, bottom: 8),
-          child: Row(children: [
-            Text("${widget.pageProgress}${tabKey??""}", style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16, decoration: TextDecoration.underline),),
-            !isCompleted ? Container():
-            Container(
-                height: 16,
-                width: 16,
-                child:Image.asset('images/green-check-mark.png', semanticLabel: "completed",)
-            )
-          ],)
+      child: Semantics(label: "Page ${tabName.toString()}", button: true, hint: "${isCompleted? "Completed" : "Not Completed" } ${(isCurrentTab)? ", Current page" : ""}", child:
+       GestureDetector(
+          onTap: (){_onTapTabButton(index);},
+          child: Container(
+            padding: EdgeInsets.only(right: 16, top: 8, bottom: 8),
+            child: Row(children: [
+              Text(tabName, style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16, decoration: TextDecoration.underline), semanticsLabel: "",),
+              !isCompleted ? Container():
+              Container(
+                  height: 16,
+                  width: 16,
+                  child:Image.asset('images/green-check-mark.png', semanticLabel: "completed",)
+              )
+            ],)
+          )
         )
-      )
-    );
+      ));
   }
 
   Widget _buildViewPager(){
@@ -934,7 +938,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   @override
   void onNotification(String name, param) {
     if(name == Gies.notifyPageChanged){
-      // Workaround if we do not want to recreate the Page (reuse one Page with one Horizontal Scroll)
+      // Workaround if we do not want to recreate the Page (reuse one Page with one Horizontal  Scroll)
       //Reset to default when we change the page (fix missing selected tab)
       // _currentPage = 0;
       // _pageController?.jumpToPage(_currentPage);
