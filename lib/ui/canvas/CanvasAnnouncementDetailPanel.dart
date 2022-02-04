@@ -24,15 +24,15 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CanvasAnnouncementPanel extends StatefulWidget {
+class CanvasAnnouncementDetailPanel extends StatefulWidget {
   final CanvasDiscussionTopic announcement;
-  CanvasAnnouncementPanel({required this.announcement});
+  CanvasAnnouncementDetailPanel({required this.announcement});
 
   @override
-  _CanvasAnnouncementPanelState createState() => _CanvasAnnouncementPanelState();
+  _CanvasAnnouncementDetailPanelState createState() => _CanvasAnnouncementDetailPanelState();
 }
 
-class _CanvasAnnouncementPanelState extends State<CanvasAnnouncementPanel> {
+class _CanvasAnnouncementDetailPanelState extends State<CanvasAnnouncementDetailPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

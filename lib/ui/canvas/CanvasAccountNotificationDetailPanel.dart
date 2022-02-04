@@ -26,15 +26,15 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CanvasAccountNotificationPanel extends StatefulWidget {
+class CanvasAccountNotificationDetailPanel extends StatefulWidget {
   final CanvasAccountNotification notification;
-  CanvasAccountNotificationPanel({required this.notification});
+  CanvasAccountNotificationDetailPanel({required this.notification});
 
   @override
-  _CanvasAccountNotificationPanelState createState() => _CanvasAccountNotificationPanelState();
+  _CanvasAccountNotificationDetailPanelState createState() => _CanvasAccountNotificationDetailPanelState();
 }
 
-class _CanvasAccountNotificationPanelState extends State<CanvasAccountNotificationPanel> {
+class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNotificationDetailPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

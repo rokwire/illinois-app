@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
-import 'package:illinois/ui/canvas/CanvasAccountNotificationPanel.dart';
+import 'package:illinois/ui/canvas/CanvasAccountNotificationDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -132,7 +132,7 @@ class _CanvasAccountNotificationsPanelState extends State<CanvasAccountNotificat
 
   void _onTapNotification(CanvasAccountNotification notification) {
     Analytics().logSelect(target: "Notification");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAccountNotificationPanel(notification: notification)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAccountNotificationDetailPanel(notification: notification)));
   }
 
   void _loadNotifications() {
