@@ -56,11 +56,16 @@ class _CanvasAnnouncementDetailPanelState extends State<CanvasAnnouncementDetail
         child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(StringUtils.ensureNotEmpty(widget.announcement.title),
-                    style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimaryVariant)),
-                Text(StringUtils.ensureNotEmpty(widget.announcement.postedAtDisplayDate),
-                    style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface))
+              Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Expanded(
+                    child: Text(StringUtils.ensureNotEmpty(widget.announcement.title),
+                        maxLines: 5,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimaryVariant))),
+                Padding(
+                    padding: EdgeInsets.only(left: 7),
+                    child: Text(StringUtils.ensureNotEmpty(widget.announcement.postedAtDisplayDate),
+                        style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)))
               ]),
               Visibility(
                   visible: StringUtils.isNotEmpty(widget.announcement.author?.displayName),
