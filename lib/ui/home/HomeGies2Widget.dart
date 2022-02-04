@@ -25,11 +25,11 @@ class HomeGies2Widget extends StatefulWidget{
 }
 
 class HomeGies2State extends State<HomeGies2Widget> implements NotificationsListener{
-
   @override
   void initState() {
-    NotificationService().subscribe(this, [Gies.notifyPageChanged]);
     super.initState();
+    NotificationService().subscribe(this, [Gies.notifyPageChanged]);
+
   }
 
   @override
@@ -41,7 +41,7 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: true, child:
-    Semantics(container: true, child:
+    Semantics( child:
     Column(children: <Widget>[
       _buildHeader(),
       Stack(children: <Widget>[
@@ -53,20 +53,22 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
   }
 
   Widget _buildHeader() {
-    return Container(color: Styles().colors!.fillColorPrimary, child:
-    Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10), child:
-    Column(children: [
-      Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Expanded(child:
-        Text(Localization().getStringEx(
-            'widget.gies.title', 'iDegrees New Student Checklist')!,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Styles().colors!.white,
-            fontFamily: Styles().fontFamilies!.extraBold,
-            fontSize: 20,),),),
-      ],),
-    ],),
-    ),);
+    return Semantics(
+      header: true,
+      child:Container(color: Styles().colors!.fillColorPrimary, child:
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10), child:
+          Column(children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Expanded(child:
+              Text(Localization().getStringEx(
+                  'widget.gies.title', 'iDegrees New Student Checklist')!,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Styles().colors!.white,
+                  fontFamily: Styles().fontFamilies!.extraBold,
+                  fontSize: 20,),),),
+          ],),
+        ],),
+        ),));
   }
 
   Widget _buildSlant() {
@@ -103,12 +105,14 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
               children: [
                 Row(children: [
                   Expanded(child:
-                  Text(Localization().getStringEx(
-                      'widget.gies2.message.start', 'Ready to get started?')!,
-                    style: TextStyle(color: Styles().colors!.fillColorPrimary,
-                      fontFamily: Styles().fontFamilies!.extraBold,
-                      fontSize: 32,),),),
-                ],),
+                  Semantics(
+                    container: true,
+                    child:Text(Localization().getStringEx(
+                        'widget.gies2.message.start', 'Ready to get started?')!,
+                      style: TextStyle(color: Styles().colors!.fillColorPrimary,
+                        fontFamily: Styles().fontFamilies!.extraBold,
+                        fontSize: 32,),),)),
+                  ],),
                 Container(height: 24,),
                 ScalableRoundedButton(
                   label: Localization().getStringEx('widget.gies2.button.title.begin', "Begin Checklist"),
@@ -134,11 +138,14 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
               children: [
                 Row(children: [
                   Expanded(child:
-                  Text(Localization().getStringEx(
-                      'widget.gies2.message.finished', 'You’ve completed the checklist.')!,
-                    style: TextStyle(color: Styles().colors!.fillColorPrimary,
-                      fontFamily: Styles().fontFamilies!.extraBold,
-                      fontSize: 32,),),),
+                    Semantics(
+                      container: true,
+                      child:
+                      Text(Localization().getStringEx(
+                          'widget.gies2.message.finished', 'You’ve completed the checklist.')!,
+                        style: TextStyle(color: Styles().colors!.fillColorPrimary,
+                          fontFamily: Styles().fontFamilies!.extraBold,
+                          fontSize: 32,),),)),
                 ],),
                 Container(height: 24,),
                 ScalableRoundedButton(
@@ -184,11 +191,13 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                 // ],),
                 Row(children: [
                   Expanded(child:
-                  Text("$_completedPagesNames ${Localization().getStringEx('widget.gies2.message.progress.completed', 'completed')!}",
-                    style: TextStyle(color: Styles().colors!.fillColorPrimary,
-                      fontFamily: Styles().fontFamilies!.extraBold,
-                      fontSize: 32,),),),
-                ],),
+                    Semantics(
+                      container: true,
+                      child: Text("$_completedPagesNames ${Localization().getStringEx('widget.gies2.message.progress.completed', 'completed')!}",
+                        style: TextStyle(color: Styles().colors!.fillColorPrimary,
+                          fontFamily: Styles().fontFamilies!.extraBold,
+                          fontSize: 32,),),)),
+                    ],),
                 Container(height: 24,),
                 ScalableRoundedButton(
                   label: Localization().getStringEx('widget.gies2.button.title.continue', "Continue"),
