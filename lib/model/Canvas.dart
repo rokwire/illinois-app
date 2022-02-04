@@ -820,8 +820,12 @@ class CanvasDiscussionTopic {
         : null;
   }
 
+  DateTime? get postedAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(postedAt);
+  }
+
   String? get postedAtDisplayDate {
-    return AppDateTime().formatDateTime(postedAt, format: _canvasDisplayDateTimeFormat);
+    return AppDateTime().formatDateTime(postedAtLocal, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasDiscussionTopic>? listFromJson(List<dynamic>? jsonList) {
@@ -1016,8 +1020,12 @@ class CanvasCollaboration {
       (updateUrl?.hashCode ?? 0) ^
       (userName?.hashCode ?? 0);
 
+  DateTime? get createdAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(createdAt);
+  }
+
   String? get createdAtDisplayDate {
-    return AppDateTime().formatDateTime(createdAt, format: _canvasDisplayDateTimeFormat);
+    return AppDateTime().formatDateTime(createdAtLocal, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasCollaboration>? listFromJson(List<dynamic>? jsonList) {
