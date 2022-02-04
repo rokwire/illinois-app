@@ -127,11 +127,17 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
                     ]),
                 padding: EdgeInsets.all(10),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                    Text(StringUtils.ensureNotEmpty(announcement.title),
-                        style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimaryVariant)),
-                    Text(StringUtils.ensureNotEmpty(announcement.postedAtDisplayDate),
-                        style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface))
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    Expanded(
+                        child: Text(StringUtils.ensureNotEmpty(announcement.title),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimaryVariant))),
+                    Padding(
+                        padding: EdgeInsets.only(left: 5),
+                        child: Text(StringUtils.ensureNotEmpty(announcement.postedAtDisplayDate),
+                            style:
+                                TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)))
                   ]),
                   Visibility(
                       visible: StringUtils.isNotEmpty(announcement.author?.displayName),
