@@ -1958,6 +1958,12 @@
     "panel.canvas_calendar.load.failed.error.msg": "未能加載事件. 請稍後再試.",
     "panel.canvas_calendar.empty.msg": "今天沒有活動.",
 
+    "panel.canvas_notifications.header.title": "帳戶通知",
+    "panel.canvas_notifications.load.failed.error.msg": "未能加載帳戶通知. 請稍後再試.",
+    "panel.canvas_notifications.empty.msg": "沒有帳戶通知.",
+
+    "panel.canvas_notification.header.title": "通知",
+
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 
 	"widget.game_detail_heading.button.live_stats.title":"实时信息",

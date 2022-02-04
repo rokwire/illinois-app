@@ -1960,6 +1960,12 @@
     "panel.canvas_calendar.load.failed.error.msg": "No se pudieron cargar los eventos. Por favor, inténtelo de nuevo más tarde.",
     "panel.canvas_calendar.empty.msg": "Hoy no hay eventos.",
 
+    "panel.canvas_notifications.header.title": "Notificaciones de cuenta",
+    "panel.canvas_notifications.load.failed.error.msg": "No se pudieron cargar las notificaciones de la cuenta. Por favor, inténtelo de nuevo más tarde.",
+    "panel.canvas_notifications.empty.msg": "No hay notificaciones de cuenta.",
+
+    "panel.canvas_notification.header.title": "Notificación",
+
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 
     "widget.game_detail_heading.button.live_stats.title":"Estadísticas en vivo",
