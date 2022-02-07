@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/ui/canvas/CanvasCourseModulesPanel.dart';
 import 'package:illinois/ui/canvas/CanvasSyllabusHtmlPanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -96,13 +97,14 @@ class _CanvasCourseSyllabusPanelState extends State<CanvasCourseSyllabusPanel> {
       RibbonButton(
           label: Localization().getStringEx('panel.syllabus_canvas_course.button.syllabus.title', 'Syllabus'),
           hint: Localization().getStringEx('panel.syllabus_canvas_course.button.syllabus.hint', ''),
-          leftIcon: 'images/icon-settings.png',
+          leftIcon: 'images/icon-canvas-implemented-working.png',
           onTap: _onTapSyllabus),
       _buildDelimiter(),
       RibbonButton(
           label: Localization().getStringEx('panel.syllabus_canvas_course.button.modules.title', 'Modules'),
           hint: Localization().getStringEx('panel.syllabus_canvas_course.button.modules.hint', ''),
-          leftIcon: 'images/icon-settings.png'),
+          leftIcon: 'images/icon-canvas-implemented-working.png',
+          onTap: _onTapModules),
       _buildDelimiter(),
       RibbonButton(
           label: Localization().getStringEx('panel.syllabus_canvas_course.button.assignments.title', 'Assignments'),
@@ -127,8 +129,13 @@ class _CanvasCourseSyllabusPanelState extends State<CanvasCourseSyllabusPanel> {
   }
 
   void _onTapSyllabus() {
-    Analytics().logSelect(target: 'Syllabus');
+    Analytics().logSelect(target: 'Syllabus -> Syllabus');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasSyllabusHtmlPanel(courseId: widget.courseId!)));
+  }
+
+  void _onTapModules() {
+    Analytics().logSelect(target: 'Syllabus -> Modules');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseModulesPanel(courseId: widget.courseId!)));
   }
 
   void _loadCourse() {

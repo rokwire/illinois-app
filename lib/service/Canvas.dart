@@ -273,10 +273,66 @@ class Canvas with Service {
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      List<CanvasAccountNotification>? calendarEvents = CanvasAccountNotification.listFromJson(JsonUtils.decodeList(responseString));
-      return calendarEvents;
+      List<CanvasAccountNotification>? notifications = CanvasAccountNotification.listFromJson(JsonUtils.decodeList(responseString));
+      return notifications;
     } else {
       Log.w('Failed to load canvas user notifications. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  // Modules
+
+  Future<List<CanvasModule>?> loadModules(int courseId) async {
+    if (!_available) {
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/modules';
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasModule>? modules = CanvasModule.listFromJson(JsonUtils.decodeList(responseString));
+
+      // Sort by position
+      if (CollectionUtils.isNotEmpty(modules)) {
+        modules!.sort((CanvasModule first, CanvasModule second) {
+          int firstPosition = first.position ?? 0;
+          int secondPosition = second.position ?? 0;
+          return firstPosition.compareTo(secondPosition);
+        });
+      }
+
+      return modules;
+    } else {
+      Log.w('Failed to load canvas modules for course {$courseId}. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  Future<List<CanvasModuleItem>?> loadModuleItems({required int courseId, required int moduleId}) async {
+    if (!_available) {
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/modules/$moduleId/items';
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasModuleItem>? moduleItems = CanvasModuleItem.listFromJson(JsonUtils.decodeList(responseString));
+
+      // Sort by position
+      if (CollectionUtils.isNotEmpty(moduleItems)) {
+        moduleItems!.sort((CanvasModuleItem first, CanvasModuleItem second) {
+          int firstPosition = first.position ?? 0;
+          int secondPosition = second.position ?? 0;
+          return firstPosition.compareTo(secondPosition);
+        });
+      }
+
+      return moduleItems;
+    } else {
+      Log.w('Failed to load canvas module items for course {$courseId} and module {$moduleId}. Response:\n$responseCode: $responseString');
       return null;
     }
   }
