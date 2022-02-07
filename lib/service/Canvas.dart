@@ -293,6 +293,16 @@ class Canvas with Service {
     String? responseString = response?.body;
     if (responseCode == 200) {
       List<CanvasModule>? modules = CanvasModule.listFromJson(JsonUtils.decodeList(responseString));
+
+      // Sort by position
+      if (CollectionUtils.isNotEmpty(modules)) {
+        modules!.sort((CanvasModule first, CanvasModule second) {
+          int firstPosition = first.position ?? 0;
+          int secondPosition = second.position ?? 0;
+          return firstPosition.compareTo(secondPosition);
+        });
+      }
+
       return modules;
     } else {
       Log.w('Failed to load canvas modules for course {$courseId}. Response:\n$responseCode: $responseString');
@@ -310,6 +320,16 @@ class Canvas with Service {
     String? responseString = response?.body;
     if (responseCode == 200) {
       List<CanvasModuleItem>? moduleItems = CanvasModuleItem.listFromJson(JsonUtils.decodeList(responseString));
+
+      // Sort by position
+      if (CollectionUtils.isNotEmpty(moduleItems)) {
+        moduleItems!.sort((CanvasModuleItem first, CanvasModuleItem second) {
+          int firstPosition = first.position ?? 0;
+          int secondPosition = second.position ?? 0;
+          return firstPosition.compareTo(secondPosition);
+        });
+      }
+
       return moduleItems;
     } else {
       Log.w('Failed to load canvas module items for course {$courseId} and module {$moduleId}. Response:\n$responseCode: $responseString');
