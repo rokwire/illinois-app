@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Canvas Modules data model and UI [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 ### Changed
 - Rokwire plugin moved to a separate repository [#1203](https://github.com/rokwire/illinois-app/issues/1203).
 
