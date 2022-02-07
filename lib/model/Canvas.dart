@@ -1799,3 +1799,165 @@ class CanvasModuleItemContentDetails {
       (lockedForUser?.hashCode ?? 0) ^
       (lockExplanation?.hashCode ?? 0);
 }
+
+////////////////////////////////
+// CanvasExternalToolTagAttributes
+
+class CanvasExternalToolTagAttributes {
+  final String? url;
+  final bool? newTab;
+  final String? resourceLinkId;
+
+  CanvasExternalToolTagAttributes({this.url, this.newTab, this.resourceLinkId});
+
+  static CanvasExternalToolTagAttributes? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasExternalToolTagAttributes(
+            url: JsonUtils.stringValue(json['url']),
+            newTab: JsonUtils.boolValue(json['new_tab']),
+            resourceLinkId: JsonUtils.stringValue(json['resource_link_id']))
+        : null;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasExternalToolTagAttributes) && (o.url == url) && (o.newTab == newTab) && (o.resourceLinkId == resourceLinkId);
+
+  int get hashCode => (url?.hashCode ?? 0) ^ (newTab?.hashCode ?? 0) ^ (resourceLinkId?.hashCode ?? 0);
+}
+
+////////////////////////////////
+// CanvasLockInfo
+
+class CanvasLockInfo {
+  final String? assetString;
+  final DateTime? lockAt;
+  final DateTime? unlockAt;
+  final String? contextModule;
+  final bool? manuallyLocked;
+
+  CanvasLockInfo({this.assetString, this.lockAt, this.unlockAt, this.contextModule, this.manuallyLocked});
+
+  static CanvasLockInfo? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasLockInfo(
+            assetString: JsonUtils.stringValue(json['asset_string']),
+            lockAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['lock_at']), isUtc: true),
+            unlockAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['unlock_at']), isUtc: true),
+            contextModule: JsonUtils.stringValue(json['context_module']),
+            manuallyLocked: JsonUtils.boolValue(json['manually_locked']))
+        : null;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasLockInfo) &&
+      (o.assetString == assetString) &&
+      (o.lockAt == lockAt) &&
+      (o.unlockAt == unlockAt) &&
+      (o.contextModule == contextModule) &&
+      (o.manuallyLocked == manuallyLocked);
+
+  int get hashCode =>
+      (assetString?.hashCode ?? 0) ^
+      (lockAt?.hashCode ?? 0) ^
+      (unlockAt?.hashCode ?? 0) ^
+      (contextModule?.hashCode ?? 0) ^
+      (manuallyLocked?.hashCode ?? 0);
+}
+
+////////////////////////////////
+// CanvasRubricRating
+
+class CanvasRubricRating {
+  final int? points;
+  final String? id;
+  final String? description;
+  final String? longDescription;
+
+  CanvasRubricRating({this.points, this.id, this.description, this.longDescription});
+
+  static CanvasRubricRating? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasRubricRating(
+            points: JsonUtils.intValue(json['points']),
+            id: JsonUtils.stringValue(json['id']),
+            description: JsonUtils.stringValue(json['description']),
+            longDescription: JsonUtils.stringValue(json['long_description']))
+        : null;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasRubricRating) &&
+      (o.points == points) &&
+      (o.id == id) &&
+      (o.description == description) &&
+      (o.longDescription == longDescription);
+
+  int get hashCode => (points?.hashCode ?? 0) ^ (id?.hashCode ?? 0) ^ (description?.hashCode ?? 0) ^ (longDescription?.hashCode ?? 0);
+
+  static List<CanvasRubricRating>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasRubricRating>? result;
+    if (jsonList != null) {
+      result = <CanvasRubricRating>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasRubricRating.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+}
+
+////////////////////////////////
+// CanvasRubricCriteria
+
+class CanvasRubricCriteria {
+  final int? points;
+  final String? id;
+  final String? learningOutcomeId;
+  final String? vendorGuid;
+  final String? description;
+  final String? longDescription;
+  final bool? criterionUseRange;
+  final List<CanvasRubricRating>? ratings;
+  final bool? ignoreForScoring;
+
+  CanvasRubricCriteria({this.points, this.id, this.learningOutcomeId, this.vendorGuid, this.description, this.longDescription,
+    this.criterionUseRange, this.ratings, this.ignoreForScoring});
+
+  static CanvasRubricCriteria? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasRubricCriteria(
+            points: JsonUtils.intValue(json['points']),
+            id: JsonUtils.stringValue(json['id']),
+            learningOutcomeId: JsonUtils.stringValue(json['learning_outcome_id']),
+            vendorGuid: JsonUtils.stringValue(json['vendor_guid']),
+            description: JsonUtils.stringValue(json['description']),
+            longDescription: JsonUtils.stringValue(json['long_description']),
+            criterionUseRange: JsonUtils.boolValue(json['criterion_use_range']),
+            ratings: CanvasRubricRating.listFromJson(JsonUtils.listValue(json['ratings'])),
+            ignoreForScoring: JsonUtils.boolValue(json['ignore_for_scoring']))
+        : null;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasRubricCriteria) &&
+      (o.points == points) &&
+      (o.id == id) &&
+      (o.learningOutcomeId == learningOutcomeId) &&
+      (o.vendorGuid == vendorGuid) &&
+      (o.description == description) &&
+      (o.longDescription == longDescription) &&
+      (o.criterionUseRange == criterionUseRange) &&
+      (o.ratings == ratings) &&
+      (o.ignoreForScoring == ignoreForScoring);
+
+  int get hashCode =>
+      (points?.hashCode ?? 0) ^
+      (id?.hashCode ?? 0) ^
+      (learningOutcomeId?.hashCode ?? 0) ^
+      (vendorGuid?.hashCode ?? 0) ^
+      (description?.hashCode ?? 0) ^
+      (longDescription?.hashCode ?? 0) ^
+      (criterionUseRange?.hashCode ?? 0) ^
+      (ratings?.hashCode ?? 0) ^
+      (ignoreForScoring?.hashCode ?? 0);
+}
