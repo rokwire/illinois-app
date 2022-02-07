@@ -16,6 +16,11 @@ The official mobile app of the University of Illinois. Powered by the [Rokwire P
 
 
 ### Clone this repo
+git clone https://github.com/rokwire/illinois-app.git
+
+### Clone services flutter plugin used by Illinois app
+cd illinois-app.git
+git clone https://github.com/rokwire/services-flutter-pligin.git plugin
 
 ### Supply the following private configuration files:
 
