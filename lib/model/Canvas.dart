@@ -1722,13 +1722,15 @@ class CanvasModuleItem {
         return CanvasModuleItemType.quiz;
       case 'ExternalUrl':
         return CanvasModuleItemType.external_url;
+      case 'Assignment':
+        return CanvasModuleItemType.assignment;
       default:
         return null;
     }
   }
 }
 
-enum CanvasModuleItemType { sub_header, page, quiz, external_url }
+enum CanvasModuleItemType { sub_header, page, quiz, external_url, assignment }
 
 ////////////////////////////////
 // CanvasModuleItemCompletionRequirement

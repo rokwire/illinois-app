@@ -151,6 +151,9 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
       case CanvasModuleItemType.quiz:
         imagePath = 'icon-faqs.png';
         break;
+      case CanvasModuleItemType.assignment:
+        imagePath = 'icon-schedule.png';
+        break;
       default:
         break;
     }
