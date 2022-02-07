@@ -96,7 +96,7 @@ class _CanvasCourseSyllabusPanelState extends State<CanvasCourseSyllabusPanel> {
       RibbonButton(
           label: Localization().getStringEx('panel.syllabus_canvas_course.button.syllabus.title', 'Syllabus'),
           hint: Localization().getStringEx('panel.syllabus_canvas_course.button.syllabus.hint', ''),
-          leftIcon: 'images/icon-settings.png',
+          leftIcon: 'images/icon-canvas-implemented-working.png',
           onTap: _onTapSyllabus),
       _buildDelimiter(),
       RibbonButton(
