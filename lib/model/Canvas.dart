@@ -1631,7 +1631,7 @@ class CanvasModuleItem {
   final int? position;
   final String? title;
   final int? indent;
-  final String? type;
+  final CanvasModuleItemType? type;
   final int? contentId;
   final String? htmlUrl;
   final String? url;
@@ -1653,7 +1653,7 @@ class CanvasModuleItem {
             position: JsonUtils.intValue(json['position']),
             title: JsonUtils.stringValue(json['title']),
             indent: JsonUtils.intValue(json['indent']),
-            type: JsonUtils.stringValue(json['type']),
+            type: itemTypefromString(JsonUtils.stringValue(json['type'])),
             contentId: JsonUtils.intValue(json['content_id']),
             htmlUrl: JsonUtils.stringValue(json['html_url']),
             url: JsonUtils.stringValue(json['url']),
@@ -1711,7 +1711,24 @@ class CanvasModuleItem {
     }
     return result;
   }
+
+  static CanvasModuleItemType? itemTypefromString(String? value) {
+    switch (value) {
+      case 'SubHeader':
+        return CanvasModuleItemType.sub_header;
+      case 'Page':
+        return CanvasModuleItemType.page;
+      case 'Quiz':
+        return CanvasModuleItemType.quiz;
+      case 'ExternalUrl':
+        return CanvasModuleItemType.external_url;
+      default:
+        return null;
+    }
+  }
 }
+
+enum CanvasModuleItemType { sub_header, page, quiz, external_url }
 
 ////////////////////////////////
 // CanvasModuleItemCompletionRequirement

@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/ui/canvas/CanvasModuleDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -132,8 +134,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
 
   void _onTapModule(CanvasModule module) {
     Analytics().logSelect(target: 'Canvas Module');
-    //TBD: implement
-    // Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAnnouncementDetailPanel(announcement: module)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasModuleDetailPanel(courseId: widget.courseId, module: module)));
   }
 
   void _loadModules() {

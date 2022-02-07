@@ -1974,6 +1974,9 @@
     "panel.canvas_modules.load.failed.error.msg": "No se pudieron cargar los módulos. Por favor, inténtelo de nuevo más tarde.",
     "panel.canvas_modules.empty.msg": "No hay módulos para este curso.",
 
+    "panel.canvas_module_detail.load.failed.error.msg": "No se pudieron cargar los elementos del módulo. Por favor, inténtelo de nuevo más tarde.",
+    "panel.canvas_module_detail.empty.msg": "No hay elementos del módulo.",
+
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 
     "widget.game_detail_heading.button.live_stats.title":"Estadísticas en vivo",
