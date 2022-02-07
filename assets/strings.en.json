@@ -2002,6 +2002,10 @@
     "panel.canvas_calendar_event.calendar.label": "Calendar:",
     "panel.canvas_calendar_event.date_time.label": "Date & Time:",
 
+    "panel.canvas_modules.header.title": "Modules",
+    "panel.canvas_modules.load.failed.error.msg": "Failed to load modules. Please, try again later.",
+    "panel.canvas_modules.empty.msg": "There are no modules for this course.",
+
     "widget.game_day.label.its_game_day":"It's Game Day!",
 
     "widget.game_detail_heading.button.live_stats.title":"Live Stats",
