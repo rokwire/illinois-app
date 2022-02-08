@@ -150,8 +150,8 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
           onTap: _onTapNotifications),
       _buildDelimiter(),
       RibbonButton(
-          label: Localization().getStringEx('panel.home_canvas_course.button.inbox.title', 'Inbox'),
-          hint: Localization().getStringEx('panel.home_canvas_course.button.inbox.hint', ''),
+          label: Localization().getStringEx('panel.home_canvas_course.button.notitification.history.title', 'Notification history'),
+          hint: Localization().getStringEx('panel.home_canvas_course.button.notitification.history.hint', ''),
           leftIcon: 'images/icon-canvas-implemented-working.png',
           onTap: _onTapInbox),
       _buildDelimiter(),

@@ -1927,7 +1927,7 @@
 	"panel.home_canvas_course.button.collaborations.title": "合作",
 	"panel.home_canvas_course.button.calendar.title": "日曆",
 	"panel.home_canvas_course.button.notifications.title": "通知",
-	"panel.home_canvas_course.button.inbox.title": "收件箱",
+	"panel.home_canvas_course.button.notitification.history.title": "通知歷史",
 
 	"panel.syllabus_canvas_course.header.title": "教學大綱",
 	"panel.syllabus_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",

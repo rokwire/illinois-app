@@ -1929,7 +1929,7 @@
     "panel.home_canvas_course.button.collaborations.title": "Colaboraciones",
     "panel.home_canvas_course.button.calendar.title": "Calendario",
     "panel.home_canvas_course.button.notifications.title": "Notificaciones",
-    "panel.home_canvas_course.button.inbox.title": "Bandeja de entrada",
+    "panel.home_canvas_course.button.notitification.history.title": "Historial de notificaciones",
 
     "panel.syllabus_canvas_course.header.title": "Programa de estudios",
     "panel.syllabus_canvas_course.load.failed.error.msg": "No se ha podido cargar el curso. Vuelve a intentarlo más tarde.",

@@ -1961,7 +1961,7 @@
     "panel.home_canvas_course.button.collaborations.title": "Collaborations",
     "panel.home_canvas_course.button.calendar.title": "Calendar",
     "panel.home_canvas_course.button.notifications.title": "Notifications",
-    "panel.home_canvas_course.button.inbox.title": "Inbox",
+    "panel.home_canvas_course.button.notitification.history.title": "Notification history",
 
     "panel.syllabus_canvas_course.header.title": "Syllabus",
     "panel.syllabus_canvas_course.load.failed.error.msg": "Failed to load course. Please, try again later.",
