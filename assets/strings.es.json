@@ -1935,6 +1935,7 @@
     "panel.home_canvas_course.button.zoom.title": "Reunión Zoom",
     "panel.home_canvas_course.button.grades.title": "Los grados",
     "panel.home_canvas_course.button.group.title": "Grupo",
+    "panel.home_canvas_course.button.feedback.title": "Reacción",
 
     "panel.syllabus_html.header.title": "Programa de estudios",
     "panel.syllabus_html.load.failed.error.msg": "No se pudo cargar el contenido del programa de estudios. Por favor, inténtelo de nuevo más tarde.",
@@ -1973,6 +1974,15 @@
 
     "panel.canvas_module_detail.load.failed.error.msg": "No se pudieron cargar los elementos del módulo. Por favor, inténtelo de nuevo más tarde.",
     "panel.canvas_module_detail.empty.msg": "No hay elementos del módulo.",
+
+    "panel.canvas_feedback.header.title": "Reacción",
+    "panel.canvas_feedback.file_ticket.label": "Presente un ticket para recibir una respuesta personal de nuestro equipo de soporte.",
+    "panel.canvas_feedback.subject.label": "Sujeto",
+    "panel.canvas_feedback.description.label": "Descripción",
+    "panel.canvas_feedback.submit.button": "Entregar",
+    "panel.canvas_feedback.subject.empty.message": "Por favor, complete el asunto.",
+    "panel.canvas_feedback.report.succeeded.message": "Reportó exitosamente un ticket.",
+    "panel.canvas_feedback.report.failed.message": "Error al reportar un ticket. Por favor, inténtelo de nuevo más tarde.",
 
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 

@@ -337,6 +337,35 @@ class Canvas with Service {
     }
   }
 
+  // Error Reports
+
+  Future<bool> reportError({required String subject, String? description}) async {
+    if (!_available) {
+      return false;
+    }
+    if (StringUtils.isEmpty(subject)) {
+      Log.w('Please, provide error subject');
+      return false;
+    }
+    CanvasErrorReport report = CanvasErrorReport(subject: subject);
+    if (StringUtils.isNotEmpty(description)) {
+      report.comments = description;
+    }
+    report.email = Auth2().email;
+    String? errorBody = JsonUtils.encode(report.toJson());
+    String url = '${Config().canvasUrl}/api/v1/error_reports';
+    http.Response? response = await Network().post(url, headers: _authHeaders, body: errorBody);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      Log.d('Canvas: Successfully reported error.');
+      return true;
+    } else {
+      Log.w('Failed to report error. Response:\n$responseCode: $responseString');
+      return false;
+    }
+  }
+
   // Helpers
 
   Map<String, String>? get _authHeaders {

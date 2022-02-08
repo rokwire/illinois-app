@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/ui/canvas/CanvasAccountNotificationsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseModulesPanel.dart';
+import 'package:illinois/ui/canvas/CanvasFeedbackPanel.dart';
 import 'package:illinois/ui/canvas/CanvasSyllabusHtmlPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -183,6 +184,12 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
           hint: Localization().getStringEx('panel.home_canvas_course.button.group.hint', ''),
           leftIcon: 'images/icon-canvas-implemented-working.png',
           onTap: _onTapGroup),
+      _buildDelimiter(),
+      RibbonButton(
+          label: Localization().getStringEx('panel.home_canvas_course.button.feedback.title', 'Feedback'),
+          hint: Localization().getStringEx('panel.home_canvas_course.button.feedback.hint', ''),
+          leftIcon: 'images/icon-canvas-implemented-working.png',
+          onTap: _onTapFeedback),
       _buildDelimiter()
     ]);
   }
@@ -234,6 +241,11 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   void _onTapGroup() {
     Analytics().logSelect(target: 'Canvas Course -> Group');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+  }
+
+  void _onTapFeedback() {
+    Analytics().logSelect(target: 'Canvas Course -> Feedback');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFeedbackPanel()));
   }
 
   void _loadCourse() {
