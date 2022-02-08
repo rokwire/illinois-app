@@ -1961,3 +1961,44 @@ class CanvasRubricCriteria {
       (ratings?.hashCode ?? 0) ^
       (ignoreForScoring?.hashCode ?? 0);
 }
+
+////////////////////////////////
+// CanvasErrorReport
+
+class CanvasErrorReport {
+  final String? subject;
+  final String? url;
+  String? email;
+  String? comments;
+
+  CanvasErrorReport({this.subject, this.url, this.email, this.comments});
+
+  static CanvasErrorReport? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasErrorReport(
+            subject: JsonUtils.stringValue(json['subject']),
+            url: JsonUtils.stringValue(json['url']),
+            email: JsonUtils.stringValue(json['email']),
+            comments: JsonUtils.stringValue(json['comments']))
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json = {'subject': subject};
+    if (StringUtils.isNotEmpty(comments)) {
+      json['comments'] = comments;
+    }
+    if (StringUtils.isNotEmpty(email)) {
+      json['email'] = email;
+    }
+    if (StringUtils.isNotEmpty(url)) {
+      json['url'] = url;
+    }
+    return json;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasErrorReport) && (o.subject == subject) && (o.url == url) && (o.email == email) && (o.comments == comments);
+
+  int get hashCode => (subject?.hashCode ?? 0) ^ (url?.hashCode ?? 0) ^ (email?.hashCode ?? 0) ^ (comments?.hashCode ?? 0);
+}

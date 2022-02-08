@@ -29,9 +29,9 @@ class CanvasCourseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color defaultColor = Colors.black;
-    const double cardHeight = 166;
+    final double cardHeight = (MediaQuery.of(context).textScaleFactor * 166);
     double cardInnerPadding = 10;
-    final double? cardWidth = isSmall ? 200 : null;
+    final double? cardWidth = isSmall ? (MediaQuery.of(context).textScaleFactor * 200) : null;
     const double borderRadiusValue = 6;
     //TBD: check from which field to take this value
     String completionPercentage = _formatDecimalValue(0);
@@ -40,34 +40,43 @@ class CanvasCourseCard extends StatelessWidget {
       mainColor = defaultColor;
     }
     return Container(
-        height: cardHeight,
+        height: (isSmall ? cardHeight : null),
         width: cardWidth,
         decoration: BoxDecoration(
-          borderRadius: (isSmall ? BorderRadius.circular(borderRadiusValue) : null),
-          boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
+            borderRadius: (isSmall ? BorderRadius.circular(borderRadiusValue) : null),
+            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Expanded(
-              child: Container(decoration: BoxDecoration(color: mainColor, borderRadius: (isSmall ? BorderRadius.vertical(top: Radius.circular(borderRadiusValue)) : null)), child: Padding(
+          Container(
+              height: (cardHeight / 2),
+              decoration: BoxDecoration(
+                  color: mainColor, borderRadius: (isSmall ? BorderRadius.vertical(top: Radius.circular(borderRadiusValue)) : null)),
+              child: Padding(
                   padding: EdgeInsets.only(left: cardInnerPadding, top: cardInnerPadding),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Container(
                         padding: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Styles().colors!.white),
-                        child:
-                        Text('$completionPercentage%', style: TextStyle(color: mainColor, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)))
-                  ])))),
-          Expanded(
-              child: Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: (isSmall ? BorderRadius.vertical(bottom: Radius.circular(borderRadiusValue)) : null)), child: Padding(
+                        child: Text('$completionPercentage%',
+                            style: TextStyle(color: mainColor, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)))
+                  ]))),
+          Container(
+              decoration: BoxDecoration(
+                  color: Styles().colors!.white,
+                  borderRadius: (isSmall ? BorderRadius.vertical(bottom: Radius.circular(borderRadiusValue)) : null)),
+              child: Padding(
                   padding: EdgeInsets.all(cardInnerPadding),
-                  child: Row(children: [Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(StringUtils.ensureNotEmpty(course.name),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: mainColor, fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold)),
-                    Text(StringUtils.ensureNotEmpty(course.courseCode),
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies!.bold))
-                  ]))]))))
+                  child: Row(children: [
+                    Expanded(
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(StringUtils.ensureNotEmpty(course.name),
+                          maxLines: (isSmall ? 2 : 5),
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: mainColor, fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold)),
+                      Text(StringUtils.ensureNotEmpty(course.courseCode),
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies!.bold))
+                    ]))
+                  ])))
         ]));
   }
 
