@@ -1930,14 +1930,10 @@
     "panel.home_canvas_course.button.calendar.title": "Calendario",
     "panel.home_canvas_course.button.notifications.title": "Notificaciones",
     "panel.home_canvas_course.button.notitification.history.title": "Historial de notificaciones",
-
-    "panel.syllabus_canvas_course.header.title": "Programa de estudios",
-    "panel.syllabus_canvas_course.load.failed.error.msg": "No se ha podido cargar el curso. Vuelve a intentarlo más tarde.",
-    "panel.syllabus_canvas_course.button.syllabus.title": "Programa de estudios",
-    "panel.syllabus_canvas_course.button.modules.title": "Módulos",
-    "panel.syllabus_canvas_course.button.assignments.title": "Tareas",
-    "panel.syllabus_canvas_course.button.zoom.title": "Reunión Zoom",
-    "panel.syllabus_canvas_course.button.grades.title": "Los grados",
+    "panel.home_canvas_course.button.modules.title": "Módulos",
+    "panel.home_canvas_course.button.assignments.title": "Tareas",
+    "panel.home_canvas_course.button.zoom.title": "Reunión Zoom",
+    "panel.home_canvas_course.button.grades.title": "Los grados",
 
     "panel.syllabus_html.header.title": "Programa de estudios",
     "panel.syllabus_html.load.failed.error.msg": "No se pudo cargar el contenido del programa de estudios. Por favor, inténtelo de nuevo más tarde.",

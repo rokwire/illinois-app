@@ -1928,14 +1928,10 @@
 	"panel.home_canvas_course.button.calendar.title": "日曆",
 	"panel.home_canvas_course.button.notifications.title": "通知",
 	"panel.home_canvas_course.button.notitification.history.title": "通知歷史",
-
-	"panel.syllabus_canvas_course.header.title": "教學大綱",
-	"panel.syllabus_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",
-	"panel.syllabus_canvas_course.button.syllabus.title": "教學大綱",
-	"panel.syllabus_canvas_course.button.modules.title": "模塊",
-	"panel.syllabus_canvas_course.button.assignments.title": "作業",
-	"panel.syllabus_canvas_course.button.zoom.title": "變焦會議",
-	"panel.syllabus_canvas_course.button.grades.title": "成績",
+	"panel.home_canvas_course.button.modules.title": "模塊",
+	"panel.home_canvas_course.button.assignments.title": "作業",
+	"panel.home_canvas_course.button.zoom.title": "變焦會議",
+	"panel.home_canvas_course.button.grades.title": "成績",
 
 	"panel.syllabus_html.header.title": "教學大綱",
 	"panel.syllabus_html.load.failed.error.msg": "未能加載課程內容. 請稍後再試.",

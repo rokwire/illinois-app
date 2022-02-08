@@ -1962,14 +1962,10 @@
     "panel.home_canvas_course.button.calendar.title": "Calendar",
     "panel.home_canvas_course.button.notifications.title": "Notifications",
     "panel.home_canvas_course.button.notitification.history.title": "Notification history",
-
-    "panel.syllabus_canvas_course.header.title": "Syllabus",
-    "panel.syllabus_canvas_course.load.failed.error.msg": "Failed to load course. Please, try again later.",
-    "panel.syllabus_canvas_course.button.syllabus.title": "Syllabus",
-    "panel.syllabus_canvas_course.button.modules.title": "Modules",
-    "panel.syllabus_canvas_course.button.assignments.title": "Assignments",
-    "panel.syllabus_canvas_course.button.zoom.title": "Zoom Meeting",
-    "panel.syllabus_canvas_course.button.grades.title": "Grades",
+    "panel.home_canvas_course.button.modules.title": "Modules",
+    "panel.home_canvas_course.button.assignments.title": "Assignments",
+    "panel.home_canvas_course.button.zoom.title": "Zoom Meeting",
+    "panel.home_canvas_course.button.grades.title": "Grades",
 
     "panel.syllabus_html.header.title": "Syllabus",
     "panel.syllabus_html.load.failed.error.msg": "Failed to load syllabus content. Please, try again later.",
