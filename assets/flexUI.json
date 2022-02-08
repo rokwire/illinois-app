@@ -10,7 +10,7 @@
 
 		"home.gies_only_content": ["twitter", "gies2", "canvas_courses"],
 
-		"home.twitter.user": ["gies2"],
+		"home.twitter.user": ["gies"],
 
 		"wallet": ["connect", "content", "cards"],
 		"wallet.connect":["netid", "phone_or_email"],

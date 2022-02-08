@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Canvas Course header is cut off [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 - Canvas Calendar overflowing [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Fixed missing Twitter Home widget for gies user [#1320](https://github.com/rokwire/illinois-app/issues/1320).
 
 ## [3.2.14] - 2022-02-07
 ### Added
