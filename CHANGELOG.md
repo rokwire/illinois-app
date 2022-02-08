@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- HomeSaferWidget: add semantics label (id) for each button [#1281](https://github.com/rokwire/illinois-app/issues/1281).
+### Changed
+- IDCardPanel: add more detailed semantics label (id) for building access image [#881](https://github.com/rokwire/illinois-app/issues/881).
+
+## [3.2.14] - 2022-02-07
+### Added
 - Canvas Modules data model and UI [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 ### Changed
 - Rokwire plugin moved to a separate repository [#1203](https://github.com/rokwire/illinois-app/issues/1203).
