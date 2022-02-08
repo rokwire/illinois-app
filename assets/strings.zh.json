@@ -1932,6 +1932,7 @@
 	"panel.home_canvas_course.button.assignments.title": "作業",
 	"panel.home_canvas_course.button.zoom.title": "變焦會議",
 	"panel.home_canvas_course.button.grades.title": "成績",
+    "panel.home_canvas_course.button.group.title": "團體",
 
 	"panel.syllabus_html.header.title": "教學大綱",
 	"panel.syllabus_html.load.failed.error.msg": "未能加載課程內容. 請稍後再試.",

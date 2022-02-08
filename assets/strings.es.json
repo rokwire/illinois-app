@@ -1934,6 +1934,7 @@
     "panel.home_canvas_course.button.assignments.title": "Tareas",
     "panel.home_canvas_course.button.zoom.title": "Reunión Zoom",
     "panel.home_canvas_course.button.grades.title": "Los grados",
+    "panel.home_canvas_course.button.group.title": "Grupo",
 
     "panel.syllabus_html.header.title": "Programa de estudios",
     "panel.syllabus_html.load.failed.error.msg": "No se pudo cargar el contenido del programa de estudios. Por favor, inténtelo de nuevo más tarde.",

@@ -20,6 +20,7 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/ui/canvas/CanvasAccountNotificationsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseModulesPanel.dart';
 import 'package:illinois/ui/canvas/CanvasSyllabusHtmlPanel.dart';
+import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -175,6 +176,12 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
           label: Localization().getStringEx('panel.home_canvas_course.button.grades.title', 'Grades'),
           hint: Localization().getStringEx('panel.home_canvas_course.button.grades.hint', ''),
           leftIcon: 'images/icon-settings.png'),
+      _buildDelimiter(),
+      RibbonButton(
+          label: Localization().getStringEx('panel.home_canvas_course.button.group.title', 'Group'),
+          hint: Localization().getStringEx('panel.home_canvas_course.button.group.hint', ''),
+          leftIcon: 'images/icon-canvas-implemented-working.png',
+          onTap: _onTapGroup),
       _buildDelimiter()
     ]);
   }
@@ -221,6 +228,11 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   void _onTapModules() {
     Analytics().logSelect(target: 'Canvas Course -> Modules');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseModulesPanel(courseId: widget.courseId!)));
+  }
+
+  void _onTapGroup() {
+    Analytics().logSelect(target: 'Canvas Course -> Group');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
   void _loadCourse() {

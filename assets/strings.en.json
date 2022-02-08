@@ -1966,6 +1966,7 @@
     "panel.home_canvas_course.button.assignments.title": "Assignments",
     "panel.home_canvas_course.button.zoom.title": "Zoom Meeting",
     "panel.home_canvas_course.button.grades.title": "Grades",
+    "panel.home_canvas_course.button.group.title": "Group",
 
     "panel.syllabus_html.header.title": "Syllabus",
     "panel.syllabus_html.load.failed.error.msg": "Failed to load syllabus content. Please, try again later.",
