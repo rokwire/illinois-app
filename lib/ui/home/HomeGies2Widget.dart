@@ -181,22 +181,14 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                 borderRadius: BorderRadius.circular(5)),
             child: Column(
               children: [
-                // Row(children: [
-                //   Expanded(child:
-                //   Text(Localization().getStringEx(
-                //       'widget.gies2.message.progress', 'Completed steps')! + " $_completedStpsCount of $_stepsCount",
-                //     style: TextStyle(color: Styles().colors!.fillColorPrimary,
-                //       fontFamily: Styles().fontFamilies!.extraBold,
-                //       fontSize: 32,),),),
-                // ],),
                 Row(children: [
                   Expanded(child:
                     Semantics(
                       container: true,
-                      child: Text("$_completedPagesNames ${Localization().getStringEx('widget.gies2.message.progress.completed', 'completed')!}",
+                      child: Text(_progressText,
                         style: TextStyle(color: Styles().colors!.fillColorPrimary,
                           fontFamily: Styles().fontFamilies!.extraBold,
-                          fontSize: 32,),),)),
+                          fontSize: 24,),),)),
                     ],),
                 Container(height: 24,),
                 ScalableRoundedButton(
@@ -222,6 +214,32 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
     });
   }
 
+  String get _progressText {
+    List<String> completed = [];
+    List<String> notCompleted = [];
+    String completedNames = "";
+    String notCompletedNames = "";
+    for(int stepId in Gies().progressSteps??[]){
+      if(Gies().isProgressStepCompleted(stepId)){
+        completed.add(stepId.toString());
+        completedNames+= StringUtils.isNotEmpty(completedNames)? ", " : "";
+        completedNames+= stepId.toString();
+      } else {
+        notCompleted.add(stepId.toString());
+      }
+    }
+    String completedText = "Step${completed.length>1 ? "s" : ""} $completedNames completed${notCompleted.length>0?"," : ""}";
+
+    for(String stepName in notCompleted){
+      notCompletedNames+= StringUtils.isNotEmpty(notCompletedNames)?
+        "${notCompleted.last == stepName ? " and" : ","} " :
+        "";
+      notCompletedNames+= stepName.toString();
+    }
+    String notCompletedText = notCompletedNames.length>0? "$notCompletedNames ${notCompleted.length>1 ? "are" : "is"} incomplete." :"";
+    return "$completedText $notCompletedText";
+  }
+
   bool get _isStarted {
     return _completedStpsCount > 0;
   }
@@ -236,16 +254,6 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
 
   int get _stepsCount {
     return Gies().progressSteps?.length ?? 0;
-  }
-  String get _completedPagesNames {
-    String result = "";
-    for(int stepId in Gies().progressSteps??[]){
-      if(Gies().isProgressStepCompleted(stepId)){
-        result+= StringUtils.isNotEmpty(result)? ", " : "";
-        result+= stepId.toString();
-      }
-    }
-    return result;
   }
 
   @override

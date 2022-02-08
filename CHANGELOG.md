@@ -11,11 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Canvas "Feedback" button that reports an error [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 ### Changed
 - IDCardPanel: add more detailed semantics label (id) for building access image [#881](https://github.com/rokwire/illinois-app/issues/881).
+<<<<<<< HEAD
+- HomeGies widget content update [#1316](https://github.com/rokwire/illinois-app/issues/1316).
+=======
 - Canvas "Inbox" to "Notification history" [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 - Moved all items from CanvasCourseSyllabusPanel to CanvasCourseHomePanel [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 ### Fixed
 - Canvas Course header is cut off [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 - Canvas Calendar overflowing [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+>>>>>>> 998e48922575ae129f5b83d3e48031b9a6c54c07
 
 ## [3.2.14] - 2022-02-07
 ### Added
