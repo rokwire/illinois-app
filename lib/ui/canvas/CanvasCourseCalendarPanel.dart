@@ -71,24 +71,25 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
   }
 
   Widget _buildContent() {
+    double horizontalPadding = 16;
     return SwipeDetector(
         onSwipeLeft: _onSwipeLeft,
         onSwipeRight: _onSwipeRight,
-        child: Column(children: [
-          Expanded(
-              child: SingleChildScrollView(
-                  child: Padding(
-                      padding: EdgeInsets.all(16),
+        child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Column(children: [
+              Expanded(
+                  child: SingleChildScrollView(
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Padding(
-                            padding: EdgeInsets.only(bottom: 20),
-                            child: Row(
-                              children: [_buildYearDropDown(), Container(width: 16), _buildMonthDropDown()],
-                            )),
-                        Padding(padding: EdgeInsets.only(bottom: 20), child: _buildWeekDaysWidget()),
-                        _buildEventsContent()
-                      ]))))
-        ]));
+                Padding(
+                    padding: EdgeInsets.only(left: horizontalPadding, right: horizontalPadding, bottom: 20),
+                    child: Row(
+                      children: [_buildYearDropDown(), Container(width: 16), _buildMonthDropDown()],
+                    )),
+                Padding(padding: EdgeInsets.only(left: 5, right: 5, bottom: 20), child: _buildWeekDaysWidget()),
+                Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding), child: _buildEventsContent())
+              ])))
+            ])));
   }
 
   void _onSwipeLeft() {
@@ -107,14 +108,21 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
 
   Widget _buildErrorContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_calendar.load.failed.error.msg', 'Failed to load events. Please, try again later.')!,
-            textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 28),
+            child: Text(
+                Localization()
+                    .getStringEx('panel.canvas_calendar.load.failed.error.msg', 'Failed to load events. Please, try again later.')!,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
   Widget _buildEmptyContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_calendar.empty.msg', 'There are no events today.')!,
-            textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 28),
+            child: Text(Localization().getStringEx('panel.canvas_calendar.empty.msg', 'There are no events today.')!,
+                textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
   Widget _buildEventsContent() {
@@ -206,19 +214,20 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
     return Container(
       height: 48,
       decoration: BoxDecoration(
-          color: Colors.white, border: Border.all(color: Styles().colors!.lightGray!, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))),
-      child: Padding(padding: EdgeInsets.only(left: 10),
+          color: Colors.white,
+          border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+          borderRadius: BorderRadius.all(Radius.circular(4))),
+      child: Padding(
+          padding: EdgeInsets.only(left: 10),
           child: DropdownButtonHideUnderline(
               child: DropdownButton(
-                style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
-                items: _buildYearDropDownItems,
-                value: _selectedDate.year,
-                onChanged: (year) => _onYearChanged(year),
-              )
-          )
-      ),
+            style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+            items: _buildYearDropDownItems,
+            value: _selectedDate.year,
+            onChanged: (year) => _onYearChanged(year),
+          ))),
     );
-  } 
+  }
 
   List<DropdownMenuItem<int>> get _buildYearDropDownItems {
     int currentYear = DateTime.now().year;
@@ -239,19 +248,20 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
     return Container(
       height: 48,
       decoration: BoxDecoration(
-          color: Colors.white, border: Border.all(color: Styles().colors!.lightGray!, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))),
-      child: Padding(padding: EdgeInsets.only(left: 10),
+          color: Colors.white,
+          border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+          borderRadius: BorderRadius.all(Radius.circular(4))),
+      child: Padding(
+          padding: EdgeInsets.only(left: 10),
           child: DropdownButtonHideUnderline(
               child: DropdownButton(
-                style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
-                items: _buildMonthDropDownItems,
-                value: _selectedDate.month,
-                onChanged: (month) => _onMonthChanged(month),
-              )
-          )
-      ),
+            style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
+            items: _buildMonthDropDownItems,
+            value: _selectedDate.month,
+            onChanged: (month) => _onMonthChanged(month),
+          ))),
     );
-  } 
+  }
 
   List<DropdownMenuItem<int>> get _buildMonthDropDownItems {
     List<DropdownMenuItem<int>> items = [];
@@ -272,16 +282,18 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
 
     List<Widget> dayWidgetList = [];
     for (int i = 1; i < 8; i++) {
-      Widget dayWidget = GestureDetector(onTap: () => _onTapWeekDay(i), child: Container(
-        padding: EdgeInsets.all(10),
-          decoration: _weekDayBoxDecoration(currentWeekDate),
-          child: Column(children: [
-            Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'E')),
-                style: TextStyle(color: _weekDayTextColor(currentWeekDate), fontFamily: Styles().fontFamilies!.bold)),
-            Container(width: 10),
-            Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'd')),
-                style: TextStyle(color: _weekDayTextColor(currentWeekDate), fontSize: 18))
-          ])));
+      Widget dayWidget = GestureDetector(
+          onTap: () => _onTapWeekDay(i),
+          child: Container(
+              padding: EdgeInsets.all(10),
+              decoration: _weekDayBoxDecoration(currentWeekDate),
+              child: Column(children: [
+                Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'E')),
+                    style: TextStyle(color: _weekDayTextColor(currentWeekDate), fontFamily: Styles().fontFamilies!.bold)),
+                Container(width: 10),
+                Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'd')),
+                    style: TextStyle(color: _weekDayTextColor(currentWeekDate), fontSize: 18))
+              ])));
       dayWidgetList.add(dayWidget);
       currentWeekDate = currentWeekDate.add(Duration(days: 1));
     }
