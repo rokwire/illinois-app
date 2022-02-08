@@ -16,11 +16,16 @@ The official mobile app of the University of Illinois. Powered by the [Rokwire P
 
 
 ### Clone this repo
-git clone https://github.com/rokwire/illinois-app.git
+```
+git clone --recurse-submodules https://github.com/rokwire/illinois-app.git
+```
 
-### Clone services flutter plugin used by Illinois app
+### Make sure app flutter plugin persist
+Rokwire app flutter plugin is used by the Illinois app. It should be located in the `plugin` subdirectory of the application's root project directory. If it does not exist you need to clone it manually.
+```
 cd illinois-app.git
-git clone https://github.com/rokwire/services-flutter-pligin.git plugin
+git clone https://github.com/rokwire/app-flutter-plugin.git plugin
+```
 
 ### Supply the following private configuration files:
 
