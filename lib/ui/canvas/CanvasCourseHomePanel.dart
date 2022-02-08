@@ -18,6 +18,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/ui/canvas/CanvasAccountNotificationsPanel.dart';
+import 'package:illinois/ui/canvas/CanvasCourseModulesPanel.dart';
+import 'package:illinois/ui/canvas/CanvasFeedbackPanel.dart';
+import 'package:illinois/ui/canvas/CanvasSyllabusHtmlPanel.dart';
+import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -25,7 +29,6 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:illinois/ui/canvas/CanvasCourseAnnouncementsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseCalendarPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseCollaborationsPanel.dart';
-import 'package:illinois/ui/canvas/CanvasCourseSyllabusPanel.dart';
 import 'package:illinois/ui/canvas/CanvasFileSystemEntitiesListPanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -116,7 +119,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.syllabus.title', 'Syllabus'),
           hint: Localization().getStringEx('panel.home_canvas_course.button.syllabus.hint', ''),
-          leftIcon: 'images/icon-canvas-partially-implemented.png',
+          leftIcon: 'images/icon-canvas-implemented-working.png',
           onTap: _onTapSyllabus),
       _buildDelimiter(),
       RibbonButton(
@@ -150,11 +153,44 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
           onTap: _onTapNotifications),
       _buildDelimiter(),
       RibbonButton(
-          label: Localization().getStringEx('panel.home_canvas_course.button.inbox.title', 'Inbox'),
-          hint: Localization().getStringEx('panel.home_canvas_course.button.inbox.hint', ''),
+          label: Localization().getStringEx('panel.home_canvas_course.button.notitification.history.title', 'Notification history'),
+          hint: Localization().getStringEx('panel.home_canvas_course.button.notitification.history.hint', ''),
           leftIcon: 'images/icon-canvas-implemented-working.png',
-          onTap: _onTapInbox),
+          onTap: _onTapNotificationHistory),
       _buildDelimiter(),
+      RibbonButton(
+          label: Localization().getStringEx('panel.home_canvas_course.button.modules.title', 'Modules'),
+          hint: Localization().getStringEx('panel.home_canvas_course.button.modules.hint', ''),
+          leftIcon: 'images/icon-canvas-implemented-working.png',
+          onTap: _onTapModules),
+      _buildDelimiter(),
+      RibbonButton(
+          label: Localization().getStringEx('panel.home_canvas_course.button.assignments.title', 'Assignments'),
+          hint: Localization().getStringEx('panel.home_canvas_course.button.assignments.hint', ''),
+          leftIcon: 'images/icon-settings.png'),
+      _buildDelimiter(),
+      RibbonButton(
+          label: Localization().getStringEx('panel.home_canvas_course.button.zoom.title', 'Zoom Meeting'),
+          hint: Localization().getStringEx('panel.home_canvas_course.button.zoom.hint', ''),
+          leftIcon: 'images/icon-settings.png'),
+      _buildDelimiter(),
+      RibbonButton(
+          label: Localization().getStringEx('panel.home_canvas_course.button.grades.title', 'Grades'),
+          hint: Localization().getStringEx('panel.home_canvas_course.button.grades.hint', ''),
+          leftIcon: 'images/icon-settings.png'),
+      _buildDelimiter(),
+      RibbonButton(
+          label: Localization().getStringEx('panel.home_canvas_course.button.group.title', 'Group'),
+          hint: Localization().getStringEx('panel.home_canvas_course.button.group.hint', ''),
+          leftIcon: 'images/icon-canvas-implemented-working.png',
+          onTap: _onTapGroup),
+      _buildDelimiter(),
+      RibbonButton(
+          label: Localization().getStringEx('panel.home_canvas_course.button.feedback.title', 'Feedback'),
+          hint: Localization().getStringEx('panel.home_canvas_course.button.feedback.hint', ''),
+          leftIcon: 'images/icon-canvas-implemented-working.png',
+          onTap: _onTapFeedback),
+      _buildDelimiter()
     ]);
   }
 
@@ -163,38 +199,53 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   }
 
   void _onTapSyllabus() {
-    Analytics().logSelect(target: "Canvas Course -> Syllabus");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseSyllabusPanel(courseId: widget.courseId!)));
+    Analytics().logSelect(target: 'Canvas Course -> Syllabus');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasSyllabusHtmlPanel(courseId: widget.courseId!)));
   }
 
   void _onTapAnnouncements() {
-    Analytics().logSelect(target: "Canvas Course -> Announcements");
+    Analytics().logSelect(target: 'Canvas Course -> Announcements');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAnnouncementsPanel(courseId: widget.courseId!)));
   }
 
   void _onTapFiles() {
-    Analytics().logSelect(target: "Canvas Course -> Files");
+    Analytics().logSelect(target: 'Canvas Course -> Files');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFileSystemEntitiesListPanel(courseId: widget.courseId)));
   }
 
   void _onTapCollaborations() {
-    Analytics().logSelect(target: "Canvas Course -> Collaborations");
+    Analytics().logSelect(target: 'Canvas Course -> Collaborations');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseCollaborationsPanel(courseId: widget.courseId!)));
   }
 
   void _onTapCalendar() {
-    Analytics().logSelect(target: "Canvas Course -> Calendar");
+    Analytics().logSelect(target: 'Canvas Course -> Calendar');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseCalendarPanel(courseId: widget.courseId!)));
   }
 
   void _onTapNotifications() {
-    Analytics().logSelect(target: "Canvas Course -> Notifications");
+    Analytics().logSelect(target: 'Canvas Course -> Notifications');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAccountNotificationsPanel()));
   }
 
-  void _onTapInbox() {
-    Analytics().logSelect(target: "Canvas Course -> Inbox");
+  void _onTapNotificationHistory() {
+    Analytics().logSelect(target: 'Canvas Course -> Notification history');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => InboxHomePanel()));
+  }
+
+  void _onTapModules() {
+    Analytics().logSelect(target: 'Canvas Course -> Modules');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseModulesPanel(courseId: widget.courseId!)));
+  }
+
+  void _onTapGroup() {
+    Analytics().logSelect(target: 'Canvas Course -> Group');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+  }
+
+  void _onTapFeedback() {
+    Analytics().logSelect(target: 'Canvas Course -> Feedback');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFeedbackPanel()));
   }
 
   void _loadCourse() {
