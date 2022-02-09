@@ -374,7 +374,6 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                         backgroundColor: Colors.white,
                         borderColor: Styles().colors!.fillColorPrimary,
                         textColor: Styles().colors!.fillColorPrimary,
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                         progress: (_progressPollStatus == PollStatus.created),
                         onTap: () {
                           _onCreatePoll(status: PollStatus.created);
@@ -391,7 +390,6 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                         backgroundColor: Colors.white,
                         borderColor: Styles().colors!.fillColorSecondary,
                         textColor: Styles().colors!.fillColorPrimary,
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                         progress: (_progressPollStatus == PollStatus.opened),
                         onTap: () {
                           _onCreatePoll(status: PollStatus.opened);
