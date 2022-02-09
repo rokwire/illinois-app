@@ -21,6 +21,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/main.dart';
+import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -55,6 +57,7 @@ import 'package:illinois/ui/widgets/PopupDialog.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/service/Canvas.dart';
 
 enum RootTab { Home, Athletics, Explore, Wallet, Browse }
 
@@ -116,6 +119,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
       Guide.notifyGuideDetail,
+      Canvas.notifyCanvasEventDetail,
       Localization.notifyStringsUpdated,
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
@@ -194,6 +198,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Guide.notifyGuideDetail) {
       _onGuideDetail(param);
+    }
+    else if (name == Canvas.notifyCanvasEventDetail) {
+      _onCanvasEventDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
@@ -484,6 +491,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       if (mounted) {
         setState(() {}); // Force the postFrameCallback invokation.
       }
+    }
+  }
+
+  Future<void> _onCanvasEventDetail(Map<String, dynamic>? content) async {
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) : null;
+    if (StringUtils.isNotEmpty(eventId)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(event: CanvasCalendarEvent(title: "Test Deeplink", id: 1, createdAt: DateTime.now(), endAt: DateTime.now()),))); //TBD Remove Test and  pass real id
     }
   }
 

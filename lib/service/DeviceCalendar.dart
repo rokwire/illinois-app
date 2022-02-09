@@ -1,6 +1,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/service/Canvas.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -139,7 +140,7 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
         internalEventId: event.id?.toString(),
         startDate: event.startAtLocal,
         endDate: event.endAtLocal,
-        // deepLinkUrl: "${Events().eventDetailUrl}?event_id=${event.id}" //TBD use when deeplink is supported for CanvasCalendarEvent
+        deepLinkUrl: "${Canvas().canvasEventDetailUrl}?event_id=${event.id}"
     ) : null;
   }
 }

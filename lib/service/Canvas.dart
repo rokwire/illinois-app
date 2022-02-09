@@ -19,15 +19,18 @@ import 'dart:io';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 
-class Canvas with Service {
-
+class Canvas with Service implements NotificationsListener{
+  static const String notifyCanvasEventDetail = "edu.illinois.rokwire.canvas.event.detail";
+  List<Map<String, dynamic>>? _canvasEventDetailCache;
   // Singleton Factory
 
   Canvas._internal();
@@ -46,6 +49,27 @@ class Canvas with Service {
   @override
   Set<Service> get serviceDependsOn {
     return Set.from([Config(), Auth2()]);
+  }
+
+
+  @override
+  void createService() {
+    super.createService();
+    NotificationService().subscribe(this,[
+      DeepLink.notifyUri,
+    ]);
+    _canvasEventDetailCache = [];
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+    super.destroyService();
+  }
+
+  @override
+  void initServiceUI() {
+    _processCachedDeepLinkDetails();
   }
 
   // Courses
@@ -366,6 +390,63 @@ class Canvas with Service {
     }
   }
 
+  /////////////////////////
+  // DeepLinks
+
+  String get canvasEventDetailUrl => '${DeepLink().appUrl}/canvas_event_detail';
+
+  void _onDeepLinkUri(Uri? uri) {
+    if (uri != null) {
+      Uri? gameUri = Uri.tryParse(canvasEventDetailUrl);
+      if ((gameUri != null) &&
+          (gameUri.scheme == uri.scheme) &&
+          (gameUri.authority == uri.authority) &&
+          (gameUri.path == uri.path))
+      {
+        try { _handleDetail(uri.queryParameters.cast<String, dynamic>()); }
+        catch (e) { print(e.toString()); }
+      }
+    }
+  }
+
+  void _handleDetail(Map<String, dynamic>? params) {
+    if ((params != null) && params.isNotEmpty) {
+      if (_canvasEventDetailCache != null) {
+        _cacheCanvasEventDetail(params);
+      }
+      else {
+        _processDetail(params);
+      }
+    }
+  }
+
+  void _processDetail(Map<String, dynamic> params) {
+    NotificationService().notify(notifyCanvasEventDetail, params);
+  }
+
+  void _cacheCanvasEventDetail(Map<String, dynamic> params) {
+    _canvasEventDetailCache?.add(params);
+  }
+
+  void _processCachedDeepLinkDetails() {
+    if (_canvasEventDetailCache != null) {
+      List<Map<String, dynamic>> gameDetailsCache = _canvasEventDetailCache!;
+      _canvasEventDetailCache = null;
+
+      for (Map<String, dynamic> gameDetail in gameDetailsCache) {
+        _processDetail(gameDetail);
+      }
+    }
+  }
+
+  //Notifications
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == DeepLink.notifyUri) {
+      _onDeepLinkUri(param);
+    }
+  }
+
   // Helpers
 
   Map<String, String>? get _authHeaders {
@@ -387,6 +468,7 @@ class Canvas with Service {
         return null;
     }
   }
+
 }
 
 enum CanvasIncludeInfo { syllabus }
