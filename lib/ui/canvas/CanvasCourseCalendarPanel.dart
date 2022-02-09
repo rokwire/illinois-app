@@ -84,7 +84,8 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
                 Padding(
                     padding: EdgeInsets.only(left: horizontalPadding, right: horizontalPadding, bottom: 20),
                     child: Row(
-                      children: [_buildYearDropDown(), Container(width: 16), _buildMonthDropDown()],
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [_buildYearDropDown(), _buildMonthDropDown()],
                     )),
                 Padding(padding: EdgeInsets.only(left: 5, right: 5, bottom: 10), child: _buildWeekChangeArrows()),
                 Padding(padding: EdgeInsets.only(left: 5, right: 5, bottom: 20), child: _buildWeekDaysWidget()),
