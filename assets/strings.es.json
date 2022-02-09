@@ -1967,6 +1967,7 @@
     "panel.canvas_calendar_event.header.title": "Evento de calendario",
     "panel.canvas_calendar_event.calendar.label": "Calendario:",
     "panel.canvas_calendar_event.date_time.label": "Fecha y hora:",
+    "panel.canvas_calendar_event.load.failed.error.msg": "No se pudo cargar el evento. Por favor, inténtelo de nuevo más tarde.",
 
     "panel.canvas_modules.header.title": "Módulos",
     "panel.canvas_modules.load.failed.error.msg": "No se pudieron cargar los módulos. Por favor, inténtelo de nuevo más tarde.",

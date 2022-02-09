@@ -16,6 +16,7 @@
 
 import 'package:collection/collection.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 final String _canvasServerDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
@@ -1043,7 +1044,7 @@ class CanvasCollaboration {
 ////////////////////////////////
 // CanvasCalendarEvent
 
-class CanvasCalendarEvent {
+class CanvasCalendarEvent implements Favorite {
   final int? id;
   final String? title;
   final DateTime? startAt;
@@ -1236,6 +1237,20 @@ class CanvasCalendarEvent {
     }
     return result;
   }
+
+  ////////////////////////////
+  // Favorite implementation
+
+  @override
+  String? get favoriteId => id?.toString();
+
+  @override
+  String get favoriteTitle => StringUtils.ensureNotEmpty(title);
+
+  @override
+  String get favoriteKey => _favoriteKeyName;
+
+  static String _favoriteKeyName = "canvasCalendarEventIds";
 }
 
 

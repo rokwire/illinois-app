@@ -1999,6 +1999,7 @@
     "panel.canvas_calendar_event.header.title": "Calendar Event",
     "panel.canvas_calendar_event.calendar.label": "Calendar:",
     "panel.canvas_calendar_event.date_time.label": "Date & Time:",
+    "panel.canvas_calendar_event.load.failed.error.msg": "Failed to load event. Please, try again later.",
 
     "panel.canvas_modules.header.title": "Modules",
     "panel.canvas_modules.load.failed.error.msg": "Failed to load modules. Please, try again later.",
