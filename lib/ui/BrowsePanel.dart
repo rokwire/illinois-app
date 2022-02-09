@@ -305,7 +305,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (code == 'inbox') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.inbox.title', 'Inbox'),
+        title: Localization().getStringEx('panel.browse.button.inbox.title', 'Notifications'),
         hint: Localization().getStringEx('panel.browse.button.inbox.hint', ''),
         icon: 'images/icon-browse-inbox.png',
         textColor: Styles().colors!.fillColorPrimary,
