@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Authman Groups UI improvements [#1323](https://github.com/rokwire/illinois-app/issues/1323).
+
+## [3.2.15] - 2022-02-08
+### Added
 - HomeSaferWidget: add semantics label (id) for each button [#1281](https://github.com/rokwire/illinois-app/issues/1281).
 - Canvas "Group" button that redirects to GroupsHomePanel [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 - Canvas "Feedback" button that reports an error [#1274](https://github.com/rokwire/illinois-app/issues/1274).
@@ -16,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Canvas Course header is cut off [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 - Canvas Calendar overflowing [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- HomeGies widget content update [#1316](https://github.com/rokwire/illinois-app/issues/1316).
+- Fixed missing Twitter Home widget for gies user [#1320](https://github.com/rokwire/illinois-app/issues/1320).
 
 ## [3.2.14] - 2022-02-07
 ### Added
