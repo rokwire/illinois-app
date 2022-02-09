@@ -992,12 +992,17 @@ class GroupCard extends StatelessWidget {
 
     List<Widget> rightContent = <Widget>[];
 
-    String? privacyStatus;
+    String privacyStatus = '';
+    if (group?.authManEnabled ?? false) {
+      privacyStatus = ' ' + Localization().getStringEx('widget.group_card.status.authman', 'Managed')!;
+    }
     if (group?.privacy == GroupPrivacy.private) {
-      privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private') ;
+      privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private')! + privacyStatus;
+    } else if (StringUtils.isNotEmpty(privacyStatus)) {
+      privacyStatus = Localization().getStringEx('widget.group_card.status.public', 'Public')! + privacyStatus;
     }
 
-    if (privacyStatus != null) {
+    if (StringUtils.isNotEmpty(privacyStatus)) {
       rightContent.add(
         Semantics(
           label: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: ')!, [privacyStatus]),

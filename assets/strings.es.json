@@ -2221,6 +2221,8 @@
     "widget.group.card.reply.edited.reply.label": "edited",
 
     "widget.group_card.status.private": "Private",
+    "widget.group_card.status.public": "Public",
+    "widget.group_card.status.authman": "Managed",
     "widget.group_card.status.hidden": "Hidden",
     "widget.group_card.status.hint": "status: %s ,for: ",
 
