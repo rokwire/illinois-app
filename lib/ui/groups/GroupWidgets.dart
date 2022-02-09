@@ -958,7 +958,12 @@ class GroupCard extends StatelessWidget {
                     ),
                   ),
                   Container(height: 4),
-                  (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups ) ? _buildUpdateTime() : Container()
+                  (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups)
+                      ? Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          _buildUpdateTime(),
+                          Visibility(visible: (group?.authManEnabled ?? false), child: _buildMembersCount())
+                        ])
+                      : Container()
                 ]))));
   }
 
@@ -992,12 +997,17 @@ class GroupCard extends StatelessWidget {
 
     List<Widget> rightContent = <Widget>[];
 
-    String? privacyStatus;
+    String privacyStatus = '';
+    if (group?.authManEnabled ?? false) {
+      privacyStatus = ' ' + Localization().getStringEx('widget.group_card.status.authman', 'Managed')!;
+    }
     if (group?.privacy == GroupPrivacy.private) {
-      privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private') ;
+      privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private')! + privacyStatus;
+    } else if (StringUtils.isNotEmpty(privacyStatus)) {
+      privacyStatus = Localization().getStringEx('widget.group_card.status.public', 'Public')! + privacyStatus;
     }
 
-    if (privacyStatus != null) {
+    if (StringUtils.isNotEmpty(privacyStatus)) {
       rightContent.add(
         Semantics(
           label: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: ')!, [privacyStatus]),
@@ -1034,6 +1044,16 @@ class GroupCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface,),
     ));
+  }
+
+  Widget _buildMembersCount() {
+    int count = group!.membersCount;
+    String membersLabel = (count == 1)
+        ? Localization().getStringEx('widget.group_card.member.label', 'member')!
+        : Localization().getStringEx('widget.group_card.members.label', 'members')!;
+    return Container(
+        child: Text('$count $membersLabel',
+            style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface)));
   }
 
   void _onTapCard(BuildContext context) {
