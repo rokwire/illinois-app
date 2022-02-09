@@ -362,6 +362,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
           Column(children: <Widget>[
             ScalableRoundedButton(
               backgroundColor: Styles().colors!.white,
+              borderColor: Styles().colors!.white,
               textColor: UiColors.fromHex("#f54400"),
               fontSize: 16,
               fontFamily: Styles().fontFamilies!.regular,

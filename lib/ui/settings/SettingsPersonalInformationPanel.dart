@@ -68,6 +68,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
                 Container(height: 24,),
                 ScalableRoundedButton(
                   backgroundColor: Styles().colors!.white,
+                  borderColor: Styles().colors!.white,
                   textColor: UiColors.fromHex("#f54400"),
                   fontSize: 16,
                   fontFamily: Styles().fontFamilies!.regular,
