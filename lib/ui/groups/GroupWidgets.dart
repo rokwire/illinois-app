@@ -2423,7 +2423,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
         footerWidgets.add(_createVoteButton());
         footerWidgets.add(Container(height:8));
       }
-      if (poll.isMine) {
+      if (_canEnd) {
         footerWidgets.add(_createEndPollButton());
         footerWidgets.add(Container(height:8));
       }
@@ -2650,6 +2650,11 @@ class _GroupPollCardState extends State<GroupPollCard>{
         ) &&
         (!widget.poll!.isGeoFenced || GeoFence().currentRegionIds.contains(widget.poll!.regionId))
     );
+  }
+
+  bool get _canEnd {
+    return (widget.poll?.isMine ?? false) ||
+        (widget.group?.currentUserIsAdmin ?? false);
   }
 
   String get _pollVotesStatus {
