@@ -294,20 +294,27 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
     for (int i = 1; i < 8; i++) {
       Widget dayWidget = GestureDetector(
           onTap: () => _onTapWeekDay(i),
-          child: Container(
-              padding: EdgeInsets.all(10),
-              decoration: _weekDayBoxDecoration(currentWeekDate),
-              child: Column(children: [
-                Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'E')),
-                    style: TextStyle(color: _weekDayTextColor(currentWeekDate), fontFamily: Styles().fontFamilies!.bold)),
-                Container(width: 10),
-                Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'd')),
-                    style: TextStyle(color: _weekDayTextColor(currentWeekDate), fontSize: 18))
-              ])));
+          child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'E')),
+                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+            Padding(
+                padding: EdgeInsets.only(top: 3),
+                child: Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: _weekDayBoxDecoration(currentWeekDate),
+                    child: Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'd')),
+                        style: TextStyle(color: _weekDayTextColor(currentWeekDate), fontSize: 18)))),
+            Visibility(
+                visible: _hasEvent(currentWeekDate),
+                child: Padding(
+                    padding: EdgeInsets.only(top: 5),
+                    child: Container(
+                        decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, shape: BoxShape.circle), width: 6, height: 6)))
+          ]));
       dayWidgetList.add(dayWidget);
       currentWeekDate = currentWeekDate.add(Duration(days: 1));
     }
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: dayWidgetList);
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: dayWidgetList);
   }
 
   BoxDecoration _weekDayBoxDecoration(DateTime date) {
@@ -331,6 +338,22 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
 
   bool _isSelectedDay(DateTime currentDate) {
     return (currentDate.year == _selectedDate.year) && (currentDate.month == _selectedDate.month) && (currentDate.day == _selectedDate.day);
+  }
+
+  bool _hasEvent(DateTime date) {
+    if (CollectionUtils.isEmpty(_events)) {
+      return false;
+    }
+    for (CanvasCalendarEvent event in _events!) {
+      DateTime? eventStartDateLocal = event.startAtLocal;
+      if ((eventStartDateLocal != null) &&
+          (eventStartDateLocal.year == date.year) &&
+          (eventStartDateLocal.month == date.month) &&
+          (eventStartDateLocal.day == date.day)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   void _onTapWeekDay(int weekDay) {
