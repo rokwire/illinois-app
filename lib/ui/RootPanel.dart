@@ -21,7 +21,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/main.dart';
-import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -497,7 +496,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   Future<void> _onCanvasEventDetail(Map<String, dynamic>? content) async {
     String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) : null;
     if (StringUtils.isNotEmpty(eventId)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(event: CanvasCalendarEvent(title: "Test Deeplink", id: 1, createdAt: DateTime.now(), endAt: DateTime.now()),))); //TBD Remove Test and  pass real id
+      int? eventIdValue = int.tryParse(eventId!);
+      if (eventIdValue != null) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: eventIdValue)));
+      }
     }
   }
 

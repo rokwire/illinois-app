@@ -407,21 +407,19 @@ class Canvas with Service implements NotificationsListener{
     }
   }
 
-  /////////////////////////
-  // DeepLinks
+  // Deep Links
 
   String get canvasEventDetailUrl => '${DeepLink().appUrl}/canvas_event_detail';
 
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri? gameUri = Uri.tryParse(canvasEventDetailUrl);
-      if ((gameUri != null) &&
-          (gameUri.scheme == uri.scheme) &&
-          (gameUri.authority == uri.authority) &&
-          (gameUri.path == uri.path))
-      {
-        try { _handleDetail(uri.queryParameters.cast<String, dynamic>()); }
-        catch (e) { print(e.toString()); }
+      Uri? eventUri = Uri.tryParse(canvasEventDetailUrl);
+      if ((eventUri != null) && (eventUri.scheme == uri.scheme) && (eventUri.authority == uri.authority) && (eventUri.path == uri.path)) {
+        try {
+          _handleDetail(uri.queryParameters.cast<String, dynamic>());
+        } catch (e) {
+          print(e.toString());
+        }
       }
     }
   }
@@ -430,8 +428,7 @@ class Canvas with Service implements NotificationsListener{
     if ((params != null) && params.isNotEmpty) {
       if (_canvasEventDetailCache != null) {
         _cacheCanvasEventDetail(params);
-      }
-      else {
+      } else {
         _processDetail(params);
       }
     }
@@ -456,7 +453,8 @@ class Canvas with Service implements NotificationsListener{
     }
   }
 
-  //Notifications
+  // Notifications
+
   @override
   void onNotification(String name, dynamic param) {
     if (name == DeepLink.notifyUri) {
@@ -474,7 +472,9 @@ class Canvas with Service implements NotificationsListener{
   }
 
   bool get _available {
-    return StringUtils.isNotEmpty(Config().canvasTokenType) && StringUtils.isNotEmpty(Config().canvasToken) && StringUtils.isNotEmpty(Auth2().netId);
+    return StringUtils.isNotEmpty(Config().canvasTokenType) &&
+        StringUtils.isNotEmpty(Config().canvasToken) &&
+        StringUtils.isNotEmpty(Auth2().netId);
   }
 
   static String? _includeInfoToString(CanvasIncludeInfo? include) {
@@ -485,7 +485,6 @@ class Canvas with Service implements NotificationsListener{
         return null;
     }
   }
-
 }
 
 enum CanvasIncludeInfo { syllabus }
