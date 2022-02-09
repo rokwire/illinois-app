@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -27,18 +28,21 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class CanvasCalendarEventDetailPanel extends StatefulWidget {
-  final CanvasCalendarEvent event;
-  CanvasCalendarEventDetailPanel({required this.event});
+  final int eventId;
+  CanvasCalendarEventDetailPanel({required this.eventId});
 
   @override
   _CanvasCalendarEventDetailPanelState createState() => _CanvasCalendarEventDetailPanelState();
 }
 
 class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDetailPanel> implements NotificationsListener {
+  CanvasCalendarEvent? _event;
+  bool _loading = false;
 
   @override
   void initState() {
     NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    _loadEvent();
     super.initState();
   }
 
@@ -46,6 +50,14 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
   void dispose() {
     NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  void _loadEvent() {
+    _setLoading(true);
+    Canvas().loadCalendarEvent(widget.eventId).then((event) {
+      _event = event;
+      _setLoading(false);
+    });
   }
 
   @override
@@ -62,7 +74,32 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
   }
 
   Widget _buildContent() {
-    bool isFavorite = Auth2().isFavorite(widget.event);
+    if (_loading) {
+      return _buildLoadingContent();
+    } else if (_event != null) {
+      return _buildEventContent();
+    } else {
+      return _buildErrorContent();
+    }
+  }
+
+  Widget _buildLoadingContent() {
+    return Center(child: CircularProgressIndicator());
+  }
+
+  Widget _buildErrorContent() {
+    return Center(
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+                Localization()
+                    .getStringEx('panel.canvas_calendar_event.load.failed.error.msg', 'Failed to load event. Please, try again later.')!,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+  }
+
+  Widget _buildEventContent() {
+    bool isFavorite = Auth2().isFavorite(_event);
 
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -72,7 +109,7 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
               Stack(children: [
                 Row(children: [
                   Expanded(
-                      child: Text(StringUtils.ensureNotEmpty(widget.event.title),
+                      child: Text(StringUtils.ensureNotEmpty(_event?.title),
                           maxLines: 5,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -87,8 +124,8 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
                         child: GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: () {
-                              Analytics().logSelect(target: "Favorite: ${widget.event.favoriteTitle}");
-                              Auth2().prefs?.toggleFavorite(widget.event);
+                              Analytics().logSelect(target: "Favorite: ${_event?.favoriteTitle}");
+                              Auth2().prefs?.toggleFavorite(_event);
                             },
                             child: Semantics(
                                 container: true,
@@ -113,7 +150,7 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
                     Expanded(
                         child: Padding(
                             padding: EdgeInsets.only(left: 5),
-                            child: Text(StringUtils.ensureNotEmpty(widget.event.contextName),
+                            child: Text(StringUtils.ensureNotEmpty(_event?.contextName),
                                 maxLines: 5,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -127,13 +164,20 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
                     Expanded(
                         child: Padding(
                             padding: EdgeInsets.only(left: 5),
-                            child: Text(StringUtils.ensureNotEmpty(widget.event.displayDateTime),
+                            child: Text(StringUtils.ensureNotEmpty(_event?.displayDateTime),
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface))))
                   ]))
             ])));
+  }
+
+  void _setLoading(bool loading) {
+    _loading = loading;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   // NotificationsListener

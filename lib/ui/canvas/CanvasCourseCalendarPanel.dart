@@ -234,7 +234,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
 
   void _onTapEvent(CanvasCalendarEvent event) {
     Analytics().logSelect(target: "Canvas Calendar Event");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(event: event)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: event.id!)));
   }
 
   List<CanvasCalendarEvent>? get _visibleEvents {

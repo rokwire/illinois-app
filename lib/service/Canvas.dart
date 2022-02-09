@@ -286,6 +286,23 @@ class Canvas with Service implements NotificationsListener{
     }
   }
 
+  Future<CanvasCalendarEvent?> loadCalendarEvent(int eventId) async {
+    if (!_available) {
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/calendar_events/$eventId';
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      CanvasCalendarEvent? event = CanvasCalendarEvent.fromJson(JsonUtils.decode(responseString));
+      return event;
+    } else {
+      Log.w('Failed to load canvas calendar event with id {$eventId}. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
   // Account Notifications
 
   Future<List<CanvasAccountNotification>?> loadAccountNotifications() async {
