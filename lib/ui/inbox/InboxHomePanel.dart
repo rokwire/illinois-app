@@ -414,7 +414,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   Widget _buildTitle() {
-    return Text(Localization().getStringEx('panel.inbox.label.heading', 'Inbox')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),);
+    return Text(Localization().getStringEx('panel.inbox.label.heading', 'Notifications')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),);
   }
 
   Widget _buildBackButton() {

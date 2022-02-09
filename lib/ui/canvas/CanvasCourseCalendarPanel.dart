@@ -25,7 +25,10 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -37,7 +40,7 @@ class CanvasCourseCalendarPanel extends StatefulWidget {
   _CanvasCourseCalendarPanelState createState() => _CanvasCourseCalendarPanelState();
 }
 
-class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
+class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> implements NotificationsListener {
   List<CanvasCalendarEvent>? _events;
   late DateTime _startDateTime;
   late DateTime _endDateTime;
@@ -46,9 +49,16 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
 
   @override
   void initState() {
-    super.initState();
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     _initCalendarDates();
     _loadEvents();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -84,8 +94,10 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
                 Padding(
                     padding: EdgeInsets.only(left: horizontalPadding, right: horizontalPadding, bottom: 20),
                     child: Row(
-                      children: [_buildYearDropDown(), Container(width: 16), _buildMonthDropDown()],
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [_buildYearDropDown(), _buildMonthDropDown()],
                     )),
+                Padding(padding: EdgeInsets.only(left: 5, right: 5, bottom: 10), child: _buildWeekChangeArrows()),
                 Padding(padding: EdgeInsets.only(left: 5, right: 5, bottom: 20), child: _buildWeekDaysWidget()),
                 Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding), child: _buildEventsContent())
               ])))
@@ -153,34 +165,66 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
   }
 
   Widget _buildEventCard(CanvasCalendarEvent event) {
+    bool isFavorite = Auth2().isFavorite(event);
+
     return GestureDetector(
         onTap: () => _onTapEvent(event),
-        child: Column(children: [
-          Container(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Expanded(
-                    child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 15), child: Image.asset('images/icon-news.png')),
+        child: Stack(children: [
+          Column(children: [
+            Container(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                   Expanded(
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(StringUtils.ensureNotEmpty(event.contextName),
-                        textAlign: TextAlign.start,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style:
-                            TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
-                    Text(StringUtils.ensureNotEmpty(event.title),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
-                    Text(StringUtils.ensureNotEmpty(event.startAtDisplayDate),
-                        style: TextStyle(color: Styles().colors!.disabledTextColor, fontFamily: Styles().fontFamilies!.bold, fontSize: 18))
-                  ]))
+                      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 15), child: Image.asset('images/icon-news.png')),
+                    Expanded(
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(StringUtils.ensureNotEmpty(event.contextName),
+                          textAlign: TextAlign.start,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
+                      Text(StringUtils.ensureNotEmpty(event.title),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
+                      Text(StringUtils.ensureNotEmpty(event.startAtDisplayDate),
+                          style:
+                              TextStyle(color: Styles().colors!.disabledTextColor, fontFamily: Styles().fontFamilies!.bold, fontSize: 18))
+                    ]))
+                  ])),
+                  Image.asset('images/chevron-right.png')
                 ])),
-                Image.asset('images/chevron-right.png')
-              ])),
-          _buildEventDelimiter()
+            _buildEventDelimiter()
+          ]),
+          Visibility(
+              visible: Auth2().canFavorite,
+              child: Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        Analytics().logSelect(target: "Favorite: ${event.favoriteTitle}");
+                        Auth2().prefs?.toggleFavorite(event);
+                      },
+                      child: Semantics(
+                          container: true,
+                          label: isFavorite
+                              ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+                              : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+                          hint: isFavorite
+                              ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+                              : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+                          button: true,
+                          excludeSemantics: true,
+                          child: Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: Container(
+                                  padding: EdgeInsets.only(left: 24, bottom: 24),
+                                  child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png',
+                                      excludeFromSemantics: true)))))))
         ]));
   }
 
@@ -190,7 +234,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
 
   void _onTapEvent(CanvasCalendarEvent event) {
     Analytics().logSelect(target: "Canvas Calendar Event");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(event: event)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: event.id!)));
   }
 
   List<CanvasCalendarEvent>? get _visibleEvents {
@@ -275,6 +319,14 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
     _changeSelectedDate(month: month);
   }
 
+  Widget _buildWeekChangeArrows() {
+    double imageSize = 30;
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      GestureDetector(onTap: _onSwipeRight, child: Container(width: imageSize, height: imageSize, child: Image.asset('images/chevron-left-blue.png'))),
+      GestureDetector(onTap: _onSwipeLeft, child: Container(width: imageSize, height: imageSize, child: Image.asset('images/chevron-blue-right.png')))
+    ]);
+  }
+
   Widget _buildWeekDaysWidget() {
     int selectedWeekDay = _selectedDate.weekday;
     DateTime currentWeekDate =
@@ -284,20 +336,27 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
     for (int i = 1; i < 8; i++) {
       Widget dayWidget = GestureDetector(
           onTap: () => _onTapWeekDay(i),
-          child: Container(
-              padding: EdgeInsets.all(10),
-              decoration: _weekDayBoxDecoration(currentWeekDate),
-              child: Column(children: [
-                Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'E')),
-                    style: TextStyle(color: _weekDayTextColor(currentWeekDate), fontFamily: Styles().fontFamilies!.bold)),
-                Container(width: 10),
-                Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'd')),
-                    style: TextStyle(color: _weekDayTextColor(currentWeekDate), fontSize: 18))
-              ])));
+          child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'E')),
+                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+            Padding(
+                padding: EdgeInsets.only(top: 3),
+                child: Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: _weekDayBoxDecoration(currentWeekDate),
+                    child: Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'd')),
+                        style: TextStyle(color: _weekDayTextColor(currentWeekDate), fontSize: 18)))),
+            Visibility(
+                visible: _hasEvent(currentWeekDate),
+                child: Padding(
+                    padding: EdgeInsets.only(top: 5),
+                    child: Container(
+                        decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, shape: BoxShape.circle), width: 6, height: 6)))
+          ]));
       dayWidgetList.add(dayWidget);
       currentWeekDate = currentWeekDate.add(Duration(days: 1));
     }
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: dayWidgetList);
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: dayWidgetList);
   }
 
   BoxDecoration _weekDayBoxDecoration(DateTime date) {
@@ -323,6 +382,22 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
     return (currentDate.year == _selectedDate.year) && (currentDate.month == _selectedDate.month) && (currentDate.day == _selectedDate.day);
   }
 
+  bool _hasEvent(DateTime date) {
+    if (CollectionUtils.isEmpty(_events)) {
+      return false;
+    }
+    for (CanvasCalendarEvent event in _events!) {
+      DateTime? eventStartDateLocal = event.startAtLocal;
+      if ((eventStartDateLocal != null) &&
+          (eventStartDateLocal.year == date.year) &&
+          (eventStartDateLocal.month == date.month) &&
+          (eventStartDateLocal.day == date.day)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   void _onTapWeekDay(int weekDay) {
     int daysDiff = weekDay - _selectedDate.weekday;
     DateTime newDate = _selectedDate.add(Duration(days: (daysDiff)));
@@ -335,9 +410,11 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
     _initEventsTimeFrame();
   }
 
+  // Load events per week
   void _initEventsTimeFrame() {
-    _startDateTime = DateTime(_selectedDate.year, _selectedDate.month, 1);
-    _endDateTime = DateTime(_selectedDate.year, (_selectedDate.month + 1), 1).subtract(Duration(milliseconds: 1));
+    int selectedWeekDay = _selectedDate.weekday;
+    _startDateTime = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day).subtract(Duration(days: (selectedWeekDay - 1)));
+    _endDateTime = _startDateTime.add(Duration(days: 7)).subtract(Duration(milliseconds: 1));
   }
 
   void _changeSelectedDate({int? year, int? month, int? day}) {
@@ -382,5 +459,14 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
 
   bool get _isLoading {
     return (_loadingProgress > 0);
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      setState(() {});
+    }
   }
 }

@@ -198,7 +198,7 @@
 	"panel.browse.button.add_illini_cash.hint": "",
 	"panel.browse.button.campus_guide.title":"Campus Guide",
 	"panel.browse.button.campus_guide.hint":"",
-	"panel.browse.button.inbox.title":"收件箱",
+	"panel.browse.button.inbox.title":"Notifications",
 	"panel.browse.button.inbox.hint":"",
 	"panel.browse.button.privacy_center.title": "Privacy",
 	"panel.browse.button.privacy_center.hint":"",
@@ -1866,7 +1866,7 @@
 	"panel.guide_categories.label.heading": "Campus Guide",
 	"panel.guide_categories.label.content.empty": "空的指南內容",
 
-	"panel.inbox.label.heading": "收件箱",
+	"panel.inbox.label.heading": "Notifications",
 	"panel.inbox.label.content.empty": "沒有消息",
 	"panel.inbox.label.time.any": "任何時間",
 	"panel.inbox.label.time.today": "今天",
@@ -1965,6 +1965,7 @@
     "panel.canvas_calendar_event.header.title": "日曆事件",
     "panel.canvas_calendar_event.calendar.label": "日曆:",
     "panel.canvas_calendar_event.date_time.label": "約會時間:",
+    "panel.canvas_calendar_event.load.failed.error.msg": "未能加載事件. 請稍後再試.",
 
     "panel.canvas_modules.header.title": "模塊",
     "panel.canvas_modules.load.failed.error.msg": "無法加載模塊. 請稍後再試.",

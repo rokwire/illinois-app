@@ -198,7 +198,7 @@
     "panel.browse.button.add_illini_cash.hint": "",
     "panel.browse.button.campus_guide.title":"Campus Guide",
     "panel.browse.button.campus_guide.hint":"",
-    "panel.browse.button.inbox.title":"Bandeja de entrada",
+    "panel.browse.button.inbox.title":"Notifications",
     "panel.browse.button.inbox.hint":"",
     "panel.browse.button.privacy_center.title": "Privacy",
     "panel.browse.button.privacy_center.hint":"",
@@ -1868,7 +1868,7 @@
     "panel.guide_categories.label.heading": "Campus Guide",
     "panel.guide_categories.label.content.empty": "Contenido de la guía vacía",
 
-    "panel.inbox.label.heading": "Bandeja de entrada",
+    "panel.inbox.label.heading": "Notifications",
     "panel.inbox.label.content.empty": "Ningún mensaje",
     "panel.inbox.label.time.any": "Cualquier momento",
     "panel.inbox.label.time.today": "Hoy dia",
@@ -1967,6 +1967,7 @@
     "panel.canvas_calendar_event.header.title": "Evento de calendario",
     "panel.canvas_calendar_event.calendar.label": "Calendario:",
     "panel.canvas_calendar_event.date_time.label": "Fecha y hora:",
+    "panel.canvas_calendar_event.load.failed.error.msg": "No se pudo cargar el evento. Por favor, inténtelo de nuevo más tarde.",
 
     "panel.canvas_modules.header.title": "Módulos",
     "panel.canvas_modules.load.failed.error.msg": "No se pudieron cargar los módulos. Por favor, inténtelo de nuevo más tarde.",
