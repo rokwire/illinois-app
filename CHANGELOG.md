@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Authman Groups UI improvements [#1323](https://github.com/rokwire/illinois-app/issues/1323).
+### Changed
+- Inbox renamed to Notifications [#1326](https://github.com/rokwire/illinois-app/issues/1326).
 
 ## [3.2.15] - 2022-02-08
 ### Added
