@@ -44,6 +44,7 @@ class RoundedButton extends StatefulWidget {
   final BoxBorder? border;
   final Color? borderColor;
   final double borderWidth;
+  final List<BoxShadow>? borderShadow;
   final double? maxBorderRadius;
 
   final BoxBorder? secondaryBorder;
@@ -79,6 +80,7 @@ class RoundedButton extends StatefulWidget {
     this.border,
     this.borderColor,          //= Styles().colors.fillColorSecondary
     this.borderWidth             =  2.0,
+    this.borderShadow,
     this.maxBorderRadius         = 24.0,
 
     this.secondaryBorder,
@@ -155,7 +157,7 @@ class _RoundedButtonState extends State<RoundedButton> {
       width: widget.secondaryBorderWidth ?? widget.borderWidth
     ) : null);
 
-    return Container(key: _contentKey, decoration: BoxDecoration(color: _backgroundColor, border: border, borderRadius: borderRadius), child: (secondaryBorder != null)
+    return Container(key: _contentKey, decoration: BoxDecoration(color: _backgroundColor, border: border, borderRadius: borderRadius, boxShadow: widget.borderShadow), child: (secondaryBorder != null)
       ? Container(decoration: BoxDecoration(color: _backgroundColor, border: secondaryBorder, borderRadius: borderRadius), child: _innerContent)
       : _innerContent
     );
