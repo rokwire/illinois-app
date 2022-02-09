@@ -345,9 +345,11 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
     _initEventsTimeFrame();
   }
 
+  // Load events per week
   void _initEventsTimeFrame() {
-    _startDateTime = DateTime(_selectedDate.year, _selectedDate.month, 1);
-    _endDateTime = DateTime(_selectedDate.year, (_selectedDate.month + 1), 1).subtract(Duration(milliseconds: 1));
+    int selectedWeekDay = _selectedDate.weekday;
+    _startDateTime = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day).subtract(Duration(days: (selectedWeekDay - 1)));
+    _endDateTime = _startDateTime.add(Duration(days: 7)).subtract(Duration(milliseconds: 1));
   }
 
   void _changeSelectedDate({int? year, int? month, int? day}) {
