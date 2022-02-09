@@ -241,15 +241,15 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
       child: Padding(padding: EdgeInsets.all(16),
         child: Row(children: <Widget>[
           Expanded(child: Container(),),
-          RoundedButton(label:Localization().getStringEx("panel.membership_request.button.save.title", 'Save steps'),
+          RoundedButton(label:Localization().getStringEx("panel.membership_request.button.save.title", 'Save steps')!,
             backgroundColor: Styles().colors!.white,
             textColor: Styles().colors!.fillColorPrimary,
             fontFamily: Styles().fontFamilies!.bold,
             fontSize: 16,
-            padding: EdgeInsets.symmetric(horizontal: 32, ),
             borderColor: Styles().colors!.fillColorSecondary,
             borderWidth: 2,
-            height: 26 + 16*MediaQuery.of(context).textScaleFactor ,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            mainAxisSize: MainAxisSize.min,
             onTap:() { _onSubmit();  }
           ),
           Expanded(child: Container(),),

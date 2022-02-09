@@ -263,29 +263,18 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
   Widget _buildContinueButton() {
     return Padding(
       padding: EdgeInsets.only(top: 20, left: 30, right: 30),
-        child: Stack(children: <Widget>[
-          RoundedButton(
-            label: Localization().getStringEx('dialog.continue.title', 'Continue'),
+        child: RoundedButton(
+            label: Localization().getStringEx('dialog.continue.title', 'Continue')!,
             hint: Localization().getStringEx('dialog.continue.hint', ''),
             backgroundColor: Styles().colors!.white,
-            height: 20 + 16*MediaQuery.of(context).textScaleFactor,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            progress: _loading,
             fontSize: 16.0,
             textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
-            padding: EdgeInsets.symmetric(horizontal: 24),
             onTap: () { _onContinue(); }
           ),       
-          Visibility(visible: _loading,
-            child: Container(
-              height: 42,
-              child: Align(alignment: Alignment.center,
-                child: SizedBox(height: 21, width: 21,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                ),
-              ),
-            ),
-          ),      
-      ],),);
+      );
   } 
 
   Widget _buildCloseButton() {

@@ -353,7 +353,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     return Align(
       alignment: Alignment.centerRight,
       child: RoundedButton(
-        label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online'),
+        label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online')!,
         backgroundColor: Styles().colors!.white,
         borderColor: Styles().colors!.fillColorSecondary,
         textColor: Styles().colors!.fillColorPrimary,

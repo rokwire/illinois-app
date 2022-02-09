@@ -161,10 +161,10 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
       buttons.add(Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
         RoundedButton(
           label: StringUtils.ensureNotEmpty(title),
-          padding: EdgeInsets.symmetric(horizontal: 14),
           textColor: Styles().colors!.fillColorPrimary,
           borderColor: Styles().colors!.fillColorSecondary,
           backgroundColor: Styles().colors!.white,
+          mainAxisSize: MainAxisSize.min,
           onTap: () => _onTapButton(buttonContent),
         ),],
       ));

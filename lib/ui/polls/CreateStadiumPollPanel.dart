@@ -368,55 +368,35 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Expanded(
-                    child: Stack(children: <Widget>[
+                    child:
                       RoundedButton(
-                        label: Localization().getStringEx("panel.create_stadium_poll.setting.button.save.title", "Save"),
+                        label: Localization().getStringEx("panel.create_stadium_poll.setting.button.save.title", "Save")!,
                         backgroundColor: Colors.white,
                         borderColor: Styles().colors!.fillColorPrimary,
                         textColor: Styles().colors!.fillColorPrimary,
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        progress: (_progressPollStatus == PollStatus.created),
                         onTap: () {
                           _onCreatePoll(status: PollStatus.created);
                         },
-                        height: 48,
                       ),
-                      Visibility(visible: (_progressPollStatus == PollStatus.created),
-                        child: Container(
-                          height: 48,
-                          child: Align(alignment: Alignment.center,
-                            child: SizedBox(height: 24, width: 24,
-                                child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],),
                   ),
                   Container(
                     width: 6,
                   ),
                   Expanded(
-                    child: Stack(children: <Widget>[
+                    child:
                       RoundedButton(
-                        label: Localization().getStringEx("panel.create_stadium_poll.setting.start.preview.title", "Start poll!"),
+                        label: Localization().getStringEx("panel.create_stadium_poll.setting.start.preview.title", "Start poll!")!,
                         backgroundColor: Colors.white,
                         borderColor: Styles().colors!.fillColorSecondary,
                         textColor: Styles().colors!.fillColorPrimary,
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        progress: (_progressPollStatus == PollStatus.opened),
                         onTap: () {
                           _onCreatePoll(status: PollStatus.opened);
                         },
-                        height: 48,
                       ),
-                      Visibility(visible: (_progressPollStatus == PollStatus.opened),
-                        child: Container(
-                          height: 48,
-                          child: Align(alignment: Alignment.center,
-                            child: SizedBox(height: 24, width: 24,
-                                child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],),
                   ),
                 ],
               )),

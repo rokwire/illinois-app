@@ -104,7 +104,7 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
                   child: Padding(
                     padding: EdgeInsets.all(24),
                     child: RoundedButton(
-                        label: Localization().getStringEx('panel.settings.login.netid.button.continue.title', 'Log in with NetID'),
+                        label: Localization().getStringEx('panel.settings.login.netid.button.continue.title', 'Log in with NetID')!,
                         hint: Localization().getStringEx('panel.settings.login.netid.button.continue.hint', ''),
                         borderColor: Styles().colors!.fillColorSecondary,
                         backgroundColor: Styles().colors!.background,

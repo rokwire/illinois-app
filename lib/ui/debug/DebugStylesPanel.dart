@@ -81,33 +81,33 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
                 Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                   RoundedButton(
                     label: StringUtils.ensureNotEmpty('Debug'),
-                    padding: EdgeInsets.symmetric(horizontal: 14),
                     textColor: Styles().colors!.white,
                     textStyle: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary, decoration: (Styles().contentMode == StylesContentMode.debug) ? TextDecoration.underline : null),
                     borderColor: Styles().colors!.fillColorSecondary,
                     backgroundColor: Styles().colors!.white,
+                    mainAxisSize: MainAxisSize.min,
                     onTap: _onTapDebug,
                   ),
                 ],),
                 Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                   RoundedButton(
                     label: StringUtils.ensureNotEmpty('Auto'),
-                    padding: EdgeInsets.symmetric(horizontal: 14),
                     textColor: Styles().colors!.white,
                     textStyle: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary, decoration: (Styles().contentMode == StylesContentMode.auto) ? TextDecoration.underline : null),
                     borderColor: Styles().colors!.fillColorSecondary,
                     backgroundColor: Styles().colors!.white,
+                    mainAxisSize: MainAxisSize.min,
                     onTap: _onTapAuto,
                   ),
                 ],),
                 Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                   RoundedButton(
                     label: StringUtils.ensureNotEmpty('Assets'),
-                    padding: EdgeInsets.symmetric(horizontal: 14),
                     textColor: Styles().colors!.white,
                     textStyle: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary, decoration: (Styles().contentMode == StylesContentMode.assets) ? TextDecoration.underline : null),
                     borderColor: Styles().colors!.fillColorSecondary,
                     backgroundColor: Styles().colors!.white,
+                    mainAxisSize: MainAxisSize.min,
                     onTap: _onTapAssets,
                   ),
                 ],),

@@ -143,15 +143,15 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
         child: Stack(children: <Widget>[
           Row(children: <Widget>[
             Expanded(child: Container(),),
-            RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request'),
+            RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request')!,
               backgroundColor: Styles().colors!.white,
               textColor: Styles().colors!.fillColorPrimary,
               fontFamily: Styles().fontFamilies!.bold,
               fontSize: 16,
-              padding: EdgeInsets.symmetric(horizontal: 32, ),
               borderColor: Styles().colors!.fillColorSecondary,
               borderWidth: 2,
-              height: 42,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              mainAxisSize: MainAxisSize.min,
               onTap:() { _onSubmit();  }
             ),
             Expanded(child: Container(),),

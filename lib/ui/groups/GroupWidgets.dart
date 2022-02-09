@@ -796,25 +796,20 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                       Padding(
                           padding: EdgeInsets.all(10),
                           child: RoundedButton(
-                              label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
+                              label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url")!,
                               borderColor: Styles().colors!.fillColorSecondary,
                               backgroundColor: Styles().colors!.background,
                               textColor: Styles().colors!.fillColorPrimary,
                               onTap: _onTapUseUrl)),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Padding(
-                              padding: EdgeInsets.all(10),
-                              child: RoundedButton(
-                                  label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
-                                  borderColor: Styles().colors!.fillColorSecondary,
-                                  backgroundColor: Styles().colors!.background,
-                                  textColor: Styles().colors!.fillColorPrimary,
-                                  onTap: _onTapChooseFromDevice)),
-                          _showProgress ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary)) : Container(),
-                        ],
-                      ),
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: RoundedButton(
+                              label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device")!,
+                              borderColor: Styles().colors!.fillColorSecondary,
+                              backgroundColor: Styles().colors!.background,
+                              textColor: Styles().colors!.fillColorPrimary,
+                              progress: _showProgress,
+                              onTap: _onTapChooseFromDevice)),
                     ]))
           ],
         ));

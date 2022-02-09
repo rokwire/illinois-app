@@ -103,7 +103,7 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   RoundedButton(
-                    label: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.title', 'Upgrade'),
+                    label: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.title', 'Upgrade')!,
                     hint: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.hint', ''),
                     textColor: Styles().colors!.white,
                     borderColor: Styles().colors!.fillColorSecondary,

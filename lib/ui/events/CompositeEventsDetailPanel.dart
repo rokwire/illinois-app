@@ -464,7 +464,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     String? ticketsUrl = widget.parentEvent?.registrationUrl;
     bool getTicketsVisible = StringUtils.isNotEmpty(ticketsUrl);
 
-    String? websiteLabel = Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website');
+    String websiteLabel = Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website')!;
     String? websiteHint = Localization().getStringEx('panel.explore_detail.button.visit_website.hint', '');
 
     Widget visitWebsiteButton = (widget.parentEvent?.isSuperEvent ?? false) ?
@@ -490,7 +490,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
         visitWebsiteButton,
         Visibility(visible: visitWebsiteVisible, child: buttonsDivider),
         Visibility(visible: getTicketsVisible, child: RoundedButton(
-          label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Get tickets'),
+          label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Get tickets')!,
           hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
           backgroundColor: Colors.white,
           borderColor: Styles().colors!.fillColorSecondary,

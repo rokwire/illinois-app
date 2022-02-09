@@ -332,7 +332,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                       flex: 1,
                                       child: RoundedButton(
                                           label:
-                                          Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update'),
+                                          Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update')!,
                                           borderColor: Styles().colors!.fillColorSecondary,
                                           textColor: Styles().colors!.fillColorPrimary,
                                           backgroundColor: Styles().colors!.white,
@@ -425,8 +425,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                     flex: 1,
                     child: RoundedButton(
                         label: (_editingReply != null) ?
-                          Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update') :
-                          Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
+                          Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update')! :
+                          Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send')!,
                         borderColor: Styles().colors!.fillColorSecondary,
                         textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,
@@ -437,7 +437,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                     child: RoundedButton(
                         label: Localization().getStringEx(
                             'panel.group.detail.post.create.button.cancel.title',
-                            'Cancel'),
+                            'Cancel')!,
                         borderColor: Styles().colors!.textSurface,
                         textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,

@@ -566,7 +566,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               (widget.group!=null)? Container():
                               Expanded(
                                   child: RoundedButton(
-                                    label:  Localization().getStringEx("panel.create_event.additional_info.button.cancel.title","Cancel"),
+                                    label:  Localization().getStringEx("panel.create_event.additional_info.button.cancel.title","Cancel")!,
                                     backgroundColor: Colors.white,
                                     borderColor: Styles().colors!.fillColorPrimary,
                                     textColor: Styles().colors!.fillColorPrimary,
@@ -579,8 +579,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               (widget.group!=null)? Container():
                               Expanded(
                                   child: RoundedButton(
-                                label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
-                                                Localization().getStringEx("panel.create_event.additional_info.button.preview.title","Preview"),
+                                label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event")!:
+                                                Localization().getStringEx("panel.create_event.additional_info.button.preview.title","Preview")!,
                                 backgroundColor: Colors.white,
                                 borderColor: isValid ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
                                 textColor: isValid ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
@@ -2222,34 +2222,24 @@ class _AddImageWidgetState extends State<AddImageWidget> {
                                   hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image url"),
                                   labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image url"),
                                 ))),
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
+                        Padding(
+                            padding: EdgeInsets.all(10),
+                            child: RoundedButton(
+                                label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url")!,
+                                borderColor: Styles().colors!.fillColorSecondary,
+                                backgroundColor: Styles().colors!.background,
+                                textColor: Styles().colors!.fillColorPrimary,
+                                progress: _showUrlProgress,
+                                onTap: _onTapUseUrl)),
                             Padding(
                                 padding: EdgeInsets.all(10),
                                 child: RoundedButton(
-                                    label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
+                                    label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device")!,
                                     borderColor: Styles().colors!.fillColorSecondary,
                                     backgroundColor: Styles().colors!.background,
                                     textColor: Styles().colors!.fillColorPrimary,
-                                    onTap: _onTapUseUrl)),
-                            _showUrlProgress ? CircularProgressIndicator() : Container(),
-                          ],
-                        ),
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Padding(
-                                padding: EdgeInsets.all(10),
-                                child: RoundedButton(
-                                    label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
-                                    borderColor: Styles().colors!.fillColorSecondary,
-                                    backgroundColor: Styles().colors!.background,
-                                    textColor: Styles().colors!.fillColorPrimary,
+                                    progress: _showGalleryProgress,
                                     onTap: _onTapChooseFromDevice)),
-                            _showGalleryProgress ? CircularProgressIndicator() : Container(),
-                          ],
-                        ),
                       ]),
 
                 ],
@@ -2390,7 +2380,7 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
         child:Padding(
           padding: EdgeInsets.all(10),
           child: RoundedButton(
-              label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select"),
+              label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select")!,
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
               textColor: Styles().colors!.fillColorPrimary,

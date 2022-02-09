@@ -771,7 +771,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                               padding:
                               EdgeInsets.symmetric(horizontal: 20),
                               child: RoundedButton(
-                                label: Localization().getStringEx('widget.athletics_card.button.get_tickets.title', 'Get Tickets'),
+                                label: Localization().getStringEx('widget.athletics_card.button.get_tickets.title', 'Get Tickets')!,
                                 hint: Localization().getStringEx('widget.athletics_card.button.get_tickets.hint', ''),
                                 backgroundColor: Colors.white,
                                 fontSize: 16,

@@ -77,7 +77,7 @@ class PopupDialog extends StatelessWidget {
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors!.fillColorSecondary,
                       textColor: Styles().colors!.fillColorPrimary,
-                      label: _positiveButtonText),
+                      label: _positiveButtonText ?? ''),
                   Container(height: 10,),
                 ],
               ),

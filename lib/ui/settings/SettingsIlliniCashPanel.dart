@@ -191,7 +191,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                       child: RoundedButton(
                         label: Localization().getStringEx(
                             'panel.settings.illini_cash.button.log_in.title',
-                            'Log in to view'),
+                            'Log in to view')!,
                         hint: Localization().getStringEx(
                             'panel.settings.illini_cash.button.log_in.hint', ''),
                         backgroundColor: Styles().colors!.white,
@@ -237,7 +237,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                     child: RoundedButton(
                       label: Localization().getStringEx(
                           'panel.settings.illini_cash.button.add_cash.title',
-                          'Add Illini Cash'),
+                          'Add Illini Cash')!,
                       hint: Localization().getStringEx(
                           'panel.settings.illini_cash.button.add_cash.hint', ''),
                       backgroundColor: Styles().colors!.white,
@@ -342,11 +342,11 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
             Expanded(child: RoundedButton(
               textColor: Styles().colors!.fillColorPrimary,
-              label: Localization().getStringEx('panel.settings.illini_cash.button.view_history.title', 'View History'),
+              label: Localization().getStringEx('panel.settings.illini_cash.button.view_history.title', 'View History')!,
               hint: Localization().getStringEx('panel.settings.illini_cash.button.view_history.hint', ''),
               backgroundColor: Colors.white,
               borderColor: Styles().colors!.fillColorSecondary,
-              height: 32,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               fontSize: 16,
               onTap: _onTapViewHistory,)),
           ],)

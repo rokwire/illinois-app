@@ -256,7 +256,7 @@ class _NoUpcomingEvents extends StatelessWidget{
             children: <Widget>[
               Expanded(
                 child: RoundedButton(
-                  label: Localization().getStringEx("panel.groups_admin.button.find_existing.title", "Find existing"),
+                  label: Localization().getStringEx("panel.groups_admin.button.find_existing.title", "Find existing")!,
                   hint: Localization().getStringEx("panel.groups_admin.button.find_existing.hint", ""),
                   textColor: Styles().colors!.fillColorPrimary,
                   backgroundColor: Styles().colors!.white,
@@ -268,7 +268,7 @@ class _NoUpcomingEvents extends StatelessWidget{
               Container(width: 10,),
               Expanded(
                 child: RoundedButton(
-                  label: Localization().getStringEx("panel.groups_admin.button.create_event.title", "Create"),
+                  label: Localization().getStringEx("panel.groups_admin.button.create_event.title", "Create")!,
                   hint: Localization().getStringEx("panel.groups_admin.button.create_event.hint", ""),
                   textColor: Styles().colors!.fillColorPrimary,
                   backgroundColor: Styles().colors!.white,
@@ -531,13 +531,14 @@ class _EventCard extends StatelessWidget {
                           Expanded(child: Container()),
                           Container(height: 8,),
                           RoundedButton(
-                            label: Localization().getStringEx("panel.groups_admin.button.remove.title", "Remove event"),
+                            label: Localization().getStringEx("panel.groups_admin.button.remove.title", "Remove event")!,
                             backgroundColor: Styles().colors!.white,
                             borderColor: Styles().colors!.fillColorPrimary,
                             textColor: Styles().colors!.fillColorPrimary,
                             fontFamily: Styles().fontFamilies!.regular,
                             fontSize: 16,
-                            height: 42,
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            mainAxisSize: MainAxisSize.min,
                             borderWidth: 2,
                             onTap: (){
                               Analytics().logAlert(text: 'Remove event', selection: 'OK');
@@ -546,13 +547,14 @@ class _EventCard extends StatelessWidget {
                           ),
                           Container(height: 8,),
                           RoundedButton(
-                            label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel"),
+                            label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel")!,
                             backgroundColor: Styles().colors!.white,
                             borderColor: Styles().colors!.fillColorSecondary,
                             textColor: Styles().colors!.fillColorPrimary,
                             fontFamily: Styles().fontFamilies!.bold,
                             fontSize: 16,
-                            height: 42,
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            mainAxisSize: MainAxisSize.min,
                             borderWidth: 2,
                             onTap: (){
                               Analytics().logAlert(text: 'Remove event', selection: 'Cancel');

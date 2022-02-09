@@ -102,7 +102,7 @@ class _SettingsLoginPhonePanelState extends State<SettingsLoginPhonePanel> {
                   child: Padding(
                     padding: EdgeInsets.all(24),
                     child: RoundedButton(
-                        label: Localization().getStringEx('panel.settings.login.phone.button.continue.title', 'Verify My Phone Number'),
+                        label: Localization().getStringEx('panel.settings.login.phone.button.continue.title', 'Verify My Phone Number')!,
                         hint: Localization().getStringEx('panel.settings.login.phone.button.continue.hint', ''),
                         borderColor: Styles().colors!.fillColorSecondary,
                         backgroundColor: Styles().colors!.background,

@@ -750,15 +750,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
 
       Widget tabWidget = RoundedButton(
-          label: title,
+          label: title ?? '',
           backgroundColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.background,
           textColor: (isSelected ? Colors.white : Styles().colors!.fillColorPrimary),
           fontFamily: isSelected ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular,
           fontSize: 16,
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          mainAxisSize: MainAxisSize.min,
           borderColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
           borderWidth: 1,
-          height: 22 + 16 * MediaQuery.of(context).textScaleFactor,
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 11),
           onTap: () => _onTab(tab));
 
       tabs.add(tabWidget);
@@ -1083,23 +1083,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         Navigator.pop(context);
                       }),
                   Container(width: 16),
-                  Stack(alignment: Alignment.center, children: [
-                    RoundedButton(
-                      label: positiveButtonLabel,
-                      fontFamily: "ProximaNovaBold",
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.white,
-                      backgroundColor: Styles().colors!.white,
-                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: positiveBtnHorizontalPadding),
-                      onTap: () {
-                        Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
-                        onPositiveTap!();
-                      },
-                    ),
-                    _confirmationLoading
-                        ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary))
-                        : Container()
-                  ])
+                  RoundedButton(
+                    label: positiveButtonLabel ?? '',
+                    fontFamily: "ProximaNovaBold",
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.white,
+                    backgroundColor: Styles().colors!.white,
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: positiveBtnHorizontalPadding),
+                    progress: _confirmationLoading,
+                    onTap: () {
+                      Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
+                      onPositiveTap!();
+                    },
+                  ),
                 ])
               ]));
         }));

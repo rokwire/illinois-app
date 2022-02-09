@@ -676,15 +676,15 @@ class _GiesPageWidget extends StatelessWidget {
           String? title = JsonUtils.stringValue(button['title']);
           buttonWidgets.add(
             Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              RoundedButton(label: title,
+              RoundedButton(label: title ?? '',
                 backgroundColor: Styles().colors!.white,
                 textColor: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.bold,
                 fontSize: 16,
-                padding: EdgeInsets.symmetric(horizontal: 16, ),
                 borderColor: Styles().colors!.fillColorSecondary,
                 borderWidth: 2,
-                height: 42,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                mainAxisSize: MainAxisSize.min,
                 onTap:() {
                   try { onTapButton!(button.cast<String, dynamic>()); }
                   catch (e) { print(e.toString()); }
@@ -836,12 +836,12 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
               Container(height: 16,),
               Visibility(visible: (widget.notes != null) && widget.notes!.isNotEmpty, child:
                 RoundedButton(
-                  label: Localization().getStringEx('widget.gies.notes.button.save', 'Save'),
+                  label: Localization().getStringEx('widget.gies.notes.button.save', 'Save')!,
                   backgroundColor: Colors.transparent,
                   textColor: Styles().colors!.fillColorPrimary,
                   borderColor: Styles().colors!.fillColorSecondary,
-                  padding: EdgeInsets.symmetric(horizontal: 16, ),
-                  borderWidth: 2, height: 42,
+                  borderWidth: 2,
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   onTap: () => _onSave(),
                 ),
               ),

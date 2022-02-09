@@ -61,11 +61,11 @@ class _HomeUpgradeVersionWidgetState extends State<HomeUpgradeVersionWidget> {
                     Row(
                       children: <Widget>[
                         RoundedButton(
-                          label: Localization().getStringEx('widget.home_upgrade_version.button.got_it', 'Got It'),
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          label: Localization().getStringEx('widget.home_upgrade_version.button.got_it', 'Got It')!,
                           textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.fillColorSecondary,
                           backgroundColor: Styles().colors!.white,
+                          mainAxisSize: MainAxisSize.min,
                           onTap: _onTapGotIt,
                         )
                       ],

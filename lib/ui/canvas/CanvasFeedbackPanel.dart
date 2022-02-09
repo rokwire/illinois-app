@@ -98,10 +98,10 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                 child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   Expanded(child: Container()),
                   RoundedButton(
-                      label: Localization().getStringEx('panel.canvas_feedback.submit.button', 'Submit'),
+                      label: Localization().getStringEx('panel.canvas_feedback.submit.button', 'Submit')!,
                       hint: Localization().getStringEx('panel.canvas_feedback.submit.hint', ''),
                       onTap: _onTapSubmit,
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      mainAxisSize: MainAxisSize.min,
                       backgroundColor: Styles().colors!.white,
                       borderColor: Styles().colors!.fillColorSecondary,
                       textColor: Styles().colors!.fillColorPrimary)

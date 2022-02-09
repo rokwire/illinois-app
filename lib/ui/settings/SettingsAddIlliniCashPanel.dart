@@ -645,7 +645,7 @@ class _SettingsAddIlliniCashPanelState
                                         child: RoundedButton(
                                           label: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.cancel.text',
-                                              'Cancel'),
+                                              'Cancel')!,
                                           hint: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.cancel.hint',
                                               ''),
@@ -666,7 +666,7 @@ class _SettingsAddIlliniCashPanelState
                                         child: RoundedButton(
                                           label: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.submit.text',
-                                              'Submit'),
+                                              'Submit')!,
                                           hint: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.submit.hint',
                                               ''),

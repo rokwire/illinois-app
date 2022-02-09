@@ -131,7 +131,6 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           fontFamily: Styles().fontFamilies!.bold,
           fontSize: 16,
           borderWidth: 2,
-          height: 42,
           onTap:() { _onInitFromAssets();  }
         ),),
         Container(width: 8,),
@@ -143,7 +142,6 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           fontFamily: Styles().fontFamilies!.bold,
           fontSize: 16,
           borderWidth: 2,
-          height: 42,
           onTap:() { _onInitFromNet();  }
         ),),
       ],),
@@ -159,7 +157,6 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           fontFamily: Styles().fontFamilies!.bold,
           fontSize: 16,
           borderWidth: 2,
-          height: 42,
           onTap:() { _onApply();  }
         ),),
         Container(width: 8,),
@@ -171,7 +168,6 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           fontFamily: Styles().fontFamilies!.bold,
           fontSize: 16,
           borderWidth: 2,
-          height: 42,
           onTap:() { _onPreview();  }
         ),),
       ],),

@@ -442,25 +442,14 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     }
     else if (_couldCreatePoll) {
       return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
-        Stack(children: <Widget>[
-          RoundedButton(label:Localization().getStringEx("panel.polls_home.text.login","Login"),
+          RoundedButton(label:Localization().getStringEx("panel.polls_home.text.login","Login")!,
             textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
             backgroundColor: Styles().colors!.white,
-            height: 48,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            progress: _loggingIn,
             onTap:_onLoginTapped
           ),
-          Visibility(visible: _loggingIn,
-            child: Container(
-              height: 48,
-              child: Align(alignment: Alignment.center,
-                child: SizedBox(height: 24, width: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                ),
-              ),
-            ),
-          ),
-        ],),
         );
     }
     else {

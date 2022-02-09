@@ -130,7 +130,7 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
                     ),
                   )),
               RoundedButton(
-                  label: Localization().getStringEx("panel.debug_http_proxy.button.save.title", "Save"),
+                  label: Localization().getStringEx("panel.debug_http_proxy.button.save.title", "Save")!,
                   backgroundColor: Styles().colors!.background,
                   fontSize: 16.0,
                   textColor: Styles().colors!.fillColorPrimary,

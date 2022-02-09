@@ -713,7 +713,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         children: <Widget>[
           Expanded(
               child: RoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.modify.title', 'Modify') ,
+                label: Localization().getStringEx('panel.explore_detail.button.modify.title', 'Modify')!,
                 hint: Localization().getStringEx('panel.explore_detail.button.modify.hint', '') ,
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorPrimary,
@@ -725,7 +725,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           ),
           Expanded(
               child: RoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.publish.title', 'Publish'),
+                label: Localization().getStringEx('panel.explore_detail.button.publish.title', 'Publish')!,
                 hint: Localization().getStringEx('panel.explore_detail.button.publish.hint', 'Publish'),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorSecondary,

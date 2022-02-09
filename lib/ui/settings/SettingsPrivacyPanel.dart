@@ -356,7 +356,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   backgroundColor: Colors.transparent,
                   borderColor: Styles().colors!.fillColorSecondary,
                   textColor: Styles().colors!.fillColorPrimary,
-                  label: Localization().getStringEx("panel.settings.privacy.dialog.update_privacy.yes", "Yes")),
+                  label: Localization().getStringEx("panel.settings.privacy.dialog.update_privacy.yes", "Yes")!),
               Container(
                 height: 10,
               ),
@@ -368,7 +368,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   backgroundColor: Colors.transparent,
                   borderColor: Styles().colors!.fillColorSecondary,
                   textColor: Styles().colors!.fillColorPrimary,
-                  label: Localization().getStringEx("panel.settings.privacy.dialog.update_privacy.no", "No"))
+                  label: Localization().getStringEx("panel.settings.privacy.dialog.update_privacy.no", "No")!)
             ],
           ),
         ),

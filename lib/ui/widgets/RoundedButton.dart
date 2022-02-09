@@ -14,103 +14,167 @@
  * limitations under the License.
  */
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class RoundedButton extends StatelessWidget {
-  final String? label;
+class RoundedButton extends StatefulWidget {
+  final String label;
   final String? hint;
+  final void Function() onTap;
   final Color? backgroundColor;
-  final void Function()? onTap;
+  final EdgeInsetsGeometry padding;
+  final MainAxisSize mainAxisSize;
+  final bool? progress;
+
+  final TextStyle? textStyle;
   final Color? textColor;
-  final TextAlign textAlign;
   final String? fontFamily;
   final double fontSize;
-  final TextStyle? textStyle;
+  final TextAlign textAlign;
+
+  final BoxBorder? border;
   final Color? borderColor;
   final double borderWidth;
-  final Color? secondaryBorderColor;
-  final List<BoxShadow>? shadow;
-  final EdgeInsetsGeometry padding;
-  final bool enabled;
-  final double height;
-  final double? width;
-  final Image? leftIcon;
-  final Image? rightIcon;
+  final double? maxBorderRadius;
 
-  RoundedButton(
-      {this.label = '',
-      this.hint = '',
-      this.backgroundColor,
-      this.textColor = Colors.white,
-      this.textAlign = TextAlign.center,
-      this.fontFamily,
-      this.fontSize = 20.0,
-      this.textStyle,
-      this.padding = const EdgeInsets.all(0),
-      this.enabled = true,
-      this.borderColor,
-      this.borderWidth = 2.0,
-      this.secondaryBorderColor,
-      this.onTap,
-      this.height = 48,
-      this.width,
-      this.leftIcon,
-      this.rightIcon,
-      this.shadow});
+  final BoxBorder? secondaryBorder;
+  final Color? secondaryBorderColor;
+  final double? secondaryBorderWidth;
+
+  final Color? progressColor;
+  final double? progressSize;
+  final double? progressStrokeWidth;
+
+
+  RoundedButton({
+    required this.label,
+    this.hint,
+    required this.onTap,
+    this.backgroundColor,      //= Styles().colors.white
+    this.padding                 = const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+    this.mainAxisSize            = MainAxisSize.max,
+    this.progress,
+
+    this.textStyle,
+    this.textColor,            //= Styles().colors.fillColorPrimary
+    this.fontFamily,           //= Styles().fontFamilies.bold
+    this.fontSize                = 20.0,
+    this.textAlign               = TextAlign.center,
+
+    this.border,
+    this.borderColor,          //= Styles().colors.fillColorSecondary
+    this.borderWidth             =  2.0,
+    this.maxBorderRadius         = 24.0,
+
+    this.secondaryBorder,
+    this.secondaryBorderColor,
+    this.secondaryBorderWidth,
+    
+    this.progressColor,
+    this.progressSize,
+    this.progressStrokeWidth,
+  });
+
+  _RoundedButtonState createState() => _RoundedButtonState();
+}
+
+class _RoundedButtonState extends State<RoundedButton> {
+  final GlobalKey _contentKey = GlobalKey();
+  Size? _contentSize;
+
+  Color get _backgroundColor => widget.backgroundColor ?? Styles().colors!.white!;
+  
+  Color get _textColor => widget.textColor ?? Styles().colors!.fillColorPrimary!;
+  String get _fontFamily => widget.fontFamily ?? Styles().fontFamilies!.bold!;
+  TextStyle get _textStyle => widget.textStyle ?? TextStyle(fontFamily: _fontFamily, fontSize: widget.fontSize, color: _textColor);
+
+  Color get _borderColor => widget.borderColor ?? Styles().colors!.fillColorSecondary!;
+
+  Color get _progressColor => widget.progressColor ?? _borderColor;
+  double get _progressSize => widget.progressSize ?? ((_contentSize?.height ?? 0) / 2);
+  double get _progressStrokeWidth => widget.progressStrokeWidth ?? widget.borderWidth;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _evalHeight();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-        label: label,
-        hint: hint,
-        button: true,
-//        excludeSemantics: true,
-        enabled: enabled,
-        child: InkWell(
-          onTap: onTap,
-          child: Container(
-            height: height,
-            width: width,
-            decoration: BoxDecoration(
-              color: (backgroundColor ?? Styles().colors!.fillColorPrimary),
-              border: Border.all(
-                  color: (borderColor != null) ? borderColor! : (backgroundColor ?? Styles().colors!.fillColorPrimary!),
-                  width: borderWidth),
-              borderRadius: BorderRadius.circular(height / 2),
-              boxShadow: this.shadow
-            ),
-            child: Container(
-              height: (height - 2),
-              decoration: BoxDecoration(
-                  color: (backgroundColor ?? Styles().colors!.fillColorPrimary),
-                  border: Border.all(
-                      color: (secondaryBorderColor != null)
-                          ? secondaryBorderColor!
-                          : (backgroundColor ?? Styles().colors!.fillColorPrimary!),
-                      width: borderWidth),
-                  borderRadius: BorderRadius.circular(height / 2)),
-              child: Padding(
-                  padding: padding,
-                  child: Semantics( excludeSemantics: true,
-                  child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                    (leftIcon != null) ? Padding(padding: EdgeInsets.only(right: 5), child: leftIcon,) : Container(height: 0, width: 0),
-                    Text(label!, textAlign: textAlign,
-                      style: textStyle ?? TextStyle(
-                        fontFamily: fontFamily ?? Styles().fontFamilies!.bold,
-                        fontSize: fontSize,
-                        color: textColor,
-                      ),
-                    ),
-                    (rightIcon != null) ?  Padding(padding: EdgeInsets.only(left: 5), child: rightIcon,) : Container(height: 0, width: 0),
-                    /*Visibility(visible: showAdd, child:
-                      Padding(padding: EdgeInsets.only(left: 5), child:
-                        Image.asset('images/icon-add-20x18.png'),
-                    )),*/
-                  ],))),
-            ),
-          ),
-        ));
+    return (widget.progress == true)
+      ? Stack(children: [ _outerContent, _progressContent, ],)
+      : _outerContent;
+  }
+
+  Widget get _outerContent {
+    return Semantics(label: widget.label, hint: widget.hint, button: true /*, enabled: enabled*/, child:
+      InkWell(onTap: widget.onTap, child:
+        _wrapperContent
+      ),
+    );
+  }
+
+  Widget get _wrapperContent {
+    return Row(children: [ (widget.mainAxisSize == MainAxisSize.max)
+      ? Expanded(child: _borderContent)
+      : _borderContent
+    ]);
+  }
+
+  Widget get _borderContent {
+
+    BorderRadiusGeometry? borderRadius = (_contentSize != null) ? BorderRadius.circular((widget.maxBorderRadius != null) ? min(_contentSize!.height / 2, widget.maxBorderRadius!) : (_contentSize!.height / 2)) : null;
+
+    BoxBorder border = widget.border ?? Border.all(color: _borderColor, width: widget.borderWidth);
+
+    BoxBorder? secondaryBorder = widget.secondaryBorder ?? ((widget.secondaryBorderColor != null) ? Border.all(
+      color: widget.secondaryBorderColor!,
+      width: widget.secondaryBorderWidth ?? widget.borderWidth
+    ) : null);
+
+    return Container(key: _contentKey, decoration: BoxDecoration(color: _backgroundColor, border: border, borderRadius: borderRadius), child: (secondaryBorder != null)
+      ? Container(decoration: BoxDecoration(color: _backgroundColor, border: secondaryBorder, borderRadius: borderRadius), child: _innerContent)
+      : _innerContent
+    );
+  }
+
+  Widget get _innerContent {
+    return Padding(padding: widget.padding, child:
+      Semantics(excludeSemantics: true, child:
+        Text(widget.label, style: _textStyle, textAlign: widget.textAlign,),
+      ),
+    );
+  }
+
+  Widget get _progressContent {
+    return (_contentSize != null) ? Container(width: _contentSize!.width, height: _contentSize!.height,
+      child: Align(alignment: Alignment.center,
+        child: SizedBox(height: _progressSize, width: _progressSize,
+            child: CircularProgressIndicator(strokeWidth: _progressStrokeWidth, valueColor: AlwaysStoppedAnimation<Color?>(_progressColor), )
+        ),
+      ),
+    ): Container();
+  }
+
+  void _evalHeight() {
+    try {
+      final RenderObject? renderBox = _contentKey.currentContext?.findRenderObject();
+      if (renderBox is RenderBox) {
+        if (mounted) {
+          setState(() {
+            _contentSize = renderBox.size;
+          });
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }
 
