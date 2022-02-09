@@ -2257,6 +2257,8 @@
     "widget.group_card.status.authman": "Managed",
     "widget.group_card.status.hidden": "Hidden",
     "widget.group_card.status.hint": "status: %s ,for: ",
+    "widget.group_card.member.label": "member",
+    "widget.group_card.members.label": "members",
 
     "widget.groups.selection.button.select.label": "Select",
     "widget.groups.selection.heading": "Select Group",
