@@ -29,7 +29,7 @@ class CanvasCourseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color defaultColor = Colors.black;
-    final double cardHeight = (MediaQuery.of(context).textScaleFactor * 166);
+    final double cardHeight = (MediaQuery.of(context).textScaleFactor * 130);
     double cardInnerPadding = 10;
     final double? cardWidth = isSmall ? (MediaQuery.of(context).textScaleFactor * 200) : null;
     const double borderRadiusValue = 6;
@@ -44,7 +44,7 @@ class CanvasCourseCard extends StatelessWidget {
         width: cardWidth,
         decoration: BoxDecoration(
             borderRadius: (isSmall ? BorderRadius.circular(borderRadiusValue) : null),
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
+            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Container(
               height: (cardHeight / 2),
@@ -71,10 +71,7 @@ class CanvasCourseCard extends StatelessWidget {
                       Text(StringUtils.ensureNotEmpty(course.name),
                           maxLines: (isSmall ? 2 : 5),
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: mainColor, fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold)),
-                      Text(StringUtils.ensureNotEmpty(course.courseCode),
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies!.bold))
+                          style: TextStyle(color: mainColor, fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold))
                     ]))
                   ])))
         ]));
