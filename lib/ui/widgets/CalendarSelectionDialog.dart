@@ -85,6 +85,9 @@ class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
                   )),
                   Container(height: 10,),
                   RoundedButton(label: "Choose",
+                    textColor: Styles().colors!.white,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    backgroundColor: Styles().colors!.fillColorPrimary,
                     onTap: () {
                       if (widget.onContinue != null) {
                         widget.onContinue!(_selectedCalendar);
@@ -93,6 +96,9 @@ class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
                   ),
                   Container(height: 10,),
                   RoundedButton(label: "Refresh",
+                    textColor: Styles().colors!.white,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    backgroundColor: Styles().colors!.fillColorPrimary,
                     onTap: () {
                       _refreshCalendars();
                     }

@@ -194,7 +194,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
         backgroundColor: Styles().colors!.fillColorPrimary,
 //        height: 42,
         fontSize: 16.0,
-        textColor: Colors.white,
+        textColor: Styles().colors!.white,
         borderColor: Styles().colors!.fillColorSecondary,
         padding: EdgeInsets.symmetric(horizontal: 24),
         onTap: () { _onResultsDone(); })       
@@ -220,7 +220,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
         backgroundColor: Styles().colors!.fillColorPrimary,
 //        height: 42,
         fontSize: 16.0,
-        textColor: Colors.white,
+        textColor: Styles().colors!.white,
         borderColor: Styles().colors!.fillColorSecondary,
         padding: EdgeInsets.symmetric(horizontal: 24),
         onTap: () { _onViewResults(); }

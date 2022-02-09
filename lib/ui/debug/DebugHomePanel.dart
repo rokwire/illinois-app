@@ -570,7 +570,9 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
               Expanded(child:
                 RoundedButton(
                   label: "Copy to clipboard",
+                  textColor: Styles().colors!.white,
                   borderColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors!.fillColorPrimary,
                   onTap: (){ _copyToClipboard(textContent); },
                 ),
               ),
