@@ -958,12 +958,17 @@ class GroupCard extends StatelessWidget {
                     ),
                   ),
                   Container(height: 4),
-                  (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups)
-                      ? Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                          _buildUpdateTime(),
-                          Visibility(visible: (group?.authManEnabled ?? false), child: _buildMembersCount())
-                        ])
-                      : Container()
+                  Visibility(
+                    visible: displayType == GroupCardDisplayType.homeGroups && (group?.currentUserIsMemberOrAdmin ?? false),
+                    child: _buildUpdateTime(),
+                  ),
+                  Visibility(
+                    visible: displayType != GroupCardDisplayType.homeGroups && (group?.currentUserIsMemberOrAdmin ?? false),
+                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      _buildUpdateTime(),
+                      _buildMembersCount()
+                    ]),
+                  )
                 ]))));
   }
 
