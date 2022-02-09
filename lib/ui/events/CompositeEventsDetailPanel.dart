@@ -32,7 +32,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 
 import 'package:illinois/service/RecentItems.dart';
@@ -43,7 +43,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:sprintf/sprintf.dart';
@@ -570,28 +569,15 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     Container(
         padding: EdgeInsets.symmetric(vertical: 10),
         child:
-        Stack(
-          children: [
-            ScalableRoundedButton(
-              label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group') ,
-              hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
-              backgroundColor: Colors.white,
-              borderColor: Styles().colors!.fillColorPrimary,
-              textColor: Styles().colors!.fillColorPrimary,
-              onTap: _onTapAddToGroup,
-            ),
-            Visibility(visible: _addToGroupInProgress,
-              child: Container(
-                height: 48,
-                child: Align(alignment: Alignment.center,
-                  child: SizedBox(height: 24, width: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                  ),
-                ),
-              ),
-            ),
-          ],
-        )
+          RoundedButton(
+            label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group')!,
+            hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
+            backgroundColor: Colors.white,
+            borderColor: Styles().colors!.fillColorPrimary,
+            textColor: Styles().colors!.fillColorPrimary,
+            progress: _addToGroupInProgress,
+            onTap: _onTapAddToGroup,
+          ),
     );
   }
 

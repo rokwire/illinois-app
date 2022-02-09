@@ -23,7 +23,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -252,14 +252,14 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
         Expanded(
           flex: 3,
           child: Semantics(explicitChildNodes: true, child: Visibility(
-          visible: directionsVisible, child: Padding(padding: EdgeInsets.only(right: 8), child: ScalableRoundedButton(
-            label: Localization().getStringEx('panel.parking_lots.button.directions.title', 'Directions'),
+          visible: directionsVisible, child: Padding(padding: EdgeInsets.only(right: 8), child: RoundedButton(
+            label: Localization().getStringEx('panel.parking_lots.button.directions.title', 'Directions')!,
             hint: Localization().getStringEx('panel.parking_lots.button.directions.hint', ''),
             backgroundColor: Colors.white,
             fontSize: 16.0,
             textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
-            padding: EdgeInsets.symmetric(horizontal: 12),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             onTap: _onTapDirections),),))
         )
       ],

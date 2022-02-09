@@ -13,7 +13,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -114,8 +114,8 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
       }
       if (_maxItems < _promotedItems!.length) {
         contentList.add(Container(height: 16,));
-        contentList.add(ScalableRoundedButton(
-          label: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.title', 'View All'),
+        contentList.add(RoundedButton(
+          label: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.title', 'View All')!,
           hint: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.hint', 'Tap to view all highlights'),
           borderColor: Styles().colors!.fillColorSecondary,
           textColor: Styles().colors!.fillColorPrimary,

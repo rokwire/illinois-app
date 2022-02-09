@@ -32,7 +32,6 @@ import "package:illinois/ui/onboarding/OnboardingBackButton.dart";
 import "package:illinois/ui/widgets/HeaderBar.dart";
 import 'package:illinois/ui/widgets/PrivacySlider.dart';
 import "package:illinois/ui/widgets/RoundedButton.dart";
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import "package:illinois/ui/widgets/TabBarWidget.dart";
 import "package:rokwire_plugin/utils/utils.dart";
 import "package:rokwire_plugin/service/styles.dart";
@@ -209,32 +208,20 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Expanded(
-                    child: Stack(children: <Widget>[
-                      ScalableRoundedButton(
-                          label: _disabled
-                              ? Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.disabled.title", "Scroll to Review")
-                              : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.title", "Set my Privacy"),
-                          hint: _disabled
-                              ? Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.disabled.hint", "")
-                              : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.hint", ""),
-                          borderColor: _disabled ? Styles().colors!.disabledTextColorTwo : Styles().colors!.fillColorSecondary,
-                          backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-                          textColor: _disabled ? Styles().colors!.disabledTextColorTwo : Styles().colors!.white,
-                          onTap: () => _onSaveClicked()),
-                      Visibility(
-                        visible: _updating,
-                        child: Container(
-                          height: 48,
-                          child: Align(
-                            alignment:Alignment.center,
-                            child: SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white),),),),),),
-                    ]))
+                Expanded(child: 
+                  RoundedButton(
+                      label: _disabled
+                          ? Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.disabled.title", "Scroll to Review")!
+                          : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.title", "Set my Privacy")!,
+                      hint: _disabled
+                          ? Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.disabled.hint", "")
+                          : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.hint", ""),
+                      borderColor: _disabled ? Styles().colors!.disabledTextColorTwo : Styles().colors!.fillColorSecondary,
+                      backgroundColor: Styles().colors!.fillColorPrimaryVariant,
+                      textColor: _disabled ? Styles().colors!.disabledTextColorTwo : Styles().colors!.white,
+                      progress: _updating,
+                      onTap: () => _onSaveClicked()),
+                )
               ],
             )));
   }

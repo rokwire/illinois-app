@@ -23,7 +23,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 
 class OnboardingLoginNetIdPanel extends StatefulWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
@@ -105,11 +105,11 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                ScalableRoundedButton(
-                  label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign in with NetID'),
+                RoundedButton(
+                  label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign in with NetID')!,
                   hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
                   fontSize: 16,
-                  padding: EdgeInsets.symmetric(vertical: 12),
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   borderColor: Styles().colors!.fillColorSecondary,
                   backgroundColor: Styles().colors!.white,
                   textColor: Styles().colors!.fillColorPrimary,
@@ -130,7 +130,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
                       alignment: Alignment.bottomCenter,
                       child: Padding(
                         padding: EdgeInsets.all(24),
-                        child: ScalableRoundedButton(
+                        child: RoundedButton(
                             label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Log in with NetID'),
                             hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
                             borderColor: Styles().colors.fillColorSecondary,

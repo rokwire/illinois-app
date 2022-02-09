@@ -21,7 +21,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 
 class OnboardingSportPrefsPanel extends StatefulWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
@@ -92,8 +92,8 @@ class _OnboardingSportPrefsPanelState extends State<OnboardingSportPrefsPanel> {
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: EdgeInsets.all(24),
-                      child: ScalableRoundedButton(
-                          label: Localization().getStringEx('panel.onboarding.sports.button.continue.title', 'Explore Illinois'),
+                      child: RoundedButton(
+                          label: Localization().getStringEx('panel.onboarding.sports.button.continue.title', 'Explore Illinois')!,
                           hint: Localization().getStringEx('panel.onboarding.sports.button.continue.hint', ''),
                           enabled: _allowNext,
                           backgroundColor: (Styles().colors!.background),

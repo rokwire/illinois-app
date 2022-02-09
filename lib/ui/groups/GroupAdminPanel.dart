@@ -27,7 +27,6 @@ import 'package:illinois/ui/groups/GroupSettingsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -449,8 +448,8 @@ class _EventCard extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         Expanded(child: Container()),
-                        ScalableRoundedButton(
-                          label:Localization().getStringEx("panel.groups_admin.button.delete.title", "Delete"),
+                        RoundedButton(
+                          label:Localization().getStringEx("panel.groups_admin.button.delete.title", "Delete")!,
                           backgroundColor: Styles().colors!.white,
                           borderColor: Styles().colors!.fillColorPrimary,
                           textColor: Styles().colors!.fillColorPrimary,
@@ -464,8 +463,8 @@ class _EventCard extends StatelessWidget {
                           },
                         ),
                         Container(height: 8,),
-                        ScalableRoundedButton(
-                          label:Localization().getStringEx("panel.groups_admin.button.edit.title", "Edit"),
+                        RoundedButton(
+                          label:Localization().getStringEx("panel.groups_admin.button.edit.title", "Edit")!,
                           backgroundColor: Styles().colors!.white,
                           borderColor: Styles().colors!.fillColorPrimary,
                           textColor: Styles().colors!.fillColorPrimary,
@@ -489,8 +488,8 @@ class _EventCard extends StatelessWidget {
                           },
                         ),
                         Container(height: 8,),
-                        ScalableRoundedButton(
-                          label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel"),
+                        RoundedButton(
+                          label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel")!,
                           backgroundColor: Styles().colors!.white,
                           borderColor: Styles().colors!.fillColorSecondary,
                           textColor: Styles().colors!.fillColorPrimary,

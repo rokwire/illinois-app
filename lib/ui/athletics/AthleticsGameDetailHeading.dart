@@ -27,7 +27,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
@@ -303,8 +303,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             Visibility(
                               visible: showGetTickets,
                               child: Expanded(
-                                child: ScalableRoundedButton(
-                                  label: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.title', 'Get Tickets'),
+                                child: RoundedButton(
+                                  label: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.title', 'Get Tickets')!,
                                   hint: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.hint', ''),
                                   backgroundColor: Colors.white,
                                   fontSize: 16.0,
@@ -321,8 +321,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             Visibility(
                               visible: showParking,
                               child: Expanded(
-                                child: ScalableRoundedButton(
-                                    label: Localization().getStringEx('widget.game_detail_heading.button.parking.title', 'Parking'),
+                                child: RoundedButton(
+                                    label: Localization().getStringEx('widget.game_detail_heading.button.parking.title', 'Parking')!,
                                     hint: Localization().getStringEx('widget.game_detail_heading.button.parking.hint', ''),
                                     backgroundColor: Colors.white,
                                     fontSize: 16.0,
@@ -340,8 +340,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                       ),
                       Visibility(
                         visible: showGameDayGuide,
-                        child: ScalableRoundedButton(
-                          label: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.title', 'Game Day Guide'),
+                        child: RoundedButton(
+                          label: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.title', 'Game Day Guide')!,
                           hint: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.hint', ''),
                           backgroundColor: Colors.white,
                           fontSize: 16.0,
@@ -353,8 +353,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         ),
                       ),
                       Padding(padding: EdgeInsets.only(bottom: 6)),
-                      ScalableRoundedButton(
-                        label: Localization().getStringEx('widget.game_detail_heading.button.roster.title', 'Roster'),
+                      RoundedButton(
+                        label: Localization().getStringEx('widget.game_detail_heading.button.roster.title', 'Roster')!,
                         hint: Localization().getStringEx('widget.game_detail_heading.button.roster.hint', ''),
                         backgroundColor: Colors.white,
                         fontSize: 16.0,

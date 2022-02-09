@@ -37,7 +37,7 @@ import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -271,10 +271,10 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 25),
-            child: ScalableRoundedButton(
+            child: RoundedButton(
                 label: Localization().getStringEx(
                     'widget.home_upcoming_events.button.more.title',
-                    'View all events'),
+                    'View all events')!,
                 hint: Localization().getStringEx(
                     'widget.home_upcoming_events.button.more.hint', ''),
                 borderColor: Styles().colors!.fillColorSecondary,

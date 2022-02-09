@@ -24,7 +24,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -244,8 +243,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   Widget _buildRemoveFromGroup() {
-    return Stack(children: <Widget>[
-        ScalableRoundedButton(label: Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
+    return
+        RoundedButton(label: Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group')!,
           backgroundColor: Styles().colors!.white,
           textColor: Styles().colors!.fillColorPrimary,
           fontFamily: Styles().fontFamilies!.bold,
@@ -257,8 +256,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
             Analytics().logSelect(target: 'Remove from Group');
             showDialog(context: context, builder: _buildRemoveFromGroupDialog);
           }
-        ),
-    ],);
+        );
   }
 
   Widget _buildRemoveFromGroupDialog(BuildContext context) {

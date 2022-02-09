@@ -24,7 +24,7 @@ import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -428,8 +428,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       buttons.add(Row(children:<Widget>[
         Expanded(child:
           Padding(padding: EdgeInsets.only(bottom: 6), child:
-            ScalableRoundedButton(
-              label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
+            RoundedButton(
+              label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website')!,
               hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
               backgroundColor: hasRegistrationUrl ? Styles().colors!.background : Colors.white,
               borderColor: hasRegistrationUrl ? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorSecondary,
@@ -447,8 +447,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       buttons.add(Row(children:<Widget>[
         Expanded(child:
         Padding(padding: EdgeInsets.only(bottom: 6), child:
-          ScalableRoundedButton(
-            label: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.title', 'Register'),
+          RoundedButton(
+            label: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.title', 'Register')!,
             hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
             backgroundColor: Colors.white,
             borderColor: Styles().colors!.fillColorSecondary,
@@ -642,8 +642,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                     }
                 ),
                 Container(height: 27,),
-                ScalableRoundedButton(
-                  label: Localization().getStringEx('panel.groups_event_detail.button.add.title', "ADD "),
+                RoundedButton(
+                  label: Localization().getStringEx('panel.groups_event_detail.button.add.title', "ADD ")!,
                   backgroundColor: Colors.white,
                   borderColor: Styles().colors!.fillColorSecondary,
                   textColor: Styles().colors!.fillColorPrimary,

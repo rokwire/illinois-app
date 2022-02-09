@@ -31,7 +31,7 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/athletics/AthleticsSchedulePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
@@ -335,8 +335,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     ),
                     Padding(
                       padding: EdgeInsets.only(bottom: 48, left: 10, right: 10),
-                      child: ScalableRoundedButton(
-                        label: Localization().getStringEx("panel.athletics_team.button.full_schedule.title", 'Full Schedule'),
+                      child: RoundedButton(
+                        label: Localization().getStringEx("panel.athletics_team.button.full_schedule.title", 'Full Schedule')!,
                         hint: Localization().getStringEx("panel.athletics_team.button.full_schedule.hint", ''),
                         onTap: _showScheduleListPanel(),
                         textColor: Styles().colors!.fillColorPrimary,
@@ -409,8 +409,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       ),
                       Expanded(
                         flex: 5,
-                        child: ScalableRoundedButton(
-                          label: Localization().getStringEx("panel.athletics_team.button.all_news.title", 'All News'),
+                        child: RoundedButton(
+                          label: Localization().getStringEx("panel.athletics_team.button.all_news.title", 'All News')!,
                           hint: Localization().getStringEx("panel.athletics_team.button.all_news.hint", ''),
                           onTap: () {
                             Analytics().logSelect(target:"All News");
@@ -475,8 +475,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     child: Container(),),
                   Expanded(
                     flex: 5,
-                    child: ScalableRoundedButton(
-                      label: Localization().getStringEx("panel.athletics_team.button.full_roster.title", 'Full Roster'),
+                    child: RoundedButton(
+                      label: Localization().getStringEx("panel.athletics_team.button.full_roster.title", 'Full Roster')!,
                       hint: Localization().getStringEx("panel.athletics_team.button.full_roster.hint", ''),
                       onTap: _showRosterListPanel(),
                       textColor: Styles().colors!.fillColorPrimary,
@@ -536,8 +536,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     ),
                     Expanded(
                       flex: 5,
-                      child: ScalableRoundedButton(
-                        label: Localization().getStringEx("panel.athletics_team.button.all_staff.title", 'All Staff'),
+                      child: RoundedButton(
+                        label: Localization().getStringEx("panel.athletics_team.button.all_staff.title", 'All Staff')!,
                         hint: Localization().getStringEx("panel.athletics_team.button.all_staff.hint", ''),
                         onTap:_showCoachListPanel(),
                         textColor: Styles().colors!.fillColorPrimary,

@@ -35,7 +35,6 @@ import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -176,8 +175,8 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                               Expanded(flex: 1, child: Container()),
                               Expanded(
                                 flex: 5,
-                                child: ScalableRoundedButton(
-                                  label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See more events'),
+                                child: RoundedButton(
+                                  label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See more events')!,
                                   hint: Localization().getStringEx("panel.athletics.button.see_more_events.hint", ''),
                                   onTap: _onTapMoreUpcomingEvents,
                                   backgroundColor: Styles().colors!.background,

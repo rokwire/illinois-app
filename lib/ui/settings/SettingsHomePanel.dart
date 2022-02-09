@@ -41,7 +41,7 @@ import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:illinois/ui/settings/SettingsRolesPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -1223,8 +1223,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-          child: ScalableRoundedButton(
-            label: Localization().getStringEx("panel.settings.home.button.feedback.title", "Submit Feedback"),
+          child: RoundedButton(
+            label: Localization().getStringEx("panel.settings.home.button.feedback.title", "Submit Feedback")!,
             hint: Localization().getStringEx("panel.settings.home.button.feedback.hint", ""),
             backgroundColor: Styles().colors!.background,
             fontSize: 16.0,
@@ -1278,15 +1278,15 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   Widget _buildPrivacyDelete() {
     return Padding(padding: EdgeInsets.only(left: 18, right: 18, top: 24, bottom: 12), child:
     Column(children: <Widget>[
-      ScalableRoundedButton(
+      RoundedButton(
         backgroundColor: Styles().colors!.white,
         borderColor: Styles().colors!.white,
         textColor: UiColors.fromHex("#f54400"),
         fontSize: 16,
         fontFamily: Styles().fontFamilies!.regular,
-        label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Forget all of my information"),
+        label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Forget all of my information")!,
         hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
-        shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+        borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
         onTap: _onTapDeleteData,
       ),
     ],),);
@@ -1337,8 +1337,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   Widget _buildDebug() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 18, vertical: 24),
-      child: ScalableRoundedButton(
-        label: Localization().getStringEx("panel.profile_info.button.debug.title", "Debug"),
+      child: RoundedButton(
+        label: Localization().getStringEx("panel.profile_info.button.debug.title", "Debug")!,
         hint: Localization().getStringEx("panel.profile_info.button.debug.hint", ""),
         backgroundColor: Styles().colors!.background,
         fontSize: 16.0,

@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -43,7 +44,6 @@ import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
@@ -313,8 +313,8 @@ class GroupsConfirmationDialog extends StatelessWidget{
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Expanded(child:
-                        ScalableRoundedButton(
-                          label: Localization().getStringEx('headerbar.back.title', "Back"),
+                        RoundedButton(
+                          label: Localization().getStringEx('headerbar.back.title', "Back")!,
                           fontFamily: "ProximaNovaRegular",
                           textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.white,
@@ -327,8 +327,8 @@ class GroupsConfirmationDialog extends StatelessWidget{
                         )),
                       Container(width: 16,),
                       Expanded(child:
-                        ScalableRoundedButton(
-                          label: buttonTitle,
+                        RoundedButton(
+                          label: buttonTitle ?? '',
                           fontFamily: "ProximaNovaBold",
                           textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.fillColorSecondary,
@@ -1953,8 +1953,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
     int optionsCount = widget.poll.options?.length ?? 0;
     for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
-      Stack(children: <Widget>[
-        ScalableRoundedButton(
+        RoundedButton(
             label: widget.poll.options![optionIndex],
             backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors!.fillColorSecondary : _backgroundColor,
             hint: Localization().getStringEx("panel.poll_prompt.hint.select_option","Double tab to select this option"),
@@ -1962,20 +1961,10 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
             fontSize: 16.0,
             textColor: _textColor,
             borderColor: Styles().colors!.fillColorSecondary,
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            progress: (_votingOptions[optionIndex] != null),
             onTap: () { _onButtonOption(optionIndex); }
         ),
-        Visibility(visible: (_votingOptions[optionIndex] != null),
-          child: Container(
-            height: 42,
-            child: Align(alignment: Alignment.center,
-              child: SizedBox(height: 21, width: 21,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_textColor), )
-              ),
-            ),
-          ),
-        ),
-      ],),
       ));
     }
     return result;
@@ -2146,14 +2135,14 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
   }
 
 //   Widget _buildVoteDoneButton(void Function() handler) {
-//     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
+//     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: RoundedButton(
 //         label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
 //         backgroundColor: _backgroundColor,
 // //        height: 42,
 //         fontSize: 16.0,
 //         textColor: _textColor,
 //         borderColor: _doneButtonColor,
-//         padding: EdgeInsets.symmetric(horizontal: 24),
+//         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
 //         onTap: handler)
 //     );
 //   }

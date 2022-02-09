@@ -33,7 +33,6 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollBubblePinPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -175,8 +174,8 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           Container(height: 10,),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 80),
-            child: ScalableRoundedButton(
-              label: Localization().getStringEx("panel.polls_home.button.find_poll.title","Find Poll"),
+            child: RoundedButton(
+              label: Localization().getStringEx("panel.polls_home.button.find_poll.title","Find Poll")!,
               onTap: ()=>_onFindPollTapped(),
               backgroundColor: Styles().colors!.fillColorPrimary,
               textColor: Styles().colors!.white,
@@ -433,7 +432,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   Widget _buildCreatePollButton() {
     if (_canCreatePoll) {
       return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
-        ScalableRoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a poll"),
+        RoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a poll")!,
             textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
             backgroundColor: Styles().colors!.white,

@@ -26,7 +26,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 
@@ -154,8 +154,8 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 24, bottom: 12),
-                  child: ScalableRoundedButton(
-                    label: Localization().getStringEx('panel.group_qr_code.button.save.title', 'Save'),
+                  child: RoundedButton(
+                    label: Localization().getStringEx('panel.group_qr_code.button.save.title', 'Save')!,
                     hint: '',
                     backgroundColor: Styles().colors!.background,
                     fontSize: 16.0,

@@ -22,7 +22,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -194,12 +194,12 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
         child: Row(children: <Widget>[
           Expanded(flex: 1,child: Container(),),
           Expanded(flex: 5,
-          child: ScalableRoundedButton(label: Localization().getStringEx("panel.membership_questions.button.update_question.title", 'Update questions'),
+          child: RoundedButton(label: Localization().getStringEx("panel.membership_questions.button.update_question.title", 'Update questions')!,
             backgroundColor: Styles().colors!.white,
             textColor: Styles().colors!.fillColorPrimary,
             fontFamily: Styles().fontFamilies!.bold,
             fontSize: 16,
-            padding: EdgeInsets.symmetric(horizontal: 32, ),
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             borderColor: Styles().colors!.fillColorSecondary,
             borderWidth: 2,
             onTap:() { _onSubmit();  }

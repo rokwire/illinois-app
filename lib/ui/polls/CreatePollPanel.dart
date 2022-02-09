@@ -25,7 +25,7 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
@@ -339,55 +339,33 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(child:
-            Stack(children: <Widget>[
-                ScalableRoundedButton(
-                  label: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save"),
-                  backgroundColor: Colors.white,
-                  borderColor: Styles().colors!.fillColorPrimary,
-                  textColor: Styles().colors!.fillColorPrimary,
-                  onTap: () {
-                    _onCreatePoll(status: PollStatus.created);
-                  },
+            RoundedButton(
+              label: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save")!,
+              backgroundColor: Colors.white,
+              borderColor: Styles().colors!.fillColorPrimary,
+              textColor: Styles().colors!.fillColorPrimary,
+              progress: (_progressPollStatus == PollStatus.created),
+              onTap: () {
+                _onCreatePoll(status: PollStatus.created);
+              },
 //                  height: 48,
-                ),
-                Visibility(visible: (_progressPollStatus == PollStatus.created),
-                  child: Container(
-                    height: 48,
-                    child: Align(alignment: Alignment.center,
-                      child: SizedBox(height: 24, width: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                      ),
-                    ),
-                  ),
-                ),
-              ],),
+            ),
           ),
           Container(
             width: 6,
           ),
-          Expanded(
-            child: Stack(children: <Widget>[
-              ScalableRoundedButton(
-                label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start poll!"),
-                backgroundColor: Colors.white,
-                borderColor: Styles().colors!.fillColorSecondary,
-                textColor: Styles().colors!.fillColorPrimary,
-                onTap: () {
-                  _onCreatePoll(status: PollStatus.opened);
-                },
+          Expanded(child:
+            RoundedButton(
+              label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start poll!")!,
+              backgroundColor: Colors.white,
+              borderColor: Styles().colors!.fillColorSecondary,
+              textColor: Styles().colors!.fillColorPrimary,
+              progress: (_progressPollStatus == PollStatus.opened),
+              onTap: () {
+                _onCreatePoll(status: PollStatus.opened);
+              },
 //                height: 48,
-              ),
-              Visibility(visible: (_progressPollStatus == PollStatus.opened),
-                child: Container(
-                  height: 48,
-                  child: Align(alignment: Alignment.center,
-                    child: SizedBox(height: 24, width: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                    ),
-                  ),
-                ),
-              ),
-            ],),
+            ),
           ),
         ],
       )),

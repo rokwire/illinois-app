@@ -24,7 +24,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -204,10 +204,10 @@ class _OnboardingLoginPhoneVerifyPanelState
                   Analytics().logSelect(target: "Back");
                   Navigator.pop(context);
                 }), Align(alignment: Alignment.bottomCenter, child:
-            Padding(padding: EdgeInsets.only(left: 18, right: 18, bottom: 24),child: ScalableRoundedButton(
+            Padding(padding: EdgeInsets.only(left: 18, right: 18, bottom: 24),child: RoundedButton(
                 label: Localization().getStringEx(
                     "panel.onboarding.verify_phone.button.next.label",
-                    "Next"),
+                    "Next")!,
                 hint: Localization().getStringEx(
                     "panel.onboarding.verify_phone.button.next.hint", ""),
                 borderColor: Styles().colors!.fillColorSecondary,

@@ -19,6 +19,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -31,12 +32,11 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -588,9 +588,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               )),
                               (widget.group==null)? Container():
                               Expanded(
-                                  child: ScalableRoundedButton(
-                                    label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
-                                    Localization().getStringEx("panel.create_event.additional_info.button.create.title","Create event"),
+                                  child: RoundedButton(
+                                    label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event")!:
+                                    Localization().getStringEx("panel.create_event.additional_info.button.create.title","Create event")!,
                                     backgroundColor: Colors.white,
                                     borderColor: isValid ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
                                     textColor: isValid ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
@@ -1083,13 +1083,13 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           Row(
                             children: <Widget>[
                               Expanded(
-                                  child: ScalableRoundedButton(
+                                  child: RoundedButton(
                                     backgroundColor: Styles().colors!.white,
                                     textColor: Styles().colors!.fillColorPrimary,
                                     borderColor: Styles().colors!.fillColorSecondary,
                                     fontSize: 16,
                                     onTap: _onTapSelectLocation,
-                                    label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
+                                    label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map")!,
                                   ))
                             ],
                           )),

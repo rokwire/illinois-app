@@ -28,7 +28,6 @@ import 'package:illinois/ui/groups/GroupPendingMemberPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -436,8 +435,8 @@ class _PendingMemberCard extends StatelessWidget {
                     ),
                   ),
                   Container(height: 4,),
-                      ScalableRoundedButton(
-                        label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review request"),
+                      RoundedButton(
+                        label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review request")!,
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
                         borderColor: Styles().colors!.fillColorSecondary,
                         textColor: Styles().colors!.fillColorPrimary,

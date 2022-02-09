@@ -17,6 +17,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -41,7 +42,6 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -1018,7 +1018,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Auth2().isOidcLoggedIn && _group!.currentUserCanJoin
           ? Container(color: Colors.white,
               child: Padding(padding: EdgeInsets.all(16),
-                  child: ScalableRoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
+                  child: RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join')!,
                     backgroundColor: Styles().colors!.white,
                     textColor: Styles().colors!.fillColorPrimary,
                     fontFamily: Styles().fontFamilies!.bold,
@@ -1041,7 +1041,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             children: [
               Container(color: Colors.white,
                   child: Padding(padding: EdgeInsets.all(16),
-                    child: ScalableRoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
+                    child: RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request')!,
                         backgroundColor: Styles().colors!.white,
                         textColor: Styles().colors!.fillColorPrimary,
                         fontFamily: Styles().fontFamilies!.bold,

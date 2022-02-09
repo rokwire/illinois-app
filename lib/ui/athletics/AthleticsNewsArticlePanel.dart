@@ -26,7 +26,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -180,7 +180,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: 20, right: 20, bottom: 48),
-                                    child: ScalableRoundedButton(
+                                    child: RoundedButton(
                                       label: 'Share this article',
                                       backgroundColor: Styles().colors!.background,
                                       textColor: Styles().colors!.fillColorPrimary,
