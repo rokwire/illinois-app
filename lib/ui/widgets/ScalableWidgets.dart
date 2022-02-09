@@ -44,37 +44,31 @@ class ScalableRoundedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     BorderRadius borderRadius = BorderRadius.circular(24);
-    return Semantics(
-        label: label,
-        hint: hint,
-        button: true,
-        excludeSemantics: true,
-        enabled: enabled,
-        child: InkWell(
-          onTap: onTap,
+    return Semantics(label: label, hint: hint, button: true, excludeSemantics: true, enabled: enabled, child:
+      InkWell(onTap: onTap, child:
+        Container(
+          decoration: BoxDecoration(
+            color: (backgroundColor ?? Styles().colors!.fillColorPrimary),
+            border: Border.all(
+                color: (borderColor != null) ? borderColor! : (backgroundColor ?? Styles().colors!.fillColorPrimary!),
+                width: borderWidth),
+            borderRadius: borderRadius,
+            boxShadow: this.shadow
+          ),
           child: Container(
             decoration: BoxDecoration(
-              color: (backgroundColor ?? Styles().colors!.fillColorPrimary),
-              border: Border.all(
-                  color: (borderColor != null) ? borderColor! : (backgroundColor ?? Styles().colors!.fillColorPrimary!),
-                  width: borderWidth),
-              borderRadius: borderRadius,
-              boxShadow: this.shadow
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: (backgroundColor ?? Styles().colors!.fillColorPrimary),
-                  border: Border.all(
-                      color: (secondaryBorderColor != null)
-                          ? secondaryBorderColor!
-                          : (backgroundColor ?? Styles().colors!.fillColorPrimary!),
-                      width: borderWidth),
-                  borderRadius: borderRadius),
-              child: Padding(
-                  padding: padding,
-                  child:
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                color: (backgroundColor ?? Styles().colors!.fillColorPrimary),
+                border: Border.all(
+                    color: (secondaryBorderColor != null)
+                        ? secondaryBorderColor!
+                        : (backgroundColor ?? Styles().colors!.fillColorPrimary!),
+                    width: borderWidth),
+                borderRadius: borderRadius),
+              child: Padding(padding: padding, child:
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                    
                     (leftIcon != null) ? Padding(padding: EdgeInsets.only(right: 5), child: leftIcon,) : Container(height: 0, width: 0),
+                    
                     Expanded(child:
                       Text(label!, textAlign: textAlign, maxLines: maxLines, overflow: TextOverflow.ellipsis,
                         style: TextStyle(
