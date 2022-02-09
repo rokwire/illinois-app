@@ -26,13 +26,20 @@ class RoundedButton extends StatefulWidget {
   final Color? backgroundColor;
   final EdgeInsetsGeometry padding;
   final MainAxisSize mainAxisSize;
-  final bool? progress;
-
+  
   final TextStyle? textStyle;
   final Color? textColor;
   final String? fontFamily;
   final double fontSize;
   final TextAlign textAlign;
+
+  final Image? leftIcon;
+  final EdgeInsetsGeometry? leftIconPadding;
+  
+  final Image? rightIcon;
+  final EdgeInsetsGeometry? rightIconPadding;
+
+  final double iconPadding;
 
   final BoxBorder? border;
   final Color? borderColor;
@@ -43,6 +50,7 @@ class RoundedButton extends StatefulWidget {
   final Color? secondaryBorderColor;
   final double? secondaryBorderWidth;
 
+  final bool? progress;
   final Color? progressColor;
   final double? progressSize;
   final double? progressStrokeWidth;
@@ -55,13 +63,18 @@ class RoundedButton extends StatefulWidget {
     this.backgroundColor,      //= Styles().colors.white
     this.padding                 = const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
     this.mainAxisSize            = MainAxisSize.max,
-    this.progress,
 
     this.textStyle,
     this.textColor,            //= Styles().colors.fillColorPrimary
     this.fontFamily,           //= Styles().fontFamilies.bold
     this.fontSize                = 20.0,
     this.textAlign               = TextAlign.center,
+
+    this.leftIcon,
+    this.leftIconPadding,
+    this.rightIcon,
+    this.rightIconPadding,
+    this.iconPadding             = 8,
 
     this.border,
     this.borderColor,          //= Styles().colors.fillColorSecondary
@@ -72,6 +85,7 @@ class RoundedButton extends StatefulWidget {
     this.secondaryBorderColor,
     this.secondaryBorderWidth,
     
+    this.progress,
     this.progressColor,
     this.progressSize,
     this.progressStrokeWidth,
@@ -91,6 +105,9 @@ class _RoundedButtonState extends State<RoundedButton> {
   TextStyle get _textStyle => widget.textStyle ?? TextStyle(fontFamily: _fontFamily, fontSize: widget.fontSize, color: _textColor);
 
   Color get _borderColor => widget.borderColor ?? Styles().colors!.fillColorSecondary!;
+
+  EdgeInsetsGeometry get leftIconPadding => widget.leftIconPadding ?? EdgeInsets.all(widget.iconPadding);
+  EdgeInsetsGeometry get rightIconPadding => widget.rightIconPadding ?? EdgeInsets.all(widget.iconPadding);
 
   Color get _progressColor => widget.progressColor ?? _borderColor;
   double get _progressSize => widget.progressSize ?? ((_contentSize?.height ?? 0) / 2);
@@ -145,11 +162,48 @@ class _RoundedButtonState extends State<RoundedButton> {
   }
 
   Widget get _innerContent {
-    return Padding(padding: widget.padding, child:
-      Semantics(excludeSemantics: true, child:
-        Text(widget.label, style: _textStyle, textAlign: widget.textAlign,),
-      ),
-    );
+    if ((widget.rightIcon != null) || (widget.leftIcon != null)) {
+      List<Widget> rowContent = <Widget>[];
+      
+      if (widget.leftIcon != null) {
+        rowContent.add(Padding(padding: leftIconPadding, child: widget.leftIcon,));
+      }
+      else if (widget.rightIcon != null) {
+        // add space keeper at left to keep text content centered
+        rowContent.add(Padding(padding: rightIconPadding, child: Visibility(visible: false, maintainSize: true, maintainAnimation: true, maintainState: true, child: widget.rightIcon!)));
+      }
+
+      rowContent.add((widget.mainAxisSize == MainAxisSize.max) ?
+        Expanded(child:
+          Padding(padding: widget.padding, child:
+            Text(widget.label, style: _textStyle, textAlign: widget.textAlign,)
+          )
+        ) :
+        Padding(padding: widget.padding, child:
+          Text(widget.label, style: _textStyle, textAlign: widget.textAlign,)
+        )
+      );
+
+      if (widget.rightIcon != null) {
+        EdgeInsetsGeometry padding = widget.rightIconPadding ?? EdgeInsets.symmetric(horizontal: widget.iconPadding);
+        rowContent.add(Padding(padding: padding, child: widget.rightIcon,));
+      }
+      else if (widget.leftIcon != null) {
+        // add space keeper at right to keep text content centered
+        rowContent.add(Padding(padding: leftIconPadding, child: Visibility(visible: false, maintainSize: true, maintainAnimation: true, maintainState: true, child: widget.leftIcon!)));
+      }
+
+      return Semantics(excludeSemantics: true, child:
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: rowContent)
+      );
+    }
+    else {
+      return Semantics(excludeSemantics: true, child:
+        Padding(padding: widget.padding, child:
+          Text(widget.label, style: _textStyle, textAlign: widget.textAlign,)
+        )
+      );
+    }
   }
 
   Widget get _progressContent {
