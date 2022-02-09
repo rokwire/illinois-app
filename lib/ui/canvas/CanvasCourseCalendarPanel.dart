@@ -86,6 +86,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
                     child: Row(
                       children: [_buildYearDropDown(), Container(width: 16), _buildMonthDropDown()],
                     )),
+                Padding(padding: EdgeInsets.only(left: 5, right: 5, bottom: 10), child: _buildWeekChangeArrows()),
                 Padding(padding: EdgeInsets.only(left: 5, right: 5, bottom: 20), child: _buildWeekDaysWidget()),
                 Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding), child: _buildEventsContent())
               ])))
@@ -273,6 +274,14 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
 
   void _onMonthChanged(dynamic month) {
     _changeSelectedDate(month: month);
+  }
+
+  Widget _buildWeekChangeArrows() {
+    double imageSize = 30;
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      GestureDetector(onTap: _onSwipeRight, child: Container(width: imageSize, height: imageSize, child: Image.asset('images/chevron-left-blue.png'))),
+      GestureDetector(onTap: _onSwipeLeft, child: Container(width: imageSize, height: imageSize, child: Image.asset('images/chevron-blue-right.png')))
+    ]);
   }
 
   Widget _buildWeekDaysWidget() {
