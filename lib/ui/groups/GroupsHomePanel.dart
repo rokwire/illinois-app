@@ -56,6 +56,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   _TagFilter? _selectedTagFilter = _TagFilter.all;
   _FilterType __activeFilterType = _FilterType.none;
 
+  String? _modalImageUrl; // ModalImageDial presentation
+
   //TBD: this filtering has to be done on the server side.
   List<Group>? _getFilteredAllGroupsContent() {
     if (CollectionUtils.isEmpty(_allGroups)) {
@@ -295,7 +297,23 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               letterSpacing: 1.0),
         ),
       ),
-      body: Column(children: <Widget>[
+      body: ModalImageDialog.modalDialogContainer(
+          content: _buildContent(),
+          imageUrl: _modalImageUrl,
+          onClose: () {
+            Analytics().logSelect(target: "Close");
+            _modalImageUrl = null;
+            setState(() {});
+          }
+      ),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: TabBarWidget(),
+    );
+  }
+
+  Widget _buildContent(){
+    return
+      Column(children: <Widget>[
         _buildTabs(),
         _buildFilterButtons(),
         Expanded(
@@ -305,11 +323,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             alignment: AlignmentDirectional.topCenter,
             children: <Widget>[
               Container(color: Styles().colors!.background, child:
-                RefreshIndicator(onRefresh: _onPullToRefresh, child: 
-                  SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
-                    Column( children: <Widget>[ _myGroupsSelected ? _buildMyGroupsContent() : _buildAllGroupsContent(), ],),
-                  ),
-                ),
+              RefreshIndicator(onRefresh: _onPullToRefresh, child:
+              SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+              Column( children: <Widget>[ _myGroupsSelected ? _buildMyGroupsContent() : _buildAllGroupsContent(), ],),
+              ),
+              ),
               ),
               Visibility(
                   visible: _hasActiveFilter,
@@ -321,10 +339,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             ],
           ),
         ),
-      ],),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
-    );
+      ],);
   }
 
   Widget _buildTabs(){
@@ -532,7 +547,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       for (Group? group in _myGroups!) {
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup),
+          child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup, onImageTap: (){ onTapImage(group);} ,),
         ));
       }
       widgets.add(Container(height: 8,));
@@ -688,8 +703,21 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
+  void onTapImage(Group? group){
+    _showModalImage(group?.imageURL ?? "");
+  }
+
   bool get _canCreateGroup {
     return Auth2().isOidcLoggedIn;
+  }
+
+  //Modal Image Dialog
+  void _showModalImage(String? url){
+    if(url != null) {
+      setState(() {
+        _modalImageUrl = url;
+      });
+    }
   }
 
   ///////////////////////////////////

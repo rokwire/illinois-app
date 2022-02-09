@@ -915,8 +915,10 @@ enum GroupCardDisplayType { myGroup, allGroups, homeGroups }
 class GroupCard extends StatelessWidget {
   final Group? group;
   final GroupCardDisplayType displayType;
+  final Function? onImageTap;
+  static const double _smallImageSize = 64;
 
-  GroupCard({required this.group, this.displayType = GroupCardDisplayType.allGroups});
+  GroupCard({required this.group, this.displayType = GroupCardDisplayType.allGroups, this.onImageTap});
 
   @override
   Widget build(BuildContext context) {
@@ -931,45 +933,88 @@ class GroupCard extends StatelessWidget {
                     color: Styles().colors!.white,
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                     boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  _buildHeading(),
-                  Container(height: 3),
-                  Row(children: [
-                    Expanded(
-                        child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 0),
-                            child: Text(group?.title ?? "",
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
-                                style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))))
-                  ]),
-                  (displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) :Container(),
-                  Visibility(
-                    visible: (group?.currentUserIsAdmin ?? false) && (group!.pendingCount > 0),
-                    child: Text(pendingCountText,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.regular,
-                          fontSize: 16,
-                          color: Styles().colors!.textBackgroundVariant,
+                child:
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded( child:
+                    Column(crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                      _buildHeading(),
+                      Container(height: 3),
+                      Row(children: [
+                        Expanded(
+                            child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 0),
+                                child: Text(group?.title ?? "",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
+                                    style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary)))),
 
+                      ]),
+                      (displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) :Container(),
+                      Visibility(
+                        visible: (group?.currentUserIsAdmin ?? false) && (group!.pendingCount > 0),
+                        child: Text(pendingCountText,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
+                          style: TextStyle(
+                              fontFamily: Styles().fontFamilies!.regular,
+                              fontSize: 16,
+                              color: Styles().colors!.textBackgroundVariant,
+
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  Container(height: 4),
-                  Visibility(
-                    visible: displayType == GroupCardDisplayType.homeGroups && (group?.currentUserIsMemberOrAdmin ?? false),
-                    child: _buildUpdateTime(),
-                  ),
-                  Visibility(
-                    visible: displayType != GroupCardDisplayType.homeGroups && (group?.currentUserIsMemberOrAdmin ?? false),
-                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      _buildUpdateTime(),
-                      _buildMembersCount()
-                    ]),
-                  )
-                ]))));
+                      Container(height: 4),
+                      (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups)
+                          ? Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                              _buildUpdateTime(),
+                              Visibility(visible: (group?.authManEnabled ?? false), child: _buildMembersCount())
+                            ])
+                          : Container()
+                    ])),
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          _buildPrivacyStatysBadge(),
+                          _buildImage()
+                        ],
+                      ))
+                  ],)
+
+            )));
+  }
+
+  Widget _buildImage(){
+    String? imageUrl = group?.imageURL;
+    return
+      StringUtils.isEmpty(imageUrl)? Container() :
+      // Expanded(
+      //     flex: 1,
+      //     child:
+          Semantics(
+              label: "post image",
+              button: true,
+              hint: "Double tap to zoom the image",
+              child:GestureDetector(
+                  onTap: (){
+                    if(onImageTap!=null){
+                      onImageTap!();
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.only(left: 8),
+                    child: SizedBox(
+                      // width: _smallImageSize,
+                      height: _smallImageSize,
+                      child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),))
+          // )
+    );
   }
 
   Widget _buildHeading() {
@@ -1001,29 +1046,7 @@ class GroupCard extends StatelessWidget {
     }
 
     List<Widget> rightContent = <Widget>[];
-
-    String privacyStatus = '';
-    if (group?.authManEnabled ?? false) {
-      privacyStatus = ' ' + Localization().getStringEx('widget.group_card.status.authman', 'Managed')!;
-    }
-    if (group?.privacy == GroupPrivacy.private) {
-      privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private')! + privacyStatus;
-    } else if (StringUtils.isNotEmpty(privacyStatus)) {
-      privacyStatus = Localization().getStringEx('widget.group_card.status.public', 'Public')! + privacyStatus;
-    }
-
-    if (StringUtils.isNotEmpty(privacyStatus)) {
-      rightContent.add(
-        Semantics(
-          label: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: ')!, [privacyStatus]),
-          excludeSemantics: true,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))),
-            child: Text(privacyStatus.toUpperCase(),
-              style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white)))),
-      );
-    }
+    // rightContent.add(_buildPrivacyStatysBadge()); //Moved above the image
 
     List<Widget> content = <Widget>[];
     if (leftContent.isNotEmpty) {
@@ -1038,6 +1061,34 @@ class GroupCard extends StatelessWidget {
     }
 
     return content.isNotEmpty ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: content,) : Container(width: 0, height: 0);
+  }
+
+  Widget _buildPrivacyStatysBadge(){
+    String privacyStatus = '';
+    if (group?.authManEnabled ?? false) {
+      privacyStatus = ' ' + Localization().getStringEx('widget.group_card.status.authman', 'Managed')!;
+    }
+    if (group?.privacy == GroupPrivacy.private) {
+      privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private')! + privacyStatus;
+    } else if (StringUtils.isNotEmpty(privacyStatus)) {
+      privacyStatus = Localization().getStringEx('widget.group_card.status.public', 'Public')! + privacyStatus;
+    }
+
+    if (StringUtils.isNotEmpty(privacyStatus)) {
+      return
+        Container(
+          padding: EdgeInsets.only(bottom: 8),
+          child: Semantics(
+              label: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: ')!, [privacyStatus]),
+              excludeSemantics: true,
+              child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))),
+                  child: Text(privacyStatus.toUpperCase(),
+                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white)))));
+    } else {
+      return Container();
+    }
   }
 
 
