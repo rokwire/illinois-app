@@ -25,7 +25,10 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -37,7 +40,7 @@ class CanvasCourseCalendarPanel extends StatefulWidget {
   _CanvasCourseCalendarPanelState createState() => _CanvasCourseCalendarPanelState();
 }
 
-class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
+class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> implements NotificationsListener {
   List<CanvasCalendarEvent>? _events;
   late DateTime _startDateTime;
   late DateTime _endDateTime;
@@ -46,9 +49,16 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
 
   @override
   void initState() {
-    super.initState();
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     _initCalendarDates();
     _loadEvents();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -155,34 +165,66 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
   }
 
   Widget _buildEventCard(CanvasCalendarEvent event) {
+    bool isFavorite = Auth2().isFavorite(event);
+
     return GestureDetector(
         onTap: () => _onTapEvent(event),
-        child: Column(children: [
-          Container(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Expanded(
-                    child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 15), child: Image.asset('images/icon-news.png')),
+        child: Stack(children: [
+          Column(children: [
+            Container(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                   Expanded(
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(StringUtils.ensureNotEmpty(event.contextName),
-                        textAlign: TextAlign.start,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style:
-                            TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
-                    Text(StringUtils.ensureNotEmpty(event.title),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
-                    Text(StringUtils.ensureNotEmpty(event.startAtDisplayDate),
-                        style: TextStyle(color: Styles().colors!.disabledTextColor, fontFamily: Styles().fontFamilies!.bold, fontSize: 18))
-                  ]))
+                      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 15), child: Image.asset('images/icon-news.png')),
+                    Expanded(
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(StringUtils.ensureNotEmpty(event.contextName),
+                          textAlign: TextAlign.start,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
+                      Text(StringUtils.ensureNotEmpty(event.title),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
+                      Text(StringUtils.ensureNotEmpty(event.startAtDisplayDate),
+                          style:
+                              TextStyle(color: Styles().colors!.disabledTextColor, fontFamily: Styles().fontFamilies!.bold, fontSize: 18))
+                    ]))
+                  ])),
+                  Image.asset('images/chevron-right.png')
                 ])),
-                Image.asset('images/chevron-right.png')
-              ])),
-          _buildEventDelimiter()
+            _buildEventDelimiter()
+          ]),
+          Visibility(
+              visible: Auth2().canFavorite,
+              child: Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        Analytics().logSelect(target: "Favorite: ${event.favoriteTitle}");
+                        Auth2().prefs?.toggleFavorite(event);
+                      },
+                      child: Semantics(
+                          container: true,
+                          label: isFavorite
+                              ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+                              : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+                          hint: isFavorite
+                              ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+                              : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+                          button: true,
+                          excludeSemantics: true,
+                          child: Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: Container(
+                                  padding: EdgeInsets.only(left: 24, bottom: 24),
+                                  child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png',
+                                      excludeFromSemantics: true)))))))
         ]));
   }
 
@@ -417,5 +459,14 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> {
 
   bool get _isLoading {
     return (_loadingProgress > 0);
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      setState(() {});
+    }
   }
 }
