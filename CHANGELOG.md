@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Authman Groups UI improvements [#1323](https://github.com/rokwire/illinois-app/issues/1323).
+- Canvas Calendar - arrows for changing week, marker for each day which has events, possibility for saving events [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Removed
+- Canvas Course code from the card [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 
 ## [3.2.15] - 2022-02-08
 ### Added
