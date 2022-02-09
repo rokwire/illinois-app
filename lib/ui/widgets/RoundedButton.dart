@@ -21,7 +21,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class RoundedButton extends StatefulWidget {
   final String label;
-  final String? hint;
   final void Function() onTap;
   final Color? backgroundColor;
   final EdgeInsetsGeometry padding;
@@ -41,6 +40,9 @@ class RoundedButton extends StatefulWidget {
 
   final double iconPadding;
 
+  final String? hint;
+  final bool enabled;
+
   final BoxBorder? border;
   final Color? borderColor;
   final double borderWidth;
@@ -59,7 +61,6 @@ class RoundedButton extends StatefulWidget {
 
   RoundedButton({
     required this.label,
-    this.hint,
     required this.onTap,
     this.backgroundColor,      //= Styles().colors.white
     this.padding                 = const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -76,6 +77,9 @@ class RoundedButton extends StatefulWidget {
     this.rightIcon,
     this.rightIconPadding,
     this.iconPadding             = 8,
+
+    this.hint,
+    this.enabled                 = true,
 
     this.border,
     this.borderColor,          //= Styles().colors.fillColorSecondary
@@ -132,7 +136,7 @@ class _RoundedButtonState extends State<RoundedButton> {
   }
 
   Widget get _outerContent {
-    return Semantics(label: widget.label, hint: widget.hint, button: true /*, enabled: enabled*/, child:
+    return Semantics(label: widget.label, hint: widget.hint, button: true, enabled: widget.enabled, child:
       InkWell(onTap: widget.onTap, child:
         _wrapperContent
       ),
