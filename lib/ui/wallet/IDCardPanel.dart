@@ -20,6 +20,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -96,7 +97,12 @@ class _IDCardPanelState extends State<IDCardPanel>
           _loadingBuildingAccess = false;
         });
       }
-    });
+      }).then((_){
+        if (mounted) {
+          _checkNetIdStatus();
+        }
+      });
+
 
     // Auth2().updateAuthCard();
   }
@@ -282,10 +288,10 @@ class _IDCardPanelState extends State<IDCardPanel>
 
       Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
         
-        Visibility(visible: (0 < (Auth2().authCard?.cardNumber?.length ?? 0)), child: Column(children: [
+        Visibility(visible: (0 < (_userQRCodeContent?.length ?? 0)), child: Column(children: [
           Text(Auth2().authCard!.cardNumber ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
           Container(height: 8),
-          QrImage(data: Auth2().authCard!.magTrack2 ?? '', size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ),
+          QrImage(data: _userQRCodeContent ?? "", size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ),
         ],),),
 
         Container(width: 20),
@@ -332,6 +338,19 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   void _onClose() {
     Navigator.of(context).pop();
+  }
+
+  Future<bool> _checkNetIdStatus() async {
+    if (Auth2().authCard?.photoBase64?.isEmpty ?? true) {
+      await AppAlert.showDialogResult(context, Localization().getStringEx('panel.covid19_passport.message.missing_id_info', 'No Illini ID information found. You may have an expired i-card. Please contact the ID Center.'));
+      return false;
+    }
+    return true;
+  }
+
+  String? get _userQRCodeContent {
+    String? qrCodeContent = Auth2().authCard!.magTrack2;
+    return ((qrCodeContent != null) && (0 < qrCodeContent.length)) ? qrCodeContent : Auth2().authCard?.uin;
   }
 }
 
