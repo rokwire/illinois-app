@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -61,11 +61,11 @@ class _HomeUpgradeVersionWidgetState extends State<HomeUpgradeVersionWidget> {
                     Row(
                       children: <Widget>[
                         RoundedButton(
-                          label: Localization().getStringEx('widget.home_upgrade_version.button.got_it', 'Got It'),
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          label: Localization().getStringEx('widget.home_upgrade_version.button.got_it', 'Got It')!,
                           textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.fillColorSecondary,
                           backgroundColor: Styles().colors!.white,
+                          contentWeight: 0.0,
                           onTap: _onTapGotIt,
                         )
                       ],

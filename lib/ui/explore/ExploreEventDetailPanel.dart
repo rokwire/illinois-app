@@ -31,7 +31,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -41,7 +41,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -651,9 +650,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       buttons.add(Row(children:<Widget>[
         Expanded(child:
           Padding(padding: EdgeInsets.only(bottom: 6), child:
-            ScalableRoundedButton(
+            RoundedButton(
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
+              label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website')!,
               hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
               backgroundColor: hasRegistrationUrl ? Styles().colors!.background : Colors.white,
               borderColor: hasRegistrationUrl ? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorSecondary,
@@ -670,9 +669,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       buttons.add(Row(children:<Widget>[
         Expanded(child:
         Padding(padding: EdgeInsets.only(bottom: 6), child:
-          ScalableRoundedButton(
+          RoundedButton(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register'),
+                label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register')!,
                 hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorSecondary,
@@ -713,7 +712,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         children: <Widget>[
           Expanded(
               child: RoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.modify.title', 'Modify') ,
+                label: Localization().getStringEx('panel.explore_detail.button.modify.title', 'Modify')!,
                 hint: Localization().getStringEx('panel.explore_detail.button.modify.hint', '') ,
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorPrimary,
@@ -725,7 +724,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           ),
           Expanded(
               child: RoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.publish.title', 'Publish'),
+                label: Localization().getStringEx('panel.explore_detail.button.publish.title', 'Publish')!,
                 hint: Localization().getStringEx('panel.explore_detail.button.publish.hint', 'Publish'),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorSecondary,
@@ -741,28 +740,15 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           child:
-          Stack(
-            children: [
-              ScalableRoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group') ,
-                hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
-                backgroundColor: Colors.white,
-                borderColor: Styles().colors!.fillColorPrimary,
-                textColor: Styles().colors!.fillColorPrimary,
-                onTap: _onTapAddToGroup,
-              ),
-              Visibility(visible: _addToGroupInProgress,
-                child: Container(
-                  height: 48,
-                  child: Align(alignment: Alignment.center,
-                    child: SizedBox(height: 24, width: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          )
+            RoundedButton(
+              label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group')!,
+              hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+              backgroundColor: Colors.white,
+              borderColor: Styles().colors!.fillColorPrimary,
+              textColor: Styles().colors!.fillColorPrimary,
+              progress: _addToGroupInProgress,
+              onTap: _onTapAddToGroup,
+            ),
         );
   }
 

@@ -27,9 +27,8 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -217,31 +216,19 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 Expanded(
-                  child: Stack(children: <Widget>[
-                    ScalableRoundedButton(
-                        label: _disabled
-                            ? Localization().getStringEx('panel.settings.privacy.button.set_privacy.disabled.title', 'Scroll to Review')
-                            : Localization().getStringEx('panel.settings.privacy.button.set_privacy.title', 'Set my Privacy'),
-                        hint: _disabled
-                            ? Localization().getStringEx('panel.settings.privacy.button.set_privacy.disabled.hint', '')
-                            : Localization().getStringEx('panel.settings.privacy.button.set_privacy.hint', ''),
-                        borderColor: _disabled ? Styles().colors!.disabledTextColorTwo : Styles().colors!.fillColorSecondary,
-                        backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-                        textColor: _disabled ? Styles().colors!.disabledTextColorTwo : Styles().colors!.white,
-                        onTap: () => _onSaveClicked()),
-                    Visibility(
-                      visible: _updating,
-                      child: Container(
-                        height: 48, 
-                        child: Align(
-                          alignment:Alignment.center,
-                          child: SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white),),),),),),
-                    ]))
+                  child: RoundedButton(
+                      label: _disabled
+                          ? Localization().getStringEx('panel.settings.privacy.button.set_privacy.disabled.title', 'Scroll to Review')!
+                          : Localization().getStringEx('panel.settings.privacy.button.set_privacy.title', 'Set my Privacy')!,
+                      hint: _disabled
+                          ? Localization().getStringEx('panel.settings.privacy.button.set_privacy.disabled.hint', '')
+                          : Localization().getStringEx('panel.settings.privacy.button.set_privacy.hint', ''),
+                      borderColor: _disabled ? Styles().colors!.disabledTextColorTwo : Styles().colors!.fillColorSecondary,
+                      backgroundColor: Styles().colors!.fillColorPrimaryVariant,
+                      textColor: _disabled ? Styles().colors!.disabledTextColorTwo : Styles().colors!.white,
+                      progress: _updating,
+                      onTap: () => _onSaveClicked()),
+                  )
               ],
             )));
   }
@@ -356,7 +343,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   backgroundColor: Colors.transparent,
                   borderColor: Styles().colors!.fillColorSecondary,
                   textColor: Styles().colors!.fillColorPrimary,
-                  label: Localization().getStringEx("panel.settings.privacy.dialog.update_privacy.yes", "Yes")),
+                  label: Localization().getStringEx("panel.settings.privacy.dialog.update_privacy.yes", "Yes")!),
               Container(
                 height: 10,
               ),
@@ -368,7 +355,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   backgroundColor: Colors.transparent,
                   borderColor: Styles().colors!.fillColorSecondary,
                   textColor: Styles().colors!.fillColorPrimary,
-                  label: Localization().getStringEx("panel.settings.privacy.dialog.update_privacy.no", "No"))
+                  label: Localization().getStringEx("panel.settings.privacy.dialog.update_privacy.no", "No")!)
             ],
           ),
         ),

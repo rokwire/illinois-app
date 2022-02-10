@@ -20,7 +20,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
@@ -182,11 +182,11 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                         context: context,
                       ),
                     ),
-                    ScalableRoundedButton(
-                      label: Localization().getStringEx('panel.onboarding2.improve.button.continue.title', 'Continue'),
+                    RoundedButton(
+                      label: Localization().getStringEx('panel.onboarding2.improve.button.continue.title', 'Continue')!,
                       hint: Localization().getStringEx('panel.onboarding2.improve.button.continue.hint', ''),
                       fontSize: 16,
-                      padding: EdgeInsets.symmetric(vertical: 12),
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       backgroundColor: Styles().colors!.white,
                       borderColor: Styles().colors!.fillColorSecondaryVariant,
                       textColor: Styles().colors!.fillColorPrimary,

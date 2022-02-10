@@ -20,7 +20,7 @@ import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -157,10 +157,10 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                 ),
                 ]))),
                 Container(child:
-                ScalableRoundedButton(
+                RoundedButton(
                     label: Localization().getStringEx(
                         "panel.onboarding.confirm_phone.button.confirm.label",
-                        "Confirm phone number"),
+                        "Confirm phone number")!,
                     hint: Localization().getStringEx(
                         "panel.onboarding.confirm_phone.button.confirm.hint", ""),
                     borderColor: Styles().colors!.fillColorSecondary,

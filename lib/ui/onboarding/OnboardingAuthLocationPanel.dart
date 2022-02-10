@@ -21,7 +21,7 @@ import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 
 class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
@@ -100,10 +100,10 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    ScalableRoundedButton(
+                    RoundedButton(
                       label: Localization().getStringEx(
                           'panel.onboarding.location.button.allow.title',
-                          'Share my Location'),
+                          'Share my Location')!,
                       hint: Localization().getStringEx(
                           'panel.onboarding.location.button.allow.hint',
                           ''),

@@ -23,7 +23,7 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -271,30 +271,20 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
       child: Row(
         children: <Widget>[
             Expanded(child:
-              Stack(children: <Widget>[
-                ScalableRoundedButton(
-                  label: _continueButtonText,
-                  hint: Localization().getStringEx("panel.pending_member_detail.button.add.hint", ""),
-                  backgroundColor: Styles().colors!.white,
-                  borderColor: _canContinue? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                  textColor: _canContinue? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-                  fontFamily: Styles().fontFamilies!.bold,
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-                  onTap: () {
-                    Analytics().logSelect(target: 'Apply');
-                    _processMembership();
-                  },
-                ),
-                Visibility(visible: _updating, child:
-                  Center(child:
-                    Padding(padding: EdgeInsets.only(top: 12), child:
-                    Container(width: 24, height: 24, child:
-                        CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), strokeWidth: 2,)
-                      ),
-                    ),
-                  ),
-                ),
-              ],),
+              RoundedButton(
+                label: _continueButtonText ?? '',
+                hint: Localization().getStringEx("panel.pending_member_detail.button.add.hint", ""),
+                backgroundColor: Styles().colors!.white,
+                borderColor: _canContinue? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                textColor: _canContinue? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+                fontFamily: Styles().fontFamilies!.bold,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                progress: _updating,
+                onTap: () {
+                  Analytics().logSelect(target: 'Apply');
+                  _processMembership();
+                },
+              ),
             )
         ],
       ),

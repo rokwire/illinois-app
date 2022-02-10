@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -138,8 +138,8 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                     Padding(
                       padding: EdgeInsets.only(
                           bottom: 24),
-                      child: ScalableRoundedButton(
-                        label: Localization().getStringEx('panel.onboarding.privacy.button.continue.title', 'Set your privacy level'),
+                      child: RoundedButton(
+                        label: Localization().getStringEx('panel.onboarding.privacy.button.continue.title', 'Set your privacy level')!,
                         hint: Localization().getStringEx('panel.onboarding.privacy.button.continue.hint', ''),
                         backgroundColor: Styles().colors!.background,
                         borderColor: Styles().colors!.fillColorSecondaryVariant,

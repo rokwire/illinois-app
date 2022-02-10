@@ -28,7 +28,7 @@ import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
@@ -185,11 +185,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       hint: Localization().getStringEx("panel.groups_settings.add_image.hint", ""),
                       button: true,
                       excludeSemantics: true,
-                      child: ScalableSmallRoundedButton(
-                          maxLines: 2,
-                          label: Localization().getStringEx("panel.groups_settings.add_image", "Add cover image"),
+                      child: RoundedButton(
+                          label: Localization().getStringEx("panel.groups_settings.add_image", "Add cover image")!,
                           textColor: Styles().colors!.fillColorPrimary,
-                          onTap: _onTapAddImage,))))
+                          onTap: _onTapAddImage,
+                          backgroundColor: Colors.transparent,
+                          contentWeight: 0.8,
+                    ))))
         ]));
   }
 
@@ -322,8 +324,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             Container(width: 8),
             Expanded(
                 flex: 2,
-                child: ScalableRoundedButton(
-                    label: Localization().getStringEx("panel.groups_create.button.tags.title", "Tags"),
+                child: RoundedButton(
+                    label: Localization().getStringEx("panel.groups_create.button.tags.title", "Tags")!,
                     hint: Localization().getStringEx("panel.groups_create.button.tags.hint", ""),
                     backgroundColor: Styles().colors!.white,
                     textColor: Styles().colors!.fillColorPrimary,
@@ -598,30 +600,20 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //Buttons
   Widget _buildButtonsLayout() {
     return
-      Stack(alignment: Alignment.center, children: <Widget>[
         Container( color: Styles().colors!.white,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
-            child: ScalableRoundedButton(
-              label: Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
+            child: RoundedButton(
+              label: Localization().getStringEx("panel.groups_create.button.create.title", "Create Group")!,
               backgroundColor: Styles().colors!.white,
               borderColor: _canSave ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
               textColor: _canSave ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
               enabled: _canSave,
+              progress:  _creating,
               onTap: _onCreateTap,
             ),
-          )
-          ,),
-        Visibility(visible: _creating,
-          child: Container(
-            child: Align(alignment: Alignment.center,
-              child: SizedBox(height: 24, width: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-              ),
-            ),
           ),
-        ),
-      ],);
+        );
   }
 
   void _onCreateTap() {

@@ -16,7 +16,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -548,11 +548,11 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
                 Container(height: 32),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                   Expanded(child:
-                    RoundedButton(label: negativeButtonTitle, onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), backgroundColor: Colors.transparent, borderColor: Styles().colors!.fillColorPrimary, textColor: Styles().colors!.fillColorPrimary,),
+                    RoundedButton(label: negativeButtonTitle ?? '', onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), backgroundColor: Colors.transparent, borderColor: Styles().colors!.fillColorPrimary, textColor: Styles().colors!.fillColorPrimary,),
                   ),
                   Container(width: 8, ),
                   Expanded(child:
-                    RoundedButton(label: positiveButtonTitle, onTap: onPositive, backgroundColor: Styles().colors!.fillColorSecondaryVariant, borderColor: Styles().colors!.fillColorSecondaryVariant, textColor: Styles().colors!.surface, ),
+                    RoundedButton(label: positiveButtonTitle ?? '', onTap: onPositive ?? (){}, backgroundColor: Styles().colors!.fillColorSecondaryVariant, borderColor: Styles().colors!.fillColorSecondaryVariant, textColor: Styles().colors!.surface, ),
                   ),
                 ],)
               ],)

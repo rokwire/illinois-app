@@ -24,7 +24,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class SettingsLoginPhonePanel extends StatefulWidget{
   _SettingsLoginPhonePanelState createState() => _SettingsLoginPhonePanelState();
@@ -102,7 +102,7 @@ class _SettingsLoginPhonePanelState extends State<SettingsLoginPhonePanel> {
                   child: Padding(
                     padding: EdgeInsets.all(24),
                     child: RoundedButton(
-                        label: Localization().getStringEx('panel.settings.login.phone.button.continue.title', 'Verify My Phone Number'),
+                        label: Localization().getStringEx('panel.settings.login.phone.button.continue.title', 'Verify My Phone Number')!,
                         hint: Localization().getStringEx('panel.settings.login.phone.button.continue.hint', ''),
                         borderColor: Styles().colors!.fillColorSecondary,
                         backgroundColor: Styles().colors!.background,

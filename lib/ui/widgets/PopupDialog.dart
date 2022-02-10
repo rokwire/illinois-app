@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-import 'RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class PopupDialog extends StatelessWidget {
   final String? _displayText;
@@ -77,7 +77,7 @@ class PopupDialog extends StatelessWidget {
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors!.fillColorSecondary,
                       textColor: Styles().colors!.fillColorPrimary,
-                      label: _positiveButtonText),
+                      label: _positiveButtonText ?? ''),
                   Container(height: 10,),
                 ],
               ),

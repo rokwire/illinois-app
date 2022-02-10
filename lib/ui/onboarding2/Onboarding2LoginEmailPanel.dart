@@ -22,7 +22,7 @@ import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -263,8 +263,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
             ),
             
             Padding(padding: EdgeInsets.only(left: 24, right: 24, bottom: 8), child:
-              ScalableRoundedButton(
-                label: buttonTitle,
+              RoundedButton(
+                label: buttonTitle ?? '',
                 hint: buttonHint,
                 borderColor: Styles().colors!.fillColorSecondary,
                 backgroundColor: Styles().colors!.background,

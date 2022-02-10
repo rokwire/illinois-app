@@ -20,7 +20,7 @@ import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'dart:io' show Platform;
 
@@ -104,11 +104,11 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      ScalableRoundedButton(
-                        label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
+                      RoundedButton(
+                        label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications')!,
                         hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
                         fontSize: 16,
-                        padding: EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         borderColor: Styles().colors!.fillColorSecondary,
                         backgroundColor: Styles().colors!.white,
                         textColor: Styles().colors!.fillColorPrimary,

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Dropdown with courses in Canvas calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Changed
+- RoundedButton moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 
 ## [3.2.16] - 2022-02-09
 ### Added

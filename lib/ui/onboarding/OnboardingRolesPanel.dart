@@ -24,7 +24,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class OnboardingRolesPanel extends StatefulWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
@@ -82,33 +82,20 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
           RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton),
         ),),),        
 
-        Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 20),
-          child: Stack(children:<Widget>[
-            ScalableRoundedButton(
-              label: Localization().getStringEx('panel.onboarding.roles.button.continue.title', 'Explore Illinois'),
-              hint: Localization().getStringEx('panel.onboarding.roles.button.continue.hint', ''),
-              enabled: _allowNext,
-              backgroundColor: (Styles().colors!.background),
-              borderColor: (_allowNext
-                  ? Styles().colors!.fillColorSecondary
-                  : Styles().colors!.fillColorPrimaryTransparent03),
-              textColor: (_allowNext
-                  ? Styles().colors!.fillColorPrimary
-                  : Styles().colors!.fillColorPrimaryTransparent03),
-              onTap: () => _onExploreClicked()),
-            Visibility(
-              visible: _updating,
-              child: Container(
-                height: 48, 
-                child: Align(
-                  alignment:Alignment.center,
-                  child: SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary),),),),),),
-          ]),
+        Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 20), child:
+          RoundedButton(
+            label: Localization().getStringEx('panel.onboarding.roles.button.continue.title', 'Explore Illinois')!,
+            hint: Localization().getStringEx('panel.onboarding.roles.button.continue.hint', ''),
+            enabled: _allowNext,
+            backgroundColor: (Styles().colors!.background),
+            borderColor: (_allowNext
+                ? Styles().colors!.fillColorSecondary
+                : Styles().colors!.fillColorPrimaryTransparent03),
+            textColor: (_allowNext
+                ? Styles().colors!.fillColorPrimary
+                : Styles().colors!.fillColorPrimaryTransparent03),
+            progress: _updating,
+            onTap: () => _onExploreClicked()),
         )
 
       ],),),

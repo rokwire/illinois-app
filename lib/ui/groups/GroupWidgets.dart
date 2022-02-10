@@ -42,8 +42,7 @@ import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
@@ -313,8 +312,8 @@ class GroupsConfirmationDialog extends StatelessWidget{
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Expanded(child:
-                        ScalableRoundedButton(
-                          label: Localization().getStringEx('headerbar.back.title', "Back"),
+                        RoundedButton(
+                          label: Localization().getStringEx('headerbar.back.title', "Back")!,
                           fontFamily: "ProximaNovaRegular",
                           textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.white,
@@ -327,8 +326,8 @@ class GroupsConfirmationDialog extends StatelessWidget{
                         )),
                       Container(width: 16,),
                       Expanded(child:
-                        ScalableRoundedButton(
-                          label: buttonTitle,
+                        RoundedButton(
+                          label: buttonTitle ?? '',
                           fontFamily: "ProximaNovaBold",
                           textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.fillColorSecondary,
@@ -796,25 +795,20 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                       Padding(
                           padding: EdgeInsets.all(10),
                           child: RoundedButton(
-                              label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
+                              label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url")!,
                               borderColor: Styles().colors!.fillColorSecondary,
                               backgroundColor: Styles().colors!.background,
                               textColor: Styles().colors!.fillColorPrimary,
                               onTap: _onTapUseUrl)),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Padding(
-                              padding: EdgeInsets.all(10),
-                              child: RoundedButton(
-                                  label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
-                                  borderColor: Styles().colors!.fillColorSecondary,
-                                  backgroundColor: Styles().colors!.background,
-                                  textColor: Styles().colors!.fillColorPrimary,
-                                  onTap: _onTapChooseFromDevice)),
-                          _showProgress ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary)) : Container(),
-                        ],
-                      ),
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: RoundedButton(
+                              label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device")!,
+                              borderColor: Styles().colors!.fillColorSecondary,
+                              backgroundColor: Styles().colors!.background,
+                              textColor: Styles().colors!.fillColorPrimary,
+                              progress: _showProgress,
+                              onTap: _onTapChooseFromDevice)),
                     ]))
           ],
         ));
@@ -933,88 +927,57 @@ class GroupCard extends StatelessWidget {
                     color: Styles().colors!.white,
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                     boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
-                child:
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded( child:
-                    Column(crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                      _buildHeading(),
-                      Container(height: 3),
-                      Row(children: [
-                        Expanded(
-                            child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 0),
-                                child: Text(group?.title ?? "",
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
-                                    style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary)))),
-
-                      ]),
-                      (displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) :Container(),
-                      Visibility(
-                        visible: (group?.currentUserIsAdmin ?? false) && (group!.pendingCount > 0),
-                        child: Text(pendingCountText,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
-                          style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.regular,
-                              fontSize: 16,
-                              color: Styles().colors!.textBackgroundVariant,
-
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  _buildHeading(),
+                  Container(height: 3),
+                  Row(
+                    children:[
+                      Expanded(
+                        child:
+                          Column(
+                            children:[
+                              _buildCategoryLayout(),
+                              Row(children: [
+                                Expanded(
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 0),
+                                        child: Text(group?.title ?? "",
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
+                                            style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))))
+                              ]),
+                            ]
                           ),
-                        ),
                       ),
-                      Container(height: 4),
-                      (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups)
-                          ? Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                              _buildUpdateTime(),
-                              Visibility(visible: (group?.authManEnabled ?? false), child: _buildMembersCount())
-                            ])
-                          : Container()
-                    ])),
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          _buildPrivacyStatysBadge(),
-                          _buildImage()
-                        ],
-                      ))
-                  ],)
+                      _buildImage()
+                  ]),
+                  (displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) :Container(),
+                  Visibility(
+                    visible: (group?.currentUserIsAdmin ?? false) && (group!.pendingCount > 0),
+                    child: Text(pendingCountText,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
+                      style: TextStyle(
+                          fontFamily: Styles().fontFamilies!.regular,
+                          fontSize: 16,
+                          color: Styles().colors!.textBackgroundVariant,
 
-            )));
-  }
-
-  Widget _buildImage(){
-    String? imageUrl = group?.imageURL;
-    return
-      StringUtils.isEmpty(imageUrl)? Container() :
-      // Expanded(
-      //     flex: 1,
-      //     child:
-          Semantics(
-              label: "post image",
-              button: true,
-              hint: "Double tap to zoom the image",
-              child:GestureDetector(
-                  onTap: (){
-                    if(onImageTap!=null){
-                      onImageTap!();
-                    }
-                  },
-                  child: Container(
-                    padding: EdgeInsets.only(left: 8),
-                    child: SizedBox(
-                      // width: _smallImageSize,
-                      height: _smallImageSize,
-                      child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),))
-          // )
-    );
+                      ),
+                    ),
+                  ),
+                  Container(height: 4),
+                  // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
+                       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          Expanded(
+                            child: _buildUpdateTime(),
+                          ),
+                          Visibility(visible:
+                              (group?.authManEnabled ?? false)
+                              && displayType != GroupCardDisplayType.homeGroups,
+                                child: _buildMembersCount())
+                        ])
+                      // : Container()
+                ]))));
   }
 
   Widget _buildHeading() {
@@ -1033,20 +996,20 @@ class GroupCard extends StatelessWidget {
       );
     }
 
-    String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")!);
-    if (StringUtils.isNotEmpty(groupCategory)) {
-      if (leftContent.isNotEmpty) {
-        leftContent.add(Container(height: 6,));
-      }
-      leftContent.add(
-        Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
-          overflow: TextOverflow.ellipsis,
-          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
-      );
-    }
+    // String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")!);
+    // if (StringUtils.isNotEmpty(groupCategory)) {
+    //   if (leftContent.isNotEmpty) {
+    //     leftContent.add(Container(height: 6,));
+    //   }
+    //   leftContent.add(
+    //     Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+    //       overflow: TextOverflow.ellipsis,
+    //       maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
+    //   );
+    // }
 
     List<Widget> rightContent = <Widget>[];
-    // rightContent.add(_buildPrivacyStatysBadge()); //Moved above the image
+    rightContent.add(_buildPrivacyStatysBadge()); //Moved above the image
 
     List<Widget> content = <Widget>[];
     if (leftContent.isNotEmpty) {
@@ -1091,8 +1054,56 @@ class GroupCard extends StatelessWidget {
     }
   }
 
+  Widget _buildCategoryLayout(){
+    String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")!);
+    List<Widget> content = [];
+    if (StringUtils.isNotEmpty(groupCategory)) {
+        content.add(Container(height: 6,));
+        content.add(
+          Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+            overflow: TextOverflow.ellipsis,
+            maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
+      );
+    }
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: content,
+      )
+    );
+  }
 
-  Widget _buildUpdateTime() {
+  Widget _buildImage() {
+    String? imageUrl = group?.imageURL;
+    return
+      StringUtils.isEmpty(imageUrl) ? Container() :
+      // Expanded(
+      //     flex: 1,
+      //     child:
+      Semantics(
+          label: "post image",
+          button: true,
+          hint: "Double tap to zoom the image",
+          child: GestureDetector(
+              onTap: () {
+                if (onImageTap != null) {
+                  onImageTap!();
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.only(left: 8),
+                child: SizedBox(
+                  // width: _smallImageSize,
+                  height: _smallImageSize,
+                  child: Image.network(imageUrl!, excludeFromSemantics: true,
+                    fit: BoxFit.fill,),),))
+        // )
+      );
+  }
+
+
+    Widget _buildUpdateTime() {
     return Container(
         child: Text(
           _timeUpdatedText,
@@ -1839,10 +1850,10 @@ class _ImageChooserState extends State<ImageChooserWidget>{
                       hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
                       button: true,
                       excludeSemantics: true,
-                      child: ScalableSmallRoundedButton(
-                          maxLines: 2,
-                          label:StringUtils.isEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
+                      child: RoundedButton(
+                          label:StringUtils.isEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image")! : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image")!, // TBD localize
                           textColor: Styles().colors!.fillColorPrimary,
+                          contentWeight: 0.8,
                           onTap: (){ _onTapAddImage();}
                       )))):
           Container()
@@ -2014,8 +2025,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
     int optionsCount = widget.poll.options?.length ?? 0;
     for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
-      Stack(children: <Widget>[
-        ScalableRoundedButton(
+        RoundedButton(
             label: widget.poll.options![optionIndex],
             backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors!.fillColorSecondary : _backgroundColor,
             hint: Localization().getStringEx("panel.poll_prompt.hint.select_option","Double tab to select this option"),
@@ -2023,20 +2033,10 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
             fontSize: 16.0,
             textColor: _textColor,
             borderColor: Styles().colors!.fillColorSecondary,
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            progress: (_votingOptions[optionIndex] != null),
             onTap: () { _onButtonOption(optionIndex); }
         ),
-        Visibility(visible: (_votingOptions[optionIndex] != null),
-          child: Container(
-            height: 42,
-            child: Align(alignment: Alignment.center,
-              child: SizedBox(height: 21, width: 21,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_textColor), )
-              ),
-            ),
-          ),
-        ),
-      ],),
       ));
     }
     return result;
@@ -2207,14 +2207,14 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
   }
 
 //   Widget _buildVoteDoneButton(void Function() handler) {
-//     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
+//     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: RoundedButton(
 //         label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
 //         backgroundColor: _backgroundColor,
 // //        height: 42,
 //         fontSize: 16.0,
 //         textColor: _textColor,
 //         borderColor: _doneButtonColor,
-//         padding: EdgeInsets.symmetric(horizontal: 24),
+//         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
 //         onTap: handler)
 //     );
 //   }

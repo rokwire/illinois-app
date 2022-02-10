@@ -40,8 +40,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -750,15 +749,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
 
       Widget tabWidget = RoundedButton(
-          label: title,
+          label: title ?? '',
           backgroundColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.background,
           textColor: (isSelected ? Colors.white : Styles().colors!.fillColorPrimary),
           fontFamily: isSelected ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular,
           fontSize: 16,
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          contentWeight: 0.0,
           borderColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
           borderWidth: 1,
-          height: 22 + 16 * MediaQuery.of(context).textScaleFactor,
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 11),
           onTap: () => _onTab(tab));
 
       tabs.add(tabWidget);
@@ -797,16 +796,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
       content.add(Padding(
           padding: EdgeInsets.only(top: 16),
-          child: ScalableSmallRoundedButton(
-              label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
-              widthCoeficient: 2,
+          child: RoundedButton(
+              label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events')!,
               backgroundColor: Styles().colors!.white,
               textColor: Styles().colors!.fillColorPrimary,
               fontFamily: Styles().fontFamilies!.bold,
               fontSize: 16,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               borderColor: Styles().colors!.fillColorSecondary,
               borderWidth: 2,
+              contentWeight: 0.5,
               onTap: () {
                 Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAllEventsPanel(group: _group)));
               })));
@@ -905,9 +904,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (_groupPolls!.length >= 5) {
         pollsContentList.add(Padding(
             padding: EdgeInsets.only(top: 16),
-            child: ScalableSmallRoundedButton(
-                label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls'),
-                widthCoeficient: 2,
+            child: RoundedButton(
+                label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls')!,
                 backgroundColor: Styles().colors!.white,
                 textColor: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.bold,
@@ -915,6 +913,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                 borderColor: Styles().colors!.fillColorSecondary,
                 borderWidth: 2,
+                contentWeight: 0.5,
                 onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPollListPanel(group: _group!))))));
       }
     }
@@ -1018,7 +1017,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Auth2().isOidcLoggedIn && _group!.currentUserCanJoin
           ? Container(color: Colors.white,
               child: Padding(padding: EdgeInsets.all(16),
-                  child: ScalableRoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
+                  child: RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join')!,
                     backgroundColor: Styles().colors!.white,
                     textColor: Styles().colors!.fillColorPrimary,
                     fontFamily: Styles().fontFamilies!.bold,
@@ -1041,7 +1040,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             children: [
               Container(color: Colors.white,
                   child: Padding(padding: EdgeInsets.all(16),
-                    child: ScalableRoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
+                    child: RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request')!,
                         backgroundColor: Styles().colors!.white,
                         textColor: Styles().colors!.fillColorPrimary,
                         fontFamily: Styles().fontFamilies!.bold,
@@ -1083,23 +1082,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         Navigator.pop(context);
                       }),
                   Container(width: 16),
-                  Stack(alignment: Alignment.center, children: [
-                    RoundedButton(
-                      label: positiveButtonLabel,
-                      fontFamily: "ProximaNovaBold",
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.white,
-                      backgroundColor: Styles().colors!.white,
-                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: positiveBtnHorizontalPadding),
-                      onTap: () {
-                        Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
-                        onPositiveTap!();
-                      },
-                    ),
-                    _confirmationLoading
-                        ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary))
-                        : Container()
-                  ])
+                  RoundedButton(
+                    label: positiveButtonLabel ?? '',
+                    fontFamily: "ProximaNovaBold",
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.white,
+                    backgroundColor: Styles().colors!.white,
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: positiveBtnHorizontalPadding),
+                    progress: _confirmationLoading,
+                    onTap: () {
+                      Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
+                      onPositiveTap!();
+                    },
+                  ),
                 ])
               ]));
         }));
