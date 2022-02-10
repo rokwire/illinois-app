@@ -255,7 +255,7 @@ class Canvas with Service implements NotificationsListener{
 
   // Calendar
 
-  Future<List<CanvasCalendarEvent>?> loadCalendarEvents(int courseId, {DateTime? startDate, DateTime? endDate}) async {
+  Future<List<CanvasCalendarEvent>?> loadCalendarEvents({required int courseId, DateTime? startDate, DateTime? endDate}) async {
     if (!_available) {
       return null;
     }

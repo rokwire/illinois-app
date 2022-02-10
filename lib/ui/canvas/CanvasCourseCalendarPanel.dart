@@ -42,6 +42,8 @@ class CanvasCourseCalendarPanel extends StatefulWidget {
 
 class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> implements NotificationsListener {
   List<CanvasCalendarEvent>? _events;
+  List<CanvasCourse>? _courses;
+  late int _selectedCourseId;
   late DateTime _startDateTime;
   late DateTime _endDateTime;
   late DateTime _selectedDate;
@@ -50,8 +52,10 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
   @override
   void initState() {
     NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    _selectedCourseId = widget.courseId;
     _initCalendarDates();
     _loadEvents();
+    _loadCourses();
     super.initState();
   }
 
@@ -93,11 +97,14 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Padding(
                     padding: EdgeInsets.only(left: horizontalPadding, right: horizontalPadding, bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [_buildYearDropDown(), _buildMonthDropDown()],
-                    )),
-                Padding(padding: EdgeInsets.only(left: 5, right: 5, bottom: 10), child: _buildWeekChangeArrows()),
+                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_buildYearDropDown(), _buildMonthDropDown()])),
+                Padding(
+                    padding: EdgeInsets.only(left: 5, right: 5, bottom: 10),
+                    child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      _buildArrow(imagePath: 'images/chevron-left-blue.png', onTap: _onSwipeRight),
+                      Expanded(child: Padding(padding: EdgeInsets.symmetric(horizontal: 10), child: _buildCourseDropDown())),
+                      _buildArrow(imagePath: 'images/chevron-blue-right.png', onTap: _onSwipeLeft)
+                    ])),
                 Padding(padding: EdgeInsets.only(left: 5, right: 5, bottom: 20), child: _buildWeekDaysWidget()),
                 Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding), child: _buildEventsContent())
               ])))
@@ -256,21 +263,20 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
 
   Widget _buildYearDropDown() {
     return Container(
-      height: 48,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Styles().colors!.lightGray!, width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(4))),
-      child: Padding(
-          padding: EdgeInsets.only(left: 10),
-          child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-            style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
-            items: _buildYearDropDownItems,
-            value: _selectedDate.year,
-            onChanged: (year) => _onYearChanged(year),
-          ))),
-    );
+        height: 48,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+        child: Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+              style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+              items: _buildYearDropDownItems,
+              value: _selectedDate.year,
+              onChanged: (year) => _onYearChanged(year),
+            ))));
   }
 
   List<DropdownMenuItem<int>> get _buildYearDropDownItems {
@@ -290,21 +296,20 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
 
   Widget _buildMonthDropDown() {
     return Container(
-      height: 48,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Styles().colors!.lightGray!, width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(4))),
-      child: Padding(
-          padding: EdgeInsets.only(left: 10),
-          child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-            style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
-            items: _buildMonthDropDownItems,
-            value: _selectedDate.month,
-            onChanged: (month) => _onMonthChanged(month),
-          ))),
-    );
+        height: 48,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+        child: Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+              style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
+              items: _buildMonthDropDownItems,
+              value: _selectedDate.month,
+              onChanged: (month) => _onMonthChanged(month),
+            ))));
   }
 
   List<DropdownMenuItem<int>> get _buildMonthDropDownItems {
@@ -319,12 +324,51 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
     _changeSelectedDate(month: month);
   }
 
-  Widget _buildWeekChangeArrows() {
+  Widget _buildCourseDropDown() {
+    double height = MediaQuery.of(context).textScaleFactor * 62;
+    return Container(
+        height: height,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+        child: Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                    style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+                    items: _buildCourseDropDownItems,
+                    value: _selectedCourseId,
+                    itemHeight: null,
+                    isExpanded: true,
+                    onChanged: (courseId) => _onCourseIdChanged(courseId)))));
+  }
+
+  List<DropdownMenuItem<int>> get _buildCourseDropDownItems {
+    List<DropdownMenuItem<int>> items = [];
+    if (CollectionUtils.isNotEmpty(_courses)) {
+      for (CanvasCourse course in _courses!) {
+        int? courseId = course.id;
+        TextStyle labelStyle = TextStyle(
+            color: Styles().colors!.textSurfaceAccent,
+            fontSize: 16,
+            fontFamily: ((_selectedCourseId == courseId) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular));
+        items.add(DropdownMenuItem(value: course.id, child: Text(StringUtils.ensureNotEmpty(course.name), style: labelStyle)));
+      }
+    }
+    return items;
+  }
+
+  void _onCourseIdChanged(dynamic courseId) {
+    if ((courseId is int) && (_selectedCourseId != courseId)) {
+      _selectedCourseId = courseId;
+      _loadEvents();
+    }
+  }
+
+  Widget _buildArrow({GestureTapCallback? onTap, required String imagePath}) {
     double imageSize = 30;
-    return Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      GestureDetector(onTap: _onSwipeRight, child: Container(width: imageSize, height: imageSize, child: Image.asset('images/chevron-left-blue.png'))),
-      GestureDetector(onTap: _onSwipeLeft, child: Container(width: imageSize, height: imageSize, child: Image.asset('images/chevron-blue-right.png')))
-    ]);
+    return GestureDetector(onTap: onTap, child: Container(width: imageSize, height: imageSize, child: Image.asset(imagePath)));
   }
 
   Widget _buildWeekDaysWidget() {
@@ -430,7 +474,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
 
   void _loadEvents() {
     _increaseProgress();
-    Canvas().loadCalendarEvents(widget.courseId, startDate: _startDateTime, endDate: _endDateTime).then((events) {
+    Canvas().loadCalendarEvents(courseId: _selectedCourseId, startDate: _startDateTime, endDate: _endDateTime).then((events) {
       _events = events;
       _decreaseProgress();
     });
@@ -441,6 +485,14 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
       _initEventsTimeFrame();
       _loadEvents();
     }
+  }
+
+  void _loadCourses() {
+    _increaseProgress();
+    Canvas().loadCourses().then((courses) {
+      _courses = courses;
+      _decreaseProgress();
+    });
   }
 
   void _increaseProgress() {
