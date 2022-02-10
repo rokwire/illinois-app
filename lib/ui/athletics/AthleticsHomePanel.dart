@@ -40,7 +40,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/OptionSelectionCell.dart';
@@ -85,30 +84,24 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(
-          context: context,
-          titleWidget: Semantics(label: Localization().getStringEx('panel.athletics.header.title', 'Athletics'),
-              excludeSemantics:true,
-              child:
-              Text(
-                Localization().getStringEx('panel.athletics.header.title', 'Athletics'),
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.0),
-              )
+      appBar: AppBar(
+        backgroundColor: Styles().colors!.fillColorPrimaryVariant,
+        leading: Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
+          IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),),
+        title: Semantics(label: Localization().getStringEx('panel.athletics.header.title', 'Athletics'), excludeSemantics: true, child:
+          Text(Localization().getStringEx('panel.athletics.header.title', 'Athletics'), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),),
+        actions: <Widget>[
+          Semantics(label: Localization().getStringEx('headerbar.teams.title', 'Teams'), button: true, excludeSemantics: true, child: 
+            InkWell(onTap: _onTapTeams, child:
+              Container(child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 19), child:
+                Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.semiBold, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid))
+              ),
+              ),
+            ),
           ),
-          rightButtonVisible: true,
-          rightButtonText: Localization().getStringEx('headerbar.teams.title', 'Teams'),
-          onRightButtonTap: () {
-            Analytics().logSelect(target: "Teams");
-            Navigator.push(
-                context,
-                CupertinoPageRoute(
-                    builder: (context) =>
-                        AthleticsTeamsPanel()));
-          },
+        ],
+
       ),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: _buildContentWidget()),
       backgroundColor: Styles().colors!.background,
@@ -449,6 +442,15 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
       _visibleGames!.removeRange(0, _todayGames!.length);
     }
     _setLoading(false);
+  }
+
+  void _onTapHome() {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  void _onTapTeams() {
+    Analytics().logSelect(target: "Teams");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamsPanel()));
   }
 
   void _onTapMoreUpcomingEvents() {
