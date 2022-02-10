@@ -16,7 +16,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -191,10 +190,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               Semantics(label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
                   hint: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image.hint","") : Localization().getStringEx("panel.groups_settings.add_image.hint",""),
                   button: true, excludeSemantics: true, child:
-                  ScalableSmallRoundedButton(
-                    maxLines: 2,
-                    label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
+                  RoundedButton(
+                    label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image")! : Localization().getStringEx("panel.groups_settings.add_image","Add cover image")!,
                     textColor: Styles().colors!.fillColorPrimary,
+                    mainAxisSize: MainAxisSize.min,
+                    minAxisContentWeight: 0.8,
                     onTap: _onTapAddImage,)
               ),
             ),

@@ -18,7 +18,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Event.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -1834,10 +1833,11 @@ class _ImageChooserState extends State<ImageChooserWidget>{
                       hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
                       button: true,
                       excludeSemantics: true,
-                      child: ScalableSmallRoundedButton(
-                          maxLines: 2,
-                          label:StringUtils.isEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
+                      child: RoundedButton(
+                          label:StringUtils.isEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image")! : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image")!, // TBD localize
                           textColor: Styles().colors!.fillColorPrimary,
+                          mainAxisSize: MainAxisSize.min,
+                          minAxisContentWeight: 0.8,
                           onTap: (){ _onTapAddImage();}
                       )))):
           Container()

@@ -25,6 +25,8 @@ class RoundedButton extends StatefulWidget {
   final Color? backgroundColor;
   final EdgeInsetsGeometry padding;
   final MainAxisSize mainAxisSize;
+  final double? minAxisContentWeight;
+  final MainAxisAlignment minAxisAlignment;
   
   final TextStyle? textStyle;
   final Color? textColor;
@@ -64,6 +66,8 @@ class RoundedButton extends StatefulWidget {
     this.backgroundColor,      //= Styles().colors.white
     this.padding                 = const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
     this.mainAxisSize            = MainAxisSize.max,
+    this.minAxisContentWeight,
+    this.minAxisAlignment        = MainAxisAlignment.center,
 
     this.textStyle,
     this.textColor,            //= Styles().colors.fillColorPrimary
@@ -150,10 +154,37 @@ class _RoundedButtonState extends State<RoundedButton> {
   }
 
   Widget get _wrapperContent {
-    return Row(mainAxisSize: MainAxisSize.min, children: [ (widget.mainAxisSize == MainAxisSize.max)
-      ? Expanded(child: _borderContent)
-      : _borderContent
-    ]);
+    if (widget.mainAxisSize == MainAxisSize.max) {
+      return Row(children: [
+        Expanded(child: _borderContent)
+      ]);
+    }
+    else if (widget.minAxisContentWeight != null) {
+      if (widget.minAxisAlignment == MainAxisAlignment.start) {
+        return Row(children: [
+          Expanded(flex: (100 * widget.minAxisContentWeight!).toInt(), child: _borderContent),
+          Expanded(flex: (100 * max(1 - widget.minAxisContentWeight!, 0)).toInt(), child: Container()),
+        ]);
+      }
+      else if (widget.minAxisAlignment == MainAxisAlignment.end) {
+        return Row(children: [
+          Expanded(flex: (100 * max(1 - widget.minAxisContentWeight!, 0)).toInt(), child: Container()),
+          Expanded(flex: (100 * widget.minAxisContentWeight!).toInt(), child: _borderContent),
+        ]);
+      }
+      else {
+        return Row(children: [
+          Expanded(flex: (100 * max(1 - widget.minAxisContentWeight!, 0) ~/ 2), child: Container()),
+          Expanded(flex: (100 * widget.minAxisContentWeight!).toInt(), child: _borderContent),
+          Expanded(flex: (100 * max(1 - widget.minAxisContentWeight!, 0) ~/ 2), child: Container()),
+        ]);
+      }
+    }
+    else {
+      return Row(mainAxisSize: MainAxisSize.min, children: [
+        _borderContent
+      ]);
+    }
   }
 
   Widget get _borderContent {
@@ -247,9 +278,9 @@ class SmallRoundedButton extends RoundedButton {
   SmallRoundedButton({
     required String label,
     required void Function() onTap,
-    Color? backgroundColor,
-    EdgeInsetsGeometry? padding,
-    MainAxisSize? mainAxisSize,
+    Color? backgroundColor               = Colors.transparent,
+    EdgeInsetsGeometry padding           = const EdgeInsets.symmetric(horizontal: 3, vertical: 5),
+    MainAxisSize mainAxisSize            = MainAxisSize.min,
   
     TextStyle? textStyle,
     Color? textColor,
@@ -258,21 +289,21 @@ class SmallRoundedButton extends RoundedButton {
     TextAlign? textAlign,
 
     Widget? leftIcon,
-    EdgeInsetsGeometry? leftIconPadding,
+    EdgeInsetsGeometry? leftIconPadding  = const EdgeInsets.only(right: 15),
   
     Widget? rightIcon,
-    EdgeInsetsGeometry? rightIconPadding,
+    EdgeInsetsGeometry? rightIconPadding = const EdgeInsets.only(right: 15),
 
-    double? iconPadding,
+    double iconPadding                   = 8,
 
     String? hint,
-    bool? enabled,
+    bool enabled                         = true,
 
     BoxBorder? border,
     Color? borderColor,
-    double? borderWidth,
+    double borderWidth                   = 2.0,
     List<BoxShadow>? borderShadow,
-    double? maxBorderRadius,
+    double? maxBorderRadius = 24.0,
 
     BoxBorder? secondaryBorder,
     Color? secondaryBorderColor,
@@ -286,9 +317,9 @@ class SmallRoundedButton extends RoundedButton {
   }) : super(
     label: label,
     onTap: onTap,
-    backgroundColor: backgroundColor ?? Colors.transparent,
-    padding: padding ?? EdgeInsets.symmetric(horizontal: 3, vertical: 5),
-    mainAxisSize : mainAxisSize ?? MainAxisSize.min,
+    backgroundColor: backgroundColor,
+    padding: padding,
+    mainAxisSize : mainAxisSize,
   
     textStyle : textStyle,
     textColor : textColor,
@@ -297,19 +328,19 @@ class SmallRoundedButton extends RoundedButton {
     textAlign: textAlign ?? TextAlign.left,
 
     leftIcon: leftIcon,
-    leftIconPadding: leftIconPadding ?? EdgeInsets.only(right: 15),
+    leftIconPadding: leftIconPadding,
   
     rightIcon: rightIcon ?? Image.asset('images/chevron-right.png', excludeFromSemantics: true),
-    rightIconPadding: rightIconPadding ?? EdgeInsets.only(right: 15),
+    rightIconPadding: rightIconPadding,
 
-    iconPadding: iconPadding ?? 8,
+    iconPadding: iconPadding,
 
     hint: hint,
-    enabled: enabled ?? true,
+    enabled: enabled,
 
     border: border,
     borderColor: borderColor,
-    borderWidth: borderWidth ?? 2.0,
+    borderWidth: borderWidth,
     borderShadow: borderShadow,
     maxBorderRadius: maxBorderRadius,
 

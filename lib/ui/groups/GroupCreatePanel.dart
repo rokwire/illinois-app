@@ -16,7 +16,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -186,11 +185,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       hint: Localization().getStringEx("panel.groups_settings.add_image.hint", ""),
                       button: true,
                       excludeSemantics: true,
-                      child: ScalableSmallRoundedButton(
-                          maxLines: 2,
-                          label: Localization().getStringEx("panel.groups_settings.add_image", "Add cover image"),
+                      child: RoundedButton(
+                          label: Localization().getStringEx("panel.groups_settings.add_image", "Add cover image")!,
                           textColor: Styles().colors!.fillColorPrimary,
-                          onTap: _onTapAddImage,))))
+                          onTap: _onTapAddImage,
+                          backgroundColor: Colors.transparent,
+                          mainAxisSize: MainAxisSize.min,
+                          minAxisContentWeight: 0.8,
+                    ))))
         ]));
   }
 

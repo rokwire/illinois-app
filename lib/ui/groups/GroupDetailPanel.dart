@@ -797,16 +797,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
       content.add(Padding(
           padding: EdgeInsets.only(top: 16),
-          child: ScalableSmallRoundedButton(
-              label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
-              widthCoeficient: 2,
+          child: RoundedButton(
+              label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events')!,
               backgroundColor: Styles().colors!.white,
               textColor: Styles().colors!.fillColorPrimary,
               fontFamily: Styles().fontFamilies!.bold,
               fontSize: 16,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               borderColor: Styles().colors!.fillColorSecondary,
               borderWidth: 2,
+              mainAxisSize: MainAxisSize.min,
+              minAxisContentWeight: 0.5,
               onTap: () {
                 Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAllEventsPanel(group: _group)));
               })));
@@ -905,9 +906,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (_groupPolls!.length >= 5) {
         pollsContentList.add(Padding(
             padding: EdgeInsets.only(top: 16),
-            child: ScalableSmallRoundedButton(
-                label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls'),
-                widthCoeficient: 2,
+            child: RoundedButton(
+                label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls')!,
                 backgroundColor: Styles().colors!.white,
                 textColor: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.bold,
@@ -915,6 +915,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                 borderColor: Styles().colors!.fillColorSecondary,
                 borderWidth: 2,
+                mainAxisSize: MainAxisSize.min,
+                minAxisContentWeight: 0.5,
                 onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPollListPanel(group: _group!))))));
       }
     }

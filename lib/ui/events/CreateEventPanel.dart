@@ -19,7 +19,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -193,12 +192,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   child:
                                   Semantics(label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
                                     hint: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image.hint","") : Localization().getStringEx("panel.create_event.add_image.hint",""), button: true, excludeSemantics: true, child:
-                                    ScalableSmallRoundedButton(
-                                      label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
+                                    RoundedButton(
+                                      label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image")! : Localization().getStringEx("panel.create_event.add_image","Add event image")!,
                                       onTap: _onTapAddImage,
                                       backgroundColor: Styles().colors!.white,
                                       textColor: Styles().colors!.fillColorPrimary,
                                       borderColor: Styles().colors!.fillColorSecondary,
+                                      mainAxisSize: MainAxisSize.min,
+                                      minAxisContentWeight: 0.67,
                                     )
                                   ),
                                 ),
