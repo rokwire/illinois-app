@@ -4,7 +4,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -131,7 +131,6 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           fontFamily: Styles().fontFamilies!.bold,
           fontSize: 16,
           borderWidth: 2,
-          height: 42,
           onTap:() { _onInitFromAssets();  }
         ),),
         Container(width: 8,),
@@ -143,7 +142,6 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           fontFamily: Styles().fontFamilies!.bold,
           fontSize: 16,
           borderWidth: 2,
-          height: 42,
           onTap:() { _onInitFromNet();  }
         ),),
       ],),
@@ -159,7 +157,6 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           fontFamily: Styles().fontFamilies!.bold,
           fontSize: 16,
           borderWidth: 2,
-          height: 42,
           onTap:() { _onApply();  }
         ),),
         Container(width: 8,),
@@ -171,7 +168,6 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           fontFamily: Styles().fontFamilies!.bold,
           fontSize: 16,
           borderWidth: 2,
-          height: 42,
           onTap:() { _onPreview();  }
         ),),
       ],),

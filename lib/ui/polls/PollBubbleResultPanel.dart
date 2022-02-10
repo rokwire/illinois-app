@@ -21,7 +21,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:sprintf/sprintf.dart';
 
 class PollBubbleResultPanel extends StatefulWidget {
@@ -189,12 +189,12 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
   }
 
   Widget _buildResultsDoneButton() {
-    return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
+    return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: RoundedButton(
         label: 'Done',
         backgroundColor: Styles().colors!.fillColorPrimary,
 //        height: 42,
         fontSize: 16.0,
-        textColor: Colors.white,
+        textColor: Styles().colors!.white,
         borderColor: Styles().colors!.fillColorSecondary,
         padding: EdgeInsets.symmetric(horizontal: 24),
         onTap: () { _onResultsDone(); })       
@@ -215,14 +215,14 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
 
   Widget _buildViewResultsButton() {
     return Padding(padding: EdgeInsets.only(top: 20, left: 50, right: 50), child:
-      ScalableRoundedButton(
-        label: Localization().getStringEx('panel.poll_prompt.button.view_poll_results.title', 'View poll results'),
+      RoundedButton(
+        label: Localization().getStringEx('panel.poll_prompt.button.view_poll_results.title', 'View poll results')!,
         backgroundColor: Styles().colors!.fillColorPrimary,
 //        height: 42,
         fontSize: 16.0,
-        textColor: Colors.white,
+        textColor: Styles().colors!.white,
         borderColor: Styles().colors!.fillColorSecondary,
-        padding: EdgeInsets.symmetric(horizontal: 24),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         onTap: () { _onViewResults(); }
       ),
     );

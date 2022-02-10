@@ -29,7 +29,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Voter.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
@@ -129,11 +129,11 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
                 ),
               )),
               Row(children: <Widget>[RoundedButton(
-                label: vbmButtonTitle,
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                label: vbmButtonTitle ?? '',
                 textColor: Styles().colors!.fillColorPrimary,
                 borderColor: Styles().colors!.fillColorSecondary,
                 backgroundColor: Styles().colors!.white,
+                contentWeight: 0.0,
                 onTap: () => _onTapVbmButton(vbmButtonTitle),
               )
               ],)
@@ -260,11 +260,11 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
         for (RuleOption ruleOption in voterOptions!) {
           if (ruleOption.value == 'vbm_no') { // Special case for showing two widgets
             optionWidgets.add(Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[RoundedButton(
-              label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent),
-              padding: EdgeInsets.symmetric(horizontal: 14),
+              label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent) ?? '',
               textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
+              contentWeight: 0.0,
               onTap: () => _onTapButtonOption(ruleOption),
             ), Expanded(child: Padding(padding: EdgeInsets.only(left: 8),
               child: Text(Localization().getStringFromKeyMapping('widget.voter.option.descr.vote_in_person', _stringsContent, defaults: 'I want to vote in person')!, overflow: TextOverflow.ellipsis,
@@ -273,11 +273,11 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
             ],));
           } else {
             optionWidgets.add(Row(mainAxisSize: MainAxisSize.min, children: <Widget>[RoundedButton(
-              label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent),
-              padding: EdgeInsets.symmetric(horizontal: 14),
+              label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent) ?? '',
               textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
+              contentWeight: 0.0,
               onTap: () => _onTapButtonOption(ruleOption),
             ),
             ],));

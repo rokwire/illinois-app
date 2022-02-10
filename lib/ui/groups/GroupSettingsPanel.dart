@@ -26,7 +26,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupTagsPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';
@@ -190,10 +190,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               Semantics(label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
                   hint: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image.hint","") : Localization().getStringEx("panel.groups_settings.add_image.hint",""),
                   button: true, excludeSemantics: true, child:
-                  ScalableSmallRoundedButton(
-                    maxLines: 2,
-                    label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
+                  RoundedButton(
+                    label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image")! : Localization().getStringEx("panel.groups_settings.add_image","Add cover image")!,
                     textColor: Styles().colors!.fillColorPrimary,
+                    contentWeight: 0.8,
                     onTap: _onTapAddImage,)
               ),
             ),
@@ -443,8 +443,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 Expanded(
                     flex: 2,
                     child:
-                    ScalableRoundedButton(
-                      label: Localization().getStringEx("panel.groups_settings.button.tags.title", "Tags"),
+                    RoundedButton(
+                      label: Localization().getStringEx("panel.groups_settings.button.tags.title", "Tags")!,
                       hint: Localization().getStringEx("panel.groups_settings.button.tags.hint", ""),
                       backgroundColor: Styles().colors!.white,
                       textColor: Styles().colors!.fillColorPrimary,
@@ -767,22 +767,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Center(
         child:
         Stack(children: <Widget>[
-          ScalableRoundedButton(
-            label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
+          RoundedButton(
+            label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings")!,
             backgroundColor: Colors.white,
             borderColor: Styles().colors!.fillColorSecondary,
             textColor: Styles().colors!.fillColorPrimary,
+            progress: _loading,
             onTap: _onUpdateTap,
-          ),
-          Visibility(visible: _loading,
-            child: Container(
-              height: 48,
-              child: Align(alignment: Alignment.center,
-                child: SizedBox(height: 24, width: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                ),
-              ),
-            ),
           ),
         ],),
       )

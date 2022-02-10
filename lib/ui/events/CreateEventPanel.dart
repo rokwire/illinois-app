@@ -31,12 +31,11 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -193,12 +192,13 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   child:
                                   Semantics(label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
                                     hint: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image.hint","") : Localization().getStringEx("panel.create_event.add_image.hint",""), button: true, excludeSemantics: true, child:
-                                    ScalableSmallRoundedButton(
-                                      label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
+                                    RoundedButton(
+                                      label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image")! : Localization().getStringEx("panel.create_event.add_image","Add event image")!,
                                       onTap: _onTapAddImage,
                                       backgroundColor: Styles().colors!.white,
                                       textColor: Styles().colors!.fillColorPrimary,
                                       borderColor: Styles().colors!.fillColorSecondary,
+                                      contentWeight: 0.67,
                                     )
                                   ),
                                 ),
@@ -566,7 +566,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               (widget.group!=null)? Container():
                               Expanded(
                                   child: RoundedButton(
-                                    label:  Localization().getStringEx("panel.create_event.additional_info.button.cancel.title","Cancel"),
+                                    label:  Localization().getStringEx("panel.create_event.additional_info.button.cancel.title","Cancel")!,
                                     backgroundColor: Colors.white,
                                     borderColor: Styles().colors!.fillColorPrimary,
                                     textColor: Styles().colors!.fillColorPrimary,
@@ -579,8 +579,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               (widget.group!=null)? Container():
                               Expanded(
                                   child: RoundedButton(
-                                label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
-                                                Localization().getStringEx("panel.create_event.additional_info.button.preview.title","Preview"),
+                                label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event")!:
+                                                Localization().getStringEx("panel.create_event.additional_info.button.preview.title","Preview")!,
                                 backgroundColor: Colors.white,
                                 borderColor: isValid ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
                                 textColor: isValid ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
@@ -588,9 +588,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               )),
                               (widget.group==null)? Container():
                               Expanded(
-                                  child: ScalableRoundedButton(
-                                    label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
-                                    Localization().getStringEx("panel.create_event.additional_info.button.create.title","Create event"),
+                                  child: RoundedButton(
+                                    label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event")!:
+                                    Localization().getStringEx("panel.create_event.additional_info.button.create.title","Create event")!,
                                     backgroundColor: Colors.white,
                                     borderColor: isValid ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
                                     textColor: isValid ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
@@ -1083,13 +1083,13 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           Row(
                             children: <Widget>[
                               Expanded(
-                                  child: ScalableRoundedButton(
+                                  child: RoundedButton(
                                     backgroundColor: Styles().colors!.white,
                                     textColor: Styles().colors!.fillColorPrimary,
                                     borderColor: Styles().colors!.fillColorSecondary,
                                     fontSize: 16,
                                     onTap: _onTapSelectLocation,
-                                    label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
+                                    label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map")!,
                                   ))
                             ],
                           )),
@@ -2222,34 +2222,24 @@ class _AddImageWidgetState extends State<AddImageWidget> {
                                   hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image url"),
                                   labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image url"),
                                 ))),
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
+                        Padding(
+                            padding: EdgeInsets.all(10),
+                            child: RoundedButton(
+                                label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url")!,
+                                borderColor: Styles().colors!.fillColorSecondary,
+                                backgroundColor: Styles().colors!.background,
+                                textColor: Styles().colors!.fillColorPrimary,
+                                progress: _showUrlProgress,
+                                onTap: _onTapUseUrl)),
                             Padding(
                                 padding: EdgeInsets.all(10),
                                 child: RoundedButton(
-                                    label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
+                                    label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device")!,
                                     borderColor: Styles().colors!.fillColorSecondary,
                                     backgroundColor: Styles().colors!.background,
                                     textColor: Styles().colors!.fillColorPrimary,
-                                    onTap: _onTapUseUrl)),
-                            _showUrlProgress ? CircularProgressIndicator() : Container(),
-                          ],
-                        ),
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Padding(
-                                padding: EdgeInsets.all(10),
-                                child: RoundedButton(
-                                    label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
-                                    borderColor: Styles().colors!.fillColorSecondary,
-                                    backgroundColor: Styles().colors!.background,
-                                    textColor: Styles().colors!.fillColorPrimary,
+                                    progress: _showGalleryProgress,
                                     onTap: _onTapChooseFromDevice)),
-                            _showGalleryProgress ? CircularProgressIndicator() : Container(),
-                          ],
-                        ),
                       ]),
 
                 ],
@@ -2390,7 +2380,7 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
         child:Padding(
           padding: EdgeInsets.all(10),
           child: RoundedButton(
-              label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select"),
+              label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select")!,
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
               textColor: Styles().colors!.fillColorPrimary,

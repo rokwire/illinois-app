@@ -53,7 +53,7 @@ import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/PopupDialog.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -381,7 +381,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors!.fillColorSecondary,
                       textColor: Styles().colors!.fillColorPrimary,
-                      label: Localization().getStringEx("dialog.yes.title", 'Yes')),
+                      label: Localization().getStringEx("dialog.yes.title", 'Yes')!),
                   Container(height: 10,),
                   RoundedButton(
                       onTap: () {
@@ -392,7 +392,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors!.fillColorSecondary,
                       textColor: Styles().colors!.fillColorPrimary,
-                      label: Localization().getStringEx("dialog.no.title", 'No'))
+                      label: Localization().getStringEx("dialog.no.title", 'No')!)
                 ],
               ),
             ),

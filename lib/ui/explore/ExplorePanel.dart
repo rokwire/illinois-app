@@ -47,7 +47,7 @@ import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -906,14 +906,13 @@ class ExplorePanelState extends State<ExplorePanel>
                           Row(
                               children: <Widget>[
                                 SizedBox(width: buttonWidth, child: RoundedButton(
-                                    label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions'),
+                                    label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions')!,
                                     hint: Localization().getStringEx('panel.explore.button.directions.hint', ''),
                                     backgroundColor: Colors.white,
-                                    height: 32,
+                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                     fontSize: 16.0,
                                     textColor: Styles().colors!.fillColorPrimary,
                                     borderColor: Styles().colors!.fillColorSecondary,
-                                    padding: EdgeInsets.symmetric(horizontal: 24),
                                     onTap: () {
                                       Analytics().logSelect(target: 'Directions');
                                       _presentMapExploreDirections(context);
@@ -924,14 +923,13 @@ class ExplorePanelState extends State<ExplorePanel>
                               ]) :
                           Container(),
                           SizedBox(width: buttonWidth, child: RoundedButton(
-                              label: Localization().getStringEx('panel.explore.button.details.title', 'Details'),
+                              label: Localization().getStringEx('panel.explore.button.details.title', 'Details')!,
                               hint: Localization().getStringEx('panel.explore.button.details.hint', ''),
                               backgroundColor: Colors.white,
-                              height: 32,
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               fontSize: 16.0,
                               textColor: Styles().colors!.fillColorPrimary,
                               borderColor: Styles().colors!.fillColorSecondary,
-                              padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
                                 Analytics().logSelect(target: 'Details');
                                 _presentMapExploreDetail(context);

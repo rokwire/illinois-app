@@ -37,7 +37,7 @@ import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -660,14 +660,13 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                           Row(
                               children: <Widget>[
                                 SizedBox(width: buttonWidth, child: RoundedButton(
-                                    label: Localization().getStringEx('panel.events_schedule.button.directions.title', 'Directions'),
+                                    label: Localization().getStringEx('panel.events_schedule.button.directions.title', 'Directions')!,
                                     hint: Localization().getStringEx('panel.events_schedule.button.directions.hint', ''),
                                     backgroundColor: Colors.white,
-                                    height: 32,
+                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                     fontSize: 16.0,
                                     textColor: Styles().colors!.fillColorPrimary,
                                     borderColor: Styles().colors!.fillColorSecondary,
-                                    padding: EdgeInsets.symmetric(horizontal: 24),
                                     onTap: () {
                                       Analytics().logSelect(target: 'Directions');
                                       _presentMapExploreDirections(context);
@@ -678,14 +677,13 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                               ]) :
                           Container(),
                           SizedBox(width: buttonWidth, child: RoundedButton(
-                              label: Localization().getStringEx('panel.events_schedule.button.details.title', 'Details'),
+                              label: Localization().getStringEx('panel.events_schedule.button.details.title', 'Details')!,
                               hint: Localization().getStringEx('panel.events_schedule.button.details.hint', ''),
                               backgroundColor: Colors.white,
-                              height: 32,
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               fontSize: 16.0,
                               textColor: Styles().colors!.fillColorPrimary,
                               borderColor: Styles().colors!.fillColorSecondary,
-                              padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
                                 Analytics().logSelect(target: 'Details');
                                 _presentMapExploreDetail(context);

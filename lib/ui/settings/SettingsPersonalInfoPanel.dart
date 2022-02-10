@@ -23,7 +23,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -293,8 +293,8 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     return
       Padding(
         padding: EdgeInsets.symmetric( vertical: 5, horizontal: 16),
-        child: ScalableRoundedButton(
-          label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
+        child: RoundedButton(
+          label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out")!,
           hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
           backgroundColor: Styles().colors!.background,
           fontSize: 16.0,
@@ -310,33 +310,24 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
       Row(children: <Widget>[
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric( vertical: 5), child:
-            Stack(children: <Widget>[
-              ScalableRoundedButton(
-                label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
-                hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
-                enabled: _canSave,
-                backgroundColor: _canSave ? Styles().colors!.white : Styles().colors!.background,
-                fontSize: 16.0,
-                textColor: _canSave? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-                borderColor: _canSave? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                onTap: _onSaveChangesClicked,
-              ),
-              Visibility(
-                  visible:_isSaving,
-                  child: Align(alignment: Alignment.center,
-                    child:Container(
-                      padding: EdgeInsets.all(4),
-                      child: Center(child:
-                      CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), strokeWidth: 2,),),),
-                  ))
-            ],),
+            RoundedButton(
+              label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes")!,
+              hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
+              enabled: _canSave,
+              backgroundColor: _canSave ? Styles().colors!.white : Styles().colors!.background,
+              fontSize: 16.0,
+              textColor: _canSave? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+              borderColor: _canSave? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+              progress: _isSaving,
+              onTap: _onSaveChangesClicked,
+            ),
           ),
         ),
         Container(width: 12,),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric( vertical: 5), child:
-            ScalableRoundedButton(
-              label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
+            RoundedButton(
+              label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out")!,
               hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
               backgroundColor: Styles().colors!.white,
               fontSize: 16.0,

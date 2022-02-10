@@ -19,7 +19,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/http_proxy.dart';
 
 class DebugHttpProxyPanel extends StatefulWidget{
@@ -130,7 +130,7 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
                     ),
                   )),
               RoundedButton(
-                  label: Localization().getStringEx("panel.debug_http_proxy.button.save.title", "Save"),
+                  label: Localization().getStringEx("panel.debug_http_proxy.button.save.title", "Save")!,
                   backgroundColor: Styles().colors!.background,
                   fontSize: 16.0,
                   textColor: Styles().colors!.fillColorPrimary,

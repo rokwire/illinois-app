@@ -17,7 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -98,10 +98,10 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                 child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   Expanded(child: Container()),
                   RoundedButton(
-                      label: Localization().getStringEx('panel.canvas_feedback.submit.button', 'Submit'),
+                      label: Localization().getStringEx('panel.canvas_feedback.submit.button', 'Submit')!,
                       hint: Localization().getStringEx('panel.canvas_feedback.submit.hint', ''),
                       onTap: _onTapSubmit,
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      contentWeight: 0.0,
                       backgroundColor: Styles().colors!.white,
                       borderColor: Styles().colors!.fillColorSecondary,
                       textColor: Styles().colors!.fillColorPrimary)

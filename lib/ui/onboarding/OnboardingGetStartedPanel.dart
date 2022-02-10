@@ -19,7 +19,7 @@ import 'package:illinois/main.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -86,10 +86,10 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: 20),
-                              child: ScalableRoundedButton(
+                              child: RoundedButton(
                                 label: Localization().getStringEx(
                                     'panel.onboarding.get_started.button.get_started.title',
-                                    'Get Started'),
+                                    'Get Started')!,
                                 hint: Localization().getStringEx(
                                     'panel.onboarding.get_started.button.get_started.hint',
                                     ''),

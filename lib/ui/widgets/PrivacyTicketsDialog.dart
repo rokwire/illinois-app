@@ -21,8 +21,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-
-import 'RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class PrivacyTicketsDialog extends StatefulWidget {
   final Function? onContinueTap;
@@ -163,7 +162,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           height: 10,
                         ),
                         RoundedButton(
-                          label: Localization().getStringEx("widget.privacy_tickets_modal.button.continue.label", "Continue to buy tickets"),
+                          label: Localization().getStringEx("widget.privacy_tickets_modal.button.continue.label", "Continue to buy tickets")!,
                           hint: Localization().getStringEx("widget.privacy_tickets_modal.button.continue.hint", ""),
                           backgroundColor: Colors.white,
                           fontSize: 16,
@@ -190,7 +189,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           height: 10,
                         ),
                         RoundedButton(
-                          label: Localization().getStringEx("widget.privacy_tickets_modal.button.change_privacy.label", "Change my settings"),
+                          label: Localization().getStringEx("widget.privacy_tickets_modal.button.change_privacy.label", "Change my settings")!,
                           hint: Localization().getStringEx("widget.privacy_tickets_modal.button.change_privacy.hint", ""),
                           backgroundColor: Colors.white,
                           fontSize: 16,

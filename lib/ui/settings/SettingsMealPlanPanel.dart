@@ -24,11 +24,9 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/VerticalTitleContentSection.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -230,7 +228,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
         padding: EdgeInsets.only(left: 20, right: 20, bottom: 16),
         child: RoundedButton(
           label: Localization().getStringEx(
-              "panel.settings.meal_plan.button.login_to_view_meal_plan.text", "Log in to view your Meal Plan"),
+              "panel.settings.meal_plan.button.login_to_view_meal_plan.text", "Log in to view your Meal Plan")!,
           hint: Localization().getStringEx(
               'panel.settings.meal_plan.button.login_to_view_meal_plan.hint', ''),
           backgroundColor: Styles().colors!.white,
@@ -327,9 +325,9 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           ],),),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
-            Expanded(child: ScalableRoundedButton(
+            Expanded(child: RoundedButton(
               textColor: Styles().colors!.fillColorPrimary,
-              label: Localization().getStringEx('panel.settings.meal_plan.button.view_history.title', 'View History'),
+              label: Localization().getStringEx('panel.settings.meal_plan.button.view_history.title', 'View History')!,
               hint: Localization().getStringEx('panel.settings.meal_plan.button.view_history.hint', ''),
               backgroundColor: Colors.white,
               borderColor: Styles().colors!.fillColorSecondary,
