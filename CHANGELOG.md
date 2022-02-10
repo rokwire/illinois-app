@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dropdown with courses in Canvas calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 ### Changed
 - RoundedButton moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- IDCardPanel show QRCodewith card number if magTrack2 is missing [#1338](https://github.com/rokwire/illinois-app/issues/1338).
 
 ## [3.2.16] - 2022-02-09
 ### Added
