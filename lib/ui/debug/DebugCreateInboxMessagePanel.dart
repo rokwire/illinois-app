@@ -207,7 +207,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           borderColor: Styles().colors!.fillColorSecondary, // Styles().colors!.disabledTextColor
           backgroundColor: Styles().colors!.white,
           fontFamily: Styles().fontFamilies!.bold,
-          mainAxisSize: MainAxisSize.min,
+          contentWeight: 0.0,
           fontSize: 16,
           borderWidth: 2,
           progress: _sending,

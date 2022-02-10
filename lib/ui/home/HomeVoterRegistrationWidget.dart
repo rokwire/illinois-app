@@ -133,7 +133,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
                 textColor: Styles().colors!.fillColorPrimary,
                 borderColor: Styles().colors!.fillColorSecondary,
                 backgroundColor: Styles().colors!.white,
-                mainAxisSize: MainAxisSize.min,
+                contentWeight: 0.0,
                 onTap: () => _onTapVbmButton(vbmButtonTitle),
               )
               ],)
@@ -264,7 +264,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
               textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
-              mainAxisSize: MainAxisSize.min,
+              contentWeight: 0.0,
               onTap: () => _onTapButtonOption(ruleOption),
             ), Expanded(child: Padding(padding: EdgeInsets.only(left: 8),
               child: Text(Localization().getStringFromKeyMapping('widget.voter.option.descr.vote_in_person', _stringsContent, defaults: 'I want to vote in person')!, overflow: TextOverflow.ellipsis,
@@ -277,7 +277,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
               textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
-              mainAxisSize: MainAxisSize.min,
+              contentWeight: 0.0,
               onTap: () => _onTapButtonOption(ruleOption),
             ),
             ],));

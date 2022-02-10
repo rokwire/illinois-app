@@ -213,7 +213,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               fontSize: 16.0,
                               textColor: Styles().colors!.fillColorPrimary,
                               borderColor: Styles().colors!.fillColorPrimary,
-                              mainAxisSize: MainAxisSize.min,
+                              contentWeight: 0.0,
                               onTap: () {
                                 _clearDateOffset();
                               },

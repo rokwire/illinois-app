@@ -287,7 +287,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                       borderColor: Styles().colors!.white,
                       backgroundColor: Styles().colors!.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      mainAxisSize: MainAxisSize.min,
+                      contentWeight: 0.0,
                       onTap: (){
                         Analytics().logAlert(text: "Remove member from this group?", selection: "Back");
                         Navigator.pop(context);
@@ -301,7 +301,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                           borderColor: Styles().colors!.white,
                           backgroundColor: Styles().colors!.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          mainAxisSize: MainAxisSize.min,
+                          contentWeight: 0.0,
                           progress: _removing,
                           onTap: (){
                             Analytics().logAlert(text: "Remove member from this group?", selection: "Remove");

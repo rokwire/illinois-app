@@ -537,7 +537,7 @@ class _EventCard extends StatelessWidget {
                             fontFamily: Styles().fontFamilies!.regular,
                             fontSize: 16,
                             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            mainAxisSize: MainAxisSize.min,
+                            contentWeight: 0.0,
                             borderWidth: 2,
                             onTap: (){
                               Analytics().logAlert(text: 'Remove event', selection: 'OK');
@@ -553,7 +553,7 @@ class _EventCard extends StatelessWidget {
                             fontFamily: Styles().fontFamilies!.bold,
                             fontSize: 16,
                             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            mainAxisSize: MainAxisSize.min,
+                            contentWeight: 0.0,
                             borderWidth: 2,
                             onTap: (){
                               Analytics().logAlert(text: 'Remove event', selection: 'Cancel');

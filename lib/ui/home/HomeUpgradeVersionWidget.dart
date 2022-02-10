@@ -65,7 +65,7 @@ class _HomeUpgradeVersionWidgetState extends State<HomeUpgradeVersionWidget> {
                           textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.fillColorSecondary,
                           backgroundColor: Styles().colors!.white,
-                          mainAxisSize: MainAxisSize.min,
+                          contentWeight: 0.0,
                           onTap: _onTapGotIt,
                         )
                       ],

@@ -1836,8 +1836,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
                       child: RoundedButton(
                           label:StringUtils.isEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image")! : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image")!, // TBD localize
                           textColor: Styles().colors!.fillColorPrimary,
-                          mainAxisSize: MainAxisSize.min,
-                          minAxisContentWeight: 0.8,
+                          contentWeight: 0.8,
                           onTap: (){ _onTapAddImage();}
                       )))):
           Container()

@@ -354,7 +354,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
                                     fontSize: 16.0,
                                     textColor: Styles().colors!.fillColorPrimary,
                                     borderColor: Styles().colors!.fillColorSecondary,
-                                    mainAxisSize: MainAxisSize.min,
+                                    contentWeight: 0.0,
                                     onTap: () {
                                       Analytics().logSelect(target: 'Directions');
                                       _presentMapLaundryDirections(context);

@@ -97,14 +97,15 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
 
   Widget _buildButtons(){
     return _canCreatePoll?
-    Padding(padding: EdgeInsets.only(right: 120), child:
     RoundedButton(
       label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a poll")!,
       textColor: Styles().colors!.fillColorPrimary,
       borderColor: Styles().colors!.fillColorSecondary,
       backgroundColor: Colors.white,
+      contentWeight: 0.6,
+      conentAlignment: MainAxisAlignment.start,
       onTap: _onCreatePoll,
-    )) :
+    ) :
     Padding(padding: EdgeInsets.only(right: 120), child:
       RoundedButton(
         label: Localization().getStringEx("widget.home_create_poll.button.login.label","Login")!,

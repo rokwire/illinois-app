@@ -164,7 +164,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
           textColor: Styles().colors!.fillColorPrimary,
           borderColor: Styles().colors!.fillColorSecondary,
           backgroundColor: Styles().colors!.white,
-          mainAxisSize: MainAxisSize.min,
+          contentWeight: 0.0,
           onTap: () => _onTapButton(buttonContent),
         ),],
       ));

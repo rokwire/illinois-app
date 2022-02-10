@@ -193,8 +193,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   RoundedButton(
                     label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image")! : Localization().getStringEx("panel.groups_settings.add_image","Add cover image")!,
                     textColor: Styles().colors!.fillColorPrimary,
-                    mainAxisSize: MainAxisSize.min,
-                    minAxisContentWeight: 0.8,
+                    contentWeight: 0.8,
                     onTap: _onTapAddImage,)
               ),
             ),

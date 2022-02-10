@@ -24,9 +24,9 @@ class RoundedButton extends StatefulWidget {
   final void Function() onTap;
   final Color? backgroundColor;
   final EdgeInsetsGeometry padding;
-  final MainAxisSize mainAxisSize;
-  final double? minAxisContentWeight;
-  final MainAxisAlignment minAxisAlignment;
+
+  final double contentWeight;
+  final MainAxisAlignment conentAlignment;
   
   final TextStyle? textStyle;
   final Color? textColor;
@@ -65,9 +65,8 @@ class RoundedButton extends StatefulWidget {
     required this.onTap,
     this.backgroundColor,      //= Styles().colors.white
     this.padding                 = const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-    this.mainAxisSize            = MainAxisSize.max,
-    this.minAxisContentWeight,
-    this.minAxisAlignment        = MainAxisAlignment.center,
+    this.contentWeight           = 1.0,
+    this.conentAlignment         = MainAxisAlignment.center,
 
     this.textStyle,
     this.textColor,            //= Styles().colors.fillColorPrimary
@@ -154,36 +153,37 @@ class _RoundedButtonState extends State<RoundedButton> {
   }
 
   Widget get _wrapperContent {
-    if (widget.mainAxisSize == MainAxisSize.max) {
+    if (1.0 <= widget.contentWeight) {
       return Row(children: [
         Expanded(child: _borderContent)
       ]);
     }
-    else if (widget.minAxisContentWeight != null) {
-      if (widget.minAxisAlignment == MainAxisAlignment.start) {
+    else if (widget.contentWeight <= 0.0) {
+      // Not safe for overflow
+      return Row(mainAxisSize: MainAxisSize.min, children: [
+        _borderContent
+      ]);
+    }
+    else {
+      if (widget.conentAlignment == MainAxisAlignment.start) {
         return Row(children: [
-          Expanded(flex: (100 * widget.minAxisContentWeight!).toInt(), child: _borderContent),
-          Expanded(flex: (100 * max(1 - widget.minAxisContentWeight!, 0)).toInt(), child: Container()),
+          Expanded(flex: (100 * widget.contentWeight).toInt(), child: _borderContent),
+          Expanded(flex: (100 * (1 - widget.contentWeight)).toInt(), child: Container()),
         ]);
       }
-      else if (widget.minAxisAlignment == MainAxisAlignment.end) {
+      else if (widget.conentAlignment == MainAxisAlignment.end) {
         return Row(children: [
-          Expanded(flex: (100 * max(1 - widget.minAxisContentWeight!, 0)).toInt(), child: Container()),
-          Expanded(flex: (100 * widget.minAxisContentWeight!).toInt(), child: _borderContent),
+          Expanded(flex: (100 * (1 - widget.contentWeight)).toInt(), child: Container()),
+          Expanded(flex: (100 * widget.contentWeight).toInt(), child: _borderContent),
         ]);
       }
       else {
         return Row(children: [
-          Expanded(flex: (100 * max(1 - widget.minAxisContentWeight!, 0) ~/ 2), child: Container()),
-          Expanded(flex: (100 * widget.minAxisContentWeight!).toInt(), child: _borderContent),
-          Expanded(flex: (100 * max(1 - widget.minAxisContentWeight!, 0) ~/ 2), child: Container()),
+          Expanded(flex: (100 * (1 - widget.contentWeight) ~/ 2), child: Container()),
+          Expanded(flex: (100 * widget.contentWeight).toInt(), child: _borderContent),
+          Expanded(flex: (100 * (1 - widget.contentWeight) ~/ 2), child: Container()),
         ]);
       }
-    }
-    else {
-      return Row(mainAxisSize: MainAxisSize.min, children: [
-        _borderContent
-      ]);
     }
   }
 
@@ -216,7 +216,7 @@ class _RoundedButtonState extends State<RoundedButton> {
         rowContent.add(Padding(padding: _rightIconPadding, child: Visibility(visible: false, maintainSize: true, maintainAnimation: true, maintainState: true, child: _rightIcon)));
       }
 
-      rowContent.add((widget.mainAxisSize == MainAxisSize.max) ?
+      rowContent.add((0.0 < widget.contentWeight) ?
         Expanded(child:
           Padding(padding: widget.padding, child:
             Text(widget.label, style: _textStyle, textAlign: widget.textAlign,)
@@ -280,8 +280,10 @@ class SmallRoundedButton extends RoundedButton {
     required void Function() onTap,
     Color? backgroundColor               = Colors.transparent,
     EdgeInsetsGeometry padding           = const EdgeInsets.symmetric(horizontal: 3, vertical: 5),
-    MainAxisSize mainAxisSize            = MainAxisSize.min,
   
+    double contentWeight                 = 0.0,
+    MainAxisAlignment conentAlignment    = MainAxisAlignment.center,
+
     TextStyle? textStyle,
     Color? textColor,
     String? fontFamily,
@@ -319,7 +321,9 @@ class SmallRoundedButton extends RoundedButton {
     onTap: onTap,
     backgroundColor: backgroundColor,
     padding: padding,
-    mainAxisSize : mainAxisSize,
+
+    contentWeight: contentWeight,
+    conentAlignment: conentAlignment,
   
     textStyle : textStyle,
     textColor : textColor,

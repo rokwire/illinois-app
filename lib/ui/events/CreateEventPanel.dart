@@ -198,8 +198,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       backgroundColor: Styles().colors!.white,
                                       textColor: Styles().colors!.fillColorPrimary,
                                       borderColor: Styles().colors!.fillColorSecondary,
-                                      mainAxisSize: MainAxisSize.min,
-                                      minAxisContentWeight: 0.67,
+                                      contentWeight: 0.67,
                                     )
                                   ),
                                 ),

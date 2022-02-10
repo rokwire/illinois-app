@@ -754,7 +754,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           textColor: (isSelected ? Colors.white : Styles().colors!.fillColorPrimary),
           fontFamily: isSelected ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular,
           fontSize: 16,
-          mainAxisSize: MainAxisSize.min,
+          contentWeight: 0.0,
           borderColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
           borderWidth: 1,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 11),
@@ -805,8 +805,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               borderColor: Styles().colors!.fillColorSecondary,
               borderWidth: 2,
-              mainAxisSize: MainAxisSize.min,
-              minAxisContentWeight: 0.5,
+              contentWeight: 0.5,
               onTap: () {
                 Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAllEventsPanel(group: _group)));
               })));
@@ -914,8 +913,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                 borderColor: Styles().colors!.fillColorSecondary,
                 borderWidth: 2,
-                mainAxisSize: MainAxisSize.min,
-                minAxisContentWeight: 0.5,
+                contentWeight: 0.5,
                 onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPollListPanel(group: _group!))))));
       }
     }

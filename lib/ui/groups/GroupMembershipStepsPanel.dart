@@ -249,7 +249,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
             borderColor: Styles().colors!.fillColorSecondary,
             borderWidth: 2,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            mainAxisSize: MainAxisSize.min,
+            contentWeight: 0.0,
             onTap:() { _onSubmit();  }
           ),
           Expanded(child: Container(),),

@@ -377,7 +377,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors!.fillColorSecondary,
                       textColor: Styles().colors!.fillColorPrimary,
-                      mainAxisSize: MainAxisSize.min,
+                      contentWeight: 0.0,
                       label: Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.yes", "Yes")!),
                   ),
                   Container(
@@ -392,7 +392,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors!.fillColorSecondary,
                       textColor: Styles().colors!.fillColorPrimary,
-                      mainAxisSize: MainAxisSize.min,
+                      contentWeight: 0.0,
                       label: Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.no", "No")!)
                   )
                 ],

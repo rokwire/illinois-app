@@ -190,8 +190,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           textColor: Styles().colors!.fillColorPrimary,
                           onTap: _onTapAddImage,
                           backgroundColor: Colors.transparent,
-                          mainAxisSize: MainAxisSize.min,
-                          minAxisContentWeight: 0.8,
+                          contentWeight: 0.8,
                     ))))
         ]));
   }

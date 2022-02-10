@@ -101,7 +101,7 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                       label: Localization().getStringEx('panel.canvas_feedback.submit.button', 'Submit')!,
                       hint: Localization().getStringEx('panel.canvas_feedback.submit.hint', ''),
                       onTap: _onTapSubmit,
-                      mainAxisSize: MainAxisSize.min,
+                      contentWeight: 0.0,
                       backgroundColor: Styles().colors!.white,
                       borderColor: Styles().colors!.fillColorSecondary,
                       textColor: Styles().colors!.fillColorPrimary)
