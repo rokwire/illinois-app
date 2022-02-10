@@ -8,7 +8,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/gies/GiesPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -114,8 +114,8 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                         fontSize: 32,),),)),
                   ],),
                 Container(height: 24,),
-                ScalableRoundedButton(
-                  label: Localization().getStringEx('widget.gies2.button.title.begin', "Begin Checklist"),
+                RoundedButton(
+                  label: Localization().getStringEx('widget.gies2.button.title.begin', "Begin Checklist")!,
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,
@@ -148,8 +148,8 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                           fontSize: 32,),),)),
                 ],),
                 Container(height: 24,),
-                ScalableRoundedButton(
-                  label: Localization().getStringEx('widget.gies2.button.title.review', "Review Checklist"),
+                RoundedButton(
+                  label: Localization().getStringEx('widget.gies2.button.title.review', "Review Checklist")!,
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,
@@ -158,8 +158,8 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                 !Gies().supportNotes ? Container() :
                 Column(children: [
                   Container(height: 12,),
-                  ScalableRoundedButton(
-                    label: Localization().getStringEx('widget.gies2.button.title.view_notes', "View My Notes"),
+                  RoundedButton(
+                    label: Localization().getStringEx('widget.gies2.button.title.view_notes', "View My Notes")!,
                     backgroundColor: Styles().colors?.white!,
                     borderColor: Styles().colors?.fillColorSecondary!,
                     textColor: Styles().colors!.fillColorPrimary,
@@ -191,8 +191,8 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                           fontSize: 24,),),)),
                     ],),
                 Container(height: 24,),
-                ScalableRoundedButton(
-                  label: Localization().getStringEx('widget.gies2.button.title.continue', "Continue"),
+                RoundedButton(
+                  label: Localization().getStringEx('widget.gies2.button.title.continue', "Continue")!,
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,

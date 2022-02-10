@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- RoundedButton moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+
 ## [3.2.16] - 2022-02-09
 ### Added
 - Authman Groups UI improvements [#1323](https://github.com/rokwire/illinois-app/issues/1323).

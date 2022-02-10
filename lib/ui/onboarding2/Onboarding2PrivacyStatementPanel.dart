@@ -21,7 +21,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ExploreCampusPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -152,11 +152,11 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                     Padding(
                       padding: EdgeInsets.only(
                           bottom: 24, top: 16),
-                      child: ScalableRoundedButton(
-                        label: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.title', 'Begin'),
+                      child: RoundedButton(
+                        label: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.title', 'Begin')!,
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
                         fontSize: 16,
-                        padding: EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         backgroundColor: Styles().colors!.white,
                         borderColor: Styles().colors!.fillColorSecondaryVariant,
                         textColor: Styles().colors!.fillColorPrimary,

@@ -25,7 +25,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginEmailPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -132,8 +132,8 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
             ),
             
             Padding(padding: EdgeInsets.only(left: 24, right: 24, bottom: 8), child:
-              ScalableRoundedButton(
-                label: Localization().getStringEx("panel.onboarding2.phone_or_email.next.text", "Next"),
+              RoundedButton(
+                label: Localization().getStringEx("panel.onboarding2.phone_or_email.next.text", "Next")!,
                 hint: Localization().getStringEx("panel.onboarding2.phone_or_email.next.hint", ""),
                 borderColor: Styles().colors!.fillColorSecondary,
                 backgroundColor: Styles().colors!.background,

@@ -37,7 +37,7 @@ import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -213,6 +213,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               fontSize: 16.0,
                               textColor: Styles().colors!.fillColorPrimary,
                               borderColor: Styles().colors!.fillColorPrimary,
+                              contentWeight: 0.0,
                               onTap: () {
                                 _clearDateOffset();
                               },
@@ -570,7 +571,9 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
               Expanded(child:
                 RoundedButton(
                   label: "Copy to clipboard",
+                  textColor: Styles().colors!.white,
                   borderColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors!.fillColorPrimary,
                   onTap: (){ _copyToClipboard(textContent); },
                 ),
               ),

@@ -23,7 +23,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class HomeCreatePollWidget extends StatefulWidget {
   @override
@@ -97,37 +97,25 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
 
   Widget _buildButtons(){
     return _canCreatePoll?
-    Padding(padding: EdgeInsets.only(right: 120), child:
-    ScalableRoundedButton(
-      label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a poll"),
-      padding: EdgeInsets.symmetric(horizontal: 16),
+    RoundedButton(
+      label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a poll")!,
       textColor: Styles().colors!.fillColorPrimary,
       borderColor: Styles().colors!.fillColorSecondary,
       backgroundColor: Colors.white,
+      contentWeight: 0.6,
+      conentAlignment: MainAxisAlignment.start,
       onTap: _onCreatePoll,
-    )) :
+    ) :
     Padding(padding: EdgeInsets.only(right: 120), child:
-    Stack(children: <Widget>[
-      ScalableRoundedButton(
-        label: Localization().getStringEx("widget.home_create_poll.button.login.label","Login"),
+      RoundedButton(
+        label: Localization().getStringEx("widget.home_create_poll.button.login.label","Login")!,
 //        height: 48,
-        padding: EdgeInsets.symmetric(horizontal: 16),
         textColor: Styles().colors!.fillColorPrimary,
         borderColor: Styles().colors!.fillColorSecondary,
         backgroundColor: Colors.white,
+        progress: _authLoading,
         onTap: _onLogin,
       ),
-      Visibility(visible: _authLoading,
-        child: Container(
-          height: 48,
-          child: Align(alignment: Alignment.center,
-            child: SizedBox(height: 24, width: 24,
-                child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
-            ),
-          ),
-        ),
-      ),
-    ],),
     );
   }
 

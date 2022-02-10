@@ -27,7 +27,7 @@ import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -218,7 +218,7 @@ class _HomeInterestButton extends RoundedButton {
       backgroundColor: Colors.white,
       borderColor: borderColor ?? Styles().colors!.surfaceAccent,
       textColor: Styles().colors!.fillColorPrimary,
-      padding: EdgeInsets.symmetric(horizontal: 5),
+      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
       onTap: onTap);
 }
 

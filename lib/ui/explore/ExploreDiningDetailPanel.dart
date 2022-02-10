@@ -31,7 +31,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -353,7 +353,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     return Align(
       alignment: Alignment.centerRight,
       child: RoundedButton(
-        label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online'),
+        label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online')!,
         backgroundColor: Styles().colors!.white,
         borderColor: Styles().colors!.fillColorSecondary,
         textColor: Styles().colors!.fillColorPrimary,

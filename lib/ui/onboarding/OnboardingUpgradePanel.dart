@@ -19,7 +19,7 @@ import 'package:illinois/main.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
@@ -103,8 +103,10 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   RoundedButton(
-                    label: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.title', 'Upgrade'),
+                    label: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.title', 'Upgrade')!,
                     hint: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.hint', ''),
+                    textColor: Styles().colors!.white,
+                    borderColor: Styles().colors!.fillColorSecondary,
                     backgroundColor: Styles().colors!.fillColorSecondary,
                     onTap: () => _onUpgradeClicked(context),
                   ),

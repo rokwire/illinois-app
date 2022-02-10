@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -37,7 +38,6 @@ import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -115,7 +115,6 @@ class _RecentItemsList extends StatelessWidget{
   final String slantImageRes;
   final Color? slantColor;
   final void Function()? tapMore;
-  final bool showMoreChevron;
   final bool showMoreButtonExplicitly;
   final String? moreButtonLabel;
 
@@ -124,7 +123,7 @@ class _RecentItemsList extends StatelessWidget{
 
   const _RecentItemsList(
       {Key? key, this.items, this.heading, this.subTitle, this.headingIconRes,
-        this.slantImageRes = 'images/slant-down-right-blue.png', this.slantColor, this.tapMore, this.cardShowDate = false, this.limit = 3, this.showMoreChevron = true,
+        this.slantImageRes = 'images/slant-down-right-blue.png', this.slantColor, this.tapMore, this.cardShowDate = false, this.limit = 3,
         this.moreButtonLabel, this.showMoreButtonExplicitly = false,})
       : super(key: key);
 
@@ -144,10 +143,9 @@ class _RecentItemsList extends StatelessWidget{
         Container(height: 20,),
         !showMoreButton?Container():
         SmallRoundedButton(
-          label: moreLabel,
+          label: moreLabel ?? '',
           hint: Localization().getStringEx('widget.home_recent_items.button.more.hint', ''),
-          onTap: tapMore,
-          showChevron: showMoreChevron,),
+          onTap: tapMore ?? (){},),
         Container(height: 48,),
       ],
     ) : Container();

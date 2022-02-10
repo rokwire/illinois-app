@@ -27,7 +27,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/explore/ExploreViewTypeTab.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryListPanel.dart';
@@ -348,13 +348,13 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
                           Row(
                               children: <Widget>[
                                 RoundedButton(
-                                    label: Localization().getStringEx('panel.laundry_home.button.directions.title', 'Directions'),
+                                    label: Localization().getStringEx('panel.laundry_home.button.directions.title', 'Directions')!,
                                     hint: Localization().getStringEx('panel.laundry_home.button.directions.hint', ''),
                                     backgroundColor: Colors.white,
                                     fontSize: 16.0,
                                     textColor: Styles().colors!.fillColorPrimary,
                                     borderColor: Styles().colors!.fillColorSecondary,
-                                    padding: EdgeInsets.symmetric(horizontal: 24),
+                                    contentWeight: 0.0,
                                     onTap: () {
                                       Analytics().logSelect(target: 'Directions');
                                       _presentMapLaundryDirections(context);
@@ -365,13 +365,12 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
                               ]) :
                           Container(),
                           RoundedButton(
-                              label: Localization().getStringEx('panel.laundry_home.button.details.title', 'Details'),
+                              label: Localization().getStringEx('panel.laundry_home.button.details.title', 'Details')!,
                               hint: Localization().getStringEx('panel.laundry_home.button.details.hint', ''),
                               backgroundColor: Colors.white,
                               fontSize: 16.0,
                               textColor: Styles().colors!.fillColorPrimary,
                               borderColor: Styles().colors!.fillColorSecondary,
-                              padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
                                 Analytics().logSelect(target: 'Details');
                                 _presentMapLaundryDetail(context);

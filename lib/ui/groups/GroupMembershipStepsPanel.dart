@@ -27,7 +27,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/groups/GroupFindEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -241,15 +241,15 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
       child: Padding(padding: EdgeInsets.all(16),
         child: Row(children: <Widget>[
           Expanded(child: Container(),),
-          RoundedButton(label:Localization().getStringEx("panel.membership_request.button.save.title", 'Save steps'),
+          RoundedButton(label:Localization().getStringEx("panel.membership_request.button.save.title", 'Save steps')!,
             backgroundColor: Styles().colors!.white,
             textColor: Styles().colors!.fillColorPrimary,
             fontFamily: Styles().fontFamilies!.bold,
             fontSize: 16,
-            padding: EdgeInsets.symmetric(horizontal: 32, ),
             borderColor: Styles().colors!.fillColorSecondary,
             borderWidth: 2,
-            height: 26 + 16*MediaQuery.of(context).textScaleFactor ,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentWeight: 0.0,
             onTap:() { _onSubmit();  }
           ),
           Expanded(child: Container(),),

@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -49,7 +50,6 @@ import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
@@ -617,8 +617,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
             slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
             children: _buildListItems(context)),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
-          label: _showAll ? Localization().getStringEx('panel.saved.events.button.less', "Show Less") : Localization().getStringEx(
-              'panel.saved.events.button.all', "Show All"),
+          label: _showAll ? Localization().getStringEx('panel.saved.events.button.less', "Show Less")! : Localization().getStringEx('panel.saved.events.button.all', "Show All")!,
           onTap: _onViewAllTapped,
         ),),)
       ],

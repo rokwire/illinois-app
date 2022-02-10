@@ -27,7 +27,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -645,7 +645,7 @@ class _SettingsAddIlliniCashPanelState
                                         child: RoundedButton(
                                           label: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.cancel.text',
-                                              'Cancel'),
+                                              'Cancel')!,
                                           hint: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.cancel.hint',
                                               ''),
@@ -666,7 +666,7 @@ class _SettingsAddIlliniCashPanelState
                                         child: RoundedButton(
                                           label: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.submit.text',
-                                              'Submit'),
+                                              'Submit')!,
                                           hint: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.submit.hint',
                                               ''),

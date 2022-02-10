@@ -23,8 +23,7 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -244,8 +243,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   Widget _buildRemoveFromGroup() {
-    return Stack(children: <Widget>[
-        ScalableRoundedButton(label: Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
+    return
+        RoundedButton(label: Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group')!,
           backgroundColor: Styles().colors!.white,
           textColor: Styles().colors!.fillColorPrimary,
           fontFamily: Styles().fontFamilies!.bold,
@@ -257,8 +256,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
             Analytics().logSelect(target: 'Remove from Group');
             showDialog(context: context, builder: _buildRemoveFromGroupDialog);
           }
-        ),
-    ],);
+        );
   }
 
   Widget _buildRemoveFromGroupDialog(BuildContext context) {
@@ -283,28 +281,28 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     RoundedButton(
-                      label: Localization().getStringEx("panel.member_detail.button.back.title", "Back"),
+                      label: Localization().getStringEx("panel.member_detail.button.back.title", "Back")!,
                       fontFamily: "ProximaNovaRegular",
                       textColor: Styles().colors!.fillColorPrimary,
                       borderColor: Styles().colors!.white,
                       backgroundColor: Styles().colors!.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      contentWeight: 0.0,
                       onTap: (){
                         Analytics().logAlert(text: "Remove member from this group?", selection: "Back");
                         Navigator.pop(context);
                       },
                     ),
                     Container(width: 16,),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
                         RoundedButton(
-                          label: Localization().getStringEx("panel.member_detail.dialog.button.remove.title", "Remove"),
+                          label: Localization().getStringEx("panel.member_detail.dialog.button.remove.title", "Remove")!,
                           fontFamily: "ProximaNovaBold",
                           textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.white,
                           backgroundColor: Styles().colors!.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          contentWeight: 0.0,
+                          progress: _removing,
                           onTap: (){
                             Analytics().logAlert(text: "Remove member from this group?", selection: "Remove");
                             if(!_removing) {
@@ -329,9 +327,6 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                             }
                           },
                         ),
-                        _removing ? CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), strokeWidth: 2,) : Container(),
-                      ],
-                    ),
                   ],
                 ),
               ],

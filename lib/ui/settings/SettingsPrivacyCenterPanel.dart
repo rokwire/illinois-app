@@ -29,7 +29,7 @@ import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:package_info/package_info.dart';
 
@@ -360,14 +360,15 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
   Widget _buildDeleteButton(){
       return
           Column(children: <Widget>[
-            ScalableRoundedButton(
+            RoundedButton(
               backgroundColor: Styles().colors!.white,
+              borderColor: Styles().colors!.white,
               textColor: UiColors.fromHex("#f54400"),
               fontSize: 16,
               fontFamily: Styles().fontFamilies!.regular,
-              label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Forget all of my information"),
+              label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Forget all of my information")!,
               hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
-              shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+              borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
               onTap: _onTapDeleteData,
             ),
             Container(height: 16,),

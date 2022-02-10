@@ -29,7 +29,7 @@ import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 
 class SettingsPersonalInformationPanel extends StatefulWidget{
@@ -66,13 +66,14 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
               children: <Widget>[
                 Container(height: 1, color: Styles().colors!.surfaceAccent,),
                 Container(height: 24,),
-                ScalableRoundedButton(
+                RoundedButton(
                   backgroundColor: Styles().colors!.white,
+                  borderColor: Styles().colors!.white,
                   textColor: UiColors.fromHex("#f54400"),
                   fontSize: 16,
                   fontFamily: Styles().fontFamilies!.regular,
-                  label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal information"),
-                  shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+                  label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal information")!,
+                  borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
                   onTap: _onTapDeleteData,
                 ),
                 Container(height: 16,),

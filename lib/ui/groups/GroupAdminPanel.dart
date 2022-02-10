@@ -26,8 +26,7 @@ import 'package:illinois/ui/groups/GroupMembersPanel.dart';
 import 'package:illinois/ui/groups/GroupSettingsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -256,7 +255,7 @@ class _NoUpcomingEvents extends StatelessWidget{
             children: <Widget>[
               Expanded(
                 child: RoundedButton(
-                  label: Localization().getStringEx("panel.groups_admin.button.find_existing.title", "Find existing"),
+                  label: Localization().getStringEx("panel.groups_admin.button.find_existing.title", "Find existing")!,
                   hint: Localization().getStringEx("panel.groups_admin.button.find_existing.hint", ""),
                   textColor: Styles().colors!.fillColorPrimary,
                   backgroundColor: Styles().colors!.white,
@@ -268,7 +267,7 @@ class _NoUpcomingEvents extends StatelessWidget{
               Container(width: 10,),
               Expanded(
                 child: RoundedButton(
-                  label: Localization().getStringEx("panel.groups_admin.button.create_event.title", "Create"),
+                  label: Localization().getStringEx("panel.groups_admin.button.create_event.title", "Create")!,
                   hint: Localization().getStringEx("panel.groups_admin.button.create_event.hint", ""),
                   textColor: Styles().colors!.fillColorPrimary,
                   backgroundColor: Styles().colors!.white,
@@ -449,8 +448,8 @@ class _EventCard extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         Expanded(child: Container()),
-                        ScalableRoundedButton(
-                          label:Localization().getStringEx("panel.groups_admin.button.delete.title", "Delete"),
+                        RoundedButton(
+                          label:Localization().getStringEx("panel.groups_admin.button.delete.title", "Delete")!,
                           backgroundColor: Styles().colors!.white,
                           borderColor: Styles().colors!.fillColorPrimary,
                           textColor: Styles().colors!.fillColorPrimary,
@@ -464,8 +463,8 @@ class _EventCard extends StatelessWidget {
                           },
                         ),
                         Container(height: 8,),
-                        ScalableRoundedButton(
-                          label:Localization().getStringEx("panel.groups_admin.button.edit.title", "Edit"),
+                        RoundedButton(
+                          label:Localization().getStringEx("panel.groups_admin.button.edit.title", "Edit")!,
                           backgroundColor: Styles().colors!.white,
                           borderColor: Styles().colors!.fillColorPrimary,
                           textColor: Styles().colors!.fillColorPrimary,
@@ -489,8 +488,8 @@ class _EventCard extends StatelessWidget {
                           },
                         ),
                         Container(height: 8,),
-                        ScalableRoundedButton(
-                          label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel"),
+                        RoundedButton(
+                          label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel")!,
                           backgroundColor: Styles().colors!.white,
                           borderColor: Styles().colors!.fillColorSecondary,
                           textColor: Styles().colors!.fillColorPrimary,
@@ -531,13 +530,14 @@ class _EventCard extends StatelessWidget {
                           Expanded(child: Container()),
                           Container(height: 8,),
                           RoundedButton(
-                            label: Localization().getStringEx("panel.groups_admin.button.remove.title", "Remove event"),
+                            label: Localization().getStringEx("panel.groups_admin.button.remove.title", "Remove event")!,
                             backgroundColor: Styles().colors!.white,
                             borderColor: Styles().colors!.fillColorPrimary,
                             textColor: Styles().colors!.fillColorPrimary,
                             fontFamily: Styles().fontFamilies!.regular,
                             fontSize: 16,
-                            height: 42,
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            contentWeight: 0.0,
                             borderWidth: 2,
                             onTap: (){
                               Analytics().logAlert(text: 'Remove event', selection: 'OK');
@@ -546,13 +546,14 @@ class _EventCard extends StatelessWidget {
                           ),
                           Container(height: 8,),
                           RoundedButton(
-                            label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel"),
+                            label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel")!,
                             backgroundColor: Styles().colors!.white,
                             borderColor: Styles().colors!.fillColorSecondary,
                             textColor: Styles().colors!.fillColorPrimary,
                             fontFamily: Styles().fontFamilies!.bold,
                             fontSize: 16,
-                            height: 42,
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            contentWeight: 0.0,
                             borderWidth: 2,
                             onTap: (){
                               Analytics().logAlert(text: 'Remove event', selection: 'Cancel');
