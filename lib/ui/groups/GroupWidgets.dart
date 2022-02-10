@@ -930,14 +930,26 @@ class GroupCard extends StatelessWidget {
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   _buildHeading(),
                   Container(height: 3),
-                  Row(children: [
-                    Expanded(
-                        child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 0),
-                            child: Text(group?.title ?? "",
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
-                                style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))))
+                  Row(
+                    children:[
+                      Expanded(
+                        child:
+                          Column(
+                            children:[
+                              _buildCategoryLayout(),
+                              Row(children: [
+                                Expanded(
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 0),
+                                        child: Text(group?.title ?? "",
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
+                                            style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))))
+                              ]),
+                            ]
+                          ),
+                      ),
+                      _buildImage()
                   ]),
                   (displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) :Container(),
                   Visibility(
@@ -954,12 +966,17 @@ class GroupCard extends StatelessWidget {
                     ),
                   ),
                   Container(height: 4),
-                  (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups)
-                      ? Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                          _buildUpdateTime(),
-                          Visibility(visible: (group?.authManEnabled ?? false), child: _buildMembersCount())
+                  // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
+                       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          Expanded(
+                            child: _buildUpdateTime(),
+                          ),
+                          Visibility(visible:
+                              (group?.authManEnabled ?? false)
+                              && displayType != GroupCardDisplayType.homeGroups,
+                                child: _buildMembersCount())
                         ])
-                      : Container()
+                      // : Container()
                 ]))));
   }
 
@@ -979,17 +996,17 @@ class GroupCard extends StatelessWidget {
       );
     }
 
-    String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")!);
-    if (StringUtils.isNotEmpty(groupCategory)) {
-      if (leftContent.isNotEmpty) {
-        leftContent.add(Container(height: 6,));
-      }
-      leftContent.add(
-        Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
-          overflow: TextOverflow.ellipsis,
-          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
-      );
-    }
+    // String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")!);
+    // if (StringUtils.isNotEmpty(groupCategory)) {
+    //   if (leftContent.isNotEmpty) {
+    //     leftContent.add(Container(height: 6,));
+    //   }
+    //   leftContent.add(
+    //     Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+    //       overflow: TextOverflow.ellipsis,
+    //       maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
+    //   );
+    // }
 
     List<Widget> rightContent = <Widget>[];
     rightContent.add(_buildPrivacyStatysBadge()); //Moved above the image
@@ -1035,6 +1052,26 @@ class GroupCard extends StatelessWidget {
     } else {
       return Container();
     }
+  }
+
+  Widget _buildCategoryLayout(){
+    String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")!);
+    List<Widget> content = [];
+    if (StringUtils.isNotEmpty(groupCategory)) {
+        content.add(Container(height: 6,));
+        content.add(
+          Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+            overflow: TextOverflow.ellipsis,
+            maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
+      );
+    }
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: content,
+      )
+    );
   }
 
   Widget _buildImage() {
