@@ -32,10 +32,10 @@ class RoundedButton extends StatefulWidget {
   final double fontSize;
   final TextAlign textAlign;
 
-  final Image? leftIcon;
+  final Widget? leftIcon;
   final EdgeInsetsGeometry? leftIconPadding;
   
-  final Image? rightIcon;
+  final Widget? rightIcon;
   final EdgeInsetsGeometry? rightIconPadding;
 
   final double iconPadding;
@@ -57,7 +57,6 @@ class RoundedButton extends StatefulWidget {
   final Color? progressColor;
   final double? progressSize;
   final double? progressStrokeWidth;
-
 
   RoundedButton({
     required this.label,
@@ -98,6 +97,8 @@ class RoundedButton extends StatefulWidget {
   });
 
   _RoundedButtonState createState() => _RoundedButtonState();
+
+
 }
 
 class _RoundedButtonState extends State<RoundedButton> {
@@ -112,8 +113,13 @@ class _RoundedButtonState extends State<RoundedButton> {
 
   Color get _borderColor => widget.borderColor ?? Styles().colors!.fillColorSecondary!;
 
-  EdgeInsetsGeometry get leftIconPadding => widget.leftIconPadding ?? EdgeInsets.all(widget.iconPadding);
-  EdgeInsetsGeometry get rightIconPadding => widget.rightIconPadding ?? EdgeInsets.all(widget.iconPadding);
+  Widget get _leftIcon => widget.leftIcon ?? Container();
+  EdgeInsetsGeometry get _leftIconPadding => widget.leftIconPadding ?? EdgeInsets.all(widget.iconPadding);
+  bool get _hasLeftIcon => (widget.leftIcon != null) || (widget.leftIconPadding != null);
+  
+  Widget get _rightIcon => widget.rightIcon ?? Container();
+  EdgeInsetsGeometry get _rightIconPadding => widget.rightIconPadding ?? EdgeInsets.all(widget.iconPadding);
+  bool get _hasRightIcon => (widget.rightIcon != null) || (widget.rightIconPadding != null);
 
   Color get _progressColor => widget.progressColor ?? _borderColor;
   double get _progressSize => widget.progressSize ?? ((_contentSize?.height ?? 0) / 2);
@@ -144,7 +150,7 @@ class _RoundedButtonState extends State<RoundedButton> {
   }
 
   Widget get _wrapperContent {
-    return Row(children: [ (widget.mainAxisSize == MainAxisSize.max)
+    return Row(mainAxisSize: MainAxisSize.min, children: [ (widget.mainAxisSize == MainAxisSize.max)
       ? Expanded(child: _borderContent)
       : _borderContent
     ]);
@@ -171,12 +177,12 @@ class _RoundedButtonState extends State<RoundedButton> {
     if ((widget.rightIcon != null) || (widget.leftIcon != null)) {
       List<Widget> rowContent = <Widget>[];
       
-      if (widget.leftIcon != null) {
-        rowContent.add(Padding(padding: leftIconPadding, child: widget.leftIcon,));
+      if (_hasLeftIcon) {
+        rowContent.add(Padding(padding: _leftIconPadding, child: _leftIcon,));
       }
-      else if (widget.rightIcon != null) {
+      else if (_hasRightIcon && (widget.textAlign == TextAlign.center)) {
         // add space keeper at left to keep text content centered
-        rowContent.add(Padding(padding: rightIconPadding, child: Visibility(visible: false, maintainSize: true, maintainAnimation: true, maintainState: true, child: widget.rightIcon!)));
+        rowContent.add(Padding(padding: _rightIconPadding, child: Visibility(visible: false, maintainSize: true, maintainAnimation: true, maintainState: true, child: _rightIcon)));
       }
 
       rowContent.add((widget.mainAxisSize == MainAxisSize.max) ?
@@ -190,13 +196,12 @@ class _RoundedButtonState extends State<RoundedButton> {
         )
       );
 
-      if (widget.rightIcon != null) {
-        EdgeInsetsGeometry padding = widget.rightIconPadding ?? EdgeInsets.symmetric(horizontal: widget.iconPadding);
-        rowContent.add(Padding(padding: padding, child: widget.rightIcon,));
+      if (_hasRightIcon) {
+        rowContent.add(Padding(padding: _rightIconPadding, child: _rightIcon,));
       }
-      else if (widget.leftIcon != null) {
+      else if (_hasLeftIcon && (widget.textAlign == TextAlign.center)) {
         // add space keeper at right to keep text content centered
-        rowContent.add(Padding(padding: leftIconPadding, child: Visibility(visible: false, maintainSize: true, maintainAnimation: true, maintainState: true, child: widget.leftIcon!)));
+        rowContent.add(Padding(padding: _leftIconPadding, child: Visibility(visible: false, maintainSize: true, maintainAnimation: true, maintainState: true, child: _leftIcon)));
       }
 
       return Semantics(excludeSemantics: true, child:
@@ -238,53 +243,84 @@ class _RoundedButtonState extends State<RoundedButton> {
   }
 }
 
-class SmallRoundedButton extends StatelessWidget {
-  final String? label;
-  final String? hint;
-  final GestureTapCallback? onTap;
-  final bool showChevron;
-  final Color? borderColor;
+class SmallRoundedButton extends RoundedButton {
+  SmallRoundedButton({
+    required String label,
+    required void Function() onTap,
+    Color? backgroundColor,
+    EdgeInsetsGeometry? padding,
+    MainAxisSize? mainAxisSize,
+  
+    TextStyle? textStyle,
+    Color? textColor,
+    String? fontFamily,
+    double? fontSize,
+    TextAlign? textAlign,
 
-  SmallRoundedButton({required this.label, this.hint = '', this.onTap, this.showChevron = true, this.borderColor});
+    Widget? leftIcon,
+    EdgeInsetsGeometry? leftIconPadding,
+  
+    Widget? rightIcon,
+    EdgeInsetsGeometry? rightIconPadding,
 
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-        onTap: onTap,
-        child: Semantics(
-          label: label,
-          hint: hint,
-          button: true,
-          excludeSemantics: true,
-          child: Container(
-            height: 32,
-            decoration: BoxDecoration(
-              border: Border.all(color: borderColor ?? Styles().colors!.fillColorSecondary!, width: 2.0),
-              borderRadius: BorderRadius.circular(24.0),
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    label!,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.bold,
-                        fontSize: 16,
-                        color: Styles().colors!.fillColorPrimary),
-                  ),
-                  Visibility(
-                      visible: showChevron,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 5),
-                        child: Image.asset('images/chevron-right.png', excludeFromSemantics: true),
-                      ))
-                ],
-              ),
-            ),
-          ),
-        ));
-  }
+    double? iconPadding,
+
+    String? hint,
+    bool? enabled,
+
+    BoxBorder? border,
+    Color? borderColor,
+    double? borderWidth,
+    List<BoxShadow>? borderShadow,
+    double? maxBorderRadius,
+
+    BoxBorder? secondaryBorder,
+    Color? secondaryBorderColor,
+    double? secondaryBorderWidth,
+
+    bool? progress,
+    Color? progressColor,
+    double? progressSize,
+    double? progressStrokeWidth,
+
+  }) : super(
+    label: label,
+    onTap: onTap,
+    backgroundColor: backgroundColor ?? Colors.transparent,
+    padding: padding ?? EdgeInsets.symmetric(horizontal: 3, vertical: 5),
+    mainAxisSize : mainAxisSize ?? MainAxisSize.min,
+  
+    textStyle : textStyle,
+    textColor : textColor,
+    fontFamily : fontFamily,
+    fontSize: fontSize ?? 16,
+    textAlign: textAlign ?? TextAlign.left,
+
+    leftIcon: leftIcon,
+    leftIconPadding: leftIconPadding ?? EdgeInsets.only(right: 15),
+  
+    rightIcon: rightIcon ?? Image.asset('images/chevron-right.png', excludeFromSemantics: true),
+    rightIconPadding: rightIconPadding ?? EdgeInsets.only(right: 15),
+
+    iconPadding: iconPadding ?? 8,
+
+    hint: hint,
+    enabled: enabled ?? true,
+
+    border: border,
+    borderColor: borderColor,
+    borderWidth: borderWidth ?? 2.0,
+    borderShadow: borderShadow,
+    maxBorderRadius: maxBorderRadius,
+
+    secondaryBorder: secondaryBorder,
+    secondaryBorderColor: secondaryBorderColor,
+    secondaryBorderWidth: secondaryBorderWidth,
+
+    progress: progress,
+    progressColor: progressColor,
+    progressSize: progressSize,
+    progressStrokeWidth: progressStrokeWidth,
+  );
+
 }

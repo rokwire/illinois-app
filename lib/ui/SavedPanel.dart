@@ -617,8 +617,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
             slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
             children: _buildListItems(context)),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
-          label: _showAll ? Localization().getStringEx('panel.saved.events.button.less', "Show Less") : Localization().getStringEx(
-              'panel.saved.events.button.all', "Show All"),
+          label: _showAll ? Localization().getStringEx('panel.saved.events.button.less', "Show Less")! : Localization().getStringEx('panel.saved.events.button.all', "Show All")!,
           onTap: _onViewAllTapped,
         ),),)
       ],

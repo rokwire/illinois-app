@@ -470,7 +470,6 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     Visibility(visible: visitWebsiteVisible, child: SmallRoundedButton(
       label: websiteLabel,
       hint: websiteHint,
-      showChevron: true,
       borderColor: Styles().colors!.fillColorPrimary,
       onTap: () => _onTapVisitWebsite(titleUrl),),) :
     Visibility(visible: visitWebsiteVisible, child: RoundedButton(
