@@ -40,7 +40,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/service/styles.dart';

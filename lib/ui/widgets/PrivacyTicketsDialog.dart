@@ -21,8 +21,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-
-import 'RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class PrivacyTicketsDialog extends StatefulWidget {
   final Function? onContinueTap;

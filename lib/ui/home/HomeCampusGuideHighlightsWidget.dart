@@ -13,7 +13,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 

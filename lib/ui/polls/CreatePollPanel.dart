@@ -25,7 +25,7 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';

@@ -27,7 +27,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

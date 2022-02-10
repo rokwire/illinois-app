@@ -8,7 +8,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/gies/GiesPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

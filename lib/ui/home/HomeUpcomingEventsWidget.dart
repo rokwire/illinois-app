@@ -37,7 +37,7 @@ import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 

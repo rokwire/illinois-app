@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -32,7 +33,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 
 import 'package:illinois/service/RecentItems.dart';

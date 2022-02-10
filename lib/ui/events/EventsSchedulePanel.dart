@@ -37,7 +37,7 @@ import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

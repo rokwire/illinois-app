@@ -24,7 +24,7 @@ import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

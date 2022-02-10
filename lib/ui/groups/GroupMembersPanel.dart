@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -27,7 +28,7 @@ import 'package:illinois/ui/groups/GroupMemberPanel.dart';
 import 'package:illinois/ui/groups/GroupPendingMemberPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

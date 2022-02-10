@@ -20,7 +20,7 @@ import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/polls.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/service/Polls.dart' as illinois;

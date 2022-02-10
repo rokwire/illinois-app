@@ -34,7 +34,7 @@ import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';

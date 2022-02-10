@@ -26,7 +26,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupTagsPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';

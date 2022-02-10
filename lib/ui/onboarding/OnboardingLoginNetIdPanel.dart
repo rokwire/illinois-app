@@ -23,7 +23,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class OnboardingLoginNetIdPanel extends StatefulWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;

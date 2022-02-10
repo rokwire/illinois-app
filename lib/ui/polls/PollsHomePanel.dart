@@ -32,7 +32,7 @@ import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollBubblePinPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';

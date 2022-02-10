@@ -42,7 +42,7 @@ import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';

@@ -47,7 +47,7 @@ import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';

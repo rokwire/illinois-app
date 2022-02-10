@@ -28,7 +28,7 @@ import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';

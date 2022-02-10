@@ -24,7 +24,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class OnboardingRolesPanel extends StatefulWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;

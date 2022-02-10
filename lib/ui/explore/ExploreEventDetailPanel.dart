@@ -31,7 +31,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:rokwire_plugin/model/event.dart';

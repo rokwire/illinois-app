@@ -31,7 +31,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
