@@ -127,7 +127,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   Future<void> _removeMembership() async{
     bool success = await Groups().deleteMembership(widget.group, widget.member);
     if(!success){
-      throw sprintf(Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group")!, [_member?.displayShortName ?? ""]);
+      throw sprintf(Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group"), [_member?.displayShortName ?? ""]);
     }
   }
 
@@ -163,7 +163,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
 
   Widget _buildHeading(){
     String? memberDateAdded = (_member?.dateCreatedUtc != null) ? AppDateTime().formatDateTime(_member?.dateCreatedUtc?.toLocal(), format: "MMMM dd") : null;
-    String memberSince = (memberDateAdded != null) ? (Localization().getStringEx("panel.member_detail.label.member_since", "Member since")! + memberDateAdded) : '';
+    String memberSince = (memberDateAdded != null) ? (Localization().getStringEx("panel.member_detail.label.member_since", "Member since") + memberDateAdded) : '';
 
     return Row(
       children: <Widget>[
@@ -226,7 +226,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                 ),
               ),
               Container(height: 8,),
-              Text(Localization().getStringEx("panel.member_detail.label.admin_description", "Admins can manage settings, members, and events.")!,
+              Text(Localization().getStringEx("panel.member_detail.label.admin_description", "Admins can manage settings, members, and events."),
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies!.regular,
                     fontSize: 16,
@@ -244,7 +244,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
 
   Widget _buildRemoveFromGroup() {
     return
-        RoundedButton(label: Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group')!,
+        RoundedButton(label: Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
           backgroundColor: Styles().colors!.white,
           textColor: Styles().colors!.fillColorPrimary,
           fontFamily: Styles().fontFamilies!.bold,
@@ -272,7 +272,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 26),
                   child: Text(
-                    sprintf(Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?")!,[_member?.displayName]),
+                    sprintf(Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?"),[_member?.displayName]),
                     textAlign: TextAlign.left,
                     style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.white),
                   ),
@@ -281,7 +281,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     RoundedButton(
-                      label: Localization().getStringEx("panel.member_detail.button.back.title", "Back")!,
+                      label: Localization().getStringEx("panel.member_detail.button.back.title", "Back"),
                       fontFamily: "ProximaNovaRegular",
                       textColor: Styles().colors!.fillColorPrimary,
                       borderColor: Styles().colors!.white,
@@ -295,7 +295,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                     ),
                     Container(width: 16,),
                         RoundedButton(
-                          label: Localization().getStringEx("panel.member_detail.dialog.button.remove.title", "Remove")!,
+                          label: Localization().getStringEx("panel.member_detail.dialog.button.remove.title", "Remove"),
                           fontFamily: "ProximaNovaBold",
                           textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.white,

@@ -110,7 +110,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
                   slivers: <Widget>[
                     SliverAppBar(pinned: true, floating: true, primary: true, forceElevated: true, centerTitle: true,
                       title: Text(
-                        Localization().getStringEx('panel.browse.label.title','Browse')!,
+                        Localization().getStringEx('panel.browse.label.title','Browse'),
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,

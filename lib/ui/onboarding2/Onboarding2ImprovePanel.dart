@@ -183,7 +183,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                       ),
                     ),
                     RoundedButton(
-                      label: Localization().getStringEx('panel.onboarding2.improve.button.continue.title', 'Continue')!,
+                      label: Localization().getStringEx('panel.onboarding2.improve.button.continue.title', 'Continue'),
                       hint: Localization().getStringEx('panel.onboarding2.improve.button.continue.hint', ''),
                       fontSize: 16,
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -221,18 +221,18 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              Localization().getStringEx('panel.onboarding2.improve.learn_more.title1',"Sharing activity")!,
+              Localization().getStringEx('panel.onboarding2.improve.learn_more.title1',"Sharing activity"),
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
-            Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content1',"Sharing your activity history sends your information to processing services. These services generate recommendations based on your interests.")!,
+            Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content1',"Sharing your activity history sends your information to processing services. These services generate recommendations based on your interests."),
               style: Onboarding2InfoDialog.contentStyle,
             ),
             Container(height: 24,),
             Text(
-              Localization().getStringEx('panel.onboarding2.improve.learn_more.title2',"Opting out")!,
+              Localization().getStringEx('panel.onboarding2.improve.learn_more.title2',"Opting out"),
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
-            Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content2',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data. ")!,
+            Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content2',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data. "),
               style: Onboarding2InfoDialog.contentStyle,
             ),
           ]

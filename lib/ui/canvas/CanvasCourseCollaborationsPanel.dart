@@ -46,7 +46,7 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx('panel.canvas_collaborations.header.title', 'Collaborations')!,
+        titleWidget: Text(Localization().getStringEx('panel.canvas_collaborations.header.title', 'Collaborations'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -81,13 +81,13 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
 
   Widget _buildErrorContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_collaborations.load.failed.error.msg', 'Failed to load collaborations. Please, try again later.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_collaborations.load.failed.error.msg', 'Failed to load collaborations. Please, try again later.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
   Widget _buildEmptyContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_collaborations.empty.msg', 'There are no collaborations for this course.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_collaborations.empty.msg', 'There are no collaborations for this course.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 

@@ -104,7 +104,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
             Container(height: 20,),
             _nutritionItem == null ? Container(
               child: Center(
-                child: Text(Localization().getStringEx("panel.food_details.label.nutrition_fatcts_not_available.title", "Nutrition information not available")!,
+                child: Text(Localization().getStringEx("panel.food_details.label.nutrition_fatcts_not_available.title", "Nutrition information not available"),
                   style: TextStyle(
                       color: Styles().colors!.fillColorPrimary,
                       fontSize: 14,
@@ -131,7 +131,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
                     children: <Widget>[
                       Expanded(child:
                         Text(
-                          Localization().getStringEx("panel.food_details.label.nutrition_fatcts.title", "NUTRITION FACTS")!,
+                          Localization().getStringEx("panel.food_details.label.nutrition_fatcts.title", "NUTRITION FACTS"),
                           textAlign: TextAlign.left,
                           style: TextStyle(
                               fontFamily: Styles().fontFamilies!.bold,
@@ -207,7 +207,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
               children: <Widget>[
                 Expanded(
                   child:Text(
-                    Localization().getStringEx("panel.food_details.label.include_ingredients.title", "INCLUDES THESE INGREDIENTS")!,
+                    Localization().getStringEx("panel.food_details.label.include_ingredients.title", "INCLUDES THESE INGREDIENTS"),
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies!.bold,
@@ -258,7 +258,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
               children: <Widget>[
                 Expanded(child:
                 Text(
-                  Localization().getStringEx("panel.food_details.label.dietary_preferences.title", "DIETARY PREFERENCES")!,
+                  Localization().getStringEx("panel.food_details.label.dietary_preferences.title", "DIETARY PREFERENCES"),
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies!.bold,

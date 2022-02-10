@@ -286,7 +286,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     return ((details != null) && (0 < details.length)) ?
         Semantics(
           excludeSemantics: true,
-            label: Localization().getStringEx("panel.explore_detail.label.accepted_payments", "Accepted payments: ")! + paymentsToString(paymentTypes),
+            label: Localization().getStringEx("panel.explore_detail.label.accepted_payments", "Accepted payments: ") + paymentsToString(paymentTypes),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,7 +295,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                 Row(
                   children: <Widget>[
                     Expanded(
-                      child: Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted payment")!,
+                      child: Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted payment"),
                         style: TextStyle(
                           color: Styles().colors!.textBackground
                         ),
@@ -353,7 +353,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     return Align(
       alignment: Alignment.centerRight,
       child: RoundedButton(
-        label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online')!,
+        label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online'),
         backgroundColor: Styles().colors!.white,
         borderColor: Styles().colors!.fillColorSecondary,
         textColor: Styles().colors!.fillColorPrimary,
@@ -831,7 +831,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                 children: <Widget>[
                   Expanded(
                     flex: 2,
-                    child: Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu")!,
+                    child: Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu"),
                       style: TextStyle(
                         fontFamily: Styles().fontFamilies!.bold,
                         fontSize: 16,
@@ -857,8 +857,8 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                             children: <Widget>[
                               Expanded(child:
                               Text(hasFoodFilterApplied
-                                  ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")!
-                                  : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters")!,
+                                  ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")
+                                  : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters"),
                                 textAlign: TextAlign.right,
                                 style: TextStyle(
                                     color: Styles().colors!.fillColorPrimary,
@@ -934,7 +934,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                   CircularProgressIndicator(),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Text(Localization().getStringEx("widget.food_detail.label.loading.title", "Loading menu data")!),
+                    child: Text(Localization().getStringEx("widget.food_detail.label.loading.title", "Loading menu data")),
                   )
                 ],
               ),
@@ -1021,7 +1021,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
         hint: Localization().getStringEx("widget.food_detail.label.no_entries_for_desired_filter.hint", ""),
         button: false,
         child: Padding(padding: EdgeInsets.symmetric(vertical: 20,),
-          child: Text(Localization().getStringEx("widget.food_detail.button.no_entries_for_desired_filter.title", "There are no entries according to the current filter")!,),
+          child: Text(Localization().getStringEx("widget.food_detail.button.no_entries_for_desired_filter.title", "There are no entries according to the current filter"),),
         ),
       ));
     }

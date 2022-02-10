@@ -347,7 +347,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                       padding: EdgeInsets.all(8),
                       child: Center(
                         child: Text(
-                          Localization().getStringEx("app.title", "Illinois")!,
+                          Localization().getStringEx("app.title", "Illinois"),
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                       ),
@@ -359,7 +359,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
             Container(height: 26,),
             Text(
               Localization().getStringEx(
-                  "app.exit_dialog.message", "Are you sure you want to exit?")!,
+                  "app.exit_dialog.message", "Are you sure you want to exit?"),
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontFamily: Styles().fontFamilies!.bold,
@@ -381,7 +381,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors!.fillColorSecondary,
                       textColor: Styles().colors!.fillColorPrimary,
-                      label: Localization().getStringEx("dialog.yes.title", 'Yes')!),
+                      label: Localization().getStringEx("dialog.yes.title", 'Yes')),
                   Container(height: 10,),
                   RoundedButton(
                       onTap: () {
@@ -392,7 +392,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors!.fillColorSecondary,
                       textColor: Styles().colors!.fillColorPrimary,
-                      label: Localization().getStringEx("dialog.no.title", 'No')!)
+                      label: Localization().getStringEx("dialog.no.title", 'No'))
                 ],
               ),
             ),
@@ -422,17 +422,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         context: context,
         contentWidget: Text(Localization().getStringEx(
             'prompt.device_calendar.msg.add_event',
-            'Do you want to save this event to your calendar?')!),
+            'Do you want to save this event to your calendar?')),
         actions: <Widget>[
           TextButton(
               child:
-              Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
+              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Navigator.of(context).pop();
                 DeviceCalendar().placeEvent(data);
               }),
           TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')!),
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
               onPressed: () => Navigator.of(context).pop())
         ]);
   }
@@ -728,8 +728,8 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                       Expanded(
                           flex: 5,
                           child: Text(
-                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')!
-                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title", " and if it is an event, also your calendar")! :"") + ".",
+                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')
+                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title", " and if it is an event, also your calendar") :"") + ".",
                             style: TextStyle(
                               color: Styles().colors!.white,
                               fontSize: 16,
@@ -746,7 +746,7 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                       child: GestureDetector(
                         onTap: _onViewAll,
                         child: Text(
-                          Localization().getStringEx("widget.favorites_saved_dialog.button.view", "View")!,
+                          Localization().getStringEx("widget.favorites_saved_dialog.button.view", "View"),
                           style: TextStyle(
                               color: Styles().colors!.white,
                               fontSize: 14,

@@ -85,7 +85,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
     }
 
     if (_article == null) {
-      return Center(child: Text(Localization().getStringEx('panel.athletics_news_article.load.failed.msg', 'Failed to load news article. Please, try again.')!));
+      return Center(child: Text(Localization().getStringEx('panel.athletics_news_article.load.failed.msg', 'Failed to load news article. Please, try again.')));
     }
 
     return CustomScrollView(

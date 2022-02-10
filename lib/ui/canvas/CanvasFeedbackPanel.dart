@@ -39,7 +39,7 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
           context: context,
-          titleWidget: Text(Localization().getStringEx('panel.canvas_feedback.header.title', 'Feedback')!,
+          titleWidget: Text(Localization().getStringEx('panel.canvas_feedback.header.title', 'Feedback'),
               style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0))),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
@@ -56,11 +56,11 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
                 Localization().getStringEx(
-                    'panel.canvas_feedback.file_ticket.label', 'File a ticket for a personal response from our support team.')!,
+                    'panel.canvas_feedback.file_ticket.label', 'File a ticket for a personal response from our support team.'),
                 style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
             Padding(
                 padding: EdgeInsets.only(top: 25),
-                child: Text(Localization().getStringEx('panel.canvas_feedback.subject.label', 'Subject')!,
+                child: Text(Localization().getStringEx('panel.canvas_feedback.subject.label', 'Subject'),
                     style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16))),
             Padding(
                 padding: EdgeInsets.only(top: 10),
@@ -77,7 +77,7 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                         decoration: InputDecoration(border: InputBorder.none)))),
             Padding(
                 padding: EdgeInsets.only(top: 25),
-                child: Text(Localization().getStringEx('panel.canvas_feedback.description.label', 'Description')!,
+                child: Text(Localization().getStringEx('panel.canvas_feedback.description.label', 'Description'),
                     style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16))),
             Padding(
                 padding: EdgeInsets.only(top: 10),
@@ -98,7 +98,7 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                 child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   Expanded(child: Container()),
                   RoundedButton(
-                      label: Localization().getStringEx('panel.canvas_feedback.submit.button', 'Submit')!,
+                      label: Localization().getStringEx('panel.canvas_feedback.submit.button', 'Submit'),
                       hint: Localization().getStringEx('panel.canvas_feedback.submit.hint', ''),
                       onTap: _onTapSubmit,
                       contentWeight: 0.0,
@@ -127,10 +127,10 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
       _setLoading(false);
       late String message;
       if (success) {
-        message = Localization().getStringEx('panel.canvas_feedback.report.succeeded.message', 'Successfully reported a ticket.')!;
+        message = Localization().getStringEx('panel.canvas_feedback.report.succeeded.message', 'Successfully reported a ticket.');
       } else {
         message = Localization()
-            .getStringEx('panel.canvas_feedback.report.failed.message', 'Failed to report a ticket. Please, try again later.')!;
+            .getStringEx('panel.canvas_feedback.report.failed.message', 'Failed to report a ticket. Please, try again later.');
       }
       AppAlert.showDialogResult(context, message).then((_) {
         if (success) {

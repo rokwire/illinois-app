@@ -88,7 +88,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
       appBar: SimpleHeaderBarWithBack(
         context: context,
         backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.membership_questions.label.title", 'Membership Question')!,
+        titleWidget: Text(Localization().getStringEx("panel.membership_questions.label.title", 'Membership Question'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -122,10 +122,10 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
         child: Column(crossAxisAlignment: CrossAxisAlignment.start,
           children:<Widget>[
             Row(children: <Widget>[
-              Text(Localization().getStringEx("panel.membership_questions.label.edit", 'Edit Questions')!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
+              Text(Localization().getStringEx("panel.membership_questions.label.edit", 'Edit Questions'), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
-              Text(Localization().getStringEx("panel.membership_questions.label.description", 'Learn more about people who want to join your group by asking them some questions. Only the admins of your group will see the answers.')!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949))),
+              Text(Localization().getStringEx("panel.membership_questions.label.description", 'Learn more about people who want to join your group by asking them some questions. Only the admins of your group will see the answers.'), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949))),
             ),
           ]),
       ),
@@ -157,7 +157,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
     return Padding(padding: EdgeInsets.symmetric(vertical: 8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4),
-          child: Text(Localization().getStringEx("panel.membership_questions.label.question", 'QUESTION #')!+(index+1).toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
+          child: Text(Localization().getStringEx("panel.membership_questions.label.question", 'QUESTION #')+(index+1).toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
           Container(color: Styles().colors!.white,
@@ -194,7 +194,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
         child: Row(children: <Widget>[
           Expanded(flex: 1,child: Container(),),
           Expanded(flex: 5,
-          child: RoundedButton(label: Localization().getStringEx("panel.membership_questions.button.update_question.title", 'Update questions')!,
+          child: RoundedButton(label: Localization().getStringEx("panel.membership_questions.button.update_question.title", 'Update questions'),
             backgroundColor: Styles().colors!.white,
             textColor: Styles().colors!.fillColorPrimary,
             fontFamily: Styles().fontFamilies!.bold,
@@ -240,7 +240,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
         _questions![index].question = question;
       }
       else {
-        AppAlert.showDialogResult(context, Localization().getStringEx("panel.membership_questions.label.question.alert", 'Please input question #')!+(index+1).toString()).then((_){
+        AppAlert.showDialogResult(context, Localization().getStringEx("panel.membership_questions.label.question.alert", 'Please input question #')+(index+1).toString()).then((_){
           _focusNodes![index].requestFocus();
         });
         return;

@@ -62,7 +62,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx('panel.athletics_coach_detail.header.title', 'Staff')!,
+          Localization().getStringEx('panel.athletics_coach_detail.header.title', 'Staff'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,

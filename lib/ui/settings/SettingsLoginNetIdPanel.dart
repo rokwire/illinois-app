@@ -47,8 +47,8 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
 
   @override
   Widget build(BuildContext context) {
-    String titleString = Localization().getStringEx('panel.settings.login.netid.label.title', 'Connect your NetID')!;
-    String skipTitle = Localization().getStringEx('panel.settings.login.netid.button.dont_continue.title', 'Not right now')!;
+    String titleString = Localization().getStringEx('panel.settings.login.netid.label.title', 'Connect your NetID');
+    String skipTitle = Localization().getStringEx('panel.settings.login.netid.button.dont_continue.title', 'Not right now');
     return Scaffold(
         backgroundColor: Styles().colors!.background,
         body: Stack(
@@ -91,7 +91,7 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
                 ),
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Text(Localization().getStringEx('panel.settings.login.netid.label.description', 'Log in with your NetID to use academic and dorm specific features.')!,
+                    child: Text(Localization().getStringEx('panel.settings.login.netid.label.description', 'Log in with your NetID to use academic and dorm specific features.'),
                         textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
                 Container(
                   height: 32,
@@ -104,7 +104,7 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
                   child: Padding(
                     padding: EdgeInsets.all(24),
                     child: RoundedButton(
-                        label: Localization().getStringEx('panel.settings.login.netid.button.continue.title', 'Log in with NetID')!,
+                        label: Localization().getStringEx('panel.settings.login.netid.button.continue.title', 'Log in with NetID'),
                         hint: Localization().getStringEx('panel.settings.login.netid.button.continue.hint', ''),
                         borderColor: Styles().colors!.fillColorSecondary,
                         backgroundColor: Styles().colors!.background,

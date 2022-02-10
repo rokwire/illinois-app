@@ -186,7 +186,7 @@ class _IDCardPanelState extends State<IDCardPanel>
           SafeArea(child: Stack(children: <Widget>[
             Padding(padding: EdgeInsets.all(16), child:
                 Semantics(header:true, child:
-                  Text(Localization().getStringEx('widget.id_card.header.title', 'Illini ID')!, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),),)),
+                  Text(Localization().getStringEx('widget.id_card.header.title', 'Illini ID'), style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),),)),
             Align(alignment: Alignment.topRight, child:
                 Semantics(button: true, label: Localization().getStringEx('widget.id_card.header.button.close.title', "close"), child:
                   InkWell(
@@ -204,7 +204,7 @@ class _IDCardPanelState extends State<IDCardPanel>
     String? cardExpires = Localization().getStringEx('widget.card.label.expires.title', 'Card Expires');
     String? expirationDate = Auth2().authCard?.expirationDate;
     String cardExpiresText = (0 < (expirationDate?.length ?? 0)) ? "$cardExpires $expirationDate" : "";
-    String? roleDisplayString = (Auth2().authCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your i-card") : (Auth2().authCard?.role ?? "");
+    String roleDisplayString = (Auth2().authCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your i-card") : (Auth2().authCard?.role ?? "");
 
     Widget? buildingAccessIcon;
     String? buildingAccessStatus;
@@ -282,7 +282,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       Container(height: 10,),
       
       Text(Auth2().authCard?.fullName ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24)),
-      Text(roleDisplayString ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 20)),
+      Text(roleDisplayString, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 20)),
       
       Container(height: 15,),
 
@@ -309,7 +309,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       Container(height: 15),
       Semantics( container: true,
         child: Column(children: <Widget>[
-          // Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN')! : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
+          // Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
           Text(Auth2().authCard?.uin ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 28)),
         ],),
       ),

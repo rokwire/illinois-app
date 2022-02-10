@@ -42,7 +42,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.groups_all_events.label.heading","Upcoming Events")! + "(${_groupEvents?.length ?? ""})",
+        titleWidget: Text(Localization().getStringEx("panel.groups_all_events.label.heading","Upcoming Events") + "(${_groupEvents?.length ?? ""})",
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,

@@ -99,9 +99,9 @@ class Onboarding2ToggleButton extends StatelessWidget{
               ? Localization().getStringEx(
             "toggle_button.status.checked",
             "checked",)
-              : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
+              : Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
               ", " +
-              Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
+              Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
           excludeSemantics: true,
           child: GestureDetector(
             onTap: () { onTap!(); anaunceChange(); },

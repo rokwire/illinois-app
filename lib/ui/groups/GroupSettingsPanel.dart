@@ -85,7 +85,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       context: context,
                       backIconRes: "images/close-white.png",
                       titleWidget: Text(
-                        Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings")!,
+                        Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),
                         style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
                       ),
                     ),
@@ -96,19 +96,19 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                           child: Column(children: <Widget>[
                             _buildImageSection(),
                             Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information")!, "images/icon-schedule.png"),
+                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"), "images/icon-schedule.png"),
                             ),
                             _buildNameField(),
                             _buildDescriptionField(),
                             _buildLinkField(),
                             Container(height: 1, color: Styles().colors!.surfaceAccent,),
                             Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability")!, "images/icon-schedule.png"),
+                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"), "images/icon-schedule.png"),
                             ),
                             _buildCategoryDropDown(),
                             _buildTagsLayout(),
                             Container(color: Styles().colors!.background, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.privacy.title", "Privacy")!, "images/icon-privacy.png"),
+                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.privacy.title", "Privacy"), "images/icon-privacy.png"),
                               //_buildInfoHeader(Localization().getStringEx("panel.groups_settings.privacy.title.description", "SELECT PRIVACY"), null)
                             ]))),
                             Container(height: 12, color: Styles().colors!.background),
@@ -191,7 +191,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   hint: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image.hint","") : Localization().getStringEx("panel.groups_settings.add_image.hint",""),
                   button: true, excludeSemantics: true, child:
                   RoundedButton(
-                    label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image")! : Localization().getStringEx("panel.groups_settings.add_image","Add cover image")!,
+                    label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
                     textColor: Styles().colors!.fillColorPrimary,
                     contentWeight: 0.8,
                     onTap: _onTapAddImage,)
@@ -222,7 +222,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Name
   Widget _buildNameField() {
-    String title = Localization().getStringEx("panel.groups_settings.name.title", "GROUP NAME")!;
+    String title = Localization().getStringEx("panel.groups_settings.name.title", "GROUP NAME");
     String? fieldTitle = Localization().getStringEx("panel.groups_settings.name.field", "NAME FIELD");
     String? fieldHint = Localization().getStringEx("panel.groups_settings.name.field.hint", "");
 
@@ -258,7 +258,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   Widget _buildNameError(){
-    String errorMessage = Localization().getStringEx("panel.groups_settings.name.error.message", "A group with this name already exists. Please try a different name.")!;
+    String errorMessage = Localization().getStringEx("panel.groups_settings.name.error.message", "A group with this name already exists. Please try a different name.");
 
     return Visibility(visible: !_nameIsValid,
         child: Container( padding: EdgeInsets.only(left:16, right:16,top: 6),
@@ -288,7 +288,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Description
   Widget _buildDescriptionField() {
-    String title = Localization().getStringEx("panel.groups_settings.description.title", "GROUP DESCRIPTION")!;
+    String title = Localization().getStringEx("panel.groups_settings.description.title", "GROUP DESCRIPTION");
     String? fieldTitle = Localization().getStringEx("panel.groups_settings.description.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
     String? fieldHint = Localization().getStringEx("panel.groups_settings.description.field.hint", "");
 
@@ -336,7 +336,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   Padding(
                     padding: EdgeInsets.only(bottom: 8, top:24),
                     child: Text(
-                      Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK")!,
+                      Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK"),
                       style: TextStyle(
                           color: Styles().colors!.fillColorPrimary,
                           fontSize: 14,
@@ -375,7 +375,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             GestureDetector(
               onTap: _onTapConfirmLinkUrl,
               child: Text(
-                Localization().getStringEx("panel.groups_settings.link.button.confirm.link.title",'Confirm URL')!,
+                Localization().getStringEx("panel.groups_settings.link.button.confirm.link.title",'Confirm URL'),
                 style: TextStyle(
                     color: Styles().colors!.fillColorPrimary,
                     fontSize: 16,
@@ -406,7 +406,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildInfoHeader(Localization().getStringEx("panel.groups_settings.category.title", "CATEGORY")!,
+            _buildInfoHeader(Localization().getStringEx("panel.groups_settings.category.title", "CATEGORY"),
               Localization().getStringEx("panel.groups_settings.category.description", "Choose the category your group can be filtered by."),),
             Semantics(
             explicitChildNodes: true,
@@ -429,7 +429,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Tags
   Widget _buildTagsLayout(){
-    String title = Localization().getStringEx("panel.groups_create.tags.title", "TAGS")!;
+    String title = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
     String? description = Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group.");
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
@@ -444,7 +444,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     flex: 2,
                     child:
                     RoundedButton(
-                      label: Localization().getStringEx("panel.groups_settings.button.tags.title", "Tags")!,
+                      label: Localization().getStringEx("panel.groups_settings.button.tags.title", "Tags"),
                       hint: Localization().getStringEx("panel.groups_settings.button.tags.hint", ""),
                       backgroundColor: Styles().colors!.white,
                       textColor: Styles().colors!.fillColorPrimary,
@@ -500,7 +500,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildTagButton(String tag){
     return
       Semantics(
-        label: tag + Localization().getStringEx("panel.groups_create.tags.label.tag", " tag, ")!,
+        label: tag + Localization().getStringEx("panel.groups_create.tags.label.tag", " tag, "),
         hint: Localization().getStringEx("panel.groups_create.tags.label.tag.hint", "double tab to remove tag"),
         button: true,
         excludeSemantics: true,
@@ -612,19 +612,19 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildMembershipLayout(){
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
-      (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_settings.tags.label.question","Question(s)")!) :
-      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question")!;
+      (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_settings.tags.label.question","Question(s)")) :
+      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
 
     return
       Container(
         color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column( children: <Widget>[
-          _buildSectionTitle( Localization().getStringEx("panel.groups_settings.membership.title", "Membership")!,"images/icon-member.png"),
+          _buildSectionTitle( Localization().getStringEx("panel.groups_settings.membership.title", "Membership"),"images/icon-member.png"),
           Container(height: 12,),
           Semantics(
             explicitChildNodes: true,
-            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions")!,
+            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions"),
               description: questionsDescription,
               onTap: _onTapMembershipQuestion)),
           Container(height: 20,),
@@ -698,7 +698,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(children: <Widget>[
-          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "University managed membership")!, "images/icon-member.png"),
+          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "University managed membership"), "images/icon-member.png"),
           Container(height: 12),
           Padding(
               padding: EdgeInsets.only(top: 12),
@@ -712,7 +712,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                         Expanded( child:
-                        Text(Localization().getStringEx("panel.groups_settings.authman.enabled.label", "Is this a managed membership group?")!,
+                        Text(Localization().getStringEx("panel.groups_settings.authman.enabled.label", "Is this a managed membership group?"),
                             style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
                         GestureDetector(
                             onTap: _onTapAuthMan,
@@ -724,7 +724,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     visible: isAuthManGroup,
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Row(children: [
-                        _buildInfoHeader(Localization().getStringEx("panel.groups_settings.authman.group.name.label", "Membership name")!, null),
+                        _buildInfoHeader(Localization().getStringEx("panel.groups_settings.authman.group.name.label", "Membership name"), null),
                         Padding(padding: EdgeInsets.only(top: 14), child: Text('*', style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)))
                       ]),
                       Container(
@@ -768,7 +768,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         child:
         Stack(children: <Widget>[
           RoundedButton(
-            label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings")!,
+            label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
             backgroundColor: Colors.white,
             borderColor: Styles().colors!.fillColorSecondary,
             textColor: Styles().colors!.fillColorPrimary,
@@ -803,7 +803,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           switch (error.code) {
             case 1: message = Localization().getStringEx("panel.groups_create.permission.error.message", "You do not have permission to perform this operation."); break;
             case 5: message = Localization().getStringEx("panel.groups_create.name.error.message", "A group with this name already exists. Please try a different name."); break;
-            default: message = sprintf(Localization().getStringEx("panel.groups_update.failed.msg", "Failed to update group: %s.")!, [error.text ?? Localization().getStringEx('panel.groups_create.unknown.error.message', 'Unknown error occurred')]); break;
+            default: message = sprintf(Localization().getStringEx("panel.groups_update.failed.msg", "Failed to update group: %s."), [error.text ?? Localization().getStringEx('panel.groups_create.unknown.error.message', 'Unknown error occurred')]); break;
           }
           AppAlert.showDialogResult(context, message);
         }

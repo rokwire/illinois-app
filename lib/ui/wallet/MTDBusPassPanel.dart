@@ -152,7 +152,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
                 Padding(
                     padding: EdgeInsets.all(16),
                     child:Semantics(header: true, child: Text(
-                      Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass")!,
+                      Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"),
                       style: TextStyle(color: Color(0xff0f2040), fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),
                     ),
                     )),
@@ -189,7 +189,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
                 width: _photoSize,
                 padding: EdgeInsets.only(top: 12, left: 6, right: 6),
                 child: Text(
-                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus driver as you board.")!,
+                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus driver as you board."),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.regular,

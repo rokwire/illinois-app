@@ -61,7 +61,7 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
             Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
               Expanded(child:
               Text(Localization().getStringEx(
-                  'widget.gies.title', 'iDegrees New Student Checklist')!,
+                  'widget.gies.title', 'iDegrees New Student Checklist'),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Styles().colors!.white,
                   fontFamily: Styles().fontFamilies!.extraBold,
@@ -108,14 +108,14 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                   Semantics(
                     container: true,
                     child:Text(Localization().getStringEx(
-                        'widget.gies2.message.start', 'Ready to get started?')!,
+                        'widget.gies2.message.start', 'Ready to get started?'),
                       style: TextStyle(color: Styles().colors!.fillColorPrimary,
                         fontFamily: Styles().fontFamilies!.extraBold,
                         fontSize: 32,),),)),
                   ],),
                 Container(height: 24,),
                 RoundedButton(
-                  label: Localization().getStringEx('widget.gies2.button.title.begin', "Begin Checklist")!,
+                  label: Localization().getStringEx('widget.gies2.button.title.begin', "Begin Checklist"),
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,
@@ -142,14 +142,14 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                       container: true,
                       child:
                       Text(Localization().getStringEx(
-                          'widget.gies2.message.finished', 'You’ve completed the checklist.')!,
+                          'widget.gies2.message.finished', 'You’ve completed the checklist.'),
                         style: TextStyle(color: Styles().colors!.fillColorPrimary,
                           fontFamily: Styles().fontFamilies!.extraBold,
                           fontSize: 32,),),)),
                 ],),
                 Container(height: 24,),
                 RoundedButton(
-                  label: Localization().getStringEx('widget.gies2.button.title.review', "Review Checklist")!,
+                  label: Localization().getStringEx('widget.gies2.button.title.review', "Review Checklist"),
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,
@@ -159,7 +159,7 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                 Column(children: [
                   Container(height: 12,),
                   RoundedButton(
-                    label: Localization().getStringEx('widget.gies2.button.title.view_notes', "View My Notes")!,
+                    label: Localization().getStringEx('widget.gies2.button.title.view_notes', "View My Notes"),
                     backgroundColor: Styles().colors?.white!,
                     borderColor: Styles().colors?.fillColorSecondary!,
                     textColor: Styles().colors!.fillColorPrimary,
@@ -192,7 +192,7 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                     ],),
                 Container(height: 24,),
                 RoundedButton(
-                  label: Localization().getStringEx('widget.gies2.button.title.continue', "Continue")!,
+                  label: Localization().getStringEx('widget.gies2.button.title.continue', "Continue"),
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,

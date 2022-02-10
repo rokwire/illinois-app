@@ -51,7 +51,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx("panel.settings.personal_information.label.title", "Personal Information")!,
+          Localization().getStringEx("panel.settings.personal_information.label.title", "Personal Information"),
           style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
         ),
       ),
@@ -72,12 +72,12 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
                   textColor: UiColors.fromHex("#f54400"),
                   fontSize: 16,
                   fontFamily: Styles().fontFamilies!.regular,
-                  label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal information")!,
+                  label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal information"),
                   borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
                   onTap: _onTapDeleteData,
                 ),
                 Container(height: 16,),
-                Text(Localization().getStringEx("panel.settings.personal_information.label.description", "Delete your location history, your tags and categories, and saved events and dining locations.")!,
+                Text(Localization().getStringEx("panel.settings.personal_information.label.description", "Delete your location history, your tags and categories, and saved events and dining locations."),
                   style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textSurface),),
                 Container(height: 30,),
             ],),

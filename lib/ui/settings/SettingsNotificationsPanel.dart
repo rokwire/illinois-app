@@ -66,7 +66,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx("panel.settings.notifications.label.title", "Notifications")!,
+          Localization().getStringEx("panel.settings.notifications.label.title", "Notifications"),
           style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
         ),
       ),
@@ -84,7 +84,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
         Container(
           padding: EdgeInsets.symmetric(horizontal: 6),
           child: Text(
-            Localization().getStringEx("panel.settings.notifications.label.desctiption", "Don’t miss an event or campus update.")!,
+            Localization().getStringEx("panel.settings.notifications.label.desctiption", "Don’t miss an event or campus update."),
             style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
           ),),
         Container(height: 24,),
@@ -131,7 +131,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
               color: Styles().colors!.white,
               child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(Localization().getStringEx("panel.settings.notifications.athletics_updates.description.label", 'Based on your favorite sports')!,
+                  child: Text(Localization().getStringEx("panel.settings.notifications.athletics_updates.description.label", 'Based on your favorite sports'),
                       style: _notificationsEnabled ? TextStyle(fontSize: 14, color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular) : TextStyle(fontSize: 14, color: Styles().colors!.fillColorPrimaryTransparent015, fontFamily: Styles().fontFamilies!.regular)))))
     ]));
     widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [

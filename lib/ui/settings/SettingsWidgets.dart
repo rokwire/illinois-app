@@ -207,7 +207,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
             Expanded(child:
               Text(
 
-                Localization().getStringEx("widget.settings.dialog.button.cancel.title","Cancel")!, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
+                Localization().getStringEx("widget.settings.dialog.button.cancel.title","Cancel"), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
             )
           ],)
         )));

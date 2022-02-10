@@ -258,7 +258,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
               child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Row(children: <Widget>[
-                    Text(Localization().getStringEx("widget.schedule_card.final_score", "Final Score")!,
+                    Text(Localization().getStringEx("widget.schedule_card.final_score", "Final Score"),
                         style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
                     Expanded(
                       child: Container(),

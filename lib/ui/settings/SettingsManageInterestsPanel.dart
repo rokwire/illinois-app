@@ -104,7 +104,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx('panel.settings.manage_interests.title', 'Manage My Interests')!,
+          Localization().getStringEx('panel.settings.manage_interests.title', 'Manage My Interests'),
           style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
         ),
       ),
@@ -125,9 +125,9 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
                 color: Styles().colors!.background,
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Semantics(
-                      label: Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the")! +
-                          Localization().getStringEx("panel.settings.manage_interests.instructions.check_mark", "check-mark")! +
-                          Localization().getStringEx('panel.settings.manage_interests.instructions.follow', ' to follow the tags that interest you most')!,
+                      label: Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the") +
+                          Localization().getStringEx("panel.settings.manage_interests.instructions.check_mark", "check-mark") +
+                          Localization().getStringEx('panel.settings.manage_interests.instructions.follow', ' to follow the tags that interest you most'),
                       excludeSemantics: true,
                       child: Container(
                           alignment: Alignment.topCenter,
@@ -139,7 +139,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
-                                    Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the")!,
+                                    Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the"),
                                     style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.white, fontSize: 16),
                                     textAlign: TextAlign.start,
                                   ),
@@ -147,7 +147,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
                                   Expanded(child: Container(
                                       child:Text(
                                         Localization()
-                                            .getStringEx('panel.settings.manage_interests.instructions.follow', ' to follow the tags that interest you most')!,
+                                            .getStringEx('panel.settings.manage_interests.instructions.follow', ' to follow the tags that interest you most'),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.white, fontSize: 16),
@@ -264,11 +264,11 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
         _buildSearchField(),
         _tagSearchMode || !CollectionUtils.isNotEmpty(_followingTags)
             ? Container()
-            : Text(Localization().getStringEx('panel.settings.manage_interests.list.following', "FOLLOWING")!),
+            : Text(Localization().getStringEx('panel.settings.manage_interests.list.following', "FOLLOWING")),
         _tagSearchMode ? Container() : _buildTagsList(_followingTags),
-        _tagSearchMode ? Container() : Text(Localization().getStringEx('panel.settings.manage_interests.list.all_tags', "ALL TAGS")!),
+        _tagSearchMode ? Container() : Text(Localization().getStringEx('panel.settings.manage_interests.list.all_tags', "ALL TAGS")),
         _tagSearchMode ? Container() : _buildTagsList(_tags),
-        !_tagSearchMode ? Container() : Text(Localization().getStringEx('panel.settings.manage_interests.list.search', "SEARCH")!),
+        !_tagSearchMode ? Container() : Text(Localization().getStringEx('panel.settings.manage_interests.list.search', "SEARCH")),
         !_tagSearchMode ? Container() : _buildTagsList(_filterTags(_textEditingController.text)),
       ],
     );
@@ -579,8 +579,8 @@ class _SelectionItemWidget extends StatelessWidget {
     return Semantics(
         label: label,
         value: (selected!?Localization().getStringEx("toggle_button.status.checked", "checked",) :
-        Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
-            ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
+        Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
+            ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
         excludeSemantics: true,
         child: GestureDetector(
           onTap: onTap,

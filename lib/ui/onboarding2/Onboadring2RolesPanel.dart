@@ -69,10 +69,10 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
               Semantics(
-                label: Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who are you?')!.toLowerCase(),
-                hint: Localization().getStringEx('panel.onboarding2.roles.label.title.hint', 'Header 1')!.toLowerCase(),
+                label: Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who are you?').toLowerCase(),
+                hint: Localization().getStringEx('panel.onboarding2.roles.label.title.hint', 'Header 1').toLowerCase(),
                 excludeSemantics: true,
-                child: Text(Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who are you?')!,
+                child: Text(Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who are you?'),
                   style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24, color: Styles().colors!.fillColorPrimary),
                 ),
               ),
@@ -82,7 +82,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
         ),
         
         Padding(padding: EdgeInsets.symmetric(horizontal: 36, vertical: 6),
-          child: Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Select all that apply to help us understand who you are.')!,
+          child: Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Select all that apply to help us understand who you are.'),
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontFamily: Styles().fontFamilies!.regular,
@@ -100,7 +100,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
         !_allowNext? Container():
          Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 20), child:
             RoundedButton(
-                label: Localization().getStringEx('panel.onboarding2.roles.button.continue.title', 'Continue')!,
+                label: Localization().getStringEx('panel.onboarding2.roles.button.continue.title', 'Continue'),
                 hint: Localization().getStringEx('panel.onboarding2.roles.button.continue.hint', ''),
                 fontSize: 16,
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),

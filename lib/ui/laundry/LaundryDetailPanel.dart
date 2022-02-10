@@ -123,7 +123,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                       Text(
                                         Localization().getStringEx(
                                             'panel.laundry_detail.heading.laundry',
-                                            'Laundry')!,
+                                            'Laundry'),
                                         style: TextStyle(
                                             fontSize: 14,
                                             color: Styles().colors!.fillColorPrimary,
@@ -194,7 +194,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                          Localization().getStringEx('panel.laundry_detail.label.washers', 'WASHERS')!,
+                                          Localization().getStringEx('panel.laundry_detail.label.washers', 'WASHERS'),
                                           style: TextStyle(
                                               color: Styles().colors!.fillColorPrimary,
                                               fontSize: 14,
@@ -202,7 +202,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                               letterSpacing: 1),
                                         ),
                                         Text(
-                                          sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"')!, [washersAvailable]),
+                                          sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [washersAvailable]),
                                           style: TextStyle(
                                               color: Styles().colors!.textBackground,
                                               fontSize: 16,
@@ -224,7 +224,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                          Localization().getStringEx('panel.laundry_detail.label.dryers', 'DRYERS')!,
+                                          Localization().getStringEx('panel.laundry_detail.label.dryers', 'DRYERS'),
                                           style: TextStyle(
                                               color: Styles().colors!.fillColorPrimary,
                                               fontSize: 14,
@@ -232,7 +232,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                               letterSpacing: 1),
                                         ),
                                         Text(
-                                          sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"')!, [dryersAvailable]),
+                                          sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [dryersAvailable]),
                                           style: TextStyle(
                                               color: Styles().colors!.textBackground,
                                               fontSize: 16,
@@ -262,7 +262,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   PreferredSizeWidget _buildHeaderBar() {
     return SimpleHeaderBarWithBack(
       context: context,
-      titleWidget: Text(Localization().getStringEx("panel.laundry_detail.header.title", "Laundry")!,
+      titleWidget: Text(Localization().getStringEx("panel.laundry_detail.header.title", "Laundry"),
         style: TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -278,13 +278,13 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
       return Container();
     }
     String? locationText = laundryLocationDetails.getDisplayAddress();
-    String? semanticText =sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location: %s "')!, [locationText]);
+    String? semanticText =sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location: %s "'), [locationText]);
     if (StringUtils.isEmpty(locationText)) {
       double? latitude = laundryLocationDetails.latitude?.toDouble();
       double? longitude = laundryLocationDetails.longitude?.toDouble();
       locationText = '$latitude, $longitude';
 
-      semanticText = sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location coordinates, Latitude:%s , Longitude:%s "')!, [latitude,longitude]);
+      semanticText = sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location coordinates, Latitude:%s , Longitude:%s "'), [latitude,longitude]);
     }
 
 
@@ -323,7 +323,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
             child:Padding(
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 24),
             child: Text(
-              Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map')!,
+              Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map'),
               style: TextStyle(
                   color: Styles().colors!.fillColorPrimary,
                   fontSize: 16,

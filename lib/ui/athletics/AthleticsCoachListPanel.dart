@@ -44,7 +44,7 @@ class _AthleticsCoachListPanelState extends State<AthleticsCoachListPanel> imple
         appBar: SimpleHeaderBarWithBack(
           context: context,
           titleWidget: Text(
-            Localization().getStringEx('panel.athletics_coach_list.header.title', 'Staff')!,
+            Localization().getStringEx('panel.athletics_coach_list.header.title', 'Staff'),
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -124,7 +124,7 @@ class _CoachListHeading extends StatelessWidget{
                 ],
               ),
               SizedBox(height: 10.0,),
-              Text(Localization().getStringEx("panel.athletics_coach_list.label.heading.title", "2019-2020 Coach")!,
+              Text(Localization().getStringEx("panel.athletics_coach_list.label.heading.title", "2019-2020 Coach"),
                 style: TextStyle(
                     color: Colors.white,
                     fontFamily: Styles().fontFamilies!.extraBold,
@@ -218,7 +218,7 @@ class _CoachItem extends StatelessWidget{
                           children: <Widget>[
                             Container(
                               width: 80,
-                              child: Text(Localization().getStringEx("panel.athletics_coach_list.label.position.title", "Position")!,
+                              child: Text(Localization().getStringEx("panel.athletics_coach_list.label.position.title", "Position"),
                                   style: TextStyle(
                                       color: Styles().colors!.textBackground,
                                       fontFamily: Styles().fontFamilies!.medium,

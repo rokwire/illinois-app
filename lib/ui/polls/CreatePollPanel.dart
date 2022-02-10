@@ -71,7 +71,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
           backIconRes: 'images/close-white.png',
           onBackPressed: _onTapCancel,
           titleWidget: Text(
-            Localization().getStringEx("panel.create_poll.header.title", "Create a Quick Poll")!,
+            Localization().getStringEx("panel.create_poll.header.title", "Create a Quick Poll"),
             style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
           ),
         ),
@@ -116,14 +116,14 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
             child: Text(
               Localization().getStringEx("panel.create_poll.description",
-                  "People can vote through the Illinois app by asking you for the 4 Digit Poll #.")!,
+                  "People can vote through the Illinois app by asking you for the 4 Digit Poll #."),
               style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
             )));
   }
 
   Widget _buildNameLabel() {
     String name = Auth2().fullName ?? "Someone";
-    String wantToKnowText = Localization().getStringEx("panel.create_poll.text.wants_to_know", "wants to know…")!;
+    String wantToKnowText = Localization().getStringEx("panel.create_poll.text.wants_to_know", "wants to know…");
     return
       Semantics(label: name +","+wantToKnowText , excludeSemantics: true,child:
       Padding(
@@ -175,7 +175,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     if (_optionsControllers?.isNotEmpty ?? false) {
       for (int i = 0; i < _optionsControllers!.length; i++) {
         TextEditingController controller = _optionsControllers![i];
-        String title = Localization().getStringEx("panel.create_poll.text.option", "OPTION")! + " " + (i + 1).toString();
+        String title = Localization().getStringEx("panel.create_poll.text.option", "OPTION") + " " + (i + 1).toString();
         options.add(PollOptionView(title: title, textController: controller, enabled: (_progressPollStatus == null),));
       }
 
@@ -191,7 +191,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   Widget _constructAddOptionButton() {
-    String label = Localization().getStringEx("panel.create_poll.button.add_option.text", "Add option")!;
+    String label = Localization().getStringEx("panel.create_poll.button.add_option.text", "Add option");
     String? hint = Localization().getStringEx("panel.create_poll.button.add_option.hint", "");
     return Container(
       padding: EdgeInsets.symmetric(vertical: 24),
@@ -233,7 +233,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   Widget _buildSettingsHeader() {
-    String additionalSettingsText = Localization().getStringEx("panel.create_poll.text.add_option", "Additional settings")!;
+    String additionalSettingsText = Localization().getStringEx("panel.create_poll.text.add_option", "Additional settings");
     return Padding(
         padding: EdgeInsets.only(top: 3),
         child: Container(
@@ -340,7 +340,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         children: <Widget>[
           Expanded(child:
             RoundedButton(
-              label: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save")!,
+              label: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save"),
               backgroundColor: Colors.white,
               borderColor: Styles().colors!.fillColorPrimary,
               textColor: Styles().colors!.fillColorPrimary,
@@ -356,7 +356,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
           ),
           Expanded(child:
             RoundedButton(
-              label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start poll!")!,
+              label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start poll!"),
               backgroundColor: Colors.white,
               borderColor: Styles().colors!.fillColorSecondary,
               textColor: Styles().colors!.fillColorPrimary,
@@ -382,13 +382,13 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    Localization().getStringEx("panel.create_poll.cancel_dialog.title", "Illinois")!,
+                    Localization().getStringEx("panel.create_poll.cancel_dialog.title", "Illinois"),
                     style: TextStyle(fontSize: 24, color: Colors.black),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 26),
                     child: Text(
-                      Localization().getStringEx("panel.create_poll.cancel_dialog.message", "Are you sure you want to cancel this Quick Poll")!,
+                      Localization().getStringEx("panel.create_poll.cancel_dialog.message", "Are you sure you want to cancel this Quick Poll"),
                       textAlign: TextAlign.left,
                       style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
                     ),
@@ -401,12 +401,12 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                             Navigator.pop(context);
                             Navigator.pop(context);
                           },
-                          child: Text(Localization().getStringEx("panel.create_poll.cancel_dialog.button.yes", "Yes")!)),
+                          child: Text(Localization().getStringEx("panel.create_poll.cancel_dialog.button.yes", "Yes"))),
                       TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text(Localization().getStringEx("panel.create_poll.cancel_dialog.button.no", "No")!))
+                          child: Text(Localization().getStringEx("panel.create_poll.cancel_dialog.button.no", "No")))
                     ],
                   ),
                 ],
@@ -486,12 +486,12 @@ class _PollOptionViewState extends State<PollOptionView> {
 
   @override
   Widget build(BuildContext context) {
-    String? counterHint = Localization().getStringEx("panel.create_poll_panel.counter.hint", "maximum, %s, characters");
+    String counterHint = Localization().getStringEx("panel.create_poll_panel.counter.hint", "maximum, %s, characters");
     String votesCount = widget.maxLength.toStringAsFixed(0);
     return Container(
         child: Column(
       children: <Widget>[
-        Semantics(label: widget.title,hint: sprintf(counterHint!,['$votesCount']) ,excludeSemantics: true,child:
+        Semantics(label: widget.title,hint: sprintf(counterHint,['$votesCount']) ,excludeSemantics: true,child:
         Padding(
             padding: EdgeInsets.only(bottom: 8, top: 24),
             child: Row(children: <Widget>[

@@ -73,7 +73,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
       Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Expanded(child: 
           Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
-            Text(Localization().getStringEx("widget.home_create_poll.heading.title", "Polls")!, style:
+            Text(Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"), style:
               TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),),),
         Semantics(label: Localization().getStringEx("widget.home_create_poll.button.close.label","Close"), button: true, excludeSemantics: true, child:
           InkWell(onTap : _onClose, child:
@@ -86,10 +86,10 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   Widget _buildContent() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30), child: 
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly create and share polls.")!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),),
+        Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly create and share polls."), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),),
         Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
         Text((_canCreatePoll?Localization().getStringEx("widget.home_create_poll.text.description","People near you will be notified to vote through the Illinois app or you can provide them with the 4 Digit Poll #."):
-        Localization().getStringEx("widget.home_create_poll.text.description.login","You need to be logged in to create and share polls with people near you.")) ?? '',
+        Localization().getStringEx("widget.home_create_poll.text.description.login","You need to be logged in to create and share polls with people near you.")),
           style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies!.medium, fontSize: 16,),),),
         _buildButtons()
       ],),);
@@ -98,7 +98,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   Widget _buildButtons(){
     return _canCreatePoll?
     RoundedButton(
-      label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a poll")!,
+      label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a poll"),
       textColor: Styles().colors!.fillColorPrimary,
       borderColor: Styles().colors!.fillColorSecondary,
       backgroundColor: Colors.white,
@@ -108,7 +108,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     ) :
     Padding(padding: EdgeInsets.only(right: 120), child:
       RoundedButton(
-        label: Localization().getStringEx("widget.home_create_poll.button.login.label","Login")!,
+        label: Localization().getStringEx("widget.home_create_poll.button.login.label","Login"),
 //        height: 48,
         textColor: Styles().colors!.fillColorPrimary,
         borderColor: Styles().colors!.fillColorSecondary,

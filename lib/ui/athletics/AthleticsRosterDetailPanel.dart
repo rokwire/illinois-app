@@ -62,7 +62,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx('panel.athletics_roster_detail.header.title', 'Roster')!,
+          Localization().getStringEx('panel.athletics_roster_detail.header.title', 'Roster'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,

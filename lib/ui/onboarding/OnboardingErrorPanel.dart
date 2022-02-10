@@ -47,7 +47,7 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
 
     App.instance.homeContext = context;
 
-    String buttonTitle = Localization().getStringEx('panel.onboarding.error.button.try_again.title', 'Try Again')! ;
+    String buttonTitle = Localization().getStringEx('panel.onboarding.error.button.try_again.title', 'Try Again');
     String? buttonHint = Localization().getStringEx('panel.onboarding.error.button.try_again.hint', '');
     Color buttonBackColor = Styles().colors?.fillColorSecondary ?? Color(0xFFE84A27);
 

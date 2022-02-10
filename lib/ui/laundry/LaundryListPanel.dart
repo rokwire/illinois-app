@@ -50,7 +50,7 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.laundry_detail.header.title", "Laundry")!,
+        titleWidget: Text(Localization().getStringEx("panel.laundry_detail.header.title", "Laundry"),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,

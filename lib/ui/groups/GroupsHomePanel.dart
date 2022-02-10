@@ -40,7 +40,7 @@ enum _FilterType { none, category, tags }
 enum _TagFilter { all, my }
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener{
-  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories")!;
+  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories");
 
   bool _isFilterLoading = false;
   bool _isGroupsLoading = false;
@@ -289,7 +289,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.groups_home.label.heading","Groups")!,
+        titleWidget: Text(Localization().getStringEx("panel.groups_home.label.heading","Groups"),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -519,8 +519,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildMyGroupsContent(){
     if (CollectionUtils.isEmpty(_myGroups) && CollectionUtils.isEmpty(_myPendingGroups)) {
       String text = ((_myGroups != null) && (_myPendingGroups != null)) ?
-        Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet")! :
-        Localization().getStringEx("panel.groups_home.label.my_groups.failed", "Failed to load groups")!;
+        Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet") :
+        Localization().getStringEx("panel.groups_home.label.my_groups.failed", "Failed to load groups");
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
         child: Text(text,
@@ -562,7 +562,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       widgets.add(
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending")!,
+          child: Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"),
             style: TextStyle(
                 fontFamily: Styles().fontFamilies!.bold,
                 fontSize: 20,
@@ -617,7 +617,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       return Column(children: widgets,);
     }
     else{
-      String? text;
+      String text;
       if (_allGroups == null) {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.failed", "Failed to load groups");
       }
@@ -629,7 +629,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       }
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
-        child: Text(text!,
+        child: Text(text,
           style: TextStyle(
             fontFamily: Styles().fontFamilies!.regular,
             fontSize: 16,

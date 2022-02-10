@@ -61,7 +61,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
           context: context,
-          titleWidget: Text(Localization().getStringEx('panel.group.tags.header.title', 'Group Tags')!,
+          titleWidget: Text(Localization().getStringEx('panel.group.tags.header.title', 'Group Tags'),
               style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0))),
       backgroundColor: Styles().colors!.background,
       body: Stack(alignment: Alignment.center, children: <Widget>[
@@ -69,14 +69,14 @@ class _GroupTagsState extends State<GroupTagsPanel> {
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
                 Expanded(child: Container()),
-                RoundedButton(label: Localization().getStringEx('panel.group.tags.button.done.title', 'Done')!, contentWeight: 0.0, textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary, backgroundColor: Styles().colors!.white, onTap: _onTapDone)
+                RoundedButton(label: Localization().getStringEx('panel.group.tags.button.done.title', 'Done'), contentWeight: 0.0, textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary, backgroundColor: Styles().colors!.white, onTap: _onTapDone)
               ])),
               Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
-              Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.search.label', "SEARCH")!))),
+              Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.search.label', "SEARCH")))),
               Visibility(visible: _searchView, child: _buildTagsWidget(_filterTags(_searchController.text))),
-              Visibility(visible: hasGroupTags, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.selected.label', "SELECTED")!))),
+              Visibility(visible: hasGroupTags, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.selected.label', "SELECTED")))),
               Visibility(visible: hasGroupTags, child: _buildTagsWidget(_groupTags)),
-              Visibility(visible: !_searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.all.label', "ALL TAGS")!))),
+              Visibility(visible: !_searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.all.label', "ALL TAGS")))),
               Visibility(visible: !_searchView, child: _buildTagsWidget(_allTags))
             ]))),
         Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: Styles().colors!.background, child: CircularProgressIndicator()))
@@ -268,9 +268,9 @@ class _TagSelectionWidget extends StatelessWidget {
                     "toggle_button.status.checked",
                     "checked",
                   )
-                : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
+                : Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
             ", " +
-            Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
+            Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
         excludeSemantics: true,
         child: GestureDetector(
             onTap: onTap,

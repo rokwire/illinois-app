@@ -158,9 +158,9 @@ class Dining with Explore implements Favorite {
               ignoreTimeZone: useDeviceLocalTime,
               showTzSuffix: !useDeviceLocalTime)!;
 
-          return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")!
+          return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")
               + schedule.meal!.toLowerCase()
-              + Localization().getStringEx("model.dining.schedule.label.until", " until ")!
+              + Localization().getStringEx("model.dining.schedule.label.until", " until ")
               + formattedEndTime;
         }
         else if(schedule.isFuture && schedule.isToday){
@@ -173,9 +173,9 @@ class Dining with Explore implements Favorite {
               ignoreTimeZone: useDeviceLocalTime,
               showTzSuffix: !useDeviceLocalTime)!;
 
-          return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")!
+          return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")
               + schedule.meal!.toLowerCase()
-              + Localization().getStringEx("model.dining.schedule.label.from", " from ")!
+              + Localization().getStringEx("model.dining.schedule.label.from", " from ")
               + formattedStartTime;
         }
         else if(schedule.isFuture && schedule.isNextTwoWeeks){
@@ -188,7 +188,7 @@ class Dining with Explore implements Favorite {
               ignoreTimeZone: useDeviceLocalTime,
               showTzSuffix: !useDeviceLocalTime)!;
 
-          return Localization().getStringEx("model.dining.schedule.label.open_on", "Opening on ")!
+          return Localization().getStringEx("model.dining.schedule.label.open_on", "Opening on ")
               + formattedStartTime;
         }
       }
@@ -511,7 +511,7 @@ class NutritionNameValuePair{
     String? name = json["Name"];
     String? value = json["Value"];
 
-    name = Localization().getStringEx("com.illinois.nutrition_type.entry.$name", name);
+    name = Localization().getString("com.illinois.nutrition_type.entry.$name", defaults: name);
 
     return NutritionNameValuePair(
       name: name,

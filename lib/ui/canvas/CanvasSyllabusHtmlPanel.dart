@@ -49,7 +49,7 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
           context: context,
-          titleWidget: Text(Localization().getStringEx('panel.syllabus_html.header.title', 'Syllabus')!,
+          titleWidget: Text(Localization().getStringEx('panel.syllabus_html.header.title', 'Syllabus'),
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -80,7 +80,7 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
 
   Widget _buildErrorContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.syllabus_html.load.failed.error.msg', 'Failed to load syllabus content. Please, try again later.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.syllabus_html.load.failed.error.msg', 'Failed to load syllabus content. Please, try again later.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 

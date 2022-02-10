@@ -123,7 +123,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx("panel.debug.header.title", "Debug")!,
+          Localization().getStringEx("panel.debug.header.title", "Debug"),
           style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
         ),
       ),

@@ -44,7 +44,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                 ),
                 Container(height: 14,),
                 Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                  Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the Illinois app connects you to our campus ecosystem.")!, textAlign: TextAlign.center, style: TextStyle( fontWeight: FontWeight.w500, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
+                  Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the Illinois app connects you to our campus ecosystem."), textAlign: TextAlign.center, style: TextStyle( fontWeight: FontWeight.w500, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
                 ),
               ]),
             )
@@ -53,7 +53,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
             Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8), child:
               Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                 RoundedButton(
-                  label: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue')!,
+                  label: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue'),
                   hint: Localization().getStringEx("panel.onboarding2.get_started.button.continue.hint", ''),
                   fontSize: 16,
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),

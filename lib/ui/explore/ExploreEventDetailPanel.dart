@@ -358,7 +358,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   Widget? _exploreLocationDetail() {
     String locationText = widget.event?.getLongDisplayLocation(_locationData)??"";
     bool isVirtual = widget.event?.isVirtual ?? false;
-    String eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event")! : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event")!;
+    String eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
     bool hasEventUrl = StringUtils.isNotEmpty(widget.event?.location?.description);
     bool isOnlineUnderlined = isVirtual && hasEventUrl;
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
@@ -415,8 +415,8 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   Widget? _eventPrivacyDetail() {
     String privacyText = (widget.event?.isGroupPrivate ?? false)
-        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')!
-        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event')!;
+        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')
+        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
     return Semantics(
         label: Localization().getStringEx('panel.explore_detail.label.privacy.title', 'Privacy'),
         value: privacyText,
@@ -521,7 +521,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(Localization().getStringEx('panel.explore_detail.label.related_tags', 'Related Tags:')!),
+                Text(Localization().getStringEx('panel.explore_detail.label.related_tags', 'Related Tags:')),
                 Container(width: 5,),
                 Expanded(
                   child: Text(capitalizedTags.join(', '),
@@ -560,7 +560,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     }
     List<Widget> contactList = [];
     contactList.add(Padding(
-        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:')!)));
+        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:'))));
     for (Contact? contact in widget.event!.contacts!) {
       String contactDetails = '';
       if (StringUtils.isNotEmpty(contact!.firstName)) {
@@ -624,7 +624,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             Padding(
               padding: EdgeInsets.only(left: 12),
               child: Text(
-                Localization().getStringEx('panel.explore_detail.label.event_preview', 'Event Preview')!,
+                Localization().getStringEx('panel.explore_detail.label.event_preview', 'Event Preview'),
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -652,7 +652,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           Padding(padding: EdgeInsets.only(bottom: 6), child:
             RoundedButton(
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website')!,
+              label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
               hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
               backgroundColor: hasRegistrationUrl ? Styles().colors!.background : Colors.white,
               borderColor: hasRegistrationUrl ? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorSecondary,
@@ -671,7 +671,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         Padding(padding: EdgeInsets.only(bottom: 6), child:
           RoundedButton(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register')!,
+                label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register'),
                 hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorSecondary,
@@ -712,7 +712,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         children: <Widget>[
           Expanded(
               child: RoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.modify.title', 'Modify')!,
+                label: Localization().getStringEx('panel.explore_detail.button.modify.title', 'Modify'),
                 hint: Localization().getStringEx('panel.explore_detail.button.modify.hint', '') ,
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorPrimary,
@@ -724,7 +724,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           ),
           Expanded(
               child: RoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.publish.title', 'Publish')!,
+                label: Localization().getStringEx('panel.explore_detail.button.publish.title', 'Publish'),
                 hint: Localization().getStringEx('panel.explore_detail.button.publish.hint', 'Publish'),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorSecondary,
@@ -741,7 +741,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           padding: EdgeInsets.symmetric(vertical: 10),
           child:
             RoundedButton(
-              label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group')!,
+              label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
               hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
               backgroundColor: Colors.white,
               borderColor: Styles().colors!.fillColorPrimary,

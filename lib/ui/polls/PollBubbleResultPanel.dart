@@ -95,12 +95,12 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
 
   List<Widget> _buildResultsContent(Poll poll) {
     String? creator = poll.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
-    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
+    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
 
-    String? votesNum;
+    String votesNum;
     int totalVotes = poll.results?.totalVotes ?? 0;
     if (1 < totalVotes) {
-      votesNum = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$totalVotes']);
+      votesNum = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$totalVotes']);
     }
     else if (0 < totalVotes) {
       votesNum = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
@@ -132,7 +132,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
       Column(children: _buildResultOptions(poll),),
       Semantics(label: semanticsStatusText, excludeSemantics: true,child:
         Padding(padding: EdgeInsets.only(top: 20), child: Wrap(children: <Widget>[
-          Text(votesNum ?? '', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),),
+          Text(votesNum, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),),
           Text('  ', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 12, ),),
           Text(pollStatus ?? '', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 12, ),),
       ],),)),
@@ -149,7 +149,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
       String checkboxImage = 'images/checkbox-unselected.png'; // (_vote[optionIndex] != null) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
 
       String optionString = poll.options![optionIndex];
-      String? votesString;
+      String votesString;
       int? votesCount = (poll.results != null) ? poll.results![optionIndex] : null;
       double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
       if ((votesCount == null) || (votesCount <= 0)) {
@@ -159,13 +159,13 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
         votesString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
       }
       else {
-        votesString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votesCount']);
+        votesString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$votesCount']);
       }
 
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = optionString +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = optionString +"\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
         Semantics(label: semanticsText, excludeSemantics: true, child:
@@ -202,8 +202,8 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
   } 
 
   List<Widget> _buildReportContent(Poll? poll) {
-    String resultsIn = Localization().getStringEx('panel.poll_prompt.text.results_are_in', 'Results are in!')!;
-    String pollClosed = Localization().getStringEx('panel.poll_prompt.text.voted_poll_closed', 'A poll you voted in has closed.')!;
+    String resultsIn = Localization().getStringEx('panel.poll_prompt.text.results_are_in', 'Results are in!');
+    String pollClosed = Localization().getStringEx('panel.poll_prompt.text.voted_poll_closed', 'A poll you voted in has closed.');
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
       Padding(padding: EdgeInsets.only(top: 32, bottom:20),child:
@@ -216,7 +216,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
   Widget _buildViewResultsButton() {
     return Padding(padding: EdgeInsets.only(top: 20, left: 50, right: 50), child:
       RoundedButton(
-        label: Localization().getStringEx('panel.poll_prompt.button.view_poll_results.title', 'View poll results')!,
+        label: Localization().getStringEx('panel.poll_prompt.button.view_poll_results.title', 'View poll results'),
         backgroundColor: Styles().colors!.fillColorPrimary,
 //        height: 42,
         fontSize: 16.0,

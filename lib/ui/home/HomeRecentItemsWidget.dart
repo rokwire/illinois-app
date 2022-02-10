@@ -310,7 +310,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
   Widget? _dateDetail(){
     String? displayTime = widget.item!.recentTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
-      String displayDate = Localization().getStringEx('widget.home_recent_item_card.label.date', 'Date')!;
+      String displayDate = Localization().getStringEx('widget.home_recent_item_card.label.date', 'Date');
       return Semantics(label: displayDate, excludeSemantics: true, child:
         Row(children: <Widget>[
           Image.asset('images/icon-calendar.png'),

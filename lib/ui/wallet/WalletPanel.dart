@@ -97,7 +97,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
             } ,
             backgroundColor: Styles().colors!.surface,
             titleWidget: Text(
-              Localization().getStringEx( "panel.wallet.label.title", "Wallet")!,
+              Localization().getStringEx( "panel.wallet.label.title", "Wallet"),
               style: TextStyle(
                   fontFamily: Styles().fontFamilies!.extraBold,
                   color: Styles().colors!.fillColorPrimary,
@@ -196,7 +196,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
 
   Widget _buildLoginNetIdButton() {
     return RoundedButton(
-      label: Localization().getStringEx('panel.wallet.button.connect.netid.title', 'Connect NetID')!,
+      label: Localization().getStringEx('panel.wallet.button.connect.netid.title', 'Connect NetID'),
       hint: Localization().getStringEx('panel.wallet.button.connect.netid.hint', ''),
       backgroundColor: Styles().colors!.surface,
       fontSize: 16.0,
@@ -222,7 +222,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
 
   Widget _buildLoginPhoneOrEmailButton() {
     return RoundedButton(
-        label: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.title', 'Login By Email or Phone')!,
+        label: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.title', 'Login By Email or Phone'),
         hint: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.hint', ''),
         backgroundColor: Styles().colors!.surface,
         fontSize: 16.0,
@@ -427,7 +427,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               ),
             ),
             Text(
-              Localization().getStringEx("panel.wallet.label.expires.title", "Card expires")! + " $expires",
+              Localization().getStringEx("panel.wallet.label.expires.title", "Card expires") + " $expires",
               style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.medium,
@@ -437,7 +437,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
             Container(height: 5,),
             Semantics(explicitChildNodes: true,child:
               RoundedButton(
-                label: Localization().getStringEx("panel.wallet.button.use_bus_pass.title", "Use bus pass")!,
+                label: Localization().getStringEx("panel.wallet.button.use_bus_pass.title", "Use bus pass"),
                 hint: Localization().getStringEx("panel.wallet.button.use_bus_pass.hint", ""),
                 textColor: Styles().colors!.fillColorPrimary,
                 backgroundColor: Styles().colors!.white,
@@ -467,7 +467,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              Localization().getStringEx("panel.wallet.label.uin.title", "UIN",)!,
+              Localization().getStringEx("panel.wallet.label.uin.title", "UIN",),
               style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.medium,
@@ -485,7 +485,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
             Container(height: 5,),
             Semantics(explicitChildNodes: true,child:
               RoundedButton(
-                label: Localization().getStringEx("panel.wallet.button.use_id.title", "Use ID")!,
+                label: Localization().getStringEx("panel.wallet.button.use_id.title", "Use ID"),
                 hint: Localization().getStringEx("panel.wallet.button.use_id.hint", ""),
                 textColor: Styles().colors!.fillColorPrimary,
                 backgroundColor: Styles().colors!.white,

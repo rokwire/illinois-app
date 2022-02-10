@@ -71,22 +71,22 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   bool get _isLoading => _isCategoryLoading || _isEventLoading;
 
   // Categories Filter
-  final String _allCategoriesConst = Localization().getStringEx("panel.find_event.label.all_categories", "All categories")!;
+  final String _allCategoriesConst = Localization().getStringEx("panel.find_event.label.all_categories", "All categories");
   late List<String> _eventCategories;
   String? _selectedEventCategory;
 
   // Tags Filter
-  final String _tagFilterAllTags = Localization().getStringEx('panel.find_event.filter.tags.all', 'All Tags')!;
-  final String _tagFilterMyTags = Localization().getStringEx('panel.find_event.filter.tags.my', 'My Tags')!;
+  final String _tagFilterAllTags = Localization().getStringEx('panel.find_event.filter.tags.all', 'All Tags');
+  final String _tagFilterMyTags = Localization().getStringEx('panel.find_event.filter.tags.my', 'My Tags');
   late List<String> _tags;
   String? _selectedTag;
 
   // Time Filter
-  final String _timeFilterUpcoming = Localization().getStringEx("panel.find_event.filter.time.upcoming","Upcoming")!;
-  final String _timeFilterToday = Localization().getStringEx("panel.find_event.filter.time.today","Today")!;
-  final String _timeFilterNextSevenDays = Localization().getStringEx("find_event.find_event.filter.time.next_7_days","Next 7 days")!;
-  final String _timeFilterThisWeekend = Localization().getStringEx("panel.find_event.filter.time.this_weekend","This Weekend")!;
-  final String _timeFilterNextMonth = Localization().getStringEx("panel.find_event.filter.time.next_30_days","Next 30 days")!;
+  final String _timeFilterUpcoming = Localization().getStringEx("panel.find_event.filter.time.upcoming","Upcoming");
+  final String _timeFilterToday = Localization().getStringEx("panel.find_event.filter.time.today","Today");
+  final String _timeFilterNextSevenDays = Localization().getStringEx("find_event.find_event.filter.time.next_7_days","Next 7 days");
+  final String _timeFilterThisWeekend = Localization().getStringEx("panel.find_event.filter.time.this_weekend","This Weekend");
+  final String _timeFilterNextMonth = Localization().getStringEx("panel.find_event.filter.time.next_30_days","Next 30 days");
   late List<String> _time;
   String? __selectedTime;
   String? get _selectedTime => __selectedTime;
@@ -193,7 +193,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
       appBar: SimpleHeaderBarWithBack(
         context: context,
         backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.find_event.header.title", "Find event")!,
+        titleWidget: Text(Localization().getStringEx("panel.find_event.header.title", "Find event"),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -230,7 +230,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
             padding: EdgeInsets.all(16),
             color: Styles().colors!.white,
             child: RoundedButton(
-              label: Localization().getStringEx("panel.find_event.button.add_selected_events.title", "Add (#) event to group")!.replaceAll("#", _selectedEvents.length.toString()),
+              label: Localization().getStringEx("panel.find_event.button.add_selected_events.title", "Add (#) event to group").replaceAll("#", _selectedEvents.length.toString()),
               hint: Localization().getStringEx("panel.find_event.button.add_selected_events.hint", ""),
               backgroundColor: Styles().colors!.white,
               textColor: Styles().colors!.fillColorPrimary,
@@ -478,7 +478,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
             ),
             itemCount: _filteredEvents! .length)
         :  Container(
-            child: Center(child: Text(Localization().getStringEx('panel.find_event.label.search.empty',  "Unable to find events")!),),
+            child: Center(child: Text(Localization().getStringEx('panel.find_event.label.search.empty',  "Unable to find events")),),
         );
     }
     else{

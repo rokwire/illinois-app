@@ -39,7 +39,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
         appBar: AppBar(
           leading: HeaderBackButton(),
           title: Text(
-            Localization().getStringEx('panel.group.detail.post.header.title', 'Post')!,
+            Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
@@ -63,7 +63,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject')!,
+                  Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
                     style: TextStyle(
                         fontSize: 18,
                         fontFamily: Styles().fontFamilies!.bold,
@@ -92,7 +92,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     Flexible(
                       flex: 1,
                       child: RoundedButton(
-                        label: Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send')!,
+                        label: Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
                         borderColor: Styles().colors!.fillColorSecondary,
                         textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,
@@ -101,7 +101,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     Flexible(
                       flex: 1,
                       child: RoundedButton(
-                        label: Localization().getStringEx('panel.group.detail.post.create.button.cancel.title', 'Cancel')!,
+                        label: Localization().getStringEx('panel.group.detail.post.create.button.cancel.title', 'Cancel'),
                         borderColor: Styles().colors!.textSurface,
                         textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,

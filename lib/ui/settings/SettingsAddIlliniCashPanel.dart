@@ -116,7 +116,7 @@ class _SettingsAddIlliniCashPanelState
                             ? 'images/chevron-left-white.png'
                             : 'images/chevron-left-blue.png',
                         titleWidget: Text(
-                          Localization().getStringEx("panel.settings.add_illini_cash.header.title", "Add Illini Cash")!,
+                          Localization().getStringEx("panel.settings.add_illini_cash.header.title", "Add Illini Cash"),
                           style: TextStyle(
                               color: widget.scrollController == null
                                   ? Styles().colors!.white
@@ -154,7 +154,7 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.recipient_uin.text",
-                                                  "RECIPIENT'S UIN")!,
+                                                  "RECIPIENT'S UIN"),
                                               style: TextStyle(
                                                   fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
@@ -207,7 +207,7 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.first_name.text",
-                                                  "RECIPIENT'S FIRST NAME")!,
+                                                  "RECIPIENT'S FIRST NAME"),
                                               style: TextStyle(
                                                   fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
@@ -262,7 +262,7 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.last_name.text",
-                                                  "RECIPIENT'S LAST NAME")!,
+                                                  "RECIPIENT'S LAST NAME"),
                                               style: TextStyle(
                                                   fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
@@ -317,7 +317,7 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.email_address.text",
-                                                  "EMAIL RECEIPT TO")!,
+                                                  "EMAIL RECEIPT TO"),
                                               style: TextStyle(
                                                   fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
@@ -368,7 +368,7 @@ class _SettingsAddIlliniCashPanelState
                                           children: <Widget>[
                                             Text(
                                               Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.credit_card.text", "CREDIT CARD")!,
+                                                  "panel.settings.add_illini_cash.label.credit_card.text", "CREDIT CARD"),
                                               style: TextStyle(
                                                   fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
@@ -421,7 +421,7 @@ class _SettingsAddIlliniCashPanelState
                                           children: <Widget>[
                                             Text(
                                               Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.expiration_date.text", "EXPIRATION DATE: (MMYY)")!,
+                                                  "panel.settings.add_illini_cash.label.expiration_date.text", "EXPIRATION DATE: (MMYY)"),
                                               style: TextStyle(
                                                   fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
@@ -474,7 +474,7 @@ class _SettingsAddIlliniCashPanelState
                                           children: <Widget>[
                                             Text(
                                               Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.cvv.text", "CVV")!,
+                                                  "panel.settings.add_illini_cash.label.cvv.text", "CVV"),
                                               style: TextStyle(
                                                   fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
@@ -529,7 +529,7 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.dollar_amount.text",
-                                                  "DOLLAR AMOUNT")!,
+                                                  "DOLLAR AMOUNT"),
                                               style: TextStyle(
                                                   fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
@@ -563,7 +563,7 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.minimum_amount.text",
-                                                  "(\$5.00 minimum purchase)")!,
+                                                  "(\$5.00 minimum purchase)"),
                                               style: TextStyle(
                                                   fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
@@ -578,10 +578,10 @@ class _SettingsAddIlliniCashPanelState
                                       Semantics(
                                         label: Localization().getStringEx(
                                             "panel.settings.add_illini_cash.label.agree",
-                                            "I agree to the")! +
+                                            "I agree to the") +
                                             Localization().getStringEx(
                                                 "panel.settings.add_illini_cash.label.agree",
-                                                "terms & conditions")!,
+                                                "terms & conditions"),
                                         hint: Localization().getStringEx(
                                             "panel.settings.add_illini_cash.label.agree.hint",
                                             ""),
@@ -604,7 +604,7 @@ class _SettingsAddIlliniCashPanelState
                                         child: Text(
                                           Localization().getStringEx(
                                               "panel.settings.add_illini_cash.label.agree",
-                                              "I agree to the")!,
+                                              "I agree to the"),
                                           style: TextStyle(
                                               fontFamily: Styles().fontFamilies!.regular,
                                               fontSize: 16,
@@ -626,7 +626,7 @@ class _SettingsAddIlliniCashPanelState
                                                 child: Text(
                                                   Localization().getStringEx(
                                                       "panel.settings.add_illini_cash.label.agree",
-                                                      "terms & conditions")!,
+                                                      "terms & conditions"),
                                                   style: TextStyle(
                                                     fontFamily: Styles().fontFamilies!.regular,
                                                     fontSize: 16,
@@ -645,7 +645,7 @@ class _SettingsAddIlliniCashPanelState
                                         child: RoundedButton(
                                           label: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.cancel.text',
-                                              'Cancel')!,
+                                              'Cancel'),
                                           hint: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.cancel.hint',
                                               ''),
@@ -666,7 +666,7 @@ class _SettingsAddIlliniCashPanelState
                                         child: RoundedButton(
                                           label: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.submit.text',
-                                              'Submit')!,
+                                              'Submit'),
                                           hint: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.submit.hint',
                                               ''),
@@ -841,10 +841,10 @@ class _SettingsAddIlliniCashPanelState
       AppAlert.showCustomDialog(
           context: context,
           contentWidget: Text(
-              Localization().getStringEx("panel.settings.add_illini_cash.message.buy_illini_cash_success.text", "Transaction successfully processed.")!),
+              Localization().getStringEx("panel.settings.add_illini_cash.message.buy_illini_cash_success.text", "Transaction successfully processed.")),
           actions: <Widget>[
             TextButton(
-                child: Text(Localization().getStringEx("dialog.ok.title", "Ok")!),
+                child: Text(Localization().getStringEx("dialog.ok.title", "Ok")),
                 onPressed: _onDismissAlert)
           ]
       ).then((value) {
@@ -895,7 +895,7 @@ class _SettingsAddIlliniCashPanelState
               contentWidget: Text(e.message!),
               actions: <Widget>[
                 TextButton(
-                    child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
+                    child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
                     onPressed: () {
                       Analytics().logAlert(text: e.message, selection: "Ok");
                       Navigator.pop(context, true);

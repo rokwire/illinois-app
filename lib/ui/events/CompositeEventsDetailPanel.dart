@@ -406,7 +406,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(Localization().getStringEx('panel.explore_detail.label.related_tags', 'Related Tags:')!),
+                Text(Localization().getStringEx('panel.explore_detail.label.related_tags', 'Related Tags:')),
                 Container(width: 5,),
                 Expanded(
                   child: Text(capitalizedTags.join(', '),
@@ -464,7 +464,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     String? ticketsUrl = widget.parentEvent?.registrationUrl;
     bool getTicketsVisible = StringUtils.isNotEmpty(ticketsUrl);
 
-    String websiteLabel = Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website')!;
+    String websiteLabel = Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website');
     String? websiteHint = Localization().getStringEx('panel.explore_detail.button.visit_website.hint', '');
 
     Widget visitWebsiteButton = (widget.parentEvent?.isSuperEvent ?? false) ?
@@ -489,7 +489,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
         visitWebsiteButton,
         Visibility(visible: visitWebsiteVisible, child: buttonsDivider),
         Visibility(visible: getTicketsVisible, child: RoundedButton(
-          label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Get tickets')!,
+          label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Get tickets'),
           hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
           backgroundColor: Colors.white,
           borderColor: Styles().colors!.fillColorSecondary,
@@ -570,7 +570,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
         padding: EdgeInsets.symmetric(vertical: 10),
         child:
           RoundedButton(
-            label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group')!,
+            label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
             hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
             backgroundColor: Colors.white,
             borderColor: Styles().colors!.fillColorPrimary,
@@ -667,8 +667,8 @@ class _EventsListState extends State<_EventsList>{
   }
 
   Widget _buildFullScheduleButton() {
-    String? titleFormat = Localization().getStringEx("panel.explore_detail.button.see_super_events.title", "All %s");
-    String title = sprintf(titleFormat!, [widget.parentEvent!.title]);
+    String titleFormat = Localization().getStringEx("panel.explore_detail.button.see_super_events.title", "All %s");
+    String title = sprintf(titleFormat, [widget.parentEvent!.title]);
     return Column(
       children: <Widget>[
         Semantics(

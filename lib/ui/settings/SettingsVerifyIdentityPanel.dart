@@ -47,7 +47,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx("panel.settings.verify_identity.label.title", "Verify your Identity")!,
+          Localization().getStringEx("panel.settings.verify_identity.label.title", "Verify your Identity"),
           style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
         ),
       ),
@@ -66,7 +66,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           Container(height: 41),
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
             child: Text(
-              Localization().getStringEx("panel.settings.verify_identity.label.description", "Connect to Illinois")!,
+              Localization().getStringEx("panel.settings.verify_identity.label.description", "Connect to Illinois"),
               style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 24, fontFamily: Styles().fontFamilies!.extraBold),
             ),
           ),

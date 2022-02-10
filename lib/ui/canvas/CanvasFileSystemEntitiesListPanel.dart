@@ -50,7 +50,7 @@ class _CanvasFileSystemEntitiesListPanelState extends State<CanvasFileSystemEnti
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx('panel.canvas_files.header.title', 'Files')!,
+        titleWidget: Text(Localization().getStringEx('panel.canvas_files.header.title', 'Files'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -85,13 +85,13 @@ class _CanvasFileSystemEntitiesListPanelState extends State<CanvasFileSystemEnti
 
   Widget _buildErrorContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_files.load.failed.error.msg', 'Failed to load files and folders. Please, try again later.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_files.load.failed.error.msg', 'Failed to load files and folders. Please, try again later.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
   Widget _buildEmptyContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_files.empty.msg', 'There are no files and folders.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_files.empty.msg', 'There are no files and folders.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 

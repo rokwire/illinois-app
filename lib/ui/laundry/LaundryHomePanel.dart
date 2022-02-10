@@ -221,7 +221,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       ],
       title: Text(
         Localization()
-            .getStringEx('panel.laundry_home.heading.laundry', 'Laundry')!,
+            .getStringEx('panel.laundry_home.heading.laundry', 'Laundry'),
         style: TextStyle(
             fontSize: 16,
             color: Colors.white,
@@ -238,7 +238,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       return Center(
         child: Text(
           Localization().getStringEx(
-              'panel.laundry_home.content.empty', 'No rooms available')!,
+              'panel.laundry_home.content.empty', 'No rooms available'),
           style: TextStyle(
               fontSize: 16,
               color: Styles().colors!.fillColorPrimary,
@@ -300,7 +300,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       description = _selectedMapLaundry.campusName ?? '';
     }
     else if (_selectedMapLaundry is List<LaundryRoom>) {
-      title = sprintf(Localization().getStringEx('panel.laundry_home.map.popup.title.format', '%d Laundries')!, [_selectedMapLaundry.length]);
+      title = sprintf(Localization().getStringEx('panel.laundry_home.map.popup.title.format', '%d Laundries'), [_selectedMapLaundry.length]);
       description = _selectedMapLaundry.first?.campusName ?? '';
     }
 
@@ -348,7 +348,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
                           Row(
                               children: <Widget>[
                                 RoundedButton(
-                                    label: Localization().getStringEx('panel.laundry_home.button.directions.title', 'Directions')!,
+                                    label: Localization().getStringEx('panel.laundry_home.button.directions.title', 'Directions'),
                                     hint: Localization().getStringEx('panel.laundry_home.button.directions.hint', ''),
                                     backgroundColor: Colors.white,
                                     fontSize: 16.0,
@@ -365,7 +365,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
                               ]) :
                           Container(),
                           RoundedButton(
-                              label: Localization().getStringEx('panel.laundry_home.button.details.title', 'Details')!,
+                              label: Localization().getStringEx('panel.laundry_home.button.details.title', 'Details'),
                               hint: Localization().getStringEx('panel.laundry_home.button.details.hint', ''),
                               backgroundColor: Colors.white,
                               fontSize: 16.0,

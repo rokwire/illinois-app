@@ -50,7 +50,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx('panel.canvas_announcements.header.title', 'Announcements')!,
+        titleWidget: Text(Localization().getStringEx('panel.canvas_announcements.header.title', 'Announcements'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -85,13 +85,13 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
 
   Widget _buildErrorContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_announcements.load.failed.error.msg', 'Failed to load announcements. Please, try again later.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_announcements.load.failed.error.msg', 'Failed to load announcements. Please, try again later.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
   Widget _buildEmptyContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_announcements.empty.msg', 'There are no announcements for this course.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_announcements.empty.msg', 'There are no announcements for this course.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 

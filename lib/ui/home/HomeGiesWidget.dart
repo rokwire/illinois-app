@@ -90,7 +90,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Expanded(child: 
-              Text(Localization().getStringEx('widget.gies.title', 'iDegrees New Student Checklist')!, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),),
+              Text(Localization().getStringEx('widget.gies.title', 'iDegrees New Student Checklist'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),),
           ],),
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
             Expanded(child: Container()),
@@ -101,7 +101,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
               Align(alignment: Alignment.centerRight, child:
                 InkWell(onTap: () => _onTapNotes(), child:
                   Padding(padding: EdgeInsets.only(top: 14, bottom: 4), child:
-                    Text(Localization().getStringEx('widget.gies.button.notes', 'Notes')!, style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 16, decoration: TextDecoration.underline, ),), // Styles().colors.fillColorSecondary
+                    Text(Localization().getStringEx('widget.gies.button.notes', 'Notes'), style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 16, decoration: TextDecoration.underline, ),), // Styles().colors.fillColorSecondary
                   ),
                 ),
               ),
@@ -798,7 +798,7 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
                     Row(children: [
                       Expanded(child:
-                        Text(Localization().getStringEx('widget.gies.notes.title', 'Things to Remember')!, style: TextStyle(fontSize: 20, color: Colors.white),),
+                        Text(Localization().getStringEx('widget.gies.notes.title', 'Things to Remember'), style: TextStyle(fontSize: 20, color: Colors.white),),
                       ),
                       Semantics(
                         label: Localization().getStringEx("dialog.close.title","Close"), button: true,
@@ -836,7 +836,7 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
               Container(height: 16,),
               Visibility(visible: (widget.notes != null) && widget.notes!.isNotEmpty, child:
                 RoundedButton(
-                  label: Localization().getStringEx('widget.gies.notes.button.save', 'Save')!,
+                  label: Localization().getStringEx('widget.gies.notes.button.save', 'Save'),
                   backgroundColor: Colors.transparent,
                   textColor: Styles().colors!.fillColorPrimary,
                   borderColor: Styles().colors!.fillColorSecondary,

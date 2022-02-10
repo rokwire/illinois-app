@@ -35,7 +35,7 @@ class _SettingsBluetoothPanelState extends State<SettingsBluetoothPanel> {
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx("panel.settings.bluetooth.label.title", "Bluetooth")!,
+          Localization().getStringEx("panel.settings.bluetooth.label.title", "Bluetooth"),
           style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
         ),
       ),
@@ -53,7 +53,7 @@ class _SettingsBluetoothPanelState extends State<SettingsBluetoothPanel> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 6),
             child: Text(
-              Localization().getStringEx("panel.settings.bluetooth.label.desctiption", "Create and answer quizzes and polls with people near you.")!,
+              Localization().getStringEx("panel.settings.bluetooth.label.desctiption", "Create and answer quizzes and polls with people near you."),
               style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
           ),),
           Container(height: 24,),

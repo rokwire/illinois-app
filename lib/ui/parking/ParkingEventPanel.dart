@@ -68,7 +68,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-        Localization().getStringEx("panel.parking_lots.label.heading","Parking Spots")!,
+        Localization().getStringEx("panel.parking_lots.label.heading","Parking Spots"),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -103,7 +103,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
                             Row(children:[
                               Expanded(child:
                                 Text(
-                                  Localization().getStringEx("panel.parking_lots.label.loading", "Loading parking lots. Please wait...")!,
+                                  Localization().getStringEx("panel.parking_lots.label.loading", "Loading parking lots. Please wait..."),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontFamily: Styles().fontFamilies!.regular,
@@ -144,7 +144,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
     if(CollectionUtils.isEmpty(widgets)){
       widgets.add(Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Text(Localization().getStringEx("panel.parking_lots.label.empty","No parking lots available for this event")!,
+        child: Text(Localization().getStringEx("panel.parking_lots.label.empty","No parking lots available for this event"),
           style: TextStyle(
             fontFamily: Styles().fontFamilies!.regular,
             fontSize: 16,
@@ -238,7 +238,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
                   ),
                 ),
                 Text(
-                  Localization().getStringEx("panel.parking_lots.label.available_spots", "Available Spots: ")! + "${widget.inventory!.availableSpots}",
+                  Localization().getStringEx("panel.parking_lots.label.available_spots", "Available Spots: ") + "${widget.inventory!.availableSpots}",
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.regular,
                     fontSize: 16,
@@ -253,7 +253,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
           flex: 3,
           child: Semantics(explicitChildNodes: true, child: Visibility(
           visible: directionsVisible, child: Padding(padding: EdgeInsets.only(right: 8), child: RoundedButton(
-            label: Localization().getStringEx('panel.parking_lots.button.directions.title', 'Directions')!,
+            label: Localization().getStringEx('panel.parking_lots.button.directions.title', 'Directions'),
             hint: Localization().getStringEx('panel.parking_lots.button.directions.hint', ''),
             backgroundColor: Colors.white,
             fontSize: 16.0,

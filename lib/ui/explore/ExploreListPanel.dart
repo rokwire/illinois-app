@@ -70,7 +70,7 @@ class _ExploreListPanelState extends State<ExploreListPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.explore_list.header.title", "Explore")!,
+        titleWidget: Text(Localization().getStringEx("panel.explore_list.header.title", "Explore"),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,

@@ -102,7 +102,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx('panel.guide_categories.label.heading', 'Campus Guide')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
+        titleWidget: Text(Localization().getStringEx('panel.guide_categories.label.heading', 'Campus Guide'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
       ),
       body: Column(children: <Widget>[
           Expanded(child:
@@ -135,7 +135,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
     else {
       return Padding(padding: EdgeInsets.all(32), child:
         Center(child:
-          Text(Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+          Text(Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
         ,)
       );
     }
