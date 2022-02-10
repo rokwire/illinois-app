@@ -5,11 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.2.16] - 2022-02-09
 ### Added
 - Authman Groups UI improvements [#1323](https://github.com/rokwire/illinois-app/issues/1323).
 - Canvas Calendar - arrows for changing week, marker for each day which has events, possibility for saving events [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Show image in group card [#1331](https://github.com/rokwire/illinois-app/issues/1331).
 ### Changed
 - Inbox renamed to Notifications [#1326](https://github.com/rokwire/illinois-app/issues/1326).
+- In Groups allow an Admin to End/Close a Poll even if they did not create it. [#1328](https://github.com/rokwire/illinois-app/issues/1328).
 ### Removed
 - Canvas Course code from the card [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 
