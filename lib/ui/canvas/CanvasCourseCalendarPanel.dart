@@ -454,11 +454,16 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
     _initEventsTimeFrame();
   }
 
-  // Load events per week
+  ///
+  /// Calculates month time frame including the whole weeks of the month's first and last day.
+  ///
   void _initEventsTimeFrame() {
-    int selectedWeekDay = _selectedDate.weekday;
-    _startDateTime = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day).subtract(Duration(days: (selectedWeekDay - 1)));
-    _endDateTime = _startDateTime.add(Duration(days: 7)).subtract(Duration(milliseconds: 1));
+    DateTime monthStartDateTime = DateTime(_selectedDate.year, _selectedDate.month, 1);
+    DateTime monthEndDateTime = DateTime(_selectedDate.year, (_selectedDate.month + 1), 1).subtract(Duration(milliseconds: 1));
+    int monthStartDateWeekDay = monthStartDateTime.weekday;
+    int monthEndDateWeekDay = monthEndDateTime.weekday;
+    _startDateTime = monthStartDateTime.subtract(Duration(days: (monthStartDateWeekDay - 1)));
+    _endDateTime = monthEndDateTime.add(Duration(days: (7 - monthEndDateWeekDay)));
   }
 
   void _changeSelectedDate({int? year, int? month, int? day}) {
