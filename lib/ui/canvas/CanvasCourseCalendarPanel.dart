@@ -43,7 +43,7 @@ class CanvasCourseCalendarPanel extends StatefulWidget {
 class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> implements NotificationsListener {
   List<CanvasCalendarEvent>? _events;
   List<CanvasCourse>? _courses;
-  late int _selectedCourseId;
+  int? _selectedCourseId;
   late DateTime _startDateTime;
   late DateTime _endDateTime;
   late DateTime _selectedDate;
@@ -258,7 +258,26 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
         visibleEvents.add(event);
       }
     }
+    _sortEvents(visibleEvents);
     return visibleEvents;
+  }
+
+  void _sortEvents(List<CanvasCalendarEvent>? events) {
+    if (CollectionUtils.isNotEmpty(events)) {
+      events!.sort((CanvasCalendarEvent first, CanvasCalendarEvent second) {
+        DateTime? firstDate = first.startAt;
+        DateTime? secondDate = second.startAt;
+        if ((firstDate != null) && (secondDate != null)) {
+          return firstDate.compareTo(secondDate);
+        } else if (firstDate != null) {
+          return -1;
+        } else if (secondDate != null) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+    }
   }
 
   Widget _buildYearDropDown() {
@@ -344,23 +363,48 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
                     onChanged: (courseId) => _onCourseIdChanged(courseId)))));
   }
 
-  List<DropdownMenuItem<int>> get _buildCourseDropDownItems {
-    List<DropdownMenuItem<int>> items = [];
-    if (CollectionUtils.isNotEmpty(_courses)) {
-      for (CanvasCourse course in _courses!) {
-        int? courseId = course.id;
-        TextStyle labelStyle = TextStyle(
-            color: Styles().colors!.textSurfaceAccent,
-            fontSize: 16,
-            fontFamily: ((_selectedCourseId == courseId) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular));
-        items.add(DropdownMenuItem(value: course.id, child: Text(StringUtils.ensureNotEmpty(course.name), style: labelStyle)));
-      }
+  List<DropdownMenuItem<int>>? get _buildCourseDropDownItems {
+    if(CollectionUtils.isEmpty(_courses)) {
+      return null;
     }
+    List<DropdownMenuItem<int>> items = [];
+    CanvasCourse? currentCourse = _getCurrentCourse();
+    Color textColor = Styles().colors!.textSurfaceAccent!;
+    double textFontSize = 16;
+    if (currentCourse != null) {
+      items.add(DropdownMenuItem(
+          value: currentCourse.id,
+          child: Text(StringUtils.ensureNotEmpty(currentCourse.name),
+              style: TextStyle(
+                  color: textColor,
+                  fontSize: textFontSize,
+                  fontFamily: ((_selectedCourseId == currentCourse.id) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
+    }
+    items.add(DropdownMenuItem(
+        value: null,
+        child: Text(Localization().getStringEx('panel.canvas_calendar.all_courses.label', 'All Courses'),
+            style: TextStyle(
+                color: textColor,
+                fontSize: textFontSize,
+                fontFamily: ((_selectedCourseId == null) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
     return items;
   }
 
+  CanvasCourse? _getCurrentCourse() {
+    CanvasCourse? selectedCourse;
+    if (CollectionUtils.isNotEmpty(_courses)) {
+      for (CanvasCourse course in _courses!) {
+        if (course.id == widget.courseId) {
+          selectedCourse = course;
+          break;
+        }
+      }
+    }
+    return selectedCourse;
+  }
+
   void _onCourseIdChanged(dynamic courseId) {
-    if ((courseId is int) && (_selectedCourseId != courseId)) {
+    if (_selectedCourseId != courseId) {
       _selectedCourseId = courseId;
       _loadEvents();
     }
@@ -454,11 +498,16 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
     _initEventsTimeFrame();
   }
 
-  // Load events per week
+  ///
+  /// Calculates month time frame including the whole weeks of the month's first and last day.
+  ///
   void _initEventsTimeFrame() {
-    int selectedWeekDay = _selectedDate.weekday;
-    _startDateTime = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day).subtract(Duration(days: (selectedWeekDay - 1)));
-    _endDateTime = _startDateTime.add(Duration(days: 7)).subtract(Duration(milliseconds: 1));
+    DateTime monthStartDateTime = DateTime(_selectedDate.year, _selectedDate.month, 1);
+    DateTime monthEndDateTime = DateTime(_selectedDate.year, (_selectedDate.month + 1), 1).subtract(Duration(milliseconds: 1));
+    int monthStartDateWeekDay = monthStartDateTime.weekday;
+    int monthEndDateWeekDay = monthEndDateTime.weekday;
+    _startDateTime = monthStartDateTime.subtract(Duration(days: (monthStartDateWeekDay - 1)));
+    _endDateTime = monthEndDateTime.add(Duration(days: (7 - monthEndDateWeekDay)));
   }
 
   void _changeSelectedDate({int? year, int? month, int? day}) {
@@ -473,11 +522,35 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
   }
 
   void _loadEvents() {
+    if (_events != null) {
+      _events = null;
+    }
+    if (_selectedCourseId != null) {
+      _loadEventsForSingleCourse(_selectedCourseId!);
+    } else {
+      _loadEventsForAllCourses();
+    }
+  }
+
+  void _loadEventsForSingleCourse(int courseId) {
     _increaseProgress();
-    Canvas().loadCalendarEvents(courseId: _selectedCourseId, startDate: _startDateTime, endDate: _endDateTime).then((events) {
-      _events = events;
+    Canvas().loadCalendarEvents(courseId: courseId, startDate: _startDateTime, endDate: _endDateTime).then((events) {
+      if (CollectionUtils.isNotEmpty(events)) {
+        if (_events == null) {
+          _events = [];
+        }
+        _events!.addAll(events!);
+      }
       _decreaseProgress();
     });
+  }
+
+  void _loadEventsForAllCourses() {
+    if (CollectionUtils.isNotEmpty(_courses)) {
+      for (CanvasCourse course in _courses!) {
+        _loadEventsForSingleCourse(course.id!);
+      }
+    }
   }
 
   void _loadEventsIfNeeded() {
