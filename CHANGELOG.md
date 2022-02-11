@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added analytics packets timestamps [#1340](https://github.com/rokwire/illinois-app/issues/1340).
+- Gies wizard support navigation buttons [#1343](https://github.com/rokwire/illinois-app/issues/1343).
 ### Changed
 - Values for the courses dropdown in Canvas calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 
