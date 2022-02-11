@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added analytics packets timestamps [#1340](https://github.com/rokwire/illinois-app/issues/1340).
+### Changed
+- Values for the courses dropdown in Canvas calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 
 ## [3.2.17] - 2022-02-10
 ### Added
