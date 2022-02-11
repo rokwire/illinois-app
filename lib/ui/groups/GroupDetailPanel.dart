@@ -157,7 +157,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _canCreatePoll{
-    return _isAdmin;
+    return _isAdmin ||
+        ((!(_group?.onlyAdminsCanCreatePolls ?? true)) && _isMember);
   }
 
   @override
