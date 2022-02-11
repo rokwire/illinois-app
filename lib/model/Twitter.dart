@@ -206,6 +206,7 @@ class Tweet {
         }
       }
     }
+    html = html?.replaceAll('\n', '<br>');
     return html;
   }
 
@@ -1251,4 +1252,3 @@ class TweetsMeta {
     (previousToken?.hashCode ?? 0) ^
     (resultCount?.hashCode ?? 0);
 }
-
