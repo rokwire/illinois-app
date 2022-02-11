@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Gies wizard support navigation buttons [#1343](https://github.com/rokwire/illinois-app/issues/1343).
 ### Changed
 - Values for the courses dropdown in Canvas calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Fixed
+- Fixed some display tweaks of Twitter entries [#1322](https://github.com/rokwire/illinois-app/issues/1322).
 
 ## [3.2.17] - 2022-02-10
 ### Added
