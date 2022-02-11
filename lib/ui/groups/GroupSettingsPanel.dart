@@ -117,6 +117,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             Visibility(
                               visible: !_isAuthManGroup,
                               child: _buildMembershipLayout()),
+                            Container(height: 8, color: Styles().colors!.background),
+                            _buildPollsLayout(),
                             Container(height: 24,  color: Styles().colors!.background,),
                           ],),)
                       ]),
@@ -811,6 +813,31 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     });
   }
   //
+
+
+  //Polls
+  Widget _buildPollsLayout(){
+    return Container(
+      color: Styles().colors!.background,
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.only_admins_create_polls.enabled.label", "Only admins can create Polls"), //TBD localization
+          value: _group?.onlyAdminsCanCreatePolls,
+          onTap: _onTapOnlyAdminCreatePolls
+      ),
+    );
+  }
+
+  void _onTapOnlyAdminCreatePolls(){
+    if(_group?.onlyAdminsCanCreatePolls != null) {
+      if(mounted){
+        setState(() {
+          _group!.onlyAdminsCanCreatePolls = !(_group!.onlyAdminsCanCreatePolls ?? false);
+        });
+      }
+    }
+  }
+  //
+
   // Common
   Widget _buildInfoHeader(String title, String? description,{double topPadding = 24}){
     return Container(
@@ -867,6 +894,27 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               ),
             )
           ],)
+    );
+  }
+
+  Widget _buildSwitch({String? title, bool? value, void Function()? onTap}){
+    return Container(
+      child: Container(
+          decoration: BoxDecoration(
+              color: Styles().colors!.white,
+              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(4))),
+          padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Expanded(
+                  child: Text(title ?? "",
+                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
+              GestureDetector(
+                  onTap: onTap ?? (){},
+                  child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset((value ?? false) ? 'images/switch-on.png' : 'images/switch-off.png')))
+            ])
+          ])),
     );
   }
 
