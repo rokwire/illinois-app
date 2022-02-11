@@ -192,7 +192,7 @@ class Tweet {
 
   static String? _buildHtml(String? text, TweetEntities? entities) {
     String? html = text;
-    if ((html != null) && (entities?.entities != null)) {
+    if ((html != null) && !html.hasHighSurrogates && (entities?.entities != null)) {
       int? firstUpdated = text!.length;
       for (int entityIndex = entities!.entities.length - 1; 0 <= entityIndex; entityIndex--) {
         TweetEntity entetity = entities.entities[entityIndex];
@@ -1251,4 +1251,15 @@ class TweetsMeta {
     (nextToken?.hashCode ?? 0) ^
     (previousToken?.hashCode ?? 0) ^
     (resultCount?.hashCode ?? 0);
+}
+
+extension _StringTwitterExt on String {
+  bool get hasHighSurrogates {
+    for (int codeUnit in codeUnits) {
+      if ((0xD800 <= codeUnit) && (codeUnit <= 0xDB7F)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
