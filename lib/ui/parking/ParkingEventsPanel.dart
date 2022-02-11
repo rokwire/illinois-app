@@ -61,7 +61,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-        Localization().getStringEx("panel.parking_events.label.heading","Events")!,
+        Localization().getStringEx("panel.parking_events.label.heading","Events"),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -95,7 +95,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
                     Row(children: <Widget>[
                       Expanded(child:
                         Text(
-                          Localization().getStringEx("panel.parking_events.label.loading", "Loading parking events. Please wait...")!,
+                          Localization().getStringEx("panel.parking_events.label.loading", "Loading parking events. Please wait..."),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: Styles().fontFamilies!.regular,
@@ -116,7 +116,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
   }
 
   Widget _buildEmptyWidget() {
-    return Center(child: Text(Localization().getStringEx("panel.parking_events.label.no_events", "No parking events.")!, style: TextStyle(
+    return Center(child: Text(Localization().getStringEx("panel.parking_events.label.no_events", "No parking events."), style: TextStyle(
       fontFamily: Styles().fontFamilies!.bold,
       fontSize: 18,
       color: Styles().colors!.fillColorPrimary,
@@ -160,7 +160,7 @@ class _ParkingEventWidget extends StatelessWidget{
                 ),
             ),
             Text(
-              Localization().getStringEx("panel.parking_events.label.from","From: ")!+"${event!.displayParkingFromDate}",
+              Localization().getStringEx("panel.parking_events.label.from","From: ")+"${event!.displayParkingFromDate}",
               style: TextStyle(
                 fontFamily: Styles().fontFamilies!.regular,
                 fontSize: 16,
@@ -168,7 +168,7 @@ class _ParkingEventWidget extends StatelessWidget{
               ),
             ),
             Text(
-              Localization().getStringEx("panel.parking_events.label.to","To: ")!+"${event!.displayParkingToDate}",
+              Localization().getStringEx("panel.parking_events.label.to","To: ")+"${event!.displayParkingToDate}",
               style: TextStyle(
                 fontFamily: Styles().fontFamilies!.regular,
                 fontSize: 16,
@@ -176,7 +176,7 @@ class _ParkingEventWidget extends StatelessWidget{
               ),
             ),
             Text(
-              Localization().getStringEx("panel.parking_events.label.status","Status: ")!+"$status",
+              Localization().getStringEx("panel.parking_events.label.status","Status: ")+"$status",
               style: TextStyle(
                 fontFamily: Styles().fontFamilies!.regular,
                 fontSize: 16,

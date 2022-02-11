@@ -45,7 +45,7 @@ class HorizontalDiningSpecials extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  Localization().getStringEx("panel.explore.label.spcial_offers.title", "Special Offers")!,
+                  Localization().getStringEx("panel.explore.label.spcial_offers.title", "Special Offers"),
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.extraBold,
                     fontSize: 16,

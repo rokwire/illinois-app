@@ -66,7 +66,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
           backIconRes: 'images/close-white.png',
           onBackPressed: _onTapCancel,
           titleWidget: Text(
-            Localization().getStringEx("panel.create_stadium_poll.header.title", "Create a Stadium Poll")!,
+            Localization().getStringEx("panel.create_stadium_poll.header.title", "Create a Stadium Poll"),
             style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
           ),
         ),
@@ -207,7 +207,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     if (_optionsControllers?.isNotEmpty ?? false) {
       for (int i = 0; i < _optionsControllers!.length; i++) {
         TextEditingController controller = _optionsControllers![i];
-        String title = Localization().getStringEx("panel.create_stadium_poll.text.option", "OPTION")! + " " + (i + 1).toString();
+        String title = Localization().getStringEx("panel.create_stadium_poll.text.option", "OPTION") + " " + (i + 1).toString();
         options.add(PollOptionView(title: title, textController: controller, enabled: (_progressPollStatus == null),));
       }
 
@@ -223,7 +223,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   Widget _constructAddOptionButton() {
-    String label = Localization().getStringEx("panel.create_stadium_poll.button.add_option.text", "Add option")!;
+    String label = Localization().getStringEx("panel.create_stadium_poll.button.add_option.text", "Add option");
     String? hint = Localization().getStringEx("panel.create_stadium_poll.button.add_option.hint", "");
     return Container(
       padding: EdgeInsets.symmetric(vertical: 24),
@@ -265,7 +265,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   Widget _buildSettingsHeader() {
-    String additionalSettingsText = Localization().getStringEx("panel.create_poll.text.add_option", "Additional settings")!;
+    String additionalSettingsText = Localization().getStringEx("panel.create_poll.text.add_option", "Additional settings");
     return Padding(
         padding: EdgeInsets.only(top: 3),
         child: Container(
@@ -370,7 +370,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                   Expanded(
                     child:
                       RoundedButton(
-                        label: Localization().getStringEx("panel.create_stadium_poll.setting.button.save.title", "Save")!,
+                        label: Localization().getStringEx("panel.create_stadium_poll.setting.button.save.title", "Save"),
                         backgroundColor: Colors.white,
                         borderColor: Styles().colors!.fillColorPrimary,
                         textColor: Styles().colors!.fillColorPrimary,
@@ -386,7 +386,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                   Expanded(
                     child:
                       RoundedButton(
-                        label: Localization().getStringEx("panel.create_stadium_poll.setting.start.preview.title", "Start poll!")!,
+                        label: Localization().getStringEx("panel.create_stadium_poll.setting.start.preview.title", "Start poll!"),
                         backgroundColor: Colors.white,
                         borderColor: Styles().colors!.fillColorSecondary,
                         textColor: Styles().colors!.fillColorPrimary,
@@ -411,13 +411,13 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.title", "Illinois")!,
+                    Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.title", "Illinois"),
                     style: TextStyle(fontSize: 24, color: Colors.black),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 26),
                     child: Text(
-                      Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.message", "Are you sure you want to cancel this Stadium Poll")!,
+                      Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.message", "Are you sure you want to cancel this Stadium Poll"),
                       textAlign: TextAlign.left,
                       style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
                     ),
@@ -430,12 +430,12 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                             Navigator.pop(context);
                             Navigator.pop(context);
                           },
-                          child: Text(Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.button.yes", "Yes")!)),
+                          child: Text(Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.button.yes", "Yes"))),
                       TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text(Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.button.no", "No")!))
+                          child: Text(Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.button.no", "No")))
                     ],
                   ),
                 ],

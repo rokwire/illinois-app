@@ -62,7 +62,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
   }
 
   Widget build(BuildContext context) {
-    String title = Localization().getStringEx("widget.privacy_tickets_modal.label.header", "Buy Tickets")!;
+    String title = Localization().getStringEx("widget.privacy_tickets_modal.label.header", "Buy Tickets");
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 22),
         child: Container(
@@ -120,7 +120,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                   child: Padding(
                       padding: EdgeInsets.all(12),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                        Text(Localization().getStringEx("widget.privacy_tickets_modal.label.your_privacy", "Your privacy setting")!,
+                        Text(Localization().getStringEx("widget.privacy_tickets_modal.label.your_privacy", "Your privacy setting"),
                             style: TextStyle(
                               color: Styles().colors!.textBackground,
                               fontSize: 18,
@@ -139,7 +139,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           height: 10,
                         ),
                         Text(
-                          Localization().getStringEx("widget.privacy_tickets_modal.label.not_allowed", "Does not allow us to collect payment information")!,
+                          Localization().getStringEx("widget.privacy_tickets_modal.label.not_allowed", "Does not allow us to collect payment information"),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 18,
@@ -152,7 +152,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                         ),
                         Text(
                             Localization().getStringEx("widget.privacy_tickets_modal.label.understand",
-                                "I understand that my information will be collected in the purchase process for any tickets I purchase.")!,
+                                "I understand that my information will be collected in the purchase process for any tickets I purchase."),
                             style: TextStyle(
                               color: Styles().colors!.textBackground,
                               fontSize: 16,
@@ -162,7 +162,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           height: 10,
                         ),
                         RoundedButton(
-                          label: Localization().getStringEx("widget.privacy_tickets_modal.button.continue.label", "Continue to buy tickets")!,
+                          label: Localization().getStringEx("widget.privacy_tickets_modal.button.continue.label", "Continue to buy tickets"),
                           hint: Localization().getStringEx("widget.privacy_tickets_modal.button.continue.hint", ""),
                           backgroundColor: Colors.white,
                           fontSize: 16,
@@ -179,7 +179,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                         ),
                         Text(
                             Localization()
-                                .getStringEx("widget.privacy_tickets_modal.label.change_privacy", "Change my privacy setting to allow tickets purchase")!,
+                                .getStringEx("widget.privacy_tickets_modal.label.change_privacy", "Change my privacy setting to allow tickets purchase"),
                             style: TextStyle(
                               color: Styles().colors!.textBackground,
                               fontSize: 16,
@@ -189,7 +189,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           height: 10,
                         ),
                         RoundedButton(
-                          label: Localization().getStringEx("widget.privacy_tickets_modal.button.change_privacy.label", "Change my settings")!,
+                          label: Localization().getStringEx("widget.privacy_tickets_modal.button.change_privacy.label", "Change my settings"),
                           hint: Localization().getStringEx("widget.privacy_tickets_modal.button.change_privacy.hint", ""),
                           backgroundColor: Colors.white,
                           fontSize: 16,

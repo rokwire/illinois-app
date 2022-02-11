@@ -39,10 +39,10 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
         'Welcome to Illinois');
     String strPersonalizedRecommendations = Localization().getStringEx(
         'panel.onboarding.get_started.label.personalized_recommendations',
-        'Get personalized recommendations for the')!;
+        'Get personalized recommendations for the');
     String strUniversityofIllinois = Localization().getStringEx(
         'panel.onboarding.get_started.label.university_of_illinois',
-        'University of Illinois')!;
+        'University of Illinois');
 
     return Scaffold(body: SwipeDetector(
         onSwipeLeft: () => _goNext(context),
@@ -89,7 +89,7 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                               child: RoundedButton(
                                 label: Localization().getStringEx(
                                     'panel.onboarding.get_started.button.get_started.title',
-                                    'Get Started')!,
+                                    'Get Started'),
                                 hint: Localization().getStringEx(
                                     'panel.onboarding.get_started.button.get_started.hint',
                                     ''),

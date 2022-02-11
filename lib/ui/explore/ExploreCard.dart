@@ -89,7 +89,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     int? eventConvergeScore = (explore is Event) ? explore.convergeScore : null;
     String convergeScore = ((eventConvergeScore != null) ? (eventConvergeScore.toString() + '%') : null) ?? "";
     String interests = ((explore is Event) ? _getInterestsLabelValue() : null) ?? "";
-    interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')!) : "";
+    interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')) : "";
     String eventType = explore?.typeDisplayString??"";
 
     return "$category, $title, $time, $locationText, $workTime, $convergeScore, $interests, $eventType";
@@ -168,7 +168,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                                               children: <Widget>[
                                                 Text(Localization().getStringEx(
                                                     'widget.card.label.interests',
-                                                    'Because of your interest in:')!,
+                                                    'Because of your interest in:'),
                                                   style: TextStyle(
                                                       color: Styles().colors!.textBackground,
                                                       fontSize: 12,

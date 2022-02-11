@@ -102,7 +102,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
     }
 
     if (game == null) {
-      return Center(child: Text(Localization().getStringEx('panel.athletics_game_detail.load.failed.msg', 'Failed to load game. Please, try again.')!));
+      return Center(child: Text(Localization().getStringEx('panel.athletics_game_detail.load.failed.msg', 'Failed to load game. Please, try again.')));
     }
 
     String? sportKey = game?.sport?.shortName;
@@ -169,7 +169,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                 ),
                                 Expanded(child:
                                   Text(
-                                    Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More")! + " " + "$sportName",
+                                    Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More") + " " + "$sportName",
                                     style:
                                     TextStyle(color: Colors.white, fontSize: 20),
                                   )
@@ -332,8 +332,8 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                   children: <Widget>[
                     Text(
                       (_newsExpanded
-                          ? Localization().getStringEx("panel.athletics_game_detail.label.see_less.title", "See less")!
-                          : Localization().getStringEx("panel.athletics_game_detail.label.see_more.title", "See more")!),
+                          ? Localization().getStringEx("panel.athletics_game_detail.label.see_less.title", "See less")
+                          : Localization().getStringEx("panel.athletics_game_detail.label.see_more.title", "See more")),
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies!.bold,
                           color: Styles().colors!.fillColorPrimary,

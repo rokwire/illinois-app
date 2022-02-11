@@ -61,7 +61,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
         appBar: SimpleHeaderBarWithBack(
           context: context,
           titleWidget: Text(
-            Localization().getStringEx('panel.athletics_news_list.header.title', 'News')!,
+            Localization().getStringEx('panel.athletics_news_list.header.title', 'News'),
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -125,7 +125,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
 
   _initFilter() async{
     _filters = [];
-   _filters.add(Localization().getStringEx("panel.athletics_news_list.label.all_news.title", "All Athletics News")!);
+   _filters.add(Localization().getStringEx("panel.athletics_news_list.label.all_news.title", "All Athletics News"));
     List<SportDefinition> sportTypes = Sports().sports!;
    sportTypes.forEach((SportDefinition type){
       ListUtils.add(_filters, type.name);
@@ -234,7 +234,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   Widget _buildFilterLabel(){
     return _wrapWithBottomBorder(Styles().colors!.surfaceAccent!,
         Padding(padding: EdgeInsets.only(top: 14),
-        child:Text(Localization().getStringEx("panel.athletics_news_list.label.filter_by", "Filter by")!,
+        child:Text(Localization().getStringEx("panel.athletics_news_list.label.filter_by", "Filter by"),
           style: TextStyle(
           fontSize: 16,
           color: Styles().colors!.textBackground,

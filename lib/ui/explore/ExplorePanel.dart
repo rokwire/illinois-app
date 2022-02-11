@@ -235,7 +235,7 @@ class ExplorePanelState extends State<ExplorePanel>
         onBackPressed: _onTapHeaderBackButton,
         semanticsSortKey: _ExploreSortKey.headerBar,
         titleWidget: Text(
-          Localization().getStringEx("panel.explore.label.title", "Explore")!,
+          Localization().getStringEx("panel.explore.label.title", "Explore"),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -352,23 +352,23 @@ class ExplorePanelState extends State<ExplorePanel>
     };
 
     _filterEventTimeValues = [
-      Localization().getStringEx('panel.explore.filter.time.upcoming', 'Upcoming')!,
-      Localization().getStringEx('panel.explore.filter.time.today', 'Today')!,
-      Localization().getStringEx('panel.explore.filter.time.next_7_days', 'Next 7 days')!,
-      Localization().getStringEx('panel.explore.filter.time.this_weekend', 'This Weekend')!,
-      Localization().getStringEx('panel.explore.filter.time.this_month', 'Next 30 days')!,
+      Localization().getStringEx('panel.explore.filter.time.upcoming', 'Upcoming'),
+      Localization().getStringEx('panel.explore.filter.time.today', 'Today'),
+      Localization().getStringEx('panel.explore.filter.time.next_7_days', 'Next 7 days'),
+      Localization().getStringEx('panel.explore.filter.time.this_weekend', 'This Weekend'),
+      Localization().getStringEx('panel.explore.filter.time.this_month', 'Next 30 days'),
     ];
 
     _filterPaymentTypeValues = [
-      Localization().getStringEx('panel.explore.filter.payment_types.all', 'All Payment Types')!  
+      Localization().getStringEx('panel.explore.filter.payment_types.all', 'All Payment Types')  
     ];
     for (PaymentType paymentType in PaymentType.values) {
       _filterPaymentTypeValues!.add(PaymentTypeHelper.paymentTypeToDisplayString(paymentType) ?? '');
     }
 
     _filterWorkTimeValues = [
-      Localization().getStringEx('panel.explore.filter.worktimes.all', 'All Locations')!,
-      Localization().getStringEx('panel.explore.filter.worktimes.open_now', 'Open Now')!,
+      Localization().getStringEx('panel.explore.filter.worktimes.all', 'All Locations'),
+      Localization().getStringEx('panel.explore.filter.worktimes.open_now', 'Open Now'),
     ];
   }
 
@@ -427,8 +427,8 @@ class ExplorePanelState extends State<ExplorePanel>
 
   List<String> _getFilterCategoriesValues() {
     List<String> categoriesValues = [];
-    categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.all', 'All Categories')!);
-    categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.my', 'My Categories')!);
+    categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.all', 'All Categories'));
+    categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.my', 'My Categories'));
     if (_eventCategories != null) {
       for (var category in _eventCategories!) {
         categoriesValues.add(category['category']);
@@ -439,8 +439,8 @@ class ExplorePanelState extends State<ExplorePanel>
 
   List<String> _getFilterTagsValues() {
     List<String> tagsValues = [];
-    tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.all', 'All Tags')!);
-    tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.my', 'My Tags')!);
+    tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.all', 'All Tags'));
+    tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.my', 'My Tags'));
     return tagsValues;
   }
 
@@ -857,7 +857,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else if  (_selectedMapExplore is List<Explore>) {
       String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
-      title = sprintf(Localization().getStringEx('panel.explore.map.popup.title.format', '%d %s')!, [_selectedMapExplore?.length, exploreName]);
+      title = sprintf(Localization().getStringEx('panel.explore.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
       exploreColor = explore?.uiColor ?? Styles().colors!.fillColorSecondary!;
@@ -906,7 +906,7 @@ class ExplorePanelState extends State<ExplorePanel>
                           Row(
                               children: <Widget>[
                                 SizedBox(width: buttonWidth, child: RoundedButton(
-                                    label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions')!,
+                                    label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions'),
                                     hint: Localization().getStringEx('panel.explore.button.directions.hint', ''),
                                     backgroundColor: Colors.white,
                                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -923,7 +923,7 @@ class ExplorePanelState extends State<ExplorePanel>
                               ]) :
                           Container(),
                           SizedBox(width: buttonWidth, child: RoundedButton(
-                              label: Localization().getStringEx('panel.explore.button.details.title', 'Details')!,
+                              label: Localization().getStringEx('panel.explore.button.details.title', 'Details'),
                               hint: Localization().getStringEx('panel.explore.button.details.hint', ''),
                               backgroundColor: Colors.white,
                               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -1006,7 +1006,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   Widget _buildEmpty() {
-    String? message;
+    String message;
     switch (_selectedTab) {
       case ExploreTab.All:    message = Localization().getStringEx('panel.explore.state.online.empty.all', 'No events.'); break;
       case ExploreTab.NearMe: message = Localization().getStringEx('panel.explore.state.online.empty.near_me', 'No events near me.'); break;
@@ -1017,14 +1017,14 @@ class ExplorePanelState extends State<ExplorePanel>
     return Center(child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(message!, textAlign: TextAlign.center,),
+        Text(message, textAlign: TextAlign.center,),
         Expanded(child: Container(), flex: 3),
       ]),
     );
   }
 
   Widget _buildOffline() {
-    String? message;
+    String message;
     switch (_selectedTab) {
       case ExploreTab.All:    message = Localization().getStringEx('panel.explore.state.offline.empty.all', 'No events available while offline.'); break;
       case ExploreTab.NearMe: message = Localization().getStringEx('panel.explore.state.offline.empty.near_me', 'No events near me available while offline.'); break;
@@ -1035,9 +1035,9 @@ class ExplorePanelState extends State<ExplorePanel>
     return Center(child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline")!, style: TextStyle(fontSize: 16),),
+        Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 16),),
         Container(height:8),
-        Text(message!),
+        Text(message),
         Expanded(child: Container(), flex: 3),
       ],),);
   }

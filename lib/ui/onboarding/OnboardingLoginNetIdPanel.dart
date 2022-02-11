@@ -46,7 +46,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
 
   @override
   Widget build(BuildContext context) {
-    String titleString = Localization().getStringEx('panel.onboarding.login.netid.label.title', 'Connect your NetID')!;
+    String titleString = Localization().getStringEx('panel.onboarding.login.netid.label.title', 'Connect your NetID');
     String? skipTitle = Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.title', 'Not right now');
     return Scaffold(
         backgroundColor: Styles().colors!.background,
@@ -93,7 +93,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
                   ),
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 32),
-                      child: Text(Localization().getStringEx('panel.onboarding.login.netid.label.description', 'Log in with your NetID to use academic and residence hall specific features.')!,
+                      child: Text(Localization().getStringEx('panel.onboarding.login.netid.label.description', 'Log in with your NetID to use academic and residence hall specific features.'),
                           textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
                   Container(
                     height: 32,
@@ -106,7 +106,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 RoundedButton(
-                  label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign in with NetID')!,
+                  label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign in with NetID'),
                   hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
                   fontSize: 16,
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -186,13 +186,13 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx('app.title', 'Illinois')!,
+              Localization().getStringEx('app.title', 'Illinois'),
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
-                Localization().getStringEx('logic.general.login_failed', 'Unable to login. Please try again later.')!,
+                Localization().getStringEx('logic.general.login_failed', 'Unable to login. Please try again later.'),
                 textAlign: TextAlign.left,
                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
               ),
@@ -206,7 +206,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
                       Navigator.pop(context);
                       //_finish();
                     },
-                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')!))
+                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')))
               ],
             )
           ],

@@ -81,7 +81,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
       appBar: SimpleHeaderBarWithBack(
         context: context,
         backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.membership_request.label.request.title", 'Membership Questions')!,
+        titleWidget: Text(Localization().getStringEx("panel.membership_request.label.request.title", 'Membership Questions'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -109,7 +109,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
   }
 
   Widget _buildHeading() {
-    return Text(Localization().getStringEx("panel.membership_request.label.description", 'This group asks you to answer the following question(s) for membership consideration.')!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949)));
+    return Text(Localization().getStringEx("panel.membership_request.label.description", 'This group asks you to answer the following question(s) for membership consideration.'), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949)));
   }
 
   List<Widget> _buildQuestions() {
@@ -143,7 +143,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
         child: Stack(children: <Widget>[
           Row(children: <Widget>[
             Expanded(child: Container(),),
-            RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request')!,
+            RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request'),
               backgroundColor: Styles().colors!.white,
               textColor: Styles().colors!.fillColorPrimary,
               fontFamily: Styles().fontFamilies!.bold,
@@ -183,7 +183,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
           answers.add(GroupMembershipAnswer(question: question, answer: answer));
         }
         else {
-          AppAlert.showDialogResult(context,Localization().getStringEx("panel.membership_request.label.alert",  'Please answer ')!+ question!).then((_){
+          AppAlert.showDialogResult(context,Localization().getStringEx("panel.membership_request.label.alert",  'Please answer ')+ question!).then((_){
             focusNode.requestFocus();
           });
           return;

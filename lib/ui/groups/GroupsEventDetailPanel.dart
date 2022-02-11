@@ -240,7 +240,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   Widget _eventLocationDetail() {
     String? locationText = _event?.getLongDisplayLocation(null); //TBD decide if we need distance calculation - pass _locationData
     bool isVirtual = _event?.isVirtual ?? false;
-    String eventType = isVirtual? Localization().getStringEx('panel.groups_event_detail.label.online_event', "Online event")! : Localization().getStringEx('panel.groups_event_detail.label.in_person_event', "In-person event")!;
+    String eventType = isVirtual? Localization().getStringEx('panel.groups_event_detail.label.online_event', "Online event") : Localization().getStringEx('panel.groups_event_detail.label.in_person_event', "In-person event");
     bool hasEventUrl = StringUtils.isNotEmpty(_event?.location?.description);
     bool isOnlineUnderlined = isVirtual && hasEventUrl;
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
@@ -345,8 +345,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   Widget _eventPrivacyDetail() {
     String privacyText = _isPrivateGroupEvent
-        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')!
-        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event')!;
+        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')
+        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
     return Semantics(
         label: Localization().getStringEx('panel.explore_detail.label.privacy.title', 'Privacy'),
         value: privacyText,
@@ -368,7 +368,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     }
     List<Widget> contactList = [];
     contactList.add(Padding(
-        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:')!)));
+        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:'))));
     for (Contact? contact in widget.event!.contacts!) {
       String contactDetails = '';
       if (StringUtils.isNotEmpty(contact!.firstName)) {
@@ -429,7 +429,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         Expanded(child:
           Padding(padding: EdgeInsets.only(bottom: 6), child:
             RoundedButton(
-              label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website')!,
+              label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
               hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
               backgroundColor: hasRegistrationUrl ? Styles().colors!.background : Colors.white,
               borderColor: hasRegistrationUrl ? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorSecondary,
@@ -448,7 +448,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         Expanded(child:
         Padding(padding: EdgeInsets.only(bottom: 6), child:
           RoundedButton(
-            label: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.title', 'Register')!,
+            label: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.title', 'Register'),
             hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
             backgroundColor: Colors.white,
             borderColor: Styles().colors!.fillColorSecondary,
@@ -584,8 +584,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       return;
     }
 
-    String? title =  Localization().getStringEx('panel.groups_event_detail.label.options.add_event', "ADD EVENT");
-    String? description= Localization().getStringEx('panel.groups_event_detail.label.options.choose_group', "Choose a group you’re an admin for");
+    String title =  Localization().getStringEx('panel.groups_event_detail.label.options.add_event', "ADD EVENT");
+    String description= Localization().getStringEx('panel.groups_event_detail.label.options.choose_group', "Choose a group you’re an admin for");
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -615,14 +615,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           excludeSemantics: true,
                           child:
                           Text(
-                            title!,
+                            title,
                             style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),
                           ),
                         ),
                         Container(
                           padding: EdgeInsets.only(top: 2),
                           child: Text(
-                            description!,
+                            description,
                             style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
                           ),
                         )
@@ -643,7 +643,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                 ),
                 Container(height: 27,),
                 RoundedButton(
-                  label: Localization().getStringEx('panel.groups_event_detail.button.add.title', "ADD ")!,
+                  label: Localization().getStringEx('panel.groups_event_detail.button.add.title', "ADD "),
                   backgroundColor: Colors.white,
                   borderColor: Styles().colors!.fillColorSecondary,
                   textColor: Styles().colors!.fillColorPrimary,
@@ -653,7 +653,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       if(_currentlySelectedGroup!=null) {
                         Log.d("Selected group: $_currentlySelectedGroup");
                         AppToast.show(
-                            Localization().getStringEx('panel.groups_event_detail.label.link_result',  "Event has been linked to")! + (_currentlySelectedGroup?.title ?? ""));
+                            Localization().getStringEx('panel.groups_event_detail.label.link_result',  "Event has been linked to") + (_currentlySelectedGroup?.title ?? ""));
                         Groups().linkEventToGroup(groupId:_currentlySelectedGroup!.id,eventId: _event?.id);
                       }
                     });

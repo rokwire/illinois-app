@@ -87,22 +87,22 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   @override
   Widget build(BuildContext context) {
     String title = (_state == Auth2EmailAccountState.nonExistent) ?
-      Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign up with email')! :
-      Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign in with email')!;
+      Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign up with email') :
+      Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign in with email');
 
     String description = (_state == Auth2EmailAccountState.nonExistent) ?
-      Localization().getStringEx('panel.onboarding2.email.sign_up.description.text', 'Please enter a password to create a new account for your email.')! :
-      Localization().getStringEx('panel.onboarding2.email.sign_in.description.text', 'Please enter your password to sign in with your email.')!;
+      Localization().getStringEx('panel.onboarding2.email.sign_up.description.text', 'Please enter a password to create a new account for your email.') :
+      Localization().getStringEx('panel.onboarding2.email.sign_in.description.text', 'Please enter your password to sign in with your email.');
 
     String showPassword = (_state == Auth2EmailAccountState.nonExistent) ?
-      Localization().getStringEx("panel.onboarding2.email.label.show_passwords.text", "Show Passwords")! :
-      Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password")!;
+      Localization().getStringEx("panel.onboarding2.email.label.show_passwords.text", "Show Passwords") :
+      Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password");
 
-    String? buttonTitle = (_state == Auth2EmailAccountState.nonExistent) ?
+    String buttonTitle = (_state == Auth2EmailAccountState.nonExistent) ?
       Localization().getStringEx('panel.onboarding2.email.button.sign_up.text', 'Sign Up') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.text', 'Sign In');
 
-    String? buttonHint = (_state == Auth2EmailAccountState.nonExistent) ?
+    String buttonHint = (_state == Auth2EmailAccountState.nonExistent) ?
       Localization().getStringEx('panel.onboarding2.email.button.sign_up.hint', '') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.hint', '');
 
@@ -126,7 +126,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                       Text(description, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary)),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
-                      Text(Localization().getStringEx("panel.onboarding2.email.label.email.text", "Email Address:")!, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
+                      Text(Localization().getStringEx("panel.onboarding2.email.label.email.text", "Email Address:"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12), child:
                       Semantics(
@@ -155,7 +155,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                     ),
 
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
-                      Text(Localization().getStringEx("panel.onboarding2.email.label.password.text", "Password:")!, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
+                      Text(Localization().getStringEx("panel.onboarding2.email.label.password.text", "Password:"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12), child:
                       Semantics(
@@ -187,7 +187,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
                     Visibility(visible: (_state == Auth2EmailAccountState.nonExistent), child:
                       Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
-                        Text(Localization().getStringEx("panel.onboarding2.email.label.confirm_password.text", "Confirm Password:")!, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
+                        Text(Localization().getStringEx("panel.onboarding2.email.label.confirm_password.text", "Confirm Password:"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
                       ),
                     ),
                     Visibility(visible: (_state == Auth2EmailAccountState.nonExistent), child:
@@ -241,8 +241,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                               Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12), child:
                                 Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end, children: [
                                   (_state == Auth2EmailAccountState.unverified) ?
-                                    Text(Localization().getStringEx("panel.onboarding2.email.label.resend_email.text", "Resend Verification")!, textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies!.bold, decoration: TextDecoration.underline),) :
-                                    Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?")!, textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies!.bold, decoration: TextDecoration.underline),),
+                                    Text(Localization().getStringEx("panel.onboarding2.email.label.resend_email.text", "Resend Verification"), textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies!.bold, decoration: TextDecoration.underline),) :
+                                    Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?"), textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies!.bold, decoration: TextDecoration.underline),),
                                 ],)
                               ),
                             ),
@@ -264,7 +264,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
             
             Padding(padding: EdgeInsets.only(left: 24, right: 24, bottom: 8), child:
               RoundedButton(
-                label: buttonTitle ?? '',
+                label: buttonTitle,
                 hint: buttonHint,
                 borderColor: Styles().colors!.fillColorSecondary,
                 backgroundColor: Styles().colors!.background,

@@ -70,7 +70,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx('panel.canvas_calendar.header.title', 'Calendar')!,
+        titleWidget: Text(Localization().getStringEx('panel.canvas_calendar.header.title', 'Calendar'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -131,7 +131,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(
                 Localization()
-                    .getStringEx('panel.canvas_calendar.load.failed.error.msg', 'Failed to load events. Please, try again later.')!,
+                    .getStringEx('panel.canvas_calendar.load.failed.error.msg', 'Failed to load events. Please, try again later.'),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
@@ -140,7 +140,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
     return Center(
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
-            child: Text(Localization().getStringEx('panel.canvas_calendar.empty.msg', 'There are no events today.')!,
+            child: Text(Localization().getStringEx('panel.canvas_calendar.empty.msg', 'There are no events today.'),
                 textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 

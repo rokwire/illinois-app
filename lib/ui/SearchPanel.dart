@@ -60,7 +60,7 @@ class _SearchPanelState extends State<SearchPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.search.header.title", "Search")!,
+        titleWidget: Text(Localization().getStringEx("panel.search.header.title", "Search"),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -190,7 +190,7 @@ class _SearchPanelState extends State<SearchPanel> {
     else if (_resultsCount == 1)
       return Localization().getStringEx('panel.search.label.found_single', '1 result found');
     else if (_resultsCount > 1)
-      return sprintf(Localization().getStringEx('panel.search.label.found_multi', '%d results found')!, [_resultsCount]);
+      return sprintf(Localization().getStringEx('panel.search.label.found_multi', '%d results found'), [_resultsCount]);
     else
       return "";
   }
@@ -269,7 +269,7 @@ class _SearchPanelState extends State<SearchPanel> {
     _events = events;
     _resultsCount = _events?.length ?? 0;
     _resultsCountLabelVisible = true;
-    _searchLabel = Localization().getStringEx('panel.search.label.results_for', 'Results for ')! + _textEditingController.text;
+    _searchLabel = Localization().getStringEx('panel.search.label.results_for', 'Results for ') + _textEditingController.text;
     _setLoading(false);
   }
 

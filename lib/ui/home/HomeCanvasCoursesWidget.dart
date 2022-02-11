@@ -89,7 +89,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
                         excludeFromSemantics: true,
                       )),
                   Expanded(
-                      child: Text(Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses')!,
+                      child: Text(Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses'),
                           style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20)))
                 ]))));
   }

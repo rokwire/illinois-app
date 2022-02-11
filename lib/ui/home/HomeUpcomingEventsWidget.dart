@@ -274,7 +274,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
             child: RoundedButton(
                 label: Localization().getStringEx(
                     'widget.home_upcoming_events.button.more.title',
-                    'View all events')!,
+                    'View all events'),
                 hint: Localization().getStringEx(
                     'widget.home_upcoming_events.button.more.hint', ''),
                 borderColor: Styles().colors!.fillColorSecondary,

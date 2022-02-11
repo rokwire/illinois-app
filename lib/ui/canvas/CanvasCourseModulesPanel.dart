@@ -49,7 +49,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
           context: context,
-          titleWidget: Text(Localization().getStringEx('panel.canvas_modules.header.title', 'Modules')!,
+          titleWidget: Text(Localization().getStringEx('panel.canvas_modules.header.title', 'Modules'),
               style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0))),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
@@ -82,7 +82,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(
                 Localization()
-                    .getStringEx('panel.canvas_modules.load.failed.error.msg', 'Failed to load modules. Please, try again later.')!,
+                    .getStringEx('panel.canvas_modules.load.failed.error.msg', 'Failed to load modules. Please, try again later.'),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
@@ -91,7 +91,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
     return Center(
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
-            child: Text(Localization().getStringEx('panel.canvas_modules.empty.msg', 'There are no modules for this course.')!,
+            child: Text(Localization().getStringEx('panel.canvas_modules.empty.msg', 'There are no modules for this course.'),
                 textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 

@@ -162,7 +162,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                 Text(
                   Localization().getStringEx(
                       "widget.athletics_teams.label.men_sports.title",
-                      "MEN'S SPORTS")!,
+                      "MEN'S SPORTS"),
                   textAlign: TextAlign.left,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -177,8 +177,8 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                     'widget.athletics_teams.men_sports.title.checkmark',
                     'Tap to select or deselect all men sports'),
                 value: (allMenSelected?Localization().getStringEx("toggle_button.status.checked", "checked",) :
-                Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
-                    ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
+                Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
+                    ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
                 child: GestureDetector(
                   onTap: () {
                     Analytics().logSelect(target: "Sport Label Tap: MEN'S SPORTS");
@@ -187,7 +187,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                     Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_menSports, _preferredSports, !allMenSelected));
                   },
                   child: Row(children: <Widget>[
-                    Text(Localization().getStringEx(menSelectClearTextKey, '')!,
+                    Text(Localization().getStringEx(menSelectClearTextKey, ''),
                       style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies!.medium),), Padding(padding: EdgeInsets.symmetric(horizontal: 8),child: Image.asset(menSelectClearImageKey),)
                   ],),),),)
           ],
@@ -221,7 +221,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                 Text(
                   Localization().getStringEx(
                       "widget.athletics_teams.label.women_sports.title",
-                      "WOMEN'S SPORTS")!,
+                      "WOMEN'S SPORTS"),
                   textAlign: TextAlign.left,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -236,8 +236,8 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                     'widget.athletics_teams.women_sports.title.checkmark',
                     'Tap to select or deselect all women sports'),
                 value: (allWomenSelected?Localization().getStringEx("toggle_button.status.checked", "checked",) :
-                Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
-                    ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
+                Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
+                    ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
                 child: GestureDetector(
                   onTap: () {
                     Analytics().logSelect(target: "Sport Label Tap: WOMEN'S SPORTS");
@@ -246,7 +246,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                     Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_womenSports, _preferredSports, !allWomenSelected));
                   },
                   child: Row(children: <Widget>[
-                    Text(Localization().getStringEx(womenSelectClearTextKey, '')!,
+                    Text(Localization().getStringEx(womenSelectClearTextKey, ''),
                       style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies!.medium),), Padding(padding: EdgeInsets.symmetric(horizontal: 8),
                       child: Image.asset(womenSelectClearImageKey),)
                   ],),),),)

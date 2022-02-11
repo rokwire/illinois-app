@@ -96,7 +96,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx('panel.athletics_team.header.title', 'Team')!,
+          Localization().getStringEx('panel.athletics_team.header.title', 'Team'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -128,7 +128,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
       twitterUrl = '${Config().twitterHostUrl}$twitterName';
     }
 
-    String followLabel = Localization().getStringEx("panel.athletics_team.label.follow.title", "Follow")! + " ${widget.sport?.name}";
+    String followLabel = Localization().getStringEx("panel.athletics_team.label.follow.title", "Follow") + " ${widget.sport?.name}";
     String randomImageURL = Assets().randomStringFromListWithKey('images.random.sports.$sportShortName') ?? '';
     return SingleChildScrollView(
       child: Container(
@@ -197,7 +197,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                   children: <Widget>[
                     Expanded(child:
                     Text(
-                      Localization().getStringEx("panel.athletics_team.label.record.title", "Record")!,
+                      Localization().getStringEx("panel.athletics_team.label.record.title", "Record"),
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           color: Styles().colors!.fillColorPrimary,
@@ -301,7 +301,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                               child: Image.asset('images/icon-schedule.png', excludeFromSemantics: true),
                             ),
                             Text(
-                              Localization().getStringEx("panel.athletics_team.label.schedule.title", 'Schedule')!,
+                              Localization().getStringEx("panel.athletics_team.label.schedule.title", 'Schedule'),
                               style:
                               TextStyle(color: Colors.white, fontSize: 20),
                             )
@@ -336,7 +336,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     Padding(
                       padding: EdgeInsets.only(bottom: 48, left: 10, right: 10),
                       child: RoundedButton(
-                        label: Localization().getStringEx("panel.athletics_team.button.full_schedule.title", 'Full Schedule')!,
+                        label: Localization().getStringEx("panel.athletics_team.button.full_schedule.title", 'Full Schedule'),
                         hint: Localization().getStringEx("panel.athletics_team.button.full_schedule.hint", ''),
                         onTap: _showScheduleListPanel(),
                         textColor: Styles().colors!.fillColorPrimary,
@@ -385,7 +385,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                                 child: Image.asset('images/icon-news.png', excludeFromSemantics: true),
                               ),
                               Text(
-                                Localization().getStringEx("panel.athletics_team.button.news.title", 'News')!,
+                                Localization().getStringEx("panel.athletics_team.button.news.title", 'News'),
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 20),
                               )
@@ -410,7 +410,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       Expanded(
                         flex: 5,
                         child: RoundedButton(
-                          label: Localization().getStringEx("panel.athletics_team.button.all_news.title", 'All News')!,
+                          label: Localization().getStringEx("panel.athletics_team.button.all_news.title", 'All News'),
                           hint: Localization().getStringEx("panel.athletics_team.button.all_news.hint", ''),
                           onTap: () {
                             Analytics().logSelect(target:"All News");
@@ -445,7 +445,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     child: Padding(
                       padding: EdgeInsets.only(left: 16, top: 16),
                       child: Text(
-                        Localization().getStringEx("panel.athletics_team.label.team_roster.title", 'Team Roster')!,
+                        Localization().getStringEx("panel.athletics_team.label.team_roster.title", 'Team Roster'),
                         style: TextStyle(
                             color: Styles().colors!.fillColorPrimary, fontSize: 20),
                       ),
@@ -476,7 +476,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                   Expanded(
                     flex: 5,
                     child: RoundedButton(
-                      label: Localization().getStringEx("panel.athletics_team.button.full_roster.title", 'Full Roster')!,
+                      label: Localization().getStringEx("panel.athletics_team.button.full_roster.title", 'Full Roster'),
                       hint: Localization().getStringEx("panel.athletics_team.button.full_roster.hint", ''),
                       onTap: _showRosterListPanel(),
                       textColor: Styles().colors!.fillColorPrimary,
@@ -503,7 +503,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     child: Padding(
                       padding: EdgeInsets.only(left: 16, top: 16),
                       child: Text(
-                        Localization().getStringEx("panel.athletics_team.label.coaching_staff.title", 'Coaching Staff')!,
+                        Localization().getStringEx("panel.athletics_team.label.coaching_staff.title", 'Coaching Staff'),
                         style: TextStyle(
                             color: Styles().colors!.fillColorPrimary,
                             fontSize: 20,
@@ -537,7 +537,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     Expanded(
                       flex: 5,
                       child: RoundedButton(
-                        label: Localization().getStringEx("panel.athletics_team.button.all_staff.title", 'All Staff')!,
+                        label: Localization().getStringEx("panel.athletics_team.button.all_staff.title", 'All Staff'),
                         hint: Localization().getStringEx("panel.athletics_team.button.all_staff.hint", ''),
                         onTap:_showCoachListPanel(),
                         textColor: Styles().colors!.fillColorPrimary,

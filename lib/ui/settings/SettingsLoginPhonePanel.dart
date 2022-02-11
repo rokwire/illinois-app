@@ -45,8 +45,8 @@ class _SettingsLoginPhonePanelState extends State<SettingsLoginPhonePanel> {
 
   @override
   Widget build(BuildContext context) {
-    String titleString = Localization().getStringEx('panel.settings.login.phone.label.title', 'Verify your phone number')!;
-    String skipTitle = Localization().getStringEx('panel.settings.login.phone.button.dont_continue.title', 'Not right now')!;
+    String titleString = Localization().getStringEx('panel.settings.login.phone.label.title', 'Verify your phone number');
+    String skipTitle = Localization().getStringEx('panel.settings.login.phone.button.dont_continue.title', 'Not right now');
     return Scaffold(
         backgroundColor: Styles().colors!.background,
         body: Stack(
@@ -89,7 +89,7 @@ class _SettingsLoginPhonePanelState extends State<SettingsLoginPhonePanel> {
                 ),
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Text(Localization().getStringEx('panel.settings.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.')!,
+                    child: Text(Localization().getStringEx('panel.settings.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.'),
                         textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
                 Container(
                   height: 32,
@@ -102,7 +102,7 @@ class _SettingsLoginPhonePanelState extends State<SettingsLoginPhonePanel> {
                   child: Padding(
                     padding: EdgeInsets.all(24),
                     child: RoundedButton(
-                        label: Localization().getStringEx('panel.settings.login.phone.button.continue.title', 'Verify My Phone Number')!,
+                        label: Localization().getStringEx('panel.settings.login.phone.button.continue.title', 'Verify My Phone Number'),
                         hint: Localization().getStringEx('panel.settings.login.phone.button.continue.hint', ''),
                         borderColor: Styles().colors!.fillColorSecondary,
                         backgroundColor: Styles().colors!.background,

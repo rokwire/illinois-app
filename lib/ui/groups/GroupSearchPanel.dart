@@ -51,7 +51,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.groups_search.header.title", "Search")!,
+        titleWidget: Text(Localization().getStringEx("panel.groups_search.header.title", "Search"),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -208,7 +208,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     } else if (_resultsCount == 1) {
       return Localization().getStringEx('panel.groups_search.label.found_single', '1 result found');
     } else if (_resultsCount > 1) {
-      return sprintf(Localization().getStringEx('panel.groups_search.label.found_multi', '%d results found')!, [_resultsCount]);
+      return sprintf(Localization().getStringEx('panel.groups_search.label.found_multi', '%d results found'), [_resultsCount]);
     } else {
       return "";
     }
@@ -232,7 +232,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
       _groups = groups;
       _resultsCount = _groups?.length ?? 0;
       _resultsCountLabelVisible = true;
-      _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ')! + _searchController.text;
+      _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ') + _searchController.text;
       _setLoading(false);
     });
   }

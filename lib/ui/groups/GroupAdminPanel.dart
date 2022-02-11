@@ -71,7 +71,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
       appBar: SimpleHeaderBarWithBack(
         context: context,
         backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.groups_admin.header.title", "Admin view")!,
+        titleWidget: Text(Localization().getStringEx("panel.groups_admin.header.title", "Admin view"),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -100,7 +100,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
   }
 
   Widget _buildHeading(){
-    String? members;
+    String members;
     int membersCount = widget.group?.membersCount ?? 0;
     if (membersCount == 0) {
       members = Localization().getStringEx("panel.groups_admin.members.count.empty", "No Current Members");
@@ -109,7 +109,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
       members = Localization().getStringEx("panel.groups_admin.members.count.one", "1 Current Member");
     }
     else {
-      members = sprintf(Localization().getStringEx("panel.groups_admin.members.count.format", "%s Current Members")!,[membersCount]);
+      members = sprintf(Localization().getStringEx("panel.groups_admin.members.count.format", "%s Current Members"),[membersCount]);
     }
 
     return Container(
@@ -146,7 +146,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
             ),
           ),
           Container(height: 8,),
-          Text(members!,
+          Text(members,
             style: TextStyle(
               fontFamily: Styles().fontFamilies!.bold,
               fontSize: 16,
@@ -234,7 +234,7 @@ class _NoUpcomingEvents extends StatelessWidget{
       child: Column(
         children: <Widget>[
           Text(
-            Localization().getStringEx("panel.groups_admin.label.no_upcoming_events", "No upcoming events")!,
+            Localization().getStringEx("panel.groups_admin.label.no_upcoming_events", "No upcoming events"),
             style: TextStyle(
               color: Styles().colors!.textBackground,
               fontSize: 20,
@@ -243,7 +243,7 @@ class _NoUpcomingEvents extends StatelessWidget{
           ),
           Container(height: 10,),
           Text(
-            Localization().getStringEx("panel.groups_admin.label.create_new_event", "Create a new event or share an existing event with your members. ")!,
+            Localization().getStringEx("panel.groups_admin.label.create_new_event", "Create a new event or share an existing event with your members. "),
             style: TextStyle(
               color: Styles().colors!.textBackground,
               fontSize: 16,
@@ -255,7 +255,7 @@ class _NoUpcomingEvents extends StatelessWidget{
             children: <Widget>[
               Expanded(
                 child: RoundedButton(
-                  label: Localization().getStringEx("panel.groups_admin.button.find_existing.title", "Find existing")!,
+                  label: Localization().getStringEx("panel.groups_admin.button.find_existing.title", "Find existing"),
                   hint: Localization().getStringEx("panel.groups_admin.button.find_existing.hint", ""),
                   textColor: Styles().colors!.fillColorPrimary,
                   backgroundColor: Styles().colors!.white,
@@ -267,7 +267,7 @@ class _NoUpcomingEvents extends StatelessWidget{
               Container(width: 10,),
               Expanded(
                 child: RoundedButton(
-                  label: Localization().getStringEx("panel.groups_admin.button.create_event.title", "Create")!,
+                  label: Localization().getStringEx("panel.groups_admin.button.create_event.title", "Create"),
                   hint: Localization().getStringEx("panel.groups_admin.button.create_event.hint", ""),
                   textColor: Styles().colors!.fillColorPrimary,
                   backgroundColor: Styles().colors!.white,
@@ -426,7 +426,7 @@ class _EventCard extends StatelessWidget {
                   borderRadius: BorderRadius.all(Radius.circular(8))
               ),
               child:
-                Text(Localization().getStringEx("panel.groups_admin.button.post.text","Post about this event...")!,style: TextStyle(fontFamily: 'ProximaNovaExtraRegular', fontSize: 14, color: Styles().colors!.textBackground),)
+                Text(Localization().getStringEx("panel.groups_admin.button.post.text","Post about this event..."),style: TextStyle(fontFamily: 'ProximaNovaExtraRegular', fontSize: 14, color: Styles().colors!.textBackground),)
             ))
           ],),
       ));
@@ -449,7 +449,7 @@ class _EventCard extends StatelessWidget {
                       children: <Widget>[
                         Expanded(child: Container()),
                         RoundedButton(
-                          label:Localization().getStringEx("panel.groups_admin.button.delete.title", "Delete")!,
+                          label:Localization().getStringEx("panel.groups_admin.button.delete.title", "Delete"),
                           backgroundColor: Styles().colors!.white,
                           borderColor: Styles().colors!.fillColorPrimary,
                           textColor: Styles().colors!.fillColorPrimary,
@@ -464,7 +464,7 @@ class _EventCard extends StatelessWidget {
                         ),
                         Container(height: 8,),
                         RoundedButton(
-                          label:Localization().getStringEx("panel.groups_admin.button.edit.title", "Edit")!,
+                          label:Localization().getStringEx("panel.groups_admin.button.edit.title", "Edit"),
                           backgroundColor: Styles().colors!.white,
                           borderColor: Styles().colors!.fillColorPrimary,
                           textColor: Styles().colors!.fillColorPrimary,
@@ -489,7 +489,7 @@ class _EventCard extends StatelessWidget {
                         ),
                         Container(height: 8,),
                         RoundedButton(
-                          label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel")!,
+                          label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel"),
                           backgroundColor: Styles().colors!.white,
                           borderColor: Styles().colors!.fillColorSecondary,
                           textColor: Styles().colors!.fillColorPrimary,
@@ -530,7 +530,7 @@ class _EventCard extends StatelessWidget {
                           Expanded(child: Container()),
                           Container(height: 8,),
                           RoundedButton(
-                            label: Localization().getStringEx("panel.groups_admin.button.remove.title", "Remove event")!,
+                            label: Localization().getStringEx("panel.groups_admin.button.remove.title", "Remove event"),
                             backgroundColor: Styles().colors!.white,
                             borderColor: Styles().colors!.fillColorPrimary,
                             textColor: Styles().colors!.fillColorPrimary,
@@ -546,7 +546,7 @@ class _EventCard extends StatelessWidget {
                           ),
                           Container(height: 8,),
                           RoundedButton(
-                            label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel")!,
+                            label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel"),
                             backgroundColor: Styles().colors!.white,
                             borderColor: Styles().colors!.fillColorSecondary,
                             textColor: Styles().colors!.fillColorPrimary,

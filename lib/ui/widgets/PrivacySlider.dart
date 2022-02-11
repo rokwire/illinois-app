@@ -66,9 +66,9 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                             child: Semantics(
                                 label: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.hint", "Privacy Level"),
                                 enabled: true,
-                                increasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.increase", "increased to")! +
+                                increasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.increase", "increased to") +
                                     (roundedValue + 1).toString(),
-                                decreasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.decrease", "decreased to")! +
+                                decreasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.decrease", "decreased to") +
                                     (roundedValue - 1).toString(),
                                 child:
                                 Padding(

@@ -34,7 +34,7 @@ class SettingsNotificationsPreferencesPanel extends StatelessWidget{
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx("panel.settings.notification_prefferences.label.title", "Notifications Preferences")!,
+          Localization().getStringEx("panel.settings.notification_prefferences.label.title", "Notifications Preferences"),
           style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
         ),
       ),

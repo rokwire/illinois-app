@@ -81,19 +81,19 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                       header: true,
                       child: Padding(padding: EdgeInsets.symmetric(horizontal: 36), child:
                         Text(_link ?
-                          Localization().getStringEx('panel.onboarding2.phone_or_email.link.title.text', 'Link a phone or email')! :
-                          Localization().getStringEx('panel.onboarding2.phone_or_email.title.text', 'Login by phone or email')!,
+                          Localization().getStringEx('panel.onboarding2.phone_or_email.link.title.text', 'Link a phone or email') :
+                          Localization().getStringEx('panel.onboarding2.phone_or_email.title.text', 'Login by phone or email'),
                           textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary))
                     )),
                     Container(height: 24,),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
                       Text(_link ?
-                        Localization().getStringEx("panel.onboarding2.phone_or_email.link.description", "Please enter the phone number or email address you wish to link to your account.")! :
-                        Localization().getStringEx("panel.onboarding2.phone_or_email.description", "Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email.")!,
+                        Localization().getStringEx("panel.onboarding2.phone_or_email.link.description", "Please enter the phone number or email address you wish to link to your account.") :
+                        Localization().getStringEx("panel.onboarding2.phone_or_email.description", "Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email."),
                         textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary)),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
-                      Text(Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.text", "Phone number or email address:")!, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
+                      Text(Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.text", "Phone number or email address:"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
                       Semantics(
@@ -133,7 +133,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
             
             Padding(padding: EdgeInsets.only(left: 24, right: 24, bottom: 8), child:
               RoundedButton(
-                label: Localization().getStringEx("panel.onboarding2.phone_or_email.next.text", "Next")!,
+                label: Localization().getStringEx("panel.onboarding2.phone_or_email.next.text", "Next"),
                 hint: Localization().getStringEx("panel.onboarding2.phone_or_email.next.hint", ""),
                 borderColor: Styles().colors!.fillColorSecondary,
                 backgroundColor: Styles().colors!.background,

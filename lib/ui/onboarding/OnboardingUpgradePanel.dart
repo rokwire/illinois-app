@@ -47,14 +47,14 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
     String? title, message;
     if (widget.requiredVersion != null) {
       title = Localization().getStringEx('panel.onboarding.upgrade.required.label.title', 'Upgrade Required');
-      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.required.label.description', '%s app version %s requires an upgrade to version %s or later.')!, [appName, appVersion, widget.requiredVersion])
+      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.required.label.description', '%s app version %s requires an upgrade to version %s or later.'), [appName, appVersion, widget.requiredVersion])
       ;
     } else if (widget.availableVersion != null) {
       title = Localization().getStringEx('panel.onboarding.upgrade.available.label.title', 'Upgrade Available');
-      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.available.label.description', '%s app version %s has newer version %s available.')!, [appName, appVersion, widget.availableVersion]);
+      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.available.label.description', '%s app version %s has newer version %s available.'), [appName, appVersion, widget.availableVersion]);
     }
-    String? notNow = Localization().getStringEx('panel.onboarding.upgrade.button.not_now.title', 'Not right now');
-    String? dontShow = Localization().getStringEx('panel.onboarding.upgrade.button.dont_show.title', 'Don\'t show again');
+    String notNow = Localization().getStringEx('panel.onboarding.upgrade.button.not_now.title', 'Not right now');
+    String dontShow = Localization().getStringEx('panel.onboarding.upgrade.button.dont_show.title', 'Don\'t show again');
     bool canSkip = (widget.requiredVersion == null);
 
     return Scaffold(
@@ -103,7 +103,7 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   RoundedButton(
-                    label: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.title', 'Upgrade')!,
+                    label: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.title', 'Upgrade'),
                     hint: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.hint', ''),
                     textColor: Styles().colors!.white,
                     borderColor: Styles().colors!.fillColorSecondary,
@@ -124,7 +124,7 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                                       padding:
                                           EdgeInsets.symmetric(vertical: 20),
                                       child: Text(
-                                        dontShow!,
+                                        dontShow,
                                         style: TextStyle(
                                             fontFamily: Styles().fontFamilies!.medium,
                                             fontSize: 16,
@@ -150,7 +150,7 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                                       padding:
                                           EdgeInsets.symmetric(vertical: 20),
                                       child: Text(
-                                        notNow!,
+                                        notNow,
                                         style: TextStyle(
                                             fontFamily: Styles().fontFamilies!.medium,
                                             fontSize: 16,

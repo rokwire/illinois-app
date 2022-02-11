@@ -84,7 +84,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(
                 Localization().getStringEx(
-                    'panel.canvas_module_detail.load.failed.error.msg', 'Failed to load module items. Please, try again later.')!,
+                    'panel.canvas_module_detail.load.failed.error.msg', 'Failed to load module items. Please, try again later.'),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
@@ -93,7 +93,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
     return Center(
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
-            child: Text(Localization().getStringEx('panel.canvas_module_detail.empty.msg', 'There are no module items.')!,
+            child: Text(Localization().getStringEx('panel.canvas_module_detail.empty.msg', 'There are no module items.'),
                 textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 

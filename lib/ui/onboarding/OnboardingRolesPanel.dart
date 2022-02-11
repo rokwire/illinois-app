@@ -61,15 +61,15 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
               }),
             Expanded(child: Column(children: <Widget>[
               Semantics(
-                label: Localization().getStringEx('panel.onboarding.roles.label.title', 'Who are you?')!.toLowerCase(),
-                hint: Localization().getStringEx('panel.onboarding.roles.label.title.hint', 'Header 1')!.toLowerCase(),
+                label: Localization().getStringEx('panel.onboarding.roles.label.title', 'Who are you?').toLowerCase(),
+                hint: Localization().getStringEx('panel.onboarding.roles.label.title.hint', 'Header 1').toLowerCase(),
                 excludeSemantics: true,
-                child: Text(Localization().getStringEx('panel.onboarding.roles.label.title', 'Who are you?')!,
+                child: Text(Localization().getStringEx('panel.onboarding.roles.label.title', 'Who are you?'),
                   style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24, color: Styles().colors!.fillColorPrimary),
                 ),
               ),
               Padding(padding: EdgeInsets.only(top: 8),
-                child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Select all that apply')!,
+                child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Select all that apply'),
                   style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),
                 ),
               )
@@ -84,7 +84,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
 
         Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 20), child:
           RoundedButton(
-            label: Localization().getStringEx('panel.onboarding.roles.button.continue.title', 'Explore Illinois')!,
+            label: Localization().getStringEx('panel.onboarding.roles.button.continue.title', 'Explore Illinois'),
             hint: Localization().getStringEx('panel.onboarding.roles.button.continue.hint', ''),
             enabled: _allowNext,
             backgroundColor: (Styles().colors!.background),

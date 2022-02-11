@@ -65,7 +65,7 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
           context: context,
-          titleWidget: Text(Localization().getStringEx('panel.canvas_calendar_event.header.title', 'Calendar Event')!,
+          titleWidget: Text(Localization().getStringEx('panel.canvas_calendar_event.header.title', 'Calendar Event'),
               style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0))),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
@@ -93,7 +93,7 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
                 Localization()
-                    .getStringEx('panel.canvas_calendar_event.load.failed.error.msg', 'Failed to load event. Please, try again later.')!,
+                    .getStringEx('panel.canvas_calendar_event.load.failed.error.msg', 'Failed to load event. Please, try again later.'),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
@@ -145,7 +145,7 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
               Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(Localization().getStringEx('panel.canvas_calendar_event.calendar.label', 'Calendar:')!,
+                    Text(Localization().getStringEx('panel.canvas_calendar_event.calendar.label', 'Calendar:'),
                         style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
                     Expanded(
                         child: Padding(
@@ -159,7 +159,7 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
               Padding(
                   padding: EdgeInsets.only(top: 20),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(Localization().getStringEx('panel.canvas_calendar_event.date_time.label', 'Date & Time:')!,
+                    Text(Localization().getStringEx('panel.canvas_calendar_event.date_time.label', 'Date & Time:'),
                         style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
                     Expanded(
                         child: Padding(

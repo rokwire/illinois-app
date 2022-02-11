@@ -304,7 +304,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                               visible: showGetTickets,
                               child: Expanded(
                                 child: RoundedButton(
-                                  label: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.title', 'Get Tickets')!,
+                                  label: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.title', 'Get Tickets'),
                                   hint: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.hint', ''),
                                   backgroundColor: Colors.white,
                                   fontSize: 16.0,
@@ -322,7 +322,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                               visible: showParking,
                               child: Expanded(
                                 child: RoundedButton(
-                                    label: Localization().getStringEx('widget.game_detail_heading.button.parking.title', 'Parking')!,
+                                    label: Localization().getStringEx('widget.game_detail_heading.button.parking.title', 'Parking'),
                                     hint: Localization().getStringEx('widget.game_detail_heading.button.parking.hint', ''),
                                     backgroundColor: Colors.white,
                                     fontSize: 16.0,
@@ -341,7 +341,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                       Visibility(
                         visible: showGameDayGuide,
                         child: RoundedButton(
-                          label: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.title', 'Game Day Guide')!,
+                          label: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.title', 'Game Day Guide'),
                           hint: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.hint', ''),
                           backgroundColor: Colors.white,
                           fontSize: 16.0,
@@ -354,7 +354,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                       ),
                       Padding(padding: EdgeInsets.only(bottom: 6)),
                       RoundedButton(
-                        label: Localization().getStringEx('widget.game_detail_heading.button.roster.title', 'Roster')!,
+                        label: Localization().getStringEx('widget.game_detail_heading.button.roster.title', 'Roster'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.roster.hint', ''),
                         backgroundColor: Colors.white,
                         fontSize: 16.0,
@@ -861,7 +861,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     int period = _currentLiveGame!.period!;
     if (period <= 0) return "";
 
-    return _convertToOrdinal(period) + " " + Localization().getStringEx("widget.score.period.set", "Set")!;
+    return _convertToOrdinal(period) + " " + Localization().getStringEx("widget.score.period.set", "Set");
   }
 
   String _getHomeScore() {
@@ -1476,7 +1476,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),
-          child: Text(sprintf(Localization().getStringEx('widget.score.last_play', 'Last Play: %s')!, [lastPlay]), textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
+          child: Text(sprintf(Localization().getStringEx('widget.score.last_play', 'Last Play: %s'), [lastPlay]), textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
         ))
         : Container();
   }
@@ -1541,7 +1541,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
   String _getPeriod() {
     if (_currentLiveGame!.period! <= 0) return "";
 
-    return _convertToOrdinal(_currentLiveGame!.period) + " " + Localization().getStringEx("widget.score.period.quarter", "Quarter")!;
+    return _convertToOrdinal(_currentLiveGame!.period) + " " + Localization().getStringEx("widget.score.period.quarter", "Quarter");
   }
 }
 
@@ -1685,8 +1685,8 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
       return "";
     }
     String? shortName = widget._game!.sport!.shortName;
-    String periodName = (shortName == "mbball") ? Localization().getStringEx("widget.score.period.half", "Half")! : Localization().getStringEx(
-        "widget.score.period.quarter", "Quarter")!;
+    String periodName = (shortName == "mbball") ? Localization().getStringEx("widget.score.period.half", "Half") : Localization().getStringEx(
+        "widget.score.period.quarter", "Quarter");
     return _convertToOrdinal(_currentLiveGame!.period) + " " + periodName;
   }
 

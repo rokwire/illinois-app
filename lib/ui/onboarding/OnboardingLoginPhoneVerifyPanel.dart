@@ -73,7 +73,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                       child: Text(
                           Localization().getStringEx(
                               'panel.onboarding.verify_phone.title',
-                              'Connect to Illinois')!,
+                              'Connect to Illinois'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontFamily: Styles().fontFamilies!.bold,
@@ -87,7 +87,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                       child: Text(
                           Localization().getStringEx(
                               "panel.onboarding.verify_phone.description",
-                              "To verify your phone number, choose your preferred contact channel, and we'll send you a one-time authentication code.")!,
+                              "To verify your phone number, choose your preferred contact channel, and we'll send you a one-time authentication code."),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontFamily: Styles().fontFamilies!.regular,
@@ -98,7 +98,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                     child: Text(
                       Localization().getStringEx(
                           "panel.onboarding.verify_phone.phone_number.label",
-                          "Phone number")!,
+                          "Phone number"),
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           fontSize: 16,
@@ -165,7 +165,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                             Text(
                               Localization().getStringEx(
                                   "panel.onboarding.verify_phone.text_me.label",
-                                  "Text me")!,
+                                  "Text me"),
                               style: TextStyle(
                                   fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
                             ))
@@ -207,7 +207,7 @@ class _OnboardingLoginPhoneVerifyPanelState
             Padding(padding: EdgeInsets.only(left: 18, right: 18, bottom: 24),child: RoundedButton(
                 label: Localization().getStringEx(
                     "panel.onboarding.verify_phone.button.next.label",
-                    "Next")!,
+                    "Next"),
                 hint: Localization().getStringEx(
                     "panel.onboarding.verify_phone.button.next.hint", ""),
                 borderColor: Styles().colors!.fillColorSecondary,

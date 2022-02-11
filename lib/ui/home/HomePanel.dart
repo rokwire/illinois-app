@@ -331,7 +331,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Text(Localization().getStringEx(
-                    'headerbar.saved.title', 'Saved')!,
+                    'headerbar.saved.title', 'Saved'),
                     style: TextStyle(color: Colors.white,
                         fontSize: 16,
                         fontFamily: Styles().fontFamilies!.semiBold,

@@ -47,7 +47,7 @@ class _CanvasAccountNotificationsPanelState extends State<CanvasAccountNotificat
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx('panel.canvas_notifications.header.title', 'Account Notifications')!,
+        titleWidget: Text(Localization().getStringEx('panel.canvas_notifications.header.title', 'Account Notifications'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -82,13 +82,13 @@ class _CanvasAccountNotificationsPanelState extends State<CanvasAccountNotificat
 
   Widget _buildErrorContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_notifications.load.failed.error.msg', 'Failed to load account notifications. Please, try again later.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_notifications.load.failed.error.msg', 'Failed to load account notifications. Please, try again later.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
   Widget _buildEmptyContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_notifications.empty.msg', 'There are no account notifications.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_notifications.empty.msg', 'There are no account notifications.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 

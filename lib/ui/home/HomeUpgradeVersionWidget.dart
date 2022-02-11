@@ -48,7 +48,7 @@ class _HomeUpgradeVersionWidgetState extends State<HomeUpgradeVersionWidget> {
                       padding: EdgeInsets.only(top: 8, bottom: 16),
                       child: Text(
                         Localization().getStringEx('widget.home_upgrade_version.text',
-                            'Welcome to the latest version of Illinois. We recommend that you Sign out and then Sign in again to ensure that all features are available.')!,
+                            'Welcome to the latest version of Illinois. We recommend that you Sign out and then Sign in again to ensure that all features are available.'),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 10,
                         style: TextStyle(
@@ -61,7 +61,7 @@ class _HomeUpgradeVersionWidgetState extends State<HomeUpgradeVersionWidget> {
                     Row(
                       children: <Widget>[
                         RoundedButton(
-                          label: Localization().getStringEx('widget.home_upgrade_version.button.got_it', 'Got It')!,
+                          label: Localization().getStringEx('widget.home_upgrade_version.button.got_it', 'Got It'),
                           textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.fillColorSecondary,
                           backgroundColor: Styles().colors!.white,

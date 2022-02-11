@@ -110,7 +110,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                         color: Styles().colors!.fillColorPrimary
                     ),
                   ),
-                  Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ")!+(AppDateTime().formatDateTime(widget.member?.dateCreatedUtc?.toLocal(), format: "MMM dd, yyyy")??""),
+                  Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ")+(AppDateTime().formatDateTime(widget.member?.dateCreatedUtc?.toLocal(), format: "MMM dd, yyyy")??""),
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies!.regular,
                         fontSize: 14,
@@ -171,7 +171,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
             Row(children: [
               Image.asset("images/user-check.png"),
               Container(width: 8,),
-              Text(Localization().getStringEx("panel.pending_member_detail.label.approval", "Member approval")!,
+              Text(Localization().getStringEx("panel.pending_member_detail.label.approval", "Member approval"),
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies!.bold,
                     fontSize: 16,
@@ -222,7 +222,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 13),
                     child:
-                    Text(Localization().getStringEx("panel.pending_member_detail.deny.description", "If you choose not to accept this person, please provide a reason.")!,
+                    Text(Localization().getStringEx("panel.pending_member_detail.deny.description", "If you choose not to accept this person, please provide a reason."),
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies!.regular,
                           fontSize: 14,
@@ -308,7 +308,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
           Navigator.pop(context);
         }
         else {
-          AppAlert.showDialogResult(context, sprintf(Localization().getStringEx("panel.pending_member_detail.label.failed.hint", 'Failed to %s the membership request')!,[(_approved ? " accept " : " reject ")])); //TBD localize
+          AppAlert.showDialogResult(context, sprintf(Localization().getStringEx("panel.pending_member_detail.label.failed.hint", 'Failed to %s the membership request'),[(_approved ? " accept " : " reject ")])); //TBD localize
         }
       }
     });

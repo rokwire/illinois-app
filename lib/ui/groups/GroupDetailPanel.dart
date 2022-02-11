@@ -471,7 +471,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         Expanded(
           child: Center(
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 32),
-              child: Text(Localization().getStringEx("panel.group_detail.label.error_message", 'Failed to load group data.')!,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary),)
+              child: Text(Localization().getStringEx("panel.group_detail.label.error_message", 'Failed to load group data.'),  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary),)
             ),
           ),
         ),
@@ -561,7 +561,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildGroupInfo() {
     List<Widget> commands = [];
 
-    String? members;
+    String members;
     int membersCount = _group?.membersCount ?? 0;
     if (membersCount == 0) {
       members = Localization().getStringEx("panel.group_detail.members.count.empty", "No Current Members");
@@ -570,14 +570,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       members = Localization().getStringEx("panel.group_detail.members.count.one", "1 Current Member");
     }
     else {
-      members = sprintf(Localization().getStringEx("panel.group_detail.members.count.format", "%s Current Members")!,[membersCount]);
+      members = sprintf(Localization().getStringEx("panel.group_detail.members.count.format", "%s Current Members"),[membersCount]);
     }
 
     int pendingCount = _group?.pendingCount ?? 0;
-    String? pendingMembers;
+    String pendingMembers;
     if (_group!.currentUserIsAdmin && pendingCount > 0) {
       pendingMembers = pendingCount > 1 ?
-        sprintf(Localization().getStringEx("panel.group_detail.pending_members.count.format", "%s Pending Members")!, [pendingCount]) :
+        sprintf(Localization().getStringEx("panel.group_detail.pending_members.count.format", "%s Pending Members"), [pendingCount]) :
         Localization().getStringEx("panel.group_detail.pending_members.count.one", "1 Pending Member");
     }
     else {
@@ -704,12 +704,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 child: Text(_group?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32, color: Styles().colors!.fillColorPrimary),),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                child: Text(members!,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground, ),)
+                child: Text(members,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground, ),)
               ),
               Visibility(
                 visible: StringUtils.isNotEmpty(pendingMembers),
                 child: Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                    child: Text(pendingMembers!,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground, ),)
+                    child: Text(pendingMembers,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground, ),)
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4),
@@ -724,7 +724,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildTabs() {
     List<Widget> tabs = [];
     for (_DetailTab tab in _DetailTab.values) {
-      String? title;
+      String title;
       switch (tab) {
         case _DetailTab.Events:
           title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
@@ -749,7 +749,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
 
       Widget tabWidget = RoundedButton(
-          label: title ?? '',
+          label: title,
           backgroundColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.background,
           textColor: (isSelected ? Colors.white : Styles().colors!.fillColorPrimary),
           fontFamily: isSelected ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular,
@@ -767,7 +767,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         onTap: _onTapLeave,
         child: Padding(
             padding: EdgeInsets.only(left: 24, top: 10, bottom: 10),
-            child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave')!,
+            child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'),
                 style: TextStyle(
                     fontSize: 14,
                     fontFamily: Styles().fontFamilies!.regular,
@@ -797,7 +797,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content.add(Padding(
           padding: EdgeInsets.only(top: 16),
           child: RoundedButton(
-              label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events')!,
+              label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
               backgroundColor: Styles().colors!.white,
               textColor: Styles().colors!.fillColorPrimary,
               fontFamily: Styles().fontFamilies!.bold,
@@ -814,7 +814,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return Stack(children: [
       Column(children: <Widget>[
         SectionTitlePrimary(
-            title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events')! + ' ($_allEventsCount)',
+            title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') + ' ($_allEventsCount)',
             iconPath: 'images/icon-calendar.png',
             rightIconPath: _canAddEvent ? "images/icon-add-20x18.png" : null,
             rightIconAction: _canAddEvent ? _onTapEventOptions : null,
@@ -861,7 +861,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _visibleGroupPosts.length)) {
-      String? title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
+      String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
       listPadding = EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 16);
       postsContent.add(Container(padding: EdgeInsets.only(top: 16),
         child: Semantics(label: title, button: true, excludeSemantics: true,
@@ -870,7 +870,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 child: Align(alignment: Alignment.topCenter,
                   child: (_loadingPostsPage == true) ?
                   SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )) :
-                  Text(title!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16, decoration: TextDecoration.underline ),),
+                  Text(title, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16, decoration: TextDecoration.underline ),),
                 ),
               )
           )
@@ -905,7 +905,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         pollsContentList.add(Padding(
             padding: EdgeInsets.only(top: 16),
             child: RoundedButton(
-                label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls')!,
+                label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls'),
                 backgroundColor: Styles().colors!.white,
                 textColor: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.bold,
@@ -921,7 +921,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return Stack(key: _pollsKey, children: [
       Column(children: <Widget>[
         SectionTitlePrimary(
-            title: Localization().getStringEx('panel.group_detail.label.polls', 'Polls')!,
+            title: Localization().getStringEx('panel.group_detail.label.polls', 'Polls'),
             iconPath: 'images/icon-calendar.png',
             rightIconPath: _canCreatePoll? 'images/icon-add-20x18.png' : null,
             rightIconAction: _canCreatePoll? _onTapCreatePoll : null,
@@ -942,7 +942,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4), child:
-          Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us')!, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16, color: Color(0xff494949), ),),
+          Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16, color: Color(0xff494949), ),),
         ),
         ExpandableText(description, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground, ), trimLines: 4, iconColor: Styles().colors!.fillColorPrimary,),
       ],),);
@@ -1005,7 +1005,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(
                 padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                child: Text(Localization().getStringEx("panel.group_detail.label.admins", 'Admins')!,
+                child: Text(Localization().getStringEx("panel.group_detail.label.admins", 'Admins'),
                     style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
             SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: content))
           ]))
@@ -1017,7 +1017,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Auth2().isOidcLoggedIn && _group!.currentUserCanJoin
           ? Container(color: Colors.white,
               child: Padding(padding: EdgeInsets.all(16),
-                  child: RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join')!,
+                  child: RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
                     backgroundColor: Styles().colors!.white,
                     textColor: Styles().colors!.fillColorPrimary,
                     fontFamily: Styles().fontFamilies!.bold,
@@ -1040,7 +1040,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             children: [
               Container(color: Colors.white,
                   child: Padding(padding: EdgeInsets.all(16),
-                    child: RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request')!,
+                    child: RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
                         backgroundColor: Styles().colors!.white,
                         textColor: Styles().colors!.fillColorPrimary,
                         fontFamily: Styles().fontFamilies!.bold,
@@ -1071,7 +1071,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         textAlign: TextAlign.left, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.white))),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
                   RoundedButton(
-                      label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")!),
+                      label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
                       fontFamily: "ProximaNovaRegular",
                       textColor: Styles().colors!.fillColorPrimary,
                       borderColor: Styles().colors!.white,
@@ -1114,7 +1114,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     String? confirmMsg = (membersCount > 1)
         ? sprintf(
             Localization().getStringEx(
-                "panel.group_detail.members_count.group.delete.confirm.msg", "This group has %d members. Are you sure you want to delete this group?")!,
+                "panel.group_detail.members_count.group.delete.confirm.msg", "This group has %d members. Are you sure you want to delete this group?"),
             [membersCount])
         : Localization().getStringEx("panel.group_detail.group.delete.confirm.msg", "Are you sure you want to delete this group?");
 

@@ -110,7 +110,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-        Localization().getStringEx("panel.polls_home.text.header.title","Quick Polls")!,
+        Localization().getStringEx("panel.polls_home.text.header.title","Quick Polls"),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -149,7 +149,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Widget _buildDescriptionLayout(){
-    String description = Localization().getStringEx("panel.polls_home.text.pin_description", "Ask the creator of the poll for its 4 Digit Poll #.")!;
+    String description = Localization().getStringEx("panel.polls_home.text.pin_description", "Ask the creator of the poll for its 4 Digit Poll #.");
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
@@ -175,7 +175,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 80),
             child: RoundedButton(
-              label: Localization().getStringEx("panel.polls_home.button.find_poll.title","Find Poll")!,
+              label: Localization().getStringEx("panel.polls_home.button.find_poll.title","Find Poll"),
               onTap: ()=>_onFindPollTapped(),
               backgroundColor: Styles().colors!.fillColorPrimary,
               textColor: Styles().colors!.white,
@@ -343,7 +343,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Widget _buildEmptyContent(){
-    String? message, description;
+    String message, description;
     if (_selectedPollType == _PollType.myPolls) {
       message = Localization().getStringEx("panel.polls_home.tab.empty.message.my_pols","Have a question?");
       description = Localization().getStringEx("panel.polls_home.tab.empty.description.my_pols","Pose a question to people near you by creating your first poll");
@@ -364,7 +364,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       Column(
         children:[
           Container(height: 100,),
-          Text(message!,
+          Text(message,
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
@@ -373,7 +373,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
             ),
           ),
           Container(height: 16,),
-          Text(description!,
+          Text(description,
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: Styles().colors!.textBackground,
@@ -390,7 +390,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       Column(
         children:[
           Container(height: 46,),
-          Text(Localization().getStringEx("panel.polls_home.text.error","Error")!,
+          Text(Localization().getStringEx("panel.polls_home.text.error","Error"),
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
@@ -418,7 +418,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           crossAxisAlignment: CrossAxisAlignment.center,
           children:[
           Container(height: 100,),
-          Text(Localization().getStringEx("panel.polls_home.text.login_description", 'You need to be logged in to create and share polls with people near you.')!,
+          Text(Localization().getStringEx("panel.polls_home.text.login_description", 'You need to be logged in to create and share polls with people near you.'),
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
@@ -432,7 +432,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   Widget _buildCreatePollButton() {
     if (_canCreatePoll) {
       return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
-        RoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a poll")!,
+        RoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a poll"),
             textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
             backgroundColor: Styles().colors!.white,
@@ -441,7 +441,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     }
     else if (_couldCreatePoll) {
       return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
-          RoundedButton(label:Localization().getStringEx("panel.polls_home.text.login","Login")!,
+          RoundedButton(label:Localization().getStringEx("panel.polls_home.text.login","Login"),
             textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
             backgroundColor: Styles().colors!.white,
@@ -868,12 +868,12 @@ class _PollCardState extends State<_PollCard>{
 
     String? groupName = widget.group?.title;
 
-    String pin = sprintf(Localization().getStringEx('panel.polls_home.card.text.pin', 'Pin: %s')!, [
+    String pin = sprintf(Localization().getStringEx('panel.polls_home.card.text.pin', 'Pin: %s'), [
       sprintf('%04i', [poll.pinCode ?? 0])
     ]);
 
     Widget cardBody = ((poll.status == PollStatus.opened) && (poll.settings?.hideResultsUntilClosed ?? false)) ?
-      Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends.")!, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 15, fontWeight: FontWeight.w500),) :
+      Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 15, fontWeight: FontWeight.w500),) :
       Column(children: _buildCheckboxOptions(),);
 
     return Container(child:
@@ -884,7 +884,7 @@ class _PollCardState extends State<_PollCard>{
           child: Padding(padding: EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:
           <Widget>[
             Visibility(visible: (widget.group != null), child: Padding(padding: EdgeInsets.only(bottom: 10), child: Row(children: [
-              Padding(padding: EdgeInsets.only(right: 3), child: Text(Localization().getStringEx('panel.polls_home.card.group.label', 'Group:')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14))),
+              Padding(padding: EdgeInsets.only(right: 3), child: Text(Localization().getStringEx('panel.polls_home.card.group.label', 'Group:'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14))),
               Expanded(child: Text(StringUtils.ensureNotEmpty(groupName), overflow: TextOverflow.ellipsis, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
             ]))),
             Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus",
@@ -950,7 +950,7 @@ class _PollCardState extends State<_PollCard>{
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = option +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = option +"\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
       GestureDetector(
@@ -987,13 +987,13 @@ class _PollCardState extends State<_PollCard>{
   }
 
   Widget _createStartPollButton(){
-    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.start_poll","Start Poll")!, _onStartPollTapped, loading: _showStartPollProgress);
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.start_poll","Start Poll"), _onStartPollTapped, loading: _showStartPollProgress);
   }
   Widget _createEndPollButton(){
-    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll")!, _onEndPollTapped, loading: _showEndPollProgress);
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll"), _onEndPollTapped, loading: _showEndPollProgress);
   }
   Widget _createVoteButton(){
-    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.vote","Vote")!, _onVoteTapped);
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.vote","Vote"), _onVoteTapped);
   }
 
   Widget _createButton(String title, void Function()? onTap, {bool enabled=true, bool loading = false}){
@@ -1104,15 +1104,15 @@ class _PollCardState extends State<_PollCard>{
 
     String statusString;
     if (1 < votes) {
-      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votes']);
+      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$votes']);
     } else if (0 < votes) {
-      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote')!;
+      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
     } else {
-      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet')!;
+      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet');
     }
 
     if (hasGroup && (votes > 0)) {
-      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of')!, _groupMembersCount]);
+      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of'), _groupMembersCount]);
     }
 
     return statusString;

@@ -40,7 +40,7 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
           context: context,
-          titleWidget: Text(Localization().getStringEx('panel.canvas_notification.header.title', 'Notification')!,
+          titleWidget: Text(Localization().getStringEx('panel.canvas_notification.header.title', 'Notification'),
               style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0))),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,

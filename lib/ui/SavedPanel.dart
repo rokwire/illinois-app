@@ -153,7 +153,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                           ? 'images/chevron-left-white.png'
                           : 'images/chevron-left-blue.png',
                       titleWidget: Text(
-                        Localization().getStringEx('panel.saved.header.label', 'Saved')!,
+                        Localization().getStringEx('panel.saved.header.label', 'Saved'),
                         style: TextStyle(
                             color: widget.scrollController == null
                                 ? Styles().colors!.white
@@ -401,7 +401,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx('app.title', 'Illinois')!,
+              Localization().getStringEx('app.title', 'Illinois'),
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(
@@ -426,7 +426,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                         _showNotificationPermissionPrompt = false;
                       });
                     },
-                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')!))
+                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')))
               ],
             )
           ],
@@ -447,7 +447,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
               Padding(
                 padding: EdgeInsets.all(16),
                 child: Text(
-                  Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events.")!,
+                  Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events."),
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies!.regular,
                       fontSize: 16,
@@ -509,9 +509,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   Widget _buildOffline() {
     return Column(children: <Widget>[
       Expanded(child: Container(), flex: 1),
-      Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline")!, style: TextStyle(fontSize: 16),),
+      Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 16),),
       Container(height:8),
-      Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline")!),
+      Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline")),
       Expanded(child: Container(), flex: 3),
     ],);
   }
@@ -522,7 +522,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       child: Column(
         children: <Widget>[
           Container(height: 24,),
-          Text(Localization().getStringEx("panel.saved.message.no_items", "Whoops! Nothing to see here.")!,
+          Text(Localization().getStringEx("panel.saved.message.no_items", "Whoops! Nothing to see here."),
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontFamily: Styles().fontFamilies!.bold,
@@ -531,7 +531,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
             ),
           ),
           Container(height: 24,),
-          Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here.")!,
+          Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."),
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontFamily: Styles().fontFamilies!.regular,
@@ -617,7 +617,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
             slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
             children: _buildListItems(context)),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
-          label: _showAll ? Localization().getStringEx('panel.saved.events.button.less', "Show Less")! : Localization().getStringEx('panel.saved.events.button.all', "Show All")!,
+          label: _showAll ? Localization().getStringEx('panel.saved.events.button.less', "Show Less") : Localization().getStringEx('panel.saved.events.button.all', "Show All"),
           onTap: _onViewAllTapped,
         ),),)
       ],

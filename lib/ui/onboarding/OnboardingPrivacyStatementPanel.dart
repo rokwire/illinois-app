@@ -58,8 +58,8 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding.privacy.label.title', 'We care about your privacy')!;
-    String descriptionText = Localization().getStringEx('panel.onboarding.privacy.label.description', 'We only ask for personal information when we can use it to enhance your experience by enabling more features.')!;
+    String titleText = Localization().getStringEx('panel.onboarding.privacy.label.title', 'We care about your privacy');
+    String descriptionText = Localization().getStringEx('panel.onboarding.privacy.label.description', 'We only ask for personal information when we can use it to enhance your experience by enabling more features.');
 
     double headingWidth = MediaQuery.of(context).size.width;
     double headingHeight = _headingHeight ?? 0;
@@ -139,7 +139,7 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                       padding: EdgeInsets.only(
                           bottom: 24),
                       child: RoundedButton(
-                        label: Localization().getStringEx('panel.onboarding.privacy.button.continue.title', 'Set your privacy level')!,
+                        label: Localization().getStringEx('panel.onboarding.privacy.button.continue.title', 'Set your privacy level'),
                         hint: Localization().getStringEx('panel.onboarding.privacy.button.continue.hint', ''),
                         backgroundColor: Styles().colors!.background,
                         borderColor: Styles().colors!.fillColorSecondaryVariant,

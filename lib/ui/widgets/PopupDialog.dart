@@ -46,7 +46,7 @@ class PopupDialog extends StatelessWidget {
                       padding: EdgeInsets.all(8),
                       child: Center(
                         child: Text(
-                          Localization().getStringEx("app.title", "Illinois")!,
+                          Localization().getStringEx("app.title", "Illinois"),
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                       ),

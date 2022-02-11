@@ -127,7 +127,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule')!,
+        titleWidget: Text(Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -281,7 +281,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   Widget _buildEmpty() {
-    String message =  Localization().getStringEx('panel.events_schedule.empty.events', 'No events.')!;
+    String message =  Localization().getStringEx('panel.events_schedule.empty.events', 'No events.');
     return Container(child: Align(alignment: Alignment.center,
       child: Text(message, textAlign: TextAlign.center,),
     ));
@@ -486,7 +486,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       return null;
     }
     List<String> categoriesValues = [];
-    categoriesValues.add(Localization().getStringEx('panel.events_schedule.filter.tracks.all', 'All Tracks')!);
+    categoriesValues.add(Localization().getStringEx('panel.events_schedule.filter.tracks.all', 'All Tracks'));
     for (var category in _eventCategories!) {
       categoriesValues.add(category);
     }
@@ -495,7 +495,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   List<String>? _getFilterTagsValues() {
     List<String> tagsValues = [];
-    tagsValues.add(Localization().getStringEx('panel.events_schedule.filter.tags.all', 'All Tags')!);
+    tagsValues.add(Localization().getStringEx('panel.events_schedule.filter.tags.all', 'All Tags'));
 
     if (_visibleTags != null) {
       for (var tag in _visibleTags!) {
@@ -612,7 +612,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
     else if  (_selectedMapExplore is List<Event>) {
       String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
-      title = sprintf(Localization().getStringEx('panel.events_schedule.map.popup.title.format', '%d %s')!, [_selectedMapExplore?.length, exploreName]);
+      title = sprintf(Localization().getStringEx('panel.events_schedule.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
       description = _selectedMapExplore?.first?.exploreLocation?.description;
       exploreColor = _selectedMapExplore.first?.uiColor;
     }
@@ -660,7 +660,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                           Row(
                               children: <Widget>[
                                 SizedBox(width: buttonWidth, child: RoundedButton(
-                                    label: Localization().getStringEx('panel.events_schedule.button.directions.title', 'Directions')!,
+                                    label: Localization().getStringEx('panel.events_schedule.button.directions.title', 'Directions'),
                                     hint: Localization().getStringEx('panel.events_schedule.button.directions.hint', ''),
                                     backgroundColor: Colors.white,
                                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -677,7 +677,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                               ]) :
                           Container(),
                           SizedBox(width: buttonWidth, child: RoundedButton(
-                              label: Localization().getStringEx('panel.events_schedule.button.details.title', 'Details')!,
+                              label: Localization().getStringEx('panel.events_schedule.button.details.title', 'Details'),
                               hint: Localization().getStringEx('panel.events_schedule.button.details.hint', ''),
                               backgroundColor: Colors.white,
                               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),

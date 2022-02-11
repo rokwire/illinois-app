@@ -127,9 +127,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   void _refreshAllMembersFilterText(){
     if(_selectedMembersFilter == _allMembersFilter){
-      _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members?.length.toString() ?? "0");
+      _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)").replaceAll("#", _members?.length.toString() ?? "0");
     } else {
-      _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members?.length.toString() ?? "0");
+      _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)").replaceAll("#", _members?.length.toString() ?? "0");
     }
   }
   void _applyMembersFilter(){
@@ -164,7 +164,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         backgroundColor: Styles().colors!.background,
         appBar: SimpleHeaderBarWithBack(
           context: context,
-          titleWidget: Text(Localization().getStringEx("panel.manage_members.header.title", "Manage Members",)!,
+          titleWidget: Text(Localization().getStringEx("panel.manage_members.header.title", "Manage Members",),
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -200,7 +200,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         requests.add(Container(
           padding: EdgeInsets.only(top: 20, bottom: 10),
           child: SmallRoundedButton(
-            label: Localization().getStringEx("panel.manage_members.button.see_all_requests.title", "See all # requests")!.replaceAll("#", _pendingMembers!.length.toString()),
+            label: Localization().getStringEx("panel.manage_members.button.see_all_requests.title", "See all # requests").replaceAll("#", _pendingMembers!.length.toString()),
             hint: Localization().getStringEx("panel.manage_members.button.see_all_requests.hint", ""),
             onTap: () {
               Analytics().logSelect(target: 'See all requests');
@@ -437,7 +437,7 @@ class _PendingMemberCard extends StatelessWidget {
                   ),
                   Container(height: 4,),
                       RoundedButton(
-                        label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review request")!,
+                        label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review request"),
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
                         borderColor: Styles().colors!.fillColorSecondary,
                         textColor: Styles().colors!.fillColorPrimary,

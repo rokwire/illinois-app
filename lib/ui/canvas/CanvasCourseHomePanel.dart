@@ -64,7 +64,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx('panel.home_canvas_course.header.title', 'Course')!,
+        titleWidget: Text(Localization().getStringEx('panel.home_canvas_course.header.title', 'Course'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -95,7 +95,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
 
   Widget _buildErrorContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.home_canvas_course.load.failed.error.msg', 'Failed to load course. Please, try again later.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.home_canvas_course.load.failed.error.msg', 'Failed to load course. Please, try again later.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 

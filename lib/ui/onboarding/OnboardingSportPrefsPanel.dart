@@ -93,7 +93,7 @@ class _OnboardingSportPrefsPanelState extends State<OnboardingSportPrefsPanel> {
                     child: Padding(
                       padding: EdgeInsets.all(24),
                       child: RoundedButton(
-                          label: Localization().getStringEx('panel.onboarding.sports.button.continue.title', 'Explore Illinois')!,
+                          label: Localization().getStringEx('panel.onboarding.sports.button.continue.title', 'Explore Illinois'),
                           hint: Localization().getStringEx('panel.onboarding.sports.button.continue.hint', ''),
                           enabled: _allowNext,
                           backgroundColor: (Styles().colors!.background),

@@ -115,7 +115,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
       if (_maxItems < _promotedItems!.length) {
         contentList.add(Container(height: 16,));
         contentList.add(RoundedButton(
-          label: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.title', 'View All')!,
+          label: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.title', 'View All'),
           hint: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.hint', 'Tap to view all highlights'),
           borderColor: Styles().colors!.fillColorSecondary,
           textColor: Styles().colors!.fillColorPrimary,

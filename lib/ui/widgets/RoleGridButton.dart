@@ -65,8 +65,8 @@ class RoleGridButton extends StatelessWidget {
     } }, //onTap (this),
     child: Semantics(label: title, excludeSemantics: true, sortKey: sortOrder!=null?OrdinalSortKey(sortOrder!) : null,
         value: (selected?Localization().getStringEx("toggle_button.status.checked", "checked",) :
-        Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
-            ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
+        Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
+            ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
     child:Stack(
       children: <Widget>[
         Padding(

@@ -83,7 +83,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.food_special_offers.title.text", "Specials")!,
+        titleWidget: Text(Localization().getStringEx("panel.food_special_offers.title.text", "Specials"),
           style: TextStyle(
               fontFamily: Styles().fontFamilies!.extraBold,
               fontSize: 16
@@ -143,8 +143,8 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
                 ),*/
                 Container(height: 20,),
                 Text(_hasLocations
-                    ? Localization().getStringEx("panel.food_special_offers.available.text", "Available at these locations")!
-                    : Localization().getStringEx("panel.food_special_offers.not_available.text", "No available locations")!,
+                    ? Localization().getStringEx("panel.food_special_offers.available.text", "Available at these locations")
+                    : Localization().getStringEx("panel.food_special_offers.not_available.text", "No available locations"),
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies!.extraBold,
                       fontSize: 16,
