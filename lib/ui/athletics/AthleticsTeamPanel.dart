@@ -93,16 +93,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.athletics_team.header.title', 'Team'),
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.athletics_team.header.title', 'Team'),
       ),
       body: _buildContentWidget(),
       backgroundColor: Styles().colors!.background,

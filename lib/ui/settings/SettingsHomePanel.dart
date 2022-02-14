@@ -166,8 +166,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     contentList.add(Container(height: 12,),);
 
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
+      appBar: HeaderBar(
         titleWidget: _buildHeaderBarTitle(),
         actions: actionsList,
       ),

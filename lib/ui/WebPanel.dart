@@ -206,8 +206,7 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener {
   }
 
   PreferredSizeWidget _getHeaderBar() {
-    return SimpleHeaderBarWithBack(context: context,
-      titleWidget: Text(widget.title!, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+    return HeaderBar(title: widget.title);
   }
 
   void _onTapStatusLink(String? url) {

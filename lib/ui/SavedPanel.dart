@@ -152,7 +152,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                       backIconRes: widget.scrollController == null
                           ? 'images/chevron-left-white.png'
                           : 'images/chevron-left-blue.png',
-                      titleWidget: Text(
+                      titleWidget: Text( 
                         Localization().getStringEx('panel.saved.header.label', 'Saved'),
                         style: TextStyle(
                             color: widget.scrollController == null

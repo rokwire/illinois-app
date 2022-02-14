@@ -260,15 +260,8 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   PreferredSizeWidget _buildHeaderBar() {
-    return SimpleHeaderBarWithBack(
-      context: context,
-      titleWidget: Text(Localization().getStringEx("panel.laundry_detail.header.title", "Laundry"),
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.0),
-      ),
+    return HeaderBar(
+      title: Localization().getStringEx("panel.laundry_detail.header.title", "Laundry"),
     );
   }
 

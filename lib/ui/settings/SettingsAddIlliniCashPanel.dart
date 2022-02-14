@@ -115,7 +115,7 @@ class _SettingsAddIlliniCashPanelState
                         backIconRes: widget.scrollController == null
                             ? 'images/chevron-left-white.png'
                             : 'images/chevron-left-blue.png',
-                        titleWidget: Text(
+                        titleWidget: Text( 
                           Localization().getStringEx("panel.settings.add_illini_cash.header.title", "Add Illini Cash"),
                           style: TextStyle(
                               color: widget.scrollController == null

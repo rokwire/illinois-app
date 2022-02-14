@@ -135,9 +135,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors!.background,
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-      ),
+      appBar: HeaderBar(),
       body: _isLoading
           ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ))
           : Column(

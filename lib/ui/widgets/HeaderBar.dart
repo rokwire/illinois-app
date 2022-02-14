@@ -14,90 +14,68 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/ui/SearchPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/header_bar.dart' as rokwire;
 
-// SimpleAppBar
+class HeaderBar extends rokwire.HeaderBar {
 
-class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWidget {
-  final BuildContext context;
-  final Widget? titleWidget;
-  final bool? backVisible;
-  final String backIconRes;
-  final Function? onBackPressed;
-  final bool searchVisible;
-  final List<Widget>? actions;
+  static const String defaultLeadingAsset = 'images/chevron-left-white.png';
 
-  final semanticsSortKey;
+  HeaderBar({Key? key,
+    SemanticsSortKey? sortKey,
 
-  SimpleHeaderBarWithBack({required this.context, this.titleWidget, this.backVisible = true, this.onBackPressed, this.searchVisible = false, this.backIconRes = 'images/chevron-left-white.png', this.semanticsSortKey = const OrdinalSortKey(1), this.actions });
+    Widget? leadingWidget,
+    String? leadingLabel,
+    String? leadingHint,
+    String? leadingAsset = defaultLeadingAsset,
+    void Function(BuildContext context)? onLeading,
+    
+    Widget? titleWidget,
+    String? title,
+    TextStyle? textStyle,
+    Color? textColor,
+    String? fontFamily,
+    double? fontSize = 16.0,
+    double? letterSpacing = 1.0,
+    int? maxLines,
+    TextAlign? textAlign,
+    bool? centerTitle = true,
 
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> actionsList = <Widget>[];
-    if (CollectionUtils.isNotEmpty(actions)) {
-      actionsList.addAll(actions!);
-    }
-    if (searchVisible) {
-      actionsList.add(_buildSearchButton());
-    }
+    List<Widget>? actions,
+  }) : super(key: key,
+    sortKey: sortKey,
+    
+    leadingWidget: leadingWidget,
+    leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
+    leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
+    leadingAsset: leadingAsset,
+    onLeading: onLeading,
 
-    return Semantics(sortKey:semanticsSortKey,child:AppBar(
-      leading: backVisible! ? _buildBackButton() : null,
-      title: titleWidget,
-      centerTitle: true,
-      backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-      actions: actionsList,
-    ));
-  }
+    titleWidget: titleWidget,
+    title: title,
+    textStyle: textStyle,
+    textColor: textColor ?? Styles().colors?.white,
+    fontFamily: fontFamily ?? Styles().fontFamilies?.extraBold,
+    fontSize: fontSize,
+    letterSpacing: letterSpacing,
+    maxLines: maxLines,
+    textAlign: textAlign,
+    centerTitle: centerTitle,
 
-  Widget _buildBackButton() {
-    return Semantics(
-      label: Localization().getStringEx('headerbar.back.title', 'Back'),
-      hint: Localization().getStringEx('headerbar.back.hint', ''),
-      button: true,
-      excludeSemantics: true,
-      child: IconButton(
-        icon: Image.asset(backIconRes, excludeFromSemantics: true),
-        onPressed: _onTapBack));
-  }
-
-  void _onTapBack() {
-    Analytics().logSelect(target: "Back");
-    if (onBackPressed != null) {
-      onBackPressed!();
-    } else {
-      Navigator.pop(context);
-    }
-  }
-
-  Widget _buildSearchButton() {
-    return Semantics(
-      label: Localization().getStringEx('headerbar.search.title', 'Search'),
-      hint: Localization().getStringEx('headerbar.search.hint', ''),
-      button: true,
-      excludeSemantics: true,
-      child: IconButton(
-        icon: Image.asset('images/icon-search.png', width: 20, height: 20, excludeFromSemantics: true),
-        onPressed: _onTapSearch,
-      ));
-  }
-
-  void _onTapSearch() {
-    Analytics().logSelect(target: "Search");
-    Navigator.push(context, CupertinoPageRoute( builder: (context) => SearchPanel()));
-  }
+    actions: actions,
+  );
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  void leadingHandler(BuildContext context) {
+    Navigator.of(context).pop();
+  }
 }
 
 class SliverToutHeaderBar extends SliverAppBar {

@@ -118,16 +118,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SimpleHeaderBarWithBack(
-          context: context,
-          onBackPressed: _onTapBack,
-          titleWidget: Text(_panelTitleText!,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.0),
-          ),
+        appBar: HeaderBar(
+          title: _panelTitleText,
+          onLeading: _onTapBack,
         ),
         body: _buildContent(),
         backgroundColor: Styles().colors!.background,
@@ -1712,7 +1705,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     //TBD: prompt
   }
 
-  void _onTapBack() {
+  void _onTapBack(BuildContext context) {
     if (_modified) {
       _promptBack().then((bool? result) {
         if (result!) {

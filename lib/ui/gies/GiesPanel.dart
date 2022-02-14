@@ -44,15 +44,8 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx('widget.gies.title', 'iDegrees New Student Checklist'),
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontFamily: Styles().fontFamilies!.extraBold,
-            letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('widget.gies.title', 'iDegrees New Student Checklist'),
       ),
       body: SingleChildScrollView(child:
       Column(children: <Widget>[

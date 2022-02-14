@@ -162,15 +162,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Styles().colors!.background,
-        appBar: SimpleHeaderBarWithBack(
-          context: context,
-          titleWidget: Text(Localization().getStringEx("panel.manage_members.header.title", "Manage Members",),
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontFamily: Styles().fontFamilies!.extraBold,
-                letterSpacing: 1.0),
-          ),
+        appBar: HeaderBar(
+          title: Localization().getStringEx("panel.manage_members.header.title", "Manage Members",),
         ),
         body: _isLoading
             ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ))

@@ -190,16 +190,9 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.find_event.header.title", "Find event"),
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.find_event.header.title", "Find event"),
+        leadingAsset: 'images/icon-circle-close.png',
       ),
       body: Column(
         children: <Widget>[

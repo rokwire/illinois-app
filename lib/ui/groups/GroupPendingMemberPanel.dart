@@ -59,9 +59,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors!.background,
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-      ),
+      appBar: HeaderBar(),
       body:
       Container(
         color:  Styles().colors!.white,

@@ -66,14 +66,10 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SimpleHeaderBarWithBack(
-          context: context,
-          backIconRes: 'images/close-white.png',
-          onBackPressed: _onTapCancel,
-          titleWidget: Text(
-            Localization().getStringEx("panel.create_poll.header.title", "Create a Quick Poll"),
-            style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
-          ),
+        appBar: HeaderBar(
+          title: Localization().getStringEx("panel.create_poll.header.title", "Create a Quick Poll"),
+          leadingAsset: 'images/close-white.png',
+          onLeading: _onTapCancel,
         ),
         body: SafeArea(
           child: Container(
@@ -372,7 +368,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     ));
   }
 
-  void _onTapCancel() {
+  void _onTapCancel(BuildContext context) {
     if (_progressPollStatus == null) {
       showDialog(context: context, builder: (context) =>
           Dialog(

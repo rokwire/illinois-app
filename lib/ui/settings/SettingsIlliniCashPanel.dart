@@ -129,7 +129,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
           backIconRes: widget.scrollController == null
               ? 'images/chevron-left-white.png'
               : 'images/chevron-left-blue.png',
-          titleWidget: Text(
+          titleWidget: Text( 
             Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash'),
             style: TextStyle(
                 color: widget.scrollController == null

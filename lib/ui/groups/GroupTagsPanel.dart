@@ -59,10 +59,9 @@ class _GroupTagsState extends State<GroupTagsPanel> {
     bool hasGroupTags = CollectionUtils.isNotEmpty(_groupTags);
 
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-          context: context,
-          titleWidget: Text(Localization().getStringEx('panel.group.tags.header.title', 'Group Tags'),
-              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0))),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.group.tags.header.title', 'Group Tags'),
+      ),
       backgroundColor: Styles().colors!.background,
       body: Stack(alignment: Alignment.center, children: <Widget>[
         SingleChildScrollView(

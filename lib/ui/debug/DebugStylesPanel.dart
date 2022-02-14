@@ -58,12 +58,8 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors!.surface,
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          "Styles",
-          style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),
-        ),
+      appBar: HeaderBar(
+        title: "Styles",
       ),
       body: Padding(padding: EdgeInsets.all(16), child:
         SafeArea(child:

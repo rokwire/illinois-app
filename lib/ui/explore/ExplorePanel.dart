@@ -141,8 +141,8 @@ class ExplorePanelState extends State<ExplorePanel>
   LocationServicesStatus? _locationServicesStatus;
 
   ExploreFilter? _initialSelectedFilter;
-  bool?          _showHeaderBack = true;
-  bool?          _showTabBar = true;
+  bool           _showHeaderBack = true;
+  bool           _showTabBar = true;
   Map<ExploreTab, List<ExploreFilter>>? _tabToFilterMap;
   bool _filterOptionsVisible = false;
 
@@ -183,8 +183,8 @@ class ExplorePanelState extends State<ExplorePanel>
 
     _selectedTab = widget._data._selectedTab;
     _initialSelectedFilter = widget._data._selectedFilter;
-    _showHeaderBack = widget._data._showHeaderBack;
-    _showTabBar = widget._data._showTabBar;
+    _showHeaderBack = widget._data._showHeaderBack ?? true;
+    _showTabBar = widget._data._showTabBar ?? true;
 
     _initTabs();
     _initFilters();
@@ -229,19 +229,11 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        backVisible: _showHeaderBack,
-        onBackPressed: _onTapHeaderBackButton,
-        semanticsSortKey: _ExploreSortKey.headerBar,
-        titleWidget: Text(
-          Localization().getStringEx("panel.explore.label.title", "Explore"),
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title:  Localization().getStringEx("panel.explore.label.title", "Explore"),
+        sortKey: _ExploreSortKey.headerBar,
+        leadingAsset: _showHeaderBack  ? HeaderBar.defaultLeadingAsset : null,
+        onLeading: _onTapHeaderBackButton,
       ),
       body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         ExploreDisplayTypeHeader(
@@ -272,7 +264,7 @@ class ExplorePanelState extends State<ExplorePanel>
         ),
       ]),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: _showTabBar! ? TabBarWidget() : null,
+      bottomNavigationBar: _showTabBar ? TabBarWidget() : null,
     );
   }
 
@@ -1239,7 +1231,7 @@ class ExplorePanelState extends State<ExplorePanel>
     _loadExplores();
   }
 
-  void _onTapHeaderBackButton() {
+  void _onTapHeaderBackButton(BuildContext context) {
     Navigator.pop(context);
   }
 

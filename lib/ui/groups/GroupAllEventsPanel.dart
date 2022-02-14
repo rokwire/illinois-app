@@ -40,15 +40,8 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.groups_all_events.label.heading","Upcoming Events") + "(${_groupEvents?.length ?? ""})",
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.groups_all_events.label.heading","Upcoming Events") + "(${_groupEvents?.length ?? ""})",
       ),
       body:SingleChildScrollView(child:
          Column(
