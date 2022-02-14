@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/ui/canvas/CanvasAccountNotificationsPanel.dart';
+import 'package:illinois/ui/canvas/CanvasCourseAssignmentsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseModulesPanel.dart';
 import 'package:illinois/ui/canvas/CanvasFeedbackPanel.dart';
 import 'package:illinois/ui/canvas/CanvasSyllabusHtmlPanel.dart';
@@ -160,7 +161,8 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.assignments.title', 'Assignments'),
           hint: Localization().getStringEx('panel.home_canvas_course.button.assignments.hint', ''),
-          leftIcon: 'images/icon-settings.png'),
+          leftIcon: 'images/icon-canvas-implemented-working.png',
+          onTap: _onTapAssignments),
       _buildDelimiter(),
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.zoom.title', 'Zoom Meeting'),
@@ -229,6 +231,11 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   void _onTapModules() {
     Analytics().logSelect(target: 'Canvas Course -> Modules');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseModulesPanel(courseId: widget.courseId!)));
+  }
+
+  void _onTapAssignments() {
+    Analytics().logSelect(target: 'Canvas Course -> Assignments');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAssignmentsPanel(courseId: widget.courseId!)));
   }
 
   void _onTapGroup() {
