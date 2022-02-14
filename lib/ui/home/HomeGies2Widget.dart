@@ -9,7 +9,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/gies/GiesPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -76,7 +76,7 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
       Container(color: Styles().colors!.fillColorPrimary, height: 45,),
       Container(color: Styles().colors!.fillColorPrimary, child:
       CustomPaint(painter: TrianglePainter(
-          painterColor: Styles().colors!.background, left: true), child:
+          painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
       Container(height: 65,),
       )),
     ],);

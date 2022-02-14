@@ -9,7 +9,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -172,7 +172,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
     return Column(children: <Widget>[
       Container(color:  Styles().colors!.fillColorPrimary, height: 10,),
       Container(color: Styles().colors!.fillColorPrimary, child:
-      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.white, left : true), child:
+      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.white, horzDir: TriangleHorzDirection.rightToLeft), child:
       Container(height: 45,),
       )),
     ],);
@@ -889,7 +889,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     return Column(children: <Widget>[
       Container(color:  Styles().colors!.fillColorPrimary, height: 40,),
       Container(color: Styles().colors!.fillColorPrimary, child:
-      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.white, left : true), child:
+      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.white, horzDir: TriangleHorzDirection.rightToLeft), child:
       Container(height: 55,),
       )),
     ],);
