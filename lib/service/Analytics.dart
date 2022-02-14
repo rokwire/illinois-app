@@ -821,6 +821,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         case Auth2LoginType.phone:
         case Auth2LoginType.phoneTwilio:  action = LogAuthLoginPhoneActionName; break;
         case Auth2LoginType.email:        action = LogAuthLoginEmailActionName; break;
+        case Auth2LoginType.apiKey:
         case Auth2LoginType.anonymous:    break;
       }
     }

@@ -159,7 +159,7 @@
 		},
 		"platform":{
 			"onboarding.notifications_auth" : { "os": "ios" },
-			"roles.gies": { "envirnment": "dev" }
+			"roles.gies": { "environment": "dev" }
 		},
 		"illini_cash": {
 			"laundry"                       : { "housingResidenceStatus" : true }
