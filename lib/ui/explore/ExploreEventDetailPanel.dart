@@ -114,9 +114,8 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   scrollDirection: Axis.vertical,
                   slivers: <Widget>[
                     SliverToutHeaderBar(
-                      context: context,
-                      imageUrl: widget.event?.eventImageUrl,
-                      leftTriangleColor: Colors.white
+                      flexImageUrl: widget.event?.eventImageUrl,
+                      flexRightToLeftTriangleColor: Colors.white,
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate(

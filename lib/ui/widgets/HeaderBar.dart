@@ -17,10 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/config.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/header_bar.dart' as rokwire;
 
@@ -74,76 +71,66 @@ class HeaderBar extends rokwire.HeaderBar {
 
   @override
   void leadingHandler(BuildContext context) {
-    Navigator.of(context).pop();
+    Analytics().logSelect(target: "Back");
+    Navigator.pop(context);
   }
 }
 
-class SliverToutHeaderBar extends SliverAppBar {
-  final BuildContext context;
-  final String? imageUrl;
-  final GestureTapCallback? onBackTap;
+class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 
-  SliverToutHeaderBar(
-      {
-        required this.context,
-        this.imageUrl,
-        this.onBackTap,
-        Color? backColor,
-        Color? leftTriangleColor,
-        Color? rightTriangleColor,
-      })
-      : super(
-      pinned: true,
-      floating: false,
-      expandedHeight: 200,
-      backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-      flexibleSpace: Semantics(container: true,excludeSemantics: true,child: FlexibleSpaceBar(
-          background:
-          Container(
-            color: backColor ?? Styles().colors!.background,
-            child: Stack(
-              alignment: Alignment.bottomCenter,
-              children: <Widget>[
-                StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl!, fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
-                CustomPaint(
-                  painter: TrianglePainter(painterColor: rightTriangleColor ?? Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
-                  child: Container(
-                    height: 53,
-                  ),
-                ),
-                CustomPaint(
-                  painter: TrianglePainter(painterColor: leftTriangleColor ?? Styles().colors!.background),
-                  child: Container(
-                    height: 30,
-                  ),
-                ),
-              ],
-            ),
-          ))
-      ),
-      leading: Semantics(
-          label: Localization().getStringEx('headerbar.back.title', 'Back'),
-          hint: Localization().getStringEx('headerbar.back.hint', ''),
-          button: true,
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: GestureDetector(
-              onTap: onBackTap != null ? onBackTap : (){
-                Analytics().logSelect(target: "Back");
-                Navigator.pop(context);
-              },
-              child: ClipOval(
-                child: Container(
-                    height: 32,
-                    width: 32,
-                    color: Styles().colors!.fillColorPrimary,
-                    child: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true)
-                ),
-              ),
-            ),
-          )
-      )
+  static const String defaultLeadingAsset = 'images/chevron-left-white.png';
+
+  SliverToutHeaderBar({
+    bool pinned = true,
+    bool floating = false,
+    double? expandedHeight = 200,
+    Color? backgroundColor,
+
+    Widget? flexWidget,
+    String? flexImageUrl,
+    Color?  flexBackColor,
+    Color?  flexRightToLeftTriangleColor,
+    double? flexRightToLeftTriangleHeight = 30,
+    Color?  flexLeftToRightTriangleColor,
+    double? flexLeftToRightTriangleHeight = 53,
+
+    Widget? leadingWidget,
+    String? leadingLabel,
+    String? leadingHint,
+    EdgeInsetsGeometry? leadingPadding = const EdgeInsets.all(8),
+    Size? leadingOvalSize = const Size(32, 32),
+    Color? leadingOvalColor,
+    String? leadingAsset = defaultLeadingAsset,
+    void Function(BuildContext context)? onLeading,
+  }) : super(
+    pinned: pinned,
+    floating: floating,
+    expandedHeight: expandedHeight,
+    backgroundColor: backgroundColor ?? Styles().colors?.fillColorPrimaryVariant,
+
+    flexWidget: flexWidget,
+    flexImageUrl: flexImageUrl,
+    flexBackColor: flexBackColor ?? Styles().colors?.background,
+    flexRightToLeftTriangleColor: flexRightToLeftTriangleColor ?? Styles().colors?.background,
+    flexRightToLeftTriangleHeight: flexRightToLeftTriangleHeight,
+    flexLeftToRightTriangleColor: flexLeftToRightTriangleColor ?? Styles().colors?.fillColorSecondaryTransparent05,
+    flexLeftToRightTriangleHeight: flexLeftToRightTriangleHeight,
+
+    leadingWidget: leadingWidget,
+    leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
+    leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
+    leadingPadding: leadingPadding,
+    leadingOvalSize: leadingOvalSize,
+    leadingOvalColor: leadingOvalColor ?? Styles().colors?.fillColorPrimary,
+    leadingAsset: leadingAsset,
+    onLeading: onLeading,
   );
+
+  @override
+  void leadingHandler(BuildContext context) {
+    Analytics().logSelect(target: "Back");
+    Navigator.pop(context);
+  }
 }
 
 // SliverSheetHeaderBar

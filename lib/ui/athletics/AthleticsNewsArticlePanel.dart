@@ -92,11 +92,10 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
         scrollDirection: Axis.vertical,
         slivers: <Widget>[
             SliverToutHeaderBar(
-            context: context,
-            imageUrl: _article?.imageUrl,
-            backColor: Styles().colors!.white,
-            leftTriangleColor: Styles().colors!.white,
-            rightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
+            flexImageUrl: _article?.imageUrl,
+            flexBackColor: Styles().colors?.white,
+            flexRightToLeftTriangleColor: Styles().colors?.white,
+            flexLeftToRightTriangleColor: Styles().colors?.fillColorSecondaryTransparent05,
           ),
           SliverList(
             delegate: SliverChildListDelegate([
