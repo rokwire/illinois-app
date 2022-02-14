@@ -472,22 +472,21 @@ class _GiesPageState extends State<_GiesPageWidget> {
         if (button is Map) {
           String? title = JsonUtils.stringValue(button['title']);
           buttonWidgets.add(
-            Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              Semantics(container: true,
-                child: RoundedButton(label: title ?? '',
-                  backgroundColor: Styles().colors!.white,
-                  textColor: Styles().colors!.fillColorPrimary,
-                  fontFamily: Styles().fontFamilies!.bold,
-                  fontSize: 16,
-                  borderColor: Styles().colors!.fillColorSecondary,
-                  borderWidth: 2,
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  onTap:() {
+                Semantics(container: true,
+                  child: RoundedButton(label: title ?? '',
+                    backgroundColor: Styles().colors!.white,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    fontFamily: Styles().fontFamilies!.bold,
+                    fontSize: 16,
+                    borderColor: Styles().colors!.fillColorSecondary,
+                    borderWidth: 2,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    contentWeight: 0,
+                    onTap:() {
                     try { widget.onTapButton!(button.cast<String, dynamic>(), JsonUtils.stringValue(widget.page?["id"])!); }
                     catch (e) { print(e.toString()); }
                   }
               ))
-            ]),
           );
         }
       }
@@ -495,6 +494,46 @@ class _GiesPageState extends State<_GiesPageWidget> {
         contentList.add(
           Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
           Wrap(runSpacing: 8, spacing: 16, children: buttonWidgets,)
+          ),);
+      }
+    }
+
+    List<dynamic>? navigationButtons = (widget.page != null) ? JsonUtils.listValue(widget.page!['navigation_buttons']) : null;
+    if (navigationButtons != null) {
+      List<Widget> buttonWidgets = <Widget>[];
+      for (dynamic button in navigationButtons) {
+        if (button is Map) {
+          String? position = JsonUtils.stringValue(button['position']);
+          if(position == "right"){
+            buttonWidgets.add(Expanded(child:Container()));
+          }
+          String? title = JsonUtils.stringValue(button['title']);
+          buttonWidgets.add(
+              Semantics(container: true,
+                  child: RoundedButton(label: title ?? '',
+                      backgroundColor: Styles().colors!.white,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      fontFamily: Styles().fontFamilies!.bold,
+                      fontSize: 26,
+                      borderColor: Styles().colors!.white,
+                      borderWidth: 2,
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      contentWeight: 0,
+                      onTap:() {
+                        try { widget.onTapButton!(button.cast<String, dynamic>(), JsonUtils.stringValue(widget.page?["id"])!); }
+                        catch (e) { print(e.toString()); }
+                      }
+                  ))
+          );
+          if(position == "left"){
+            buttonWidgets.add(Expanded(child:Container()));
+          }
+        }
+      }
+      if (0 < buttonWidgets.length) {
+        contentList.add(
+          Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+            Row(children: buttonWidgets,)
           ),);
       }
     }
@@ -629,6 +668,9 @@ class _GiesNotesWidgetState extends State<GiesNotesWidget> {
         ),
         Container(height: 16,),
         Visibility(visible: (widget.notes != null) && widget.notes!.isNotEmpty, child:
+        Container(
+          height: 50,
+          child:
         RoundedButton(
           label: Localization().getStringEx('widget.gies.notes.button.save', 'Save'),
           backgroundColor: Colors.transparent,
@@ -637,7 +679,7 @@ class _GiesNotesWidgetState extends State<GiesNotesWidget> {
           borderWidth: 2,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           onTap: () => _onSave(),
-        ),
+        )),
         ),
       ]),
       )

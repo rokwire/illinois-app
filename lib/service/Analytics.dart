@@ -567,8 +567,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 
   // Public Accessories
 
-  void logEvent(Map<String, dynamic>? event, { List<String> defaultAttributes = DefaultAttributes}) {
-    if ((event != null) && Auth2().privacyMatch(2)) {
+  @override
+  void logEvent(Map<String, dynamic> event, { List<String> defaultAttributes = DefaultAttributes, int? timestamp }) {
+    if (Auth2().privacyMatch(2)) {
       
       event[LogEventPageName] = _currentPageName;
 
@@ -576,9 +577,11 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         LogEvent:            event,
       };
 
+      DateTime nowUtc = DateTime.now().toUtc();
+
       for (String attributeName in defaultAttributes) {
         if (attributeName == LogStdTimestampName) {
-          analyticsEvent[LogStdTimestampName] = DateTime.now().toUtc().toIso8601String();
+          analyticsEvent[LogStdTimestampName] = nowUtc.toIso8601String();
         }
         else if (attributeName == LogStdAppIdName) {
           analyticsEvent[LogStdAppIdName] = super.appId;
@@ -633,7 +636,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         }
       }
 
-      super.logEvent(analyticsEvent);
+      super.logEvent(analyticsEvent, timestamp: timestamp ?? nowUtc.millisecondsSinceEpoch);
     }
   }
 
@@ -729,7 +732,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       };
     }
 
-    logEvent(httpResponseEvent);
+    if (httpResponseEvent != null) {
+      logEvent(httpResponseEvent);
+    }
   }
 
   void logFavorite(Favorite? favorite, [bool? on]) {
@@ -816,6 +821,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         case Auth2LoginType.phone:
         case Auth2LoginType.phoneTwilio:  action = LogAuthLoginPhoneActionName; break;
         case Auth2LoginType.email:        action = LogAuthLoginEmailActionName; break;
+        case Auth2LoginType.apiKey:
         case Auth2LoginType.anonymous:    break;
       }
     }

@@ -59,7 +59,7 @@
 
 			"home.content"                           : ["~gies?"],
 			"home.gies_only_content"                 : ["gies!"],
-			"home.twitter.user.gies2"                : ["gies"],
+			"home.twitter.user.gies"                 : ["gies"],
 			"home.gies_only_content.gies2"           : ["gies"],
 			"home.gies_only_content.canvas_courses"  : ["gies"],
 			"home.content.gies2"                     : ["gies"],
@@ -159,7 +159,7 @@
 		},
 		"platform":{
 			"onboarding.notifications_auth" : { "os": "ios" },
-			"roles.gies": { "envirnment": "dev" }
+			"roles.gies": { "environment": "dev" }
 		},
 		"illini_cash": {
 			"laundry"                       : { "housingResidenceStatus" : true }

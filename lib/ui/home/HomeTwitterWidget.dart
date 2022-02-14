@@ -244,9 +244,9 @@ class _TweetWidget extends StatelessWidget {
             Expanded(child: 
               SingleChildScrollView(child:
                 Column(children: [
-                  StringUtils.isNotEmpty(tweet?.media?.url) ?
+                  StringUtils.isNotEmpty(tweet?.media?.imageUrl) ?
                     InkWell(onTap: () => _onTap(context), child:
-                      Image.network(tweet!.media!.url!, excludeFromSemantics: true)) :
+                      Image.network(tweet!.media!.imageUrl!, excludeFromSemantics: true)) :
                   Container(),
                   Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
                     //Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),
