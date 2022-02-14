@@ -2195,12 +2195,67 @@ class CanvasAssignment {
         : null;
   }
 
+  DateTime? get dueAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(dueAt);
+  }
+
+  String? get dueDisplayDateTime {
+    String? dueDisplayDate = AppDateTime().formatDateTime(dueAtLocal, format: 'MMM d, h:mma');
+    return dueDisplayDate;
+  }
+
   static List<CanvasAssignment>? listFromJson(List<dynamic>? jsonList) {
     List<CanvasAssignment>? result;
     if (jsonList != null) {
       result = <CanvasAssignment>[];
       for (dynamic jsonEntry in jsonList) {
         ListUtils.add(result, CanvasAssignment.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+}
+
+////////////////////////////////
+// CanvasAssignmentGroup
+
+class CanvasAssignmentGroup {
+  final int? id;
+  final String? name;
+  final int? position;
+  final double? groupWeight;
+  final List<CanvasAssignment>? assignments;
+
+  CanvasAssignmentGroup({this.id, this.name, this.position, this.groupWeight, this.assignments});
+
+  static CanvasAssignmentGroup? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasAssignmentGroup(
+            id: JsonUtils.intValue(json['id']),
+            name: JsonUtils.stringValue(json['name']),
+            position: JsonUtils.intValue(json['position']),
+            groupWeight: JsonUtils.doubleValue(json['group_weight']),
+            assignments: CanvasAssignment.listFromJson(json['assignments']))
+        : null;
+  }
+
+  bool operator ==(o) =>
+      (o is CanvasAssignmentGroup) &&
+      (o.id == id) &&
+      (o.name == name) &&
+      (o.position == position) &&
+      (o.groupWeight == groupWeight) &&
+      (o.assignments == assignments);
+
+  int get hashCode =>
+      (id?.hashCode ?? 0) ^ (name?.hashCode ?? 0) ^ (position?.hashCode ?? 0) ^ (groupWeight?.hashCode ?? 0) ^ (assignments?.hashCode ?? 0);
+
+  static List<CanvasAssignmentGroup>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasAssignmentGroup>? result;
+    if (jsonList != null) {
+      result = <CanvasAssignmentGroup>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasAssignmentGroup.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
