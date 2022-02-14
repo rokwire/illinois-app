@@ -48,10 +48,9 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-          context: context,
-          titleWidget: Text(Localization().getStringEx('panel.canvas_assignments.header.title', 'Assignments'),
-              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0))),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.canvas_assignments.header.title', 'Assignments'),
+      ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
       bottomNavigationBar: TabBarWidget(),
