@@ -100,9 +100,8 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx('panel.guide_categories.label.heading', 'Campus Guide'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.guide_categories.label.heading', 'Campus Guide'), 
       ),
       body: Column(children: <Widget>[
           Expanded(child:

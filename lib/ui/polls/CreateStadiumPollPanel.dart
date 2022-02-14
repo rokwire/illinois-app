@@ -61,14 +61,10 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SimpleHeaderBarWithBack(
-          context: context,
-          backIconRes: 'images/close-white.png',
-          onBackPressed: _onTapCancel,
-          titleWidget: Text(
-            Localization().getStringEx("panel.create_stadium_poll.header.title", "Create a Stadium Poll"),
-            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-          ),
+        appBar: HeaderBar(
+          title: Localization().getStringEx("panel.create_stadium_poll.header.title", "Create a Stadium Poll"),
+          leadingAsset: 'images/close-white.png',
+          onLeading: _onTapCancel,
         ),
         body: Container(
             color: Styles().colors!.white,
@@ -401,7 +397,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
         ));
   }
 
-  _onTapCancel() {
+  void _onTapCancel(BuildContext context) {
     if (_progressPollStatus == null) {
       showDialog(context: context, builder: (context) =>
           Dialog(

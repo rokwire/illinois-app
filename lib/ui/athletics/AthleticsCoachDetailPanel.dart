@@ -59,16 +59,8 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
     Log.d(color.toString());
 
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.athletics_coach_detail.header.title', 'Staff'),
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.athletics_coach_detail.header.title', 'Staff'),
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,

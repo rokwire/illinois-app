@@ -125,15 +125,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule'),
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule'),
       ),
       body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

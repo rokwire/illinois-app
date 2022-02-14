@@ -117,16 +117,9 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.membership_request.label.title", 'Membership Steps'),
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        leadingAsset: 'images/icon-circle-close.png',
+        title: Localization().getStringEx("panel.membership_request.label.title", 'Membership Steps'),
       ),
       body: Column(
         children: <Widget>[

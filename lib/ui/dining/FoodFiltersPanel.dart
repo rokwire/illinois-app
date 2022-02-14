@@ -56,15 +56,8 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
   Widget build(BuildContext context) {
     String onlyShow = Localization().getStringEx("panel.food_filters.label.only_show_food_that_are.title", "ONLY SHOW FOODS THAT ARE");
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.food_filters.header.title", "Food Filters"),
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.food_filters.header.title", "Food Filters"),
       ),
       body: Column(
         children: <Widget>[

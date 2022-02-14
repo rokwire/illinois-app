@@ -81,14 +81,9 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.food_special_offers.title.text", "Specials"),
-          style: TextStyle(
-              fontFamily: Styles().fontFamilies!.extraBold,
-              fontSize: 16
-          ),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.food_special_offers.title.text", "Specials"),
+        //textStyle: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16 ),
       ),
       body: Column(
         children: <Widget>[

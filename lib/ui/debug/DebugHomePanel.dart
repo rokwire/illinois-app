@@ -120,12 +120,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     String? pid = Auth2().profile?.id;
     String? firebaseProjectId = FirebaseCore().app?.options.projectId;
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx("panel.debug.header.title", "Debug"),
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.debug.header.title", "Debug"),
       ),
       body: Column(
         children: <Widget>[

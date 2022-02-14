@@ -36,10 +36,9 @@ class _CanvasAnnouncementDetailPanelState extends State<CanvasAnnouncementDetail
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-          context: context,
-          titleWidget: Text(Localization().getStringEx('panel.canvas_announcement.header.title', 'Announcement'),
-              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0))),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.canvas_announcement.header.title', 'Announcement'),
+      ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
       bottomNavigationBar: TabBarWidget(),

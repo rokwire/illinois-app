@@ -52,12 +52,8 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors!.surface,
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx("panel.debug_http_proxy.header.title", "Http Proxy"),
-          style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.debug_http_proxy.header.title", "Http Proxy"),
       ),
       body: SingleChildScrollView(
         child: Padding(

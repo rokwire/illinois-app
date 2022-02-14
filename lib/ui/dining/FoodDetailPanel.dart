@@ -65,14 +65,9 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(widget.productItem.name ?? "",
-          style: TextStyle(
-            fontFamily: Styles().fontFamilies!.extraBold,
-            fontSize: 16
-          ),
-        ),
+      appBar: HeaderBar(
+        title: widget.productItem.name,
+        //textStyle: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16),
       ),
       body: Column(
         children: <Widget>[

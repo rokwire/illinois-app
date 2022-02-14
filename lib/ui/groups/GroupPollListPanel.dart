@@ -61,10 +61,9 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SimpleHeaderBarWithBack(
-            context: context,
-            titleWidget: Text(Localization().getStringEx('panel.group_polls.label.heading', 'All Polls'),
-                style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0))),
+        appBar: HeaderBar(
+            title: Localization().getStringEx('panel.group_polls.label.heading', 'All Polls'),
+        ),
         body: CustomScrollView(controller: _scrollController, slivers: <Widget>[
           SliverList(
               delegate: SliverChildListDelegate([

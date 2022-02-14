@@ -45,10 +45,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text("Campus Guide", style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
-      ),
+      appBar: HeaderBar(title: "Campus Guide", ),
       body: SafeArea(child:
         Column(children: <Widget>[
           Expanded(child: 

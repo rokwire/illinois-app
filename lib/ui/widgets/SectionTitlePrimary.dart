@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -66,7 +66,7 @@ class SectionTitlePrimary extends StatelessWidget{
               Container(
                 color:  slantColor ?? Styles().colors!.fillColorPrimary,
                 child:CustomPaint(
-                  painter: TrianglePainter(painterColor: backgroundColor ?? Styles().colors!.background, left : true),
+                  painter: TrianglePainter(painterColor: backgroundColor ?? Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft),
                   child: Container(
                     height: 67,
                   ),

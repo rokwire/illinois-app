@@ -64,16 +64,8 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   Widget build(BuildContext context) {
     _tabs = _constructTabWidgets();
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.athletics_roster_list.header.title', 'Roster'),
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.athletics_roster_list.header.title', 'Roster'),
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,

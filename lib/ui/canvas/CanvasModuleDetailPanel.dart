@@ -49,10 +49,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-          context: context,
-          titleWidget: Text(StringUtils.ensureNotEmpty(widget.module.name), maxLines: 3,
-              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0))),
+      appBar: HeaderBar(title: StringUtils.ensureNotEmpty(widget.module.name), maxLines: 3,),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
       bottomNavigationBar: TabBarWidget(),

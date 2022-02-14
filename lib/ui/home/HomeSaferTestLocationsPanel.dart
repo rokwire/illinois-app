@@ -89,12 +89,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
 
     return Scaffold(
       backgroundColor: Styles().colors!.background,
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.home.safer.test_locations.header.title", "Test Locations"),
-          style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),
-        ),
-      ),
+      appBar: HeaderBar(title: Localization().getStringEx("panel.home.safer.test_locations.header.title", "Test Locations"),),
       body: SafeArea(child:
         Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
           Column(children: [

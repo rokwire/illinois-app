@@ -58,8 +58,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
     String scheduleLabel = scheduleYear + " " + Localization().getStringEx("panel.athletics_schedule.label.schedule.title", "Schedule");
     int itemsCount = _displayList?.length ?? 0;
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context, titleWidget: Text(headerLabel, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),),
+      appBar: HeaderBar(title: headerLabel,),
       body: _loading ? Center(child: CircularProgressIndicator()) : Column(children: <Widget>[
         Container(color:Styles().colors!.fillColorPrimaryVariant, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(children: <Widget>[
           Row(children: <Widget>[
