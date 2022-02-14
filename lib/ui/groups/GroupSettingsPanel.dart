@@ -82,12 +82,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   scrollDirection: Axis.vertical,
                   slivers: <Widget>[
                     SliverHeaderBar(
-                      context: context,
-                      backIconRes: "images/close-white.png",
-                      titleWidget: Text( 
-                        Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-                      ),
+                      title: Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate([

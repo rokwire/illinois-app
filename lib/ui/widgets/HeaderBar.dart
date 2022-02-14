@@ -135,7 +135,68 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 
 // SliverSheetHeaderBar
 
-class SliverHeaderBar extends SliverAppBar {
+class SliverHeaderBar extends rokwire.SliverHeaderBar  {
+  static const String defaultLeadingAsset = 'images/close-white.png';
+
+  SliverHeaderBar({Key? key,
+    bool pinned = true,
+    bool floating = false,
+    double? elevation = 0,
+    Color? backgroundColor,
+
+    Widget? leadingWidget,
+    String? leadingLabel,
+    String? leadingHint,
+    String? leadingAsset = defaultLeadingAsset,
+    void Function(BuildContext context)? onLeading,
+    
+    Widget? titleWidget,
+    String? title,
+    TextStyle? textStyle,
+    Color? textColor,
+    String? fontFamily,
+    double? fontSize = 16.0,
+    double? letterSpacing = 1.0,
+    int? maxLines,
+    TextAlign? textAlign,
+    bool? centerTitle = true,
+
+    List<Widget>? actions,
+  }) : super(key: key,
+    
+    pinned: pinned,
+    floating: floating,
+    elevation: elevation,
+    backgroundColor: backgroundColor ?? Styles().colors?.fillColorPrimaryVariant,
+
+    leadingWidget: leadingWidget,
+    leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
+    leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
+    leadingAsset: leadingAsset,
+    onLeading: onLeading,
+
+    titleWidget: titleWidget,
+    title: title,
+    textStyle: textStyle,
+    textColor: textColor ?? Styles().colors?.white,
+    fontFamily: fontFamily ?? Styles().fontFamilies?.extraBold,
+    fontSize: fontSize,
+    letterSpacing: letterSpacing,
+    maxLines: maxLines,
+    textAlign: textAlign,
+    centerTitle: centerTitle,
+
+    actions: actions,
+  );
+
+  @override
+  void leadingHandler(BuildContext context) {
+    Analytics().logSelect(target: "Back");
+    Navigator.pop(context);
+  }
+}
+
+/*class SliverHeaderBar extends SliverAppBar {
   final BuildContext context;
   final Widget? titleWidget;
   final bool backVisible;
@@ -169,4 +230,4 @@ class SliverHeaderBar extends SliverAppBar {
         centerTitle: true,
         actions: actions,
       );
-}
+}*/

@@ -119,12 +119,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   scrollDirection: Axis.vertical,
                   slivers: <Widget>[
                     SliverHeaderBar(
-                      context: context,
-                      backIconRes: "images/close-white.png",
-                      titleWidget: Text(
-                        Localization().getStringEx("panel.groups_create.label.heading", "Create a group"),
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-                      ),
+                      title: Localization().getStringEx("panel.groups_create.label.heading", "Create a group"),
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate([
