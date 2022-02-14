@@ -407,6 +407,25 @@ class Canvas with Service implements NotificationsListener{
     }
   }
 
+  // Assignments
+
+  Future<List<CanvasAssignmentGroup>?> loadAssignmentGroups(int courseId) async {
+    if (!_available) {
+      return null;
+    }
+    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/assignment_groups?include[]=assignments';
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasAssignmentGroup>? assignmentGroups = CanvasAssignmentGroup.listFromJson(JsonUtils.decodeList(responseString));
+      return assignmentGroups;
+    } else {
+      Log.w('Failed to load canvas assignment groups. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
   // Deep Links
 
   String get canvasEventDetailUrl => '${DeepLink().appUrl}/canvas_event_detail';
