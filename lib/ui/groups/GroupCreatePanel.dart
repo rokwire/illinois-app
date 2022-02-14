@@ -60,7 +60,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   @override
   void initState() {
-    _group = Group();
+    _initGroup();
     _initPrivacyData();
     _initCategories();
     super.initState();
@@ -86,6 +86,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _groupCategoeriesLoading = false;
       });
     });
+  }
+
+  void _initGroup(){
+    _group = Group();
+    //default values
+    _group!.onlyAdminsCanCreatePolls = true;
   }
   //
 
@@ -149,6 +155,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                                 _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
                                 _buildMembershipLayout(),
                               ],)),
+                            Container(height: 8),
+                            _buildPollsLayout(),
                             Container(height: 40),
                         ],),)
 
@@ -541,28 +549,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   // AuthMan Group
   Widget _buildAuthManLayout() {
-    bool isAuthManGroup = _isAuthManGroup;
     return Padding(
         padding: EdgeInsets.only(left: 16, top: 12, right: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(
-              decoration: BoxDecoration(
-                  color: Styles().colors!.white,
-                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(4))),
-              padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Expanded(
-                    child: Text(Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this a managed membership group?"),
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
-                  GestureDetector(
-                      onTap: _onTapAuthMan,
-                      child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset(isAuthManGroup ? 'images/switch-on.png' : 'images/switch-off.png')))
-                ])
-              ])),
+          _buildSwitch(title: Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this a managed membership group?"),
+              value: _isAuthManGroup,
+              onTap: _onTapAuthMan
+          ),
           Visibility(
-              visible: isAuthManGroup,
+              visible: _isAuthManGroup,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 _buildSectionTitle(Localization().getStringEx("panel.groups_create.authman.group.name.label", "Membership name"), null, true),
                 Container(
@@ -594,6 +589,27 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     }
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  //Polls
+  Widget _buildPollsLayout(){
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.only_admins_create_polls.enabled.label", "Only admins can create Polls"), //TBD localization
+          value: _group?.onlyAdminsCanCreatePolls,
+          onTap: _onTapOnlyAdminCreatePolls
+      ),
+    );
+  }
+
+  void _onTapOnlyAdminCreatePolls(){
+    if(_group?.onlyAdminsCanCreatePolls != null) {
+      if(mounted){
+        setState(() {
+          _group!.onlyAdminsCanCreatePolls = !(_group!.onlyAdminsCanCreatePolls ?? false);
+        });
+      }
     }
   }
 
@@ -711,6 +727,27 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   )
               ))
       ],)));
+  }
+
+  Widget _buildSwitch({String? title, bool? value, void Function()? onTap}){
+    return Container(
+      child: Container(
+          decoration: BoxDecoration(
+              color: Styles().colors!.white,
+              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(4))),
+          padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Expanded(
+                  child: Text(title ?? "",
+                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
+              GestureDetector(
+                  onTap: onTap ?? (){},
+                  child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset((value ?? false) ? 'images/switch-on.png' : 'images/switch-off.png')))
+            ])
+          ])),
+    );
   }
 
   void onNameChanged(String name){

@@ -42,8 +42,11 @@
   "tab_index": "a",
   "title":"Claim Your NetID and Password",
   "text":"<p>Your NetID will give you access to campus services, including e-mail and file storage. New students should visit <a href='https://netidclaim.illinois.edu/'>Illinois NetID Claim</a> to claim their NetID. First, you will need to enter your University ID Number (UIN) and Activation Code. The UIN and Activation Code were sent to you in your Notice of Admission Letter from the Graduate College. Next, you will select and provide answers to two security questions to protect your NetID account. Finally, you will need to choose a password for your NetID account and setup <a href='https://techservices.illinois.edu/content/two-factor-authentication-2fa'>Two-Factor Authentication (2FA)</a>.</p><p><i>If you have previously enrolled at the University of Illinois, there is no need to claim your NetID again. You will need to reset your password. You can find more information on the <a href='https://answers.uillinois.edu/illinois/page.php?id=48103'>Technology Services Website</a>.</i></p>",
-  "buttons":[
+  "_buttons":[
     {"title":"Next", "_popup":"current-notes", "swipe_page":"setup.email.account", "completes": true}
+  ],
+  "navigation_buttons":[
+    {"title":">","position":"right", "swipe_page":"setup.email.account", "completes": true}
   ]
 },{
   "id":"setup.email.account",
@@ -52,8 +55,12 @@
   "tab_index": "b",
   "title":"Setup Your University Email Account",
   "text":"Most correspondence is sent to your Illinois email address, so it is imperative you set up your email and check it regularly. Microsoft Office 365 is a service used for email, calendaring, and contact and task management at the University of Illinois and is vital for receiving emails and information from the University. Approximately one hour after claiming your Net ID and setting your password, you will be able to login to and start using your <a href='https://outlook.office365.com/'>Office 365 Email Account</a>. If you have questions about your email or your Exchange account, please visit the <a href='http://techservices.illinois.edu/services/email'>Technology Services Website</a>, or email <a href='mailto:consult@illinois.edu'>consult@illinois.edu</a>.",
-  "buttons":[
+  "_buttons":[
     {"title":"Next", "_popup":"current-notes", "swipe_page":"verify.personal.information", "completes": true}
+  ],
+  "navigation_buttons":[
+    {"title":"<","position":"left", "swipe_page":"claim.netid.and.password"},
+    {"title":">","position":"right", "swipe_page":"verify.personal.information", "completes": true}
   ]
 },{
   "id":"verify.personal.information",
@@ -62,8 +69,12 @@
   "tab_index": "c",
   "title":"Verify Your Personal Information in Student Self-Service",
   "text":"Once you have established your NetID, use it to log into the online <a href='https://apps.uillinois.edu/selfservice/'>Student Self-Service</a> and verify your personal information, such as your contact information. Keeping this information up to date is extremely important and ensures proper delivery of important documents.",
-  "buttons":[
+  "_buttons":[
     {"title":"Next", "_popup":"current-notes", "swipe_page":"setup.zoom.account", "completes": true}
+  ],
+  "navigation_buttons":[
+    {"title":"<","position":"left", "swipe_page":"setup.email.account"},
+    {"title":">","position":"right", "swipe_page":"setup.zoom.account", "completes": true}
   ]
 },{
   "id":"setup.zoom.account",
@@ -74,6 +85,9 @@
   "text":"Zoom Pro is the way you will participate in your live sessions (lectures) for each course, office hours and more. Follow these <a href='https://uofi.box.com/s/j168hch5ro8188wkyhykunff84wwenps'>step-by-step instructions</a> to get setup with Zoom.",
   "buttons":[
     {"title":"Done", "_popup":"current-notes", "page":"setup.coursera.account", "completes": true}
+  ],
+  "navigation_buttons":[
+    {"title":"<","position":"left", "swipe_page":"verify.personal.information"}
   ]
 },{
   "id":"setup.coursera.account",
@@ -128,8 +142,11 @@
     ]},{
     "heading":"Make sure to check your junk mail if you have not received an email regarding Workplace."
   }],
-  "buttons":[
+  "_buttons":[
     {"title":"Next", "_popup":"current-notes", "swipe_page":"connect.student.guide", "completes": true}
+  ],
+  "navigation_buttons":[
+    {"title":">","position":"right", "swipe_page":"connect.student.guide", "completes": true}
   ]
 },{
   "id":"connect.student.guide",
@@ -140,6 +157,9 @@
   "text":"Pairing with your Gies Online New Student Guide begins approximately four weeks prior to the term start. You will receive an email notifying you of your New Student Guide. Your guide will be able to assist you with orientation to the program and will be a resource moving forward for general questions and more.",
   "buttons":[
     {"title":"Done", "_popup":"current-notes", "page":"complete.onboarding.course", "completes": true}
+  ],
+  "navigation_buttons":[
+    {"title":"<","position":"left", "swipe_page":"join.workspace"}
   ]
 },{
   "id":"complete.onboarding.course",
