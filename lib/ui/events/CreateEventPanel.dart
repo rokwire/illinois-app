@@ -32,7 +32,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -118,16 +118,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SimpleHeaderBarWithBack(
-          context: context,
-          onBackPressed: _onTapBack,
-          titleWidget: Text(_panelTitleText!,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.0),
-          ),
+        appBar: HeaderBar(
+          title: _panelTitleText,
+          onLeading: _onTapBack,
         ),
         body: _buildContent(),
         backgroundColor: Styles().colors!.background,
@@ -184,7 +177,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               StringUtils.isNotEmpty(_imageUrl)
                                   ? Positioned.fill(child: Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))
                                   : Container(),
-                              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
+                              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.white), child: Container(height: 30)),
                               Container(
                                 height: _imageHeight,
@@ -1712,7 +1705,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     //TBD: prompt
   }
 
-  void _onTapBack() {
+  void _onTapBack(BuildContext context) {
     if (_modified) {
       _promptBack().then((bool? result) {
         if (result!) {

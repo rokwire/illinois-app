@@ -23,7 +23,7 @@ import 'package:illinois/ui/onboarding2/Onboarding2PrivacyPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 import 'Onboarding2Widgets.dart';
 
@@ -145,7 +145,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                                       child:Column(
                                           children:[
                                             CustomPaint(
-                                              painter: TrianglePainter(painterColor: Styles().colors!.background, left: false),
+                                              painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.leftToRight),
                                               child: Container(
                                                 height: 100,
                                               ),

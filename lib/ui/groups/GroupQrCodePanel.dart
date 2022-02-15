@@ -100,18 +100,9 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.group_qr_code.title', 'Promote this group'),
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.0,
-          ),
-          textAlign: TextAlign.center,
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.group_qr_code.title', 'Promote this group'),
+        textAlign: TextAlign.center,
       ),
       body: SingleChildScrollView(
         child: Container(

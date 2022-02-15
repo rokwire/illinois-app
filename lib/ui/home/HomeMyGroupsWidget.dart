@@ -9,7 +9,7 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 
 class HomeMyGroupsWidget extends StatefulWidget {
@@ -99,7 +99,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
     return Column(children: <Widget>[
       Container(color:  Styles().colors!.fillColorPrimary, height: 45,),
       Container(color: Styles().colors!.fillColorPrimary, child:
-      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, left : true), child:
+      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
       Container(height: 65,),
       )),
     ],);

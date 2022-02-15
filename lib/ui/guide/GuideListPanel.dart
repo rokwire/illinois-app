@@ -134,10 +134,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     }
     
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
-      ),
+      appBar: HeaderBar(title: title),
       body: Column(children: _buildContent()),
       backgroundColor: Styles().colors!.background,
     );

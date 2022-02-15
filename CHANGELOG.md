@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Header bars moved to Rokwire plugin UI section [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+
+## [3.2.19] - 2022-02-14
+### Added
 - Canvas Assignments [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 
 ## [3.2.18] - 2022-02-11

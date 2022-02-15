@@ -63,12 +63,8 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx("panel.settings.notifications.label.title", "Notifications"),
-          style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.settings.notifications.label.title", "Notifications"),
       ),
       body: SingleChildScrollView(child: _buildContent()),
       backgroundColor: Styles().colors!.background,

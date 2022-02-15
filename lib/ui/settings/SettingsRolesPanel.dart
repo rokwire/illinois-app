@@ -57,13 +57,9 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO YOU ARE'),
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-        ),
-        onBackPressed: _onBack,
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO YOU ARE'),
+        onLeading: _onBack,
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
@@ -146,7 +142,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
     }
   }
 
-  void _onBack() {
+  void _onBack(BuildContext context) {
     if (_saveRolesTimer != null) {
       _saveSelectedRoles();
     }

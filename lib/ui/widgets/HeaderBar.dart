@@ -14,228 +14,189 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/config.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/ui/SearchPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/header_bar.dart' as rokwire;
 
-class HeaderBar extends AppBar {
-  final BuildContext context;
-  final Widget? titleWidget;
-  final bool searchVisible;
-  final bool rightButtonVisible;
-  final String rightButtonText;
-  final GestureTapCallback? onRightButtonTap;
+class HeaderBar extends rokwire.HeaderBar {
 
-  HeaderBar(
-      {required this.context, this.titleWidget, this.searchVisible = false,
-        this.rightButtonVisible = false, required this.rightButtonText, this.onRightButtonTap})
-      : super(
-            backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-            leading: Semantics(
-              label: Localization().getStringEx('headerbar.home.title', 'Home'),
-              hint: Localization().getStringEx('headerbar.home.hint', ''),
-              button: true,
-              excludeSemantics: true,
-              child: IconButton(
-                icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true),
-                onPressed: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                })),
-            title: titleWidget,
-            actions: <Widget>[
-              Visibility(
-                  visible: searchVisible,
-                  child: Semantics(
-                    label: Localization().getStringEx('headerbar.search.title', 'Search'),
-                    hint: Localization().getStringEx('headerbar.search.hint', ''),
-                    button: true,
-                    child: IconButton(
-                      icon: Image.asset('images/icon-search.png', excludeFromSemantics: true),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                                builder: (context) => SearchPanel()));
-                      }))),
-              Visibility(
-                  visible: rightButtonVisible,
-                  child: Container(
-                    alignment: Alignment.centerRight,
-                    child: Semantics(
-                      label: rightButtonText,
-                      button: true,
-                      excludeSemantics: true,
-                      child:InkWell(
-                      onTap: onRightButtonTap,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                        child: Text(rightButtonText,
-                            style: TextStyle(color: Colors.white,
-                                fontSize: 16,
-                                fontFamily: Styles().fontFamilies!.semiBold,
-                                decoration: TextDecoration.underline,
-                                decorationColor: Styles().colors!.fillColorSecondary,
-                                decorationThickness: 1,
-                                decorationStyle: TextDecorationStyle.solid)),),)),
-                  )
-              )
-            ],
-            centerTitle: true);
-}
+  static const String defaultLeadingAsset = 'images/chevron-left-white.png';
 
-// SimpleAppBar
+  HeaderBar({Key? key,
+    SemanticsSortKey? sortKey,
 
-class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWidget {
-  final BuildContext context;
-  final Widget? titleWidget;
-  final bool? backVisible;
-  final String backIconRes;
-  final Function? onBackPressed;
-  final bool searchVisible;
-  final List<Widget>? actions;
+    Widget? leadingWidget,
+    String? leadingLabel,
+    String? leadingHint,
+    String? leadingAsset = defaultLeadingAsset,
+    void Function(BuildContext context)? onLeading,
+    
+    Widget? titleWidget,
+    String? title,
+    TextStyle? textStyle,
+    Color? textColor,
+    String? fontFamily,
+    double? fontSize = 16.0,
+    double? letterSpacing = 1.0,
+    int? maxLines,
+    TextAlign? textAlign,
+    bool? centerTitle = true,
 
-  final semanticsSortKey;
+    List<Widget>? actions,
+  }) : super(key: key,
+    sortKey: sortKey,
+    
+    leadingWidget: leadingWidget,
+    leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
+    leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
+    leadingAsset: leadingAsset,
+    onLeading: onLeading,
 
-  SimpleHeaderBarWithBack({required this.context, this.titleWidget, this.backVisible = true, this.onBackPressed, this.searchVisible = false, this.backIconRes = 'images/chevron-left-white.png', this.semanticsSortKey = const OrdinalSortKey(1), this.actions });
+    titleWidget: titleWidget,
+    title: title,
+    textStyle: textStyle,
+    textColor: textColor ?? Styles().colors?.white,
+    fontFamily: fontFamily ?? Styles().fontFamilies?.extraBold,
+    fontSize: fontSize,
+    letterSpacing: letterSpacing,
+    maxLines: maxLines,
+    textAlign: textAlign,
+    centerTitle: centerTitle,
 
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> actionsList = <Widget>[];
-    if (CollectionUtils.isNotEmpty(actions)) {
-      actionsList.addAll(actions!);
-    }
-    if (searchVisible) {
-      actionsList.add(_buildSearchButton());
-    }
-
-    return Semantics(sortKey:semanticsSortKey,child:AppBar(
-      leading: backVisible! ? _buildBackButton() : null,
-      title: titleWidget,
-      centerTitle: true,
-      backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-      actions: actionsList,
-    ));
-  }
-
-  Widget _buildBackButton() {
-    return Semantics(
-      label: Localization().getStringEx('headerbar.back.title', 'Back'),
-      hint: Localization().getStringEx('headerbar.back.hint', ''),
-      button: true,
-      excludeSemantics: true,
-      child: IconButton(
-        icon: Image.asset(backIconRes, excludeFromSemantics: true),
-        onPressed: _onTapBack));
-  }
-
-  void _onTapBack() {
-    Analytics().logSelect(target: "Back");
-    if (onBackPressed != null) {
-      onBackPressed!();
-    } else {
-      Navigator.pop(context);
-    }
-  }
-
-  Widget _buildSearchButton() {
-    return Semantics(
-      label: Localization().getStringEx('headerbar.search.title', 'Search'),
-      hint: Localization().getStringEx('headerbar.search.hint', ''),
-      button: true,
-      excludeSemantics: true,
-      child: IconButton(
-        icon: Image.asset('images/icon-search.png', width: 20, height: 20, excludeFromSemantics: true),
-        onPressed: _onTapSearch,
-      ));
-  }
-
-  void _onTapSearch() {
-    Analytics().logSelect(target: "Search");
-    Navigator.push(context, CupertinoPageRoute( builder: (context) => SearchPanel()));
-  }
-
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
-}
-
-class SliverToutHeaderBar extends SliverAppBar {
-  final BuildContext context;
-  final String? imageUrl;
-  final GestureTapCallback? onBackTap;
-
-  SliverToutHeaderBar(
-      {
-        required this.context,
-        this.imageUrl,
-        this.onBackTap,
-        Color? backColor,
-        Color? leftTriangleColor,
-        Color? rightTriangleColor,
-      })
-      : super(
-      pinned: true,
-      floating: false,
-      expandedHeight: 200,
-      backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-      flexibleSpace: Semantics(container: true,excludeSemantics: true,child: FlexibleSpaceBar(
-          background:
-          Container(
-            color: backColor ?? Styles().colors!.background,
-            child: Stack(
-              alignment: Alignment.bottomCenter,
-              children: <Widget>[
-                StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl!, fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
-                CustomPaint(
-                  painter: TrianglePainter(painterColor: rightTriangleColor ?? Styles().colors!.fillColorSecondaryTransparent05, left: false),
-                  child: Container(
-                    height: 53,
-                  ),
-                ),
-                CustomPaint(
-                  painter: TrianglePainter(painterColor: leftTriangleColor ?? Styles().colors!.background),
-                  child: Container(
-                    height: 30,
-                  ),
-                ),
-              ],
-            ),
-          ))
-      ),
-      leading: Semantics(
-          label: Localization().getStringEx('headerbar.back.title', 'Back'),
-          hint: Localization().getStringEx('headerbar.back.hint', ''),
-          button: true,
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: GestureDetector(
-              onTap: onBackTap != null ? onBackTap : (){
-                Analytics().logSelect(target: "Back");
-                Navigator.pop(context);
-              },
-              child: ClipOval(
-                child: Container(
-                    height: 32,
-                    width: 32,
-                    color: Styles().colors!.fillColorPrimary,
-                    child: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true)
-                ),
-              ),
-            ),
-          )
-      )
+    actions: actions,
   );
+
+  @override
+  void leadingHandler(BuildContext context) {
+    Analytics().logSelect(target: "Back");
+    Navigator.pop(context);
+  }
+}
+
+class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
+
+  static const String defaultLeadingAsset = 'images/chevron-left-white.png';
+
+  SliverToutHeaderBar({
+    bool pinned = true,
+    bool floating = false,
+    double? expandedHeight = 200,
+    Color? backgroundColor,
+
+    Widget? flexWidget,
+    String? flexImageUrl,
+    Color?  flexBackColor,
+    Color?  flexRightToLeftTriangleColor,
+    double? flexRightToLeftTriangleHeight = 30,
+    Color?  flexLeftToRightTriangleColor,
+    double? flexLeftToRightTriangleHeight = 53,
+
+    Widget? leadingWidget,
+    String? leadingLabel,
+    String? leadingHint,
+    EdgeInsetsGeometry? leadingPadding = const EdgeInsets.all(8),
+    Size? leadingOvalSize = const Size(32, 32),
+    Color? leadingOvalColor,
+    String? leadingAsset = defaultLeadingAsset,
+    void Function(BuildContext context)? onLeading,
+  }) : super(
+    pinned: pinned,
+    floating: floating,
+    expandedHeight: expandedHeight,
+    backgroundColor: backgroundColor ?? Styles().colors?.fillColorPrimaryVariant,
+
+    flexWidget: flexWidget,
+    flexImageUrl: flexImageUrl,
+    flexBackColor: flexBackColor ?? Styles().colors?.background,
+    flexRightToLeftTriangleColor: flexRightToLeftTriangleColor ?? Styles().colors?.background,
+    flexRightToLeftTriangleHeight: flexRightToLeftTriangleHeight,
+    flexLeftToRightTriangleColor: flexLeftToRightTriangleColor ?? Styles().colors?.fillColorSecondaryTransparent05,
+    flexLeftToRightTriangleHeight: flexLeftToRightTriangleHeight,
+
+    leadingWidget: leadingWidget,
+    leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
+    leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
+    leadingPadding: leadingPadding,
+    leadingOvalSize: leadingOvalSize,
+    leadingOvalColor: leadingOvalColor ?? Styles().colors?.fillColorPrimary,
+    leadingAsset: leadingAsset,
+    onLeading: onLeading,
+  );
+
+  @override
+  void leadingHandler(BuildContext context) {
+    Analytics().logSelect(target: "Back");
+    Navigator.pop(context);
+  }
 }
 
 // SliverSheetHeaderBar
 
-class SliverHeaderBar extends SliverAppBar {
+class SliverHeaderBar extends rokwire.SliverHeaderBar  {
+  static const String defaultLeadingAsset = 'images/close-white.png';
+
+  SliverHeaderBar({Key? key,
+    bool pinned = true,
+    bool floating = false,
+    double? elevation = 0,
+    Color? backgroundColor,
+
+    Widget? leadingWidget,
+    String? leadingLabel,
+    String? leadingHint,
+    String? leadingAsset = defaultLeadingAsset,
+    void Function(BuildContext context)? onLeading,
+    
+    Widget? titleWidget,
+    String? title,
+    TextStyle? textStyle,
+    Color? textColor,
+    String? fontFamily,
+    double? fontSize = 16.0,
+    double? letterSpacing = 1.0,
+    int? maxLines,
+    TextAlign? textAlign,
+    bool? centerTitle = true,
+
+    List<Widget>? actions,
+  }) : super(key: key,
+    
+    pinned: pinned,
+    floating: floating,
+    elevation: elevation,
+    backgroundColor: backgroundColor ?? Styles().colors?.fillColorPrimaryVariant,
+
+    leadingWidget: leadingWidget,
+    leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
+    leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
+    leadingAsset: leadingAsset,
+    onLeading: onLeading,
+
+    titleWidget: titleWidget,
+    title: title,
+    textStyle: textStyle,
+    textColor: textColor ?? Styles().colors?.white,
+    fontFamily: fontFamily ?? Styles().fontFamilies?.extraBold,
+    fontSize: fontSize,
+    letterSpacing: letterSpacing,
+    maxLines: maxLines,
+    textAlign: textAlign,
+    centerTitle: centerTitle,
+
+    actions: actions,
+  );
+
+  @override
+  void leadingHandler(BuildContext context) {
+    Analytics().logSelect(target: "Back");
+    Navigator.pop(context);
+  }
+}
+
+/*class SliverHeaderBar extends SliverAppBar {
   final BuildContext context;
   final Widget? titleWidget;
   final bool backVisible;
@@ -269,4 +230,4 @@ class SliverHeaderBar extends SliverAppBar {
         centerTitle: true,
         actions: actions,
       );
-}
+}*/

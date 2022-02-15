@@ -112,11 +112,10 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
       scrollDirection: Axis.vertical,
       slivers: <Widget>[
         SliverToutHeaderBar(
-          context: context,
-          imageUrl: game?.imageUrl,
-          backColor: Styles().colors!.fillColorPrimary,
-          leftTriangleColor: Styles().colors!.fillColorPrimary,
-          rightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
+          flexImageUrl: game?.imageUrl,
+          flexBackColor: Styles().colors?.fillColorPrimary,
+          flexRightToLeftTriangleColor: Styles().colors!.fillColorPrimary,
+          flexLeftToRightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
         ),
         SliverList(
           delegate: SliverChildListDelegate([

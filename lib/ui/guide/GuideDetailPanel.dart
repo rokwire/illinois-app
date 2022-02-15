@@ -122,10 +122,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     }
 
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(headerTitle ?? '', style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
-      ),
+      appBar: HeaderBar(title: headerTitle),
       body: Column(children: <Widget>[
           Expanded(child:
             contentWidget

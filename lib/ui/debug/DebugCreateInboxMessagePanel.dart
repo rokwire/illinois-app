@@ -61,10 +61,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text("Inbox Message", style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
-      ),
+      appBar: HeaderBar(title: "Inbox Message",),
       body: SafeArea(child:
         Column(children: <Widget>[
           Expanded(child:

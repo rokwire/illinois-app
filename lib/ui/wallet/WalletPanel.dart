@@ -89,21 +89,11 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       body: CustomScrollView(
         slivers: <Widget>[
           SliverHeaderBar(
-            context: context,
-            backVisible: false,
-            onBackPressed: () {
-              Analytics().logSelect(target: 'Close');
-              Navigator.pop(context);
-            } ,
-            backgroundColor: Styles().colors!.surface,
-            titleWidget: Text(
-              Localization().getStringEx( "panel.wallet.label.title", "Wallet"),
-              style: TextStyle(
-                  fontFamily: Styles().fontFamilies!.extraBold,
-                  color: Styles().colors!.fillColorPrimary,
-                  fontSize: 20,
-                  letterSpacing: 1.0),
-            ),
+            leadingAsset: null,
+            backgroundColor: Styles().colors?.surface,
+            title: Localization().getStringEx( "panel.wallet.label.title", "Wallet"),
+            textColor: Styles().colors!.fillColorPrimary,
+            fontSize: 20,
             actions: <Widget>[
               Visibility(
                 visible: widget.scrollController != null,

@@ -101,12 +101,8 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.settings.manage_interests.title', 'Manage My Interests'),
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.settings.manage_interests.title', 'Manage My Interests'),
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,

@@ -117,8 +117,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                 scrollDirection: Axis.vertical,
                 slivers: <Widget>[
                   SliverToutHeaderBar(
-                    context: context,
-                    imageUrl: widget.parentEvent?.eventImageUrl,
+                    flexImageUrl: widget.parentEvent?.eventImageUrl,
                   ),
                   SliverList(
                     delegate: SliverChildListDelegate(

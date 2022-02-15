@@ -58,16 +58,8 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SimpleHeaderBarWithBack(
-          context: context,
-          titleWidget: Text(
-            Localization().getStringEx('panel.athletics_news_list.header.title', 'News'),
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.0),
-          ),
+        appBar: HeaderBar(
+          title: Localization().getStringEx('panel.athletics_news_list.header.title', 'News'),
         ),
         body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

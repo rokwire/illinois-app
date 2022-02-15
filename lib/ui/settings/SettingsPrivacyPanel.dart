@@ -128,14 +128,8 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: (widget.mode == SettingsPrivacyPanelMode.regular)
-          ? SimpleHeaderBarWithBack(
-              context: context,
-              titleWidget: Text(
-                Localization().getStringEx('panel.settings.privacy.label.title', 'My Privacy'),
-                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-              ),
-            )
-          : null,
+        ? HeaderBar(title: Localization().getStringEx('panel.settings.privacy.label.title', 'My Privacy'),)
+        : null,
       body: _buildContentWidget(),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: (widget.mode == SettingsPrivacyPanelMode.regular) ? TabBarWidget() : null,

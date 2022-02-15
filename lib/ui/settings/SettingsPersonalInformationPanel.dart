@@ -48,12 +48,8 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx("panel.settings.personal_information.label.title", "Personal Information"),
-          style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.settings.personal_information.label.title", "Personal Information"),
       ),
       body: Column(
         children:[

@@ -107,16 +107,8 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-        Localization().getStringEx("panel.polls_home.text.header.title","Quick Polls"),
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.polls_home.text.header.title","Quick Polls"),
       ),
       body: _buildScaffoldBody(),
       backgroundColor: Styles().colors!.background,
