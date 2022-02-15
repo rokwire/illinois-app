@@ -295,7 +295,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             )),);
           contentList.add(Stack(children: [
             RibbonButton(
-              height: null,
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
               borderRadius: _allRounding,
               label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Connect your NetID"),
@@ -330,7 +329,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               ),
             )),);
           contentList.add(RibbonButton(
-            height: null,
             borderRadius: _allRounding,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Proceed"),
@@ -400,7 +398,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       
       if (code == 'roles') {
         customizationOptions.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.customizations.role.title", "Who you are"),
@@ -408,7 +405,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'interests') {
         customizationOptions.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.customizations.manage_interests.title", "Manage your interests"),
@@ -416,7 +412,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'food_filters') {
         customizationOptions.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.customizations.food_filters.title", "Food filters"),
@@ -496,7 +491,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       else if (code == 'connect') {
         contentList.add(Stack(children: [
             RibbonButton(
-              height: null,
               borderRadius: borderRadius,
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
               label: Localization().getStringEx("panel.settings.home.net_id.button.connect", "Connect your NetID"),
@@ -516,7 +510,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'disconnect') {
         contentList.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Disconnect your NetID"),
@@ -552,7 +545,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'verify') {
         contentList.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Phone Number"),
@@ -560,7 +552,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'disconnect') {
         contentList.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect","Disconnect your Phone",),
@@ -595,7 +586,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'login') {
         contentList.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
@@ -603,7 +593,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'disconnect') {
         contentList.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect","Logout",),
@@ -730,7 +719,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           }
           else if (code == 'unlink') {
             contentList.add(RibbonButton(
-                height: null,
                 borderRadius: borderRadius,
                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
                 label: Localization().getStringEx("panel.settings.home.linked.net_id.button.unlink", "Unlink"),
@@ -774,7 +762,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           }
           else if (code == 'unlink') {
             contentList.add(RibbonButton(
-                height: null,
                 borderRadius: borderRadius,
                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
                 label: Localization().getStringEx("panel.settings.home.linked.phone.button.unlink", "Unlink"),
@@ -818,7 +805,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           }
           else if (code == 'unlink') {
             contentList.add(RibbonButton(
-                height: null,
                 borderRadius: borderRadius,
                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
                 label: Localization().getStringEx("panel.settings.home.linked.email.button.unlink", "Unlink"),
@@ -864,7 +850,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             )),);
         contentList.add(Stack(children: [
           RibbonButton(
-              height: null,
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
               borderRadius: _allRounding,
               label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Link your NetID"),
@@ -892,7 +877,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           ),
         ),);
         contentList.add(RibbonButton(
-            height: null,
             borderRadius: _allRounding,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone_or_email.title", "Proceed"),
@@ -978,24 +962,21 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.add(ToggleRibbonButton(
           borderRadius: borderRadius,
           label: Localization().getStringEx("panel.settings.home.notifications.reminders", "Event reminders"),
-          toggled: FirebaseMessaging().notifyEventReminders,
-          context: context,
+          toggled: FirebaseMessaging().notifyEventReminders ?? false,
           onTap: _onEventRemindersToggled));
       }
       else if (code == 'athletics_updates') {
         contentList.add(ToggleRibbonButton(
           borderRadius: borderRadius,
           label: Localization().getStringEx("panel.settings.home.notifications.athletics_updates", "Athletics updates"),
-          toggled: FirebaseMessaging().notifyAthleticsUpdates,
-          context: context,
+          toggled: FirebaseMessaging().notifyAthleticsUpdates ?? false,
           onTap: _onAthleticsUpdatesToggled));
       }
       else if (code == 'dining') {
         contentList.add(ToggleRibbonButton(
           borderRadius: borderRadius,
           label: Localization().getStringEx("panel.settings.home.notifications.dining", "Dining specials"),
-          toggled: FirebaseMessaging().notifyDiningSpecials,
-          context: context,
+          toggled: FirebaseMessaging().notifyDiningSpecials ?? false,
           onTap: _onDiningSpecialsToggled));
       }
     }
@@ -1032,7 +1013,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
       if (code == 'edit') {
         contentList.add(RibbonButton(
-          height: null,
           borderRadius: borderRadius,
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
           label: Localization().getStringEx("panel.settings.home.privacy.edit_my_privacy.title", "Edit My Privacy"),
@@ -1041,7 +1021,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'statement') {
         contentList.add(RibbonButton(
-          height: null,
           borderRadius: borderRadius,
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
           label: Localization().getStringEx("panel.settings.home.privacy.privacy_statement.title", "Privacy Statement"),

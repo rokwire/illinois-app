@@ -157,11 +157,9 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
         String? foodLabel = Dinings().getLocalizedString(foodType);
         list.add(
             ToggleRibbonButton(
-              height: null,
               label: foodLabel,
               onTap: (){_onFoodTypePrefTapped(foodType);},
               toggled: selected,
-              context: context,
             ));
       }
     }
@@ -180,11 +178,9 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
         String? ingredientLabel = Dinings().getLocalizedString(foodIngredient);
         list.add(
             ToggleRibbonButton(
-              height: null,
               label: ingredientLabel,
               onTap: (){_onFoodIngredientPrefTapped(foodIngredient);},
               toggled: selected,
-              context: context,
             ));
       }
     }

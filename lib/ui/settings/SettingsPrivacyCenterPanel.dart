@@ -176,10 +176,10 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
           Container(height: 10,),
           Semantics(explicitChildNodes: true,
             child: RibbonButton(
-            leftIcon: "images/user-check.png",
             label: Localization().getStringEx("panel.settings.privacy_center.button.verify_identity.title", "Verify your Identity"),
+            leftIconAsset: "images/user-check.png",
             borderRadius: BorderRadius.circular(4),
-            shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.15), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+            borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.15), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
             onTap: () => _onTapVerifyIdentity(),
           )),
         ],

@@ -472,12 +472,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   Semantics(label:Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
                                       hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: _allDay, excludeSemantics: true, child:
                                   ToggleRibbonButton(
-                                    height: null,
                                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                                     label: Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
                                     toggled: _allDay,
                                     onTap: _onAllDayToggled,
-                                    context: context,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(4)),
                                     border: Border.all(color: Styles().colors!.fillColorPrimary!),
@@ -486,12 +484,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   Semantics(label:Localization().getStringEx("panel.create_event.date_time.online","Make this an online event"),
                                       hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: _isOnline, excludeSemantics: true, child:
                                       ToggleRibbonButton(
-                                        height: null,
                                         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                                         label: Localization().getStringEx("panel.create_event.date_time.online","Make this an online event"),
                                         toggled: _isOnline,
                                         onTap: _onOnlineToggled,
-                                        context: context,
                                         border: Border.all(color: Styles().colors!.fillColorPrimary!),
                                         borderRadius:
                                         BorderRadius.all(Radius.circular(4)),
@@ -1289,12 +1285,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         Semantics(label:Localization().getStringEx("panel.create_event.button.free.title","Is this event free?"),//TBD localize
             hint: Localization().getStringEx("panel.create_event.button.free.hint",""), toggled: _isFree, excludeSemantics: true, child:
             ToggleRibbonButton(
-              height: null,
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               label: Localization().getStringEx("panel.create_event.button.free.title","Is this event free?"),
               toggled: _isFree,
               onTap: _onFreeToggled,
-              context: context,
               border: Border.all(color: Styles().colors!.fillColorPrimary!),
               borderRadius:
               BorderRadius.all(Radius.circular(4)),
@@ -1448,12 +1442,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       child: Semantics(label:Localization().getStringEx("panel.create_event.button.attendance.title","Attendance required"),//TBD localize
         hint: Localization().getStringEx("panel.create_event.button.attendance..hint",""), toggled: true, excludeSemantics: true, child:
         ToggleRibbonButton(
-          height: null,
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           label: Localization().getStringEx("panel.create_event.button.attendance.title","Attendance required"),
           toggled: _isAttendanceRequired,
           onTap: _onAttendanceRequiredToggled,
-          context: context,
           border: Border.all(color: Styles().colors.fillColorPrimary),
           borderRadius:
           BorderRadius.all(Radius.circular(4)),
@@ -1705,7 +1697,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     //TBD: prompt
   }
 
-  void _onTapBack(BuildContext context) {
+  void _onTapBack() {
     if (_modified) {
       _promptBack().then((bool? result) {
         if (result!) {
@@ -2392,9 +2384,8 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
           borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
           label: group.title,
           toggled: _isGroupSelected(index),
-          context: context,
           onTap: () => _onTapGroup(index),
-          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold));
+          textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold));
 
       groupWidgetList.add(groupSelectionWidget);
     }

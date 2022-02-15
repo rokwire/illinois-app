@@ -650,9 +650,8 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                 Container(height: 48,),
                 !_canDelete? Container():
                   RibbonButton(
-                    height: null,
-                    leftIcon: "images/icon-leave-group.png",
-                    label:Localization().getStringEx("panel.group_detail.button.delete_event.title", "Remove group event"),
+                    label: Localization().getStringEx("panel.group_detail.button.delete_event.title", "Remove group event"),
+                    leftIconAsset: "images/icon-leave-group.png",
                     onTap: (){
                       Analytics().logSelect(target: "Remove group event");
                       showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
@@ -660,9 +659,8 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                   ),
                 !_canEdit? Container():
                   RibbonButton(
-                    height: null,
-                    leftIcon: "images/icon-edit.png",
-                    label:Localization().getStringEx("panel.group_detail.button.edit_event.title", "Edit Event"),
+                    label: Localization().getStringEx("panel.group_detail.button.edit_event.title", "Edit Event"),
+                    leftIconAsset: "images/icon-edit.png",
                     onTap: (){
                       _onEditEventTap(context);
                     },

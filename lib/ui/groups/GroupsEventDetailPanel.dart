@@ -489,10 +489,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
             RibbonButton(
-              leftIcon: "images/icon-edit.png",
               label: Localization().getStringEx('panel.groups_event_detail.button.edit.title',  'Edit') ,
               hint: Localization().getStringEx('panel.groups_event_detail.button.edit.hint', '') ,
-              padding: EdgeInsets.zero,
+              leftIconAsset: "images/icon-edit.png",
               onTap: _onTapEdit,
             ),
         Container(
@@ -506,10 +505,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           height: 14,
         ),
         RibbonButton(
-          leftIcon: "images/icon-leave-group.png",
           label: Localization().getStringEx('panel.groups_event_detail.button.delete.title', "Delete Event"),
           hint:  Localization().getStringEx('panel.groups_event_detail.button.delete.hint', ""),
-          padding: EdgeInsets.zero,
+          leftIconAsset: "images/icon-leave-group.png",
           onTap: _onTapDelete,
         )
       ],

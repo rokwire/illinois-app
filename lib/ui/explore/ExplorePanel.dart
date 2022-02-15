@@ -1231,7 +1231,7 @@ class ExplorePanelState extends State<ExplorePanel>
     _loadExplores();
   }
 
-  void _onTapHeaderBackButton(BuildContext context) {
+  void _onTapHeaderBackButton() {
     Navigator.pop(context);
   }
 

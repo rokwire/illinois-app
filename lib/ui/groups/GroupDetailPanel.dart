@@ -588,28 +588,25 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (_isMemberOrAdmin) {
       if(_isAdmin){
         commands.add(RibbonButton(
-          height: null,
           label: Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
           hint: Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
-          leftIcon: 'images/icon-member.png',
+          leftIconAsset: 'images/icon-member.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapMembers,
         ));
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent,));
         commands.add(RibbonButton(
-          height: null,
           label: Localization().getStringEx("panel.group_detail.button.group_settings.title", "Group Settings"),
           hint: Localization().getStringEx("panel.group_detail.button.group_settings.hint", ""),
-          leftIcon: 'images/icon-gear.png',
+          leftIconAsset: 'images/icon-gear.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapSettings,
         ));
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
         commands.add(RibbonButton(
-          height: null,
           label: Localization().getStringEx("panel.group_detail.button.group_promote.title", "Promote this group"),
           hint: Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
-          leftIcon: 'images/icon-qr-code.png',
+          leftIconAsset: 'images/icon-qr-code.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapPromote,
         ));
@@ -974,8 +971,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildWebsiteLink() {
     return RibbonButton(
         label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
-        icon: 'images/external-link.png',
-        leftIcon: 'images/globe.png',
+        rightIconAsset: 'images/external-link.png',
+        leftIconAsset: 'images/globe.png',
         padding: EdgeInsets.symmetric(horizontal: 0),
         onTap: _onWebsite);
   }
@@ -1135,8 +1132,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canCreatePost,
                     child: RibbonButton(
-                        height: null,
-                        leftIcon: "images/icon-add-20x18.png",
+                        leftIconAsset: "images/icon-add-20x18.png",
                         label: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
                         onTap: () {
                           Navigator.of(context).pop();
@@ -1145,8 +1141,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canLeaveGroup,
                     child: RibbonButton(
-                        height: null,
-                        leftIcon: "images/icon-leave-group.png",
+                        leftIconAsset: "images/icon-leave-group.png",
                         label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
                         onTap: () {
                           Analytics().logSelect(target: "Leave group");
@@ -1161,8 +1156,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canDeleteGroup,
                     child: RibbonButton(
-                        height: null,
-                        leftIcon: "images/icon-delete-group.png",
+                        leftIconAsset: "images/icon-delete-group.png",
                         label: Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
                         onTap: () {
                           Analytics().logSelect(target: "Delete group");
@@ -1177,8 +1171,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canAddEvent,
                     child: RibbonButton(
-                        height: null,
-                        leftIcon: "images/icon-edit.png",
+                        leftIconAsset: "images/icon-edit.png",
                         label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add existing event"),
                         onTap: (){
                           Navigator.pop(context);
@@ -1187,8 +1180,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canAddEvent,
                     child: RibbonButton(
-                        height: null,
-                        leftIcon: "images/icon-edit.png",
+                        leftIconAsset: "images/icon-edit.png",
                         label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create new event"),
                         onTap: (){
                           Navigator.pop(context);
@@ -1216,8 +1208,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canAddEvent,
                     child: RibbonButton(
-                        height: null,
-                        leftIcon: "images/icon-edit.png",
+                        leftIconAsset: "images/icon-edit.png",
                         label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add existing event"),
                         onTap: (){
                           Navigator.pop(context);
@@ -1226,8 +1217,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canAddEvent,
                     child: RibbonButton(
-                        height: null,
-                        leftIcon: "images/icon-edit.png",
+                        leftIconAsset: "images/icon-edit.png",
                         label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create new event"),
                         onTap: (){
                           Navigator.pop(context);
