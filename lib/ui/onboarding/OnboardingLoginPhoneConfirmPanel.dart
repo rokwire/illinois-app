@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -48,6 +49,13 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
   String? _verificationErrorMsg;
 
   bool _isLoading = false;
+  bool _link = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _link = widget.onboardingContext?["link"] ?? false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +175,17 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                     backgroundColor: Styles().colors!.background,
                     textColor: Styles().colors!.fillColorPrimary,
                     onTap: () => _onTapConfirm())
+                ),
+                Container(child:
+                RoundedButton(
+                    label: Localization().getStringEx(
+                        "panel.onboarding.confirm_phone.button.cancel.label", "Cancel"),
+                    hint: Localization().getStringEx(
+                        "panel.onboarding.confirm_phone.button.cancel.hint", ""),
+                    borderColor: Styles().colors!.fillColorSecondary,
+                    backgroundColor: Styles().colors!.background,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    onTap: () => _onTapCancel())
                 )
               ],
             ),),),
@@ -205,12 +224,54 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
       _isLoading = true;
     });
 
-    Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text).then((success) {
+    if (!_link) {
+      Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text).then((success) {
+        if(mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+          _onPhoneVerified(success);
+        }
+      });
+    } else {
+      Map<String, dynamic> creds = {
+        "phone": phoneNumber,
+        "code": _codeController.text,
+      };
+      Map<String, dynamic> params = {};
+      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
+        //TODO: handle result status
+        if(mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+          // _onPhoneVerified(success);
+        }
+      });
+    }
+  }
+
+  void _onTapCancel() {
+    String phoneNumber = ((widget.onboardingContext != null) ? widget.onboardingContext!["phone"] : null) ?? widget.phoneNumber ?? '';
+    setState(() {
+      _isLoading = true;
+    });
+
+    Auth2().unlinkAccountAuthType(Auth2LoginType.phoneTwilio, phoneNumber).then((success) {
       if(mounted) {
         setState(() {
           _isLoading = false;
         });
-        _onPhoneVerified(success);
+        if (!success) {
+          setState(() {
+            _verificationErrorMsg = Localization().getStringEx(
+                "panel.onboarding.confirm_phone.cancel.server_error.text",
+                "Failed to cancel link verification");
+          });
+        }
+        else {
+          _finishedPhoneVerification();
+        }
       }
     });
   }
@@ -223,7 +284,13 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
             "Failed to verify code");
       });
     }
-    else if (widget.onboardingContext != null) {
+    else {
+      _finishedPhoneVerification();
+    }
+  }
+
+  void _finishedPhoneVerification() {
+    if (widget.onboardingContext != null) {
       Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
       if(onSuccess!=null){
         onSuccess();

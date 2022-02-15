@@ -767,6 +767,13 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 label: Localization().getStringEx("panel.settings.home.linked.phone.button.unlink", "Unlink"),
                 onTap: () => _unlinkAuthType(Auth2LoginType.phoneTwilio, identifier)));
           }
+          else if (code == 'verify') {
+            contentList.add(RibbonButton(
+                borderRadius: borderRadius,
+                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+                label: Localization().getStringEx("panel.settings.home.linked.phone.button.verify", "Verify"),
+                onTap: () => _onVerifyAuthTypeClicked(identifier)));
+          }
         }
         if (identifiers.indexOf(identifier) < identifiers.length - 1) {
           contentList.add(Container(height: 16.0,));
@@ -809,6 +816,13 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
                 label: Localization().getStringEx("panel.settings.home.linked.email.button.unlink", "Unlink"),
                 onTap: () => _unlinkAuthType(Auth2LoginType.email, identifier)));
+          }
+          else if (code == 'verify') {
+            contentList.add(RibbonButton(
+                borderRadius: borderRadius,
+                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+                label: Localization().getStringEx("panel.settings.home.linked.email.button.verify", "Verify"),
+                onTap: () => _onVerifyAuthTypeClicked(identifier)));
           }
         }
         if (identifiers.indexOf(identifier) < identifiers.length - 1) {
@@ -943,6 +957,26 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.home.unlink.failed", "Unlink failed."));
         }
       });
+    } else {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
+    }
+  }
+
+  void _onVerifyAuthTypeClicked(String identifier) {
+    Analytics().logSelect(target: "Verify auth type");
+    if (Connectivity().isNotOffline) {
+      Navigator.push(context, CupertinoPageRoute(
+        settings: RouteSettings(),
+        builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
+          onboardingContext: {
+            "link": true,
+            "identifier": identifier,
+            "onContinueAction": () {
+              _didLogin(context);
+            }
+          },
+        ),
+      ),);
     } else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }

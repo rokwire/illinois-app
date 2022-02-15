@@ -392,8 +392,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
             "sign_up": true,
             "confirm_password": confirmPassword
           };
-          Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((bool success) {
-            if (success) {
+          Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((result) {
+            //TODO: handle result status
+            if (result == Auth2LinkResult.succeded) {
               Function? onSuccess = widget.onboardingContext!["onContinueAction"];
               if(onSuccess!=null){
                 onSuccess();
