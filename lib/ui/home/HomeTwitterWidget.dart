@@ -98,7 +98,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           Future.delayed(Duration.zero, ()
           {
-            _refresh(count: Config().twitterTweetsCount);
+            _refresh(/*count: Config().twitterTweetsCount*/);
           });
         }
       }
