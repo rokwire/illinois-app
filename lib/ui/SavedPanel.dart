@@ -457,11 +457,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
           ),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
             child: ToggleRibbonButton(
-              height: null,
               label: Localization().getStringEx("panel.saved.notifications.enable.label", "Enable notifications"),
               toggled: false,
               onTap: _onAuthorizeTapped,
-              context: context,
               borderRadius:
               BorderRadius.all(Radius.circular(4)),
               )),

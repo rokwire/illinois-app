@@ -179,13 +179,11 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
             ],),
             Container(height: 21,),
             ToggleRibbonButton(
-                height: null,
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: Styles().colors!.fillColorPrimary!),
                 label: Localization().getStringEx("panel.pending_member_detail.button.approve.text", "Approve "),
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 toggled: _approved,
-                context: context,
                 onTap: () {
                   Analytics().logSelect(target: 'Aprove');
                   setState(() {
@@ -203,12 +201,10 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
               child: Column(
                 children: [
                   ToggleRibbonButton(
-                      height: null,
                       label: Localization().getStringEx("panel.pending_member_detail.button.deny.text", "Deny"),
                       borderRadius: BorderRadius.circular(4),
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       toggled: _denied,
-                      context: context,
                       onTap: () {
                         Analytics().logSelect(target: 'Deny');
                         setState(() {

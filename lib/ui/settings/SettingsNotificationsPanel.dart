@@ -107,9 +107,8 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
           borderRadius: _topRounding,
           label: Localization().getStringEx("panel.settings.notifications.reminders", "Event reminders"),
           toggled: FirebaseMessaging().notifyEventReminders,
-          context: context,
           onTap: _toggleButtonEnabled?_onEventRemindersToggled : (){},
-          style: _toggleButtonEnabled? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold) :
+          textStyle: _toggleButtonEnabled? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold) :
               TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)));
     widgets.add(Container(color:Styles().colors!.surfaceAccent,height: 1,));
     widgets.add(_CustomToggleButton(
@@ -117,9 +116,8 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.athletics_updates", "Athletics updates"),
           toggled: FirebaseMessaging().notifyAthleticsUpdates,
-          context: context,
           onTap: _toggleButtonEnabled? _onAthleticsUpdatesToggled : (){},
-          style: _toggleButtonEnabled? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold) :
+          textStyle: _toggleButtonEnabled? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold) :
               TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)));
     widgets.add(Row(children: [
       Expanded(
@@ -136,27 +134,24 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.athletics_updates.start.label", "Start"),
           toggled: FirebaseMessaging().notifyStartAthleticsUpdates,
-          context: context,
           onTap: _athleticsSubNotificationsEnabled ? _onAthleticsUpdatesStartToggled : (){},
-          style: _athleticsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
+          textStyle: _athleticsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
           TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies!.bold)),
       _CustomToggleButton(
           enabled: _athleticsSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.athletics_updates.end.label", "End"),
           toggled: FirebaseMessaging().notifyEndAthleticsUpdates,
-          context: context,
           onTap: _athleticsSubNotificationsEnabled ? _onAthleticsUpdatesEndToggled : (){},
-          style: _athleticsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
+          textStyle: _athleticsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
           TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies!.bold)),
       _CustomToggleButton(
           enabled: _athleticsSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.athletics_updates.news.label", "News"),
           toggled: FirebaseMessaging().notifyNewsAthleticsUpdates,
-          context: context,
           onTap: _athleticsSubNotificationsEnabled ? _onAthleticsUpdatesNewsToggled : (){},
-          style: _athleticsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
+          textStyle: _athleticsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
           TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies!.bold))
     ]))))]));
     widgets.add(Container(color:Styles().colors!.surfaceAccent,height: 1,));
@@ -165,9 +160,8 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
         borderRadius: BorderRadius.zero,
         label: Localization().getStringEx("panel.settings.notifications.group_updates", "Group updates"),
         toggled: FirebaseMessaging().notifyGroupUpdates,
-        context: context,
         onTap: _toggleButtonEnabled? _onGroupsUpdatesToggled : (){},
-        style: _toggleButtonEnabled? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold) :
+        textStyle: _toggleButtonEnabled? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold) :
         TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)));
     widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _CustomToggleButton(
@@ -175,27 +169,24 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.posts.label", "Posts"),
           toggled: FirebaseMessaging().notifyGroupPostUpdates,
-          context: context,
           onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesPostsToggled : (){},
-          style: _groupsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
+          textStyle: _groupsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
           TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies!.bold)),
       _CustomToggleButton(
           enabled: _groupsSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.event.label", "Event"),
           toggled: FirebaseMessaging().notifyGroupEventsUpdates,
-          context: context,
           onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesEventsToggled : (){},
-          style: _groupsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
+          textStyle: _groupsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
           TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies!.bold)),
       _CustomToggleButton(
           enabled: _groupsSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.invitations.label", "Invitations"),
           toggled: FirebaseMessaging().notifyGroupInvitationsUpdates,
-          context: context,
           onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesInvitationsToggled: (){},
-          style: _groupsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
+          textStyle: _groupsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
           TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies!.bold))
     ]))))]));
     widgets.add(Container(color: Styles().colors!.white, height: 20));
@@ -204,9 +195,8 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
         borderRadius: BorderRadius.zero,
         label: Localization().getStringEx("panel.settings.notifications.pause_notifications", "Pause all notifications"),
         toggled: FirebaseMessaging().notificationsPaused,
-        context: context,
         onTap: _notificationsEnabled? _onPauseNotificationsToggled : (){},
-        style: _notificationsEnabled? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold) :
+        textStyle: _notificationsEnabled? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold) :
         TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)));
     widgets.add(Container(color:Styles().colors!.surfaceAccent,height: 1,));
     widgets.add(Container(color: Styles().colors!.white, height: 20));
@@ -371,23 +361,26 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
   }
 }
 
-class _CustomToggleButton extends ToggleRibbonButton{
+class _CustomToggleButton extends ToggleRibbonButton {
   final bool? enabled;
 
-  //super
-  final String? label;
-  final GestureTapCallback? onTap;
-  final bool? toggled;
-  final BorderRadius? borderRadius;
-  final BoxBorder? border;
-  final BuildContext? context; //Required in order to announce the VO status change
-  final TextStyle? style;
-  final double? height;
-
-  _CustomToggleButton({this.style, this.enabled, this.label, this.onTap, this.toggled, this.borderRadius, this.border, this.context, this.height});
+  _CustomToggleButton({
+    String? label,
+    bool? toggled,
+    void Function()? onTap,
+    BoxBorder? border,
+    BorderRadius? borderRadius,
+    TextStyle? textStyle,
+    this.enabled,
+  }) : super(
+    label: label,
+    toggled: (toggled == true),
+    onTap: onTap,
+    border: border,
+    borderRadius: borderRadius,
+    textStyle: textStyle,
+  );
 
   @override
-    Widget getImage() {
-      return enabled! ? super.getImage(): Image.asset("images/switch-off.png");
-    }
+  bool get toggled => (enabled == true) && super.toggled;
 }

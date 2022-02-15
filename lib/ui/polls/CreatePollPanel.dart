@@ -274,10 +274,8 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     widgets.add(ToggleRibbonButton(
         label: Localization().getStringEx("panel.create_poll.setting.multy_choice", "Allow selecting more than one choice"),
         toggled: _selectedMultichoice,
-        context: context,
         borderRadius: rounding,
-        style: _textStyle,
-        height: null,
+        textStyle: _textStyle,
         onTap: () {
           if (_progressPollStatus == null) {
             setState(() {
@@ -291,10 +289,8 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     widgets.add(ToggleRibbonButton(
         label: Localization().getStringEx("panel.create_poll.setting.repeat_vote", "Allow repeat votes"),
         toggled: _selectedRepeatVotes,
-        context: context,
         borderRadius: rounding,
-        style: _textStyle,
-        height: null,
+        textStyle: _textStyle,
         onTap: () {
           if (_progressPollStatus == null) {
             setState(() {
@@ -308,10 +304,8 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     widgets.add(ToggleRibbonButton(
         label: Localization().getStringEx("panel.create_poll.setting.hide_result", "Hide results until poll ends"),
         toggled: _selectedHideResult,
-        context: context,
         borderRadius: rounding,
-        style: _textStyle,
-        height: null,
+        textStyle: _textStyle,
         onTap: () {
           if (_progressPollStatus == null) {
             setState(() {

@@ -44,7 +44,6 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
                 RibbonButton(
                   label: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.title',  'Personalize this app') ,
                   hint: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.hint', '') ,
-                  height: null,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapPersonalize,
                 ),
@@ -52,7 +51,6 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
                 RibbonButton(
                   label: Localization().getStringEx('widgets.home_highlighted_features.button.notifications.title',  'Manage notification preferences') ,
                   hint: Localization().getStringEx('widgets.home_highlighted_features.button.notifications.hint', '') ,
-                  height: null,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapNotificationPreferences,
                 ),
@@ -60,7 +58,6 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
                 RibbonButton(
                   label: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.title',  'Manage my privacy') ,
                   hint: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.hint', '') ,
-                  height: null,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapManagePrivacy,
                 ),
@@ -68,7 +65,6 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
                 RibbonButton(
                   label: Localization().getStringEx('widgets.home_highlighted_features.button.guide.title',  'Campus Guide') ,
                   hint: Localization().getStringEx('widgets.home_highlighted_features.button.guide.hint', '') ,
-                  height: null,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapCampusGuide,
                 ),
