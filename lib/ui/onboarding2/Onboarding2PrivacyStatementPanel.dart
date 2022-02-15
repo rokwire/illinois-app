@@ -21,7 +21,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ExploreCampusPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -47,13 +47,13 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title', 'Control your data privacy')!;
-    String titleText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title2', '')!;
-    String descriptionText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description', 'Choose what information you want to store and share to get a recommended privacy level.')!;
+    String titleText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title', 'Control your data privacy');
+    String titleText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title2', '');
+    String descriptionText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description', 'Choose what information you want to store and share to get a recommended privacy level.');
 
-    String descriptionText1 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description1', 'Please read the ')!;
-    String descriptionText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description2', 'Privacy notice ')!;
-    String descriptionText3 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description3', '. Your continued use of the app assumes that you have read and agree with it.')!;
+    String descriptionText1 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description1', 'Please read the ');
+    String descriptionText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description2', 'Privacy notice ');
+    String descriptionText3 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description3', '. Your continued use of the app assumes that you have read and agree with it.');
 
     return Scaffold(
         backgroundColor: Styles().colors!.background,
@@ -152,11 +152,11 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                     Padding(
                       padding: EdgeInsets.only(
                           bottom: 24, top: 16),
-                      child: ScalableRoundedButton(
+                      child: RoundedButton(
                         label: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.title', 'Begin'),
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
                         fontSize: 16,
-                        padding: EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         backgroundColor: Styles().colors!.white,
                         borderColor: Styles().colors!.fillColorSecondaryVariant,
                         textColor: Styles().colors!.fillColorPrimary,

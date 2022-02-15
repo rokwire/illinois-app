@@ -16,9 +16,9 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -49,15 +49,8 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.groups_search.header.title", "Search")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.groups_search.header.title", "Search"),
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
@@ -208,7 +201,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     } else if (_resultsCount == 1) {
       return Localization().getStringEx('panel.groups_search.label.found_single', '1 result found');
     } else if (_resultsCount > 1) {
-      return sprintf(Localization().getStringEx('panel.groups_search.label.found_multi', '%d results found')!, [_resultsCount]);
+      return sprintf(Localization().getStringEx('panel.groups_search.label.found_multi', '%d results found'), [_resultsCount]);
     } else {
       return "";
     }
@@ -232,7 +225,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
       _groups = groups;
       _resultsCount = _groups?.length ?? 0;
       _resultsCountLabelVisible = true;
-      _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ')! + _searchController.text;
+      _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ') + _searchController.text;
       _setLoading(false);
     });
   }

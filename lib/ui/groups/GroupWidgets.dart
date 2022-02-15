@@ -17,16 +17,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
-import 'package:illinois/service/Content.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -40,9 +42,8 @@ import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:sprintf/sprintf.dart';
@@ -311,7 +312,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Expanded(child:
-                        ScalableRoundedButton(
+                        RoundedButton(
                           label: Localization().getStringEx('headerbar.back.title', "Back"),
                           fontFamily: "ProximaNovaRegular",
                           textColor: Styles().colors!.fillColorPrimary,
@@ -325,8 +326,8 @@ class GroupsConfirmationDialog extends StatelessWidget{
                         )),
                       Container(width: 16,),
                       Expanded(child:
-                        ScalableRoundedButton(
-                          label: buttonTitle,
+                        RoundedButton(
+                          label: buttonTitle ?? '',
                           fontFamily: "ProximaNovaBold",
                           textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.fillColorSecondary,
@@ -375,8 +376,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
       content2.add(
           Container(
               padding: EdgeInsets.symmetric(vertical: 16),
-              child:_buildAddPostButton(photoUrl: Groups().getUserMembership(widget.group?.id)?.photoURL,
-                  onTap: (){
+              child:_buildAddPostButton(onTap: (){
                     Analytics().logSelect(target: "Add post");
                     //TBD: remove if not used
                     // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.group?.id,)));
@@ -410,7 +410,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text(Localization().getStringEx("panel.group_detail.button.previous_post.title", "See previous posts")!, style: TextStyle(fontSize: 16,
+                    Text(Localization().getStringEx("panel.group_detail.button.previous_post.title", "See previous posts"), style: TextStyle(fontSize: 16,
                         fontFamily: Styles().fontFamilies!.bold,
                         color: Styles().colors!.fillColorPrimary),),
                     Padding(
@@ -507,7 +507,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
                       borderRadius: BorderRadius.all(Radius.circular(8))
                   ),
                   child:
-                  Text(Localization().getStringEx("panel.group_detail.button.add_post.title", "Add a public post ...")!,style: TextStyle(fontSize: 16, color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular),)
+                  Text(Localization().getStringEx("panel.group_detail.button.add_post.title", "Add a public post ..."),style: TextStyle(fontSize: 16, color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular),)
               ))
             ],),
           ));
@@ -556,7 +556,8 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   @override
   Widget build(BuildContext context) {
 
-    bool isFavorite = widget.event!.isFavorite;
+    bool isFavorite = widget.event?.isFavorite ?? false;
+    String? imageUrl = widget.event?.eventImageUrl;
 
     List<Widget> content = [
       Padding(padding: EdgeInsets.only(bottom: 8, right: 8), child:
@@ -567,7 +568,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
       Expanded(child:
-      Text(widget.event!.timeDisplayString!,  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),)
+      Text(widget.event?.timeDisplayString ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),)
       ),
     ],)),);
 
@@ -612,14 +613,14 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
               )
             ],),
             Visibility(visible:
-                StringUtils.isNotEmpty(widget.event?.exploreImageURL),
+                StringUtils.isNotEmpty(imageUrl),
                 child: Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 8),
                   child: SizedBox(
                     width: _smallImageSize,
                     height: _smallImageSize,
                     child: Image.network(
-                      widget.event!.exploreImageURL!, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),),)),
+                      imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),),)),
                 ])
                 )
     ],);
@@ -649,9 +650,8 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                 Container(height: 48,),
                 !_canDelete? Container():
                   RibbonButton(
-                    height: null,
-                    leftIcon: "images/icon-leave-group.png",
-                    label:Localization().getStringEx("panel.group_detail.button.delete_event.title", "Remove group event"),
+                    label: Localization().getStringEx("panel.group_detail.button.delete_event.title", "Remove group event"),
+                    leftIconAsset: "images/icon-leave-group.png",
                     onTap: (){
                       Analytics().logSelect(target: "Remove group event");
                       showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
@@ -659,9 +659,8 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                   ),
                 !_canEdit? Container():
                   RibbonButton(
-                    height: null,
-                    leftIcon: "images/icon-edit.png",
-                    label:Localization().getStringEx("panel.group_detail.button.edit_event.title", "Edit Event"),
+                    label: Localization().getStringEx("panel.group_detail.button.edit_event.title", "Edit Event"),
+                    leftIconAsset: "images/icon-edit.png",
                     onTap: (){
                       _onEditEventTap(context);
                     },
@@ -752,7 +751,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                   Padding(
                     padding: EdgeInsets.only(left: 10, top: 10),
                     child: Text(
-                      Localization().getStringEx("widget.add_image.heading", "Select Image")!,
+                      Localization().getStringEx("widget.add_image.heading", "Select Image"),
                       style: TextStyle(
                           color: Colors.white,
                           fontFamily: Styles().fontFamilies!.medium,
@@ -799,20 +798,15 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                               backgroundColor: Styles().colors!.background,
                               textColor: Styles().colors!.fillColorPrimary,
                               onTap: _onTapUseUrl)),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Padding(
-                              padding: EdgeInsets.all(10),
-                              child: RoundedButton(
-                                  label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
-                                  borderColor: Styles().colors!.fillColorSecondary,
-                                  backgroundColor: Styles().colors!.background,
-                                  textColor: Styles().colors!.fillColorPrimary,
-                                  onTap: _onTapChooseFromDevice)),
-                          _showProgress ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary)) : Container(),
-                        ],
-                      ),
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: RoundedButton(
+                              label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
+                              borderColor: Styles().colors!.fillColorSecondary,
+                              backgroundColor: Styles().colors!.background,
+                              textColor: Styles().colors!.fillColorPrimary,
+                              progress: _showProgress,
+                              onTap: _onTapChooseFromDevice)),
                     ]))
           ],
         ));
@@ -827,14 +821,14 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     Analytics().logSelect(target: "Use Url");
     String url = _imageUrlController.value.text;
     if (url == "") {
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url")!);
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
       return;
     }
 
     bool isReadyUrl = url.endsWith(".webp");
     if (isReadyUrl) {
       //ready
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
       Navigator.pop(context, url);
     } else {
       //we need to process it
@@ -852,15 +846,15 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
         ImagesResultType? resultType = logicResult.resultType;
         switch (resultType) {
-          case ImagesResultType.CANCELLED:
+          case ImagesResultType.cancelled:
           //do nothing
             break;
-          case ImagesResultType.ERROR_OCCURRED:
-            AppToast.show(logicResult.errorMessage!);
+          case ImagesResultType.error:
+            AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
             break;
-          case ImagesResultType.SUCCEEDED:
+          case ImagesResultType.succeeded:
           //ready
-            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
+            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
             Navigator.pop(context, logicResult.data);
             break;
           default:
@@ -886,15 +880,15 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
       ImagesResultType? resultType = logicResult!.resultType;
       switch (resultType) {
-        case ImagesResultType.CANCELLED:
+        case ImagesResultType.cancelled:
         //do nothing
           break;
-        case ImagesResultType.ERROR_OCCURRED:
-          AppToast.show(logicResult.errorMessage!);
+        case ImagesResultType.error:
+          AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
           break;
-        case ImagesResultType.SUCCEEDED:
+        case ImagesResultType.succeeded:
         //ready
-          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
+          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
           Navigator.pop(context, logicResult.data);
           break;
         default:
@@ -913,12 +907,14 @@ enum GroupCardDisplayType { myGroup, allGroups, homeGroups }
 class GroupCard extends StatelessWidget {
   final Group? group;
   final GroupCardDisplayType displayType;
+  final Function? onImageTap;
+  static const double _smallImageSize = 64;
 
-  GroupCard({required this.group, this.displayType = GroupCardDisplayType.allGroups});
+  GroupCard({required this.group, this.displayType = GroupCardDisplayType.allGroups, this.onImageTap});
 
   @override
   Widget build(BuildContext context) {
-    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s")!, [StringUtils.ensureNotEmpty(group!.pendingCount.toString())]);
+    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [StringUtils.ensureNotEmpty(group!.pendingCount.toString())]);
     return GestureDetector(
         onTap: () => _onTapCard(context),
         child: Padding(
@@ -932,14 +928,26 @@ class GroupCard extends StatelessWidget {
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   _buildHeading(),
                   Container(height: 3),
-                  Row(children: [
-                    Expanded(
-                        child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 0),
-                            child: Text(group?.title ?? "",
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
-                                style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))))
+                  Row(
+                    children:[
+                      Expanded(
+                        child:
+                          Column(
+                            children:[
+                              _buildCategoryLayout(),
+                              Row(children: [
+                                Expanded(
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 0),
+                                        child: Text(group?.title ?? "",
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
+                                            style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))))
+                              ]),
+                            ]
+                          ),
+                      ),
+                      _buildImage()
                   ]),
                   (displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) :Container(),
                   Visibility(
@@ -956,7 +964,17 @@ class GroupCard extends StatelessWidget {
                     ),
                   ),
                   Container(height: 4),
-                  (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups ) ? _buildUpdateTime() : Container()
+                  // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
+                       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          Expanded(
+                            child: _buildUpdateTime(),
+                          ),
+                          Visibility(visible:
+                              (group?.authManEnabled ?? false)
+                              && displayType != GroupCardDisplayType.homeGroups,
+                                child: _buildMembersCount())
+                        ])
+                      // : Container()
                 ]))));
   }
 
@@ -976,37 +994,20 @@ class GroupCard extends StatelessWidget {
       );
     }
 
-    String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")!);
-    if (StringUtils.isNotEmpty(groupCategory)) {
-      if (leftContent.isNotEmpty) {
-        leftContent.add(Container(height: 6,));
-      }
-      leftContent.add(
-        Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
-          overflow: TextOverflow.ellipsis,
-          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
-      );
-    }
+    // String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
+    // if (StringUtils.isNotEmpty(groupCategory)) {
+    //   if (leftContent.isNotEmpty) {
+    //     leftContent.add(Container(height: 6,));
+    //   }
+    //   leftContent.add(
+    //     Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+    //       overflow: TextOverflow.ellipsis,
+    //       maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
+    //   );
+    // }
 
     List<Widget> rightContent = <Widget>[];
-
-    String? privacyStatus;
-    if (group?.privacy == GroupPrivacy.private) {
-      privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private') ;
-    }
-
-    if (privacyStatus != null) {
-      rightContent.add(
-        Semantics(
-          label: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: ')!, [privacyStatus]),
-          excludeSemantics: true,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))),
-            child: Text(privacyStatus.toUpperCase(),
-              style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white)))),
-      );
-    }
+    rightContent.add(_buildPrivacyStatysBadge()); //Moved above the image
 
     List<Widget> content = <Widget>[];
     if (leftContent.isNotEmpty) {
@@ -1023,8 +1024,84 @@ class GroupCard extends StatelessWidget {
     return content.isNotEmpty ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: content,) : Container(width: 0, height: 0);
   }
 
+  Widget _buildPrivacyStatysBadge(){
+    String privacyStatus = '';
+    if (group?.authManEnabled ?? false) {
+      privacyStatus = ' ' + Localization().getStringEx('widget.group_card.status.authman', 'Managed');
+    }
+    if (group?.privacy == GroupPrivacy.private) {
+      privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private') + privacyStatus;
+    } else if (StringUtils.isNotEmpty(privacyStatus)) {
+      privacyStatus = Localization().getStringEx('widget.group_card.status.public', 'Public') + privacyStatus;
+    }
 
-  Widget _buildUpdateTime() {
+    if (StringUtils.isNotEmpty(privacyStatus)) {
+      return
+        Container(
+          padding: EdgeInsets.only(bottom: 8),
+          child: Semantics(
+              label: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [privacyStatus]),
+              excludeSemantics: true,
+              child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))),
+                  child: Text(privacyStatus.toUpperCase(),
+                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white)))));
+    } else {
+      return Container();
+    }
+  }
+
+  Widget _buildCategoryLayout(){
+    String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
+    List<Widget> content = [];
+    if (StringUtils.isNotEmpty(groupCategory)) {
+        content.add(Container(height: 6,));
+        content.add(
+          Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+            overflow: TextOverflow.ellipsis,
+            maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
+      );
+    }
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: content,
+      )
+    );
+  }
+
+  Widget _buildImage() {
+    String? imageUrl = group?.imageURL;
+    return
+      StringUtils.isEmpty(imageUrl) ? Container() :
+      // Expanded(
+      //     flex: 1,
+      //     child:
+      Semantics(
+          label: "post image",
+          button: true,
+          hint: "Double tap to zoom the image",
+          child: GestureDetector(
+              onTap: () {
+                if (onImageTap != null) {
+                  onImageTap!();
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.only(left: 8),
+                child: SizedBox(
+                  // width: _smallImageSize,
+                  height: _smallImageSize,
+                  child: Image.network(imageUrl!, excludeFromSemantics: true,
+                    fit: BoxFit.fill,),),))
+        // )
+      );
+  }
+
+
+    Widget _buildUpdateTime() {
     return Container(
         child: Text(
           _timeUpdatedText,
@@ -1032,6 +1109,16 @@ class GroupCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface,),
     ));
+  }
+
+  Widget _buildMembersCount() {
+    int count = group!.membersCount;
+    String membersLabel = (count == 1)
+        ? Localization().getStringEx('widget.group_card.member.label', 'member')
+        : Localization().getStringEx('widget.group_card.members.label', 'members');
+    return Container(
+        child: Text('$count $membersLabel',
+            style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface)));
   }
 
   void _onTapCard(BuildContext context) {
@@ -1162,7 +1249,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             child: Semantics(child: Container(
                               padding: EdgeInsets.only(left: 6),
                               child: Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime),
-                                semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
+                                semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
                                 textAlign: TextAlign.right,
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),
                           )),
@@ -1325,7 +1412,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       Expanded(
                           child: Container(
                             child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
-                                semanticsLabel: "Updated ${widget.reply?.getDisplayDateTime() ?? ""} ago",
+                                semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),)),
                       Visibility(
                         visible: isRepliesLabelVisible,
@@ -1520,7 +1607,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                               child: Text(
                                   Localization().getStringEx(
                                       'panel.group.detail.post.create.link.label',
-                                      'Link')!,
+                                      'Link'),
                                   style: TextStyle(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -1583,14 +1670,14 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                 Analytics().logSelect(target: 'Set Link Url');
                 _onTapOkLink(linkStartPosition, linkEndPosition);
               },
-              child: Text(Localization().getStringEx('dialog.ok.title', 'OK')!)),
+              child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
           TextButton(
               onPressed: () {
                 Analytics().logSelect(target: 'Cancel');
                 Navigator.of(context).pop();
               },
               child: Text(
-                  Localization().getStringEx('dialog.cancel.title', 'Cancel')!))
+                  Localization().getStringEx('dialog.cancel.title', 'Cancel')))
         ]);
   }
 
@@ -1639,7 +1726,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
           Text(
               Localization().getStringEx(
                   'panel.group.detail.post.create.dialog.link.edit.header',
-                  'Edit Link')!,
+                  'Edit Link'),
               style: TextStyle(
                   fontSize: 20,
                   color: Styles().colors!.fillColorPrimary,
@@ -1649,7 +1736,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
               child: Text(
                   Localization().getStringEx(
                       'panel.group.detail.post.create.dialog.link.text.label',
-                      'Link Text:')!,
+                      'Link Text:'),
                   style: TextStyle(
                       fontSize: 16,
                       fontFamily: Styles().fontFamilies!.regular,
@@ -1672,7 +1759,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
               child: Text(
                   Localization().getStringEx(
                       'panel.group.detail.post.create.dialog.link.url.label',
-                      'Link URL:')!,
+                      'Link URL:'),
                   style: TextStyle(
                       fontSize: 16,
                       fontFamily: Styles().fontFamilies!.regular,
@@ -1750,7 +1837,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
               ? Positioned.fill(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover))
               : Container(),
           Visibility( visible: showSlant,
-              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false), child: Container(height: 53))),
+              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background), child: Container(height: 30))),
           StringUtils.isEmpty(imageUrl) || explicitlyShowAddButton
@@ -1761,10 +1848,10 @@ class _ImageChooserState extends State<ImageChooserWidget>{
                       hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
                       button: true,
                       excludeSemantics: true,
-                      child: ScalableSmallRoundedButton(
-                          maxLines: 2,
+                      child: RoundedButton(
                           label:StringUtils.isEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
                           textColor: Styles().colors!.fillColorPrimary,
+                          contentWeight: 0.8,
                           onTap: (){ _onTapAddImage();}
                       )))):
           Container()
@@ -1868,7 +1955,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
 
     bool isClosed = widget.poll.status == PollStatus.closed;
     String? creator = widget.poll.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
-    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
+    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
 
     String? pollStatus;
     if (widget.poll.status == PollStatus.opened) {
@@ -1921,8 +2008,8 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
   }
 
   List<Widget> _buildCheckoutContent() {
-    String thanks = Localization().getStringEx('panel.poll_prompt.text.thanks_for_voting', 'Thanks for voting!')!;
-    String willNotify = Localization().getStringEx('panel.poll_prompt.text.will_notify', 'We will notify you once the poll results are in.')!;
+    String thanks = Localization().getStringEx('panel.poll_prompt.text.thanks_for_voting', 'Thanks for voting!');
+    String willNotify = Localization().getStringEx('panel.poll_prompt.text.will_notify', 'We will notify you once the poll results are in.');
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
       Padding(padding: EdgeInsets.only(top: 32, bottom:20),child:
@@ -1936,8 +2023,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
     int optionsCount = widget.poll.options?.length ?? 0;
     for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
-      Stack(children: <Widget>[
-        ScalableRoundedButton(
+        RoundedButton(
             label: widget.poll.options![optionIndex],
             backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors!.fillColorSecondary : _backgroundColor,
             hint: Localization().getStringEx("panel.poll_prompt.hint.select_option","Double tab to select this option"),
@@ -1945,20 +2031,10 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
             fontSize: 16.0,
             textColor: _textColor,
             borderColor: Styles().colors!.fillColorSecondary,
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            progress: (_votingOptions[optionIndex] != null),
             onTap: () { _onButtonOption(optionIndex); }
         ),
-        Visibility(visible: (_votingOptions[optionIndex] != null),
-          child: Container(
-            height: 42,
-            child: Align(alignment: Alignment.center,
-              child: SizedBox(height: 21, width: 21,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_textColor), )
-              ),
-            ),
-          ),
-        ),
-      ],),
       ));
     }
     return result;
@@ -1986,7 +2062,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
       bool didVote = ((widget.poll.userVote != null) && (0 < (widget.poll.userVote![optionIndex] ?? 0)));
       String checkboxImage = didVote ? 'images/deselected-dark.png' : 'images/checkbox-unselected.png';
 
-      String? votesString;
+      String votesString;
       int? votesCount = (widget.poll.results != null) ? widget.poll.results![optionIndex] : null;
       double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
       if ((votesCount == null) || (votesCount == 0)) {
@@ -2004,7 +2080,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = option +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = option +"\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
       GestureDetector(
@@ -2048,7 +2124,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
       String checkboxImage = (0 < _optionVotes(optionIndex)) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
 
       String optionString = widget.poll.options![optionIndex];
-      String? votesString;
+      String votesString;
       int? votesCount = (widget.poll.results != null) ? widget.poll.results![optionIndex] : null;
       double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
       if ((votesCount == null) || (votesCount <= 0)) {
@@ -2058,13 +2134,13 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
         votesString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
       }
       else {
-        votesString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votesCount']);
+        votesString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$votesCount']);
       }
 
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = optionString +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = optionString +"\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
       Semantics(label: semanticsText, excludeSemantics: true, child:
       Row(children: <Widget>[
@@ -2104,7 +2180,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
                   ),
                   child: Center(
                     child: Text(
-                      Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll")!,
+                      Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll"),
                       style: TextStyle(
                         fontFamily: Styles().fontFamilies!.bold,
                         fontSize: 16,
@@ -2129,14 +2205,14 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
   }
 
 //   Widget _buildVoteDoneButton(void Function() handler) {
-//     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
+//     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: RoundedButton(
 //         label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
 //         backgroundColor: _backgroundColor,
 // //        height: 42,
 //         fontSize: 16.0,
 //         textColor: _textColor,
 //         borderColor: _doneButtonColor,
-//         padding: EdgeInsets.symmetric(horizontal: 24),
+//         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
 //         onTap: handler)
 //     );
 //   }
@@ -2273,19 +2349,19 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
       if (details.isNotEmpty) {
         details += '\n';
       }
-      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.multy_choice", "You can choose more that one answer.")!;
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.multy_choice", "You can choose more that one answer.");
     }
     if (_allowRepeatOptions) {
       if (details.isNotEmpty) {
         details += '\n';
       }
-      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.repeat_vote", "You can vote as many times as you want before the poll closes.")!;
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.repeat_vote", "You can vote as many times as you want before the poll closes.");
     }
     if (_hideResultsUntilClosed) {
       if (details.isNotEmpty) {
         details += '\n';
       }
-      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends.")!;
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends.");
     }
     return details;
   }
@@ -2296,15 +2372,15 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
 
     String statusString;
     if (1 < votes) {
-      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votes']);
+      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$votes']);
     } else if (0 < votes) {
-      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote')!;
+      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
     } else {
-      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet')!;
+      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet');
     }
 
     if (hasGroup && (votes > 0)) {
-      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of')!, _groupMembersCount]);
+      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of'), _groupMembersCount]);
     }
 
     return statusString;
@@ -2386,7 +2462,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
     String? pollStatus;
 
     String? creator = widget.poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');//TBD localize
-    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
+    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
     String semanticsQuestionText =  "$wantsToKnow,\n ${poll.title!}";
 
     if(poll.status == PollStatus.created) {
@@ -2401,7 +2477,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
         footerWidgets.add(_createVoteButton());
         footerWidgets.add(Container(height:8));
       }
-      if (poll.isMine) {
+      if (_canEnd) {
         footerWidgets.add(_createEndPollButton());
         footerWidgets.add(Container(height:8));
       }
@@ -2411,7 +2487,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
     }
 
     Widget cardBody = ((poll.status == PollStatus.opened) && (poll.settings?.hideResultsUntilClosed ?? false)) ?
-    Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends.")!, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 15, fontWeight: FontWeight.w500),) :
+    Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 15, fontWeight: FontWeight.w500),) :
     Column(children: _buildCheckboxOptions(),);
     return
       Column(children: <Widget>[ Container(padding: EdgeInsets.symmetric(),
@@ -2464,7 +2540,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
       bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
       String checkboxImage = didVote ? 'images/deselected-dark.png' : 'images/checkbox-unselected.png';
 
-      String? votesString;
+      String votesString;
       int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
       double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
       if ((votesCount == null) || (votesCount == 0)) {
@@ -2482,7 +2558,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = option + "," +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = option + "," +"\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
       GestureDetector(
@@ -2519,13 +2595,13 @@ class _GroupPollCardState extends State<GroupPollCard>{
   }
 
   Widget _createStartPollButton(){
-    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.start_poll","Start Poll")!, _onStartPollTapped, loading: _showStartPollProgress);
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.start_poll","Start Poll"), _onStartPollTapped, loading: _showStartPollProgress);
   }
   Widget _createEndPollButton(){
-    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll")!, _onEndPollTapped, loading: _showEndPollProgress);
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll"), _onEndPollTapped, loading: _showEndPollProgress);
   }
   Widget _createVoteButton(){
-    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.vote","Vote")!, _onVoteTapped);
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.vote","Vote"), _onVoteTapped);
   }
 
   Widget _createButton(String title, void Function()? onTap, {bool enabled=true, bool loading = false}){
@@ -2630,21 +2706,26 @@ class _GroupPollCardState extends State<GroupPollCard>{
     );
   }
 
+  bool get _canEnd {
+    return (widget.poll?.isMine ?? false) ||
+        (widget.group?.currentUserIsAdmin ?? false);
+  }
+
   String get _pollVotesStatus {
     bool hasGroup = (widget.group != null);
     int votes = hasGroup ? _uniqueVotersCount : (widget.poll!.results?.totalVotes ?? 0);
 
     String statusString;
     if (1 < votes) {
-      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votes']);
+      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$votes']);
     } else if (0 < votes) {
-      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote')!;
+      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
     } else {
-      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet')!;
+      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet');
     }
 
     if (hasGroup && (votes > 0)) {
-      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of')!, _groupMembersCount]);
+      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of'), _groupMembersCount]);
     }
 
     return statusString;

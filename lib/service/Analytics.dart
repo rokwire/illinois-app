@@ -19,6 +19,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
@@ -33,6 +34,8 @@ import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/analytics.dart' as rokwire;
 
 import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Auth2.dart';
 
 import 'package:illinois/main.dart';
@@ -275,6 +278,15 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       Polls.notifyLifecycleOpen,
       Polls.notifyLifecycleClose,
       Polls.notifyLifecycleVote,
+
+      Groups.notifyGroupMembershipRequested,
+      Groups.notifyGroupMembershipCanceled,
+      Groups.notifyGroupMembershipQuit,
+      Groups.notifyGroupMembershipApproved,
+      Groups.notifyGroupMembershipRejected,
+      Groups.notifyGroupMembershipRemoved,
+      Groups.notifyGroupMembershipSwitchToAdmin,
+      Groups.notifyGroupMembershipSwitchToMember,
     ]);
 
   }
@@ -371,6 +383,31 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
     else if (name == Polls.notifyLifecycleVote) {
       logPoll(param, LogPollVoteActionName);
+    }
+
+    else if (name == Groups.notifyGroupMembershipRequested) {
+      logGroup(action: LogGroupMembershipRequested, attributes: (param as Group).analyticsAttributes);
+    }
+    else if (name == Groups.notifyGroupMembershipCanceled) {
+      logGroup(action: LogGroupMembershipRequestCanceled, attributes: (param as Group).analyticsAttributes);
+    }
+    else if (name == Groups.notifyGroupMembershipQuit) {
+      logGroup(action: LogGroupMembershipQuit, attributes: (param as Group).analyticsAttributes);
+    }
+    else if (name == Groups.notifyGroupMembershipApproved) {
+      logGroup(action: LogGroupMembershipApproved, attributes: (param as Group).analyticsAttributes);
+    }
+    else if (name == Groups.notifyGroupMembershipRejected) {
+      logGroup(action: LogGroupMembershipRejected, attributes: (param as Group).analyticsAttributes);
+    }
+    else if (name == Groups.notifyGroupMembershipRemoved) {
+      logGroup(action: LogGroupMembershipRemoved, attributes: (param as Group).analyticsAttributes);
+    }
+    else if (name == Groups.notifyGroupMembershipSwitchToAdmin) {
+      logGroup(action: LogGroupMembershipSwitchToAdmin, attributes: (param as Group).analyticsAttributes);
+    }
+    else if (name == Groups.notifyGroupMembershipSwitchToMember) {
+      logGroup(action: LogGroupMembershipSwitchToMember, attributes: (param as Group).analyticsAttributes);
     }
   }
 
@@ -530,8 +567,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 
   // Public Accessories
 
-  void logEvent(Map<String, dynamic>? event, { List<String> defaultAttributes = DefaultAttributes}) {
-    if ((event != null) && Auth2().privacyMatch(2)) {
+  @override
+  void logEvent(Map<String, dynamic> event, { List<String> defaultAttributes = DefaultAttributes, int? timestamp }) {
+    if (Auth2().privacyMatch(2)) {
       
       event[LogEventPageName] = _currentPageName;
 
@@ -539,9 +577,11 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         LogEvent:            event,
       };
 
+      DateTime nowUtc = DateTime.now().toUtc();
+
       for (String attributeName in defaultAttributes) {
         if (attributeName == LogStdTimestampName) {
-          analyticsEvent[LogStdTimestampName] = DateTime.now().toUtc().toIso8601String();
+          analyticsEvent[LogStdTimestampName] = nowUtc.toIso8601String();
         }
         else if (attributeName == LogStdAppIdName) {
           analyticsEvent[LogStdAppIdName] = super.appId;
@@ -596,7 +636,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         }
       }
 
-      super.logEvent(analyticsEvent);
+      super.logEvent(analyticsEvent, timestamp: timestamp ?? nowUtc.millisecondsSinceEpoch);
     }
   }
 
@@ -692,7 +732,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       };
     }
 
-    logEvent(httpResponseEvent);
+    if (httpResponseEvent != null) {
+      logEvent(httpResponseEvent);
+    }
   }
 
   void logFavorite(Favorite? favorite, [bool? on]) {
@@ -779,6 +821,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         case Auth2LoginType.phone:
         case Auth2LoginType.phoneTwilio:  action = LogAuthLoginPhoneActionName; break;
         case Auth2LoginType.email:        action = LogAuthLoginEmailActionName; break;
+        case Auth2LoginType.apiKey:
         case Auth2LoginType.anonymous:    break;
       }
     }

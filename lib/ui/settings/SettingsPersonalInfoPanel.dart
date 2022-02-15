@@ -23,7 +23,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -79,15 +79,8 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.profile_info.header.title", "PERSONAL INFO")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.profile_info.header.title", "PERSONAL INFO"),
       ),
       body: Column(children: <Widget>[
         Expanded(
@@ -155,7 +148,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
         Container(height: 32,),
         Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(bottom: 8), child:
-            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name")!, textAlign: TextAlign.left, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
+            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
           )
         ),
         Semantics(
@@ -181,7 +174,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
             //hint: Localization().getStringEx("panel.profile_info.phone_or_email.email.hint", ""),
             header: true, excludeSemantics: true,
                child: Padding(padding: EdgeInsets.only(bottom: 8),
-                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.email.title","Email Address")!, textAlign: TextAlign.left,
+                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.email.title","Email Address"), textAlign: TextAlign.left,
                     style: TextStyle( color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
               )
           ),
@@ -217,7 +210,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
         Container(height: 32,),
         Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(bottom: 8), child:
-            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name")!, textAlign: TextAlign.left, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
+            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
           )
         ),
         Semantics(
@@ -243,7 +236,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
             //hint: Localization().getStringEx("panel.profile_info.phone_or_email.phone.hint", ""),
             header: true, excludeSemantics: true,
                child: Padding(padding: EdgeInsets.only(bottom: 8),
-                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number")!, textAlign: TextAlign.left, style: TextStyle( color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
+                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number"), textAlign: TextAlign.left, style: TextStyle( color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
               )
           ),
           Semantics(
@@ -293,7 +286,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     return
       Padding(
         padding: EdgeInsets.symmetric( vertical: 5, horizontal: 16),
-        child: ScalableRoundedButton(
+        child: RoundedButton(
           label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
           hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
           backgroundColor: Styles().colors!.background,
@@ -310,32 +303,23 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
       Row(children: <Widget>[
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric( vertical: 5), child:
-            Stack(children: <Widget>[
-              ScalableRoundedButton(
-                label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
-                hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
-                enabled: _canSave,
-                backgroundColor: _canSave ? Styles().colors!.white : Styles().colors!.background,
-                fontSize: 16.0,
-                textColor: _canSave? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-                borderColor: _canSave? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                onTap: _onSaveChangesClicked,
-              ),
-              Visibility(
-                  visible:_isSaving,
-                  child: Align(alignment: Alignment.center,
-                    child:Container(
-                      padding: EdgeInsets.all(4),
-                      child: Center(child:
-                      CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), strokeWidth: 2,),),),
-                  ))
-            ],),
+            RoundedButton(
+              label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
+              hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
+              enabled: _canSave,
+              backgroundColor: _canSave ? Styles().colors!.white : Styles().colors!.background,
+              fontSize: 16.0,
+              textColor: _canSave? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+              borderColor: _canSave? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+              progress: _isSaving,
+              onTap: _onSaveChangesClicked,
+            ),
           ),
         ),
         Container(width: 12,),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric( vertical: 5), child:
-            ScalableRoundedButton(
+            RoundedButton(
               label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
               hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
               backgroundColor: Styles().colors!.white,
@@ -358,13 +342,13 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx("panel.profile_info.logout.title", "Illinois")!,
+              Localization().getStringEx("panel.profile_info.logout.title", "Illinois"),
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
-                Localization().getStringEx("panel.profile_info.logout.message", "Are you sure you want to sign out?")!,
+                Localization().getStringEx("panel.profile_info.logout.message", "Are you sure you want to sign out?"),
                 textAlign: TextAlign.left,
                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
               ),
@@ -378,13 +362,13 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
                       Navigator.pop(context);
                       Auth2().logout();
                     },
-                    child: Text(Localization().getStringEx("panel.profile_info.logout.button.yes", "Yes")!)),
+                    child: Text(Localization().getStringEx("panel.profile_info.logout.button.yes", "Yes"))),
                 TextButton(
                     onPressed: () {
                       Analytics().logAlert(text: "Sign out", selection: "No");
                       Navigator.pop(context);
                     },
-                    child: Text(Localization().getStringEx("panel.profile_info.logout.no", "No")!))
+                    child: Text(Localization().getStringEx("panel.profile_info.logout.no", "No")))
               ],
             ),
           ],

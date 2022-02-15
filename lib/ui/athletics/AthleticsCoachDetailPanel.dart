@@ -24,7 +24,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/ModalImageDialog.dart';
-import 'package:illinois/model/Coach.dart';
+import 'package:illinois/model/sport/Coach.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -59,16 +59,8 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
     Log.d(color.toString());
 
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.athletics_coach_detail.header.title', 'Staff')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.athletics_coach_detail.header.title', 'Staff'),
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,

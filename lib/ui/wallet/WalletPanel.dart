@@ -35,7 +35,7 @@ import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/VerticalTitleContentSection.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class WalletPanel extends StatefulWidget{
@@ -89,21 +89,11 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       body: CustomScrollView(
         slivers: <Widget>[
           SliverHeaderBar(
-            context: context,
-            backVisible: false,
-            onBackPressed: () {
-              Analytics().logSelect(target: 'Close');
-              Navigator.pop(context);
-            } ,
-            backgroundColor: Styles().colors!.surface,
-            titleWidget: Text(
-              Localization().getStringEx( "panel.wallet.label.title", "Wallet")!,
-              style: TextStyle(
-                  fontFamily: Styles().fontFamilies!.extraBold,
-                  color: Styles().colors!.fillColorPrimary,
-                  fontSize: 20,
-                  letterSpacing: 1.0),
-            ),
+            leadingAsset: null,
+            backgroundColor: Styles().colors?.surface,
+            title: Localization().getStringEx( "panel.wallet.label.title", "Wallet"),
+            textColor: Styles().colors!.fillColorPrimary,
+            fontSize: 20,
             actions: <Widget>[
               Visibility(
                 visible: widget.scrollController != null,
@@ -427,7 +417,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               ),
             ),
             Text(
-              Localization().getStringEx("panel.wallet.label.expires.title", "Card expires")! + " $expires",
+              Localization().getStringEx("panel.wallet.label.expires.title", "Card expires") + " $expires",
               style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.medium,
@@ -467,7 +457,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              Localization().getStringEx("panel.wallet.label.uin.title", "UIN",)!,
+              Localization().getStringEx("panel.wallet.label.uin.title", "UIN",),
               style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.medium,

@@ -24,12 +24,10 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
-import 'package:illinois/service/DiningService.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Gies.dart';
-import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/LiveStats.dart';
@@ -70,6 +68,8 @@ import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
+import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
@@ -111,7 +111,7 @@ void main() async {
     Sports(),
     LiveStats(),
     RecentItems(),
-    DiningService(),
+    Dinings(),
     IlliniCash(),
     FlexUI(),
     Onboarding(),
@@ -121,13 +121,13 @@ void main() async {
     Guide(),
     Inbox(),
     DeviceCalendar(),
-    ExploreService(),
+    Events(),
     Groups(),
     Gies(),
     Canvas(),
 
     // These do not rely on Service initialization API so they are not registered as services.
-    // LaundryService(),
+    // Laundries(),
     // Content(),
   ]);
   
@@ -276,7 +276,7 @@ class _AppState extends State<App> implements NotificationsListener {
       supportedLocales: Localization().supportedLocales(),
       navigatorObservers:[AppNavigation()],
       //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-      title: Localization().getStringEx('app.title', 'Illinois')!,
+      title: Localization().getStringEx('app.title', 'Illinois'),
       theme: ThemeData(
           appBarTheme: AppBarTheme(backgroundColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040)),
           primaryColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040),

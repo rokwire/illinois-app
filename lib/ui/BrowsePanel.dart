@@ -110,7 +110,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
                   slivers: <Widget>[
                     SliverAppBar(pinned: true, floating: true, primary: true, forceElevated: true, centerTitle: true,
                       title: Text(
-                        Localization().getStringEx('panel.browse.label.title','Browse')!,
+                        Localization().getStringEx('panel.browse.label.title','Browse'),
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -305,7 +305,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (code == 'inbox') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.inbox.title', 'Inbox'),
+        title: Localization().getStringEx('panel.browse.button.inbox.title', 'Notifications'),
         hint: Localization().getStringEx('panel.browse.button.inbox.hint', ''),
         icon: 'images/icon-browse-inbox.png',
         textColor: Styles().colors!.fillColorPrimary,

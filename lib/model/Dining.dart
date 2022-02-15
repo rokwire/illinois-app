@@ -17,13 +17,10 @@
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Location.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/DiningService.dart';
-import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
@@ -42,7 +39,7 @@ class Dining with Explore implements Favorite {
   Map<String, dynamic>? onlineOrder;
   String? placeID;
 
-  Location? location;
+  ExploreLocation? location;
   List<PaymentType>? paymentTypes;
   List<DiningSchedule>? diningSchedules;
 
@@ -90,7 +87,7 @@ class Dining with Explore implements Favorite {
         longDescription: json['MoreInfo'],
         imageURL: json['ImageUrl'],
         onlineOrder: json['OnLineOrder'],
-        location: Location(
+        location: ExploreLocation(
           description: addressInfo,
           latitude: json["Lat"],
           longitude: json["Long"],
@@ -140,19 +137,7 @@ class Dining with Explore implements Favorite {
   @override DateTime? get exploreStartDateUtc     { return null; }
   @override String?   get exploreImageURL         { return imageURL; }
   @override String?   get explorePlaceId          { return null; }
-  @override Location? get exploreLocation         { return location; }
-  @override Color?    get uiColor                 { return Styles().colors!.diningColor; }
-
-  @override
-  Map<String, dynamic> get analyticsAttributes {
-    Map<String, dynamic> attributes = {
-      Analytics.LogAttributeDiningId:   exploreId,
-      Analytics.LogAttributeDiningName: exploreTitle,
-    };
-    attributes.addAll(analyticsSharedExploreAttributes ?? {});
-    return attributes;
-  }
-
+  @override ExploreLocation? get exploreLocation  { return location; }
 
   static String favoriteKeyName = "diningPlaceIds";
   @override String? get favoriteId => exploreId;
@@ -173,9 +158,9 @@ class Dining with Explore implements Favorite {
               ignoreTimeZone: useDeviceLocalTime,
               showTzSuffix: !useDeviceLocalTime)!;
 
-          return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")!
+          return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")
               + schedule.meal!.toLowerCase()
-              + Localization().getStringEx("model.dining.schedule.label.until", " until ")!
+              + Localization().getStringEx("model.dining.schedule.label.until", " until ")
               + formattedEndTime;
         }
         else if(schedule.isFuture && schedule.isToday){
@@ -188,9 +173,9 @@ class Dining with Explore implements Favorite {
               ignoreTimeZone: useDeviceLocalTime,
               showTzSuffix: !useDeviceLocalTime)!;
 
-          return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")!
+          return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")
               + schedule.meal!.toLowerCase()
-              + Localization().getStringEx("model.dining.schedule.label.from", " from ")!
+              + Localization().getStringEx("model.dining.schedule.label.from", " from ")
               + formattedStartTime;
         }
         else if(schedule.isFuture && schedule.isNextTwoWeeks){
@@ -203,7 +188,7 @@ class Dining with Explore implements Favorite {
               ignoreTimeZone: useDeviceLocalTime,
               showTzSuffix: !useDeviceLocalTime)!;
 
-          return Localization().getStringEx("model.dining.schedule.label.open_on", "Opening on ")!
+          return Localization().getStringEx("model.dining.schedule.label.open_on", "Opening on ")
               + formattedStartTime;
         }
       }
@@ -526,7 +511,7 @@ class NutritionNameValuePair{
     String? name = json["Name"];
     String? value = json["Value"];
 
-    name = Localization().getStringEx("com.illinois.nutrition_type.entry.$name", name);
+    name = Localization().getString("com.illinois.nutrition_type.entry.$name", defaults: name);
 
     return NutritionNameValuePair(
       name: name,
@@ -561,12 +546,12 @@ class DiningProductItem {
   }
 
   List<String> get ingredients{
-    List<String>? foodTypes = DiningService().foodTypes;
+    List<String>? foodTypes = Dinings().foodTypes;
     return traitList.where((entry)=>!foodTypes!.contains(entry)).toList();
   }
 
   List<String> get dietaryPreferences{
-    List<String>? foodTypes = DiningService().foodTypes;
+    List<String>? foodTypes = Dinings().foodTypes;
     return traitList.where((entry)=>foodTypes!.contains(entry)).toList();
   }
 

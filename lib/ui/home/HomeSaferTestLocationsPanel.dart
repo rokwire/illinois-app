@@ -76,7 +76,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
       contentWidget = _buildStatus(_statusString!);
     }
     else if (CollectionUtils.isEmpty(_locations)) {
-      contentWidget = _buildStatus(Localization().getStringEx("panel.home.safer.test_locations.no_locations.text", "No Locations found for selected provider and county")! );
+      contentWidget = _buildStatus(Localization().getStringEx("panel.home.safer.test_locations.no_locations.text", "No Locations found for selected provider and county") );
     }
     else {
       contentWidget = ListView.builder(
@@ -89,12 +89,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
 
     return Scaffold(
       backgroundColor: Styles().colors!.background,
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.home.safer.test_locations.header.title", "Test Locations")!,
-          style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),
-        ),
-      ),
+      appBar: HeaderBar(title: Localization().getStringEx("panel.home.safer.test_locations.header.title", "Test Locations"),),
       body: SafeArea(child:
         Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
           Column(children: [
@@ -197,10 +192,10 @@ class _TestLocation extends StatelessWidget {
     ];
 
     if ((distance != null) && (distance! > 0)) {
-      String distanceText = distance!.toStringAsFixed(2) + Localization().getStringEx("panel.home.safer.test_locations.distance.text", "mi away")!;
+      String distanceText = distance!.toStringAsFixed(2) + Localization().getStringEx("panel.home.safer.test_locations.distance.text", "mi away");
       locationContent.add(Text(distanceText, style: textStyle,));
       if (canLocation) {
-        String directionsText = Localization().getStringEx("panel.home.safer.test_locations.distance.directions.text", "get directions")!;
+        String directionsText = Localization().getStringEx("panel.home.safer.test_locations.distance.directions.text", "get directions");
         locationContent.addAll(<Widget>[
           Text(" (", style: textStyle,),
           Text(directionsText, style: linkStyle,),
@@ -214,7 +209,7 @@ class _TestLocation extends StatelessWidget {
       ));
     }
     else {
-      String unknownLocationText = Localization().getStringEx("panel.home.safer.test_locations.location.unknown", "unknown location")!;
+      String unknownLocationText = Localization().getStringEx("panel.home.safer.test_locations.location.unknown", "unknown location");
       locationContent.add(
         Text(unknownLocationText, style: canLocation ? linkStyle : textStyle,
       ));
@@ -356,7 +351,7 @@ class _TestLocation extends StatelessWidget {
       }
     } else {
       return Container(
-        child: Text(Localization().getStringEx("panel.home.safer.test_locations.work_time.unknown","Unknown working time")!)
+        child: Text(Localization().getStringEx("panel.home.safer.test_locations.work_time.unknown","Unknown working time"))
       );
     }
 

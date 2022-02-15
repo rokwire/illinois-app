@@ -17,10 +17,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter_html/flutter_html.dart' as FlutterHtml;
+import 'package:rokwire_plugin/rokwire_plugin.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/tracking_services.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -31,7 +33,7 @@ import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart' as FlutterWebView;
 
-class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPageAttributes{
+class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPageAttributes {
   final String? url;
   final String? analyticsName;
   final String? title;
@@ -53,7 +55,7 @@ class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPag
   }
 }
 
-class _WebPanelState extends State<WebPanel> implements NotificationsListener{
+class _WebPanelState extends State<WebPanel> implements NotificationsListener {
 
   bool? _isOnline;
   bool? _isTrackingEnabled;
@@ -63,7 +65,10 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, AppLivecycle.notifyStateChanged);
+    NotificationService().subscribe(this, [
+      AppLivecycle.notifyStateChanged,
+      DeepLink.notifyUri,
+    ]);
     if (Platform.isAndroid) {
       FlutterWebView.WebView.platform = FlutterWebView.SurfaceAndroidWebView();
     }
@@ -99,7 +104,7 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
     else if (_isTrackingEnabled == false) {
       contentWidget = _buildStatus(
         title: Localization().getStringEx("panel.web.tracking_disabled.title", "Web Content Blocked"),
-        message: sprintf(Localization().getStringEx("panel.web.tracking_disabled.message", "You have opted to deny cookie usage for web content in this app, therefore we have blocked access to web sites. If you change your mind, change your preference <a href='%s'>here</a>. Your phone Settings may also need to have Privacy > Tracking enabled.")!, [NativeCommunicator().appSettingsUrl]),
+        message: sprintf(Localization().getStringEx("panel.web.tracking_disabled.message", "You have opted to deny cookie usage for web content in this app, therefore we have blocked access to web sites. If you change your mind, change your preference <a href='%s'>here</a>. Your phone Settings may also need to have Privacy > Tracking enabled."), [appSettingsUrl]),
       );
     }
     else if ((_isOnline == true) && (_isTrackingEnabled == true)) {
@@ -193,16 +198,15 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
   }
 
   static Future<bool> _getTrackingEnabled() async {
-    AuthorizationStatus? status = await NativeCommunicator().queryTrackingAuthorization('query');
-    if (status == AuthorizationStatus.NotDetermined) {
-      status = await NativeCommunicator().queryTrackingAuthorization('request');
+    TrackingAuthorizationStatus? status = await TrackingServices.queryAuthorizationStatus();
+    if (status == TrackingAuthorizationStatus.undetermined) {
+      status = await TrackingServices.requestAuthorization();
     }
-    return (status == AuthorizationStatus.Allowed);
+    return (status == TrackingAuthorizationStatus.allowed);
   }
 
   PreferredSizeWidget _getHeaderBar() {
-    return SimpleHeaderBarWithBack(context: context,
-      titleWidget: Text(widget.title!, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+    return HeaderBar(title: widget.title);
   }
 
   void _onTapStatusLink(String? url) {
@@ -217,7 +221,24 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
         _isForeground = (param == AppLifecycleState.resumed);
       });
     }
+    else if (name == DeepLink.notifyUri) {
+      _onDeepLinkUri(param);
+    }
   }
 
+  String get appSettingsUrl => '${DeepLink().appUrl}/app_settings';
+
+  void _onDeepLinkUri(Uri? uri) {
+    if (uri != null) {
+      Uri? settingsUri = Uri.tryParse(appSettingsUrl);
+      if ((settingsUri != null) &&
+          (settingsUri.scheme == uri.scheme) &&
+          (settingsUri.authority == uri.authority) &&
+          (settingsUri.path == uri.path))
+      {
+        RokwirePlugin.launchAppSettings();
+      }
+    }
+  }
 }
 

@@ -19,6 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/ext/Game.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
@@ -48,13 +49,10 @@ class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAt
   AthleticsGameDetailPanel({this.game, this.gameId, this.sportName});
 
   @override
-  _AthleticsGameDetailPanelState createState() =>
-      _AthleticsGameDetailPanelState(game);
+  _AthleticsGameDetailPanelState createState() => _AthleticsGameDetailPanelState(game);
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return game?.analyticsAttributes;
-  }
+  Map<String, dynamic>? get analyticsPageAttributes => game?.analyticsAttributes;
 }
 
 class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
@@ -104,7 +102,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
     }
 
     if (game == null) {
-      return Center(child: Text(Localization().getStringEx('panel.athletics_game_detail.load.failed.msg', 'Failed to load game. Please, try again.')!));
+      return Center(child: Text(Localization().getStringEx('panel.athletics_game_detail.load.failed.msg', 'Failed to load game. Please, try again.')));
     }
 
     String? sportKey = game?.sport?.shortName;
@@ -114,11 +112,10 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
       scrollDirection: Axis.vertical,
       slivers: <Widget>[
         SliverToutHeaderBar(
-          context: context,
-          imageUrl: game?.imageUrl,
-          backColor: Styles().colors!.fillColorPrimary,
-          leftTriangleColor: Styles().colors!.fillColorPrimary,
-          rightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
+          flexImageUrl: game?.imageUrl,
+          flexBackColor: Styles().colors?.fillColorPrimary,
+          flexRightToLeftTriangleColor: Styles().colors!.fillColorPrimary,
+          flexLeftToRightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
         ),
         SliverList(
           delegate: SliverChildListDelegate([
@@ -171,7 +168,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                 ),
                                 Expanded(child:
                                   Text(
-                                    Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More")! + " " + "$sportName",
+                                    Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More") + " " + "$sportName",
                                     style:
                                     TextStyle(color: Colors.white, fontSize: 20),
                                   )
@@ -334,8 +331,8 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                   children: <Widget>[
                     Text(
                       (_newsExpanded
-                          ? Localization().getStringEx("panel.athletics_game_detail.label.see_less.title", "See less")!
-                          : Localization().getStringEx("panel.athletics_game_detail.label.see_more.title", "See more")!),
+                          ? Localization().getStringEx("panel.athletics_game_detail.label.see_less.title", "See less")
+                          : Localization().getStringEx("panel.athletics_game_detail.label.see_more.title", "See more")),
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies!.bold,
                           color: Styles().colors!.fillColorPrimary,

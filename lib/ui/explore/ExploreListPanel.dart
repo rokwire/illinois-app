@@ -17,10 +17,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:illinois/service/ExploreService.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -28,6 +27,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class ExploreListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final List<Explore>? explores;
@@ -61,22 +61,15 @@ class _ExploreListPanelState extends State<ExploreListPanel> {
     if (widget.explores != null) {
       _explores = widget.explores;
       //Sort "only for when we go to details from map view and there is a list of items because of the map grouping"
-      ExploreService().sortEvents(_explores);
+      SortUtils.sort(_explores);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.explore_list.header.title", "Explore")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.explore_list.header.title", "Explore"),
       ),
       body: _buildBody(),
       backgroundColor: Styles().colors!.background,

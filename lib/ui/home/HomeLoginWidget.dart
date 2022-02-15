@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -8,7 +7,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -96,25 +95,15 @@ class _HomeLoginNetIdWidgetState extends State<HomeLoginNetIdWidget> {
           )),
           Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-          Stack(children: <Widget>[
-            Semantics(explicitChildNodes: true, child: ScalableRoundedButton(
-              label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Connect your NetID"),
-              hint: '',
-              borderColor: Styles().colors!.fillColorSecondary,
-              backgroundColor: Styles().colors!.surface,
-              textColor: Styles().colors!.fillColorPrimary,
-              onTap: ()=> _onTapConnectNetIdClicked(context),
-            )),
-            Visibility(visible: _authLoading == true, child:
-              Container(height: 42, child:
-                Align(alignment: Alignment.center, child:
-                  SizedBox(height: 24, width: 24, child:
-                    CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
-                  ),
-                ),
-              ),
-            ),
-          ]),
+          Semantics(explicitChildNodes: true, child: RoundedButton(
+            label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Connect your NetID"),
+            hint: '',
+            borderColor: Styles().colors!.fillColorSecondary,
+            backgroundColor: Styles().colors!.surface,
+            textColor: Styles().colors!.fillColorPrimary,
+            progress: (_authLoading == true),
+            onTap: ()=> _onTapConnectNetIdClicked(context),
+          )),
           ),
         ]),
         ),
@@ -162,7 +151,7 @@ class HomeLoginPhoneOrEmailWidget extends StatelessWidget{
             Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),
 
             Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
-            Semantics(explicitChildNodes: true, child: ScalableRoundedButton(
+            Semantics(explicitChildNodes: true, child: RoundedButton(
               label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Proceed"),
               hint: '',
               borderColor: Styles().colors!.fillColorSecondary,

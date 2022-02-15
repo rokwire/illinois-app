@@ -57,13 +57,9 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO YOU ARE')!,
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-        ),
-        onBackPressed: _onBack,
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO YOU ARE'),
+        onLeading: _onBack,
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
@@ -85,7 +81,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
                 child: Padding(
                   padding: EdgeInsets.only(top: 16),
                   child: Text(
-                    Localization().getStringEx('panel.onboarding.roles.label.description', 'Select all that apply')!,
+                    Localization().getStringEx('panel.onboarding.roles.label.description', 'Select all that apply'),
                     style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),
                   ),
                 ),

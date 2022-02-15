@@ -24,11 +24,9 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/VerticalTitleContentSection.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -126,20 +124,13 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       controller: widget.scrollController,
       slivers: <Widget>[
         SliverHeaderBar(
-          context: context,
-          backIconRes: widget.scrollController == null
+          leadingAsset: widget.scrollController == null
               ? 'images/chevron-left-white.png'
               : 'images/chevron-left-blue.png',
-          titleWidget: Text(
-            Localization().getStringEx('panel.settings.meal_plan.label.title','University Housing Meal Plan')!,
-            style: TextStyle(
-                color: widget.scrollController == null
-                    ? Styles().colors!.white
-                    : Styles().colors!.fillColorPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.0),
-          ),
+          title: Localization().getStringEx('panel.settings.meal_plan.label.title','University Housing Meal Plan'),
+          textColor: widget.scrollController == null
+              ? Styles().colors!.white
+              : Styles().colors!.fillColorPrimary,
         ),
         SliverList(
           delegate: SliverChildListDelegate([
@@ -296,7 +287,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
-                Localization().getStringEx("panel.settings.meal_plan.label.custom_period", "CUSTOM PERIOD")!,
+                Localization().getStringEx("panel.settings.meal_plan.label.custom_period", "CUSTOM PERIOD"),
                 style: TextStyle(
                     color: Styles().colors!.fillColorPrimary,
                     fontSize: 16,
@@ -327,7 +318,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           ],),),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
-            Expanded(child: ScalableRoundedButton(
+            Expanded(child: RoundedButton(
               textColor: Styles().colors!.fillColorPrimary,
               label: Localization().getStringEx('panel.settings.meal_plan.button.view_history.title', 'View History'),
               hint: Localization().getStringEx('panel.settings.meal_plan.button.view_history.hint', ''),
@@ -349,7 +340,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           _startDate!.isAfter(_endDate!)) {
         String text = Localization().getStringEx(
             'panel.settings.meal_plan.transactions.message.start_end_validation.text',
-            'Start date must be before end date')!;
+            'Start date must be before end date');
         return Semantics(
           label: text, hint: Localization().getStringEx(
             'panel.settings.meal_plan.transactions.message.start_end_validation.hint',
@@ -363,7 +354,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       if (transactionList == null || transactionList.isEmpty) {
         String text = Localization().getStringEx(
             'panel.settings.meal_plan.transactions.message.no_transactions.text',
-            'There is no transactions for the selected period')!;
+            'There is no transactions for the selected period');
         return Semantics(label: text, hint: Localization().getStringEx(
             'panel.settings.meal_plan.transactions.message.no_transactions.hint',
             ''), excludeSemantics: true, child: Center(child: Padding(
@@ -375,13 +366,13 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
                 fontFamily: Styles().fontFamilies!.bold),),),),);
       }
       String dateHeader = Localization().getStringEx(
-          'panel.settings.meal_plan.label.date', 'Date')!;
+          'panel.settings.meal_plan.label.date', 'Date');
       String locationHeader = Localization().getStringEx(
-          'panel.settings.meal_plan.label.location', 'Location')!;
+          'panel.settings.meal_plan.label.location', 'Location');
       String descriptionHeader = Localization().getStringEx(
-          'panel.settings.meal_plan.label.description', 'Description')!;
+          'panel.settings.meal_plan.label.description', 'Description');
       String amountHeader = Localization().getStringEx(
-          'panel.settings.meal_plan.label.amount', 'Amount')!;
+          'panel.settings.meal_plan.label.amount', 'Amount');
       List<Widget> dateWidgets =  [];
       List<Widget> locationWidgets =  [];
       List<Widget> descriptionWidgets =  [];

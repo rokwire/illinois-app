@@ -24,10 +24,10 @@ import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/PrivacySlider.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 import 'Onboarding2Widgets.dart';
 
@@ -208,7 +208,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                   children: <Widget>[
                     Container(height: 16,),
                     Text(
-                      Localization().getStringEx("panel.onboarding2.privacy.label.continue.description", "You can adjust what you store and share at any time in the Privacy Center.")!,
+                      Localization().getStringEx("panel.onboarding2.privacy.label.continue.description", "You can adjust what you store and share at any time in the Privacy Center."),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies!.regular,
@@ -218,11 +218,11 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                     Padding(
                       padding: EdgeInsets.only(
                           bottom: 20, top: 16),
-                      child: ScalableRoundedButton(
+                      child: RoundedButton(
                         label: _continueButtonLabel,
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
                         fontSize: 16,
-                        padding: EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         backgroundColor: Styles().colors!.white,
                         borderColor: Styles().colors!.fillColorSecondaryVariant,
                         textColor: Styles().colors!.fillColorPrimary,
@@ -406,7 +406,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
   Widget _buildPrivacyBadge(){
     return
       Semantics(
-        label: Localization().getStringEx('panel.onboarding2.privacy.badge.privacy_level.title', "Privacy Level: ")! + _privacyLevel.toString(),
+        label: Localization().getStringEx('panel.onboarding2.privacy.badge.privacy_level.title', "Privacy Level: ") + _privacyLevel.toString(),
         excludeSemantics: true,
         child:Container(
           height: 60,
@@ -464,7 +464,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
             child:
             Row(children: [
               Text(
-                Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy notice ")!,
+                Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy notice "),
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies!.regular,
                     fontSize: 14,
@@ -529,10 +529,10 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 
   String get _continueButtonLabel{
     switch(_privacyLevel){
-      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_browsing.title', "Start browsing")!;
-      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_exploring.title', "Start exploring")!;
+      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_browsing.title', "Start browsing");
+      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_exploring.title', "Start exploring");
     }
-    return Localization().getStringEx('panel.onboarding2.privacy.button.save_privacy.title', "Save privacy level")!;
+    return Localization().getStringEx('panel.onboarding2.privacy.button.save_privacy.title', "Save privacy level");
   }
 
   void _goNext(BuildContext context) {

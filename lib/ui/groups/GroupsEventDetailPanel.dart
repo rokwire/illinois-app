@@ -2,15 +2,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -22,9 +24,9 @@ import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -145,15 +147,16 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventImageHeader(){
+    String? imageUrl = widget.event?.eventImageUrl;
     return Container(
       height: 200,
       color: Styles().colors!.background,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(_event?.exploreImageURL) ?  Positioned.fill(child:Image.network(widget.event!.exploreImageURL!, fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
+          StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
           CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false),
+            painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(
               height: 53,
             ),
@@ -235,9 +238,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventLocationDetail() {
-    String? locationText = ExploreHelper.getLongDisplayLocation(_event, null); //TBD decide if we need distance calculation - pass _locationData
+    String? locationText = _event?.getLongDisplayLocation(null); //TBD decide if we need distance calculation - pass _locationData
     bool isVirtual = _event?.isVirtual ?? false;
-    String eventType = isVirtual? Localization().getStringEx('panel.groups_event_detail.label.online_event', "Online event")! : Localization().getStringEx('panel.groups_event_detail.label.in_person_event', "In-person event")!;
+    String eventType = isVirtual? Localization().getStringEx('panel.groups_event_detail.label.online_event', "Online event") : Localization().getStringEx('panel.groups_event_detail.label.in_person_event', "In-person event");
     bool hasEventUrl = StringUtils.isNotEmpty(_event?.location?.description);
     bool isOnlineUnderlined = isVirtual && hasEventUrl;
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
@@ -342,8 +345,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   Widget _eventPrivacyDetail() {
     String privacyText = _isPrivateGroupEvent
-        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')!
-        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event')!;
+        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')
+        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
     return Semantics(
         label: Localization().getStringEx('panel.explore_detail.label.privacy.title', 'Privacy'),
         value: privacyText,
@@ -365,7 +368,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     }
     List<Widget> contactList = [];
     contactList.add(Padding(
-        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:')!)));
+        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:'))));
     for (Contact? contact in widget.event!.contacts!) {
       String contactDetails = '';
       if (StringUtils.isNotEmpty(contact!.firstName)) {
@@ -425,7 +428,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       buttons.add(Row(children:<Widget>[
         Expanded(child:
           Padding(padding: EdgeInsets.only(bottom: 6), child:
-            ScalableRoundedButton(
+            RoundedButton(
               label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
               hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
               backgroundColor: hasRegistrationUrl ? Styles().colors!.background : Colors.white,
@@ -444,7 +447,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       buttons.add(Row(children:<Widget>[
         Expanded(child:
         Padding(padding: EdgeInsets.only(bottom: 6), child:
-          ScalableRoundedButton(
+          RoundedButton(
             label: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.title', 'Register'),
             hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
             backgroundColor: Colors.white,
@@ -486,10 +489,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
             RibbonButton(
-              leftIcon: "images/icon-edit.png",
               label: Localization().getStringEx('panel.groups_event_detail.button.edit.title',  'Edit') ,
               hint: Localization().getStringEx('panel.groups_event_detail.button.edit.hint', '') ,
-              padding: EdgeInsets.zero,
+              leftIconAsset: "images/icon-edit.png",
               onTap: _onTapEdit,
             ),
         Container(
@@ -503,10 +505,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           height: 14,
         ),
         RibbonButton(
-          leftIcon: "images/icon-leave-group.png",
           label: Localization().getStringEx('panel.groups_event_detail.button.delete.title', "Delete Event"),
           hint:  Localization().getStringEx('panel.groups_event_detail.button.delete.hint', ""),
-          padding: EdgeInsets.zero,
+          leftIconAsset: "images/icon-leave-group.png",
           onTap: _onTapDelete,
         )
       ],
@@ -581,8 +582,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       return;
     }
 
-    String? title =  Localization().getStringEx('panel.groups_event_detail.label.options.add_event', "ADD EVENT");
-    String? description= Localization().getStringEx('panel.groups_event_detail.label.options.choose_group', "Choose a group you’re an admin for");
+    String title =  Localization().getStringEx('panel.groups_event_detail.label.options.add_event', "ADD EVENT");
+    String description= Localization().getStringEx('panel.groups_event_detail.label.options.choose_group', "Choose a group you’re an admin for");
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -612,14 +613,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           excludeSemantics: true,
                           child:
                           Text(
-                            title!,
+                            title,
                             style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),
                           ),
                         ),
                         Container(
                           padding: EdgeInsets.only(top: 2),
                           child: Text(
-                            description!,
+                            description,
                             style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
                           ),
                         )
@@ -639,7 +640,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                     }
                 ),
                 Container(height: 27,),
-                ScalableRoundedButton(
+                RoundedButton(
                   label: Localization().getStringEx('panel.groups_event_detail.button.add.title', "ADD "),
                   backgroundColor: Colors.white,
                   borderColor: Styles().colors!.fillColorSecondary,
@@ -650,7 +651,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       if(_currentlySelectedGroup!=null) {
                         Log.d("Selected group: $_currentlySelectedGroup");
                         AppToast.show(
-                            Localization().getStringEx('panel.groups_event_detail.label.link_result',  "Event has been linked to")! + (_currentlySelectedGroup?.title ?? ""));
+                            Localization().getStringEx('panel.groups_event_detail.label.link_result',  "Event has been linked to") + (_currentlySelectedGroup?.title ?? ""));
                         Groups().linkEventToGroup(groupId:_currentlySelectedGroup!.id,eventId: _event?.id);
                       }
                     });
@@ -681,7 +682,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   @override
   void onNotification(String name, param) {
     if (name == Groups.notifyGroupEventsUpdated) {
-      ExploreService().getEventById(_event?.eventId).then((event) {
+      Events().getEventById(_event?.eventId).then((event) {
         setState(() {
           if (event != null)
             event = _event;

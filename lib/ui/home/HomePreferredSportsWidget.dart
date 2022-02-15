@@ -134,7 +134,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                     Expanded(
                       flex: 5,
                       child: Text(
-                        Localization().getStringEx('widget.home_prefered_sports.label.mens_sports', "MEN'S SPORTS")!,
+                        Localization().getStringEx('widget.home_prefered_sports.label.mens_sports', "MEN'S SPORTS"),
                         textAlign: TextAlign.left,
                         style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),
                       )
@@ -154,7 +154,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                           } ,
                           child: Row(children: <Widget>[
                             Expanded(child:
-                            Text(Localization().getStringEx(menSelectClearTextKey, '')!,
+                            Text(Localization().getStringEx(menSelectClearTextKey, ''),
                               textAlign: TextAlign.right,
                               style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies!.medium),),
                             ),
@@ -188,7 +188,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                       Expanded(
                         flex: 5,
                         child: Text(
-                          Localization().getStringEx('widget.home_prefered_sports.label.womes_sports', "WOMEN'S SPORTS")!,
+                          Localization().getStringEx('widget.home_prefered_sports.label.womes_sports', "WOMEN'S SPORTS"),
                           textAlign: TextAlign.left,
                           style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),
                         ),
@@ -209,7 +209,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                             },
                             child: Row(children: <Widget>[
                               Expanded(child:
-                              Text(Localization().getStringEx(womenSelectClearTextKey, '')!,
+                              Text(Localization().getStringEx(womenSelectClearTextKey, ''),
                                 style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies!.medium),),
                               ),
                               Padding(padding: EdgeInsets.symmetric(horizontal: 8),

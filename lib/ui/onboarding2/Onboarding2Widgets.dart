@@ -6,7 +6,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/utils/AppUtils.dart';
 
 class Onboarding2TitleWidget extends StatelessWidget{
@@ -38,7 +38,7 @@ class Onboarding2TitleWidget extends StatelessWidget{
               Container(height: 90,),
             ],),
           ),
-          CustomPaint(painter: TrianglePainter(painterColor: rightTriangleColor, left: false), child:
+          CustomPaint(painter: TrianglePainter(painterColor: rightTriangleColor, horzDir: TriangleHorzDirection.leftToRight), child:
             Container(height: 48,),
           ),
           CustomPaint(painter: TrianglePainter(painterColor: leftTriangleColor), child:
@@ -99,9 +99,9 @@ class Onboarding2ToggleButton extends StatelessWidget{
               ? Localization().getStringEx(
             "toggle_button.status.checked",
             "checked",)
-              : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
+              : Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
               ", " +
-              Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
+              Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
           excludeSemantics: true,
           child: GestureDetector(
             onTap: () { onTap!(); anaunceChange(); },

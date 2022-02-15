@@ -27,8 +27,8 @@ import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/TransportationService.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:illinois/service/Transportation.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -152,7 +152,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
                 Padding(
                     padding: EdgeInsets.all(16),
                     child:Semantics(header: true, child: Text(
-                      Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass")!,
+                      Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"),
                       style: TextStyle(color: Color(0xff0f2040), fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),
                     ),
                     )),
@@ -189,7 +189,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
                 width: _photoSize,
                 padding: EdgeInsets.only(top: 12, left: 6, right: 6),
                 child: Text(
-                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus driver as you board.")!,
+                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus driver as you board."),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.regular,
@@ -294,7 +294,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
       'major': _currentBeacon!.major.toString(),
       'minor': _currentBeacon!.minor.toString(),
     } : null;
-    TransportationService().loadBusPass(deviceId: deviceId, userId: Auth2().accountId, iBeaconData: beaconData).then((dynamic result){
+    Transportation().loadBusPass(deviceId: deviceId, userId: Auth2().accountId, iBeaconData: beaconData).then((dynamic result){
 
       if (result is Map) {
         setState(() {

@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -29,7 +29,7 @@ import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:package_info/package_info.dart';
 
@@ -100,7 +100,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
                         Expanded(child:
                           Semantics(header: true, child:
                             Text(
-                              Localization().getStringEx("panel.settings.privacy_center.label.title", "Privacy Center")!,
+                              Localization().getStringEx("panel.settings.privacy_center.label.title", "Privacy Center"),
                               textAlign: TextAlign.center,
                               style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: Styles().fontFamilies!.extraBold),
                             ),)
@@ -128,7 +128,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
           children: <Widget>[
             _buildFinishSetupWidget(),
             Container(height: 40,),
-            Text(Localization().getStringEx("panel.settings.privacy_center.label.description", "Personalize your privacy and data preferences.")!,
+            Text(Localization().getStringEx("panel.settings.privacy_center.label.description", "Personalize your privacy and data preferences."),
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontFamily: Styles().fontFamilies!.bold,
@@ -158,7 +158,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(height: 40,),
-          Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup", "Finish setup")!,
+          Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup", "Finish setup"),
             style: TextStyle(
                 fontFamily: Styles().fontFamilies!.extraBold,
                 fontSize: 16,
@@ -166,7 +166,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
             ),
           ),
           Container(height: 4,),
-          Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Log in with your NetID or Telephone number to get the full Illinois experience.")!,
+          Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Log in with your NetID or Telephone number to get the full Illinois experience."),
             style: TextStyle(
                 fontFamily: Styles().fontFamilies!.regular,
                 fontSize: 16,
@@ -176,10 +176,10 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
           Container(height: 10,),
           Semantics(explicitChildNodes: true,
             child: RibbonButton(
-            leftIcon: "images/user-check.png",
             label: Localization().getStringEx("panel.settings.privacy_center.button.verify_identity.title", "Verify your Identity"),
+            leftIconAsset: "images/user-check.png",
             borderRadius: BorderRadius.circular(4),
-            shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.15), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+            borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.15), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
             onTap: () => _onTapVerifyIdentity(),
           )),
         ],
@@ -228,7 +228,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
                             Expanded(child:
                               Semantics(  excludeSemantics: true,
                               child: Text(
-                                Localization().getStringEx("panel.settings.privacy_center.button.manage_privacy.title", "Manage and Understand Your Privacy")!,
+                                Localization().getStringEx("panel.settings.privacy_center.button.manage_privacy.title", "Manage and Understand Your Privacy"),
                                 textAlign: TextAlign.left,
                                 style: buttonTextStyle,
                               )),
@@ -249,14 +249,14 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Expanded(child: _buildSquareButton(
-              label: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.title", "Personal Information")!,
+              label: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.title", "Personal Information"),
               hint: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.hint", ""),
               iconPath: 'images/group-5.png',
               onTap: _onTapPersonalInformation,
               ),),
             Container(width: 12,),
             Expanded(child: _buildSquareButton(
-              label: Localization().getStringEx("panel.settings.privacy_center.button.notifications.title", "Notification Preferences")!,
+              label: Localization().getStringEx("panel.settings.privacy_center.button.notifications.title", "Notification Preferences"),
               hint: Localization().getStringEx("panel.settings.privacy_center.button.notifications.", ""),
               iconPath: 'images/notifications.png',
               onTap: _onTapNotifications,
@@ -337,7 +337,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
       child: GestureDetector(
         onTap: _onTapPrivacyPolicy,
         child: Text(
-          Localization().getStringEx("panel.settings.privacy_center.button.privacy_policy.title", "Privacy Statement")!,
+          Localization().getStringEx("panel.settings.privacy_center.button.privacy_policy.title", "Privacy Statement"),
           style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, decoration: TextDecoration.underline,decorationColor:  Styles().colors!.fillColorSecondary,),
       )));
   }
@@ -360,19 +360,20 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
   Widget _buildDeleteButton(){
       return
           Column(children: <Widget>[
-            ScalableRoundedButton(
+            RoundedButton(
               backgroundColor: Styles().colors!.white,
+              borderColor: Styles().colors!.white,
               textColor: UiColors.fromHex("#f54400"),
               fontSize: 16,
               fontFamily: Styles().fontFamilies!.regular,
               label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Forget all of my information"),
               hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
-              shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+              borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
               onTap: _onTapDeleteData,
             ),
             Container(height: 16,),
             ExcludeSemantics(
-            child: Text(Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app.")!,
+            child: Text(Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
               textAlign: TextAlign.center,
               style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textSurface),)),
           ],);

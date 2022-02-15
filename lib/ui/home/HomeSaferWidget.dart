@@ -73,28 +73,28 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
         Widget? contentEntry;
         if (contentListCode == 'building_access') {
           contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access')!,
+            title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access'),
             description: Localization().getStringEx('widget.home.safer.button.building_access.description', 'Check your current building access.'),
             onTap: _onBuildingAccess,
           );
         }
         else if (contentListCode == 'test_locations') {
           contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.test_locations.title', 'Test Locations')!,
+            title: Localization().getStringEx('widget.home.safer.button.test_locations.title', 'Test Locations'),
             description: Localization().getStringEx('widget.home.safer.button.test_locations.description', 'Find test locations'),
             onTap: _onTestLocations,
           );
         }
         else if (contentListCode == 'my_mckinley') {
           contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley')!,
+            title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley'),
             description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'MyMcKinley Patient Health Portal'),
             onTap: _onMyMcKinley,
           );
         }
         else if (contentListCode == 'wellness_answer_center') {
           contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Wellness Answer Center')!,
+            title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Wellness Answer Center'),
             description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Contact Wellness Answer Center for issues'),
             onTap: _onWellnessAnswerCenter,
           );
@@ -113,7 +113,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   Widget _buildCommandEntry({required String title, String? description, void Function()? onTap}) {
-    return Semantics(container: true, button: true, child:
+    return Semantics(label: title, container: true, button: true, child:
       InkWell(onTap: onTap, child:
         Container(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -121,7 +121,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Row(children: <Widget>[
               Expanded(child:
-                Text(title, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary),),
+                Text(title, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary), semanticsLabel: "",),
               ),
               Image.asset('images/chevron-right.png', excludeFromSemantics: true,),
             ],),

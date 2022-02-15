@@ -192,7 +192,7 @@ class Tweet {
 
   static String? _buildHtml(String? text, TweetEntities? entities) {
     String? html = text;
-    if ((html != null) && (entities?.entities != null)) {
+    if ((html != null) && !html.hasHighSurrogates && (entities?.entities != null)) {
       int? firstUpdated = text!.length;
       for (int entityIndex = entities!.entities.length - 1; 0 <= entityIndex; entityIndex--) {
         TweetEntity entetity = entities.entities[entityIndex];
@@ -206,6 +206,7 @@ class Tweet {
         }
       }
     }
+    html = html?.replaceAll('\n', '<br>');
     return html;
   }
 
@@ -933,17 +934,19 @@ class TwitterMedia {
   final String? key;
   final String? type;
   final String? url;
+  final String? previewImageUrl;
   final String? altText;
   final int? width;
   final int? height;
   
-  TwitterMedia({this.key, this.type, this.url, this.altText, this.width, this.height});
+  TwitterMedia({this.key, this.type, this.url, this.previewImageUrl, this.altText, this.width, this.height});
 
   static TwitterMedia? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TwitterMedia(
       key: JsonUtils.stringValue(json['media_key']),
       type: JsonUtils.stringValue(json['type']),
       url: JsonUtils.stringValue(json['url']),
+      previewImageUrl: JsonUtils.stringValue(json['preview_image_url']),
       altText: JsonUtils.stringValue(json['alt_text']),
       width: JsonUtils.intValue(json['width']),
       height: JsonUtils.intValue(json['height']),
@@ -955,6 +958,7 @@ class TwitterMedia {
       'media_key': key,
       'type': type,
       'url': url,
+      'preview_image_url': previewImageUrl,
       'alt_text': altText,
       'width': width,
       'height': height,
@@ -966,6 +970,7 @@ class TwitterMedia {
       (o.key == key) &&
       (o.type == type) &&
       (o.url == url) &&
+      (o.previewImageUrl == previewImageUrl) &&
       (o.altText == altText) &&
       (o.width == width) &&
       (o.height == height);
@@ -974,10 +979,15 @@ class TwitterMedia {
     (key?.hashCode ?? 0) ^
     (type?.hashCode ?? 0) ^
     (url?.hashCode ?? 0) ^
+    (previewImageUrl?.hashCode ?? 0) ^
     (altText?.hashCode ?? 0) ^
     (width?.hashCode ?? 0) ^
     (height?.hashCode ?? 0);
 
+  String? get imageUrl {
+    return previewImageUrl ?? url;
+  }
+  
   static List<TwitterMedia>? listFromJson(List<dynamic>? jsonList) {
     List<TwitterMedia>? result;
     if (jsonList != null) {
@@ -1243,3 +1253,13 @@ class TweetsMeta {
     (resultCount?.hashCode ?? 0);
 }
 
+extension _StringTwitterExt on String {
+  bool get hasHighSurrogates {
+    for (int codeUnit in codeUnits) {
+      if ((0xD800 <= codeUnit) && (codeUnit <= 0xDB7F)) {
+        return true;
+      }
+    }
+    return false;
+  }
+}

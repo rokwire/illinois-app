@@ -20,7 +20,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
-import 'package:illinois/ui/canvas/CanvasAnnouncementPanel.dart';
+import 'package:illinois/ui/canvas/CanvasAnnouncementDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -48,15 +48,8 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx('panel.canvas_announcements.header.title', 'Announcements')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0)
-        )
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.canvas_announcements.header.title', 'Announcements'),
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
@@ -85,13 +78,13 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
 
   Widget _buildErrorContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_announcements.load.failed.error.msg', 'Failed to load announcements. Please, try again later.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_announcements.load.failed.error.msg', 'Failed to load announcements. Please, try again later.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
   Widget _buildEmptyContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_announcements.empty.msg', 'There are no announcements for this course.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_announcements.empty.msg', 'There are no announcements for this course.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
@@ -127,11 +120,17 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
                     ]),
                 padding: EdgeInsets.all(10),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                    Text(StringUtils.ensureNotEmpty(announcement.title),
-                        style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimaryVariant)),
-                    Text(StringUtils.ensureNotEmpty(announcement.postedAtDisplayDate),
-                        style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface))
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    Expanded(
+                        child: Text(StringUtils.ensureNotEmpty(announcement.title),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimaryVariant))),
+                    Padding(
+                        padding: EdgeInsets.only(left: 5),
+                        child: Text(StringUtils.ensureNotEmpty(announcement.postedAtDisplayDate),
+                            style:
+                                TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)))
                   ]),
                   Visibility(
                       visible: StringUtils.isNotEmpty(announcement.author?.displayName),
@@ -157,7 +156,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
 
   void _onTapAnnouncement(CanvasDiscussionTopic announcement) {
     Analytics().logSelect(target: "Canvas Course -> Announcement");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAnnouncementPanel(announcement: announcement)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAnnouncementDetailPanel(announcement: announcement)));
   }
 
   void _loadAnnouncements() {

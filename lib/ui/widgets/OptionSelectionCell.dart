@@ -44,10 +44,10 @@ class OptionSelectionCell extends StatelessWidget {
   Widget build(BuildContext context) {
     String hint = "";
     if(isCustomToggle){
-      hint = this.hint! + (selected?Localization().getStringEx("toggle_button.status.checked", "checked",)! :
-                                  Localization().getStringEx("toggle_button.status.unchecked", "unchecked")!);
+      hint = this.hint! + (selected?Localization().getStringEx("toggle_button.status.checked", "checked",) :
+                                  Localization().getStringEx("toggle_button.status.unchecked", "unchecked"));
 
-      hint += ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!;
+      hint += ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox");
     }
     return  Semantics(label: label /*+", "+hint,*/, /*hint: hint,*/button: isButton, /*checked: selected,*/ excludeSemantics: true, value: hint,child:
         Stack(

@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -58,7 +58,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
       _isLoading = true;
     });
 
-    DiningService().loadBackendDinings(widget.onlyOpened, null, widget.locationData).then((List<Dining>? list){
+    Dinings().loadBackendDinings(widget.onlyOpened, null, widget.locationData).then((List<Dining>? list){
       setState(() {
         _isLoading = false;
       });
@@ -81,14 +81,9 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.food_special_offers.title.text", "Specials")!,
-          style: TextStyle(
-              fontFamily: Styles().fontFamilies!.extraBold,
-              fontSize: 16
-          ),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.food_special_offers.title.text", "Specials"),
+        //textStyle: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16 ),
       ),
       body: Column(
         children: <Widget>[
@@ -143,8 +138,8 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
                 ),*/
                 Container(height: 20,),
                 Text(_hasLocations
-                    ? Localization().getStringEx("panel.food_special_offers.available.text", "Available at these locations")!
-                    : Localization().getStringEx("panel.food_special_offers.not_available.text", "No available locations")!,
+                    ? Localization().getStringEx("panel.food_special_offers.available.text", "Available at these locations")
+                    : Localization().getStringEx("panel.food_special_offers.not_available.text", "No available locations"),
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies!.extraBold,
                       fontSize: 16,

@@ -53,12 +53,8 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          "Inbox User Info",
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: "Inbox User Info",
       ),
       body: _loading
           ? Center(child: Column(

@@ -5,7 +5,7 @@ import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -61,10 +61,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text("Inbox Message", style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
-      ),
+      appBar: HeaderBar(title: "Inbox Message",),
       body: SafeArea(child:
         Column(children: <Widget>[
           Expanded(child:
@@ -199,34 +196,23 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
   }
 
   Widget _buildSend() {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Stack(children: <Widget>[
-          Row(children: <Widget>[
-            Expanded(child: Container(),),
-            RoundedButton(label: "Send Message",
-              textColor: Styles().colors!.fillColorPrimary, // Styles().colors!.disabledTextColor,
-              borderColor: Styles().colors!.fillColorSecondary, // Styles().colors!.disabledTextColor
-              backgroundColor: Styles().colors!.white,
-              fontFamily: Styles().fontFamilies!.bold,
-              fontSize: 16,
-              padding: EdgeInsets.symmetric(horizontal: 32, ),
-              borderWidth: 2,
-              height: 42,
-              onTap:() { _onSend();  }
-            ),
-            Expanded(child: Container(),),
-          ],),
-          Visibility(visible: (_sending == true), child:
-            Center(child:
-              Padding(padding: EdgeInsets.only(top: 10.5), child:
-               Container(width: 21, height:21, child:
-                  CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), strokeWidth: 2,)
-                ),
-              ),
-            ),
-          ),
-        ],),
-      );
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+      Row(children: <Widget>[
+        Expanded(child: Container(),),
+        RoundedButton(label: "Send Message",
+          textColor: Styles().colors!.fillColorPrimary, // Styles().colors!.disabledTextColor,
+          borderColor: Styles().colors!.fillColorSecondary, // Styles().colors!.disabledTextColor
+          backgroundColor: Styles().colors!.white,
+          fontFamily: Styles().fontFamilies!.bold,
+          contentWeight: 0.0,
+          fontSize: 16,
+          borderWidth: 2,
+          progress: _sending,
+          onTap:() { _onSend();  }
+        ),
+        Expanded(child: Container(),),
+      ],),
+    );
   }
 
   void _onSend() {

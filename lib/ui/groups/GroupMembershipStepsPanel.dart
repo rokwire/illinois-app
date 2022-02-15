@@ -17,16 +17,17 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/groups.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/groups/GroupFindEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -67,7 +68,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     }
 
     if (0 < eventIds.length) {
-      ExploreService().loadEventsByIds(eventIds).then((List<Event>? events) {
+      Events().loadEventsByIds(eventIds).then((List<Event>? events) {
         if (events != null) {
           for (Event event in events) {
             if (event.id != null) {
@@ -116,16 +117,9 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.membership_request.label.title", 'Membership Steps')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        leadingAsset: 'images/icon-circle-close.png',
+        title: Localization().getStringEx("panel.membership_request.label.title", 'Membership Steps'),
       ),
       body: Column(
         children: <Widget>[
@@ -155,10 +149,10 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
           children:<Widget>[
             Row(children: <Widget>[
               Padding(padding: EdgeInsets.only(right: 4), child: Image.asset('images/campus-tools-blue.png')),
-              Text(Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add Steps')!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
+              Text(Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add Steps'), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
-              Text(Localization().getStringEx("panel.membership_request.label.steps.description", 'Share the steps someone will need to take to become a member of your group.')!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949))),
+              Text(Localization().getStringEx("panel.membership_request.label.steps.description", 'Share the steps someone will need to take to become a member of your group.'), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949))),
             ),
           ]),
       ),
@@ -185,7 +179,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   Widget _buildStep({required int index}) {
     List<Widget> stepContent = [
       Padding(padding: EdgeInsets.only(bottom: 4),
-        child: Text(Localization().getStringEx("panel.membership_request.button.add_steps.step", 'STEP ')! +(index+1).toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
+        child: Text(Localization().getStringEx("panel.membership_request.button.add_steps.step", 'STEP ') +(index+1).toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
       ),
       Stack(children: <Widget>[
         Container(color: Styles().colors!.white,
@@ -245,10 +239,10 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
             textColor: Styles().colors!.fillColorPrimary,
             fontFamily: Styles().fontFamilies!.bold,
             fontSize: 16,
-            padding: EdgeInsets.symmetric(horizontal: 32, ),
             borderColor: Styles().colors!.fillColorSecondary,
             borderWidth: 2,
-            height: 26 + 16*MediaQuery.of(context).textScaleFactor ,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentWeight: 0.0,
             onTap:() { _onSubmit();  }
           ),
           Expanded(child: Container(),),
@@ -319,7 +313,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
         step.description = text;
       }
       else {
-        AppAlert.showDialogResult(context, Localization().getStringEx("panel.membership_request.button.add_steps.alert", 'Please input step #')!+(index+1).toString()).then((_){
+        AppAlert.showDialogResult(context, Localization().getStringEx("panel.membership_request.button.add_steps.alert", 'Please input step #')+(index+1).toString()).then((_){
           _focusNodes![index].requestFocus();
         });
         return;
@@ -355,7 +349,7 @@ class _EventCard extends StatelessWidget {
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
                 Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
-                Text(event!.timeDisplayString!,  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),),
+                Text(event?.timeDisplayString ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),),
               ],)),
             ],)
           ),

@@ -18,29 +18,29 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Event.dart';
+import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -55,13 +55,10 @@ class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAtt
   ExploreEventDetailPanel({this.event, this.previewMode = false, this.initialLocationData, this.superEventTitle, this.browseGroupId});
 
   @override
-  _EventDetailPanelState createState() =>
-      _EventDetailPanelState();
+  _EventDetailPanelState createState() => _EventDetailPanelState();
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return event?.analyticsAttributes;
-  }
+  Map<String, dynamic>? get analyticsPageAttributes => event?.analyticsAttributes;
 }
 
 class _EventDetailPanelState extends State<ExploreEventDetailPanel>
@@ -117,9 +114,8 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   scrollDirection: Axis.vertical,
                   slivers: <Widget>[
                     SliverToutHeaderBar(
-                      context: context,
-                      imageUrl: widget.event!.exploreImageURL,
-                      leftTriangleColor: Colors.white
+                      flexImageUrl: widget.event?.eventImageUrl,
+                      flexRightToLeftTriangleColor: Colors.white,
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate(
@@ -359,9 +355,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget? _exploreLocationDetail() {
-    String locationText = ExploreHelper.getLongDisplayLocation(widget.event, _locationData)??"";
+    String locationText = widget.event?.getLongDisplayLocation(_locationData)??"";
     bool isVirtual = widget.event?.isVirtual ?? false;
-    String eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event")! : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event")!;
+    String eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
     bool hasEventUrl = StringUtils.isNotEmpty(widget.event?.location?.description);
     bool isOnlineUnderlined = isVirtual && hasEventUrl;
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
@@ -418,8 +414,8 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   Widget? _eventPrivacyDetail() {
     String privacyText = (widget.event?.isGroupPrivate ?? false)
-        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')!
-        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event')!;
+        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')
+        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
     return Semantics(
         label: Localization().getStringEx('panel.explore_detail.label.privacy.title', 'Privacy'),
         value: privacyText,
@@ -524,7 +520,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(Localization().getStringEx('panel.explore_detail.label.related_tags', 'Related Tags:')!),
+                Text(Localization().getStringEx('panel.explore_detail.label.related_tags', 'Related Tags:')),
                 Container(width: 5,),
                 Expanded(
                   child: Text(capitalizedTags.join(', '),
@@ -563,7 +559,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     }
     List<Widget> contactList = [];
     contactList.add(Padding(
-        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:')!)));
+        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:'))));
     for (Contact? contact in widget.event!.contacts!) {
       String contactDetails = '';
       if (StringUtils.isNotEmpty(contact!.firstName)) {
@@ -627,7 +623,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             Padding(
               padding: EdgeInsets.only(left: 12),
               child: Text(
-                Localization().getStringEx('panel.explore_detail.label.event_preview', 'Event Preview')!,
+                Localization().getStringEx('panel.explore_detail.label.event_preview', 'Event Preview'),
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -653,7 +649,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       buttons.add(Row(children:<Widget>[
         Expanded(child:
           Padding(padding: EdgeInsets.only(bottom: 6), child:
-            ScalableRoundedButton(
+            RoundedButton(
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
               hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
@@ -672,7 +668,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       buttons.add(Row(children:<Widget>[
         Expanded(child:
         Padding(padding: EdgeInsets.only(bottom: 6), child:
-          ScalableRoundedButton(
+          RoundedButton(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register'),
                 hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
@@ -715,7 +711,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         children: <Widget>[
           Expanded(
               child: RoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.modify.title', 'Modify') ,
+                label: Localization().getStringEx('panel.explore_detail.button.modify.title', 'Modify'),
                 hint: Localization().getStringEx('panel.explore_detail.button.modify.hint', '') ,
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorPrimary,
@@ -743,28 +739,15 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           child:
-          Stack(
-            children: [
-              ScalableRoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group') ,
-                hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
-                backgroundColor: Colors.white,
-                borderColor: Styles().colors!.fillColorPrimary,
-                textColor: Styles().colors!.fillColorPrimary,
-                onTap: _onTapAddToGroup,
-              ),
-              Visibility(visible: _addToGroupInProgress,
-                child: Container(
-                  height: 48,
-                  child: Align(alignment: Alignment.center,
-                    child: SizedBox(height: 24, width: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          )
+            RoundedButton(
+              label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
+              hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+              backgroundColor: Colors.white,
+              borderColor: Styles().colors!.fillColorPrimary,
+              textColor: Styles().colors!.fillColorPrimary,
+              progress: _addToGroupInProgress,
+              onTap: _onTapAddToGroup,
+            ),
         );
   }
 
@@ -829,7 +812,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   void _onTapPublish() async{
     Analytics().logSelect(target: "Publish");
-    ExploreService().postNewEvent(widget.event).then((String? eventId){
+    Events().postNewEvent(widget.event).then((String? eventId){
         if(eventId!=null){
           AppToast.show("Event successfully created");
           Navigator.pop(context,true);

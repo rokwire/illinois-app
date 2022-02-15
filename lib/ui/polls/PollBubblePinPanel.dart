@@ -20,7 +20,7 @@ import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/polls.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
@@ -144,7 +144,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
       Padding(
         padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 52),
         child: Text(
-          Localization().getStringEx("panel.poll_pin_bouble.long_info_description", "Each poll has a 4-digit code associated with it. Only the poll creator can see and share this code. To participate in their poll, have them share the 4-digit code.")!,
+          Localization().getStringEx("panel.poll_pin_bouble.long_info_description", "Each poll has a 4-digit code associated with it. Only the poll creator can see and share this code. To participate in their poll, have them share the 4-digit code."),
           style: TextStyle(
             fontFamily: Styles().fontFamilies!.regular,
             fontSize: 16,
@@ -163,7 +163,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         Padding(padding: EdgeInsets.only(right: 40), child:
           RichText(
             text: TextSpan(
-              text:Localization().getStringEx("panel.poll_pin_bouble.label_description", "Enter your 4-digit code to see poll.")! + " ",
+              text:Localization().getStringEx("panel.poll_pin_bouble.label_description", "Enter your 4-digit code to see poll.") + " ",
               style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24),
               children:[
                 WidgetSpan(
@@ -263,29 +263,18 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
   Widget _buildContinueButton() {
     return Padding(
       padding: EdgeInsets.only(top: 20, left: 30, right: 30),
-        child: Stack(children: <Widget>[
-          RoundedButton(
+        child: RoundedButton(
             label: Localization().getStringEx('dialog.continue.title', 'Continue'),
             hint: Localization().getStringEx('dialog.continue.hint', ''),
             backgroundColor: Styles().colors!.white,
-            height: 20 + 16*MediaQuery.of(context).textScaleFactor,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            progress: _loading,
             fontSize: 16.0,
             textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
-            padding: EdgeInsets.symmetric(horizontal: 24),
             onTap: () { _onContinue(); }
           ),       
-          Visibility(visible: _loading,
-            child: Container(
-              height: 42,
-              child: Align(alignment: Alignment.center,
-                child: SizedBox(height: 21, width: 21,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                ),
-              ),
-            ),
-          ),      
-      ],),);
+      );
   } 
 
   Widget _buildCloseButton() {

@@ -20,7 +20,7 @@ import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -55,7 +55,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
     String maskedPhoneNumber = StringUtils.getMaskedPhoneNumber(phoneNumber);
     String description = sprintf(
         Localization().getStringEx(
-            'panel.onboarding.confirm_phone.description.send', 'A one time code has been sent to %s. Enter your code below to continue.')!,
+            'panel.onboarding.confirm_phone.description.send', 'A one time code has been sent to %s. Enter your code below to continue.'),
         [maskedPhoneNumber]);
     return Scaffold(
       body: GestureDetector(
@@ -75,7 +75,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                   padding: EdgeInsets.only(left: 64, right: 64, bottom: 12),
                   child: Text(
                     Localization().getStringEx("panel.onboarding.confirm_phone.title",
-                        "Confirm your code")!,
+                        "Confirm your code"),
                     textAlign: TextAlign.center,
                     style:
                         TextStyle(fontSize: 36, color: Styles().colors!.fillColorPrimary),
@@ -103,7 +103,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                   child: Text(
                     Localization().getStringEx(
                         "panel.onboarding.confirm_phone.code.label",
-                        "One-time code")!,
+                        "One-time code"),
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontSize: 16,
@@ -157,7 +157,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                 ),
                 ]))),
                 Container(child:
-                ScalableRoundedButton(
+                RoundedButton(
                     label: Localization().getStringEx(
                         "panel.onboarding.confirm_phone.button.confirm.label",
                         "Confirm phone number"),

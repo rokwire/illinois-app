@@ -16,14 +16,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:illinois/model/Event.dart';
+import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ext/Explore.dart';
 
 class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttributes {
   final Explore? explore;
@@ -33,9 +34,7 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
   ExploreDetailPanel({this.explore, this.initialLocationData, this.browseGroupId});
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return explore?.analyticsAttributes;
-  }
+  Map<String, dynamic>? get analyticsPageAttributes => explore?.analyticsAttributes;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +53,7 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
     }
     else{ // Default for unexpected type
       return Scaffold(
-        appBar: SimpleHeaderBarWithBack(context: context,),
+        appBar: HeaderBar(),
       );
     }
   }

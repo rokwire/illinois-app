@@ -16,9 +16,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -26,8 +28,7 @@ import 'package:illinois/ui/groups/GroupMemberPanel.dart';
 import 'package:illinois/ui/groups/GroupPendingMemberPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -126,9 +127,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   void _refreshAllMembersFilterText(){
     if(_selectedMembersFilter == _allMembersFilter){
-      _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members?.length.toString() ?? "0");
+      _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)").replaceAll("#", _members?.length.toString() ?? "0");
     } else {
-      _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members?.length.toString() ?? "0");
+      _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)").replaceAll("#", _members?.length.toString() ?? "0");
     }
   }
   void _applyMembersFilter(){
@@ -161,15 +162,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Styles().colors!.background,
-        appBar: SimpleHeaderBarWithBack(
-          context: context,
-          titleWidget: Text(Localization().getStringEx("panel.manage_members.header.title", "Manage Members",)!,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontFamily: Styles().fontFamilies!.extraBold,
-                letterSpacing: 1.0),
-          ),
+        appBar: HeaderBar(
+          title: Localization().getStringEx("panel.manage_members.header.title", "Manage Members",),
         ),
         body: _isLoading
             ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ))
@@ -199,7 +193,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         requests.add(Container(
           padding: EdgeInsets.only(top: 20, bottom: 10),
           child: SmallRoundedButton(
-            label: Localization().getStringEx("panel.manage_members.button.see_all_requests.title", "See all # requests")!.replaceAll("#", _pendingMembers!.length.toString()),
+            label: Localization().getStringEx("panel.manage_members.button.see_all_requests.title", "See all # requests").replaceAll("#", _pendingMembers!.length.toString()),
             hint: Localization().getStringEx("panel.manage_members.button.see_all_requests.hint", ""),
             onTap: () {
               Analytics().logSelect(target: 'See all requests');
@@ -435,7 +429,7 @@ class _PendingMemberCard extends StatelessWidget {
                     ),
                   ),
                   Container(height: 4,),
-                      ScalableRoundedButton(
+                      RoundedButton(
                         label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review request"),
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
                         borderColor: Styles().colors!.fillColorSecondary,

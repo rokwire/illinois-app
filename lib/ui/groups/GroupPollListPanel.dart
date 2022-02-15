@@ -15,7 +15,8 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -60,10 +61,9 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SimpleHeaderBarWithBack(
-            context: context,
-            titleWidget: Text(Localization().getStringEx('panel.group_polls.label.heading', 'All Polls')!,
-                style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0))),
+        appBar: HeaderBar(
+            title: Localization().getStringEx('panel.group_polls.label.heading', 'All Polls'),
+        ),
         body: CustomScrollView(controller: _scrollController, slivers: <Widget>[
           SliverList(
               delegate: SliverChildListDelegate([
@@ -114,8 +114,8 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
   }
 
   Widget _buildEmptyContent() {
-    String message = Localization().getStringEx('panel.group_polls.empty.message', 'There are no group polls.')!;
-    String description = Localization().getStringEx('panel.group_polls.empty.description', 'You will see the polls for your group here.')!;
+    String message = Localization().getStringEx('panel.group_polls.empty.message', 'There are no group polls.');
+    String description = Localization().getStringEx('panel.group_polls.empty.description', 'You will see the polls for your group here.');
 
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 24),
@@ -139,7 +139,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: Column(children: [
           Container(height: 46),
-          Text(Localization().getStringEx('panel.group_polls.text.error', 'Error')!,
+          Text(Localization().getStringEx('panel.group_polls.text.error', 'Error'),
               textAlign: TextAlign.center,
               style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24)),
           Container(height: 16),

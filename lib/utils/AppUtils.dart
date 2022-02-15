@@ -32,7 +32,7 @@ class AppAlert {
           content: Text(message!),
           actions: <Widget>[
             TextButton(
-                child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
+                child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
                 onPressed: () {
                   Analytics().logAlert(text: message, selection: "Ok");
                   Navigator.pop(context, true);
@@ -60,13 +60,13 @@ class AppAlert {
     return showDialog(context: context, builder: (context) {
       return AlertDialog(
         content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline")!, style: TextStyle(fontSize: 18),),
+          Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 18),),
           Container(height:16),
           Text(message!, textAlign: TextAlign.center,),
         ],),
         actions: <Widget>[
           TextButton(
-              child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
+              child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
               onPressed: (){
                 Analytics().logAlert(text: message, selection: "OK");
                   Navigator.pop(context, true);
@@ -83,16 +83,16 @@ class AppSemantics {
     static void announceCheckBoxStateChange(BuildContext? context, bool checked, String? name){
       String message = (StringUtils.isNotEmpty(name)?name!+", " :"")+
           (checked ?
-            Localization().getStringEx("toggle_button.status.checked", "checked",)! :
-            Localization().getStringEx("toggle_button.status.unchecked", "unchecked")!); // !toggled because we announce before it got changed
+            Localization().getStringEx("toggle_button.status.checked", "checked",) :
+            Localization().getStringEx("toggle_button.status.unchecked", "unchecked")); // !toggled because we announce before it got changed
       announceMessage(context, message);
     }
 
     static Semantics buildCheckBoxSemantics({Widget? child, String? title, bool selected = false, double? sortOrder}){
       return Semantics(label: title, button: true ,excludeSemantics: true, sortKey: sortOrder!=null?OrdinalSortKey(sortOrder) : null,
       value: (selected?Localization().getStringEx("toggle_button.status.checked", "checked",) :
-      Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
-      ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
+      Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
+      ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
       child: child );
     }
 
@@ -171,13 +171,13 @@ class AppDateTimeUtils {
   static String getDayGreeting() {
     int currentHour = DateTime.now().hour;
     if (currentHour > 7 && currentHour < 12) {
-      return Localization().getStringEx("logic.date_time.greeting.morning", "Good morning")!;
+      return Localization().getStringEx("logic.date_time.greeting.morning", "Good morning");
     }
     else if (currentHour >= 12 && currentHour < 19) {
-      return Localization().getStringEx("logic.date_time.greeting.afternoon", "Good afternoon")!;
+      return Localization().getStringEx("logic.date_time.greeting.afternoon", "Good afternoon");
     }
     else {
-      return Localization().getStringEx("logic.date_time.greeting.evening", "Good evening")!;
+      return Localization().getStringEx("logic.date_time.greeting.evening", "Good evening");
     }
   }
 

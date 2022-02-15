@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -39,7 +39,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
         appBar: AppBar(
           leading: HeaderBackButton(),
           title: Text(
-            Localization().getStringEx('panel.group.detail.post.header.title', 'Post')!,
+            Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
@@ -63,7 +63,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject')!,
+                  Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
                     style: TextStyle(
                         fontSize: 18,
                         fontFamily: Styles().fontFamilies!.bold,

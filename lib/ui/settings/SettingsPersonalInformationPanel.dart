@@ -29,7 +29,7 @@ import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 
 class SettingsPersonalInformationPanel extends StatefulWidget{
@@ -48,12 +48,8 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx("panel.settings.personal_information.label.title", "Personal Information")!,
-          style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.settings.personal_information.label.title", "Personal Information"),
       ),
       body: Column(
         children:[
@@ -66,17 +62,18 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
               children: <Widget>[
                 Container(height: 1, color: Styles().colors!.surfaceAccent,),
                 Container(height: 24,),
-                ScalableRoundedButton(
+                RoundedButton(
                   backgroundColor: Styles().colors!.white,
+                  borderColor: Styles().colors!.white,
                   textColor: UiColors.fromHex("#f54400"),
                   fontSize: 16,
                   fontFamily: Styles().fontFamilies!.regular,
                   label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal information"),
-                  shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+                  borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
                   onTap: _onTapDeleteData,
                 ),
                 Container(height: 16,),
-                Text(Localization().getStringEx("panel.settings.personal_information.label.description", "Delete your location history, your tags and categories, and saved events and dining locations.")!,
+                Text(Localization().getStringEx("panel.settings.personal_information.label.description", "Delete your location history, your tags and categories, and saved events and dining locations."),
                   style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textSurface),),
                 Container(height: 30,),
             ],),
@@ -125,16 +122,13 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
           Container(height: 8,),
           ToggleRibbonButton(
               label: 'Add saved events to calendar',
-              toggled: Storage().calendarEnabledToSave,
-              context: context,
+              toggled: Storage().calendarEnabledToSave ?? false,
               onTap: (){ setState(() {Storage().calendarEnabledToSave = !Storage().calendarEnabledToSave!;});}),
           Container(height: 8,),
           ToggleRibbonButton(
               label: 'Prompt when saving events to calendar',
-              style: TextStyle(fontSize: 16,fontFamily: Styles().fontFamilies!.bold, color: Storage().calendarEnabledToSave! ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,) ,
-              height: null,
-              toggled: Storage().calendarCanPrompt,
-              context: context,
+              textStyle: TextStyle(fontSize: 16,fontFamily: Styles().fontFamilies!.bold, color: Storage().calendarEnabledToSave! ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,) ,
+              toggled: Storage().calendarCanPrompt ?? false,
               onTap: (){
                 if(!Storage().calendarEnabledToSave!) {
                   return;

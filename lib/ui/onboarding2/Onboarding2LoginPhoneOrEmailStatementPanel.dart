@@ -23,7 +23,7 @@ import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class Onboarding2LoginPhoneOrEmailStatementPanel extends StatefulWidget with OnboardingPanel {
 
@@ -49,7 +49,7 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
 
   @override
   Widget build(BuildContext context) {
-    String titleString = Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.text', 'Login by phone or email')!;
+    String titleString = Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.text', 'Login by phone or email');
     EdgeInsetsGeometry backButtonInsets = EdgeInsets.only(left: 10, top: 20 + MediaQuery.of(context).padding.top, right: 20, bottom: 20);
 
     return Scaffold(backgroundColor: Styles().colors!.background, body:
@@ -69,7 +69,7 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
                   ),
                   Container(height: 24,),
                   Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
-                    Text(Localization().getStringEx('panel.onboarding2.phone_or_email_statement.description', 'This saves your preferences so you can have the same experience on more than one device.')!, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))
+                    Text(Localization().getStringEx('panel.onboarding2.phone_or_email_statement.description', 'This saves your preferences so you can have the same experience on more than one device.'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))
                   ),
                 ]),
               ),
@@ -77,11 +77,11 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
           ),
           Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8), child:
             Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              ScalableRoundedButton(
+              RoundedButton(
                 label: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.continue.title', 'Continue'),
                 hint: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.continue.hint', ''),
                 fontSize: 16,
-                padding: EdgeInsets.symmetric(vertical: 12),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 borderColor: Styles().colors!.fillColorSecondary,
                 backgroundColor: Styles().colors!.white,
                 textColor: Styles().colors!.fillColorPrimary,

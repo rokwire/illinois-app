@@ -21,7 +21,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/model/Roster.dart';
+import 'package:illinois/model/sport/Roster.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/ModalImageDialog.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -59,16 +59,8 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
     bool hasPosition = widget.sport != null ? widget.sport!.hasPosition! : false;
 
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.athletics_roster_detail.header.title', 'Roster')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.athletics_roster_detail.header.title', 'Roster'),
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,

@@ -198,7 +198,7 @@
 	"panel.browse.button.add_illini_cash.hint": "",
 	"panel.browse.button.campus_guide.title":"Campus Guide",
 	"panel.browse.button.campus_guide.hint":"",
-	"panel.browse.button.inbox.title":"收件箱",
+	"panel.browse.button.inbox.title":"Notifications",
 	"panel.browse.button.inbox.hint":"",
 	"panel.browse.button.privacy_center.title": "Privacy",
 	"panel.browse.button.privacy_center.hint":"",
@@ -643,7 +643,7 @@
 	"panel.onboarding2.email.sign_in.failed.text": "Sign in failed.",
 	"panel.onboarding2.email.sign_up.failed.text": "Sign up failed.",
 	"panel.onboarding2.email.sign_in.failed.not_activated.text": "Your account is not activated yet. Please confirm the email sent to your email address.",
-	"panel.onboarding2.email.sign_in.failed.activation_expired.text": "Your activation link has already expired. Please resend verification email again and cofirm it in order to activate your account.",
+	"panel.onboarding2.email.sign_in.failed.activation_expired.text": "Your activation link has already expired. Please resend verification email again and confirm it in order to activate your account.",
 	"panel.onboarding2.email.sign_up.failed.account_exists.text": "Sign up failed. This account already exists.",
 	"panel.onboarding2.email.sign_up.succeeded.text": "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential.",
 	"panel.onboarding2.email.label.forgot_password.text": "Forgot Password?",
@@ -1866,7 +1866,7 @@
 	"panel.guide_categories.label.heading": "Campus Guide",
 	"panel.guide_categories.label.content.empty": "空的指南內容",
 
-	"panel.inbox.label.heading": "收件箱",
+	"panel.inbox.label.heading": "Notifications",
 	"panel.inbox.label.content.empty": "沒有消息",
 	"panel.inbox.label.time.any": "任何時間",
 	"panel.inbox.label.time.today": "今天",
@@ -1927,15 +1927,12 @@
 	"panel.home_canvas_course.button.collaborations.title": "合作",
 	"panel.home_canvas_course.button.calendar.title": "日曆",
 	"panel.home_canvas_course.button.notifications.title": "通知",
-	"panel.home_canvas_course.button.inbox.title": "收件箱",
-
-	"panel.syllabus_canvas_course.header.title": "教學大綱",
-	"panel.syllabus_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",
-	"panel.syllabus_canvas_course.button.syllabus.title": "教學大綱",
-	"panel.syllabus_canvas_course.button.modules.title": "模塊",
-	"panel.syllabus_canvas_course.button.assignments.title": "作業",
-	"panel.syllabus_canvas_course.button.zoom.title": "變焦會議",
-	"panel.syllabus_canvas_course.button.grades.title": "成績",
+	"panel.home_canvas_course.button.notitification.history.title": "通知歷史",
+	"panel.home_canvas_course.button.modules.title": "模塊",
+	"panel.home_canvas_course.button.assignments.title": "作業",
+	"panel.home_canvas_course.button.zoom.title": "變焦會議",
+    "panel.home_canvas_course.button.group.title": "團體",
+    "panel.home_canvas_course.button.feedback.title": "回饋",
 
 	"panel.syllabus_html.header.title": "教學大綱",
 	"panel.syllabus_html.load.failed.error.msg": "未能加載課程內容. 請稍後再試.",
@@ -1953,6 +1950,45 @@
     "panel.canvas_collaborations.header.title": "合作",
     "panel.canvas_collaborations.load.failed.error.msg": "未能加載協作. 請稍後再試.",
     "panel.canvas_collaborations.empty.msg": "本課程沒有合作.",
+
+    "panel.canvas_calendar.header.title": "日曆",
+    "panel.canvas_calendar.load.failed.error.msg": "未能加載事件. 請稍後再試.",
+    "panel.canvas_calendar.empty.msg": "今天沒有活動.",
+
+    "panel.canvas_notifications.header.title": "帳戶通知",
+    "panel.canvas_notifications.load.failed.error.msg": "未能加載帳戶通知. 請稍後再試.",
+    "panel.canvas_notifications.empty.msg": "沒有帳戶通知.",
+
+    "panel.canvas_notification.header.title": "通知",
+
+    "panel.canvas_calendar_event.header.title": "日曆事件",
+    "panel.canvas_calendar_event.calendar.label": "日曆:",
+    "panel.canvas_calendar_event.date_time.label": "約會時間:",
+    "panel.canvas_calendar_event.load.failed.error.msg": "未能加載事件. 請稍後再試.",
+    "panel.canvas_calendar.all_courses.label": "所有課程",
+
+    "panel.canvas_modules.header.title": "模塊",
+    "panel.canvas_modules.load.failed.error.msg": "無法加載模塊. 請稍後再試.",
+    "panel.canvas_modules.empty.msg": "本課程沒有模塊.",
+
+    "panel.canvas_module_detail.load.failed.error.msg": "無法加載模塊項目. 請稍後再試.",
+    "panel.canvas_module_detail.empty.msg": "沒有模塊項目.",
+
+    "panel.canvas_feedback.header.title": "回饋",
+    "panel.canvas_feedback.file_ticket.label": "提交工單以獲取我們支持團隊的個人回复.",
+    "panel.canvas_feedback.subject.label": "主題",
+    "panel.canvas_feedback.description.label": "描述",
+    "panel.canvas_feedback.submit.button": "提交",
+    "panel.canvas_feedback.subject.empty.message": "請填寫主題.",
+    "panel.canvas_feedback.report.succeeded.message": "成功報了一張票.",
+    "panel.canvas_feedback.report.failed.message": "未能報告票證. 請稍後再試.",
+    
+    "panel.canvas_assignments.header.title": "作業",
+    "panel.canvas_assignments.load.failed.error.msg": "未能加載分配. 請稍後再試.",
+    "panel.canvas_assignments.empty.msg": "本課程沒有作業.",
+    "panel.canvas_assignments.due.label": "到期的",
+    "panel.canvas_assignments.upcoming.label": "即將到來的作業",
+    "panel.canvas_assignments.past.label": "過去的作業",
 
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 
@@ -2191,8 +2227,12 @@
 	"widget.group.card.reply.edited.reply.label": "edited",
 
 	"widget.group_card.status.private": "Private",
+    "widget.group_card.status.public": "Public",
+    "widget.group_card.status.authman": "Managed",
 	"widget.group_card.status.hidden": "Hidden",
 	"widget.group_card.status.hint": "status: %s ,for: ",
+    "widget.group_card.member.label": "member",
+    "widget.group_card.members.label": "members",
 
 	"widget.groups.selection.button.select.label": "選擇",
 	"widget.groups.selection.heading": "選擇組",
@@ -2240,13 +2280,15 @@
 	"model.groups.member.status.rejected": "Denied",
 	"model.groups.member.status.unknown": "Unknown",
 
+    "model.canvas.calendar.event.type.event.label": "事件",
+    "model.canvas.calendar.event.type.assignment.label": "任務",
+
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",
 	"logic.date_time.greeting.evening": "晚上好",
 
-	"logic.polls.unable_to_load_poll": "无法加载投票",
-	"logic.polls.no_polls_with_pin": "此4位数的投票代码 # 没有投票",
-	"logic.polls.multiple_polls_with_pin": "有多个公开的投票关联到这个四位数投票代码 #",
+	"logic.calendar.create_event_failed": "創建活動失敗。",
+	"logic.calendar.permission_denied": "無法將事件保存到日曆。 未授予權限。",
 
 	"logic.general.internal_error": "发生内部错误",
 	"logic.general.unknown_error": "發生未知錯誤",

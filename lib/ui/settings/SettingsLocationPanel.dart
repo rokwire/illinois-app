@@ -31,12 +31,8 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx("panel.settings.location.label.title", "Location")!,
-          style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.settings.location.label.title", "Location"),
       ),
       body: SingleChildScrollView(child: _buildContent()),
       backgroundColor: Styles().colors!.background,
@@ -55,7 +51,7 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 6),
             child: Text(
-              Localization().getStringEx("panel.settings.location.label.desctiption", "Find events and places on campus near you.")!,
+              Localization().getStringEx("panel.settings.location.label.desctiption", "Find events and places on campus near you."),
               style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
             ),
           ),

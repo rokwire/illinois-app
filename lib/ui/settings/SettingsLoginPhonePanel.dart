@@ -24,7 +24,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class SettingsLoginPhonePanel extends StatefulWidget{
   _SettingsLoginPhonePanelState createState() => _SettingsLoginPhonePanelState();
@@ -45,8 +45,8 @@ class _SettingsLoginPhonePanelState extends State<SettingsLoginPhonePanel> {
 
   @override
   Widget build(BuildContext context) {
-    String titleString = Localization().getStringEx('panel.settings.login.phone.label.title', 'Verify your phone number')!;
-    String skipTitle = Localization().getStringEx('panel.settings.login.phone.button.dont_continue.title', 'Not right now')!;
+    String titleString = Localization().getStringEx('panel.settings.login.phone.label.title', 'Verify your phone number');
+    String skipTitle = Localization().getStringEx('panel.settings.login.phone.button.dont_continue.title', 'Not right now');
     return Scaffold(
         backgroundColor: Styles().colors!.background,
         body: Stack(
@@ -89,7 +89,7 @@ class _SettingsLoginPhonePanelState extends State<SettingsLoginPhonePanel> {
                 ),
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Text(Localization().getStringEx('panel.settings.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.')!,
+                    child: Text(Localization().getStringEx('panel.settings.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.'),
                         textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
                 Container(
                   height: 32,

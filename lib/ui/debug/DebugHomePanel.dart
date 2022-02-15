@@ -37,7 +37,7 @@ import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -120,12 +120,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     String? pid = Auth2().profile?.id;
     String? firebaseProjectId = FirebaseCore().app?.options.projectId;
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx("panel.debug.header.title", "Debug")!,
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.debug.header.title", "Debug"),
       ),
       body: Column(
         children: <Widget>[
@@ -158,9 +154,9 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     ),
                     
                     Container(height: 1, color: Styles().colors!.surfaceAccent),
-                    ToggleRibbonButton(label: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck, onTap: _onDisableLiveGameCheckToggled),
+                    ToggleRibbonButton(label: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck ?? false, onTap: _onDisableLiveGameCheckToggled),
                     ToggleRibbonButton(label: 'Display all times in Central Time', toggled: !Storage().useDeviceLocalTimeZone!, onTap: _onUseDeviceLocalTimeZoneToggled),
-                    ToggleRibbonButton(label: 'Show map location source', toggled: Storage().debugMapLocationProvider, onTap: _onMapLocationProvider),
+                    ToggleRibbonButton(label: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
                     ToggleRibbonButton(label: 'Show map levels', toggled: !Storage().debugMapHideLevels!, onTap: _onMapShowLevels),
                     Container(height: 1, color: Styles().colors!.surfaceAccent),
                     Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 5), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
@@ -213,6 +209,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               fontSize: 16.0,
                               textColor: Styles().colors!.fillColorPrimary,
                               borderColor: Styles().colors!.fillColorPrimary,
+                              contentWeight: 0.0,
                               onTap: () {
                                 _clearDateOffset();
                               },
@@ -570,7 +567,9 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
               Expanded(child:
                 RoundedButton(
                   label: "Copy to clipboard",
+                  textColor: Styles().colors!.white,
                   borderColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors!.fillColorPrimary,
                   onTap: (){ _copyToClipboard(textContent); },
                 ),
               ),

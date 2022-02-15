@@ -91,7 +91,7 @@ class ExpandableTextState extends State<ExpandableText> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Text(Localization().getStringEx( "app.common.label.read_more", "Read more")!, style: TextStyle(fontSize: 16,
+                      Text(Localization().getStringEx( "app.common.label.read_more", "Read more"), style: TextStyle(fontSize: 16,
                           fontFamily: Styles().fontFamilies!.bold,
                           color: Styles().colors!.fillColorPrimary),),
                       Padding(

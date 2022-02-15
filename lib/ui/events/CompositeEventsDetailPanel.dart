@@ -18,10 +18,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -30,19 +33,17 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Event.dart';
+import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:sprintf/sprintf.dart';
@@ -57,13 +58,10 @@ class CompositeEventsDetailPanel extends StatefulWidget implements AnalyticsPage
   CompositeEventsDetailPanel({this.parentEvent, this.initialLocationData, this.browseGroupId});
 
   @override
-  _CompositeEventsDetailPanelState createState() =>
-      _CompositeEventsDetailPanelState();
+  _CompositeEventsDetailPanelState createState() => _CompositeEventsDetailPanelState();
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return parentEvent?.analyticsAttributes;
-  }
+  Map<String, dynamic>? get analyticsPageAttributes => parentEvent?.analyticsAttributes;
 }
 
 class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
@@ -119,8 +117,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                 scrollDirection: Axis.vertical,
                 slivers: <Widget>[
                   SliverToutHeaderBar(
-                    context: context,
-                    imageUrl: widget.parentEvent!.exploreImageURL,
+                    flexImageUrl: widget.parentEvent?.eventImageUrl,
                   ),
                   SliverList(
                     delegate: SliverChildListDelegate(
@@ -180,7 +177,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   Widget _exploreHeading() {
     String? category = widget.parentEvent?.category;
-    bool isFavorite = widget.parentEvent!.isFavorite;
+    bool isFavorite = widget.parentEvent?.isFavorite ?? false;
     bool starVisible = Auth2().canFavorite;
     return Padding(padding: EdgeInsets.only(top: 16, bottom: 12), child: Row(
       children: <Widget>[
@@ -331,7 +328,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   Widget? _exploreLocationDetail() {
-    String? locationText = ExploreHelper.getLongDisplayLocation(widget.parentEvent, _locationData);
+    String? locationText = widget.parentEvent?.getLongDisplayLocation(_locationData);
     if (!(widget.parentEvent?.isVirtual ?? false) && widget.parentEvent?.location != null && (locationText != null) && locationText.isNotEmpty) {
       return GestureDetector(
         onTap: _onLocationDetailTapped,
@@ -408,7 +405,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(Localization().getStringEx('panel.explore_detail.label.related_tags', 'Related Tags:')!),
+                Text(Localization().getStringEx('panel.explore_detail.label.related_tags', 'Related Tags:')),
                 Container(width: 5,),
                 Expanded(
                   child: Text(capitalizedTags.join(', '),
@@ -466,14 +463,13 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     String? ticketsUrl = widget.parentEvent?.registrationUrl;
     bool getTicketsVisible = StringUtils.isNotEmpty(ticketsUrl);
 
-    String? websiteLabel = Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website');
+    String websiteLabel = Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website');
     String? websiteHint = Localization().getStringEx('panel.explore_detail.button.visit_website.hint', '');
 
     Widget visitWebsiteButton = (widget.parentEvent?.isSuperEvent ?? false) ?
     Visibility(visible: visitWebsiteVisible, child: SmallRoundedButton(
       label: websiteLabel,
       hint: websiteHint,
-      showChevron: true,
       borderColor: Styles().colors!.fillColorPrimary,
       onTap: () => _onTapVisitWebsite(titleUrl),),) :
     Visibility(visible: visitWebsiteVisible, child: RoundedButton(
@@ -564,7 +560,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   void _onTapHeaderStar() {
     Analytics().logSelect(target: "Favorite: ${widget.parentEvent?.title}");
-    widget.parentEvent!.toggleFavorite();
+    widget.parentEvent?.toggleFavorite();
   }
 
   Widget _buildGroupButtons(){
@@ -572,28 +568,15 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     Container(
         padding: EdgeInsets.symmetric(vertical: 10),
         child:
-        Stack(
-          children: [
-            ScalableRoundedButton(
-              label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group') ,
-              hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
-              backgroundColor: Colors.white,
-              borderColor: Styles().colors!.fillColorPrimary,
-              textColor: Styles().colors!.fillColorPrimary,
-              onTap: _onTapAddToGroup,
-            ),
-            Visibility(visible: _addToGroupInProgress,
-              child: Container(
-                height: 48,
-                child: Align(alignment: Alignment.center,
-                  child: SizedBox(height: 24, width: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                  ),
-                ),
-              ),
-            ),
-          ],
-        )
+          RoundedButton(
+            label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
+            hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
+            backgroundColor: Colors.white,
+            borderColor: Styles().colors!.fillColorPrimary,
+            textColor: Styles().colors!.fillColorPrimary,
+            progress: _addToGroupInProgress,
+            onTap: _onTapAddToGroup,
+          ),
     );
   }
 
@@ -683,8 +666,8 @@ class _EventsListState extends State<_EventsList>{
   }
 
   Widget _buildFullScheduleButton() {
-    String? titleFormat = Localization().getStringEx("panel.explore_detail.button.see_super_events.title", "All %s");
-    String title = sprintf(titleFormat!, [widget.parentEvent!.title]);
+    String titleFormat = Localization().getStringEx("panel.explore_detail.button.see_super_events.title", "All %s");
+    String title = sprintf(titleFormat, [widget.parentEvent!.title]);
     return Column(
       children: <Widget>[
         Semantics(

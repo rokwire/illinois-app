@@ -44,15 +44,8 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx('panel.canvas_collaborations.header.title', 'Collaborations')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0)
-        )
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.canvas_collaborations.header.title', 'Collaborations'),
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
@@ -81,13 +74,13 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
 
   Widget _buildErrorContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_collaborations.load.failed.error.msg', 'Failed to load collaborations. Please, try again later.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_collaborations.load.failed.error.msg', 'Failed to load collaborations. Please, try again later.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
   Widget _buildEmptyContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_collaborations.empty.msg', 'There are no collaborations for this course.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_collaborations.empty.msg', 'There are no collaborations for this course.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 

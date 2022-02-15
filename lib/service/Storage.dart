@@ -371,39 +371,9 @@ class Storage extends rokwire.Storage {
   //////////////////
   // Calendar
 
-  static const String _calendarEventsTableKey = 'calendar_events_table';
-
-  Map<String, String>? get calendarEventsTable {
-    String? jsonString = getStringWithName(_calendarEventsTableKey);
-    try { return (JsonUtils.decode(jsonString) as Map?)?.cast<String, String>(); }
-    catch(e) { print(e.toString()); }
-    return null;
-  }
-
-  set calendarEventsTable(Map<String, String>? table) {
-    String? tableToString = (table != null) ? json.encode(table) : null;
-    setStringWithName(_calendarEventsTableKey, tableToString);
-  }
-
-  static const String _calendarEnableSaveKey = 'calendar_enabled_to_save';
-
-  bool? get calendarEnabledToSave{
-    return getBoolWithName(_calendarEnableSaveKey, defaultValue: true);
-  }
-
-  set calendarEnabledToSave(bool? value){
-    setBoolWithName(_calendarEnableSaveKey, value);
-  }
-
-  static const String _calendarEnablePromptKey = 'calendar_enabled_to_prompt';
-
-  bool? get calendarCanPrompt{
-    return getBoolWithName(_calendarEnablePromptKey, defaultValue: false);
-  }
-
-  set calendarCanPrompt(bool? value){
-    setBoolWithName(_calendarEnablePromptKey, value);
-  }
+  @override String get calendarEventsTableKey => 'calendar_events_table';
+  @override String get calendarEnableSaveKey => 'calendar_enabled_to_save';
+  @override String get calendarEnablePromptKey => 'calendar_enabled_to_prompt';
 
   //////////////////
   // GIES

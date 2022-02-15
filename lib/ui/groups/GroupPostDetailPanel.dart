@@ -20,9 +20,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -30,7 +31,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -106,7 +107,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             leading: HeaderBackButton(),
             title: Text(
               Localization()
-                  .getStringEx('panel.group.detail.post.header.title', 'Post')!,
+                  .getStringEx('panel.group.detail.post.header.title', 'Post'),
               style: TextStyle(
                   fontSize: 16,
                   color: Colors.white,
@@ -363,7 +364,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               child: Text(
                                   StringUtils.ensureNotEmpty(
                                       _post?.displayDateTime),
-                                  semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
+                                  semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
                                   style: TextStyle(
                                       fontFamily:
                                       Styles().fontFamilies!.medium,
@@ -592,17 +593,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         context: context,
         contentWidget: Text(Localization().getStringEx(
             'panel.group.detail.post.delete.confirm.msg',
-            'Are you sure that you want to delete this post?')!),
+            'Are you sure that you want to delete this post?')),
         actions: <Widget>[
           TextButton(
               child:
-                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
+                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Navigator.of(context).pop();
                 _deletePost();
               }),
           TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')!),
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
               onPressed: () => Navigator.of(context).pop())
         ]);
   }
@@ -640,8 +641,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Visibility(visible: _isReplyVisible, child: RibbonButton(
-                  height: null,
-                  leftIcon: "images/icon-group-post-reply.png",
+                  leftIconAsset: "images/icon-group-post-reply.png",
                   label: Localization().getStringEx(
                       "panel.group.detail.post.reply.reply.label", "Reply"),
                   onTap: () {
@@ -650,8 +650,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   },
                 )),
                 Visibility(visible: _isEditVisible(reply), child: RibbonButton(
-                  height: null,
-                  leftIcon: "images/icon-edit.png",
+                  leftIconAsset: "images/icon-edit.png",
                   label: Localization().getStringEx(
                       "panel.group.detail.post.reply.edit.label", "Edit"),
                   onTap: () {
@@ -660,8 +659,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   },
                 )),
                 Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
-                  height: null,
-                  leftIcon: "images/trash.png",
+                  leftIconAsset: "images/trash.png",
                   label: Localization().getStringEx(
                       "panel.group.detail.post.reply.delete.label", "Delete"),
                   onTap: () {
@@ -681,18 +679,18 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         context: context,
         contentWidget: Text(Localization().getStringEx(
             'panel.group.detail.post.reply.delete.confirm.msg',
-            'Are you sure that you want to delete this reply?')!),
+            'Are you sure that you want to delete this reply?')),
         actions: <Widget>[
           TextButton(
               child:
-                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
+                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'Yes');
                 Navigator.of(context).pop();
                 _deleteReply(reply);
               }),
           TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')!),
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
               onPressed: () {
                 Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'No');
                 Navigator.of(context).pop();
@@ -834,8 +832,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
     if (StringUtils.isEmpty(body)) {
       String validationMsg = ((_editingReply != null))
-          ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")!
-          : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required")!;
+          ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")
+          : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required");
       AppAlert.showDialogResult(context, validationMsg);
       return;
     }

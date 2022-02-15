@@ -99,7 +99,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     if (_guideItems != null) {
 
         _guideItems!.sort((dynamic entry1, dynamic entry2) {
-          return SortUtils.compareIntegers(
+          return SortUtils.compare(
             (entry1 is Map) ? JsonUtils.intValue(entry1['sort_order']) : null,
             (entry2 is Map) ? JsonUtils.intValue(entry2['sort_order']) : null
           );
@@ -134,10 +134,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     }
     
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
-      ),
+      appBar: HeaderBar(title: title),
       body: Column(children: _buildContent()),
       backgroundColor: Styles().colors!.background,
     );
@@ -189,7 +186,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         Expanded(child:
           Padding(padding: EdgeInsets.all(32), child:
             Center(child:
-              Text(Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+              Text(Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
             ,)
           ),
         ),

@@ -16,10 +16,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
@@ -28,7 +28,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -40,7 +40,7 @@ enum _FilterType { none, category, tags }
 enum _TagFilter { all, my }
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener{
-  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories")!;
+  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories");
 
   bool _isFilterLoading = false;
   bool _isGroupsLoading = false;
@@ -55,6 +55,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   _TagFilter? _selectedTagFilter = _TagFilter.all;
   _FilterType __activeFilterType = _FilterType.none;
+
+  String? _modalImageUrl; // ModalImageDial presentation
 
   //TBD: this filtering has to be done on the server side.
   List<Group>? _getFilteredAllGroupsContent() {
@@ -285,17 +287,26 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.groups_home.label.heading","Groups")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.groups_home.label.heading","Groups"),
       ),
-      body: Column(children: <Widget>[
+      body: ModalImageDialog.modalDialogContainer(
+          content: _buildContent(),
+          imageUrl: _modalImageUrl,
+          onClose: () {
+            Analytics().logSelect(target: "Close");
+            _modalImageUrl = null;
+            setState(() {});
+          }
+      ),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: TabBarWidget(),
+    );
+  }
+
+  Widget _buildContent(){
+    return
+      Column(children: <Widget>[
         _buildTabs(),
         _buildFilterButtons(),
         Expanded(
@@ -305,11 +316,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             alignment: AlignmentDirectional.topCenter,
             children: <Widget>[
               Container(color: Styles().colors!.background, child:
-                RefreshIndicator(onRefresh: _onPullToRefresh, child: 
-                  SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
-                    Column( children: <Widget>[ _myGroupsSelected ? _buildMyGroupsContent() : _buildAllGroupsContent(), ],),
-                  ),
-                ),
+              RefreshIndicator(onRefresh: _onPullToRefresh, child:
+              SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+              Column( children: <Widget>[ _myGroupsSelected ? _buildMyGroupsContent() : _buildAllGroupsContent(), ],),
+              ),
+              ),
               ),
               Visibility(
                   visible: _hasActiveFilter,
@@ -321,10 +332,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             ],
           ),
         ),
-      ],),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
-    );
+      ],);
   }
 
   Widget _buildTabs(){
@@ -504,8 +512,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildMyGroupsContent(){
     if (CollectionUtils.isEmpty(_myGroups) && CollectionUtils.isEmpty(_myPendingGroups)) {
       String text = ((_myGroups != null) && (_myPendingGroups != null)) ?
-        Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet")! :
-        Localization().getStringEx("panel.groups_home.label.my_groups.failed", "Failed to load groups")!;
+        Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet") :
+        Localization().getStringEx("panel.groups_home.label.my_groups.failed", "Failed to load groups");
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
         child: Text(text,
@@ -532,7 +540,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       for (Group? group in _myGroups!) {
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup),
+          child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup, onImageTap: (){ onTapImage(group);} ,),
         ));
       }
       widgets.add(Container(height: 8,));
@@ -547,7 +555,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       widgets.add(
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending")!,
+          child: Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"),
             style: TextStyle(
                 fontFamily: Styles().fontFamilies!.bold,
                 fontSize: 20,
@@ -602,7 +610,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       return Column(children: widgets,);
     }
     else{
-      String? text;
+      String text;
       if (_allGroups == null) {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.failed", "Failed to load groups");
       }
@@ -614,7 +622,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       }
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
-        child: Text(text!,
+        child: Text(text,
           style: TextStyle(
             fontFamily: Styles().fontFamilies!.regular,
             fontSize: 16,
@@ -688,8 +696,21 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
+  void onTapImage(Group? group){
+    _showModalImage(group?.imageURL ?? "");
+  }
+
   bool get _canCreateGroup {
     return Auth2().isOidcLoggedIn;
+  }
+
+  //Modal Image Dialog
+  void _showModalImage(String? url){
+    if(url != null) {
+      setState(() {
+        _modalImageUrl = url;
+      });
+    }
   }
 
   ///////////////////////////////////

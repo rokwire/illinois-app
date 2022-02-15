@@ -17,13 +17,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -40,7 +41,7 @@ import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:illinois/ui/settings/SettingsRolesPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -69,6 +70,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   void initState() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
+      Auth2.notifyLinkChanged,
       Auth2.notifyPrefsChanged,
       FirebaseMessaging.notifySettingUpdated,
       FlexUI.notifyChanged,
@@ -90,6 +92,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
+      _updateState();
+    } else if (name == Auth2.notifyLinkChanged){
       _updateState();
     } else if (name == Auth2.notifyPrefsChanged){
       _updateState();
@@ -135,11 +139,20 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       else if (code == 'privacy') {
         contentList.add(_buildPrivacy(),);
       }
+      else if (code == 'linked') {
+        contentList.add(_buildLinked());
+      }
+      else if (code == 'link') {
+        contentList.add(_buildLink());
+      }
       else if (code == 'account') {
         contentList.add(_buildAccount());
       }
       else if (code == 'feedback') {
         contentList.add(_buildFeedback(),);
+      }
+      else if (code == 'delete') {
+        contentList.add(_buildPrivacyDelete());
       }
     }
 
@@ -153,8 +166,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     contentList.add(Container(height: 12,),);
 
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
+      appBar: HeaderBar(
         titleWidget: _buildHeaderBarTitle(),
         actions: actionsList,
       ),
@@ -181,7 +193,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   //Header Bar
   Widget _buildHeaderBarTitle() {
     return _DebugContainer(child:
-      Text(Localization().getStringEx("panel.settings.home.settings.header", "Settings")!, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0, ), textAlign: TextAlign.center,),
+      Text(Localization().getStringEx("panel.settings.home.settings.header", "Settings"), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0, ), textAlign: TextAlign.center,),
     );
   }
 
@@ -209,7 +221,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                   children: <Widget>[
                     Expanded(child:
                     Text(
-                      Localization().getStringEx("panel.setting.home.button.privacy_center.title","Privacy Center")!, //TBD to Strings
+                      Localization().getStringEx("panel.setting.home.button.privacy_center.title","Privacy Center"), //TBD to Strings
                       textAlign: TextAlign.start,
                       style: TextStyle(
                           color: Styles().colors!.white,
@@ -230,7 +242,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     bool hasFullName =  StringUtils.isNotEmpty(fullName);
     String welcomeMessage = StringUtils.isNotEmpty(fullName)
         ? AppDateTimeUtils.getDayGreeting() + ","
-        : Localization().getStringEx("panel.settings.home.user_info.title.sufix", "Welcome to Illinois")!;
+        : Localization().getStringEx("panel.settings.home.user_info.title.sufix", "Welcome to Illinois");
     return Container(
         width: double.infinity,
         child: Padding(
@@ -252,7 +264,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     contentList.add(Padding(
         padding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 2),
         child: Text(
-          Localization().getStringEx("panel.settings.home.connect.not_logged_in.title", "Connect to Illinois")!,
+          Localization().getStringEx("panel.settings.home.connect.not_logged_in.title", "Connect to Illinois"),
           style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
         ),
       ),
@@ -283,7 +295,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             )),);
           contentList.add(Stack(children: [
             RibbonButton(
-              height: null,
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
               borderRadius: _allRounding,
               label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Connect your NetID"),
@@ -318,7 +329,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               ),
             )),);
           contentList.add(RibbonButton(
-            height: null,
             borderRadius: _allRounding,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Proceed"),
@@ -357,6 +367,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         settings: RouteSettings(),
         builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
           onboardingContext: {
+            "link": false,
             "onContinueAction": () {
               _didLogin(context);
             }
@@ -374,6 +385,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     });
   }
 
+
   // Customizations
 
   Widget _buildCustomizations() {
@@ -386,7 +398,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       
       if (code == 'roles') {
         customizationOptions.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.customizations.role.title", "Who you are"),
@@ -394,7 +405,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'interests') {
         customizationOptions.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.customizations.manage_interests.title", "Manage your interests"),
@@ -402,7 +412,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'food_filters') {
         customizationOptions.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.customizations.food_filters.title", "Food filters"),
@@ -473,7 +482,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(Localization().getStringEx("panel.settings.home.net_id.message", "Connected as ")!,
+                Text(Localization().getStringEx("panel.settings.home.net_id.message", "Connected as "),
                     style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
                 Text(Auth2().fullName ?? "",
                     style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
@@ -482,7 +491,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       else if (code == 'connect') {
         contentList.add(Stack(children: [
             RibbonButton(
-              height: null,
               borderRadius: borderRadius,
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
               label: Localization().getStringEx("panel.settings.home.net_id.button.connect", "Connect your NetID"),
@@ -502,7 +510,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'disconnect') {
         contentList.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Disconnect your NetID"),
@@ -530,7 +537,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Verified as ")!,
+                Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Verified as "),
                     style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
                 Visibility(visible: hasFullName, child: Text(fullName, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
                 Text(Auth2().account?.authType?.phone ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
@@ -538,7 +545,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'verify') {
         contentList.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Phone Number"),
@@ -546,7 +552,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'disconnect') {
         contentList.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect","Disconnect your Phone",),
@@ -573,7 +578,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(Localization().getStringEx("panel.settings.home.email_login.message", "Logged in as ")!,
+                Text(Localization().getStringEx("panel.settings.home.email_login.message", "Logged in as "),
                     style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
                 Visibility(visible: hasFullName, child: Text(fullName, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
                 Text(Auth2().account?.authType?.email ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
@@ -581,7 +586,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'login') {
         contentList.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
@@ -589,7 +593,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'disconnect') {
         contentList.add(RibbonButton(
-            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect","Logout",),
@@ -618,13 +621,13 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx("panel.settings.home.logout.title", "Illinois")!,
+              Localization().getStringEx("panel.settings.home.logout.title", "Illinois"),
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
-                Localization().getStringEx("panel.settings.home.logout.message", "Are you sure you want to sign out?")!,
+                Localization().getStringEx("panel.settings.home.logout.message", "Are you sure you want to sign out?"),
                 textAlign: TextAlign.left,
                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
               ),
@@ -638,13 +641,13 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                       Navigator.pop(context);
                       Auth2().logout();
                     },
-                    child: Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes")!)),
+                    child: Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes"))),
                 TextButton(
                     onPressed: () {
                       Analytics().logAlert(text: "Sign out", selection: "No");
                       Navigator.pop(context);
                     },
-                    child: Text(Localization().getStringEx("panel.settings.home.logout.no", "No")!))
+                    child: Text(Localization().getStringEx("panel.settings.home.logout.no", "No")))
               ],
             ),
           ],
@@ -652,6 +655,299 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       ),
     );
   }
+
+
+  // Linked
+
+  Widget _buildLinked() {
+    List<Widget> contentList =  [];
+
+    List<dynamic> codes = FlexUI()['settings.linked'] ?? [];
+    for (String code in codes) {
+      if (code == 'netid') {
+        List<Widget> linkedNetIDs = _buildLinkedNetIdLayout();
+        contentList.addAll(linkedNetIDs);
+      }
+      else if (code == 'phone') {
+        List<Widget> linkedPhones = _buildLinkedPhoneLayout();
+        if (linkedPhones.length > 0 && contentList.length > 0) {
+          contentList.add(Container(height: 16.0,));
+        }
+        contentList.addAll(linkedPhones);
+      }
+      else if (code == 'email') {
+        List<Widget> linkedEmails = _buildLinkedEmailLayout();
+        if (linkedEmails.length > 0 && contentList.length > 0) {
+          contentList.add(Container(height: 16.0,));
+        }
+        contentList.addAll(linkedEmails);
+      }
+    }
+
+    return (contentList.isNotEmpty) ? _OptionsSection(
+      title: Localization().getStringEx("panel.settings.home.linked.title", "Linked credentials"),
+      widgets: contentList,
+      showBox: false,
+    ) : Container(height: 0.0,);
+  }
+
+  List<Widget> _buildLinkedNetIdLayout() {
+    List<Widget> contentList = [];
+    List<String> identifiers = Auth2().linkedOidcIds;
+
+    List<dynamic> codes = FlexUI()['settings.linked.netid'] ?? [];
+    for (String identifier in identifiers) {
+      if (StringUtils.isNotEmpty(identifier) && identifier != Auth2().account?.authType?.identifier) {
+        for (int index = 0; index < codes.length; index++) {
+          String code = codes[index];
+          BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
+          if (code == 'info') {
+            contentList.add(Container(
+                width: double.infinity,
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+                child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(Localization().getStringEx("panel.settings.home.linked.net_id.header", "UIN"),
+                            style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
+                        Text(identifier, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+                      ],
+                    )
+                )));
+          }
+          else if (code == 'unlink') {
+            contentList.add(RibbonButton(
+                borderRadius: borderRadius,
+                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+                label: Localization().getStringEx("panel.settings.home.linked.net_id.button.unlink", "Unlink"),
+                onTap: () => _unlinkAuthType(Auth2LoginType.oidcIllinois, identifier)));
+          }
+        }
+        if (identifiers.indexOf(identifier) < identifiers.length - 1) {
+          contentList.add(Container(height: 16.0,));
+        }
+      }
+    }
+
+    return contentList;
+  }
+
+  List<Widget> _buildLinkedPhoneLayout() {
+    List<Widget> contentList = [];
+    List<String> identifiers = Auth2().linkedPhoneIds;
+
+    List<dynamic> codes = FlexUI()['settings.linked.phone'] ?? [];
+    for (String identifier in identifiers) {
+      if (StringUtils.isNotEmpty(identifier) && identifier != Auth2().account?.authType?.identifier) {
+        for (int index = 0; index < codes.length; index++) {
+          String code = codes[index];
+          BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
+          if (code == 'info') {
+            contentList.add(Container(
+                width: double.infinity,
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(Localization().getStringEx("panel.settings.home.linked.phone.header", "Phone"),
+                          style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
+                      Text(identifier, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+                    ],
+                  )
+                )));
+          }
+          else if (code == 'unlink') {
+            contentList.add(RibbonButton(
+                borderRadius: borderRadius,
+                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+                label: Localization().getStringEx("panel.settings.home.linked.phone.button.unlink", "Unlink"),
+                onTap: () => _unlinkAuthType(Auth2LoginType.phoneTwilio, identifier)));
+          }
+        }
+        if (identifiers.indexOf(identifier) < identifiers.length - 1) {
+          contentList.add(Container(height: 16.0,));
+        }
+      }
+    }
+
+    return contentList;
+  }
+
+  List<Widget> _buildLinkedEmailLayout() {
+    List<Widget> contentList = [];
+    List<String> identifiers = Auth2().linkedEmailIds;
+
+    List<dynamic> codes = FlexUI()['settings.linked.email'] ?? [];
+    for (String identifier in identifiers) {
+      if (StringUtils.isNotEmpty(identifier) && identifier != Auth2().account?.authType?.identifier) {
+        for (int index = 0; index < codes.length; index++) {
+          String code = codes[index];
+          BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
+          if (code == 'info') {
+            contentList.add(Container(
+                width: double.infinity,
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(Localization().getStringEx("panel.settings.home.linked.email.header", "Email"),
+                          style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
+                      Text(identifier, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+                    ],
+                  ),
+                )));
+          }
+          else if (code == 'unlink') {
+            contentList.add(RibbonButton(
+                borderRadius: borderRadius,
+                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+                label: Localization().getStringEx("panel.settings.home.linked.email.button.unlink", "Unlink"),
+                onTap: () => _unlinkAuthType(Auth2LoginType.email, identifier)));
+          }
+        }
+        if (identifiers.indexOf(identifier) < identifiers.length - 1) {
+          contentList.add(Container(height: 16.0,));
+        }
+      }
+    }
+
+    return contentList;
+  }
+
+
+  // Link
+
+  Widget _buildLink() {
+    List<Widget> contentList =  [];
+    List<dynamic> codes = FlexUI()['settings.link'] ?? [];
+    for (String code in codes) {
+      if (code == 'netid') {
+        contentList.add(Padding(
+            padding: EdgeInsets.all(10),
+            child: new RichText(
+              text: new TextSpan(
+                style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                children: <TextSpan>[
+                  new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.description.part_1", "Are you a ")),
+                  new TextSpan(
+                      text: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.description.part_2", "university student"),
+                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+                  new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.description.part_3", " or ")),
+                  new TextSpan(
+                      text: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.description.part_4", "employee"),
+                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+                  new TextSpan(
+                      text: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.description.part_5",
+                          "? Link your NetID to see Illinois information specific to you, like your Illini Cash and meal plan."))
+                ],
+              ),
+            )),);
+        contentList.add(Stack(children: [
+          RibbonButton(
+              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+              borderRadius: _allRounding,
+              label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Link your NetID"),
+              onTap: _onLinkNetIdClicked),
+          Visibility(visible: _connectingNetId == true, child:
+            Container(height: 46, child:
+              Align(alignment: Alignment.centerRight, child:
+                Padding(padding: EdgeInsets.only(right: 10), child:
+                  SizedBox(height: 24, width: 24, child:
+                    CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                  ),
+                )
+              ),
+            ),
+          ),
+        ],),);
+      }
+      else if (code == 'phone_or_email' && (!Auth2().isPhoneLinked || !Auth2().isEmailLinked)) {
+        contentList.add(Padding(
+          padding: EdgeInsets.all(10),
+          child: Text(
+            Localization().getStringEx("panel.settings.home.connect.not_linked.phone_or_email.description",
+                "Link your phone number or email address."),
+            style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+          ),
+        ),);
+        contentList.add(RibbonButton(
+            borderRadius: _allRounding,
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+            label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone_or_email.title", "Proceed"),
+            onTap: _onLinkPhoneOrEmailClicked),);
+      }
+    }
+
+    if (contentList.length > 0) {
+      contentList.insert(0, Padding(
+        padding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 2),
+        child: Text(
+          Localization().getStringEx("panel.settings.home.connect.not_linked.title", "Link a new credential"),
+          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
+        ),));
+
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: contentList),
+      );
+    }
+
+    return Container(height: 0.0,);
+  }
+
+  void _onLinkNetIdClicked() {
+    Analytics().logSelect(target: "Link Illinois NetID");
+    if (Connectivity().isNotOffline) {
+      Auth2().authenticateWithOidc(link: true).then((bool? result) {
+        if (result == false) {
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to link Illinois NetID."));
+        }
+      });
+    } else {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.netid', 'Feature not available when offline.'));
+    }
+  }
+
+  void _onLinkPhoneOrEmailClicked() {
+    Analytics().logSelect(target: "Link Phone or Email");
+    if (Connectivity().isNotOffline) {
+      Navigator.push(context, CupertinoPageRoute(
+        settings: RouteSettings(),
+        builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
+          onboardingContext: {
+            "link": true,
+            "onContinueAction": () {
+              _didLogin(context);
+            }
+          },
+        ),
+      ),);
+    } else {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
+    }
+  }
+
+  void _unlinkAuthType(Auth2LoginType loginType, String identifier) {
+    Analytics().logSelect(target: "Unlink auth type");
+    if (Connectivity().isNotOffline) {
+      Auth2().unlinkAccountAuthType(loginType, identifier).then((bool? result) {
+        if (mounted && result == false) {
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.home.unlink.failed", "Unlink failed."));
+        }
+      });
+    } else {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
+    }
+  }
+
 
   // NotificationsOptions
 
@@ -666,24 +962,21 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.add(ToggleRibbonButton(
           borderRadius: borderRadius,
           label: Localization().getStringEx("panel.settings.home.notifications.reminders", "Event reminders"),
-          toggled: FirebaseMessaging().notifyEventReminders,
-          context: context,
+          toggled: FirebaseMessaging().notifyEventReminders ?? false,
           onTap: _onEventRemindersToggled));
       }
       else if (code == 'athletics_updates') {
         contentList.add(ToggleRibbonButton(
           borderRadius: borderRadius,
           label: Localization().getStringEx("panel.settings.home.notifications.athletics_updates", "Athletics updates"),
-          toggled: FirebaseMessaging().notifyAthleticsUpdates,
-          context: context,
+          toggled: FirebaseMessaging().notifyAthleticsUpdates ?? false,
           onTap: _onAthleticsUpdatesToggled));
       }
       else if (code == 'dining') {
         contentList.add(ToggleRibbonButton(
           borderRadius: borderRadius,
           label: Localization().getStringEx("panel.settings.home.notifications.dining", "Dining specials"),
-          toggled: FirebaseMessaging().notifyDiningSpecials,
-          context: context,
+          toggled: FirebaseMessaging().notifyDiningSpecials ?? false,
           onTap: _onDiningSpecialsToggled));
       }
     }
@@ -708,6 +1001,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     FirebaseMessaging().notifyDiningSpecials = !FirebaseMessaging().notifyDiningSpecials!;
   }
 
+
   // Privacy 0
 
   Widget _buildPrivacy0() {
@@ -719,7 +1013,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
       if (code == 'edit') {
         contentList.add(RibbonButton(
-          height: null,
           borderRadius: borderRadius,
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
           label: Localization().getStringEx("panel.settings.home.privacy.edit_my_privacy.title", "Edit My Privacy"),
@@ -728,7 +1021,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'statement') {
         contentList.add(RibbonButton(
-          height: null,
           borderRadius: borderRadius,
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
           label: Localization().getStringEx("panel.settings.home.privacy.privacy_statement.title", "Privacy Statement"),
@@ -764,9 +1056,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       String code = codes[index];
       if (code == 'buttons') {
         contentList.add(_buildPrivacyButtons());
-      }
-      else if (code == 'delete') {
-        contentList.add(_buildPrivacyDelete());
       }
     }
 
@@ -850,22 +1139,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     }
   }
 
-  Widget _buildPrivacyDelete() {
-    return Padding(padding: EdgeInsets.only(top: 12), child:
-      Column(children: <Widget>[
-        ScalableRoundedButton(
-          backgroundColor: Styles().colors!.white,
-          textColor: UiColors.fromHex("#f54400"),
-          fontSize: 16,
-          fontFamily: Styles().fontFamilies!.regular,
-          label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Forget all of my information"),
-          hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
-          shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
-          onTap: _onTapDeleteData,
-        ),
-    ],),);
-  }
-
   void _onTapPersonalInformation() {
     Analytics().logSelect(target: "Personal Information");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInformationPanel()));
@@ -874,46 +1147,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   void _onTapNotifications() {
     Analytics().logSelect(target: "Notifications");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
-  }
-
-  void _onTapDeleteData() async{
-    final String groupsSwitchTitle = "Please delete all my contributions.";
-    int userPostCount = await Groups().getUserPostCount();
-    bool contributeInGroups = userPostCount > 0;
-
-    SettingsDialog.show(context,
-        title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Forget all of your information?"),
-        message: [
-          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
-          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies!.bold)),
-          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
-          //TBD localization
-          TextSpan(text: contributeInGroups?
-            Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, and events) or leave them for others to see.") :
-            ""
-          ),
-        ],
-        options:contributeInGroups ? [groupsSwitchTitle] : null,
-        initialOptionsSelection:contributeInGroups ?  [groupsSwitchTitle] : [],
-        continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
-        onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
-            progressController(loading: true);
-            if(selectedValues.contains(groupsSwitchTitle)){
-              Groups().deleteUserData();
-            }
-            _deleteUserData().then((_){
-              progressController(loading: false);
-              Navigator.pop(context);
-            });
-
-        },
-        longButtonTitle: true
-      );
-  }
-
-  Future<void> _deleteUserData() async{
-    Analytics().logAlert(text: "Remove My Information", selection: "Yes");
-    await Auth2().deleteUser();
   }
 
   // Account
@@ -956,19 +1189,19 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Text(
-                Localization().getStringEx("panel.settings.home.feedback.title", "We need your ideas!")!,
+                Localization().getStringEx("panel.settings.home.feedback.title", "We need your ideas!"),
                 style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
               ),
               Container(height: 5,),
               Text(
-                Localization().getStringEx("panel.settings.home.feedback.description", "Enjoying the app? Missing something? Tap on the bottom to submit your idea.")!,
+                Localization().getStringEx("panel.settings.home.feedback.description", "Enjoying the app? Missing something? Tap on the bottom to submit your idea."),
                 style: TextStyle(fontFamily: Styles().fontFamilies!.regular,color: Styles().colors!.textBackground, fontSize: 16),
               ),
             ])
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-          child: ScalableRoundedButton(
+          child: RoundedButton(
             label: Localization().getStringEx("panel.settings.home.button.feedback.title", "Submit Feedback"),
             hint: Localization().getStringEx("panel.settings.home.button.feedback.hint", ""),
             backgroundColor: Styles().colors!.background,
@@ -1018,12 +1251,71 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     }
   }
 
+  // Delete Information
+
+  Widget _buildPrivacyDelete() {
+    return Padding(padding: EdgeInsets.only(left: 18, right: 18, top: 24, bottom: 12), child:
+    Column(children: <Widget>[
+      RoundedButton(
+        backgroundColor: Styles().colors!.white,
+        borderColor: Styles().colors!.white,
+        textColor: UiColors.fromHex("#f54400"),
+        fontSize: 16,
+        fontFamily: Styles().fontFamilies!.regular,
+        label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Forget all of my information"),
+        hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
+        borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+        onTap: _onTapDeleteData,
+      ),
+    ],),);
+  }
+
+  void _onTapDeleteData() async{
+    final String groupsSwitchTitle = "Please delete all my contributions.";
+    int userPostCount = await Groups().getUserPostCount();
+    bool contributeInGroups = userPostCount > 0;
+
+    SettingsDialog.show(context,
+        title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Forget all of your information?"),
+        message: [
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies!.bold)),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
+          //TBD localization
+          TextSpan(text: contributeInGroups?
+          Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, and events) or leave them for others to see.") :
+          ""
+          ),
+        ],
+        options:contributeInGroups ? [groupsSwitchTitle] : null,
+        initialOptionsSelection:contributeInGroups ?  [groupsSwitchTitle] : [],
+        continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
+        onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
+          progressController(loading: true);
+          if(selectedValues.contains(groupsSwitchTitle)){
+            Groups().deleteUserData();
+          }
+          _deleteUserData().then((_){
+            progressController(loading: false);
+            Navigator.pop(context);
+          });
+
+        },
+        longButtonTitle: true
+    );
+  }
+
+  Future<void> _deleteUserData() async{
+    Analytics().logAlert(text: "Remove My Information", selection: "Yes");
+    await Auth2().deleteUser();
+  }
+
   // Debug
 
   Widget _buildDebug() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 18, vertical: 24),
-      child: ScalableRoundedButton(
+      child: RoundedButton(
         label: Localization().getStringEx("panel.profile_info.button.debug.title", "Debug"),
         hint: Localization().getStringEx("panel.profile_info.button.debug.hint", ""),
         backgroundColor: Styles().colors!.background,
@@ -1032,7 +1324,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         borderColor: Styles().colors!.fillColorSecondary,
         onTap: _onDebugClicked,
       ),
-    ); 
+    );
   }
 
   Widget _buildHeaderBarDebug() {
@@ -1095,19 +1387,23 @@ class _OptionsSection extends StatelessWidget {
   final List<Widget>? widgets;
   final String? title;
   final String? description;
+  final bool? showBox;
 
-  const _OptionsSection({Key? key, this.widgets, this.title, this.description}) : super(key: key);
+  const _OptionsSection({Key? key, this.widgets, this.title, this.description, this.showBox}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-            child: Text(
-              title!,
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
+          Visibility(
+            visible: StringUtils.isNotEmpty(title),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              child: Text(
+                (title != null) ? title! : '',
+                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
+              ),
             ),
           ),
           StringUtils.isEmpty(description)
@@ -1120,7 +1416,7 @@ class _OptionsSection extends StatelessWidget {
                   )),
           Stack(alignment: Alignment.topCenter, children: [
             Container(
-              decoration: BoxDecoration(
+              decoration: (showBox == false) ? null : BoxDecoration(
                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5),
                 borderRadius: BorderRadius.circular(5.0),
               ),

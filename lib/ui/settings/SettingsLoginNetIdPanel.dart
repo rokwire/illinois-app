@@ -23,7 +23,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class SettingsLoginNetIdPanel extends StatefulWidget{
   
@@ -47,8 +47,8 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
 
   @override
   Widget build(BuildContext context) {
-    String titleString = Localization().getStringEx('panel.settings.login.netid.label.title', 'Connect your NetID')!;
-    String skipTitle = Localization().getStringEx('panel.settings.login.netid.button.dont_continue.title', 'Not right now')!;
+    String titleString = Localization().getStringEx('panel.settings.login.netid.label.title', 'Connect your NetID');
+    String skipTitle = Localization().getStringEx('panel.settings.login.netid.button.dont_continue.title', 'Not right now');
     return Scaffold(
         backgroundColor: Styles().colors!.background,
         body: Stack(
@@ -91,7 +91,7 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
                 ),
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Text(Localization().getStringEx('panel.settings.login.netid.label.description', 'Log in with your NetID to use academic and dorm specific features.')!,
+                    child: Text(Localization().getStringEx('panel.settings.login.netid.label.description', 'Log in with your NetID to use academic and dorm specific features.'),
                         textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
                 Container(
                   height: 32,

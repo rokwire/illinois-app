@@ -19,23 +19,26 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
-import 'package:illinois/service/LaundryService.dart';
+import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/model/Dining.dart';
-import 'package:illinois/model/Event.dart';
+import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -45,9 +48,8 @@ import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
@@ -146,20 +148,13 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                 CustomScrollView(
                   slivers: <Widget>[
                     SliverHeaderBar(
-                      context: context,
-                      backIconRes: widget.scrollController == null
+                      leadingAsset: widget.scrollController == null
                           ? 'images/chevron-left-white.png'
                           : 'images/chevron-left-blue.png',
-                      titleWidget: Text(
-                        Localization().getStringEx('panel.saved.header.label', 'Saved')!,
-                        style: TextStyle(
-                            color: widget.scrollController == null
-                                ? Styles().colors!.white
-                                : Styles().colors!.fillColorPrimary,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1.0),
-                      ),
+                      title: Localization().getStringEx('panel.saved.header.label', 'Saved'),
+                      textColor: widget.scrollController == null
+                        ? Styles().colors!.white
+                        : Styles().colors!.fillColorPrimary,
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate([
@@ -227,7 +222,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       setState(() {
         _progress++;
       });
-      ExploreService().loadEventsByIds(favoriteEventIds).then((List<Event>? events) {
+      Events().loadEventsByIds(favoriteEventIds).then((List<Event>? events) {
         setState(() {
           _progress--;
           _events = _buildFilteredItems(events, favoriteEventIds);
@@ -247,7 +242,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       setState(() {
         _progress++;
       });
-      DiningService().loadBackendDinings(false, null, null).then((List<Dining>? items) {
+      Dinings().loadBackendDinings(false, null, null).then((List<Dining>? items) {
         setState(() {
           _progress--;
           _dinings = _buildFilteredItems(items, favoriteDiningIds);
@@ -310,7 +305,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       setState(() {
         _progress++;
       });
-      LaundryService().getRoomData().then((List<LaundryRoom>? laundries) {
+      Laundries().getRoomData().then((List<LaundryRoom>? laundries) {
         setState(() {
           _progress--;
           _laundries = _buildFilteredItems(laundries, favoriteLaundryIds);
@@ -399,7 +394,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx('app.title', 'Illinois')!,
+              Localization().getStringEx('app.title', 'Illinois'),
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(
@@ -424,7 +419,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                         _showNotificationPermissionPrompt = false;
                       });
                     },
-                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')!))
+                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')))
               ],
             )
           ],
@@ -445,7 +440,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
               Padding(
                 padding: EdgeInsets.all(16),
                 child: Text(
-                  Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events.")!,
+                  Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events."),
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies!.regular,
                       fontSize: 16,
@@ -462,11 +457,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
           ),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
             child: ToggleRibbonButton(
-              height: null,
               label: Localization().getStringEx("panel.saved.notifications.enable.label", "Enable notifications"),
               toggled: false,
               onTap: _onAuthorizeTapped,
-              context: context,
               borderRadius:
               BorderRadius.all(Radius.circular(4)),
               )),
@@ -507,9 +500,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   Widget _buildOffline() {
     return Column(children: <Widget>[
       Expanded(child: Container(), flex: 1),
-      Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline")!, style: TextStyle(fontSize: 16),),
+      Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 16),),
       Container(height:8),
-      Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline")!),
+      Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline")),
       Expanded(child: Container(), flex: 3),
     ],);
   }
@@ -520,7 +513,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       child: Column(
         children: <Widget>[
           Container(height: 24,),
-          Text(Localization().getStringEx("panel.saved.message.no_items", "Whoops! Nothing to see here.")!,
+          Text(Localization().getStringEx("panel.saved.message.no_items", "Whoops! Nothing to see here."),
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontFamily: Styles().fontFamilies!.bold,
@@ -529,7 +522,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
             ),
           ),
           Container(height: 24,),
-          Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here.")!,
+          Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."),
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontFamily: Styles().fontFamilies!.regular,
@@ -615,8 +608,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
             slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
             children: _buildListItems(context)),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
-          label: _showAll ? Localization().getStringEx('panel.saved.events.button.less', "Show Less") : Localization().getStringEx(
-              'panel.saved.events.button.all', "Show All"),
+          label: _showAll ? Localization().getStringEx('panel.saved.events.button.less', "Show Less") : Localization().getStringEx('panel.saved.events.button.all', "Show All"),
           onTap: _onViewAllTapped,
         ),),)
       ],

@@ -21,13 +21,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/main.dart';
+import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/Groups.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -52,9 +53,10 @@ import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/PopupDialog.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/service/Canvas.dart';
 
 enum RootTab { Home, Athletics, Explore, Wallet, Browse }
 
@@ -112,10 +114,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyGroupsNotification,
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyInboxNotification,
-      ExploreService.notifyEventDetail,
+      Events.notifyEventDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
       Guide.notifyGuideDetail,
+      Canvas.notifyCanvasEventDetail,
       Localization.notifyStringsUpdated,
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
@@ -183,7 +186,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if(name == FirebaseMessaging.notifyAthleticsGameStarted) {
       _showAthleticsGameDetail(param);
     }
-    else if (name == ExploreService.notifyEventDetail) {
+    else if (name == Events.notifyEventDetail) {
       _onFirebaseEventDetail(param);
     }
     else if (name == Sports.notifyGameDetail) {
@@ -194,6 +197,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Guide.notifyGuideDetail) {
       _onGuideDetail(param);
+    }
+    else if (name == Canvas.notifyCanvasEventDetail) {
+      _onCanvasEventDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
@@ -341,7 +347,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                       padding: EdgeInsets.all(8),
                       child: Center(
                         child: Text(
-                          Localization().getStringEx("app.title", "Illinois")!,
+                          Localization().getStringEx("app.title", "Illinois"),
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                       ),
@@ -353,7 +359,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
             Container(height: 26,),
             Text(
               Localization().getStringEx(
-                  "app.exit_dialog.message", "Are you sure you want to exit?")!,
+                  "app.exit_dialog.message", "Are you sure you want to exit?"),
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontFamily: Styles().fontFamilies!.bold,
@@ -416,18 +422,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         context: context,
         contentWidget: Text(Localization().getStringEx(
             'prompt.device_calendar.msg.add_event',
-            'Do you want to save this event to your calendar?')!),
+            'Do you want to save this event to your calendar?')),
         actions: <Widget>[
           TextButton(
               child:
-              Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
+              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Navigator.of(context).pop();
-                  NotificationService().notify(
-                      DeviceCalendar.notifyPlaceEvent, data);
+                DeviceCalendar().placeEvent(data);
               }),
           TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')!),
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
               onPressed: () => Navigator.of(context).pop())
         ]);
   }
@@ -484,6 +489,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       });
       if (mounted) {
         setState(() {}); // Force the postFrameCallback invokation.
+      }
+    }
+  }
+
+  Future<void> _onCanvasEventDetail(Map<String, dynamic>? content) async {
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) : null;
+    if (StringUtils.isNotEmpty(eventId)) {
+      int? eventIdValue = int.tryParse(eventId!);
+      if (eventIdValue != null) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: eventIdValue)));
       }
     }
   }
@@ -713,8 +728,8 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                       Expanded(
                           flex: 5,
                           child: Text(
-                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')!
-                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title", " and if it is an event, also your calendar")! :"") + ".",
+                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')
+                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title", " and if it is an event, also your calendar") :"") + ".",
                             style: TextStyle(
                               color: Styles().colors!.white,
                               fontSize: 16,
@@ -731,7 +746,7 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                       child: GestureDetector(
                         onTap: _onViewAll,
                         child: Text(
-                          Localization().getStringEx("widget.favorites_saved_dialog.button.view", "View")!,
+                          Localization().getStringEx("widget.favorites_saved_dialog.button.view", "View"),
                           style: TextStyle(
                               color: Styles().colors!.white,
                               fontSize: 14,

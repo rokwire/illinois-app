@@ -20,10 +20,10 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 import 'Onboarding2PersonalizePanel.dart';
 import 'Onboarding2Widgets.dart';
@@ -182,11 +182,11 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                         context: context,
                       ),
                     ),
-                    ScalableRoundedButton(
+                    RoundedButton(
                       label: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.title', 'Continue'),
                       hint: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.hint', ''),
                       fontSize: 16,
-                      padding: EdgeInsets.symmetric(vertical: 12),
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       backgroundColor: Styles().colors!.white,
                       borderColor: Styles().colors!.fillColorSecondaryVariant,
                       textColor: Styles().colors!.fillColorPrimary,
@@ -239,15 +239,15 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
         Text(
-          Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.title',"Location Specific Services ")!,
+          Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.title',"Location Specific Services "),
           style: Onboarding2InfoDialog.titleStyle,),
         Container(height: 8,),
-        Text(Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content1',"When Location Services is enabled, the app can find events and services near you and provide interactive maps. ")!,
+        Text(Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content1',"When Location Services is enabled, the app can find events and services near you and provide interactive maps. "),
           style: Onboarding2InfoDialog.contentStyle,
         ),
         Container(height: 10,),
         Text(
-          Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content2',"When Bluetooth is enabled, the app can exchange information with other devices for MTD pass. Bluetooth helps you find your seat, parking spot, in-building messaging and outdoor services that may be near you.")!,
+          Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content2',"When Bluetooth is enabled, the app can exchange information with other devices for MTD pass. Bluetooth helps you find your seat, parking spot, in-building messaging and outdoor services that may be near you."),
           style: Onboarding2InfoDialog.contentStyle,),
         ]
       )

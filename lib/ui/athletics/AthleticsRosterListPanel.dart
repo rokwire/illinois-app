@@ -24,7 +24,7 @@ import 'package:illinois/ui/athletics/AthleticsRosterDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
-import 'package:illinois/model/Roster.dart';
+import 'package:illinois/model/sport/Roster.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -41,9 +41,9 @@ class AthleticsRosterListPanel extends StatefulWidget {
 
 class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> implements RoundedTabListener, _RosterItemListener{
 
-  final String _tabFilterByName = Localization().getStringEx("panel.athletics_roster_list.button.by_name.title", "By Name")!;
-  final String _tabFilterByPosition = Localization().getStringEx("panel.athletics_roster_list.button.by_position.title", "By Position")!;
-  final String _tabFilterByNumber = Localization().getStringEx("panel.athletics_roster_list.button.by_number.title", "By Number")!;
+  final String _tabFilterByName = Localization().getStringEx("panel.athletics_roster_list.button.by_name.title", "By Name");
+  final String _tabFilterByPosition = Localization().getStringEx("panel.athletics_roster_list.button.by_position.title", "By Position");
+  final String _tabFilterByNumber = Localization().getStringEx("panel.athletics_roster_list.button.by_number.title", "By Number");
 
   int? _selectedTabIndex = 0;
   late List<RoundedTab> _tabs;
@@ -64,16 +64,8 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   Widget build(BuildContext context) {
     _tabs = _constructTabWidgets();
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.athletics_roster_list.header.title', 'Roster')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.athletics_roster_list.header.title', 'Roster'),
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
@@ -262,7 +254,7 @@ class _RosterListHeading extends StatelessWidget{
                 ],
               ),
               SizedBox(height: 10.0,),
-              Text(Localization().getStringEx("panel.athletics_roster_list.label.heading.title", '2019-2020 Roster')! ,
+              Text(Localization().getStringEx("panel.athletics_roster_list.label.heading.title", '2019-2020 Roster') ,
                 style: TextStyle(
                     color: Colors.white,
                     fontFamily: Styles().fontFamilies!.extraBold,

@@ -18,8 +18,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/explore.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -35,7 +37,7 @@ import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -123,15 +125,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule'),
       ),
       body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,7 +274,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   Widget _buildEmpty() {
-    String message =  Localization().getStringEx('panel.events_schedule.empty.events', 'No events.')!;
+    String message =  Localization().getStringEx('panel.events_schedule.empty.events', 'No events.');
     return Container(child: Align(alignment: Alignment.center,
       child: Text(message, textAlign: TextAlign.center,),
     ));
@@ -484,7 +479,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       return null;
     }
     List<String> categoriesValues = [];
-    categoriesValues.add(Localization().getStringEx('panel.events_schedule.filter.tracks.all', 'All Tracks')!);
+    categoriesValues.add(Localization().getStringEx('panel.events_schedule.filter.tracks.all', 'All Tracks'));
     for (var category in _eventCategories!) {
       categoriesValues.add(category);
     }
@@ -493,7 +488,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   List<String>? _getFilterTagsValues() {
     List<String> tagsValues = [];
-    tagsValues.add(Localization().getStringEx('panel.events_schedule.filter.tags.all', 'All Tags')!);
+    tagsValues.add(Localization().getStringEx('panel.events_schedule.filter.tags.all', 'All Tags'));
 
     if (_visibleTags != null) {
       for (var tag in _visibleTags!) {
@@ -609,8 +604,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       exploreColor = _selectedMapExplore.uiColor;
     }
     else if  (_selectedMapExplore is List<Event>) {
-      String? exploreName = ExploreHelper.getExploresListDisplayTitle(_selectedMapExplore);
-      title = sprintf(Localization().getStringEx('panel.events_schedule.map.popup.title.format', '%d %s')!, [_selectedMapExplore?.length, exploreName]);
+      String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
+      title = sprintf(Localization().getStringEx('panel.events_schedule.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
       description = _selectedMapExplore?.first?.exploreLocation?.description;
       exploreColor = _selectedMapExplore.first?.uiColor;
     }
@@ -661,11 +656,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                                     label: Localization().getStringEx('panel.events_schedule.button.directions.title', 'Directions'),
                                     hint: Localization().getStringEx('panel.events_schedule.button.directions.hint', ''),
                                     backgroundColor: Colors.white,
-                                    height: 32,
+                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                     fontSize: 16.0,
                                     textColor: Styles().colors!.fillColorPrimary,
                                     borderColor: Styles().colors!.fillColorSecondary,
-                                    padding: EdgeInsets.symmetric(horizontal: 24),
                                     onTap: () {
                                       Analytics().logSelect(target: 'Directions');
                                       _presentMapExploreDirections(context);
@@ -679,11 +673,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                               label: Localization().getStringEx('panel.events_schedule.button.details.title', 'Details'),
                               hint: Localization().getStringEx('panel.events_schedule.button.details.hint', ''),
                               backgroundColor: Colors.white,
-                              height: 32,
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               fontSize: 16.0,
                               textColor: Styles().colors!.fillColorPrimary,
                               borderColor: Styles().colors!.fillColorSecondary,
-                              padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
                                 Analytics().logSelect(target: 'Details');
                                 _presentMapExploreDetail(context);
@@ -1140,7 +1133,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 4, left: 28),
-                    child: Text(widget.event!.displaySuperTime, style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium)),
+                    child: Text(widget.event?.displaySuperTime ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium)),
                   )
                 ]),
               ),

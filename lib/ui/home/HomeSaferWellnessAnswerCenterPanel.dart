@@ -14,11 +14,8 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors!.background,
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.home.safer.wellness_answer_center.header.title", "Wellness Answer Center")!,
-          style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.home.safer.wellness_answer_center.header.title", "Wellness Answer Center"),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -27,7 +24,7 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                Localization().getStringEx("panel.home.safer.wellness_answer_center.label.description", "If you are having issues with the app or getting a test result, contact the Wellness Answer Center for assistance.")!,
+                Localization().getStringEx("panel.home.safer.wellness_answer_center.label.description", "If you are having issues with the app or getting a test result, contact the Wellness Answer Center for assistance."),
                 style: TextStyle(
                   fontFamily: Styles().fontFamilies!.regular,
                   fontSize: 16,
