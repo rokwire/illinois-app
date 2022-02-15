@@ -60,7 +60,7 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
           padding: EdgeInsets.all(16),
           child: Column(
             children: [
-              ToggleRibbonButton(label: Localization().getStringEx("panel.debug_http_proxy_enable.button.save.title", "Http Proxy Enabled"), toggled: _proxyEnabled, onTap: (){
+              ToggleRibbonButton(label: Localization().getStringEx("panel.debug_http_proxy_enable.button.save.title", "Http Proxy Enabled"), toggled: _proxyEnabled ?? false, onTap: (){
                 setState(() {
                   _proxyEnabled = (_proxyEnabled != true);
                 });

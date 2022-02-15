@@ -212,11 +212,9 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                   alignment: Alignment.center,
                   children: [
                     ToggleRibbonButton(
-                        height: null,
                         borderRadius: BorderRadius.circular(4),
                         label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
                         toggled: _isAdmin,
-                        context: context,
                         onTap: _updateMemberStatus
                     ),
                     _updating ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ) : Container()

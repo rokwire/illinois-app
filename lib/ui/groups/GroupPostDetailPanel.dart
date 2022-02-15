@@ -641,8 +641,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Visibility(visible: _isReplyVisible, child: RibbonButton(
-                  height: null,
-                  leftIcon: "images/icon-group-post-reply.png",
+                  leftIconAsset: "images/icon-group-post-reply.png",
                   label: Localization().getStringEx(
                       "panel.group.detail.post.reply.reply.label", "Reply"),
                   onTap: () {
@@ -651,8 +650,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   },
                 )),
                 Visibility(visible: _isEditVisible(reply), child: RibbonButton(
-                  height: null,
-                  leftIcon: "images/icon-edit.png",
+                  leftIconAsset: "images/icon-edit.png",
                   label: Localization().getStringEx(
                       "panel.group.detail.post.reply.edit.label", "Edit"),
                   onTap: () {
@@ -661,8 +659,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   },
                 )),
                 Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
-                  height: null,
-                  leftIcon: "images/trash.png",
+                  leftIconAsset: "images/trash.png",
                   label: Localization().getStringEx(
                       "panel.group.detail.post.reply.delete.label", "Delete"),
                   onTap: () {

@@ -108,10 +108,8 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
             ToggleRibbonButton(
                 label: Localization().getStringEx("panel.create_stadium_poll.setting.geofence", "Geofence poll to venue"),
                 toggled: _selectedGeofenceResult,
-                context: context,
                 borderRadius:  BorderRadius.all(Radius.circular(5)),
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
-                height: null,
+                textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
                 onTap: () {
                   if (_progressPollStatus == null) {
                     setState(() {
@@ -304,10 +302,8 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     widgets.add(ToggleRibbonButton(
         label: Localization().getStringEx("panel.create_stadium_poll.setting.multy_choice", "Allow selecting more than one choice"),
         toggled: _selectedMultichoice,
-        context: context,
         borderRadius: rounding,
-        style: _textStyle,
-        height: null,
+        textStyle: _textStyle,
         onTap: () {
           if (_progressPollStatus == null) {
             setState(() {
@@ -321,10 +317,8 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     widgets.add(ToggleRibbonButton(
         label: Localization().getStringEx("panel.create_stadium_poll.setting.repeat_vote", "Allow repeat votes"),
         toggled: _selectedRepeatVotes,
-        context: context,
         borderRadius: rounding,
-        style: _textStyle,
-        height: null,
+        textStyle: _textStyle,
         onTap: () {
           if (_progressPollStatus == null) {
             setState(() {
@@ -338,10 +332,8 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     widgets.add(ToggleRibbonButton(
         label: Localization().getStringEx("panel.create_stadium_poll.setting.hide_result", "Hide results until poll ends"),
         toggled: _selectedHideResult,
-        context: context,
         borderRadius: rounding,
-        style: _textStyle,
-        height: null,
+        textStyle: _textStyle,
         onTap: () {
           if (_progressPollStatus == null) {
             setState(() {

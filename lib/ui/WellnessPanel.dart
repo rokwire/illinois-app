@@ -480,12 +480,11 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
             hint != null ? StringUtils.ensureNotEmpty(hint, defaultValue: "panel.wellness.common.resources.poor_accessibility.hint") : null;
         String? hintValue = StringUtils.isNotEmpty(hintKey) ? Localization().getStringFromKeyMapping(hintKey, _stringsContent) : "";
         RibbonButton button = RibbonButton(
-          height: null,
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
           borderRadius: BorderRadius.all(Radius.circular(5)),
           label: title,
           hint: hintValue,
-          icon: 'images/$iconValue',
+          rightIconAsset: 'images/$iconValue',
           onTap: () => _onTapRibbonButton(ribbonButtonSource),
         );
         buttonWidgets.add(button);
