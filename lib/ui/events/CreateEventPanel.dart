@@ -1705,7 +1705,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     //TBD: prompt
   }
 
-  void _onTapBack(BuildContext context) {
+  void _onTapBack() {
     if (_modified) {
       _promptBack().then((bool? result) {
         if (result!) {

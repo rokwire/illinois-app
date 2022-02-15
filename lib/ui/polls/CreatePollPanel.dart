@@ -368,7 +368,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     ));
   }
 
-  void _onTapCancel(BuildContext context) {
+  void _onTapCancel() {
     if (_progressPollStatus == null) {
       showDialog(context: context, builder: (context) =>
           Dialog(
