@@ -1933,7 +1933,6 @@
     "panel.home_canvas_course.button.modules.title": "Módulos",
     "panel.home_canvas_course.button.assignments.title": "Tareas",
     "panel.home_canvas_course.button.zoom.title": "Reunión Zoom",
-    "panel.home_canvas_course.button.grades.title": "Los grados",
     "panel.home_canvas_course.button.group.title": "Grupo",
     "panel.home_canvas_course.button.feedback.title": "Reacción",
 
@@ -2282,6 +2281,9 @@
     "model.groups.member.status.admin": "Admin",
     "model.groups.member.status.rejected": "Denied",
     "model.groups.member.status.unknown": "Unknown",
+
+    "model.canvas.calendar.event.type.event.label": "Evento",
+    "model.canvas.calendar.event.type.assignment.label": "Asignación",
 
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",

@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Header bars moved to Rokwire plugin UI section [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 - Ribbon buttons moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- Masquerade a user when requesting Canvas API [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Canvas Assignments in the calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- ### Removed
+- Canvas Course completion / result percentage [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Canvas 'Grades' [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 
 ## [3.2.19] - 2022-02-14
 ### Added

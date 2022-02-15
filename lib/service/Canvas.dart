@@ -78,7 +78,7 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/courses';
+    String url = _masquerade('${Config().canvasUrl}/api/v1/courses');
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -104,6 +104,7 @@ class Canvas with Service implements NotificationsListener{
     if (includeValue != null) {
       url += '?include[]=$includeValue';
     }
+    url = _masquerade(url);
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -122,7 +123,7 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/discussion_topics?only_announcements=true';
+    String url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/discussion_topics?only_announcements=true');
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -187,7 +188,7 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/folders/by_path';
+    String url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/folders/by_path');
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -204,7 +205,7 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/folders/$folderId/folders';
+    String url = _masquerade('${Config().canvasUrl}/api/v1/folders/$folderId/folders');
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -221,7 +222,7 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/folders/$folderId/files';
+    String url = _masquerade('${Config().canvasUrl}/api/v1/folders/$folderId/files');
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -240,7 +241,7 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/collaborations';
+    String url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/collaborations');
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -255,7 +256,7 @@ class Canvas with Service implements NotificationsListener{
 
   // Calendar
 
-  Future<List<CanvasCalendarEvent>?> loadCalendarEvents({required int courseId, DateTime? startDate, DateTime? endDate}) async {
+  Future<List<CanvasCalendarEvent>?> loadCalendarEvents({required int courseId, CanvasCalendarEventType? type, DateTime? startDate, DateTime? endDate}) async {
     if (!_available) {
       return null;
     }
@@ -274,12 +275,17 @@ class Canvas with Service implements NotificationsListener{
         url += '&end_date=$formattedDate';
       }
     }
+    String? typeKeyString = CanvasCalendarEvent.typeToKeyString(type);
+    if (StringUtils.isNotEmpty(typeKeyString)) {
+      url += '&type=$typeKeyString';
+    }
+    url = _masquerade(url);
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
       List<CanvasCalendarEvent>? calendarEvents = CanvasCalendarEvent.listFromJson(JsonUtils.decodeList(responseString));
-      return calendarEvents?.where((element) => (element.hidden == false)).toList();
+      return calendarEvents?.where((element) => ((element.hidden == false) || (element.hidden == null))).toList();
     } else {
       Log.w('Failed to load canvas calendar events for course {$courseId}. Response:\n$responseCode: $responseString');
       return null;
@@ -290,7 +296,7 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/calendar_events/$eventId';
+    String url = _masquerade('${Config().canvasUrl}/api/v1/calendar_events/$eventId');
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -309,7 +315,7 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/accounts/2/users/self/account_notifications';
+    String url = _masquerade('${Config().canvasUrl}/api/v1/accounts/2/users/self/account_notifications');
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -328,7 +334,7 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/modules';
+    String url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/modules');
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -355,7 +361,7 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/modules/$moduleId/items';
+    String url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/modules/$moduleId/items');
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -394,7 +400,7 @@ class Canvas with Service implements NotificationsListener{
     }
     report.email = Auth2().email;
     String? errorBody = JsonUtils.encode(report.toJson());
-    String url = '${Config().canvasUrl}/api/v1/error_reports';
+    String url = _masquerade('${Config().canvasUrl}/api/v1/error_reports');
     http.Response? response = await Network().post(url, headers: _authHeaders, body: errorBody);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -413,7 +419,7 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/assignment_groups?include[]=assignments';
+    String url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/assignment_groups?include[]=assignments');
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -494,6 +500,18 @@ class Canvas with Service implements NotificationsListener{
     return StringUtils.isNotEmpty(Config().canvasTokenType) &&
         StringUtils.isNotEmpty(Config().canvasToken) &&
         StringUtils.isNotEmpty(Auth2().netId);
+  }
+
+  String _masquerade(String url) {
+    if (StringUtils.isEmpty(url)) {
+      return url;
+    }
+    String? userNetId = Auth2().netId;
+    if (StringUtils.isEmpty(userNetId)) {
+      return url;
+    }
+    String querySymbol = url.contains('?') ? '&' : '?';
+    return '$url${querySymbol}as_user_id=sis_user_id:$userNetId';
   }
 
   static String? _includeInfoToString(CanvasIncludeInfo? include) {

@@ -1931,7 +1931,6 @@
 	"panel.home_canvas_course.button.modules.title": "模塊",
 	"panel.home_canvas_course.button.assignments.title": "作業",
 	"panel.home_canvas_course.button.zoom.title": "變焦會議",
-	"panel.home_canvas_course.button.grades.title": "成績",
     "panel.home_canvas_course.button.group.title": "團體",
     "panel.home_canvas_course.button.feedback.title": "回饋",
 
@@ -2280,6 +2279,9 @@
 	"model.groups.member.status.admin": "Admin",
 	"model.groups.member.status.rejected": "Denied",
 	"model.groups.member.status.unknown": "Unknown",
+
+    "model.canvas.calendar.event.type.event.label": "事件",
+    "model.canvas.calendar.event.type.assignment.label": "任務",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",

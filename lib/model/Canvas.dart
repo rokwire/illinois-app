@@ -17,6 +17,7 @@
 import 'package:collection/collection.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 final String _canvasServerDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
@@ -1075,6 +1076,8 @@ class CanvasCalendarEvent implements Favorite {
   final String? participantType;
   final int? participantsPerAppointment;
   final int? availableSlots;
+  final CanvasCalendarEventType? type;
+  final CanvasAssignment? assignment;
   final CanvasUser? user;
   final CanvasGroup? group;
   final bool? importantDates;
@@ -1084,7 +1087,7 @@ class CanvasCalendarEvent implements Favorite {
     this.hidden, this.parentEventId, this.childEventsCount, this.childEvents, this.url, this.htmlUrl,
     this.allDayDate, this.allDay, this.createdAt, this.updatedAt, this.appointmentGroupId, this.appointmentGroupUrl,
     this.ownReservation, this.reserveUrl, this.reserved, this.participantType, this.participantsPerAppointment, 
-    this.availableSlots, this.user, this.group, this.importantDates});
+    this.availableSlots, this.type, this.assignment, this.user, this.group, this.importantDates});
 
   static CanvasCalendarEvent? fromJson(Map<String, dynamic>? json) {
     return (json != null)
@@ -1120,6 +1123,8 @@ class CanvasCalendarEvent implements Favorite {
             participantsPerAppointment: JsonUtils.intValue(json['participants_per_appointment']),
             availableSlots: JsonUtils.intValue(json['available_slots']),
             user: CanvasUser.fromJson(json['user']),
+            type: CanvasCalendarEvent.typeFromString(json['type']),
+            assignment: CanvasAssignment.fromJson(json['assignment']),
             group: CanvasGroup.fromJson(json['group']),
             importantDates: JsonUtils.boolValue(json['important_dates']))
         : null;
@@ -1157,6 +1162,8 @@ class CanvasCalendarEvent implements Favorite {
       (o.participantType == participantType) &&
       (o.participantsPerAppointment == participantsPerAppointment) &&
       (o.availableSlots == availableSlots) &&
+      (o.type == type) &&
+      (o.assignment == assignment) &&
       (o.user == user) &&
       (o.group == group) &&
       (o.importantDates == importantDates);
@@ -1192,6 +1199,8 @@ class CanvasCalendarEvent implements Favorite {
       (participantType?.hashCode ?? 0) ^
       (participantsPerAppointment?.hashCode ?? 0) ^
       (availableSlots?.hashCode ?? 0) ^
+      (type?.hashCode ?? 0) ^
+      (assignment?.hashCode ?? 0) ^
       (user?.hashCode ?? 0) ^
       (group?.hashCode ?? 0) ^
       (importantDates?.hashCode ?? 0);
@@ -1238,6 +1247,39 @@ class CanvasCalendarEvent implements Favorite {
     return result;
   }
 
+  static CanvasCalendarEventType? typeFromString(String? value) {
+    switch (value) {
+      case 'event':
+        return CanvasCalendarEventType.event;
+      case 'assignment':
+        return CanvasCalendarEventType.assignment;
+      default:
+        return null;
+    }
+  }
+
+  static String? typeToKeyString(CanvasCalendarEventType? type) {
+    switch (type) {
+      case CanvasCalendarEventType.event:
+        return 'event';
+      case CanvasCalendarEventType.assignment:
+        return 'assignment';
+      default:
+        return null;
+    }
+  }
+
+  static String? typeToDisplayString(CanvasCalendarEventType? type) {
+    switch (type) {
+      case CanvasCalendarEventType.event:
+        return Localization().getStringEx('model.canvas.calendar.event.type.event.label', 'Event');
+      case CanvasCalendarEventType.assignment:
+        return Localization().getStringEx('model.canvas.calendar.event.type.assignment.label', 'Assignment');
+      default:
+        return null;
+    }
+  }
+
   ////////////////////////////
   // Favorite implementation
 
@@ -1253,7 +1295,10 @@ class CanvasCalendarEvent implements Favorite {
   static String _favoriteKeyName = "canvasCalendarEventIds";
 }
 
+////////////////////////////////
+// CanvasCalendarEventType
 
+enum CanvasCalendarEventType { event, assignment }
 
 ////////////////////////////////
 // CanvasUser
