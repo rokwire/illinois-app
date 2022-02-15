@@ -20,6 +20,7 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
@@ -31,6 +32,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CanvasCourseCalendarPanel extends StatefulWidget {
   final int courseId;
@@ -44,6 +46,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
   List<CanvasCalendarEvent>? _events;
   List<CanvasCourse>? _courses;
   int? _selectedCourseId;
+  CanvasCalendarEventType? _selectedType;
   late DateTime _startDateTime;
   late DateTime _endDateTime;
   late DateTime _selectedDate;
@@ -53,6 +56,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
   void initState() {
     NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     _selectedCourseId = widget.courseId;
+    _selectedType = CanvasCalendarEventType.event;
     _initCalendarDates();
     _loadEvents();
     _loadCourses();
@@ -90,7 +94,9 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Padding(
                     padding: EdgeInsets.only(left: horizontalPadding, right: horizontalPadding, bottom: 20),
-                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_buildYearDropDown(), _buildMonthDropDown()])),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [_buildYearDropDown(), _buildMonthDropDown(), _buildTypeDropDown()])),
                 Padding(
                     padding: EdgeInsets.only(left: 5, right: 5, bottom: 10),
                     child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -176,7 +182,10 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
                 child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                   Expanded(
                       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 15), child: Image.asset('images/icon-news.png')),
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        child: Image.asset(
+                            (event.type == CanvasCalendarEventType.assignment) ? 'images/icon-schedule.png' : 'images/icon-news.png')),
                     Expanded(
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text(StringUtils.ensureNotEmpty(event.contextName),
@@ -233,8 +242,20 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
   }
 
   void _onTapEvent(CanvasCalendarEvent event) {
-    Analytics().logSelect(target: "Canvas Calendar Event");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: event.id!)));
+    if (event.type == CanvasCalendarEventType.assignment) {
+      Analytics().logSelect(target: 'Canvas Calendar -> Assignment');
+      String? url = event.assignment?.htmlUrl;
+      if (StringUtils.isNotEmpty(url)) {
+        if (UrlUtils.launchInternal(url)) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        } else {
+          launch(url!);
+        }
+      }
+    } else {
+      Analytics().logSelect(target: 'Canvas Calendar -> Event');
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: event.id!)));
+    }
   }
 
   List<CanvasCalendarEvent>? get _visibleEvents {
@@ -334,6 +355,39 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
 
   void _onMonthChanged(dynamic month) {
     _changeSelectedDate(month: month);
+  }
+
+  Widget _buildTypeDropDown() {
+    return Container(
+        height: 48,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+        child: Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+              style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+              items: _buildTypeDropDownItems,
+              value: _selectedType,
+              onChanged: (type) => _onTypeChanged(type),
+            ))));
+  }
+
+  List<DropdownMenuItem<CanvasCalendarEventType>> get _buildTypeDropDownItems {
+    List<DropdownMenuItem<CanvasCalendarEventType>> items = [];
+    for (CanvasCalendarEventType type in CanvasCalendarEventType.values) {
+      items.add(DropdownMenuItem(value: type, child: Text(StringUtils.ensureNotEmpty(CanvasCalendarEvent.typeToDisplayString(type)))));
+    }
+    return items;
+  }
+
+  void _onTypeChanged(dynamic type) {
+    if (type != _selectedType) {
+      _selectedType = type;
+      _loadEvents();
+    }
   }
 
   Widget _buildCourseDropDown() {
@@ -527,7 +581,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
 
   void _loadEventsForSingleCourse(int courseId) {
     _increaseProgress();
-    Canvas().loadCalendarEvents(courseId: courseId, startDate: _startDateTime, endDate: _endDateTime).then((events) {
+    Canvas().loadCalendarEvents(courseId: courseId, type: _selectedType, startDate: _startDateTime, endDate: _endDateTime).then((events) {
       if (CollectionUtils.isNotEmpty(events)) {
         if (_events == null) {
           _events = [];

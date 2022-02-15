@@ -256,7 +256,7 @@ class Canvas with Service implements NotificationsListener{
 
   // Calendar
 
-  Future<List<CanvasCalendarEvent>?> loadCalendarEvents({required int courseId, DateTime? startDate, DateTime? endDate}) async {
+  Future<List<CanvasCalendarEvent>?> loadCalendarEvents({required int courseId, CanvasCalendarEventType? type, DateTime? startDate, DateTime? endDate}) async {
     if (!_available) {
       return null;
     }
@@ -275,13 +275,17 @@ class Canvas with Service implements NotificationsListener{
         url += '&end_date=$formattedDate';
       }
     }
+    String? typeKeyString = CanvasCalendarEvent.typeToKeyString(type);
+    if (StringUtils.isNotEmpty(typeKeyString)) {
+      url += '&type=$typeKeyString';
+    }
     url = _masquerade(url);
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
       List<CanvasCalendarEvent>? calendarEvents = CanvasCalendarEvent.listFromJson(JsonUtils.decodeList(responseString));
-      return calendarEvents?.where((element) => (element.hidden == false)).toList();
+      return calendarEvents?.where((element) => ((element.hidden == false) || (element.hidden == null))).toList();
     } else {
       Log.w('Failed to load canvas calendar events for course {$courseId}. Response:\n$responseCode: $responseString');
       return null;

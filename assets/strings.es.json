@@ -2282,6 +2282,9 @@
     "model.groups.member.status.rejected": "Denied",
     "model.groups.member.status.unknown": "Unknown",
 
+    "model.canvas.calendar.event.type.event.label": "Evento",
+    "model.canvas.calendar.event.type.assignment.label": "Asignación",
+
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",
     "logic.date_time.greeting.evening": "Buena noches",

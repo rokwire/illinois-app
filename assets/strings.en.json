@@ -2314,6 +2314,9 @@
     "model.groups.member.status.rejected": "Denied",
 	"model.groups.member.status.unknown": "Unknown",
 
+    "model.canvas.calendar.event.type.event.label": "Event",
+    "model.canvas.calendar.event.type.assignment.label": "Assignment",
+
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",
     "logic.date_time.greeting.evening": "Good evening",
