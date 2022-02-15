@@ -170,11 +170,6 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
           leftIcon: 'images/icon-settings.png'),
       _buildDelimiter(),
       RibbonButton(
-          label: Localization().getStringEx('panel.home_canvas_course.button.grades.title', 'Grades'),
-          hint: Localization().getStringEx('panel.home_canvas_course.button.grades.hint', ''),
-          leftIcon: 'images/icon-settings.png'),
-      _buildDelimiter(),
-      RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.group.title', 'Group'),
           hint: Localization().getStringEx('panel.home_canvas_course.button.group.hint', ''),
           leftIcon: 'images/icon-canvas-implemented-working.png',
