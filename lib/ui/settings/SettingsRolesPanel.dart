@@ -142,7 +142,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
     }
   }
 
-  void _onBack(BuildContext context) {
+  void _onBack() {
     if (_saveRolesTimer != null) {
       _saveSelectedRoles();
     }

@@ -32,7 +32,7 @@ class HeaderBar extends rokwire.HeaderBar {
     String? leadingLabel,
     String? leadingHint,
     String? leadingAsset = defaultLeadingAsset,
-    void Function(BuildContext context)? onLeading,
+    void Function()? onLeading,
     
     Widget? titleWidget,
     String? title,
@@ -101,7 +101,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     Size? leadingOvalSize = const Size(32, 32),
     Color? leadingOvalColor,
     String? leadingAsset = defaultLeadingAsset,
-    void Function(BuildContext context)? onLeading,
+    void Function()? onLeading,
   }) : super(
     pinned: pinned,
     floating: floating,
@@ -148,7 +148,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     String? leadingLabel,
     String? leadingHint,
     String? leadingAsset = defaultLeadingAsset,
-    void Function(BuildContext context)? onLeading,
+    void Function()? onLeading,
     
     Widget? titleWidget,
     String? title,
