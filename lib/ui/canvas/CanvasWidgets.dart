@@ -17,7 +17,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class CanvasCourseCard extends StatelessWidget {
@@ -33,8 +32,6 @@ class CanvasCourseCard extends StatelessWidget {
     double cardInnerPadding = 10;
     final double? cardWidth = isSmall ? (MediaQuery.of(context).textScaleFactor * 200) : null;
     const double borderRadiusValue = 6;
-    //TBD: check from which field to take this value
-    String completionPercentage = _formatDecimalValue(0);
     Color? mainColor = StringUtils.isNotEmpty(course.courseColor) ? UiColors.fromHex(course.courseColor!) : defaultColor;
     if (mainColor == null) {
       mainColor = defaultColor;
@@ -49,16 +46,7 @@ class CanvasCourseCard extends StatelessWidget {
           Container(
               height: (cardHeight / 2),
               decoration: BoxDecoration(
-                  color: mainColor, borderRadius: (isSmall ? BorderRadius.vertical(top: Radius.circular(borderRadiusValue)) : null)),
-              child: Padding(
-                  padding: EdgeInsets.only(left: cardInnerPadding, top: cardInnerPadding),
-                  child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Container(
-                        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Styles().colors!.white),
-                        child: Text('$completionPercentage%',
-                            style: TextStyle(color: mainColor, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)))
-                  ]))),
+                  color: mainColor, borderRadius: (isSmall ? BorderRadius.vertical(top: Radius.circular(borderRadiusValue)) : null))),
           Container(
               decoration: BoxDecoration(
                   color: Styles().colors!.white,
@@ -75,12 +63,5 @@ class CanvasCourseCard extends StatelessWidget {
                     ]))
                   ])))
         ]));
-  }
-
-  String _formatDecimalValue(double num, {int minimumFractionDigits = 0, int maximumFractionDigits = 2}) {
-    NumberFormat numFormatter = NumberFormat();
-    numFormatter.minimumFractionDigits = minimumFractionDigits;
-    numFormatter.maximumFractionDigits = maximumFractionDigits;
-    return numFormatter.format(num);
   }
 }
