@@ -139,6 +139,7 @@
     "panel.wallet.button.use_id.hint": "",
     "panel.wallet.label.library.title": "tarjeta de biblioteca",
     "panel.wallet.button.close.title": "cerrar",
+    "panel.wallet.button.close.hint": "",
     "panel.wallet.button.connect.netid.title": "Conectar NetID",
     "panel.wallet.button.connect.netid.hint": "",
     "panel.wallet.button.connect.phone_or_email.title": "Login By Email or Phone",
