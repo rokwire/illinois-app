@@ -1941,7 +1941,8 @@
 
     "panel.canvas_announcements.header.title": "Anuncios",
     "panel.canvas_announcements.load.failed.error.msg": "No se pudieron cargar los anuncios. Por favor, inténtelo de nuevo más tarde.",
-    "panel.canvas_announcements.empty.msg": "No hay anuncios para este curso.",
+    "panel.canvas_announcements.empty.msg": "No hay anuncios.",
+    "panel.canvas_announcements.all_courses.label": "Todos los cursos",
 
     "panel.canvas_announcement.header.title": "Anuncio",
 

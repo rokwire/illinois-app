@@ -1973,7 +1973,8 @@
 
     "panel.canvas_announcements.header.title": "Announcements",
     "panel.canvas_announcements.load.failed.error.msg": "Failed to load announcements. Please, try again later.",
-    "panel.canvas_announcements.empty.msg": "There are no announcements for this course.",
+    "panel.canvas_announcements.empty.msg": "There are no announcements.",
+    "panel.canvas_announcements.all_courses.label": "All Courses",
 
     "panel.canvas_announcement.header.title": "Announcement",
 
