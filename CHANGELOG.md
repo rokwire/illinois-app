@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TweeterPage widget: add next/previous buttons [#1353](https://github.com/rokwire/illinois-app/issues/1353).
 - TabBar widget moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 - WebPanel moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- Possibility for loading both events and assignments in Canvas calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Possibility for loading announcements for all Canvas courses [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Fixed
+- Messages for events and assignments in Canvas Calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- ### Removed
+- Canvas Feedback [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 
 ## [3.2.20] - 2022-02-15
 ### Added
