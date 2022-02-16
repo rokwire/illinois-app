@@ -272,6 +272,20 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                 onTap: () => _onTapLogin()
               ),
             ),
+            Visibility(
+              visible: _link,
+              child: Padding(padding: EdgeInsets.only(left: 24, right: 24, bottom: 8), child:
+              RoundedButton(
+                  label: Localization().getStringEx(
+                      "panel.onboarding2.email.button.cancel.label", "Cancel"),
+                  hint: Localization().getStringEx(
+                      "panel.onboarding2.email.button.cancel.hint", ""),
+                  borderColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors!.background,
+                  textColor: Styles().colors!.fillColorPrimary,
+                  onTap: () => _onTapCancel())
+              ),
+            )
           ]),
         ),
         OnboardingBackButton(padding: backButtonInsets, onTap: () { Analytics().logSelect(target: "Back"); Navigator.pop(context); }),
@@ -393,14 +407,10 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
             "confirm_password": confirmPassword
           };
           Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((result) {
-            //TODO: handle result status
             if (result == Auth2LinkResult.succeded) {
-              Function? onSuccess = widget.onboardingContext!["onContinueAction"];
-              if(onSuccess!=null){
-                onSuccess();
-                return;
-              }
               _trySignUpCallback(Auth2EmailSignUpResult.succeded);
+            } else if (result == Auth2LinkResult.failedAccountExist) {
+              _trySignUpCallback(Auth2EmailSignUpResult.failedAccountExist);
             } else {
               _trySignUpCallback(Auth2EmailSignUpResult.failed);
             }
@@ -429,10 +439,10 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
         _state = Auth2EmailAccountState.unverified;
         _showingPassword = false;
       });
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.account_exists.text", "Sign up failed. This account already exists."));
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.account_exists.text", "Sign up failed. An existing account is already using this email address."));
     }
     else /*if (result == Auth2EmailSignUpResult.failed)*/ {
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.text", "Sign up failed."));
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.text", "Sign up failed. An unexpected error occurred"));
     }
   }
 
@@ -450,36 +460,86 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       else {
         setState(() { _isLoading = true; });
 
-        Auth2().authenticateWithEmail(widget.email, password).then((Auth2EmailSignInResult result) {
-          
-          setState(() { _isLoading = false; });
-          
-          if (result == Auth2EmailSignInResult.failed) {
-            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.text", "Sign in failed."));
-          }
-          else if (result == Auth2EmailSignInResult.failedNotActivated) {
-            setState(() {
-              _state = Auth2EmailAccountState.unverified;
-            });
-            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.not_activated.text", "Your activation link has already expired. Your account is not activated yet. Please confirm the email sent to your email address."));
-          }
-          else if (result == Auth2EmailSignInResult.failedActivationExpired) {
-            setState(() {
-              _state = Auth2EmailAccountState.unverified;
-            });
-            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.activation_expired.text", "Your activation link has already expired. Please resend verification email again and confirm it in order to activate your account."));
-          }
-          else if (widget.onboardingContext != null) {
-            Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
-            if(onSuccess!=null){
-              onSuccess();
-            } else {
-              Onboarding().next(context, widget);
+        if (!_link) {
+          Auth2().authenticateWithEmail(widget.email, password).then((Auth2EmailSignInResult result) {
+            setState(() { _isLoading = false; });
+            _trySignInCallback(result);
+          });
+        } else {
+          Map<String, dynamic> creds = {
+            "email": widget.email,
+            "password": password
+          };
+          Map<String, dynamic> params = {};
+          Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((Auth2LinkResult result) {
+            setState(() { _isLoading = false; });
+            switch (result) {
+              case Auth2LinkResult.succeded: _trySignInCallback(Auth2EmailSignInResult.succeded); break;
+              case Auth2LinkResult.failedNotActivated: _trySignInCallback(Auth2EmailSignInResult.failedNotActivated); break;
+              case Auth2LinkResult.failedActivationExpired: _trySignInCallback(Auth2EmailSignInResult.failedActivationExpired); break;
+              case Auth2LinkResult.failedInvalid: _trySignInCallback(Auth2EmailSignInResult.failedInvalid); break;
+              default: _trySignInCallback(Auth2EmailSignInResult.failed);
             }
-          }
-        });
+          });
+        }
       }
     }
+  }
+  
+  void _trySignInCallback(Auth2EmailSignInResult result) {
+    if (result == Auth2EmailSignInResult.failed) {
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.text", "Sign in failed."));
+    }
+    else if (result == Auth2EmailSignInResult.failedNotActivated) {
+      setState(() {
+        _state = Auth2EmailAccountState.unverified;
+      });
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.not_activated.text", "Your activation link has already expired. Your account is not activated yet. Please confirm the email sent to your email address."));
+    }
+    else if (result == Auth2EmailSignInResult.failedActivationExpired) {
+      setState(() {
+        _state = Auth2EmailAccountState.unverified;
+      });
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.activation_expired.text", "Your activation link has already expired. Please resend verification email again and confirm it in order to activate your account."));
+    }
+    else if (result == Auth2EmailSignInResult.failedInvalid) {
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.invalid.text", "Incorrect password."));
+    }
+    else if (widget.onboardingContext != null) {
+      Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
+      if(onSuccess!=null){
+        onSuccess();
+      } else {
+        Onboarding().next(context, widget);
+      }
+    }
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isLoading = true;
+    });
+
+    Auth2().unlinkAccountAuthType(Auth2LoginType.phoneTwilio, widget.email!).then((success) {
+      if(mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        if (!success) {
+          setState(() {
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.link.cancel.text", "Failed to cancel link verification"));
+          });
+        }
+        else if (widget.onboardingContext != null) {
+          Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
+          if(onSuccess!=null){
+            onSuccess();
+          } else {
+            Onboarding().next(context, widget);
+          }
+        }
+      }
+    });
   }
 
   void setErrorMsg(String? msg, { Color? color}) {

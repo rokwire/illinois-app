@@ -176,17 +176,20 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                     textColor: Styles().colors!.fillColorPrimary,
                     onTap: () => _onTapConfirm())
                 ),
-                Container(child:
-                RoundedButton(
-                    label: Localization().getStringEx(
-                        "panel.onboarding.confirm_phone.button.cancel.label", "Cancel"),
-                    hint: Localization().getStringEx(
-                        "panel.onboarding.confirm_phone.button.cancel.hint", ""),
-                    borderColor: Styles().colors!.fillColorSecondary,
-                    backgroundColor: Styles().colors!.background,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    onTap: () => _onTapCancel())
-                )
+                Visibility(
+                  visible: _link,
+                  child: Container(child:
+                  RoundedButton(
+                      label: Localization().getStringEx(
+                          "panel.onboarding.confirm_phone.button.cancel.label", "Cancel"),
+                      hint: Localization().getStringEx(
+                          "panel.onboarding.confirm_phone.button.cancel.hint", ""),
+                      borderColor: Styles().colors!.fillColorSecondary,
+                      backgroundColor: Styles().colors!.background,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      onTap: () => _onTapCancel())
+                  ),
+                ),
               ],
             ),),),
           Visibility(
@@ -225,12 +228,12 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
     });
 
     if (!_link) {
-      Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text).then((success) {
+      Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text).then((result) {
         if(mounted) {
           setState(() {
             _isLoading = false;
           });
-          _onPhoneVerified(success);
+          _onPhoneVerified(result);
         }
       });
     } else {
@@ -240,12 +243,17 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
       };
       Map<String, dynamic> params = {};
       Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
-        //TODO: handle result status
         if(mounted) {
           setState(() {
             _isLoading = false;
           });
-          // _onPhoneVerified(success);
+          if (result == Auth2LinkResult.succeded) {
+            _onPhoneVerified(Auth2PhoneSignInResult.succeded);
+          } else if (result == Auth2LinkResult.failedInvalid) {
+            _onPhoneVerified(Auth2PhoneSignInResult.failedInvalid);
+          } else {
+            _onPhoneVerified(Auth2PhoneSignInResult.failed);
+          }
         }
       });
     }
@@ -264,9 +272,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
         });
         if (!success) {
           setState(() {
-            _verificationErrorMsg = Localization().getStringEx(
-                "panel.onboarding.confirm_phone.cancel.server_error.text",
-                "Failed to cancel link verification");
+            _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.link.cancel.text", "Failed to cancel link verification");
           });
         }
         else {
@@ -276,15 +282,16 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
     });
   }
 
-  void _onPhoneVerified(bool success) {
-    if (!success) {
+  void _onPhoneVerified(Auth2PhoneSignInResult result) {
+    if (result == Auth2PhoneSignInResult.failed) {
       setState(() {
-        _verificationErrorMsg = Localization().getStringEx(
-            "panel.onboarding.confirm_phone.validation.server_error.text",
-            "Failed to verify code");
+        _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.server_error.text", "Failed to verify code. An unexpected error occurred.");
       });
-    }
-    else {
+    } else if (result == Auth2PhoneSignInResult.failedInvalid) {
+      setState(() {
+        _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.invalid.text", "Incorrect code.");
+      });
+    } else {
       _finishedPhoneVerification();
     }
   }

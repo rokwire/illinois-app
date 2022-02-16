@@ -184,15 +184,20 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     setState(() { _isLoading = true; });
 
     if (!_link) {
-      Auth2().authenticateWithPhone(phoneNumber).then((success) => _onPhoneInitiated(phoneNumber, success));
+      Auth2().authenticateWithPhone(phoneNumber).then((result) => _onPhoneInitiated(phoneNumber, result));
     } else if (!Auth2().isPhoneLinked){ // at most one phone number may be linked at a time
       Map<String, dynamic> creds = {
         "phone": phoneNumber
       };
       Map<String, dynamic> params = {};
       Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
-        //TODO: handle result status
-        // _onPhoneInitiated(phoneNumber, result);
+        if (result == Auth2LinkResult.succeded) {
+          _onPhoneInitiated(phoneNumber, Auth2PhoneSignUpResult.succeded);
+        } else if (result == Auth2LinkResult.failedAccountExist) {
+          _onPhoneInitiated(phoneNumber, Auth2PhoneSignUpResult.failedAccountExist);
+        } else {
+          _onPhoneInitiated(phoneNumber, Auth2PhoneSignUpResult.failed);
+        }
       });
     } else {
       setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.linked.text", "You have already linked a phone number to your account."));
@@ -202,47 +207,30 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     }
   }
 
-  // void _loginByPhoneCallback(bool success, String? phoneNumber) {
-  //   if (mounted) {
-  //     setState(() { _isLoading = false; });
-  //     if (_link) {
-  //       if (success) {
-  //         Function? onSuccess = widget.onboardingContext!["onContinueAction"];
-  //         if(onSuccess!=null){
-  //           onSuccess();
-  //           return;
-  //         }
-  //       } else {
-  //         setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.link.failed", "Failed to link phone number."));
-  //         return;
-  //       }
-  //     }
-  //     _onPhoneInitiated(phoneNumber, success);
-  //   }
-  // }
-
-  void _onPhoneInitiated(String? phoneNumber, bool success) {
+  void _onPhoneInitiated(String? phoneNumber, Auth2PhoneSignUpResult result) {
     if (mounted) {
       setState(() { _isLoading = false; });
     }
-    if (!success) {
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed", "Failed to send phone verification code."));
-    }
-    else {
+
+    if (result == Auth2PhoneSignUpResult.succeded) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginPhoneConfirmPanel(phoneNumber: phoneNumber, onboardingContext: widget.onboardingContext)));
+    } else if (result == Auth2PhoneSignUpResult.failedAccountExist) {
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists", "Failed to send phone verification code: another account is already using this phone number."));
+    } else {
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.unexpected", "Failed to send phone verification code: an unexpected error has occurred."));
     }
   }
 
   void _loginByEmail(String? email) {
     setState(() { _isLoading = true; });
     
-    Auth2().checkEmailAccountState(email).then((Auth2EmailAccountState? state) {
+    Auth2().checkEmailAccountState(email, _link ? "link" : "login").then((Auth2EmailAccountState? state) {
       if (mounted) {
         setState(() { _isLoading = false; });
         if (state != null) {
           if (_link) {
-            if (state != Auth2EmailAccountState.nonExistent) {
-              setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.link.exists", "An account using this email address already exists."));
+            if (state == Auth2EmailAccountState.verified) {
+              setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.link.failed.exists", "An existing account is already using this email address."));
               return;
             } else if (Auth2().isEmailLinked) { // at most one email address may be linked at a time
               setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.linked.text", "You have already linked an email address to your account."));
