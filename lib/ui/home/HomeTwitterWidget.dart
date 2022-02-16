@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Twitter.dart';
@@ -37,7 +38,6 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   @override
   void initState() {
     super.initState();
-
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       FlexUI.notifyChanged,
@@ -143,7 +143,12 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     for (TweetsPage tweetsPage in _tweetsPages) {
       if (tweetsPage.tweets != null) {
         for (Tweet? tweet in tweetsPage.tweets!) {
-          pages.add(_TweetWidget(tweet: tweet,));
+          bool isFirst = pages.isEmpty;
+          pages.add(_TweetWidget(
+            tweet: tweet,
+            onTapPrevious: isFirst? null : _onTapPrevious,
+            onTapNext: _onTapNext,
+          ));
         }
       }
     }
@@ -297,6 +302,43 @@ class _TweetWidget extends StatelessWidget {
                 ),
                 Text(tweet?.displayTime ?? '', style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 14, ),),
               ],)
+            ),
+
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Visibility(
+                  visible: onTapPrevious!=null,
+                  child: GestureDetector(
+                    onTap: onTapPrevious?? (){},
+                    child: Container(
+                      padding: EdgeInsets.all(24),
+                      child: Text(
+                        "<",
+                        style: TextStyle(
+                          color : Styles().colors!.fillColorPrimary,
+                          fontFamily: Styles().fontFamilies!.bold,
+                          fontSize: 26,
+                        ),),)
+                  )
+                ),
+                Visibility(
+                    visible: onTapNext!=null,
+                    child: GestureDetector(
+                      onTap: onTapNext?? (){},
+                      child: Container(
+                        padding: EdgeInsets.all(24),
+                        child: Text(
+                          ">",
+                          style: TextStyle(
+                            color : Styles().colors!.fillColorPrimary,
+                            fontFamily: Styles().fontFamilies!.bold,
+                            fontSize: 26,
+                          ),),)
+                    )
+                )
+              ],
             )
           ])
       )
