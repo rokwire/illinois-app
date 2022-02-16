@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Twitter.dart';
