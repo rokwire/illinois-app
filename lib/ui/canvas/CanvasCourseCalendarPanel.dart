@@ -399,6 +399,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
 
   List<DropdownMenuItem<CanvasCalendarEventType>> get _buildTypeDropDownItems {
     List<DropdownMenuItem<CanvasCalendarEventType>> items = [];
+    items.add(DropdownMenuItem(value: null, child: Text(Localization().getStringEx('panel.canvas_calendar.all_types.label', 'All'))));
     for (CanvasCalendarEventType type in CanvasCalendarEventType.values) {
       items.add(DropdownMenuItem(value: type, child: Text(StringUtils.ensureNotEmpty(CanvasCalendarEvent.typeToDisplayString(type)))));
     }
@@ -595,29 +596,43 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
       _events = null;
     }
     if (_selectedCourseId != null) {
-      _loadEventsForSingleCourse(_selectedCourseId!);
+      _loadEventTypeForSingleCourse(_selectedCourseId!);
     } else {
       _loadEventsForAllCourses();
     }
   }
 
-  void _loadEventsForSingleCourse(int courseId) {
-    _increaseProgress();
-    Canvas().loadCalendarEvents(courseId: courseId, type: _selectedType, startDate: _startDateTime, endDate: _endDateTime).then((events) {
-      if (CollectionUtils.isNotEmpty(events)) {
-        if (_events == null) {
-          _events = [];
-        }
-        _events!.addAll(events!);
+  void _loadEventTypeForSingleCourse(int courseId) {
+    if (_selectedType != null) {
+      _loadForSingleCourse(courseId: courseId, type: _selectedType);
+    } else {
+      for (CanvasCalendarEventType type in CanvasCalendarEventType.values) {
+        _loadForSingleCourse(courseId: courseId, type: type);
       }
-      _decreaseProgress();
+    }
+  }
+
+  void _loadForSingleCourse({required int courseId, CanvasCalendarEventType? type}) {
+    _increaseProgress();
+    Canvas().loadCalendarEvents(courseId: courseId, type: type, startDate: _startDateTime, endDate: _endDateTime).then((events) {
+      _onEventsLoaded(events);
     });
+  }
+
+  void _onEventsLoaded(List<CanvasCalendarEvent>? events) {
+    if (CollectionUtils.isNotEmpty(events)) {
+      if (_events == null) {
+        _events = [];
+      }
+      _events!.addAll(events!);
+    }
+    _decreaseProgress();
   }
 
   void _loadEventsForAllCourses() {
     if (CollectionUtils.isNotEmpty(_courses)) {
       for (CanvasCourse course in _courses!) {
-        _loadEventsForSingleCourse(course.id!);
+        _loadEventTypeForSingleCourse(course.id!);
       }
     }
   }

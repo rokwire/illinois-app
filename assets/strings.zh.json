@@ -1953,6 +1953,7 @@
 
     "panel.canvas_calendar.header.title": "日曆",
     "panel.canvas_calendar.all_courses.label": "所有課程",
+    "panel.canvas_calendar.all_types.label": "全部",
     "panel.canvas_calendar.events.load.failed.error.msg": "未能加載事件. 請稍後再試.",
     "panel.canvas_calendar.assignments.load.failed.error.msg": "未能加載分配. 請稍後再試.",
     "panel.canvas_calendar.all.load.failed.error.msg": "未能加載事件和分配. 請稍後再試.",

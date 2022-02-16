@@ -1987,6 +1987,7 @@
 
     "panel.canvas_calendar.header.title": "Calendar",
     "panel.canvas_calendar.all_courses.label": "All Courses",
+    "panel.canvas_calendar.all_types.label": "All",
     "panel.canvas_calendar.events.load.failed.error.msg": "Failed to load events. Please, try again later.",
     "panel.canvas_calendar.assignments.load.failed.error.msg": "Failed to load assignments. Please, try again later.",
     "panel.canvas_calendar.all.load.failed.error.msg": "Failed to load events and assignments. Please, try again later.",
