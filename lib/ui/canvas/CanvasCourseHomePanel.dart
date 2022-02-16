@@ -20,7 +20,6 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/ui/canvas/CanvasAccountNotificationsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseAssignmentsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseModulesPanel.dart';
-import 'package:illinois/ui/canvas/CanvasFeedbackPanel.dart';
 import 'package:illinois/ui/canvas/CanvasSyllabusHtmlPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -175,12 +174,13 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
           leftIconAsset: 'images/icon-canvas-implemented-working.png',
           onTap: _onTapGroup),
       _buildDelimiter(),
+      /* Hide feedback for now
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.feedback.title', 'Feedback'),
           hint: Localization().getStringEx('panel.home_canvas_course.button.feedback.hint', ''),
           leftIconAsset: 'images/icon-canvas-implemented-working.png',
           onTap: _onTapFeedback),
-      _buildDelimiter()
+      _buildDelimiter()*/
     ]);
   }
 
@@ -238,10 +238,11 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
+  /* Hide Feedback for now
   void _onTapFeedback() {
     Analytics().logSelect(target: 'Canvas Course -> Feedback');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFeedbackPanel()));
-  }
+  }*/
 
   void _loadCourse() {
     _increaseProgress();
