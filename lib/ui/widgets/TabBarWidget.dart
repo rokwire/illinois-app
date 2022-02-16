@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -28,12 +30,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class TabBarWidget extends StatefulWidget {
 
-  static double tabBarHeight = 60;
-  static double tabTextSize = 12;
-
   final TabController? tabController;
+  final bool? walletExpanded;
 
-  TabBarWidget({this.tabController});
+  TabBarWidget({this.tabController, this.walletExpanded});
 
   _TabBarWidgetState createState() => _TabBarWidgetState();
 }
@@ -45,25 +45,16 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
   @override
   void initState() {
     super.initState();
-
     NotificationService().subscribe(this, FlexUI.notifyChanged);
-
-    if(widget.tabController != null) {
-      widget.tabController!.addListener(_onTabControllerChanged);
-    }
-
+    widget.tabController?.addListener(_onTabControllerChanged);
     _contentListCodes = _getContentListCodes();
   }
 
   @override
   void dispose() {
     super.dispose();
-
     NotificationService().unsubscribe(this);
-
-    if(widget.tabController != null) {
-      widget.tabController!.removeListener(_onTabControllerChanged);
-    }
+    widget.tabController?.removeListener(_onTabControllerChanged);
   }
 
   // NotificationsListener
@@ -77,33 +68,29 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
 
   @override
   Widget build(BuildContext context) {
-    double height = 35 + (TabBarWidget.tabTextSize * MediaQuery.of(context).textScaleFactor); // 35 is icon height + paddings
-    if(TabBarWidget.tabBarHeight < height){
-      TabBarWidget.tabBarHeight = height;
-    }
-
-
-    Color? backgroundColor;
-    switch(Config().configEnvironment) {
-      case ConfigEnvironment.dev:        backgroundColor = Colors.yellowAccent; break;
-      case ConfigEnvironment.test:       backgroundColor = Colors.lightGreenAccent; break;
-      case ConfigEnvironment.production: backgroundColor = Colors.white; break;
-      default: break;
-    }
-    return Container(
-      decoration: BoxDecoration(
-          color: backgroundColor,
-          border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid))),
-      child: SafeArea(
-        child: Container(
-          height: TabBarWidget.tabBarHeight,
-          child: Row(
-            children: _buildTabs(),
-          ),
+    return Column(mainAxisSize: MainAxisSize.min, children: [
+      Container(decoration: BoxDecoration(color: backgroundColor, border: border), child:
+        SafeArea(child:
+            Row(children: 
+              _buildTabs(),
+            ),
         ),
       ),
-    );
+    ],);
   }
+
+  @protected
+  Color? get backgroundColor {
+    switch(Config().configEnvironment) {
+      case ConfigEnvironment.dev:        return Colors.yellowAccent;
+      case ConfigEnvironment.test:       return Colors.lightGreenAccent;
+      case ConfigEnvironment.production: return Colors.white;
+      default:                           return Colors.white;
+    }
+  }
+
+  @protected
+  BoxBorder? get border => Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid));
 
   List<Widget> _buildTabs() {
     List<Widget> tabs = [];
@@ -115,9 +102,9 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
           child: TabWidget(
             label: Localization().getStringEx('tabbar.home.title', 'Home'),
             hint: Localization().getStringEx('tabbar.home.hint', ''),
-            iconResource: 'images/tab-home.png',
-            iconResourceSelected: 'images/tab-home-selected.png',
-            selected: (widget.tabController != null) && (widget.tabController!.index == tabIndex),
+            iconAsset: 'images/tab-home.png',
+            selectedIconAsset: 'images/tab-home-selected.png',
+            selected: (widget.tabController?.index == tabIndex),
             onTap: ()=>_onSwitchTab(tabIndex, 'Home'),
           ),
         ));
@@ -127,38 +114,55 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
           child: TabWidget(
             label: Localization().getStringEx('tabbar.explore.title', 'Explore'),
             hint: Localization().getStringEx('tabbar.explore.hint', ''),
-            iconResource: 'images/tab-explore.png',
-            iconResourceSelected: 'images/tab-explore-selected.png',
-            selected: (widget.tabController != null) && (widget.tabController!.index == tabIndex),
+            iconAsset: 'images/tab-explore.png',
+            selectedIconAsset: 'images/tab-explore-selected.png',
+            selected: (widget.tabController?.index == tabIndex),
             onTap: ()=>_onSwitchTab(tabIndex, 'Explore'),
           )
         ));
       }
       else if (code == 'wallet') {
-        tabs.add(Expanded(
-          child: TabWidget(
-            label: Localization().getStringEx('tabbar.wallet.title', 'Wallet'),
-            hint: Localization().getStringEx('tabbar.wallet.hint', ''),
-            iconResource: 'images/tab-wallet.png',
-            selected: false,
-            onTap: ()=>_onShowWalletSheet('Wallet'),
-          )
-        ));
+        if (widget.walletExpanded != true) {
+          tabs.add(Expanded(
+            child: TabWidget(
+              label: Localization().getStringEx('tabbar.wallet.title', 'Wallet'),
+              hint: Localization().getStringEx('tabbar.wallet.hint', ''),
+              iconAsset: 'images/tab-wallet.png',
+              selected: false,
+              onTap: () => _onShowWalletSheet('Wallet'),
+            )
+          ));
+        }
+        else {
+          tabs.add(Expanded(
+            child: TabCloseWidget(
+              label: Localization().getStringEx('panel.wallet.button.close.title', 'close'),
+              hint: Localization().getStringEx('panel.wallet.button.close.hint', ''),
+              iconAsset: 'images/icon-close-big.png',
+              onTap: _onClose,
+            )
+          ));
+        }
       }
       else if (code == 'browse') {
         tabs.add(Expanded(
           child: TabWidget(
             label: Localization().getStringEx('tabbar.browse.title', 'Browse'),
             hint: Localization().getStringEx('tabbar.browse.hint', ''),
-            iconResource: 'images/tab-browse.png',
-            iconResourceSelected: 'images/tab-browse-selected.png',
-            selected: (widget.tabController != null) && (widget.tabController!.index == tabIndex),
+            iconAsset: 'images/tab-browse.png',
+            selectedIconAsset: 'images/tab-browse-selected.png',
+            selected: (widget.tabController?.index == tabIndex),
             onTap: ()=>_onSwitchTab(tabIndex, 'Browse'),
           ),
         ));
       }
     }
     return tabs;
+  }
+
+  void _onClose() {
+    Analytics().logSelect(target: 'Close');
+    Navigator.pop(context);
   }
 
   void _onTabControllerChanged(){
@@ -214,72 +218,121 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
 class TabWidget extends StatelessWidget {
   final String? label;
   final String? hint;
-  final String? iconResource;
-  final String? iconResourceSelected;
+  final String? iconAsset;
+  final String? selectedIconAsset;
   final bool selected;
   final GestureTapCallback onTap;
 
   TabWidget(
       {this.label,
-      this.iconResource,
-      this.iconResourceSelected,
-      this.hint = '',
+      this.iconAsset,
+      this.selectedIconAsset,
+      this.hint,
       this.selected = false,
       required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    double scaleFactor = MediaQuery.of(context).textScaleFactor;
-    scaleFactor = scaleFactor > 2 ? 2 : scaleFactor;
-
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.translucent,
-      child: Stack(
-        children: <Widget>[
-          Center(
-            child: Semantics(
-                label: label,
-                hint: hint,
-                excludeSemantics: true,
-                child: Container(
-                  padding: EdgeInsets.only(top: 10),
-                  height: TabBarWidget.tabBarHeight,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                          padding: EdgeInsets.only(bottom: 5),
-                          child: Image(
-                              image: (selected
-                                  ? AssetImage(iconResourceSelected!)
-                                  : AssetImage(iconResource!)),
-                              width: 20.0,
-                              height: 20.0)),
-                      Expanded(child:
-                      Text(
-                        label!,
-                        textScaleFactor: scaleFactor,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.bold,
-                            color: selected ? Styles().colors!.fillColorSecondary : Styles().colors!.mediumGray,
-                            fontSize: TabBarWidget.tabTextSize),
-                      )
-                      )
-                    ],
-                  ),
-                )),
-          ),
-          selected ? Positioned.fill(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Container(height: 4, color: Styles().colors!.fillColorSecondary,)
-              ],
-            ),
-          ) : Container(),
+    return GestureDetector(onTap: onTap, behavior: HitTestBehavior.translucent, child:
+      Stack(children: <Widget>[
+        buildTab(context),
+        selected ? buildSelectedIndicator(context) : Container(),
         ],
       ),
     );
   }
+
+  // Tab
+
+  @protected
+  Widget buildTab(BuildContext context) => Center(child:
+    Semantics(label: label, hint: hint, excludeSemantics: true, child:
+      Padding(padding: tabPadding, child:
+        Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+          Padding(padding: tabIconPadding, child:
+            getTabIcon(context)
+          ),
+          Padding(padding: tabTextPadding, child:
+            getTabText(context)
+          ),
+        ],),
+      ),
+    ),
+  );
+
+  @protected
+  EdgeInsetsGeometry get tabPadding => EdgeInsets.only(top: 10);
+
+  @protected
+  EdgeInsetsGeometry get tabIconPadding => EdgeInsets.only(bottom: 4);
+
+  @protected
+  EdgeInsetsGeometry get tabTextPadding => EdgeInsets.all(0);
+
+  @protected
+  TextAlign get tabTextAlign => TextAlign.center;
+
+  @protected
+  TextStyle get tabTextStyle => TextStyle(fontFamily: Styles().fontFamilies!.bold, color: selected ? Styles().colors!.fillColorSecondary : Styles().colors!.mediumGray, fontSize: 12);
+
+  @protected
+  double getTextScaleFactor(BuildContext context) => min(MediaQuery.of(context).textScaleFactor, 2);
+
+  @protected
+  Widget getTabText(BuildContext context) => Row(children: [
+    Expanded(child:
+      Text(label ?? '', textScaleFactor: getTextScaleFactor(context), textAlign: tabTextAlign, style: tabTextStyle,),
+    )
+  ]);
+
+  @protected
+  Widget getTabIcon(BuildContext context)  {
+    String? asset = selected ? (selectedIconAsset ?? iconAsset) : iconAsset;
+    return (asset != null) ? Image.asset(asset, width: tabIconSize.width, height: tabIconSize.height) : Container(width: tabIconSize.width, height: tabIconSize.height);
+  }
+
+  @protected
+  Size get tabIconSize => Size(20, 20);
+
+  // Selected Indicator
+
+  @protected
+  Widget buildSelectedIndicator(BuildContext context) => Positioned.fill(child:
+    Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+      Container(height: selectedIndicatorHeight, color: selectedIndicatorColor)
+    ],),
+  );
+
+  @protected
+  double get selectedIndicatorHeight => 4;
+
+  @protected
+  Color? get selectedIndicatorColor => Styles().colors?.fillColorSecondary;
+
+}
+
+class TabCloseWidget extends StatelessWidget {
+  final String? label;
+  final String? hint;
+  final String iconAsset;
+  final GestureTapCallback onTap;
+
+  TabCloseWidget({
+    this.label,
+    this.hint,
+    required this.iconAsset,
+    required this.onTap
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(label: label, hint: hint, button: true, child:
+      GestureDetector(onTap: onTap, behavior: HitTestBehavior.translucent, child:
+        Center(child:
+          Image.asset(iconAsset, excludeFromSemantics: true,),
+        ),
+      )
+    );
+  }
+
 }

@@ -256,9 +256,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                 physics: NeverScrollableScrollPhysics(), //disable scrolling
                 children: panels,
               ),
-              bottomNavigationBar: TabBarWidget(tabController: _tabBarController),
-              backgroundColor: Styles().colors!.background,
-            ),
+            bottomNavigationBar: TabBarWidget(tabController: _tabBarController),
+            backgroundColor: Styles().colors!.background,
+          ),
         ),
         onWillPop: _onWillPop);
   }
