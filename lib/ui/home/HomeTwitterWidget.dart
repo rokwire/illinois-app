@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Twitter.dart';
@@ -37,7 +38,6 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   @override
   void initState() {
     super.initState();
-
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       FlexUI.notifyChanged,
@@ -46,25 +46,17 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
     if (widget.refreshController != null) {
       widget.refreshController!.stream.listen((_) {
-        Future.delayed(Duration.zero, ()
-        {
-          _refresh(noCache: true);
-        });
+        _refresh(noCache: true);
       });
     }
 
     _loadingPage = true;
     Twitter().loadTweetsPage(count: Config().twitterTweetsCount, userCategory: userCategory).then((TweetsPage? tweetsPage) {
-      Future.delayed(Duration.zero, ()
-      {
-        if (mounted) {
-          setState(() {
-            _loadingPage = false;
-            if (tweetsPage != null) {
-              _tweetsPages.add(tweetsPage);
-              _tweetsUserCategory = userCategory;
-            }
-          });
+      _setState(() {
+        _loadingPage = false;
+        if (tweetsPage != null) {
+          _tweetsPages.add(tweetsPage);
+          _tweetsUserCategory = userCategory;
         }
       });
     });
@@ -96,10 +88,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          Future.delayed(Duration.zero, ()
-          {
-            _refresh(/*count: Config().twitterTweetsCount*/);
-          });
+          _refresh(/*count: Config().twitterTweetsCount*/);
         }
       }
     }
@@ -107,10 +96,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
   void _onTwitterUserChanged() {
     if (_tweetsUserCategory != userCategory) {
-      Future.delayed(Duration.zero, ()
-      {
-        _refresh(count: Config().twitterTweetsCount);
-      });
+      _refresh(count: Config().twitterTweetsCount);
     }
   }
 
@@ -157,7 +143,12 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     for (TweetsPage tweetsPage in _tweetsPages) {
       if (tweetsPage.tweets != null) {
         for (Tweet? tweet in tweetsPage.tweets!) {
-          pages.add(_TweetWidget(tweet: tweet,));
+          bool isFirst = pages.isEmpty;
+          pages.add(_TweetWidget(
+            tweet: tweet,
+            onTapPrevious: isFirst? null : _onTapPrevious,
+            onTapNext: _onTapNext,
+          ));
         }
       }
     }
@@ -193,84 +184,82 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
   void _onPageChanged(int index) {
     if ((tweetsCount <= (index + 1)) && (_loadingPage != true)) {
-      // _needsSecondRefresh = false;
-      Future.delayed(Duration.zero, () {
-        setState(() {
-          _loadingPage = true;
-        });
+      _setStateDelayed(() {
+        _loadingPage = true;
       });
       TweetsPage? lastTweetsPage = (0 < _tweetsPages.length) ? _tweetsPages.last : null;
       Tweet? lastTweet = ((lastTweetsPage?.tweets != null) && (0 < lastTweetsPage!.tweets!.length)) ? lastTweetsPage.tweets!.last : null;
       Twitter().loadTweetsPage(count: Config().twitterTweetsCount, endTimeUtc: lastTweet?.createdAtUtc, userCategory: userCategory).then((TweetsPage? tweetsPage) {
-      Future.delayed(Duration.zero, ()
-      {
-        if (mounted) {
-          setState(() {
-            _loadingPage = false;
-            if (tweetsPage != null) {
-              _tweetsPages.add(tweetsPage);
-              _tweetsUserCategory = userCategory;
-            }
-          });
-        }
+        _setState(() {
+          _loadingPage = false;
+          if (tweetsPage != null) {
+            _tweetsPages.add(tweetsPage);
+            _tweetsUserCategory = userCategory;
+          }
+        });
       });
-      }).then((_){ //TBD this is workaround for ExpandablePageView getting stuck as last element and need to refresh
-        // if(_needsSecondRefresh = true){
-        //   _needsSecondRefresh = false;
-        //   _refresh(count: tweetsCount + 1);
-        // }
-
-      });
-    } else if(_loadingPage==true){
-      //TBD we stuck on page 3 and need to refresh
-      // _needsSecondRefresh = true;
     }
   }
 
   void _refresh({int? count, bool? noCache}) {
-    Future.delayed(Duration.zero, () {
-      setState(() {
-        _loadingPage = true;
-      });
+    _setState(() {
+      _loadingPage = true;
     });
     Twitter().loadTweetsPage(
         count: count ?? max(tweetsCount, Config().twitterTweetsCount!),
         noCache: noCache,
         userCategory: userCategory).then((TweetsPage? tweetsPage) {
-          Future.delayed(Duration.zero, ()
-          {
-            if (mounted) {
-              // Future.delayed(Duration.zero,(){
-              setState(() {
-                _loadingPage = false;
-                if (tweetsPage != null) {
-                  _tweetsPages = [tweetsPage];
-                  _tweetsUserCategory = userCategory;
-                }
-              });
+          _setState(() {
+            _loadingPage = false;
+            if (tweetsPage != null) {
+              _tweetsPages = [tweetsPage];
+              _tweetsUserCategory = userCategory;
             }
           });
-        Future.delayed((Duration.zero),(){
+        // Future.delayed((Duration.zero),(){
         if (tweetsPage != null) {
           _pageController!.animateToPage(
               0, duration: Duration(milliseconds: 500), curve: Curves.easeIn);
         }
-        }
-        );
+        // });
       });
+  }
+
+  void _onTapPrevious(){
+   _pageController?.previousPage(duration:  Duration(milliseconds: 500), curve: Curves.easeIn);
+  }
+
+  void _onTapNext(){
+    _pageController?.nextPage(duration:  Duration(milliseconds: 500), curve: Curves.easeIn);
   }
 
   String? get userCategory {
     List<dynamic>? twitterUserList = FlexUI()['home.twitter.user'];
     return ((twitterUserList != null) && twitterUserList.isNotEmpty) ? twitterUserList.first : null;
   }
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
+
+  void _setStateDelayed(VoidCallback fn, { Duration duration = Duration.zero }) {
+    Future.delayed(duration, () {
+      if (mounted) {
+        setState(fn);
+      }
+    });
+  }
 }
 
 class _TweetWidget extends StatelessWidget {
 
   final Tweet? tweet;
+  final void Function()? onTapNext;
+  final void Function()? onTapPrevious;
 
-  _TweetWidget({this.tweet});
+  _TweetWidget({this.tweet, this.onTapNext, this.onTapPrevious});
 
   @override
   Widget build(BuildContext context) {
@@ -313,6 +302,43 @@ class _TweetWidget extends StatelessWidget {
                 ),
                 Text(tweet?.displayTime ?? '', style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 14, ),),
               ],)
+            ),
+
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Visibility(
+                  visible: onTapPrevious!=null,
+                  child: GestureDetector(
+                    onTap: onTapPrevious?? (){},
+                    child: Container(
+                      padding: EdgeInsets.all(24),
+                      child: Text(
+                        "<",
+                        style: TextStyle(
+                          color : Styles().colors!.fillColorPrimary,
+                          fontFamily: Styles().fontFamilies!.bold,
+                          fontSize: 26,
+                        ),),)
+                  )
+                ),
+                Visibility(
+                    visible: onTapNext!=null,
+                    child: GestureDetector(
+                      onTap: onTapNext?? (){},
+                      child: Container(
+                        padding: EdgeInsets.all(24),
+                        child: Text(
+                          ">",
+                          style: TextStyle(
+                            color : Styles().colors!.fillColorPrimary,
+                            fontFamily: Styles().fontFamilies!.bold,
+                            fontSize: 26,
+                          ),),)
+                    )
+                )
+              ],
             )
           ])
       )
