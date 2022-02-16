@@ -128,6 +128,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyPromptPopup,
       DeviceCalendar.notifyCalendarSelectionPopup,
       DeviceCalendar.notifyShowConsoleMessage,
+      TabBarWidget.notifySelectionChanged,
     ]);
 
     _tabs = _getTabs();
@@ -235,6 +236,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
     }
+    else if (name == TabBarWidget.notifySelectionChanged) {
+      _onTabSelectionChanged(param);
+    }
+  }
+
+  void _onTabSelectionChanged(int tabIndex) {
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      RootTab? tab = getRootTabByIndex(tabIndex);
+      selectTab(rootTab: tab);
+    }
   }
 
   @override
@@ -256,9 +268,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                 physics: NeverScrollableScrollPhysics(), //disable scrolling
                 children: panels,
               ),
-              bottomNavigationBar: TabBarWidget(tabController: _tabBarController),
-              backgroundColor: Styles().colors!.background,
-            ),
+            bottomNavigationBar: TabBarWidget(tabController: _tabBarController),
+            backgroundColor: Styles().colors!.background,
+          ),
         ),
         onWillPop: _onWillPop);
   }
