@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Possibility for loading announcements for all Canvas courses [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 ### Fixed
 - Messages for events and assignments in Canvas Calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
-- ### Removed
+### Removed
 - Canvas Feedback [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 
 ## [3.2.20] - 2022-02-15
