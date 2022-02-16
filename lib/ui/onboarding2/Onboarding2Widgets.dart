@@ -236,7 +236,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
   void _openPrivacyPolicy(){
     Analytics().logSelect(target: "Privacy Policy");
     if (Config().privacyPolicyUrl != null) {
-      Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, hideToolBar:true, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
+      Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showToolBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
     }
   }
 }

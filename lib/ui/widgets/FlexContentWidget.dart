@@ -207,7 +207,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
     }
     else {
       String? panelTitle = ((options != null) ? JsonUtils.stringValue(options['title']) : null) ?? title;
-      Navigator.of(context).push(CupertinoPageRoute(builder: (context) => WebPanel(url: url, title: panelTitle, hideToolBar: !Storage().onBoardingPassed!, )));
+      Navigator.of(context).push(CupertinoPageRoute(builder: (context) => WebPanel(url: url, title: panelTitle, showToolBar: Storage().onBoardingPassed!, )));
     }
   }
 }

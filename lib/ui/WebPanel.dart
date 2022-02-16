@@ -37,9 +37,9 @@ class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPag
   final String? url;
   final String? analyticsName;
   final String? title;
-  final bool hideToolBar;
+  final bool showToolBar;
 
-  WebPanel({required this.url, this.analyticsName, this.title = "", this.hideToolBar = false});
+  WebPanel({required this.url, this.analyticsName, this.title = "", this.showToolBar = true});
 
   @override
   _WebPanelState createState() => _WebPanelState();
@@ -119,7 +119,7 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener {
       backgroundColor: Styles().colors!.background,
       body: Column(children: <Widget>[
         Expanded(child: contentWidget),
-        widget.hideToolBar ? Container() : TabBarWidget()
+        widget.showToolBar ? TabBarWidget() : Container()
       ],),);
   }
 
