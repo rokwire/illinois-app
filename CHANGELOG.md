@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - TweeterPage widget: add next/previous buttons [#1353](https://github.com/rokwire/illinois-app/issues/1353).
 - TabBar widget moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- WebPanel moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 
 ## [3.2.20] - 2022-02-15
 ### Added
