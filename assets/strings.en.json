@@ -1986,8 +1986,13 @@
     "panel.canvas_collaborations.empty.msg": "There are no collaborations for this course.",
 
     "panel.canvas_calendar.header.title": "Calendar",
-    "panel.canvas_calendar.load.failed.error.msg": "Failed to load events. Please, try again later.",
-    "panel.canvas_calendar.empty.msg": "There are no events today.",
+    "panel.canvas_calendar.all_courses.label": "All Courses",
+    "panel.canvas_calendar.events.load.failed.error.msg": "Failed to load events. Please, try again later.",
+    "panel.canvas_calendar.assignments.load.failed.error.msg": "Failed to load assignments. Please, try again later.",
+    "panel.canvas_calendar.all.load.failed.error.msg": "Failed to load events and assignments. Please, try again later.",
+    "panel.canvas_calendar.events.empty.msg": "There are no events today.",
+    "panel.canvas_calendar.assignments.empty.msg": "There are no assignments today.",
+    "panel.canvas_calendar.all.empty.msg": "There are no events and assignments today.",
 
     "panel.canvas_notifications.header.title": "Account Notifications",
     "panel.canvas_notifications.load.failed.error.msg": "Failed to load account notifications. Please, try again later.",
@@ -1999,7 +2004,6 @@
     "panel.canvas_calendar_event.calendar.label": "Calendar:",
     "panel.canvas_calendar_event.date_time.label": "Date & Time:",
     "panel.canvas_calendar_event.load.failed.error.msg": "Failed to load event. Please, try again later.",
-    "panel.canvas_calendar.all_courses.label": "All Courses",
 
     "panel.canvas_modules.header.title": "Modules",
     "panel.canvas_modules.load.failed.error.msg": "Failed to load modules. Please, try again later.",

@@ -128,19 +128,41 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
     return Center(
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
-            child: Text(
-                Localization()
-                    .getStringEx('panel.canvas_calendar.load.failed.error.msg', 'Failed to load events. Please, try again later.'),
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+            child: Text(_errorMessage,
+                textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
   Widget _buildEmptyContent() {
     return Center(
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
-            child: Text(Localization().getStringEx('panel.canvas_calendar.empty.msg', 'There are no events today.'),
+            child: Text(_emptyMessage,
                 textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+  }
+
+  String get _errorMessage {
+    switch (_selectedType) {
+      case CanvasCalendarEventType.event:
+        return Localization()
+            .getStringEx('panel.canvas_calendar.events.load.failed.error.msg', 'Failed to load events. Please, try again later.');
+      case CanvasCalendarEventType.assignment:
+        return Localization()
+            .getStringEx('panel.canvas_calendar.assignments.load.failed.error.msg', 'Failed to load assignments. Please, try again later.');
+      default:
+        return Localization().getStringEx(
+            'panel.canvas_calendar.all.load.failed.error.msg', 'Failed to load events and assignments. Please, try again later.');
+    }
+  }
+
+  String get _emptyMessage {
+    switch (_selectedType) {
+      case CanvasCalendarEventType.event:
+        return Localization().getStringEx('panel.canvas_calendar.events.empty.msg', 'There are no events today.');
+      case CanvasCalendarEventType.assignment:
+        return Localization().getStringEx('panel.canvas_calendar.assignments.empty.msg', 'There are no assignments today.');
+      default:
+        return Localization().getStringEx('panel.canvas_calendar.all.empty.msg', 'There are no events and assignments today.');
+    }
   }
 
   Widget _buildEventsContent() {

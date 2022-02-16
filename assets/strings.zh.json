@@ -1952,8 +1952,13 @@
     "panel.canvas_collaborations.empty.msg": "本課程沒有合作.",
 
     "panel.canvas_calendar.header.title": "日曆",
-    "panel.canvas_calendar.load.failed.error.msg": "未能加載事件. 請稍後再試.",
-    "panel.canvas_calendar.empty.msg": "今天沒有活動.",
+    "panel.canvas_calendar.all_courses.label": "所有課程",
+    "panel.canvas_calendar.events.load.failed.error.msg": "未能加載事件. 請稍後再試.",
+    "panel.canvas_calendar.assignments.load.failed.error.msg": "未能加載分配. 請稍後再試.",
+    "panel.canvas_calendar.all.load.failed.error.msg": "未能加載事件和分配. 請稍後再試.",
+    "panel.canvas_calendar.events.empty.msg": "今天沒有活動.",
+    "panel.canvas_calendar.assignments.empty.msg": "今天沒有作業.",
+    "panel.canvas_calendar.all.empty.msg": "今天沒有活動和任務.",
 
     "panel.canvas_notifications.header.title": "帳戶通知",
     "panel.canvas_notifications.load.failed.error.msg": "未能加載帳戶通知. 請稍後再試.",
@@ -1965,7 +1970,6 @@
     "panel.canvas_calendar_event.calendar.label": "日曆:",
     "panel.canvas_calendar_event.date_time.label": "約會時間:",
     "panel.canvas_calendar_event.load.failed.error.msg": "未能加載事件. 請稍後再試.",
-    "panel.canvas_calendar.all_courses.label": "所有課程",
 
     "panel.canvas_modules.header.title": "模塊",
     "panel.canvas_modules.load.failed.error.msg": "無法加載模塊. 請稍後再試.",
