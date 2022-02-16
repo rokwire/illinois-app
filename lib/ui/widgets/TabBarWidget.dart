@@ -22,13 +22,13 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/main.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class TabBarWidget extends StatefulWidget {
+
+  static const String notifySelectionChanged = "edu.illinois.rokwire.tabbar_widget.selection.changed";
 
   final TabController? tabController;
   final bool? walletExpanded;
@@ -105,7 +105,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
             iconAsset: 'images/tab-home.png',
             selectedIconAsset: 'images/tab-home-selected.png',
             selected: (widget.tabController?.index == tabIndex),
-            onTap: ()=>_onSwitchTab(tabIndex, 'Home'),
+            onTap: (TabWidget tabWidget) => _onSwitchTab(tabIndex, tabWidget),
           ),
         ));
       }
@@ -117,7 +117,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
             iconAsset: 'images/tab-explore.png',
             selectedIconAsset: 'images/tab-explore-selected.png',
             selected: (widget.tabController?.index == tabIndex),
-            onTap: ()=>_onSwitchTab(tabIndex, 'Explore'),
+            onTap: (TabWidget tabWidget) => _onSwitchTab(tabIndex, tabWidget),
           )
         ));
       }
@@ -129,7 +129,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
               hint: Localization().getStringEx('tabbar.wallet.hint', ''),
               iconAsset: 'images/tab-wallet.png',
               selected: false,
-              onTap: () => _onShowWalletSheet('Wallet'),
+              onTap: (TabWidget tabWidget) => _onShowWalletSheet(tabWidget),
             )
           ));
         }
@@ -139,7 +139,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
               label: Localization().getStringEx('panel.wallet.button.close.title', 'close'),
               hint: Localization().getStringEx('panel.wallet.button.close.hint', ''),
               iconAsset: 'images/icon-close-big.png',
-              onTap: _onClose,
+              onTap: _onCloseWalletSheet,
             )
           ));
         }
@@ -152,7 +152,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
             iconAsset: 'images/tab-browse.png',
             selectedIconAsset: 'images/tab-browse-selected.png',
             selected: (widget.tabController?.index == tabIndex),
-            onTap: ()=>_onSwitchTab(tabIndex, 'Browse'),
+            onTap: (TabWidget tabWidget) => _onSwitchTab(tabIndex, tabWidget),
           ),
         ));
       }
@@ -160,26 +160,17 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
     return tabs;
   }
 
-  void _onClose() {
-    Analytics().logSelect(target: 'Close');
-    Navigator.pop(context);
-  }
-
   void _onTabControllerChanged(){
     setState(() {});
   }
 
-  void _onSwitchTab(int tabIndex, String tabName){
-    Analytics().logSelect(target: tabName);
-
-    Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-    RootPanel? rootPanel = App.instance?.panelState?.rootPanel;
-    RootTab? tab = rootPanel?.panelState?.getRootTabByIndex(tabIndex);
-    rootPanel?.selectTab(rootTab: tab);
+  void _onSwitchTab(int tabIndex, TabWidget tabWidget) {
+    Analytics().logSelect(target: tabWidget.label);
+    NotificationService().notify(TabBarWidget.notifySelectionChanged, tabIndex);
   }
 
-  void _onShowWalletSheet(String tabName){
-    Analytics().logSelect(target: tabName);
+  void _onShowWalletSheet(TabWidget tabWidget) {
+    Analytics().logSelect(target: tabWidget.label);
     showModalBottomSheet(context: context,
         isScrollControlled: true,
         isDismissible: true,
@@ -190,6 +181,11 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
           return WalletSheet();
         }
     );
+  }
+
+  void _onCloseWalletSheet(TabCloseWidget tabCloseWidget) {
+    Analytics().logSelect(target: tabCloseWidget.label);
+    Navigator.pop(context);
   }
 
   List<String>? _getContentListCodes() {
@@ -221,7 +217,7 @@ class TabWidget extends StatelessWidget {
   final String? iconAsset;
   final String? selectedIconAsset;
   final bool selected;
-  final GestureTapCallback onTap;
+  final void Function(TabWidget tabWidget) onTap;
 
   TabWidget(
       {this.label,
@@ -233,7 +229,7 @@ class TabWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: onTap, behavior: HitTestBehavior.translucent, child:
+    return GestureDetector(onTap: () => onTap(this), behavior: HitTestBehavior.translucent, child:
       Stack(children: <Widget>[
         buildTab(context),
         selected ? buildSelectedIndicator(context) : Container(),
@@ -315,7 +311,7 @@ class TabCloseWidget extends StatelessWidget {
   final String? label;
   final String? hint;
   final String iconAsset;
-  final GestureTapCallback onTap;
+  final void Function(TabCloseWidget tabWidget) onTap;
 
   TabCloseWidget({
     this.label,
@@ -327,7 +323,7 @@ class TabCloseWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(label: label, hint: hint, button: true, child:
-      GestureDetector(onTap: onTap, behavior: HitTestBehavior.translucent, child:
+      GestureDetector(onTap: () => onTap(this), behavior: HitTestBehavior.translucent, child:
         Center(child:
           Image.asset(iconAsset, excludeFromSemantics: true,),
         ),
