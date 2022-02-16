@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.2.20] - 2022-02-15
 ### Added
 - Header bars moved to Rokwire plugin UI section [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 - Ribbon buttons moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
@@ -13,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ### Removed
 - Canvas Course completion / result percentage [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 - Canvas 'Grades' [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Changed
+- Remove Scroll from twitter page and workaround setState exception [#1353](https://github.com/rokwire/illinois-app/issues/1353).
 
 ## [3.2.19] - 2022-02-14
 ### Added
