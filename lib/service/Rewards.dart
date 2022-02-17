@@ -63,6 +63,7 @@ class Rewards with Service {
       return (json != null) ? JsonUtils.intValue(json['amount']) : null;
     } else {
       Log.w('Failed to load user rewards balance. Response:\n$responseCode: $responseString');
+      return null;
     }
   }
 
@@ -76,7 +77,7 @@ class Rewards with Service {
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      List<RewardHistoryEntry>? entries = RewardHistoryEntry.listFromJson(JsonUtils.listValue(responseString));
+      List<RewardHistoryEntry>? entries = RewardHistoryEntry.listFromJson(JsonUtils.decodeList(responseString));
       return entries;
     } else {
       Log.w('Failed to load user rewards history. Response:\n$responseCode: $responseString');

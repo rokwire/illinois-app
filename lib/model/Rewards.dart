@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class RewardHistoryEntry {
   final String? id;
   final int? amount;
-  final String? name;
-  final String? poolId;
+  final String? description;
+  final String? displayName;
   final String? type;
   final String? userId;
   final DateTime? dateCreated;
   final DateTime? dateUpdated;
 
-  RewardHistoryEntry({this.id, this.amount, this.name, this.poolId, this.type, this.userId, this.dateCreated, this.dateUpdated});
+  RewardHistoryEntry({this.id, this.amount, this.description, this.displayName, this.type, this.userId, this.dateCreated, 
+    this.dateUpdated});
 
   static RewardHistoryEntry? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -35,12 +37,24 @@ class RewardHistoryEntry {
     return RewardHistoryEntry(
         id: JsonUtils.stringValue(json['id']),
         amount: JsonUtils.intValue(json['amount']),
-        name: JsonUtils.stringValue(json['name']),
-        poolId: JsonUtils.stringValue(json['pool_id']),
-        type: JsonUtils.stringValue(json['type']),
+        description: JsonUtils.stringValue(json['description']),
+        displayName: JsonUtils.stringValue(json['display_name']),
+        type: JsonUtils.stringValue(json['reward_type']),
         userId: JsonUtils.stringValue(json['user_id']),
         dateCreated: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_created']), isUtc: true),
         dateUpdated: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_updated']), isUtc: true));
+  }
+
+  DateTime? get dateCreatedLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(dateCreated);
+  }
+
+  String? get displayDate {
+    return AppDateTime().formatDateTime(dateCreatedLocal, format: 'MM-dd-yy');
+  }
+
+  String? get displayDescription {
+    return StringUtils.isNotEmpty(description) ? description : displayName;
   }
 
   static List<RewardHistoryEntry>? listFromJson(List<dynamic>? jsonList) {
