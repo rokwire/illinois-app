@@ -59,7 +59,7 @@ class Rewards with Service {
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      Map<String, dynamic>? json = JsonUtils.mapValue(responseString);
+      Map<String, dynamic>? json = JsonUtils.decodeMap(responseString);
       return (json != null) ? JsonUtils.intValue(json['amount']) : null;
     } else {
       Log.w('Failed to load user rewards balance. Response:\n$responseCode: $responseString');
