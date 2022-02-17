@@ -2196,6 +2196,9 @@
     "widget.home.interest_selection.description": "See events based on topics you chose",
     "widget.home.interest_selection.button.see_all": "See all",
 
+    "widget.flex_content.button.close.label": "Close",
+    "widget.flex_content.button.close.hint": "",
+
     "widget.home_canvas_courses.header.label": "Courses",
 
     "widget.add_image.heading": "Select Image",
