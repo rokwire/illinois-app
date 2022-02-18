@@ -61,7 +61,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   Widget build(BuildContext context) {
     return SectionTitlePrimary(
       title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
-      iconPath: 'images/campus-tools.png',
+      titleIconAsset: 'images/campus-tools.png',
       children: _buildCommandsList(),);
   }
 

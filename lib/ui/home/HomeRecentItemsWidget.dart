@@ -136,7 +136,7 @@ class _RecentItemsList extends StatelessWidget{
         SectionTitlePrimary(
             title:heading,
             subTitle: subTitle,
-            iconPath: headingIconRes,
+            titleIconAsset: headingIconRes,
             children: _buildListItems(context)
         ),
         !showMoreButton?Container():

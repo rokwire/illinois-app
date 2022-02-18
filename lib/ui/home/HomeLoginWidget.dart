@@ -53,7 +53,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
 
       return SectionTitlePrimary(
         title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
-        iconPath: 'images/icon-member.png',
+        titleIconAsset: 'images/icon-member.png',
         children: content,);
     }
     else {

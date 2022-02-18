@@ -85,7 +85,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
       Column(children: [
           SectionTitlePrimary(
             title: Localization().getStringEx('widget.home_campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
-            iconPath: 'images/campus-tools.png',
+            titleIconAsset: 'images/campus-tools.png',
             children: _buildPromotedList()
           ),
         ]),

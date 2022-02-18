@@ -813,8 +813,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Column(children: <Widget>[
         SectionTitlePrimary(
             title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') + ' ($_allEventsCount)',
-            iconPath: 'images/icon-calendar.png',
-            rightIconPath: _canAddEvent ? "images/icon-add-20x18.png" : null,
+            titleIconAsset: 'images/icon-calendar.png',
+            rightIconAsset: _canAddEvent ? "images/icon-add-20x18.png" : null,
             rightIconAction: _canAddEvent ? _onTapEventOptions : null,
             rightIconLabel: _canAddEvent ? Localization().getStringEx("panel.group_detail.button.create_event.title", "Create Event") : null,
             children: content)
@@ -831,16 +831,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildPosts() {
     List<Widget> postsContent = [];
 
-    EdgeInsetsGeometry? listPadding;
-
     if (CollectionUtils.isEmpty(_visibleGroupPosts)) {
       if (_isMemberOrAdmin) {
         Column(children: <Widget>[
           SectionTitlePrimary(
               title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
-              iconPath: 'images/icon-calendar.png',
-              listPadding: listPadding,
-              rightIconPath: _canCreatePost ? "images/icon-add-20x18.png" : null,
+              titleIconAsset: 'images/icon-calendar.png',
+              rightIconAsset: _canCreatePost ? "images/icon-add-20x18.png" : null,
               rightIconAction: _canCreatePost ? _onTapCreatePost : null,
               rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
               children: postsContent)
@@ -860,7 +857,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _visibleGroupPosts.length)) {
       String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
-      listPadding = EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 16);
       postsContent.add(Container(padding: EdgeInsets.only(top: 16),
         child: Semantics(label: title, button: true, excludeSemantics: true,
           child: InkWell(onTap: _loadNextPostsPage,
@@ -879,9 +875,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return Column(children: <Widget>[
       SectionTitlePrimary(
           title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
-          iconPath: 'images/icon-calendar.png',
-          listPadding: listPadding,
-          rightIconPath: _canCreatePost ? "images/icon-add-20x18.png" : null,
+          titleIconAsset: 'images/icon-calendar.png',
+          rightIconAsset: _canCreatePost ? "images/icon-add-20x18.png" : null,
           rightIconAction: _canCreatePost ? _onTapCreatePost : null,
           rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
           children: postsContent)
@@ -920,8 +915,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Column(children: <Widget>[
         SectionTitlePrimary(
             title: Localization().getStringEx('panel.group_detail.label.polls', 'Polls'),
-            iconPath: 'images/icon-calendar.png',
-            rightIconPath: _canCreatePoll? 'images/icon-add-20x18.png' : null,
+            titleIconAsset: 'images/icon-calendar.png',
+            rightIconAsset: _canCreatePoll? 'images/icon-add-20x18.png' : null,
             rightIconAction: _canCreatePoll? _onTapCreatePoll : null,
             rightIconLabel: _canCreatePoll? Localization().getStringEx('panel.group_detail.button.create_poll.title', 'Create Poll') : null,//TBD Localization
             children: pollsContentList)

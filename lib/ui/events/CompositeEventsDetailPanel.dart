@@ -640,10 +640,9 @@ class _EventsListState extends State<_EventsList>{
         : "panel.explore_detail.recurring_event.schedule.heading.title";
     return SectionTitlePrimary(
         title: Localization().getStringEx(titleKey, "Event Schedule"),
-        subTitle: "",
-        slantImageRes: "images/slant-down-right-grey.png",
+        slantImageAsset: "images/slant-down-right-grey.png",
         slantColor: Styles().colors!.backgroundVariant,
-        textColor: Styles().colors!.fillColorPrimary,
+        titleTextColor: Styles().colors!.fillColorPrimary,
         children: _buildListItems()
     );
   }

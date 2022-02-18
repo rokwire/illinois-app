@@ -206,7 +206,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       }
 
       return SectionTitlePrimary(title: Localization().getStringEx("panel.manage_members.label.requests", "Requests"),
-        iconPath: 'images/icon-reminder.png',
+        titleIconAsset: 'images/icon-reminder.png',
         children: <Widget>[
           Column(
             children: requests,

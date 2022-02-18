@@ -151,8 +151,8 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
     return Column(
       children: <Widget>[
         SectionTitlePrimary(title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
-          iconPath: 'images/campus-tools.png',
-          listPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+          titleIconAsset: 'images/campus-tools.png',
+          childrenPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           children: rows,),
         Container(height: 48,),
       ],

@@ -99,7 +99,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
       Column(children: [
           SectionTitlePrimary(
             title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
-            iconPath: 'images/campus-tools.png',
+            titleIconAsset: 'images/campus-tools.png',
             children: _buildRemindersList()
           ),
         ]),

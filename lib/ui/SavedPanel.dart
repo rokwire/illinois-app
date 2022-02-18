@@ -603,8 +603,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       children: <Widget>[
         SectionTitlePrimary(
             title: widget.heading,
-            iconPath: widget.headingIconRes,
-            slantImageRes: widget.slantImageRes,
+            titleIconAsset: widget.headingIconRes,
+            slantImageAsset: widget.slantImageRes,
             slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
             children: _buildListItems(context)),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
