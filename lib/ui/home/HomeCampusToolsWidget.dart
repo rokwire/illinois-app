@@ -31,7 +31,7 @@ import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
-import 'package:illinois/ui/widgets/LinkTileButton.dart';
+import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -114,8 +114,8 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
     }
 
     return (countPerRow == 1) ?
-      LinkTileWideButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap) :
-      LinkTileSmallButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap);
+      WideTileButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap) :
+      SmallTileButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap);
   }
 
   @override
