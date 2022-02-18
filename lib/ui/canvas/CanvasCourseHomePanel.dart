@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/canvas/CanvasAccountNotificationsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseAssignmentsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseModulesPanel.dart';
@@ -38,6 +39,8 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CanvasCourseHomePanel extends StatefulWidget {
   final int? courseId;
@@ -166,7 +169,8 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.zoom.title', 'Zoom Meeting'),
           hint: Localization().getStringEx('panel.home_canvas_course.button.zoom.hint', ''),
-          leftIconAsset: 'images/icon-settings.png'),
+          leftIconAsset: 'images/icon-canvas-implemented-working.png',
+          onTap: _onTapZoomMeeting),
       _buildDelimiter(),
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.group.title', 'Group'),
@@ -236,6 +240,14 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   void _onTapGroup() {
     Analytics().logSelect(target: 'Canvas Course -> Group');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+  }
+
+  void _onTapZoomMeeting() {
+    Analytics().logSelect(target: 'Canvas Course -> Zoom Meeting');
+    String? zoomUrl = Config().canvasZoomMeetingUrl;
+    if (StringUtils.isNotEmpty(zoomUrl)) {
+      launch(zoomUrl!);
+    }
   }
 
   /* Hide Feedback for now

@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - SectionTitlePrimary and LinkTileButtons moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 - FlexContentWidget moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- Redirect user to external web page when Canvas "Zoom Meeting" is tapped [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Possibility for loading collaborations, modules and assignments for all Canvas courses [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Canvas user info in the Debug panel [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 
 ## [3.2.22] - 2022-02-17
 ### Added

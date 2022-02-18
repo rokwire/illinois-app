@@ -78,7 +78,11 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = _masquerade('${Config().canvasUrl}/api/v1/courses');
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/courses');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -99,12 +103,16 @@ class Canvas with Service implements NotificationsListener{
       Log.d('Failed to load canvas course - missing course id.');
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId';
+    String? url = '${Config().canvasUrl}/api/v1/courses/$courseId';
     String? includeValue = _includeInfoToString(includeInfo);
     if (includeValue != null) {
       url += '?include[]=$includeValue';
     }
     url = _masquerade(url);
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -123,7 +131,11 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/discussion_topics?only_announcements=true');
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/discussion_topics?only_announcements=true');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -188,7 +200,11 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/folders/by_path');
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/folders/by_path');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -205,7 +221,11 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = _masquerade('${Config().canvasUrl}/api/v1/folders/$folderId/folders');
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/folders/$folderId/folders');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -222,7 +242,11 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = _masquerade('${Config().canvasUrl}/api/v1/folders/$folderId/files');
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/folders/$folderId/files');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -241,7 +265,11 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/collaborations');
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/collaborations');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -260,7 +288,7 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/calendar_events?context_codes[]=course_$courseId&per_page=50';
+    String? url = '${Config().canvasUrl}/api/v1/calendar_events?context_codes[]=course_$courseId&per_page=50';
     if (startDate != null) {
       DateTime startDateUtc = startDate.toUtc();
       String? formattedDate = DateTimeUtils.utcDateTimeToString(startDateUtc);
@@ -280,6 +308,10 @@ class Canvas with Service implements NotificationsListener{
       url += '&type=$typeKeyString';
     }
     url = _masquerade(url);
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -296,7 +328,11 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = _masquerade('${Config().canvasUrl}/api/v1/calendar_events/$eventId');
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/calendar_events/$eventId');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -315,7 +351,11 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = _masquerade('${Config().canvasUrl}/api/v1/accounts/2/users/self/account_notifications');
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/accounts/2/users/self/account_notifications');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -334,7 +374,11 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/modules');
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/modules');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -361,7 +405,11 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/modules/$moduleId/items');
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/modules/$moduleId/items');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -400,7 +448,11 @@ class Canvas with Service implements NotificationsListener{
     }
     report.email = Auth2().email;
     String? errorBody = JsonUtils.encode(report.toJson());
-    String url = _masquerade('${Config().canvasUrl}/api/v1/error_reports');
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/error_reports');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return false;
+    }
     http.Response? response = await Network().post(url, headers: _authHeaders, body: errorBody);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -419,7 +471,11 @@ class Canvas with Service implements NotificationsListener{
     if (!_available) {
       return null;
     }
-    String url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/assignment_groups?include[]=assignments');
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/assignment_groups?include[]=assignments');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
     http.Response? response = await Network().get(url, headers: _authHeaders);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -428,6 +484,28 @@ class Canvas with Service implements NotificationsListener{
       return assignmentGroups;
     } else {
       Log.w('Failed to load canvas assignment groups. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  // Canvas Self User
+
+  Future<Map<String, dynamic>?> loadSelfUser() async {
+    if (!_available) {
+      return null;
+    }
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/users/self');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return JsonUtils.decodeMap(responseString);
+    } else {
+      Log.w('Failed to load canvas self user. Response:\n$responseCode: $responseString');
       return null;
     }
   }
@@ -502,13 +580,17 @@ class Canvas with Service implements NotificationsListener{
         StringUtils.isNotEmpty(Auth2().netId);
   }
 
-  String _masquerade(String url) {
+  ///
+  /// Do not return a value if the user is not able to masquerade with Net id
+  /// returns masqueraded url if succeeded, null - otherwise
+  ///
+  String? _masquerade(String url) {
     if (StringUtils.isEmpty(url)) {
-      return url;
+      return null;
     }
     String? userNetId = Auth2().netId;
     if (StringUtils.isEmpty(userNetId)) {
-      return url;
+      return null;
     }
     String querySymbol = url.contains('?') ? '&' : '?';
     return '$url${querySymbol}as_user_id=sis_user_id:$userNetId';
