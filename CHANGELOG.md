@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - FlexContentWidget moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- Redirect user to external web page when Canvas "Zoom Meeting" is tapped [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 
 ## [3.2.22] - 2022-02-17
 ### Added
