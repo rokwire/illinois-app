@@ -54,7 +54,7 @@ class LinkTileWideButton extends StatelessWidget {
 
     this.hint,
     this.margin = const EdgeInsets.all(2),
-    this.padding = const EdgeInsets.symmetric(vertical:16),
+    this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical:16),
     this.onTap
   });
 
@@ -74,10 +74,10 @@ class LinkTileWideButton extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
     if (title != null) {
-      contentList.add(Text(title!, textAlign: TextAlign.center, style: _titleTextStyle));
+      contentList.add(Expanded(child: Text(title!, textAlign: TextAlign.center, style: _titleTextStyle)));
     } 
     if (iconAsset != null) {
-      contentList.add(Image.asset(iconAsset!));
+      contentList.add(Expanded(child: Column(mainAxisSize: MainAxisSize.min, children: [Image.asset(iconAsset!)]))); // Image.asset(iconAsset!)
     }
 
     return GestureDetector(onTap: onTap, child:
@@ -112,7 +112,7 @@ class LinkTileSmallButton extends StatelessWidget {
   final String? hint;
   final EdgeInsetsGeometry margin;
   final EdgeInsetsGeometry padding;
-  final double verticalSpacing;
+  final double contentSpacing;
   final GestureTapCallback? onTap;
 
   LinkTileSmallButton({
@@ -133,7 +133,7 @@ class LinkTileSmallButton extends StatelessWidget {
     this.hint,
     this.margin = const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-    this.verticalSpacing = 26,
+    this.contentSpacing = 26,
     this.onTap, 
   });
 
@@ -144,7 +144,7 @@ class LinkTileSmallButton extends StatelessWidget {
       contentList.add(Image.asset(iconAsset!));
     }
     if ((title != null) && (iconAsset != null)) {
-      contentList.add(Container(height: verticalSpacing));
+      contentList.add(Container(height: contentSpacing));
     } 
     if (title != null) {
       contentList.add(Text(title!, textAlign: TextAlign.center, style: _titleTextStyle));
