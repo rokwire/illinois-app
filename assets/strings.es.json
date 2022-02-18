@@ -2022,7 +2022,8 @@
 
     "panel.canvas_modules.header.title": "Módulos",
     "panel.canvas_modules.load.failed.error.msg": "No se pudieron cargar los módulos. Por favor, inténtelo de nuevo más tarde.",
-    "panel.canvas_modules.empty.msg": "No hay módulos para este curso.",
+    "panel.canvas_modules.empty.msg": "No hay módulos.",
+    "panel.canvas_modules.all_courses.label": "Todos los cursos",
 
     "panel.canvas_module_detail.load.failed.error.msg": "No se pudieron cargar los elementos del módulo. Por favor, inténtelo de nuevo más tarde.",
     "panel.canvas_module_detail.empty.msg": "No hay elementos del módulo.",

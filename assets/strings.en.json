@@ -2028,7 +2028,8 @@
 
     "panel.canvas_modules.header.title": "Modules",
     "panel.canvas_modules.load.failed.error.msg": "Failed to load modules. Please, try again later.",
-    "panel.canvas_modules.empty.msg": "There are no modules for this course.",
+    "panel.canvas_modules.empty.msg": "There are no modules.",
+    "panel.canvas_modules.all_courses.label": "All Courses",
 
     "panel.canvas_module_detail.load.failed.error.msg": "Failed to load module items. Please, try again later.",
     "panel.canvas_module_detail.empty.msg": "There are no module items.",

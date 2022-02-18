@@ -2020,7 +2020,8 @@
 
     "panel.canvas_modules.header.title": "模塊",
     "panel.canvas_modules.load.failed.error.msg": "無法加載模塊. 請稍後再試.",
-    "panel.canvas_modules.empty.msg": "本課程沒有模塊.",
+    "panel.canvas_modules.empty.msg": "沒有模塊.",
+    "panel.canvas_modules.all_courses.label": "所有課程",
 
     "panel.canvas_module_detail.load.failed.error.msg": "無法加載模塊項目. 請稍後再試.",
     "panel.canvas_module_detail.empty.msg": "沒有模塊項目.",

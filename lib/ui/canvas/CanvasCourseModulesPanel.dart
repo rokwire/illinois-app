@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
@@ -35,12 +37,17 @@ class CanvasCourseModulesPanel extends StatefulWidget {
 }
 
 class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
-  List<CanvasModule>? _modules;
+  Map<int, List<CanvasModule>?>? _courseModulesMap;
+  List<CanvasCourse>? _courses;
+  int? _selectedCourseId;
+  int _modulesCount = 0;
   int _loadingProgress = 0;
 
   @override
   void initState() {
     super.initState();
+    _selectedCourseId = widget.courseId;
+    _loadCourses();
     _loadModules();
   }
 
@@ -57,18 +64,23 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
   }
 
   Widget _buildContent() {
+    late Widget contentWidget;
     if (_isLoading) {
-      return _buildLoadingContent();
-    }
-    if (_modules != null) {
-      if (_modules!.isNotEmpty) {
-        return _buildModulesContent();
-      } else {
-        return _buildEmptyContent();
-      }
+      contentWidget = _buildLoadingContent();
     } else {
-      return _buildErrorContent();
+      if (_courseModulesMap != null) {
+        if (_hasModules) {
+          contentWidget = _buildModulesContent();
+        } else {
+          contentWidget = _buildEmptyContent();
+        }
+      } else {
+        contentWidget = _buildErrorContent();
+      }
     }
+
+    return Column(
+        children: [Padding(padding: EdgeInsets.all(16), child: _buildCourseDropDownWidget()), Expanded(child: contentWidget)]);
   }
 
   Widget _buildLoadingContent() {
@@ -90,18 +102,28 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
     return Center(
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
-            child: Text(Localization().getStringEx('panel.canvas_modules.empty.msg', 'There are no modules for this course.'),
+            child: Text(Localization().getStringEx('panel.canvas_modules.empty.msg', 'There are no modules.'),
                 textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
   Widget _buildModulesContent() {
-    if (CollectionUtils.isEmpty(_modules)) {
+    if (CollectionUtils.isEmpty(_courseModulesMap?.values)) {
       return Container();
     }
 
     List<Widget> moduleWidgetList = [];
-    for (CanvasModule module in _modules!) {
-      moduleWidgetList.add(_buildModuleItem(module));
+    bool showCourseLabel = (_selectedCourseId == null);
+    for (int courseId in _courseModulesMap!.keys) {
+      CanvasCourse? course = _getCurrentCourse(courseId: courseId);
+      if (course != null) {
+        if (showCourseLabel) {
+          moduleWidgetList.add(_buildCourseLabelWidget(course.name));
+        }
+        List<CanvasModule>? modules = _courseModulesMap![course.id];
+        for (CanvasModule module in modules!) {
+          moduleWidgetList.add(_buildModuleItem(module));
+        }
+      }
     }
 
     return SingleChildScrollView(
@@ -109,6 +131,20 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
         child: Padding(
             padding: EdgeInsets.only(left: 16, top: 16, right: 16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: moduleWidgetList)));
+  }
+  
+  Widget _buildCourseLabelWidget(String? label) {
+    return Padding(
+        padding: EdgeInsets.only(bottom: 16, top: 10),
+        child: Container(
+            padding: EdgeInsets.all(10),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Expanded(
+                    child: Text(StringUtils.ensureNotEmpty(label),
+                        style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)))
+              ])
+            ])));
   }
 
   Widget _buildModuleItem(CanvasModule module) {
@@ -136,10 +172,110 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasModuleDetailPanel(courseId: widget.courseId, module: module)));
   }
 
+  Widget _buildCourseDropDownWidget() {
+    double height = MediaQuery.of(context).textScaleFactor * 62;
+    return Container(
+        height: height,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+        child: Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                    style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+                    items: _buildCourseDropDownItems,
+                    value: _selectedCourseId,
+                    itemHeight: null,
+                    isExpanded: true,
+                    onChanged: (courseId) => _onCourseIdChanged(courseId)))));
+  }
+
+  List<DropdownMenuItem<int>>? get _buildCourseDropDownItems {
+    if(CollectionUtils.isEmpty(_courses)) {
+      return null;
+    }
+    List<DropdownMenuItem<int>> items = [];
+    CanvasCourse? currentCourse = _getCurrentCourse(courseId: widget.courseId);
+    Color textColor = Styles().colors!.textSurfaceAccent!;
+    double textFontSize = 16;
+    if (currentCourse != null) {
+      items.add(DropdownMenuItem(
+          value: currentCourse.id,
+          child: Text(StringUtils.ensureNotEmpty(currentCourse.name),
+              style: TextStyle(
+                  color: textColor,
+                  fontSize: textFontSize,
+                  fontFamily: ((_selectedCourseId == currentCourse.id) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
+    }
+    items.add(DropdownMenuItem(
+        value: null,
+        child: Text(Localization().getStringEx('panel.canvas_modules.all_courses.label', 'All Courses'),
+            style: TextStyle(
+                color: textColor,
+                fontSize: textFontSize,
+                fontFamily: ((_selectedCourseId == null) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
+    return items;
+  }
+
+  CanvasCourse? _getCurrentCourse({int? courseId}) {
+    CanvasCourse? selectedCourse;
+    if (CollectionUtils.isNotEmpty(_courses)) {
+      for (CanvasCourse course in _courses!) {
+        if (course.id == courseId) {
+          selectedCourse = course;
+          break;
+        }
+      }
+    }
+    return selectedCourse;
+  }
+
+  void _onCourseIdChanged(dynamic courseId) {
+    if (_selectedCourseId != courseId) {
+      _selectedCourseId = courseId;
+      _loadModules();
+    }
+  }
+
   void _loadModules() {
+    if (_courseModulesMap != null) {
+      _courseModulesMap = null;
+    }
+    if (_selectedCourseId != null) {
+      _loadModulesForSingleCourse(_selectedCourseId!);
+    } else {
+      _loadModulesForAllCourses();
+    }
+  }
+
+  void _loadModulesForSingleCourse(int courseId) {
     _increaseProgress();
-    Canvas().loadModules(widget.courseId).then((modules) {
-      _modules = modules;
+    Canvas().loadModules(courseId).then((modules) {
+      if (modules != null) {
+        if (_courseModulesMap == null) {
+          _courseModulesMap = HashMap();
+        }
+        _courseModulesMap![courseId] = modules;
+        _modulesCount += modules.length;
+      }
+      _decreaseProgress();
+    });
+  }
+
+  void _loadModulesForAllCourses() {
+    if (CollectionUtils.isNotEmpty(_courses)) {
+      for (CanvasCourse course in _courses!) {
+        _loadModulesForSingleCourse(course.id!);
+      }
+    }
+  }
+
+  void _loadCourses() {
+    _increaseProgress();
+    Canvas().loadCourses().then((courses) {
+      _courses = courses;
       _decreaseProgress();
     });
   }
@@ -160,5 +296,9 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
 
   bool get _isLoading {
     return (_loadingProgress > 0);
+  }
+
+  bool get _hasModules {
+    return (_modulesCount > 0);
   }
 }
