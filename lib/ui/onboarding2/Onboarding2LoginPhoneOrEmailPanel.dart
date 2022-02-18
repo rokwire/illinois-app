@@ -192,11 +192,11 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
       Map<String, dynamic> params = {};
       Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
         if (result == Auth2LinkResult.succeded) {
-          _onPhoneInitiated(phoneNumber, Auth2PhoneSignUpResult.succeded);
+          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.succeded);
         } else if (result == Auth2LinkResult.failedAccountExist) {
-          _onPhoneInitiated(phoneNumber, Auth2PhoneSignUpResult.failedAccountExist);
+          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.failedAccountExist);
         } else {
-          _onPhoneInitiated(phoneNumber, Auth2PhoneSignUpResult.failed);
+          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.failed);
         }
       });
     } else {
@@ -207,17 +207,17 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     }
   }
 
-  void _onPhoneInitiated(String? phoneNumber, Auth2PhoneSignUpResult result) {
+  void _onPhoneInitiated(String? phoneNumber, Auth2PhoneRequestCodeResult result) {
     if (mounted) {
       setState(() { _isLoading = false; });
     }
 
-    if (result == Auth2PhoneSignUpResult.succeded) {
+    if (result == Auth2PhoneRequestCodeResult.succeded) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginPhoneConfirmPanel(phoneNumber: phoneNumber, onboardingContext: widget.onboardingContext)));
-    } else if (result == Auth2PhoneSignUpResult.failedAccountExist) {
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists", "Failed to send phone verification code: another account is already using this phone number."));
+    } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists", "Failed to send phone verification code. Another account is already using this phone number."));
     } else {
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.unexpected", "Failed to send phone verification code: an unexpected error has occurred."));
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed", "Failed to send phone verification code. An unexpected error has occurred."));
     }
   }
 

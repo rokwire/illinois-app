@@ -263,15 +263,15 @@ class _OnboardingLoginPhoneVerifyPanelState
     });
   }
 
-  void _onPhoneInitiated(String? phoneNumber, Auth2PhoneSignUpResult result) {
-    if (result == Auth2PhoneSignUpResult.failed) {
+  void _onPhoneInitiated(String? phoneNumber, Auth2PhoneRequestCodeResult result) {
+    if (result == Auth2PhoneRequestCodeResult.failed) {
       setState(() {
         _validationErrorMsg = Localization().getStringEx(
-            "panel.onboarding.verify_phone.validation.server_error.text",
+            "panel.onboarding.verify_phone.validation.failed.text",
             "Failed to send authentication code. An unexpected error occurred.");
       });
     }
-    else if (result == Auth2PhoneSignUpResult.failedAccountExist) {
+    else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
       setState(() {
         _validationErrorMsg = Localization().getStringEx(
             "panel.onboarding.verify_phone.validation.exists.text",

@@ -178,12 +178,13 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                 ),
                 Visibility(
                   visible: _link,
-                  child: Container(child:
-                  RoundedButton(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: RoundedButton(
                       label: Localization().getStringEx(
-                          "panel.onboarding.confirm_phone.button.cancel.label", "Cancel"),
+                          "panel.onboarding.confirm_phone.button.link.cancel.label", "Cancel"),
                       hint: Localization().getStringEx(
-                          "panel.onboarding.confirm_phone.button.cancel.hint", ""),
+                          "panel.onboarding.confirm_phone.button.link.cancel.hint", ""),
                       borderColor: Styles().colors!.fillColorSecondary,
                       backgroundColor: Styles().colors!.background,
                       textColor: Styles().colors!.fillColorPrimary,
@@ -248,11 +249,11 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
             _isLoading = false;
           });
           if (result == Auth2LinkResult.succeded) {
-            _onPhoneVerified(Auth2PhoneSignInResult.succeded);
+            _onPhoneVerified(Auth2PhoneSendCodeResult.succeded);
           } else if (result == Auth2LinkResult.failedInvalid) {
-            _onPhoneVerified(Auth2PhoneSignInResult.failedInvalid);
+            _onPhoneVerified(Auth2PhoneSendCodeResult.failedInvalid);
           } else {
-            _onPhoneVerified(Auth2PhoneSignInResult.failed);
+            _onPhoneVerified(Auth2PhoneSendCodeResult.failed);
           }
         }
       });
@@ -272,7 +273,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
         });
         if (!success) {
           setState(() {
-            _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.link.cancel.text", "Failed to cancel link verification");
+            _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.link.cancel.text", "Failed to cancel link verification.");
           });
         }
         else {
@@ -282,12 +283,12 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
     });
   }
 
-  void _onPhoneVerified(Auth2PhoneSignInResult result) {
-    if (result == Auth2PhoneSignInResult.failed) {
+  void _onPhoneVerified(Auth2PhoneSendCodeResult result) {
+    if (result == Auth2PhoneSendCodeResult.failed) {
       setState(() {
         _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.server_error.text", "Failed to verify code. An unexpected error occurred.");
       });
-    } else if (result == Auth2PhoneSignInResult.failedInvalid) {
+    } else if (result == Auth2PhoneSendCodeResult.failedInvalid) {
       setState(() {
         _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.invalid.text", "Incorrect code.");
       });

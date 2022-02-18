@@ -17,9 +17,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -39,7 +41,7 @@ class Onboarding2LoginEmailPanel extends StatefulWidget with OnboardingPanel {
   _Onboarding2LoginEmailPanelState createState() => _Onboarding2LoginEmailPanelState();
 }
 
-class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel> {
+class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel> implements NotificationsListener {
 
   static final Color _successColor = Colors.green.shade800;
   static final Color _errorColor = Colors.red.shade700;
@@ -63,6 +65,10 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      AppLivecycle.notifyStateChanged,
+    ]);
+
     super.initState();
     _emailController.text = widget.email!;
     _state = widget.state;
@@ -75,6 +81,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
+
     _emailController.dispose();
     _emailFocusNode.dispose();
     _passwordController.dispose();
@@ -84,6 +92,15 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
     super.dispose();
   }
 
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == AppLivecycle.notifyStateChanged) {
+      _checkAccountState();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String title = (_state == Auth2EmailAccountState.nonExistent) ?
@@ -91,6 +108,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign in with email');
 
     String description = (_state == Auth2EmailAccountState.nonExistent) ?
+      _link ? Localization().getStringEx('panel.onboarding2.email.link.description.text', 'Please enter a password to link your email.') :
       Localization().getStringEx('panel.onboarding2.email.sign_up.description.text', 'Please enter a password to create a new account for your email.') :
       Localization().getStringEx('panel.onboarding2.email.sign_in.description.text', 'Please enter your password to sign in with your email.');
 
@@ -276,10 +294,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
               visible: _link,
               child: Padding(padding: EdgeInsets.only(left: 24, right: 24, bottom: 8), child:
               RoundedButton(
-                  label: Localization().getStringEx(
-                      "panel.onboarding2.email.button.cancel.label", "Cancel"),
-                  hint: Localization().getStringEx(
-                      "panel.onboarding2.email.button.cancel.hint", ""),
+                  label: Localization().getStringEx("panel.onboarding2.email.button.link.cancel.label", "Cancel"),
+                  hint: Localization().getStringEx("panel.onboarding2.email.button.link.cancel.hint", ""),
                   borderColor: Styles().colors!.fillColorSecondary,
                   backgroundColor: Styles().colors!.background,
                   textColor: Styles().colors!.fillColorPrimary,
@@ -315,11 +331,11 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
       setState(() { _isLoading = true; });
 
-      Auth2().resetEmailPassword(widget.email).then((bool result) {
+      Auth2().resetEmailPassword(widget.email).then((result) {
         
         setState(() { _isLoading = false; });
         
-        if (result == true) {
+        if (result == Auth2EmailForgotPasswordResult.succeded) {
           _emailFocusNode.unfocus();
           _passwordFocusNode.unfocus();
           _confirmPasswordFocusNode.unfocus();
@@ -328,9 +344,12 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
           setState(() {
             _showingPassword = false;
           });
-        }
-        else {
-          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.failed.text", "Failed to send password reset email."));
+        } else if (result == Auth2EmailForgotPasswordResult.failedActivationExpired) {
+          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.failed.activation_expired.text", "Your activation link has already expired. A verification email has been resent to your email address. Please confirm it in order to activate your account."));
+        } else if (result == Auth2EmailForgotPasswordResult.failedNotActivated) {
+          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.failed.not_activated.text", "Your account is not activated yet. Please confirm the email sent to your email address."));
+        } else {
+          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.failed.text", "Failed to send password reset email. An unexpected error occurred."));
         }
       });
     }
@@ -387,7 +406,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
         setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.password_empty.text", "Please enter your password."));
       }
       else if (!RegExp(strengthRegEx).hasMatch(password)) {
-        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.passwords_weak.text", "Password must be at least 8 characters long and must contain a lowercase letter, uppercase letter, number, and a special character."));
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.password_weak.text", "Password must be at least 8 characters long and must contain a lowercase letter, uppercase letter, number, and a special character."));
       }
       else if (password != confirmPassword) {
         setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.passwords_dont_match.text", "Passwords do not match."));
@@ -442,7 +461,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.account_exists.text", "Sign up failed. An existing account is already using this email address."));
     }
     else /*if (result == Auth2EmailSignUpResult.failed)*/ {
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.text", "Sign up failed. An unexpected error occurred"));
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.text", "Sign up failed. An unexpected error occurred."));
     }
   }
 
@@ -488,13 +507,13 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   
   void _trySignInCallback(Auth2EmailSignInResult result) {
     if (result == Auth2EmailSignInResult.failed) {
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.text", "Sign in failed."));
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.text", "Sign in failed. An unexpected error occurred."));
     }
     else if (result == Auth2EmailSignInResult.failedNotActivated) {
       setState(() {
         _state = Auth2EmailAccountState.unverified;
       });
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.not_activated.text", "Your activation link has already expired. Your account is not activated yet. Please confirm the email sent to your email address."));
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.not_activated.text", "Your account is not activated yet. Please confirm the email sent to your email address."));
     }
     else if (result == Auth2EmailSignInResult.failedActivationExpired) {
       setState(() {
@@ -503,6 +522,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.activation_expired.text", "Your activation link has already expired. Please resend verification email again and confirm it in order to activate your account."));
     }
     else if (result == Auth2EmailSignInResult.failedInvalid) {
+      setState(() {
+        _state = Auth2EmailAccountState.verified;
+      });
       setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.invalid.text", "Incorrect password."));
     }
     else if (widget.onboardingContext != null) {
@@ -527,7 +549,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
         });
         if (!success) {
           setState(() {
-            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.link.cancel.text", "Failed to cancel link verification"));
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.link.cancel.text", "Failed to cancel link verification."));
           });
         }
         else if (widget.onboardingContext != null) {
@@ -538,6 +560,14 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
             Onboarding().next(context, widget);
           }
         }
+      }
+    });
+  }
+
+  void _checkAccountState() {
+    Auth2().checkEmailAccountState(widget.email, _link ? "link" : "login").then((Auth2EmailAccountState? state) {
+      if (mounted && state != null) {
+        setState(() { _state = state; });
       }
     });
   }
