@@ -139,6 +139,7 @@
     "panel.wallet.button.use_id.hint": "",
     "panel.wallet.label.library.title": "tarjeta de biblioteca",
     "panel.wallet.button.close.title": "cerrar",
+    "panel.wallet.button.close.hint": "",
     "panel.wallet.button.connect.netid.title": "Conectar NetID",
     "panel.wallet.button.connect.netid.hint": "",
     "panel.wallet.button.connect.phone_or_email.title": "Login By Email or Phone",
@@ -1984,7 +1985,8 @@
 
     "panel.canvas_announcements.header.title": "Anuncios",
     "panel.canvas_announcements.load.failed.error.msg": "No se pudieron cargar los anuncios. Por favor, inténtelo de nuevo más tarde.",
-    "panel.canvas_announcements.empty.msg": "No hay anuncios para este curso.",
+    "panel.canvas_announcements.empty.msg": "No hay anuncios.",
+    "panel.canvas_announcements.all_courses.label": "Todos los cursos",
 
     "panel.canvas_announcement.header.title": "Anuncio",
 
@@ -1997,8 +1999,14 @@
     "panel.canvas_collaborations.empty.msg": "No hay colaboraciones para este curso.",
 
     "panel.canvas_calendar.header.title": "Calendario",
-    "panel.canvas_calendar.load.failed.error.msg": "No se pudieron cargar los eventos. Por favor, inténtelo de nuevo más tarde.",
-    "panel.canvas_calendar.empty.msg": "Hoy no hay eventos.",
+    "panel.canvas_calendar.all_courses.label": "Todos los cursos",
+    "panel.canvas_calendar.all_types.label": "Todo",
+    "panel.canvas_calendar.events.load.failed.error.msg": "No se pudieron cargar los eventos. Por favor, inténtelo de nuevo más tarde.",
+    "panel.canvas_calendar.assignments.load.failed.error.msg": "Error al cargar las tareas. Por favor, inténtelo de nuevo más tarde.",
+    "panel.canvas_calendar.all.load.failed.error.msg": "Error al cargar eventos y asignaciones. Por favor, inténtelo de nuevo más tarde.",
+    "panel.canvas_calendar.events.empty.msg": "Hoy no hay eventos.",
+    "panel.canvas_calendar.assignments.empty.msg": "No hay asignaciones hoy.",
+    "panel.canvas_calendar.all.empty.msg": "No hay eventos ni asignaciones hoy.",
 
     "panel.canvas_notifications.header.title": "Notificaciones de cuenta",
     "panel.canvas_notifications.load.failed.error.msg": "No se pudieron cargar las notificaciones de la cuenta. Por favor, inténtelo de nuevo más tarde.",
@@ -2010,7 +2018,6 @@
     "panel.canvas_calendar_event.calendar.label": "Calendario:",
     "panel.canvas_calendar_event.date_time.label": "Fecha y hora:",
     "panel.canvas_calendar_event.load.failed.error.msg": "No se pudo cargar el evento. Por favor, inténtelo de nuevo más tarde.",
-    "panel.canvas_calendar.all_courses.label": "Todos los cursos",
 
     "panel.canvas_modules.header.title": "Módulos",
     "panel.canvas_modules.load.failed.error.msg": "No se pudieron cargar los módulos. Por favor, inténtelo de nuevo más tarde.",
@@ -2199,6 +2206,9 @@
     "widget.home.interest_selection.title": "¿Qué le interesa?",
     "widget.home.interest_selection.description": "Ver eventos según los temas que elegiste",
     "widget.home.interest_selection.button.see_all": "Ver todo",
+
+    "widget.flex_content.button.close.label": "Cerca",
+    "widget.flex_content.button.close.hint": "",
 
     "widget.home_canvas_courses.header.label": "Cursos",
 

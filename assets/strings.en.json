@@ -138,6 +138,7 @@
     "panel.wallet.button.use_id.hint": "",
     "panel.wallet.label.library.title": "Library Card",
     "panel.wallet.button.close.title": "close",
+    "panel.wallet.button.close.hint": "",
     "panel.wallet.button.connect.netid.title": "Connect NetID",
     "panel.wallet.button.connect.netid.hint": "",
     "panel.wallet.button.connect.phone_or_email.title": "Login By Email or Phone",
@@ -1990,7 +1991,8 @@
 
     "panel.canvas_announcements.header.title": "Announcements",
     "panel.canvas_announcements.load.failed.error.msg": "Failed to load announcements. Please, try again later.",
-    "panel.canvas_announcements.empty.msg": "There are no announcements for this course.",
+    "panel.canvas_announcements.empty.msg": "There are no announcements.",
+    "panel.canvas_announcements.all_courses.label": "All Courses",
 
     "panel.canvas_announcement.header.title": "Announcement",
 
@@ -2003,8 +2005,14 @@
     "panel.canvas_collaborations.empty.msg": "There are no collaborations for this course.",
 
     "panel.canvas_calendar.header.title": "Calendar",
-    "panel.canvas_calendar.load.failed.error.msg": "Failed to load events. Please, try again later.",
-    "panel.canvas_calendar.empty.msg": "There are no events today.",
+    "panel.canvas_calendar.all_courses.label": "All Courses",
+    "panel.canvas_calendar.all_types.label": "All",
+    "panel.canvas_calendar.events.load.failed.error.msg": "Failed to load events. Please, try again later.",
+    "panel.canvas_calendar.assignments.load.failed.error.msg": "Failed to load assignments. Please, try again later.",
+    "panel.canvas_calendar.all.load.failed.error.msg": "Failed to load events and assignments. Please, try again later.",
+    "panel.canvas_calendar.events.empty.msg": "There are no events today.",
+    "panel.canvas_calendar.assignments.empty.msg": "There are no assignments today.",
+    "panel.canvas_calendar.all.empty.msg": "There are no events and assignments today.",
 
     "panel.canvas_notifications.header.title": "Account Notifications",
     "panel.canvas_notifications.load.failed.error.msg": "Failed to load account notifications. Please, try again later.",
@@ -2016,7 +2024,6 @@
     "panel.canvas_calendar_event.calendar.label": "Calendar:",
     "panel.canvas_calendar_event.date_time.label": "Date & Time:",
     "panel.canvas_calendar_event.load.failed.error.msg": "Failed to load event. Please, try again later.",
-    "panel.canvas_calendar.all_courses.label": "All Courses",
 
     "panel.canvas_modules.header.title": "Modules",
     "panel.canvas_modules.load.failed.error.msg": "Failed to load modules. Please, try again later.",
@@ -2205,6 +2212,9 @@
     "widget.home.interest_selection.title": "What are you interested in?",
     "widget.home.interest_selection.description": "See events based on topics you chose",
     "widget.home.interest_selection.button.see_all": "See all",
+
+    "widget.flex_content.button.close.label": "Close",
+    "widget.flex_content.button.close.hint": "",
 
     "widget.home_canvas_courses.header.label": "Courses",
 

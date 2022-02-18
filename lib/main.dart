@@ -37,6 +37,7 @@ import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
+import 'package:illinois/service/Rewards.dart';
 import 'package:illinois/service/Services.dart' as illinois;
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Voter.dart';
@@ -125,6 +126,7 @@ void main() async {
     Groups(),
     Gies(),
     Canvas(),
+    Rewards(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // Laundries(),

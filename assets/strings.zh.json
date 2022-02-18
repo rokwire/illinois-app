@@ -139,6 +139,7 @@
 	"panel.wallet.button.use_id.hint": "",
 	"panel.wallet.label.library.title": "图书馆卡",
 	"panel.wallet.button.close.title": "关闭",
+	"panel.wallet.button.close.hint": "",
 	"panel.wallet.button.connect.netid.title": "連接NetID",
 	"panel.wallet.button.connect.netid.hint": "",
 	"panel.wallet.button.connect.phone_or_email.title": "Login By Email or Phone",
@@ -1982,7 +1983,8 @@
 
     "panel.canvas_announcements.header.title": "公告",
     "panel.canvas_announcements.load.failed.error.msg": "未能加載公告. 請稍後再試.",
-    "panel.canvas_announcements.empty.msg": "本課程沒有公告.",
+    "panel.canvas_announcements.empty.msg": "沒有公告.",
+    "panel.canvas_announcements.all_courses.label": "所有課程",
 
     "panel.canvas_announcement.header.title": "公告",
 
@@ -1995,8 +1997,14 @@
     "panel.canvas_collaborations.empty.msg": "本課程沒有合作.",
 
     "panel.canvas_calendar.header.title": "日曆",
-    "panel.canvas_calendar.load.failed.error.msg": "未能加載事件. 請稍後再試.",
-    "panel.canvas_calendar.empty.msg": "今天沒有活動.",
+    "panel.canvas_calendar.all_courses.label": "所有課程",
+    "panel.canvas_calendar.all_types.label": "全部",
+    "panel.canvas_calendar.events.load.failed.error.msg": "未能加載事件. 請稍後再試.",
+    "panel.canvas_calendar.assignments.load.failed.error.msg": "未能加載分配. 請稍後再試.",
+    "panel.canvas_calendar.all.load.failed.error.msg": "未能加載事件和分配. 請稍後再試.",
+    "panel.canvas_calendar.events.empty.msg": "今天沒有活動.",
+    "panel.canvas_calendar.assignments.empty.msg": "今天沒有作業.",
+    "panel.canvas_calendar.all.empty.msg": "今天沒有活動和任務.",
 
     "panel.canvas_notifications.header.title": "帳戶通知",
     "panel.canvas_notifications.load.failed.error.msg": "未能加載帳戶通知. 請稍後再試.",
@@ -2008,7 +2016,6 @@
     "panel.canvas_calendar_event.calendar.label": "日曆:",
     "panel.canvas_calendar_event.date_time.label": "約會時間:",
     "panel.canvas_calendar_event.load.failed.error.msg": "未能加載事件. 請稍後再試.",
-    "panel.canvas_calendar.all_courses.label": "所有課程",
 
     "panel.canvas_modules.header.title": "模塊",
     "panel.canvas_modules.load.failed.error.msg": "無法加載模塊. 請稍後再試.",
@@ -2197,6 +2204,9 @@
 	"widget.home.interest_selection.title":"您感兴趣的是什么?",
 	"widget.home.interest_selection.description":"查看基于您选择的主题的活动",
 	"widget.home.interest_selection.button.see_all":"查看全部",
+
+	"widget.flex_content.button.close.label": "關閉",
+	"widget.flex_content.button.close.hint": "",
 
 	"widget.home_canvas_courses.header.label": "培訓班",
 

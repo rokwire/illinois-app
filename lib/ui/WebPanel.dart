@@ -14,35 +14,19 @@
  * limitations under the License.
  */
 
-import 'dart:async';
-import 'dart:io';
-import 'package:flutter_html/flutter_html.dart' as FlutterHtml;
-import 'package:rokwire_plugin/rokwire_plugin.dart';
-import 'package:rokwire_plugin/service/deep_link.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/tracking_services.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart' as FlutterWebView;
+import 'package:rokwire_plugin/ui/panels/web_panel.dart' as rokwire;
 
-class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPageAttributes {
-  final String? url;
+class WebPanel extends rokwire.WebPanel implements AnalyticsPageName, AnalyticsPageAttributes {
   final String? analyticsName;
-  final String? title;
-  final bool hideToolBar;
 
-  WebPanel({required this.url, this.analyticsName, this.title = "", this.hideToolBar = false});
-
-  @override
-  _WebPanelState createState() => _WebPanelState();
+  WebPanel({Key? key, String? url, String? title, this.analyticsName, bool showTabBar = true}) :
+    super(key: key, url: url, title: title, headerBar: HeaderBar(title: title), tabBar: showTabBar ? TabBarWidget() : null);
 
   @override
   String? get analyticsPageName {
@@ -53,192 +37,21 @@ class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPag
   Map<String, dynamic> get analyticsPageAttributes {
     return { Analytics.LogAttributeUrl : url };
   }
-}
 
-class _WebPanelState extends State<WebPanel> implements NotificationsListener {
-
-  bool? _isOnline;
-  bool? _isTrackingEnabled;
-  bool _isPageLoading = true;
-  bool _isForeground = true;
-
-  @override
-  void initState() {
-    super.initState();
-    NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
-      DeepLink.notifyUri,
-    ]);
-    if (Platform.isAndroid) {
-      FlutterWebView.WebView.platform = FlutterWebView.SurfaceAndroidWebView();
-    }
-    _getOnline().then((bool isOnline) {
-      setState(() {
-        _isOnline = isOnline;
-      });
-      if (isOnline) {
-        _getTrackingEnabled().then((bool trackingEnabled) {
-          setState(() {
-            _isTrackingEnabled = trackingEnabled;
-          });
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    NotificationService().unsubscribe(this);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget contentWidget;
-    if (_isOnline == false) {
-      contentWidget = _buildStatus(
+  @protected
+  Widget buildOfflineStatus(BuildContext context) {
+    return buildStatus(context,
         title: Localization().getStringEx("panel.web.offline.title", "Web Content Not Available"),
         message: Localization().getStringEx("panel.web.offline.message", "You need to be online in order to access web content. Please check your Internet connection."),
-      );
-    }
-    else if (_isTrackingEnabled == false) {
-      contentWidget = _buildStatus(
+    );
+  }
+
+  @protected
+  Widget buildTrackingDisabledStatus(BuildContext context) {
+    return buildStatus(context,
         title: Localization().getStringEx("panel.web.tracking_disabled.title", "Web Content Blocked"),
         message: sprintf(Localization().getStringEx("panel.web.tracking_disabled.message", "You have opted to deny cookie usage for web content in this app, therefore we have blocked access to web sites. If you change your mind, change your preference <a href='%s'>here</a>. Your phone Settings may also need to have Privacy > Tracking enabled."), [appSettingsUrl]),
-      );
-    }
-    else if ((_isOnline == true) && (_isTrackingEnabled == true)) {
-      contentWidget = _buildWebView();
-    }
-    else {
-      contentWidget = _buildInitializing();
-    }
-
-    return Scaffold(
-      appBar: _getHeaderBar(),
-      backgroundColor: Styles().colors!.background,
-      body: Column(children: <Widget>[
-        Expanded(child: contentWidget),
-        widget.hideToolBar ? Container() : TabBarWidget()
-      ],),);
-  }
-
-  Widget _buildWebView() {
-    return Stack(children: [
-      Visibility(visible: _isForeground,
-        child: FlutterWebView.WebView(
-        initialUrl: widget.url,
-        javascriptMode: FlutterWebView.JavascriptMode.unrestricted,
-        navigationDelegate: _processNavigation,
-        onPageFinished: (url) {
-          setState(() {
-            _isPageLoading = false;
-          });
-        },),),
-      Visibility(visible: _isPageLoading,
-        child: Center(
-          child: CircularProgressIndicator(),
-      )),
-    ],);
-  }
-
-  FutureOr<FlutterWebView.NavigationDecision> _processNavigation(FlutterWebView.NavigationRequest navigation) {
-    String url = navigation.url;
-    if (UrlUtils.launchInternal(url)) {
-      return FlutterWebView.NavigationDecision.navigate;
-    }
-    else {
-      launch(url);
-      return FlutterWebView.NavigationDecision.prevent;
-    }
-  }
-
-  Widget _buildStatus({String? title, String? message}) {
-    List<Widget> contentList = <Widget>[];
-    contentList.add(Expanded(flex: 1, child: Container()));
-    
-    if (title != null) {
-      contentList.add(FlutterHtml.Html(data: title,
-          onLinkTap: (url, context, attributes, element) => _onTapStatusLink(url),
-          style: { "body": FlutterHtml.Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: FlutterHtml.FontSize(32), textAlign: TextAlign.center, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
-      );
-    }
-
-    if ((title != null) && (message != null)) {
-      contentList.add(Container(height: 48));
-    }
-
-    if ((message != null)) {
-      contentList.add(FlutterHtml.Html(data: message,
-        onLinkTap: (url, context, attributes, element) => _onTapStatusLink(url),
-        style: { "body": FlutterHtml.Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FlutterHtml.FontSize(20), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
-      );
-    }
-
-    contentList.add(Expanded(flex: 3, child: Container()));
-
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
-      Column(mainAxisSize: MainAxisSize.max, crossAxisAlignment: CrossAxisAlignment.center, children: contentList,)
     );
-  }
-
-  Widget _buildInitializing(){
-    return Center(child:
-      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors!.fillColorPrimary!),),
-    );
-  }
-
-  static Future<bool> _getOnline() async {
-    List<InternetAddress>? result;
-    try {
-      result = await InternetAddress.lookup('www.example.com');
-    } on SocketException catch (_) {
-    }
-    return ((result != null) && result.isNotEmpty && result.first.rawAddress.isNotEmpty);
-  }
-
-  static Future<bool> _getTrackingEnabled() async {
-    TrackingAuthorizationStatus? status = await TrackingServices.queryAuthorizationStatus();
-    if (status == TrackingAuthorizationStatus.undetermined) {
-      status = await TrackingServices.requestAuthorization();
-    }
-    return (status == TrackingAuthorizationStatus.allowed);
-  }
-
-  PreferredSizeWidget _getHeaderBar() {
-    return HeaderBar(title: widget.title);
-  }
-
-  void _onTapStatusLink(String? url) {
-    if (StringUtils.isNotEmpty(url)) {
-      launch(url!);
-    }
-  }
-
-  void onNotification(String name, dynamic param){
-    if (name == AppLivecycle.notifyStateChanged) {
-      setState(() {
-        _isForeground = (param == AppLifecycleState.resumed);
-      });
-    }
-    else if (name == DeepLink.notifyUri) {
-      _onDeepLinkUri(param);
-    }
-  }
-
-  String get appSettingsUrl => '${DeepLink().appUrl}/app_settings';
-
-  void _onDeepLinkUri(Uri? uri) {
-    if (uri != null) {
-      Uri? settingsUri = Uri.tryParse(appSettingsUrl);
-      if ((settingsUri != null) &&
-          (settingsUri.scheme == uri.scheme) &&
-          (settingsUri.authority == uri.authority) &&
-          (settingsUri.path == uri.path))
-      {
-        RokwirePlugin.launchAppSettings();
-      }
-    }
   }
 }
 
