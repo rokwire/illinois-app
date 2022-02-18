@@ -247,10 +247,10 @@ class _OnboardingLoginPhoneVerifyPanelState
 
     setState(() { _isLoading = true; });
     
-    Auth2().authenticateWithPhone(phoneNumber).then((success) {
+    Auth2().authenticateWithPhone(phoneNumber).then((result) {
       if (mounted) {
         setState(() { _isLoading = false; });
-        _onPhoneInitiated(phoneNumber, success);
+        _onPhoneInitiated(phoneNumber, result);
       }
     });
   }
@@ -263,15 +263,22 @@ class _OnboardingLoginPhoneVerifyPanelState
     });
   }
 
-  void _onPhoneInitiated(String? phoneNumber, bool success) {
-    if (!success) {
+  void _onPhoneInitiated(String? phoneNumber, Auth2PhoneRequestCodeResult result) {
+    if (result == Auth2PhoneRequestCodeResult.failed) {
       setState(() {
         _validationErrorMsg = Localization().getStringEx(
-            "panel.onboarding.verify_phone.validation.server_error.text",
-            "Please enter a valid phone number");
+            "panel.onboarding.verify_phone.validation.failed.text",
+            "Failed to send authentication code. An unexpected error occurred.");
       });
     }
-    else if(widget.onboardingContext != null) {
+    else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
+      setState(() {
+        _validationErrorMsg = Localization().getStringEx(
+            "panel.onboarding.verify_phone.validation.exists.text",
+            "Failed to send authentication code. An existing account is already using this phone number.");
+      });
+    }
+    else if (widget.onboardingContext != null) {
       widget.onboardingContext!["phone"] = phoneNumber;
       Onboarding().next(context, widget);
     }
