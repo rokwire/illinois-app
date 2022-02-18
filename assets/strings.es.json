@@ -1983,10 +1983,11 @@
     "panel.syllabus_html.header.title": "Programa de estudios",
     "panel.syllabus_html.load.failed.error.msg": "No se pudo cargar el contenido del programa de estudios. Por favor, inténtelo de nuevo más tarde.",
 
+    "panel.canvas.common.all_courses.label": "Todos los cursos",
+
     "panel.canvas_announcements.header.title": "Anuncios",
     "panel.canvas_announcements.load.failed.error.msg": "No se pudieron cargar los anuncios. Por favor, inténtelo de nuevo más tarde.",
     "panel.canvas_announcements.empty.msg": "No hay anuncios.",
-    "panel.canvas_announcements.all_courses.label": "Todos los cursos",
 
     "panel.canvas_announcement.header.title": "Anuncio",
 
@@ -1997,10 +1998,8 @@
     "panel.canvas_collaborations.header.title": "Colaboraciones",
     "panel.canvas_collaborations.load.failed.error.msg": "No se pudieron cargar las colaboraciones. Por favor, inténtelo de nuevo más tarde.",
     "panel.canvas_collaborations.empty.msg": "No hay colaboraciones.",
-    "panel.canvas_collaborations.all_courses.label": "Todos los cursos",
 
     "panel.canvas_calendar.header.title": "Calendario",
-    "panel.canvas_calendar.all_courses.label": "Todos los cursos",
     "panel.canvas_calendar.all_types.label": "Todo",
     "panel.canvas_calendar.events.load.failed.error.msg": "No se pudieron cargar los eventos. Por favor, inténtelo de nuevo más tarde.",
     "panel.canvas_calendar.assignments.load.failed.error.msg": "Error al cargar las tareas. Por favor, inténtelo de nuevo más tarde.",
@@ -2023,7 +2022,6 @@
     "panel.canvas_modules.header.title": "Módulos",
     "panel.canvas_modules.load.failed.error.msg": "No se pudieron cargar los módulos. Por favor, inténtelo de nuevo más tarde.",
     "panel.canvas_modules.empty.msg": "No hay módulos.",
-    "panel.canvas_modules.all_courses.label": "Todos los cursos",
 
     "panel.canvas_module_detail.load.failed.error.msg": "No se pudieron cargar los elementos del módulo. Por favor, inténtelo de nuevo más tarde.",
     "panel.canvas_module_detail.empty.msg": "No hay elementos del módulo.",
@@ -2039,7 +2037,7 @@
     
     "panel.canvas_assignments.header.title": "Tareas",
     "panel.canvas_assignments.load.failed.error.msg": "Error al cargar las tareas. Por favor, inténtelo de nuevo más tarde.",
-    "panel.canvas_assignments.empty.msg": "No hay asignaciones para este curso.",
+    "panel.canvas_assignments.empty.msg": "No hay asignaciones.",
     "panel.canvas_assignments.due.label": "Vencer",
     "panel.canvas_assignments.upcoming.label": "Tareas Próximas",
     "panel.canvas_assignments.past.label": "Tareas Pasadas",

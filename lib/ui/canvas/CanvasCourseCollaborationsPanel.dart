@@ -212,7 +212,7 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
     }
     items.add(DropdownMenuItem(
         value: null,
-        child: Text(Localization().getStringEx('panel.canvas_collaborations.all_courses.label', 'All Courses'),
+        child: Text(Localization().getStringEx('panel.canvas.common.all_courses.label', 'All Courses'),
             style: TextStyle(
                 color: textColor,
                 fontSize: textFontSize,

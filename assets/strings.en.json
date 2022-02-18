@@ -1989,10 +1989,11 @@
     "panel.syllabus_html.header.title": "Syllabus",
     "panel.syllabus_html.load.failed.error.msg": "Failed to load syllabus content. Please, try again later.",
 
+    "panel.canvas.common.all_courses.label": "All Courses",
+
     "panel.canvas_announcements.header.title": "Announcements",
     "panel.canvas_announcements.load.failed.error.msg": "Failed to load announcements. Please, try again later.",
     "panel.canvas_announcements.empty.msg": "There are no announcements.",
-    "panel.canvas_announcements.all_courses.label": "All Courses",
 
     "panel.canvas_announcement.header.title": "Announcement",
 
@@ -2003,10 +2004,8 @@
     "panel.canvas_collaborations.header.title": "Collaborations",
     "panel.canvas_collaborations.load.failed.error.msg": "Failed to load collaborations. Please, try again later.",
     "panel.canvas_collaborations.empty.msg": "There are no collaborations.",
-    "panel.canvas_collaborations.all_courses.label": "All Courses",
 
     "panel.canvas_calendar.header.title": "Calendar",
-    "panel.canvas_calendar.all_courses.label": "All Courses",
     "panel.canvas_calendar.all_types.label": "All",
     "panel.canvas_calendar.events.load.failed.error.msg": "Failed to load events. Please, try again later.",
     "panel.canvas_calendar.assignments.load.failed.error.msg": "Failed to load assignments. Please, try again later.",
@@ -2029,7 +2028,6 @@
     "panel.canvas_modules.header.title": "Modules",
     "panel.canvas_modules.load.failed.error.msg": "Failed to load modules. Please, try again later.",
     "panel.canvas_modules.empty.msg": "There are no modules.",
-    "panel.canvas_modules.all_courses.label": "All Courses",
 
     "panel.canvas_module_detail.load.failed.error.msg": "Failed to load module items. Please, try again later.",
     "panel.canvas_module_detail.empty.msg": "There are no module items.",
@@ -2045,7 +2043,7 @@
     
     "panel.canvas_assignments.header.title": "Assignments",
     "panel.canvas_assignments.load.failed.error.msg": "Failed to load assignments. Please, try again later.",
-    "panel.canvas_assignments.empty.msg": "There are no assignments for this course.",
+    "panel.canvas_assignments.empty.msg": "There are no assignments.",
     "panel.canvas_assignments.due.label": "Due",
     "panel.canvas_assignments.upcoming.label": "Upcoming Assignments",
     "panel.canvas_assignments.past.label": "Past Assignments",

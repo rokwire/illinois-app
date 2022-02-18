@@ -243,7 +243,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
     }
     items.add(DropdownMenuItem(
         value: null,
-        child: Text(Localization().getStringEx('panel.canvas_announcements.all_courses.label', 'All Courses'),
+        child: Text(Localization().getStringEx('panel.canvas.common.all_courses.label', 'All Courses'),
             style: TextStyle(
                 color: textColor,
                 fontSize: textFontSize,
@@ -274,6 +274,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
   void _loadAnnouncements() {
     if (_courseAnnouncementsMap != null) {
       _courseAnnouncementsMap = null;
+      _announcementsCount = 0;
     }
     if (_selectedCourseId != null) {
       _loadAnnouncementsForSingleCourse(_selectedCourseId!);

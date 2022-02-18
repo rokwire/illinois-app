@@ -211,7 +211,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
     }
     items.add(DropdownMenuItem(
         value: null,
-        child: Text(Localization().getStringEx('panel.canvas_modules.all_courses.label', 'All Courses'),
+        child: Text(Localization().getStringEx('panel.canvas.common.all_courses.label', 'All Courses'),
             style: TextStyle(
                 color: textColor,
                 fontSize: textFontSize,
@@ -242,6 +242,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
   void _loadModules() {
     if (_courseModulesMap != null) {
       _courseModulesMap = null;
+      _modulesCount = 0;
     }
     if (_selectedCourseId != null) {
       _loadModulesForSingleCourse(_selectedCourseId!);
