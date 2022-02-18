@@ -14,7 +14,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCampusGuideHighlightsWidget extends StatefulWidget {
@@ -83,7 +83,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(_promotedItems), child:
       Column(children: [
-          SectionTitlePrimary(
+          SectionHeading(
             title: Localization().getStringEx('widget.home_campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
             titleIconAsset: 'images/campus-tools.png',
             children: _buildPromotedList()

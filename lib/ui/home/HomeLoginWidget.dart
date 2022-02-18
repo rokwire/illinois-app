@@ -8,7 +8,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeLoginWidget extends StatefulWidget {
@@ -51,7 +51,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
         content.add(Container(height: 20,),);
       }
 
-      return SectionTitlePrimary(
+      return SectionHeading(
         title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
         titleIconAsset: 'images/icon-member.png',
         children: content,);
