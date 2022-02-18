@@ -112,17 +112,17 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
       return Container();
     }
 
-    List<Widget> annoucementWidgetList = [];
+    List<Widget> announcementWidgetList = [];
     bool showCourseLabel = (_selectedCourseId == null);
     for (int courseId in _courseAnnouncementsMap!.keys) {
       CanvasCourse? course = _getCurrentCourse(courseId: courseId);
       if (course != null) {
         if (showCourseLabel) {
-          annoucementWidgetList.add(_buildCourseLabelWidget(course.name));
+          announcementWidgetList.add(_buildCourseLabelWidget(course.name));
         }
         List<CanvasDiscussionTopic>? announcements = _courseAnnouncementsMap![course.id];
         for (CanvasDiscussionTopic announcement in announcements!) {
-          annoucementWidgetList.add(_buildAnnouncementItem(announcement));
+          announcementWidgetList.add(_buildAnnouncementItem(announcement));
         }
       }
     }
@@ -131,7 +131,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
         scrollDirection: Axis.vertical,
         child: Padding(
             padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: annoucementWidgetList)));
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: announcementWidgetList)));
   }
   
   Widget _buildCourseLabelWidget(String? label) {
