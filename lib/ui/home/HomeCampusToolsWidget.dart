@@ -113,13 +113,9 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
       return null;
     }
 
-    if (countPerRow == 1) {
-      return Expanded(child: LinkTileWideButton(label: label, hint: hint, iconPath: iconPath, onTap: onTap));
-    }
-    else {
-      double width = (0 < countPerRow) ? (MediaQuery.of(context).size.width / countPerRow - 20) : 200;
-      return LinkTileSmallButton(width: width, label: label, hint: hint, iconPath: iconPath, onTap: onTap);
-    }
+    return (countPerRow == 1) ?
+      LinkTileWideButton(label: label, hint: hint, iconPath: iconPath, onTap: onTap) :
+      LinkTileSmallButton(label: label, hint: hint, iconPath: iconPath, onTap: onTap);
   }
 
   @override
@@ -130,7 +126,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
       for (String code in _contentListCodes!) {
         Widget? widget = _widgetFromCode(context, code, widgetsPerRow);
         if (widget != null) {
-          widgets.add(widget);
+          widgets.add(Expanded(child: widget),);
         }
       }
     }

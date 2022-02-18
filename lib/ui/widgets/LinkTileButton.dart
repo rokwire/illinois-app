@@ -23,41 +23,28 @@ class LinkTileWideButton extends StatelessWidget {
   final String? hint;
   final GestureTapCallback? onTap;
 
-  LinkTileWideButton({this.iconPath, this.label, this.hint = '', this.onTap});
+  LinkTileWideButton({this.iconPath, this.label, this.hint, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Semantics(label: label, hint:hint, button:true, child:Stack(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(2),
-            child: Container(
+    return GestureDetector(onTap: onTap, child:
+      Semantics(label: label, hint:hint, button:true, child:
+        Stack(children: <Widget>[
+          Padding(padding: EdgeInsets.all(2), child:
+            Container(
               decoration: BoxDecoration(
-                  color: ( Colors.white),
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(
-                      color:Colors.white,
-                      width: 2)),
-              child: Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    Text(
-                      label!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.bold,
-                          fontSize: 20,
-                          color: Styles().colors!.fillColorPrimary),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color:Colors.white, width: 2)),
+              child:
+                Padding(padding: EdgeInsets.only(top: 16, bottom: 16), child:
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceAround, mainAxisSize: MainAxisSize.max, children: <Widget>[
+                    Text(label!, textAlign: TextAlign.center, style:
+                      TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary),
                     ),
                     Image.asset(iconPath!),
-                  ],
+                  ],),
                 ),
-              ),
             ),
           ),
         ],
@@ -75,54 +62,34 @@ class LinkTileSmallButton extends StatelessWidget {
 
   static const Color _boxShadowColor = Color.fromRGBO(19, 41, 75, 0.3);
 
-  final double width;
-
-  LinkTileSmallButton({this.iconPath, this.label, this.hint = '', this.width = 140, this.onTap, this.textStyle});
+  LinkTileSmallButton({this.iconPath, this.label, this.hint, this.onTap, this.textStyle});
 
   @override
   Widget build(BuildContext context) {
-    TextStyle style = textStyle??
-        TextStyle(
-          fontFamily: Styles().fontFamilies!.bold,
-          fontSize: 20,
-          color: Styles().colors!.fillColorPrimary
-        );
+    TextStyle style = textStyle ?? TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary );
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Semantics(label: label, hint:hint, button:true, excludeSemantics: true, child:Stack(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-            child: Container(
-              decoration: BoxDecoration(color: (Styles().colors!.white),
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: Colors.white, width: 2),
-                  boxShadow: [BoxShadow(color: _boxShadowColor, spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
-              width: width,
-              child: Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child:
-                      Image.asset(iconPath!),
-                    ),
-                    Container(height: 10,),
-                    Text(
-                      label!,
-                      textAlign: TextAlign.center,
-                      style: style)
-                  ],
-                ),
+    return GestureDetector(onTap: onTap, child:
+      Semantics(label: label, hint:hint, button: true, excludeSemantics: true, child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6), child:
+            
+              Container(
+                decoration: BoxDecoration(color: (Styles().colors!.white),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.white, width: 2),
+                    boxShadow: [BoxShadow(color: _boxShadowColor, spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
+                child:
+                  Padding(padding: EdgeInsets.only(top: 16, bottom: 16), child:
+                    Column(mainAxisAlignment: MainAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: <Widget>[
+                      Padding(padding: EdgeInsets.only(bottom: 16), child:
+                        Image.asset(iconPath!),
+                      ),
+                      Container(height: 10,),
+                      Text(label!, textAlign: TextAlign.center, style: style)
+                    ],),
+                  ),
               ),
-            ),
           ),
-        ],
-      )),
+        ),
     );
   }
 }
