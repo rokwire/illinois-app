@@ -432,6 +432,24 @@ class Canvas with Service implements NotificationsListener{
     }
   }
 
+  // Canvas Self User
+
+  Future<Map<String, dynamic>?> loadSelfUser() async {
+    if (!_available) {
+      return null;
+    }
+    String url = _masquerade('${Config().canvasUrl}/api/v1/users/self');
+    http.Response? response = await Network().get(url, headers: _authHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return JsonUtils.decodeMap(responseString);
+    } else {
+      Log.w('Failed to load canvas self user. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
   // Deep Links
 
   String get canvasEventDetailUrl => '${DeepLink().appUrl}/canvas_event_detail';

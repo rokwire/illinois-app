@@ -18,6 +18,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
@@ -339,6 +340,15 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             textColor: Styles().colors!.fillColorPrimary,
                             borderColor: Styles().colors!.fillColorPrimary,
                             onTap: _onTapRefreshToken)),
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: 'Canvas User',
+                            backgroundColor: Styles().colors!.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors!.fillColorPrimary,
+                            borderColor: Styles().colors!.fillColorPrimary,
+                            onTap: _onTapCanvasUser)),
                     Visibility(
                       visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(
@@ -665,6 +675,16 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     else {
       AppAlert.showDialogResult(context, "No token to refresh");
     }
+  }
+
+  void _onTapCanvasUser() {
+    Canvas().loadSelfUser().then((userJson) {
+      if (userJson != null) {
+        showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(JsonUtils.encode(userJson, prettify: true)));
+      } else {
+        AppAlert.showDialogResult(context, 'Failed to retrieve canvas user.');
+      }
+    });
   }
 
   void _onTapRewards() {
