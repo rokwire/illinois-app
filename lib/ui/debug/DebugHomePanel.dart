@@ -18,6 +18,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -341,6 +342,17 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     Visibility(
                       visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: 'Rewards',
+                            backgroundColor: Styles().colors!.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors!.fillColorPrimary,
+                            borderColor: Styles().colors!.fillColorPrimary,
+                            onTap: _onTapRewards))),
+                    Visibility(
+                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
+                      child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
                               label: "Http Proxy",
@@ -653,6 +665,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     else {
       AppAlert.showDialogResult(context, "No token to refresh");
     }
+  }
+
+  void _onTapRewards() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugRewardsPanel()));
   }
 
   // SettingsListenerMixin
