@@ -18,78 +18,161 @@ import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class LinkTileWideButton extends StatelessWidget {
-  final String? iconPath;
-  final String? label;
+  final String? title;
+  final Color? titleTextColor;
+  final String? titleFontFamilly;
+  final double titleFontSize;
+  final TextStyle? titleTextStyle;
+  
+  final String? iconAsset;
+
+  final Border? border;
+  final BorderRadiusGeometry? borderRadius;
+  final Color? borderColor;
+  final double borderWidth;
+  final List<BoxShadow>? borderShadow;
+
   final String? hint;
+  final EdgeInsetsGeometry margin;
+  final EdgeInsetsGeometry padding;
   final GestureTapCallback? onTap;
 
-  LinkTileWideButton({this.iconPath, this.label, this.hint, this.onTap});
+  LinkTileWideButton({
+    this.title, 
+    this.titleTextColor,
+    this.titleFontFamilly,
+    this.titleFontSize = 20,
+    this.titleTextStyle,
+
+    this.iconAsset,
+    
+    this.border,
+    this.borderRadius,
+    this.borderColor,
+    this.borderWidth = 2.0,
+    this.borderShadow,
+
+    this.hint,
+    this.margin = const EdgeInsets.all(2),
+    this.padding = const EdgeInsets.symmetric(vertical:16),
+    this.onTap
+  });
+
+  TextStyle get _titleTextStyle => titleTextStyle ?? TextStyle(
+    color: titleTextColor ?? Styles().colors?.fillColorPrimary,
+    fontFamily: titleFontFamilly ?? Styles().fontFamilies?.bold,
+    fontSize: titleFontSize
+  );
+
+  Color get _borderColor => borderColor ?? Styles().colors?.white ?? const Color(0x00FFFFFF);
+  BorderRadiusGeometry get _borderRadius => borderRadius ?? BorderRadius.circular(4);
+  Border get _border => border ?? Border.all(color: _borderColor, width: borderWidth);
+  List<BoxShadow> get _borderShadow => borderShadow ?? [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))];
+  Decoration get _decoration => BoxDecoration(color: _borderColor, borderRadius: _borderRadius, border: _border, boxShadow: _borderShadow);
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> contentList = <Widget>[];
+    if (title != null) {
+      contentList.add(Text(title!, textAlign: TextAlign.center, style: _titleTextStyle));
+    } 
+    if (iconAsset != null) {
+      contentList.add(Image.asset(iconAsset!));
+    }
+
     return GestureDetector(onTap: onTap, child:
-      Semantics(label: label, hint:hint, button:true, child:
-        Stack(children: <Widget>[
-          Padding(padding: EdgeInsets.all(2), child:
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color:Colors.white, width: 2)),
-              child:
-                Padding(padding: EdgeInsets.only(top: 16, bottom: 16), child:
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceAround, mainAxisSize: MainAxisSize.max, children: <Widget>[
-                    Text(label!, textAlign: TextAlign.center, style:
-                      TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary),
-                    ),
-                    Image.asset(iconPath!),
-                  ],),
-                ),
+      Semantics(label: title, hint:hint, button: true, child:
+        Padding(padding: margin, child:
+          Container(decoration: _decoration, child:
+            Padding(padding: padding, child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, mainAxisSize: MainAxisSize.max, children: contentList,),
             ),
           ),
-        ],
-      )),
+        ),
+      ),
     );
   }
 }
 
 class LinkTileSmallButton extends StatelessWidget {
-  final String? iconPath;
-  final String? label;
+  final String? title;
+  final Color? titleTextColor;
+  final String? titleFontFamilly;
+  final double titleFontSize;
+  final TextStyle? titleTextStyle;
+
+  final String? iconAsset;
+
+  final Border? border;
+  final BorderRadiusGeometry? borderRadius;
+  final Color? borderColor;
+  final double borderWidth;
+  final List<BoxShadow>? borderShadow;
+
   final String? hint;
+  final EdgeInsetsGeometry margin;
+  final EdgeInsetsGeometry padding;
+  final double verticalSpacing;
   final GestureTapCallback? onTap;
-  final TextStyle? textStyle;
 
-  static const Color _boxShadowColor = Color.fromRGBO(19, 41, 75, 0.3);
+  LinkTileSmallButton({
+    this.title, 
+    this.titleTextColor,
+    this.titleFontFamilly,
+    this.titleFontSize = 20,
+    this.titleTextStyle,
 
-  LinkTileSmallButton({this.iconPath, this.label, this.hint, this.onTap, this.textStyle});
+    this.iconAsset, 
+
+    this.border,
+    this.borderRadius,
+    this.borderColor,
+    this.borderWidth = 2.0,
+    this.borderShadow,
+
+    this.hint,
+    this.margin = const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+    this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+    this.verticalSpacing = 26,
+    this.onTap, 
+  });
 
   @override
   Widget build(BuildContext context) {
-    TextStyle style = textStyle ?? TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary );
+    List<Widget> contentList = <Widget>[];
+    if (iconAsset != null) {
+      contentList.add(Image.asset(iconAsset!));
+    }
+    if ((title != null) && (iconAsset != null)) {
+      contentList.add(Container(height: verticalSpacing));
+    } 
+    if (title != null) {
+      contentList.add(Text(title!, textAlign: TextAlign.center, style: _titleTextStyle));
+    } 
 
     return GestureDetector(onTap: onTap, child:
-      Semantics(label: label, hint:hint, button: true, excludeSemantics: true, child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6), child:
-            
-              Container(
-                decoration: BoxDecoration(color: (Styles().colors!.white),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: Colors.white, width: 2),
-                    boxShadow: [BoxShadow(color: _boxShadowColor, spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
-                child:
-                  Padding(padding: EdgeInsets.only(top: 16, bottom: 16), child:
-                    Column(mainAxisAlignment: MainAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: <Widget>[
-                      Padding(padding: EdgeInsets.only(bottom: 16), child:
-                        Image.asset(iconPath!),
-                      ),
-                      Container(height: 10,),
-                      Text(label!, textAlign: TextAlign.center, style: style)
-                    ],),
-                  ),
-              ),
+      Semantics(label: title, hint: hint, button: true, excludeSemantics: true, child:
+        Padding(padding: margin, child:
+          Container(decoration: _decoration, child:
+            Padding(padding: padding, child:
+              Column(mainAxisAlignment: MainAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: contentList,),
+            ),
           ),
         ),
+      ),
     );
   }
+
+  TextStyle get _titleTextStyle => titleTextStyle ?? TextStyle(
+    color: titleTextColor ?? Styles().colors?.fillColorPrimary,
+    fontFamily: titleFontFamilly ?? Styles().fontFamilies?.bold,
+    fontSize: titleFontSize
+  );
+
+  Color get _borderColor => borderColor ?? Styles().colors?.white ?? const Color(0x00FFFFFF);
+  BorderRadiusGeometry get _borderRadius => borderRadius ?? BorderRadius.circular(4);
+  Border get _border => border ?? Border.all(color: _borderColor, width: borderWidth);
+  List<BoxShadow> get _borderShadow => borderShadow ?? [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))];
+  Decoration get _decoration => BoxDecoration(color: _borderColor, borderRadius: _borderRadius, border: _border, boxShadow: _borderShadow);
+
 }

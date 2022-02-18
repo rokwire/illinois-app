@@ -63,59 +63,59 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   }
 
   Widget? _widgetFromCode(BuildContext context, String code, int countPerRow) {
-    String? label, hint, iconPath;
+    String? title, hint, iconAsset;
     GestureTapCallback onTap;
     if (code == 'events') {
-      label = Localization().getStringEx('widget.home_campus_tools.button.events.title', 'Events');
+      title = Localization().getStringEx('widget.home_campus_tools.button.events.title', 'Events');
       hint = Localization().getStringEx('widget.home_campus_tools.button.events.hint', '');
-      iconPath = 'images/icon-campus-tools-events.png';
+      iconAsset = 'images/icon-campus-tools-events.png';
       onTap = _onTapEvents;
     }
     else if (code == 'dining') {
-      label = Localization().getStringEx('widget.home_campus_tools.button.dining.title', 'Dining');
+      title = Localization().getStringEx('widget.home_campus_tools.button.dining.title', 'Dining');
       hint = Localization().getStringEx('widget.home_campus_tools.button.dining.hint', '');
-      iconPath = 'images/icon-campus-tools-dining.png';
+      iconAsset = 'images/icon-campus-tools-dining.png';
       onTap = _onTapDining;
     }
     else if (code == 'athletics') {
-      label = Localization().getStringEx('widget.home_campus_tools.button.athletics.title', 'Athletics');
+      title = Localization().getStringEx('widget.home_campus_tools.button.athletics.title', 'Athletics');
       hint = Localization().getStringEx('widget.home_campus_tools.button.athletics.hint', '');
-      iconPath = 'images/icon-campus-tools-athletics.png';
+      iconAsset = 'images/icon-campus-tools-athletics.png';
       onTap = _onTapAthletics;
     }
     else if (code == 'laundry') {
-      label = Localization().getStringEx('widget.home_campus_tools.button.laundry.title', 'Laundry');
+      title = Localization().getStringEx('widget.home_campus_tools.button.laundry.title', 'Laundry');
       hint = Localization().getStringEx('widget.home_campus_tools.button.laundry.hint', '');
-      iconPath = 'images/icon-campus-tools-laundry.png';
+      iconAsset = 'images/icon-campus-tools-laundry.png';
       onTap = _onTapLaundry;
     }
     else if (code == 'illini_cash') {
-      label = Localization().getStringEx('widget.home_campus_tools.button.illini_cash.title', 'Illini Cash');
+      title = Localization().getStringEx('widget.home_campus_tools.button.illini_cash.title', 'Illini Cash');
       hint = Localization().getStringEx('widget.home_campus_tools.button.illini_cash.hint', '');
-      iconPath = 'images/icon-campus-tools-illini-cash.png';
+      iconAsset = 'images/icon-campus-tools-illini-cash.png';
       onTap = _onTapIlliniCash;
     } else if (code == 'my_illini') {
-      label = Localization().getStringEx('widget.home_campus_tools.button.my_illini.title', 'My Illini');
+      title = Localization().getStringEx('widget.home_campus_tools.button.my_illini.title', 'My Illini');
       hint = Localization().getStringEx('widget.home_campus_tools.button.my_illini.hint', '');
-      iconPath = 'images/icon-campus-tools-my-illini.png';
+      iconAsset = 'images/icon-campus-tools-my-illini.png';
       onTap = _onTapMyIllini;
     } else if (code == 'wellness') {
-      label = Localization().getStringEx('widget.home_campus_tools.button.wellness.title', 'Wellness');
+      title = Localization().getStringEx('widget.home_campus_tools.button.wellness.title', 'Wellness');
       hint = Localization().getStringEx('widget.home_campus_tools.button.wellness.hint', '');
-      iconPath = 'images/icon-campus-tools-wellness.png';
+      iconAsset = 'images/icon-campus-tools-wellness.png';
       onTap = _onTapWellness;
     } else if (code == 'crisis_help') {
-      label = Localization().getStringEx('widget.home_campus_tools.button.crisis_help.title', 'Crisis Help');
+      title = Localization().getStringEx('widget.home_campus_tools.button.crisis_help.title', 'Crisis Help');
       hint = Localization().getStringEx('widget.home_campus_tools.button.crisis_help.hint', '');
-      iconPath = 'images/icon-campus-tools-crisis.png';
+      iconAsset = 'images/icon-campus-tools-crisis.png';
       onTap = _onTapCrisisHelp;
      } else {
       return null;
     }
 
     return (countPerRow == 1) ?
-      LinkTileWideButton(label: label, hint: hint, iconPath: iconPath, onTap: onTap) :
-      LinkTileSmallButton(label: label, hint: hint, iconPath: iconPath, onTap: onTap);
+      LinkTileWideButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap) :
+      LinkTileSmallButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap);
   }
 
   @override
