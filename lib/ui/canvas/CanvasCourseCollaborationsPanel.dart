@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -32,12 +34,17 @@ class CanvasCourseCollaborationsPanel extends StatefulWidget {
 }
 
 class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborationsPanel> {
-  List<CanvasCollaboration>? _collaborations;
+  Map<int, List<CanvasCollaboration>?>? _courseCollaborationsMap;
+  List<CanvasCourse>? _courses;
+  int? _selectedCourseId;
+  int _collaborationsCount = 0;
   int _loadingProgress = 0;
 
   @override
   void initState() {
     super.initState();
+    _selectedCourseId = widget.courseId;
+    _loadCourses();
     _loadCollaborations();
   }
 
@@ -54,18 +61,22 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
   }
 
   Widget _buildContent() {
+    late Widget contentWidget;
     if (_isLoading) {
-      return _buildLoadingContent();
-    }
-    if (_collaborations != null) {
-      if (_collaborations!.isNotEmpty) {
-        return _buildCollaborationsContent();
-      } else {
-        return _buildEmptyContent();
-      }
+      contentWidget = _buildLoadingContent();
     } else {
-      return _buildErrorContent();
+      if (_courseCollaborationsMap != null) {
+        if (_hasCollaborations) {
+          contentWidget = _buildCollaborationsContent();
+        } else {
+          contentWidget = _buildEmptyContent();
+        }
+      } else {
+        contentWidget = _buildErrorContent();
+      }
     }
+
+    return Column(children: [Padding(padding: EdgeInsets.all(16), child: _buildCourseDropDownWidget()), Expanded(child: contentWidget)]);
   }
 
   Widget _buildLoadingContent() {
@@ -80,18 +91,28 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
 
   Widget _buildEmptyContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_collaborations.empty.msg', 'There are no collaborations for this course.'),
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_collaborations.empty.msg', 'There are no collaborations.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
   Widget _buildCollaborationsContent() {
-    if (CollectionUtils.isEmpty(_collaborations)) {
+    if (CollectionUtils.isEmpty(_courseCollaborationsMap?.values)) {
       return Container();
     }
 
     List<Widget> collaborationWidgetList = [];
-    for (CanvasCollaboration collaboration in _collaborations!) {
-      collaborationWidgetList.add(_buildCollaborationWidget(collaboration));
+    bool showCourseLabel = (_selectedCourseId == null);
+    for (int courseId in _courseCollaborationsMap!.keys) {
+      CanvasCourse? course = _getCurrentCourse(courseId: courseId);
+      if (course != null) {
+        if (showCourseLabel) {
+          collaborationWidgetList.add(_buildCourseLabelWidget(course.name));
+        }
+        List<CanvasCollaboration>? collaborations = _courseCollaborationsMap![course.id];
+        for (CanvasCollaboration collaboration in collaborations!) {
+          collaborationWidgetList.add(_buildCollaborationWidget(collaboration));
+        }
+      }
     }
 
     return SingleChildScrollView(
@@ -99,6 +120,22 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
         child: Padding(
             padding: EdgeInsets.only(left: 16, top: 16, right: 16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: collaborationWidgetList)));
+  }
+  
+  Widget _buildCourseLabelWidget(String? label) {
+    return Padding(
+        padding: EdgeInsets.only(bottom: 16),
+        child: Container(
+            decoration: BoxDecoration(
+                color: Styles().colors!.backgroundVariant!, border: Border.all(color: Styles().colors!.blackTransparent06!, width: 1)),
+            padding: EdgeInsets.all(10),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Expanded(
+                    child: Text(StringUtils.ensureNotEmpty(label),
+                        style: TextStyle(fontSize: 18, color: Colors.black, fontFamily: Styles().fontFamilies!.bold)))
+              ])
+            ])));
   }
 
   Widget _buildCollaborationWidget(CanvasCollaboration collaboration) {
@@ -136,10 +173,111 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
     //TBD: implement when we know how to do it.
   }
 
+  Widget _buildCourseDropDownWidget() {
+    double height = MediaQuery.of(context).textScaleFactor * 62;
+    return Container(
+        height: height,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+        child: Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                    style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+                    items: _buildCourseDropDownItems,
+                    value: _selectedCourseId,
+                    itemHeight: null,
+                    isExpanded: true,
+                    onChanged: (courseId) => _onCourseIdChanged(courseId)))));
+  }
+
+  List<DropdownMenuItem<int>>? get _buildCourseDropDownItems {
+    if(CollectionUtils.isEmpty(_courses)) {
+      return null;
+    }
+    List<DropdownMenuItem<int>> items = [];
+    CanvasCourse? currentCourse = _getCurrentCourse(courseId: widget.courseId);
+    Color textColor = Styles().colors!.textSurfaceAccent!;
+    double textFontSize = 16;
+    if (currentCourse != null) {
+      items.add(DropdownMenuItem(
+          value: currentCourse.id,
+          child: Text(StringUtils.ensureNotEmpty(currentCourse.name),
+              style: TextStyle(
+                  color: textColor,
+                  fontSize: textFontSize,
+                  fontFamily: ((_selectedCourseId == currentCourse.id) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
+    }
+    items.add(DropdownMenuItem(
+        value: null,
+        child: Text(Localization().getStringEx('panel.canvas_collaborations.all_courses.label', 'All Courses'),
+            style: TextStyle(
+                color: textColor,
+                fontSize: textFontSize,
+                fontFamily: ((_selectedCourseId == null) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
+    return items;
+  }
+
+  CanvasCourse? _getCurrentCourse({int? courseId}) {
+    CanvasCourse? selectedCourse;
+    if (CollectionUtils.isNotEmpty(_courses)) {
+      for (CanvasCourse course in _courses!) {
+        if (course.id == courseId) {
+          selectedCourse = course;
+          break;
+        }
+      }
+    }
+    return selectedCourse;
+  }
+
+  void _onCourseIdChanged(dynamic courseId) {
+    if (_selectedCourseId != courseId) {
+      _selectedCourseId = courseId;
+      _loadCollaborations();
+    }
+  }
+
   void _loadCollaborations() {
+    if (_courseCollaborationsMap != null) {
+      _courseCollaborationsMap = null;
+      _collaborationsCount = 0;
+    }
+    if (_selectedCourseId != null) {
+      _loadCollaborationsForSingleCourse(_selectedCourseId!);
+    } else {
+      _loadCollaborationsForAllCourses();
+    }
+  }
+
+  void _loadCollaborationsForSingleCourse(int courseId) {
     _increaseProgress();
-    Canvas().loadCollaborations(widget.courseId).then((collaborations) {
-      _collaborations = collaborations;
+    Canvas().loadCollaborations(courseId).then((collaborations) {
+      if (collaborations != null) {
+        if (_courseCollaborationsMap == null) {
+          _courseCollaborationsMap = HashMap();
+        }
+        _courseCollaborationsMap![courseId] = collaborations;
+        _collaborationsCount += collaborations.length;
+      }
+      _decreaseProgress();
+    });
+  }
+
+  void _loadCollaborationsForAllCourses() {
+    if (CollectionUtils.isNotEmpty(_courses)) {
+      for (CanvasCourse course in _courses!) {
+        _loadCollaborationsForSingleCourse(course.id!);
+      }
+    }
+  }
+
+  void _loadCourses() {
+    _increaseProgress();
+    Canvas().loadCourses().then((courses) {
+      _courses = courses;
       _decreaseProgress();
     });
   }
@@ -160,5 +298,9 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
 
   bool get _isLoading {
     return (_loadingProgress > 0);
+  }
+
+  bool get _hasCollaborations {
+    return (_collaborationsCount > 0);
   }
 }

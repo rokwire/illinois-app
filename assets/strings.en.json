@@ -2002,7 +2002,8 @@
 
     "panel.canvas_collaborations.header.title": "Collaborations",
     "panel.canvas_collaborations.load.failed.error.msg": "Failed to load collaborations. Please, try again later.",
-    "panel.canvas_collaborations.empty.msg": "There are no collaborations for this course.",
+    "panel.canvas_collaborations.empty.msg": "There are no collaborations.",
+    "panel.canvas_collaborations.all_courses.label": "All Courses",
 
     "panel.canvas_calendar.header.title": "Calendar",
     "panel.canvas_calendar.all_courses.label": "All Courses",

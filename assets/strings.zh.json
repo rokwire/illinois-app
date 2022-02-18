@@ -1994,7 +1994,8 @@
 
     "panel.canvas_collaborations.header.title": "合作",
     "panel.canvas_collaborations.load.failed.error.msg": "未能加載協作. 請稍後再試.",
-    "panel.canvas_collaborations.empty.msg": "本課程沒有合作.",
+    "panel.canvas_collaborations.empty.msg": "沒有合作.",
+    "panel.canvas_collaborations.all_courses.label": "所有課程",
 
     "panel.canvas_calendar.header.title": "日曆",
     "panel.canvas_calendar.all_courses.label": "所有課程",

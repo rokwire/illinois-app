@@ -1996,7 +1996,8 @@
 
     "panel.canvas_collaborations.header.title": "Colaboraciones",
     "panel.canvas_collaborations.load.failed.error.msg": "No se pudieron cargar las colaboraciones. Por favor, inténtelo de nuevo más tarde.",
-    "panel.canvas_collaborations.empty.msg": "No hay colaboraciones para este curso.",
+    "panel.canvas_collaborations.empty.msg": "No hay colaboraciones.",
+    "panel.canvas_collaborations.all_courses.label": "Todos los cursos",
 
     "panel.canvas_calendar.header.title": "Calendario",
     "panel.canvas_calendar.all_courses.label": "Todos los cursos",
