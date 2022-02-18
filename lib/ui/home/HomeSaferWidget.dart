@@ -10,7 +10,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -59,9 +59,9 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   @override
   Widget build(BuildContext context) {
-    return SectionTitlePrimary(
+    return SectionHeading(
       title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
-      iconPath: 'images/campus-tools.png',
+      titleIconAsset: 'images/campus-tools.png',
       children: _buildCommandsList(),);
   }
 

@@ -44,13 +44,13 @@ class SmallRoundedButton extends RoundedButton {
     String? hint,
     bool enabled                         = true,
 
-    BoxBorder? border,
+    Border? border,
     Color? borderColor,
     double borderWidth                   = 2.0,
     List<BoxShadow>? borderShadow,
     double? maxBorderRadius = 24.0,
 
-    BoxBorder? secondaryBorder,
+    Border? secondaryBorder,
     Color? secondaryBorderColor,
     double? secondaryBorderWidth,
 
