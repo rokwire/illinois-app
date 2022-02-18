@@ -16,7 +16,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
@@ -458,8 +458,8 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
 
     return ((contentList != null) && (0 < contentList.length)) ?
       Container(padding: EdgeInsets.symmetric(vertical: 16), child:
-        SectionTitlePrimary(title: "Related",
-          iconPath: 'images/icon-related.png',
+        SectionHeading(title: "Related",
+          titleIconAsset: 'images/icon-related.png',
           children: contentList,
       )) :
       Container();

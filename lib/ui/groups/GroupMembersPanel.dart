@@ -29,7 +29,7 @@ import 'package:illinois/ui/groups/GroupPendingMemberPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -205,8 +205,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         ));
       }
 
-      return SectionTitlePrimary(title: Localization().getStringEx("panel.manage_members.label.requests", "Requests"),
-        iconPath: 'images/icon-reminder.png',
+      return SectionHeading(title: Localization().getStringEx("panel.manage_members.label.requests", "Requests"),
+        titleIconAsset: 'images/icon-reminder.png',
         children: <Widget>[
           Column(
             children: requests,

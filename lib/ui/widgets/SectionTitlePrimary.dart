@@ -19,122 +19,183 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class SectionTitlePrimary extends StatelessWidget{
+class SectionHeading extends StatelessWidget{
   final String? title;
+  final Color? titleTextColor;
+  final String? titleFontFamilly;
+  final double titleFontSize;
+  final TextStyle? titleTextStyle;
+  final EdgeInsetsGeometry titlePadding;
+  
   final String? subTitle;
-  final String? iconPath;
-  final List<Widget>? children;
-  final EdgeInsetsGeometry? listPadding;
-  final String slantImageRes;
-  final Color? backgroundColor;
-  final Color? slantColor;
-  final Color? textColor;
-  final String? rightIconPath;
-  final String? rightIconLabel;
-  final void Function()? rightIconAction;
+  final Color? subTitleTextColor;
+  final String? subTitleFontFamilly;
+  final double subTitleFontSize;
+  final TextStyle? subTitleTextStyle;
+  final EdgeInsetsGeometry subTitlePadding;
+  
+  final String? titleIconAsset;
+  final EdgeInsetsGeometry titleIconPadding;
 
-  SectionTitlePrimary({this.title, this.subTitle, this.iconPath, this.rightIconPath, this.children, this.listPadding,
-    this.slantImageRes = "", this.slantColor, this.backgroundColor, this.textColor, this.rightIconAction, this.rightIconLabel});
+  final Color? backgroundColor;
+
+  final Color? slantColor;
+  final double slantPainterHeadingHeight;
+  final double slantPainterHeight;
+
+  final String? slantImageAsset;
+  final double slantImageHeadingHeight;
+  final double slantImageHeight;
+
+  final String? rightIconLabel;
+  final String? rightIconAsset;
+  final void Function()? rightIconAction;
+  final EdgeInsetsGeometry rightIconPadding;
+
+  final List<Widget>? children;
+  final EdgeInsetsGeometry childrenPadding;
+
+  SectionHeading({
+    Key? key,
+
+    this.title,
+    this.titleTextColor,
+    this.titleFontFamilly,
+    this.titleFontSize = 20,
+    this.titleTextStyle,
+    this.titlePadding = const EdgeInsets.only(left: 16, top: 16),
+
+    this.subTitle,
+    this.subTitleTextColor,
+    this.subTitleFontFamilly,
+    this.subTitleFontSize = 16,
+    this.subTitleTextStyle,
+    this.subTitlePadding = const EdgeInsets.only(left: 50, right: 16),
+
+    this.titleIconAsset,
+    this.titleIconPadding = const EdgeInsets.only(right: 16),
+
+    this.backgroundColor, 
+    
+    this.slantColor,
+    this.slantPainterHeadingHeight = 85,
+    this.slantPainterHeight = 67,
+    
+    this.slantImageAsset,
+    this.slantImageHeadingHeight = 40,
+    this.slantImageHeight = 112,
+    
+    this.rightIconLabel,
+    this.rightIconAsset,
+    this.rightIconAction,
+    this.rightIconPadding = const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 2),
+    
+    this.children,
+    this.childrenPadding = const EdgeInsets.all(16),
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool hasSubTitle = StringUtils.isNotEmpty(subTitle);
-    bool useImageSlant = StringUtils.isNotEmpty(slantImageRes);
-    return Stack(
-      alignment: Alignment.topCenter,
-      children: <Widget>[
-        Column(
-          children: <Widget>[
-            Container(
-              color: slantColor ?? Styles().colors!.fillColorPrimary,
-              height: 40,
-            ),
-
-            Visibility(visible:useImageSlant,child:Container(
-              height: 112,
-              width: double.infinity,
-              child: Image.asset(slantImageRes, excludeFromSemantics: true, color: slantColor ?? Styles().colors!.fillColorPrimary, fit: BoxFit.fill),
-              )
-            ),
-            Visibility(visible:!useImageSlant,child:
-              Container(
-               color:  slantColor ?? Styles().colors!.fillColorPrimary,
-               height: 45,
-              ),
-            ),
-            Visibility(visible:!useImageSlant,child:
-              Container(
-                color:  slantColor ?? Styles().colors!.fillColorPrimary,
-                child:CustomPaint(
-                  painter: TrianglePainter(painterColor: backgroundColor ?? Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft),
-                  child: Container(
-                    height: 67,
-                  ),
-                ))),
-          ],
+    
+    // Build Stack layer 1
+    List<Widget> layer1List = <Widget>[];
+    if (StringUtils.isNotEmpty(slantImageAsset)) {
+      layer1List.addAll([
+        Container(color: _slantColor, height: slantImageHeadingHeight,),
+        Row(children:[Expanded(child:
+          Container(height: slantImageHeight, child:
+            Image.asset(slantImageAsset!, excludeFromSemantics: true, color: _slantColor, fit: BoxFit.fill),
+          ),
+        )]),
+      ]);
+    }
+    else {
+      layer1List.addAll([
+        Container(color: _slantColor, height: slantPainterHeadingHeight,),
+        Container(color: _slantColor, child:
+          CustomPaint(painter: TrianglePainter(painterColor: backgroundColor ?? Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+            Container(height: slantPainterHeight,),
+          ),
         ),
-        Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(left: 16, top: 16),
-              child: Row(
-                children: <Widget>[
-                  iconPath != null ? Padding(
-                    padding: EdgeInsets.only(
-                        right: 16),
-                    child: Image.asset(
-                        iconPath!, excludeFromSemantics: true,),
-                  ) : Container(),
-                  Expanded(child:
-                    Semantics(label:title, header: true, excludeSemantics: true, child:
-                      Text(
-                        title!,
-                        style: TextStyle(
-                          color: textColor ?? Styles().colors!.textColorPrimary,
-                          fontSize: 20),
-                      )
-                    )
-                  ),
-                  rightIconPath != null ?
-                  Semantics(
-                    button: true,
-                    label: rightIconLabel,
-                    child: GestureDetector(
-                      onTap: rightIconAction,
-                      child: Container(
-                        padding: EdgeInsets.only(
-                            left: 16, right: 16, top: 8, bottom: 2),
-                        child: Image.asset(
-                          rightIconPath!, excludeFromSemantics: true,),
-                      ))): Container(),
-                ],
-              ),
-            ),
-            Visibility(visible: hasSubTitle,
-                child: Semantics(
-                  label: StringUtils.ensureNotEmpty(subTitle),
-                  header: true,
-                  excludeSemantics: true,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 50, right: 16),
-                    child: Row(children: <Widget>[
-                      Text(StringUtils.ensureNotEmpty(subTitle),
-                        style: TextStyle(fontSize: 16,
-                            color: Colors.white,
-                            fontFamily: Styles().fontFamilies!.regular),),
-                      Expanded(child: Container(),)
-                    ],),),)),
-            Padding(
-              padding: listPadding ?? EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: children!,
-              ),
-            )
-          ],
+      ]);
+    }
+
+    // Build Title Row
+    List<Widget> titleList = <Widget>[];
+    if (titleIconAsset != null) {
+      titleList.add(
+        Padding(padding: titleIconPadding, child:
+          Image.asset(titleIconAsset!, excludeFromSemantics: true,),
         )
-      ],
+      );
+    }
+    
+    titleList.add(
+      Expanded(child:
+        Semantics(label: title, header: true, excludeSemantics: true, child:
+          Text(title ?? '', style: _titleTextStyle,)
+        )
+      ),
     );
+    
+    if (rightIconAsset != null) {
+      titleList.add(
+        Semantics(label: rightIconLabel, button: true, child:
+          GestureDetector(onTap: rightIconAction, child:
+            Container(padding: rightIconPadding, child:
+              Image.asset(rightIconAsset!, excludeFromSemantics: true,),
+            )
+          )
+        ),
+      );
+    }
+
+    // Build Stack layer 2
+    List<Widget> layer2List = <Widget>[
+      Padding(padding: titlePadding, child:
+        Row(children: titleList,),
+      ),
+    ];
+
+    if (StringUtils.isNotEmpty(subTitle)) {
+      layer2List.add(
+        Semantics(label: subTitle, header: true, excludeSemantics: true, child:
+          Padding(padding: subTitlePadding, child:
+            Row(children: <Widget>[
+              Expanded(child:
+                Text(subTitle ?? '', style: _subTitleTextStyle,),
+              ),
+            ],),
+          ),
+        ),
+      );
+    }
+
+    layer2List.add(
+      Padding(padding: childrenPadding, child:
+        Column(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: children ?? [],),
+      )
+    );
+
+    return Stack(alignment: Alignment.topCenter, children: <Widget>[
+      Column(children: layer1List,),
+      Column(children: layer2List,),
+    ],);
+
+    
   }
+
+  Color? get _slantColor => slantColor ?? Styles().colors?.fillColorPrimary;
+
+  TextStyle get _titleTextStyle => titleTextStyle ?? TextStyle(
+    color: titleTextColor ?? Styles().colors?.textColorPrimary,
+    fontFamily: titleFontFamilly ?? Styles().fontFamilies?.extraBold,
+    fontSize: titleFontSize
+  );
+
+  TextStyle get _subTitleTextStyle => subTitleTextStyle ?? TextStyle(
+    color: subTitleTextColor ?? Styles().colors?.textColorPrimary,
+    fontFamily: subTitleFontFamilly ?? Styles().fontFamilies?.regular,
+    fontSize: subTitleFontSize
+  );
 }

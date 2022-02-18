@@ -34,7 +34,7 @@ import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -638,12 +638,11 @@ class _EventsListState extends State<_EventsList>{
     String titleKey = (widget.parentEvent?.isSuperEvent == true)
         ? "panel.explore_detail.super_event.schedule.heading.title"
         : "panel.explore_detail.recurring_event.schedule.heading.title";
-    return SectionTitlePrimary(
+    return SectionHeading(
         title: Localization().getStringEx(titleKey, "Event Schedule"),
-        subTitle: "",
-        slantImageRes: "images/slant-down-right-grey.png",
+        slantImageAsset: "images/slant-down-right-grey.png",
         slantColor: Styles().colors!.backgroundVariant,
-        textColor: Styles().colors!.fillColorPrimary,
+        titleTextColor: Styles().colors!.fillColorPrimary,
         children: _buildListItems()
     );
   }

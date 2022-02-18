@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- SectionTitlePrimary and LinkTileButtons moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 - FlexContentWidget moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 
 ## [3.2.22] - 2022-02-17
