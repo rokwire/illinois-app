@@ -47,15 +47,17 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
 
   bool _isLoading = false;
   bool _link = false;
+  String? _identifier;
 
   @override
   void initState() {
     super.initState();
     _phoneOrEmailController = TextEditingController();
-    if (widget.onboardingContext?["identifier"] != null) {
-      _phoneOrEmailController!.text = widget.onboardingContext?["identifier"];
-    }
     _link = widget.onboardingContext?["link"] ?? false;
+    _identifier = widget.onboardingContext?["identifier"];
+    if (_identifier != null) {
+      _phoneOrEmailController!.text = _identifier!;
+    }
   }
 
   @override
@@ -103,10 +105,10 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                         excludeSemantics: true,
                         value: _phoneOrEmailController!.text,
                         child: Container(
-                          color: widget.onboardingContext?["identifier"] == null ? Styles().colors!.white: Styles().colors!.background,
+                          color: _identifier == null ? Styles().colors!.white: Styles().colors!.background,
                           child: TextField(
                             controller: _phoneOrEmailController,
-                            readOnly: widget.onboardingContext?["identifier"] != null,
+                            readOnly: _identifier != null,
                             autofocus: false,
                             autocorrect: false,
                             onSubmitted: (_) => _clearErrorMsg,
@@ -182,13 +184,21 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     setState(() { _isLoading = true; });
 
     if (!_link) {
-      Auth2().authenticateWithPhone(phoneNumber).then((success) => _loginByPhoneCallback(success, phoneNumber));
+      Auth2().authenticateWithPhone(phoneNumber).then((result) => _onPhoneInitiated(phoneNumber, result));
     } else if (!Auth2().isPhoneLinked){ // at most one phone number may be linked at a time
       Map<String, dynamic> creds = {
         "phone": phoneNumber
       };
       Map<String, dynamic> params = {};
-      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((success) => _loginByPhoneCallback(success, phoneNumber));
+      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
+        if (result == Auth2LinkResult.succeded) {
+          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.succeded);
+        } else if (result == Auth2LinkResult.failedAccountExist) {
+          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.failedAccountExist);
+        } else {
+          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.failed);
+        }
+      });
     } else {
       setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.linked.text", "You have already linked a phone number to your account."));
       if (mounted) {
@@ -197,51 +207,35 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     }
   }
 
-  void _loginByPhoneCallback(bool success, String? phoneNumber) {
+  void _onPhoneInitiated(String? phoneNumber, Auth2PhoneRequestCodeResult result) {
     if (mounted) {
       setState(() { _isLoading = false; });
-      if (_link) {
-        if (success) {
-          Function? onSuccess = widget.onboardingContext!["onContinueAction"];
-          if(onSuccess!=null){
-            onSuccess();
-            return;
-          }
-        } else {
-          setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.link.failed", "Failed to link phone number."));
-          return;
-        }
-      }
-      _onPhoneInitiated(phoneNumber, success);
     }
-  }
 
-  void _onPhoneInitiated(String? phoneNumber, bool success) {
-    if (!success) {
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed", "Failed to send phone verification code."));
-    }
-    else {
+    if (result == Auth2PhoneRequestCodeResult.succeded) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginPhoneConfirmPanel(phoneNumber: phoneNumber, onboardingContext: widget.onboardingContext)));
+    } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists", "Failed to send phone verification code. Another account is already using this phone number."));
+    } else {
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed", "Failed to send phone verification code. An unexpected error has occurred."));
     }
   }
 
   void _loginByEmail(String? email) {
     setState(() { _isLoading = true; });
     
-    Auth2().checkEmailAccountState(email).then((Auth2EmailAccountState? state) {
+    Auth2().checkEmailAccountState(email, _link ? "link" : "login").then((Auth2EmailAccountState? state) {
       if (mounted) {
         setState(() { _isLoading = false; });
         if (state != null) {
           if (_link) {
-            if (state != Auth2EmailAccountState.nonExistent) {
-              setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.link.exists", "You have already linked this email address to your account."));
+            if (state == Auth2EmailAccountState.verified) {
+              setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.link.failed.exists", "An existing account is already using this email address."));
               return;
             } else if (Auth2().isEmailLinked) { // at most one email address may be linked at a time
               setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.linked.text", "You have already linked an email address to your account."));
               return;
             }
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: state, onboardingContext: widget.onboardingContext)));
-            return;
           }
           Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: state, onboardingContext: widget.onboardingContext)));
         }

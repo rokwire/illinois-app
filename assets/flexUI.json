@@ -30,8 +30,8 @@
 		"settings.connected.phone": ["info", "disconnect", "verify"],
 		"settings.connected.email": ["info", "disconnect", "login"],
 		"settings.linked.netid": ["info", "unlink"],
-		"settings.linked.phone": ["info", "unlink"],
-		"settings.linked.email": ["info", "unlink"],
+		"settings.linked.phone": ["info", "unlink", "verify"],
+		"settings.linked.email": ["info", "unlink", "verify"],
 		"settings.customizations": ["roles", "interests", "food_filters" ],
 		"settings.notifications": ["reminders", "athletics_updates", "dining"],
 		"settings.account": ["personal_info"],
@@ -149,13 +149,13 @@
 			"settings.linked"                     : { "loggedIn": true },
 			"settings.linked.netid"               : { "shibbolethLinked": true },
 			"settings.linked.netid.info"          : { "shibbolethLinked": true },
-			"settings.linked.netid.unlink"       : { "shibbolethLinked": true },
+			"settings.linked.netid.unlink"        : { "shibbolethLinked": true },
 			"settings.linked.phone"               : { "phoneLinked": true },
 			"settings.linked.phone.info"          : { "phoneLinked": true },
-			"settings.linked.phone.unlink"       : { "phoneLinked": true },
+			"settings.linked.phone.unlink"        : { "phoneLinked": true },
 			"settings.linked.email"               : { "emailLinked": true },
 			"settings.linked.email.info"          : { "emailLinked": true },
-			"settings.linked.email.unlink"       : { "emailLinked": true }
+			"settings.linked.email.unlink"        : { "emailLinked": true }
 		},
 		"platform":{
 			"onboarding.notifications_auth" : { "os": "ios" },
