@@ -50,7 +50,7 @@ class RewardHistoryEntry {
   }
 
   String? get displayDate {
-    return AppDateTime().formatDateTime(dateCreatedLocal, format: 'MM-dd-yy');
+    return AppDateTime().formatDateTime(dateCreatedLocal, format: 'MM-dd-yy h:mm a');
   }
 
   String? get displayDescription {
