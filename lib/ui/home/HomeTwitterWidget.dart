@@ -272,9 +272,6 @@ class _TweetWidget extends StatelessWidget {
         clipBehavior: Clip.none,
         child:
           Column(children: <Widget>[
-            
-            // Expanded(child:
-            //   SingleChildScrollView(child:
                 Column(children: [
                   StringUtils.isNotEmpty(tweet?.media?.imageUrl) ?
                     InkWell(onTap: () => _onTap(context), child:
@@ -287,9 +284,6 @@ class _TweetWidget extends StatelessWidget {
                       style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
                   ),
                 ],),
-            //   ),
-            // ),
-
             Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
               Row(children: [
                 Expanded(child: StringUtils.isNotEmpty(tweet?.author?.userName) ?
@@ -359,18 +353,14 @@ class _TweetLoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.only(bottom: 5, right: 20), child:
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24), child:
       Container(
-        decoration: BoxDecoration(
-            color: Styles().colors!.white,
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
-        ),
+        color: Colors.transparent,
         clipBehavior: Clip.none,
         child:
           Center(child: 
             SizedBox(height: 24, width: 24, child:
-              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
+              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white), )
             ),
           ),
       )
