@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -871,14 +872,15 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
       _showProgress = true;
     });
 
-    Future<ImagesResult?> result =
-    Content().selectImageFromDevice(storagePath: _groupImageStoragePath, width: _groupImageWidth);
-    result.then((logicResult) {
+    // Future<ImagesResult?> result =
+    // Content().selectImageFromDevice(storagePath: _groupImageStoragePath, width: _groupImageWidth);
+    // result.then((logicResult) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(storagePath: _groupImageStoragePath, width: _groupImageWidth))).then((logicResult){
       setState(() {
         _showProgress = false;
       });
 
-      ImagesResultType? resultType = logicResult!.resultType;
+      ImagesResultType? resultType = logicResult?.resultType;
       switch (resultType) {
         case ImagesResultType.cancelled:
         //do nothing
@@ -896,6 +898,8 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
       }
     });
   }
+
+
 }
 
 /////////////////////////////////////
@@ -1073,6 +1077,7 @@ class GroupCard extends StatelessWidget {
   }
 
   Widget _buildImage() {
+    double maxImageWidgth = 150;
     String? imageUrl = group?.imageURL;
     return
       StringUtils.isEmpty(imageUrl) ? Container() :
@@ -1091,7 +1096,8 @@ class GroupCard extends StatelessWidget {
               },
               child: Container(
                 padding: EdgeInsets.only(left: 8),
-                child: SizedBox(
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: maxImageWidgth),
                   // width: _smallImageSize,
                   height: _smallImageSize,
                   child: Image.network(imageUrl!, excludeFromSemantics: true,
@@ -1473,10 +1479,10 @@ class ModalImageDialog extends StatelessWidget{
         explicitChildNodes: true,
         scopesRoute: true,
         child:Column(children: [
-        Expanded(child: PinchZoom(
+        Expanded(child:PinchZoom(
           child: GestureDetector(
             onTap: onClose, //dismiss
-            child: Container(
+            child: SingleChildScrollView(child:  Container(
               color: Styles().colors!.blackTransparent06,
               child:Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -1521,12 +1527,12 @@ class ModalImageDialog extends StatelessWidget{
                                         child: StringUtils.isNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders): Container(),
                                       )
                                     ],
-                                  ))
+                                  )
                           )
                       )
-                  ),
+                  )),
                 ],
-              )))
+              ))))
       ))
       ],));
   }
