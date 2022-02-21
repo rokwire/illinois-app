@@ -296,7 +296,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   void _onFinish() async{
     if(widget.storagePath!=null){
       _showLoader();
-      _uploadImage(imageBytes: _imageBytes, fileName: _imageName, mediaType: _contentType, storagePath: widget.storagePath, width: widget.width)
+      Content().uploadImage(imageBytes: _imageBytes, fileName: _imageName, mediaType: _contentType, storagePath: widget.storagePath, width: widget.width)
           .then((value) {
             _hideLoader();
             Navigator.pop(this.context, value);
@@ -305,48 +305,6 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
       _hideLoader();
       ImagesResult result = (_imageBytes != null) ?  ImagesResult.succeed(_imageBytes) : ImagesResult.error(ImagesErrorType.contentNotSupplied, "'No file bytes.'");
       Navigator.pop(this.context,result);
-    }
-  }
-
-  //TODO REMOVE from here
-  //Copy paste from plugin //Expose for external usage??
-  Future<ImagesResult> _uploadImage({List<int>? imageBytes, String? fileName, String? storagePath, int? width, String? mediaType}) async {
-    String? serviceUrl = Config().contentUrl;
-    if (StringUtils.isEmpty(serviceUrl)) {
-      return ImagesResult.error(ImagesErrorType.serviceNotAvailable, 'Missing images BB url.');
-    }
-    if (CollectionUtils.isEmpty(imageBytes)) {
-      return ImagesResult.error(ImagesErrorType.contentNotSupplied, 'No file bytes.');
-    }
-    if (StringUtils.isEmpty(fileName)) {
-      return ImagesResult.error(ImagesErrorType.fileNameNotSupplied, 'Missing file name.');
-    }
-    if (StringUtils.isEmpty(storagePath)) {
-      return ImagesResult.error(ImagesErrorType.storagePathNotSupplied, 'Missing storage path.');
-    }
-    if ((width == null) || (width <= 0)) {
-      return ImagesResult.error(ImagesErrorType.dimensionsNotSupplied, 'Invalid image width. Please, provide positive number.');
-    }
-    if (StringUtils.isEmpty(mediaType)) {
-      return ImagesResult.error(ImagesErrorType.mediaTypeNotSupplied, 'Missing media type.');
-    }
-    String url = "$serviceUrl/image";
-    Map<String, String> imageRequestFields = {
-      'path': storagePath!,
-      'width': width.toString(),
-      'quality': 100.toString() // Use maximum quality - 100
-    };
-    StreamedResponse? response = await Network().multipartPost(
-        url: url, fileKey: 'fileName', fileName: fileName, fileBytes: imageBytes, contentType: mediaType, fields: imageRequestFields, auth: Auth2());
-    int responseCode = response?.statusCode ?? -1;
-    String responseString = (await response?.stream.bytesToString())!;
-    if (responseCode == 200) {
-      Map<String, dynamic>? json = JsonUtils.decode(responseString);
-      String? imageUrl = (json != null) ? json['url'] : null;
-      return ImagesResult.succeed(imageUrl);
-    } else {
-      debugPrint("Failed to upload image. Reason: $responseCode $responseString");
-      return ImagesResult.error(ImagesErrorType.uploadFailed, "Failed to upload image.", response);
     }
   }
 }

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Time in Rewards history debug panel [#1372](https://github.com/rokwire/illinois-app/issues/1372).
+- Implement crop/rotate when adding image [#1375](https://github.com/rokwire/illinois-app/issues/1375)
 
 ## [3.2.23] - 2022-02-18
 ### Added
