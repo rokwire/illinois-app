@@ -23,7 +23,7 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/SwipeDetector.dart';
+import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -452,7 +452,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
     }
     items.add(DropdownMenuItem(
         value: null,
-        child: Text(Localization().getStringEx('panel.canvas_calendar.all_courses.label', 'All Courses'),
+        child: Text(Localization().getStringEx('panel.canvas.common.all_courses.label', 'All Courses'),
             style: TextStyle(
                 color: textColor,
                 fontSize: textFontSize,

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
@@ -36,12 +38,17 @@ class CanvasCourseAssignmentsPanel extends StatefulWidget {
 }
 
 class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPanel> {
-  Map<String, List<CanvasAssignment>?>? _dueAssignmentsMap;
+  Map<int, Map<String, List<CanvasAssignment>?>?>? _courseDueAssignmentsMap;
+  List<CanvasCourse>? _courses;
+  int? _selectedCourseId;
+  int _assignmentsCount = 0;
   int _loadingProgress = 0;
 
   @override
   void initState() {
     super.initState();
+    _selectedCourseId = widget.courseId;
+    _loadCourses();
     _loadAssignments();
   }
 
@@ -58,18 +65,23 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
   }
 
   Widget _buildContent() {
+    late Widget contentWidget;
     if (_isLoading) {
-      return _buildLoadingContent();
-    }
-    if (_dueAssignmentsMap != null) {
-      if (_dueAssignmentsMap!.keys.isNotEmpty) {
-        return _buildAssignmentsContent();
-      } else {
-        return _buildEmptyContent();
-      }
+      contentWidget = _buildLoadingContent();
     } else {
-      return _buildErrorContent();
+      if (_courseDueAssignmentsMap != null) {
+        if (_hasAssignments) {
+          contentWidget = _buildAssignmentsContent();
+        } else {
+          contentWidget = _buildEmptyContent();
+        }
+      } else {
+        contentWidget = _buildErrorContent();
+      }
     }
+
+    return Column(
+        children: [Padding(padding: EdgeInsets.all(16), child: _buildCourseDropDownWidget()), Expanded(child: contentWidget)]);
   }
 
   Widget _buildLoadingContent() {
@@ -91,21 +103,35 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
     return Center(
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
-            child: Text(Localization().getStringEx('panel.canvas_assignments.empty.msg', 'There are no assignments for this course.'),
+            child: Text(Localization().getStringEx('panel.canvas_assignments.empty.msg', 'There are no assignments.'),
                 textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
   Widget _buildAssignmentsContent() {
-    List<Widget> assignmentWidgetList = [];
-    if ((_dueAssignmentsMap == null) || (CollectionUtils.isEmpty(_dueAssignmentsMap!.keys))) {
+    if ((_courseDueAssignmentsMap == null) || (CollectionUtils.isEmpty(_courseDueAssignmentsMap!.keys))) {
       return Container();
     }
-    for (String assignmentDueLabel in _dueAssignmentsMap!.keys) {
-      assignmentWidgetList.add(_buildDueAssignmentLabelWidget(assignmentDueLabel));
-      List<CanvasAssignment>? assignments = _dueAssignmentsMap![assignmentDueLabel];
-      if (CollectionUtils.isNotEmpty(assignments)) {
-        for (CanvasAssignment assignment in assignments!) {
-          assignmentWidgetList.add(_buildAssignmentItem(assignment));
+
+    List<Widget> assignmentWidgetList = [];
+    bool showCourseLabel = (_selectedCourseId == null);
+    for (int courseId in _courseDueAssignmentsMap!.keys) {
+      CanvasCourse? course = _getCurrentCourse(courseId: courseId);
+      if (course != null) {
+        if (showCourseLabel) {
+          assignmentWidgetList.add(_buildCourseLabelWidget(course.name));
+        }
+
+        Map<String, List<CanvasAssignment>?>? dueAssignmentsMap = _courseDueAssignmentsMap![courseId];
+        if ((dueAssignmentsMap != null) && CollectionUtils.isNotEmpty(dueAssignmentsMap.keys)) {
+          for (String assignmentDueLabel in dueAssignmentsMap.keys) {
+            assignmentWidgetList.add(_buildDueAssignmentLabelWidget(assignmentDueLabel));
+            List<CanvasAssignment>? assignments = dueAssignmentsMap[assignmentDueLabel];
+            if (CollectionUtils.isNotEmpty(assignments)) {
+              for (CanvasAssignment assignment in assignments!) {
+                assignmentWidgetList.add(_buildAssignmentItem(assignment));
+              }
+            }
+          }
         }
       }
     }
@@ -115,6 +141,22 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         child: Padding(
             padding: EdgeInsets.only(left: 16, top: 16, right: 16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: assignmentWidgetList)));
+  }
+  
+  Widget _buildCourseLabelWidget(String? label) {
+    return Padding(
+        padding: EdgeInsets.only(top: 16, bottom: 10),
+        child: Container(
+            decoration: BoxDecoration(
+                color: Styles().colors!.backgroundVariant!, border: Border.all(color: Styles().colors!.blackTransparent06!, width: 1)),
+            padding: EdgeInsets.all(10),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Expanded(
+                    child: Text(StringUtils.ensureNotEmpty(label),
+                        style: TextStyle(fontSize: 18, color: Colors.black, fontFamily: Styles().fontFamilies!.bold)))
+              ])
+            ])));
   }
 
   Widget _buildDueAssignmentLabelWidget(String label) {
@@ -175,10 +217,97 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
       }
     }
   }
+  
+  Widget _buildCourseDropDownWidget() {
+    double height = MediaQuery.of(context).textScaleFactor * 62;
+    return Container(
+        height: height,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+        child: Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                    style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+                    items: _buildCourseDropDownItems,
+                    value: _selectedCourseId,
+                    itemHeight: null,
+                    isExpanded: true,
+                    onChanged: (courseId) => _onCourseIdChanged(courseId)))));
+  }
+
+  List<DropdownMenuItem<int>>? get _buildCourseDropDownItems {
+    if(CollectionUtils.isEmpty(_courses)) {
+      return null;
+    }
+    List<DropdownMenuItem<int>> items = [];
+    CanvasCourse? currentCourse = _getCurrentCourse(courseId: widget.courseId);
+    Color textColor = Styles().colors!.textSurfaceAccent!;
+    double textFontSize = 16;
+    if (currentCourse != null) {
+      items.add(DropdownMenuItem(
+          value: currentCourse.id,
+          child: Text(StringUtils.ensureNotEmpty(currentCourse.name),
+              style: TextStyle(
+                  color: textColor,
+                  fontSize: textFontSize,
+                  fontFamily: ((_selectedCourseId == currentCourse.id) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
+    }
+    items.add(DropdownMenuItem(
+        value: null,
+        child: Text(Localization().getStringEx('panel.canvas.common.all_courses.label', 'All Courses'),
+            style: TextStyle(
+                color: textColor,
+                fontSize: textFontSize,
+                fontFamily: ((_selectedCourseId == null) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
+    return items;
+  }
+
+  CanvasCourse? _getCurrentCourse({int? courseId}) {
+    CanvasCourse? selectedCourse;
+    if (CollectionUtils.isNotEmpty(_courses)) {
+      for (CanvasCourse course in _courses!) {
+        if (course.id == courseId) {
+          selectedCourse = course;
+          break;
+        }
+      }
+    }
+    return selectedCourse;
+  }
+
+  void _onCourseIdChanged(dynamic courseId) {
+    if (_selectedCourseId != courseId) {
+      _selectedCourseId = courseId;
+      _loadAssignments();
+    }
+  }
 
   void _loadAssignments() {
+    if (_courseDueAssignmentsMap != null) {
+      _courseDueAssignmentsMap = null;
+      _assignmentsCount = 0;
+    }
+    if (_selectedCourseId != null) {
+      _loadAssignmentsForSingleCourse(_selectedCourseId!);
+    } else {
+      _loadAssignmentsForAllCourses();
+    }
+  }
+
+  void _loadAssignmentsForAllCourses() {
+    if (CollectionUtils.isNotEmpty(_courses)) {
+      for (CanvasCourse course in _courses!) {
+        _loadAssignmentsForSingleCourse(course.id!);
+      }
+    }
+  }
+
+  void _loadAssignmentsForSingleCourse(int courseId) {
     _increaseProgress();
-    Canvas().loadAssignmentGroups(widget.courseId).then((assignmentGroups) {
+    Canvas().loadAssignmentGroups(courseId).then((assignmentGroups) {
       DateTime now = DateTime.now().toUtc();
       if (CollectionUtils.isNotEmpty(assignmentGroups)) {
         List<CanvasAssignment> upcomingAssignments = [];
@@ -197,13 +326,19 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         }
         _sortAssignments(upcomingAssignments);
         _sortAssignments(pastAssignments, reverse: true);
+        _assignmentsCount += upcomingAssignments.length;
+        _assignmentsCount += pastAssignments.length;
 
-        _dueAssignmentsMap = {
+        if (_courseDueAssignmentsMap == null) {
+          _courseDueAssignmentsMap = HashMap();
+        }
+
+        Map<String, List<CanvasAssignment>> dueAssignmentsMap = {
           Localization().getStringEx('panel.canvas_assignments.upcoming.label', 'Upcoming Assignments'): upcomingAssignments,
           Localization().getStringEx('panel.canvas_assignments.past.label', 'Past Assignments'): pastAssignments
         };
-      } else {
-        _dueAssignmentsMap = null;
+
+        _courseDueAssignmentsMap![courseId] = dueAssignmentsMap;
       }
       _decreaseProgress();
     });
@@ -232,6 +367,14 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
     }
   }
 
+  void _loadCourses() {
+    _increaseProgress();
+    Canvas().loadCourses().then((courses) {
+      _courses = courses;
+      _decreaseProgress();
+    });
+  }
+
   void _increaseProgress() {
     _loadingProgress++;
     if (mounted) {
@@ -248,5 +391,9 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
 
   bool get _isLoading {
     return (_loadingProgress > 0);
+  }
+
+  bool get _hasAssignments {
+    return (_assignmentsCount > 0);
   }
 }

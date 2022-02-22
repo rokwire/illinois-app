@@ -41,6 +41,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
   Map<int, List<CanvasDiscussionTopic>?>? _courseAnnouncementsMap;
   List<CanvasCourse>? _courses;
   int? _selectedCourseId;
+  int _announcementsCount = 0;
   int _loadingProgress = 0;
 
   @override
@@ -69,7 +70,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
       contentWidget = _buildLoadingContent();
     } else {
       if (_courseAnnouncementsMap != null) {
-        if (_courseAnnouncementsMap!.values.isNotEmpty) {
+        if (_hasAnnouncements) {
           contentWidget = _buildAnnouncementsContent();
         } else {
           contentWidget = _buildEmptyContent();
@@ -111,17 +112,17 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
       return Container();
     }
 
-    List<Widget> annoucementWidgetList = [];
+    List<Widget> announcementWidgetList = [];
     bool showCourseLabel = (_selectedCourseId == null);
     for (int courseId in _courseAnnouncementsMap!.keys) {
       CanvasCourse? course = _getCurrentCourse(courseId: courseId);
       if (course != null) {
         if (showCourseLabel) {
-          annoucementWidgetList.add(_buildCourseLabelWidget(course.name));
+          announcementWidgetList.add(_buildCourseLabelWidget(course.name));
         }
         List<CanvasDiscussionTopic>? announcements = _courseAnnouncementsMap![course.id];
         for (CanvasDiscussionTopic announcement in announcements!) {
-          annoucementWidgetList.add(_buildAnnouncementItem(announcement));
+          announcementWidgetList.add(_buildAnnouncementItem(announcement));
         }
       }
     }
@@ -130,7 +131,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
         scrollDirection: Axis.vertical,
         child: Padding(
             padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: annoucementWidgetList)));
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: announcementWidgetList)));
   }
   
   Widget _buildCourseLabelWidget(String? label) {
@@ -242,7 +243,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
     }
     items.add(DropdownMenuItem(
         value: null,
-        child: Text(Localization().getStringEx('panel.canvas_announcements.all_courses.label', 'All Courses'),
+        child: Text(Localization().getStringEx('panel.canvas.common.all_courses.label', 'All Courses'),
             style: TextStyle(
                 color: textColor,
                 fontSize: textFontSize,
@@ -273,6 +274,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
   void _loadAnnouncements() {
     if (_courseAnnouncementsMap != null) {
       _courseAnnouncementsMap = null;
+      _announcementsCount = 0;
     }
     if (_selectedCourseId != null) {
       _loadAnnouncementsForSingleCourse(_selectedCourseId!);
@@ -284,11 +286,12 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
   void _loadAnnouncementsForSingleCourse(int courseId) {
     _increaseProgress();
     Canvas().loadAnnouncementsForCourse(courseId).then((announcements) {
-      if (CollectionUtils.isNotEmpty(announcements)) {
+      if (announcements != null) {
         if (_courseAnnouncementsMap == null) {
           _courseAnnouncementsMap = HashMap();
         }
         _courseAnnouncementsMap![courseId] = announcements;
+        _announcementsCount += announcements.length;
       }
       _decreaseProgress();
     });
@@ -326,5 +329,9 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
 
   bool get _isLoading {
     return (_loadingProgress > 0);
+  }
+
+  bool get _hasAnnouncements {
+    return (_announcementsCount > 0);
   }
 }
