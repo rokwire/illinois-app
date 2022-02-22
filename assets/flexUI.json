@@ -23,7 +23,7 @@
 
 		"settings": ["user_info", "privacy_center", "privacy", "connect", "connected", "linked", "link", "feedback", "delete"],
 		"settings.connect": ["netid", "phone_or_email"],
-		"settings.link": ["netid", "phone_or_email"],
+		"settings.link": ["netid", "phone", "email"],
 		"settings.connected": ["netid", "phone", "email"],
 		"settings.linked": ["netid", "phone", "email"],
 		"settings.connected.netid": ["info", "disconnect", "connect"],
@@ -146,6 +146,8 @@
 			"settings.connected.email.login"      : { "emailLoggedIn": false },
 			"settings.link"                       : { "loggedIn": true },
 			"settings.link.netid"                 : { "shibbolethLinked": false },
+			"settings.link.phone"                 : { "phoneLinked": false },
+			"settings.link.email"                 : { "emailLinked": false },
 			"settings.linked"                     : { "loggedIn": true },
 			"settings.linked.netid"               : { "shibbolethLinked": true },
 			"settings.linked.netid.info"          : { "shibbolethLinked": true },
