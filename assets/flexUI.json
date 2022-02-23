@@ -2,15 +2,11 @@
 	"content": {
 		"tabbar": ["home", "athletics", "explore", "wallet", "browse"],
 
-		"home": ["content", "gies_only_content"],
+		"home": ["content"],
 		"home.content": ["emergency", "upgrade_version_message", "connect", "safer", "gies2", "twitter", "canvas_courses", "highlighted_features", "my_groups", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_guide_highlights"],
 		"home.content.connect": ["netid", "phone_or_email"],
 		"home.content.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 		"home.content.campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help"],
-
-		"home.gies_only_content": ["twitter", "gies2", "canvas_courses"],
-
-		"home.twitter.user": ["gies"],
 
 		"wallet": ["connect", "content", "cards"],
 		"wallet.connect":["netid", "phone_or_email"],
@@ -39,8 +35,8 @@
 		"settings.privacy": ["buttons"],
 		"settings.privacy.buttons": ["personal_info", "notifications"],
 
-		"roles": ["student", "visitor", "fan", "employee", "alumni", "parent", "resident", "gies"],
-
+		"roles": ["student", "visitor", "fan", "employee", "alumni", "parent", "resident"],
+		
 		"onboarding":["get_started", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
 
 		"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
@@ -56,14 +52,6 @@
 			"tabbar.athletics"                       : ["fan", "AND", ["NOT", ["student", "OR", "employee", "OR", "parent"]]],
 			"tabbar.explore"                         : ["NOT", ["employee", "OR", "student", "OR", "resident"]],
 			"tabbar.wallet"                          : ["student", "OR", "employee", "OR", "resident"],
-
-			"home.content"                           : ["~gies?"],
-			"home.gies_only_content"                 : ["gies!"],
-			"home.twitter.user.gies"                 : ["gies"],
-			"home.gies_only_content.gies2"           : ["gies"],
-			"home.gies_only_content.canvas_courses"  : ["gies"],
-			"home.content.gies2"                     : ["gies"],
-			"home.content.canvas_courses"            : ["gies"],
 
 			"game_day"                               : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
 			"pref_sports"                            : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
@@ -83,6 +71,11 @@
 			"onboarding.sport_prefs"                 : ["fan"],
 
 			"bus_pass"                               : ["student", "OR", "employee", "OR", "resident"]
+		},
+		"groups": {
+			"home.content.gies2"                     : ["Authman test group"],
+			"home.content.twitter"                   : ["Authman test group"],
+			"home.content.canvas_courses"            : ["Canvas Beta"]
 		},
 		"privacy" : {
 			"illini_cash"                     : 3,
@@ -115,6 +108,9 @@
 			"home.content.connect"                : { "loggedIn": false },
 			"home.content.safer.building_access"  : { "shibbolethLoggedIn": true },
 			"home.content.safer.my_mckinley"      : { "shibbolethLoggedIn": true },
+			"home.content.gies2"                  : { "shibbolethLoggedIn": true },
+			"home.content.twitter"                : { "shibbolethLoggedIn": true },
+			"home.content.canvas_courses"         : { "shibbolethLoggedIn": true },
 			"browse.all.building_status"          : { "shibbolethLoggedIn": true },
 			"laundry"                             : { "shibbolethLoggedIn": true },
 			"create_event"                        : { "accountRole": "event approvers" },
@@ -159,7 +155,8 @@
 		},
 		"platform":{
 			"onboarding.notifications_auth" : { "os": "ios" },
-			"roles.gies": { "environment": "dev" }
+			"groups.Authman test group" : { "environment": "dev" },
+			"groups.Canvas Beta" : { "environment": "dev" }
 		},
 		"illini_cash": {
 			"laundry"                       : { "housingResidenceStatus" : true }
