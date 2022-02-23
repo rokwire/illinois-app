@@ -75,6 +75,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       Connectivity.notifyStatusChanged,
       Localization.notifyStringsUpdated,
       FlexUI.notifyChanged,
+      Config.notifyConfigChanged,
       Styles.notifyChanged,
       Storage.notifySettingChanged,
     ]);
@@ -766,6 +767,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     if ((name == Connectivity.notifyStatusChanged) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == FlexUI.notifyChanged) ||
+        (name == Config.notifyConfigChanged) ||
         (name == Styles.notifyChanged))
     {
       setState(() { });
