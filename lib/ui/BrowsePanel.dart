@@ -75,6 +75,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       Connectivity.notifyStatusChanged,
       Localization.notifyStringsUpdated,
       FlexUI.notifyChanged,
+      Config.notifyConfigChanged,
       Styles.notifyChanged,
       Storage.notifySettingChanged,
     ]);
@@ -321,7 +322,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _navigatePrivacyCenter(),
       );
     }
-    else if (code == 'crisis_help') {
+    else if ((code == 'crisis_help') && _canCrisisHelp) {
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.crisis_help.title', 'Crisis Help'),
         hint: Localization().getStringEx('panel.browse.button.crisis_help.hint', ''),
@@ -471,7 +472,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _onFeedbackTap(),
       );
     }
-    else if (code == 'faqs') {
+    else if ((code == 'faqs') && _canFAQs) {
       return _RibbonButton(
         icon: Image.asset('images/icon-faqs.png'),
         accessoryIcon: Image.asset('images/link-out.png'),
@@ -479,6 +480,16 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         hint: Localization().getStringEx('panel.browse.button.faqs.hint', ''),
         padding: _ribbonButtonPadding,
         onTap: () => _onFAQsTap(),
+      );
+    }
+    else if ((code == 'date_cat') && _canDateCat) {
+      return _RibbonButton(
+        icon: Image.asset('images/icon-settings.png'),
+        accessoryIcon: Image.asset('images/link-out.png'),
+        title: Localization().getStringEx('panel.browse.button.date_cat.title', 'Due Date Catalog'),
+        hint: Localization().getStringEx('panel.browse.button.date_cat.hint', ''),
+        padding: _ribbonButtonPadding,
+        onTap: () => _onDateCatTap(),
       );
     }
 
@@ -624,17 +635,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
   }
 
-  void _navigateCrisisHelp() {
-    Analytics().logSelect(target: "Crisis Help");
-
-    if (Connectivity().isNotOffline && Config().crisisHelpUrl != null) {
-      url_launcher.launch(Config().crisisHelpUrl!);
-    }
-    else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
-    }
-  }
-
   void _onFeedbackTap() {
     Analytics().logSelect(target: "Provide Feedback");
 
@@ -655,18 +655,45 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
 
+  bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
+
+  void _navigateCrisisHelp() {
+    Analytics().logSelect(target: "Crisis Help");
+
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().crisisHelpUrl)) {
+      url_launcher.launch(Config().crisisHelpUrl!);
+    }
+  }
+
+  bool get _canFAQs => StringUtils.isNotEmpty(Config().faqsUrl);
+
   void _onFAQsTap() {
     Analytics().logSelect(target: "FAQs");
 
-    if (Connectivity().isNotOffline ) {
-      String faqsUrl = "http://mhcwellness.illinois.edu/faq"; // TBD from Config after confirmation Config().faqsUrl
-
-      String? panelTitle = Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs');
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WebPanel(url: faqsUrl, title: panelTitle,)));
-    }
-    else {
+    if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.faqs', 'FAQs is not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().faqsUrl)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+        url: Config().faqsUrl,
+        title: Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs'),
+      )));
+    }
+  }
+
+  bool get _canDateCat => StringUtils.isNotEmpty(Config().dateCatalogUrl);
+
+  void _onDateCatTap() {
+    Analytics().logSelect(target: "Due Date Catalog");
+    
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.date_cat', 'Due Date Catalog not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().dateCatalogUrl)) {
+      url_launcher.launch(Config().dateCatalogUrl!);
     }
   }
 
@@ -740,6 +767,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     if ((name == Connectivity.notifyStatusChanged) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == FlexUI.notifyChanged) ||
+        (name == Config.notifyConfigChanged) ||
         (name == Styles.notifyChanged))
     {
       setState(() { });
