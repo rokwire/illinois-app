@@ -166,7 +166,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   void _onWellnessAnswerCenter() {
-    Analytics().logSelect(target: 'Wellness Answer Center');
+    Analytics().logSelect(target: 'Answer Center');
     Navigator.push(context, CupertinoPageRoute(
       builder: (context) => HomeSaferWellnessAnswerCenterPanel()
     ));
