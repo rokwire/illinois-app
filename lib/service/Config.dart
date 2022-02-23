@@ -44,7 +44,6 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get secretParkhub => JsonUtils.mapValue(secretKeys['parkhub']) ?? {};
   Map<String, dynamic> get secretPadaapi => JsonUtils.mapValue(secretKeys['padaapi']) ?? {};
   Map<String, dynamic> get secretTwitter => JsonUtils.mapValue(secretKeys['twitter']) ?? {};
-  Map<String, dynamic> get secretCanvas => JsonUtils.mapValue(secretKeys['canvas']) ?? {};
   
   Map<String, dynamic> get twitter => JsonUtils.mapValue(content['twitter']) ?? {};
   Map<String, dynamic> get onboardingInfo => JsonUtils.mapValue(content['onboarding']) ?? {};
@@ -69,9 +68,6 @@ class Config extends rokwire.Config {
   String? get twitterToken           => JsonUtils.stringValue(secretTwitter['token']);
   String? get twitterTokenType       => JsonUtils.stringValue(secretTwitter['token_type']);
 
-  String? get canvasToken            => JsonUtils.stringValue(secretCanvas['token']);
-  String? get canvasTokenType        => JsonUtils.stringValue(secretCanvas['token_type']);
-
 
   // Getters: Other University Services
   String? get shibbolethAuthTokenUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_auth_token_url']);  // "https://{shibboleth_client_id}:{shibboleth_client_secret}@shibboleth.illinois.edu/idp/profile/oidc/token"
@@ -91,10 +87,12 @@ class Config extends rokwire.Config {
   String? get crisisHelpUrl          => JsonUtils.stringValue(otherUniversityServices['crisis_help_url']);            // "https://wellness.web.illinois.edu/help/im-not-sure-where-to-start/"
   String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);         // "https://go.illinois.edu/illinois-app-privacy"
   String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);                // "https://api-test.test-compliance.rokwire.illinois.edu/padaapi"
-  String? get canvasUrl              => JsonUtils.stringValue(otherUniversityServices['canvas_url']);                 // "https://illinoisedu.test.instructure.com"
   String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);    // "https://apps.giesbusiness.illinois.edu/online/ZoomLinks"
+  String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);           // "https://apps.atlas.illinois.edu/datecat"
+  String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
 
   // Getters: Platform Building Blocks
+  String? get lmsUrl                 => JsonUtils.stringValue(platformBuildingBlocks['lms_url']);                     // "https://api-dev.rokwire.illinois.edu/lms/api"
   String? get rewardsUrl             => JsonUtils.stringValue(platformBuildingBlocks['rewards_url']);                 // "https://api-dev.rokwire.illinois.edu/rewards/api"
   String? get rokwireAuthUrl         => JsonUtils.stringValue(platformBuildingBlocks['rokwire_auth_url']);            // "https://api-dev.rokwire.illinois.edu/authentication"
   String? get sportsServiceUrl       => JsonUtils.stringValue(platformBuildingBlocks['sports_service_url']);          // "https://api-dev.rokwire.illinois.edu/sports-service";
