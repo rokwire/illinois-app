@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Display Gies, Twitter and Canvas home widgets based on user group membership [#1377](https://github.com/rokwire/illinois-app/issues/1377).
 
+###Changed
+- Update GIES wizard [#1379](https://github.com/rokwire/illinois-app/issues/1379).
+
 ## [3.2.24] - 2022-02-21
 ### Added
 - Time in Rewards history debug panel [#1372](https://github.com/rokwire/illinois-app/issues/1372).
