@@ -321,7 +321,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _navigatePrivacyCenter(),
       );
     }
-    else if (code == 'crisis_help') {
+    else if ((code == 'crisis_help') && _canCrisisHelp) {
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.crisis_help.title', 'Crisis Help'),
         hint: Localization().getStringEx('panel.browse.button.crisis_help.hint', ''),
@@ -634,17 +634,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
   }
 
-  void _navigateCrisisHelp() {
-    Analytics().logSelect(target: "Crisis Help");
-
-    if (Connectivity().isNotOffline && Config().crisisHelpUrl != null) {
-      url_launcher.launch(Config().crisisHelpUrl!);
-    }
-    else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
-    }
-  }
-
   void _onFeedbackTap() {
     Analytics().logSelect(target: "Provide Feedback");
 
@@ -664,6 +653,19 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
+
+  bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
+
+  void _navigateCrisisHelp() {
+    Analytics().logSelect(target: "Crisis Help");
+
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().crisisHelpUrl)) {
+      url_launcher.launch(Config().crisisHelpUrl!);
+    }
+  }
 
   bool get _canFAQs => StringUtils.isNotEmpty(Config().faqsUrl);
 
