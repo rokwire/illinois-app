@@ -180,6 +180,8 @@
     "panel.browse.button.saved.hint":"",
     "panel.browse.button.feedback.title":"Provide Feedback",
     "panel.browse.button.feedback.hint":"",
+    "panel.browse.button.date_cat.title":"Due Date Catalog",
+    "panel.browse.button.date_cat.hint":"",
     "panel.browse.button.settings.title":"Settings",
     "panel.browse.button.settings.hint":"",
     "panel.browse.button.parking.title":"State Farm Event Parking",
@@ -219,6 +221,7 @@
     "panel.browse.label.offline.feedback": "Providing a feedback is not available while offline.",
     "panel.browse.label.offline.faqs": "FAQs is not available while offline.",
     "panel.browse.label.offline.crisis_help": "Crisis Help is not available while offline.",
+    "panel.browse.label.offline.date_cat": "Due Date Catalog not available while offline.",
 
     "panel.browse.button.sign_in.title":"Sign In",
     "panel.browse.button.sign_in.hint":"",

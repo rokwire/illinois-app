@@ -181,7 +181,9 @@
 	"panel.browse.button.saved.hint":"",
 	"panel.browse.button.feedback.title":"提供反馈",
 	"panel.browse.button.feedback.hint":"",
-	"panel.browse.button.settings.title":"设置",
+	"panel.browse.button.date_cat.title":"到期日目錄",
+	"panel.browse.button.date_cat.hint":"",
+"panel.browse.button.settings.title":"设置",
 	"panel.browse.button.settings.hint":"",
 	"panel.browse.button.parking.title":"州立農場活動停車場",
 	"panel.browse.button.parking.hint":"",
@@ -220,6 +222,7 @@
 	"panel.browse.label.offline.feedback":"离线时无法提供反馈。",
 	"panel.browse.label.offline.faqs": "FAQs is not available while offline.",
 	"panel.browse.label.offline.crisis_help": "Crisis Help is not available while offline.",
+	"panel.browse.label.offline.date_cat": "截止日期目錄在離線時不可用。",
 
 	"panel.browse.button.sign_in.title":"登录",
 	"panel.browse.button.sign_in.hint":"",

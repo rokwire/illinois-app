@@ -181,6 +181,8 @@
     "panel.browse.button.saved.hint":"",
     "panel.browse.button.feedback.title":"Proporcionar comentarios",
     "panel.browse.button.feedback.hint":"",
+    "panel.browse.button.date_cat.title":"Catálogo de fecha de vencimiento",
+    "panel.browse.button.date_cat.hint":"",
     "panel.browse.button.settings.title":"Configuración",
     "panel.browse.button.settings.hint":"",
     "panel.browse.button.parking.title":"Estacionamiento para eventos de State Farm",
@@ -220,6 +222,7 @@
     "panel.browse.label.offline.feedback": "Proporcionar un comentario no está disponible sin conexión.",
     "panel.browse.label.offline.faqs": "FAQs is not available while offline.",
     "panel.browse.label.offline.crisis_help": "Crisis Help is not available while offline.",
+    "panel.browse.label.offline.date_cat": "El catálogo de fecha de vencimiento no está disponible sin conexión.",
 
     "panel.browse.button.sign_in.title":"Iniciar sesión",
     "panel.browse.button.sign_in.hint":"",

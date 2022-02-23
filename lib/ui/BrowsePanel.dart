@@ -481,6 +481,16 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _onFAQsTap(),
       );
     }
+    else if ((code == 'date_cat') && _canDateCat) {
+      return _RibbonButton(
+        icon: Image.asset('images/icon-settings.png'),
+        accessoryIcon: Image.asset('images/link-out.png'),
+        title: Localization().getStringEx('panel.browse.button.date_cat.title', 'Due Date Catalog'),
+        hint: Localization().getStringEx('panel.browse.button.date_cat.hint', ''),
+        padding: _ribbonButtonPadding,
+        onTap: () => _onDateCatTap(),
+      );
+    }
 
     else {
       return null;
@@ -667,6 +677,19 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.faqs', 'FAQs is not available while offline.'));
+    }
+  }
+
+  bool get _canDateCat => StringUtils.isNotEmpty(Config().dateCatalogUrl);
+
+  void _onDateCatTap() {
+    Analytics().logSelect(target: "Due Date Catalog");
+    
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.date_cat', 'Due Date Catalog not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().dateCatalogUrl)) {
+      url_launcher.launch(Config().dateCatalogUrl!);
     }
   }
 
