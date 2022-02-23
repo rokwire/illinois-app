@@ -471,7 +471,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _onFeedbackTap(),
       );
     }
-    else if (code == 'faqs') {
+    else if ((code == 'faqs') && _canFAQs) {
       return _RibbonButton(
         icon: Image.asset('images/icon-faqs.png'),
         accessoryIcon: Image.asset('images/link-out.png'),
@@ -665,18 +665,19 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
 
+  bool get _canFAQs => StringUtils.isNotEmpty(Config().faqsUrl);
+
   void _onFAQsTap() {
     Analytics().logSelect(target: "FAQs");
 
-    if (Connectivity().isNotOffline ) {
-      String faqsUrl = "http://mhcwellness.illinois.edu/faq"; // TBD from Config after confirmation Config().faqsUrl
-
-      String? panelTitle = Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs');
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WebPanel(url: faqsUrl, title: panelTitle,)));
-    }
-    else {
+    if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.faqs', 'FAQs is not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().faqsUrl)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+        url: Config().faqsUrl,
+        title: Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs'),
+      )));
     }
   }
 
