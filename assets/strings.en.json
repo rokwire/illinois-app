@@ -206,6 +206,8 @@
     "panel.browse.button.crisis_help.hint": "",
     "panel.browse.button.faqs.title": "FAQs",
     "panel.browse.button.faqs.hint": "",
+    "panel.browse.button.date_cat.title":"Due Date Catalog",
+    "panel.browse.button.date_cat.hint":"",
     
     "panel.browse.label.browse_all": "Browse all",
     "panel.browse.label.offline.sign_in": "Sign In not available while offline.",
@@ -219,6 +221,7 @@
     "panel.browse.label.offline.feedback": "Providing a feedback is not available while offline.",
     "panel.browse.label.offline.faqs": "FAQs is not available while offline.",
     "panel.browse.label.offline.crisis_help": "Crisis Help is not available while offline.",
+    "panel.browse.label.offline.date_cat": "Due Date Catalog not available while offline.",
 
     "panel.browse.button.sign_in.title":"Sign In",
     "panel.browse.button.sign_in.hint":"",
