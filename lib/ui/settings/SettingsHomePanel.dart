@@ -718,12 +718,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                     )
                 )));
           }
-          else if (code == 'unlink' && linked.unverified == false) {
+          else if (code == 'remove' && linked.unverified == false) {
             contentList.add(RibbonButton(
                 borderRadius: borderRadius,
                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-                label: Localization().getStringEx("panel.settings.home.linked.net_id.button.unlink", "Unlink"),
-                onTap: () => _unlinkAuthType(Auth2LoginType.oidcIllinois, linked.identifier!)));
+                label: Localization().getStringEx("panel.settings.home.linked.net_id.button.remove", "Remove"),
+                onTap: () => _removeAuthType(Auth2LoginType.oidcIllinois, linked.identifier!)));
           }
         }
         _addSpaceIfNeeded(linkedTypes, linked, contentList);
@@ -759,12 +759,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                   )
                 )));
           }
-          else if (code == 'unlink' && linked.unverified == false) {
+          else if (code == 'remove' && linked.unverified == false) {
             contentList.add(RibbonButton(
                 borderRadius: borderRadius,
                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-                label: Localization().getStringEx("panel.settings.home.linked.phone.button.unlink", "Unlink"),
-                onTap: () => _unlinkAuthType(Auth2LoginType.phoneTwilio, linked.identifier!)));
+                label: Localization().getStringEx("panel.settings.home.linked.phone.button.remove", "Remove"),
+                onTap: () => _removeAuthType(Auth2LoginType.phoneTwilio, linked.identifier!)));
           }
           else if (code == 'verify' && linked.unverified == true) {
             contentList.add(Row(
@@ -780,8 +780,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                   child: RibbonButton(
                       borderRadius: borderRadius,
                       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-                      label: Localization().getStringEx("panel.settings.home.linked.phone.button.cancel", "Cancel"),
-                      onTap: () => _unlinkAuthType(Auth2LoginType.phoneTwilio, linked.identifier!)),
+                      label: Localization().getStringEx("panel.settings.home.linked.phone.button.remove", "Remove"),
+                      onTap: () => _removeAuthType(Auth2LoginType.phoneTwilio, linked.identifier!)),
                 ),
               ],
             ));
@@ -820,12 +820,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                   ),
                 )));
           }
-          else if (code == 'unlink' && linked.unverified == false) {
+          else if (code == 'remove' && linked.unverified == false) {
             contentList.add(RibbonButton(
                 borderRadius: borderRadius,
                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-                label: Localization().getStringEx("panel.settings.home.linked.email.button.unlink", "Unlink"),
-                onTap: () => _unlinkAuthType(Auth2LoginType.email, linked.identifier!)));
+                label: Localization().getStringEx("panel.settings.home.linked.email.button.remove", "Remove"),
+                onTap: () => _removeAuthType(Auth2LoginType.email, linked.identifier!)));
           }
           else if (code == 'verify' && linked.unverified == true) {
             contentList.add(Row(
@@ -841,8 +841,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                   child: RibbonButton(
                       borderRadius: borderRadius,
                       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-                      label: Localization().getStringEx("panel.settings.home.linked.email.button.cancel", "Cancel"),
-                      onTap: () => _unlinkAuthType(Auth2LoginType.email, linked.identifier!)),
+                      label: Localization().getStringEx("panel.settings.home.linked.email.button.remove", "Remove"),
+                      onTap: () => _removeAuthType(Auth2LoginType.email, linked.identifier!)),
                 ),
               ],
             ));
@@ -921,7 +921,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     if (Connectivity().isNotOffline) {
       Auth2().authenticateWithOidc(link: true).then((bool? result) {
         if (result == false) {
-          AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to link Illinois NetID."));
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add Illinois NetID."));
         }
       });
     } else {
@@ -949,12 +949,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     }
   }
 
-  void _unlinkAuthType(Auth2LoginType loginType, String identifier) {
-    Analytics().logSelect(target: "Unlink auth type");
+  void _removeAuthType(Auth2LoginType loginType, String identifier) {
+    Analytics().logSelect(target: "Remove alternative login");
     if (Connectivity().isNotOffline) {
       Auth2().unlinkAccountAuthType(loginType, identifier).then((bool? result) {
         if (mounted && result == false) {
-          AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.home.unlink.failed", "Unlink failed."));
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.home.unlink.failed", "Failed to remove alternative login."));
         }
       });
     } else {

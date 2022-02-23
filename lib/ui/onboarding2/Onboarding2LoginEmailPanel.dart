@@ -87,12 +87,12 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   @override
   Widget build(BuildContext context) {
     String title = (_state == Auth2EmailAccountState.nonExistent) ?
-      _link ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Link your email') :
+      _link ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Add your email address') :
       Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign up with email') :
       Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign in with email');
 
     String description = (_state == Auth2EmailAccountState.nonExistent) ?
-      _link ? Localization().getStringEx('panel.onboarding2.email.link.description.text', 'Please enter a password to link your email.') :
+      _link ? Localization().getStringEx('panel.onboarding2.email.link.description.text', 'Please enter a password to add your email address.') :
       Localization().getStringEx('panel.onboarding2.email.sign_up.description.text', 'Please enter a password to create a new account for your email.') :
       Localization().getStringEx('panel.onboarding2.email.sign_in.description.text', 'Please enter your password to sign in with your email.');
 
@@ -101,7 +101,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password");
 
     String buttonTitle = (_state == Auth2EmailAccountState.nonExistent) ?
-      _link ? Localization().getStringEx('panel.onboarding2.email.button.link.text', 'Link') :
+      _link ? Localization().getStringEx('panel.onboarding2.email.button.link.text', 'Add') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_up.text', 'Sign Up') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.text', 'Sign In');
 
@@ -123,7 +123,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Padding(padding: EdgeInsets.symmetric(horizontal: 36), child:
                       Semantics( header: true,
-                        child: Text(title, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary)))
+                        child: Text(title, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary))),
                     ),
                     Container(height: 24,),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
@@ -535,7 +535,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
         });
         if (!success) {
           setState(() {
-            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.link.cancel.text", "Failed to cancel link verification."));
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.link.cancel.text", "Failed to remove email address from your account."));
           });
         }
         else if (widget.onboardingContext != null) {

@@ -203,8 +203,13 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
       }
 
       String phoneOrEmailValue = _phoneOrEmailController!.text;
-      String? phone = _validatePhoneNumber(phoneOrEmailValue);
-      String? email = StringUtils.isEmailValid(phoneOrEmailValue) ? phoneOrEmailValue : null;
+      String? phone, email;
+      if (_panelMode == PanelMode.PHONE || _panelMode == PanelMode.BOTH) {
+        phone = _validatePhoneNumber(phoneOrEmailValue);
+      }
+      if (_panelMode == PanelMode.EMAIL || _panelMode == PanelMode.BOTH) {
+        email = StringUtils.isEmailValid(phoneOrEmailValue) ? phoneOrEmailValue : null;
+      }
 
       if (StringUtils.isNotEmpty(phone)) {
         _loginByPhone(phone);
