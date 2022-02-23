@@ -15,7 +15,7 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{
     return Scaffold(
       backgroundColor: Styles().colors!.background,
       appBar: HeaderBar(
-        title: Localization().getStringEx("panel.home.safer.wellness_answer_center.header.title", "Wellness Answer Center"),
+        title: Localization().getStringEx("panel.home.safer.wellness_answer_center.header.title", "Answer Center"),
       ),
       body: SingleChildScrollView(
         child: Padding(
