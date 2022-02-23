@@ -180,8 +180,6 @@
     "panel.browse.button.saved.hint":"",
     "panel.browse.button.feedback.title":"Provide Feedback",
     "panel.browse.button.feedback.hint":"",
-    "panel.browse.button.date_cat.title":"Due Date Catalog",
-    "panel.browse.button.date_cat.hint":"",
     "panel.browse.button.settings.title":"Settings",
     "panel.browse.button.settings.hint":"",
     "panel.browse.button.parking.title":"State Farm Event Parking",
@@ -208,6 +206,8 @@
     "panel.browse.button.crisis_help.hint": "",
     "panel.browse.button.faqs.title": "FAQs",
     "panel.browse.button.faqs.hint": "",
+    "panel.browse.button.date_cat.title":"Due Date Catalog",
+    "panel.browse.button.date_cat.hint":"",
     
     "panel.browse.label.browse_all": "Browse all",
     "panel.browse.label.offline.sign_in": "Sign In not available while offline.",
