@@ -2157,8 +2157,8 @@
     "widget.home.safer.button.test_locations.description": "Find test locations",
     "widget.home.safer.button.my_mckinley.title": "MyMcKinley",
     "widget.home.safer.button.my_mckinley.description": "MyMcKinley Patient Health Portal",
-    "widget.home.safer.button.wellness_answer_center.title": "Wellness Answer Center",
-    "widget.home.safer.button.wellness_answer_center.description": "Contact Wellness Answer Center for issues",
+    "widget.home.safer.button.wellness_answer_center.title": "Answer Center",
+    "widget.home.safer.button.wellness_answer_center.description": "Get answers to your questions.",
 
     "widget.athletics_card.button.get_tickets.title":"Get Tickets",
     "widget.athletics_card.button.get_tickets.hint":"",
