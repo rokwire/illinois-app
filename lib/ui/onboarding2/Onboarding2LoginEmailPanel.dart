@@ -530,7 +530,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
     for (Auth2Type authType in Auth2().linkedEmail) {
       if (authType.identifier == widget.email) {
-        Auth2().unlinkAccountAuthType(Auth2LoginType.phoneTwilio, widget.email!).then((success) {
+        Auth2().unlinkAccountAuthType(Auth2LoginType.email, widget.email!).then((success) {
           if(mounted) {
             setState(() {
               _isLoading = false;
