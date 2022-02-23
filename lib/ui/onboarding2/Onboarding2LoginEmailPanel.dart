@@ -528,26 +528,40 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       _isLoading = true;
     });
 
-    Auth2().unlinkAccountAuthType(Auth2LoginType.phoneTwilio, widget.email!).then((success) {
-      if(mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        if (!success) {
-          setState(() {
-            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.link.cancel.text", "Failed to remove email address from your account."));
-          });
-        }
-        else if (widget.onboardingContext != null) {
-          Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
-          if(onSuccess!=null){
-            onSuccess();
-          } else {
-            Onboarding().next(context, widget);
+    for (Auth2Type authType in Auth2().linkedEmail) {
+      if (authType.identifier == widget.email) {
+        Auth2().unlinkAccountAuthType(Auth2LoginType.phoneTwilio, widget.email!).then((success) {
+          if(mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+            if (!success) {
+              setState(() {
+                setErrorMsg(Localization().getStringEx("panel.onboarding2.email.link.cancel.text", "Failed to remove email address from your account."));
+              });
+            }
+            else if (widget.onboardingContext != null) {
+              Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
+              if(onSuccess!=null){
+                onSuccess();
+              } else {
+                Onboarding().next(context, widget);
+              }
+            }
           }
-        }
+        });
+        return;
       }
-    });
+    }
+
+    if (widget.onboardingContext != null) {
+      Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
+      if(onSuccess!=null){
+        onSuccess();
+      } else {
+        Onboarding().next(context, widget);
+      }
+    }
   }
 
   void setErrorMsg(String? msg, { Color? color}) {
