@@ -17,11 +17,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -41,7 +39,7 @@ class Onboarding2LoginEmailPanel extends StatefulWidget with OnboardingPanel {
   _Onboarding2LoginEmailPanelState createState() => _Onboarding2LoginEmailPanelState();
 }
 
-class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel> implements NotificationsListener {
+class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel> {
 
   static final Color _successColor = Colors.green.shade800;
   static final Color _errorColor = Colors.red.shade700;
@@ -65,10 +63,6 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
-    ]);
-
     super.initState();
     _emailController.text = widget.email!;
     _state = widget.state;
@@ -81,8 +75,6 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
   @override
   void dispose() {
-    NotificationService().unsubscribe(this);
-
     _emailController.dispose();
     _emailFocusNode.dispose();
     _passwordController.dispose();
@@ -92,23 +84,15 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
     super.dispose();
   }
 
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _checkAccountState();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     String title = (_state == Auth2EmailAccountState.nonExistent) ?
+      _link ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Add your email address') :
       Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign up with email') :
       Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign in with email');
 
     String description = (_state == Auth2EmailAccountState.nonExistent) ?
-      _link ? Localization().getStringEx('panel.onboarding2.email.link.description.text', 'Please enter a password to link your email.') :
+      _link ? Localization().getStringEx('panel.onboarding2.email.link.description.text', 'Please enter a password to add your email address.') :
       Localization().getStringEx('panel.onboarding2.email.sign_up.description.text', 'Please enter a password to create a new account for your email.') :
       Localization().getStringEx('panel.onboarding2.email.sign_in.description.text', 'Please enter your password to sign in with your email.');
 
@@ -117,10 +101,12 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password");
 
     String buttonTitle = (_state == Auth2EmailAccountState.nonExistent) ?
+      _link ? Localization().getStringEx('panel.onboarding2.email.button.link.text', 'Add') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_up.text', 'Sign Up') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.text', 'Sign In');
 
     String buttonHint = (_state == Auth2EmailAccountState.nonExistent) ?
+      _link ? Localization().getStringEx('panel.onboarding2.email.button.link.hint', '') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_up.hint', '') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.hint', '');
 
@@ -137,7 +123,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Padding(padding: EdgeInsets.symmetric(horizontal: 36), child:
                       Semantics( header: true,
-                        child: Text(title, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary)))
+                        child: Text(title, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary))),
                     ),
                     Container(height: 24,),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
@@ -542,34 +528,40 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       _isLoading = true;
     });
 
-    Auth2().unlinkAccountAuthType(Auth2LoginType.phoneTwilio, widget.email!).then((success) {
-      if(mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        if (!success) {
-          setState(() {
-            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.link.cancel.text", "Failed to cancel link verification."));
-          });
-        }
-        else if (widget.onboardingContext != null) {
-          Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
-          if(onSuccess!=null){
-            onSuccess();
-          } else {
-            Onboarding().next(context, widget);
+    for (Auth2Type authType in Auth2().linkedEmail) {
+      if (authType.identifier == widget.email) {
+        Auth2().unlinkAccountAuthType(Auth2LoginType.email, widget.email!).then((success) {
+          if(mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+            if (!success) {
+              setState(() {
+                setErrorMsg(Localization().getStringEx("panel.onboarding2.email.link.cancel.text", "Failed to remove email address from your account."));
+              });
+            }
+            else if (widget.onboardingContext != null) {
+              Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
+              if(onSuccess!=null){
+                onSuccess();
+              } else {
+                Onboarding().next(context, widget);
+              }
+            }
           }
-        }
+        });
+        return;
       }
-    });
-  }
+    }
 
-  void _checkAccountState() {
-    Auth2().checkEmailAccountState(widget.email, _link ? "link" : "login").then((Auth2EmailAccountState? state) {
-      if (mounted && state != null) {
-        setState(() { _state = state; });
+    if (widget.onboardingContext != null) {
+      Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
+      if(onSuccess!=null){
+        onSuccess();
+      } else {
+        Onboarding().next(context, widget);
       }
-    });
+    }
   }
 
   void setErrorMsg(String? msg, { Color? color}) {
