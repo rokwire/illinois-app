@@ -48,7 +48,7 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
   static const String notifyGameDetail = "edu.illinois.rokwire.sports.game.detail";
 
   static const String _sportsCacheFileName = "sports.json";
-  static const String _sportsSocialMediaCacheFileName = "sports.social.media.json";
+  static const String _sportsSocialMediaCacheFileName = "sportsSocialMedia.json";
 
   static final Sports _logic = Sports._internal();
 
