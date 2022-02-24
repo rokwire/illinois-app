@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modify Wellness Answer Center button [#1364](https://github.com/rokwire/illinois-app/issues/1364).
 ### Removed
 - Retrieve group by canvas course [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Added
+- Added account switch dropdown in Home Twitter widget [#1389](https://github.com/rokwire/illinois-app/issues/1389).
 
 ## [3.2.25] - 2022-02-23
 ### Added
