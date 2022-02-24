@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix issues with account linking [#1356](https://github.com/rokwire/illinois-app/issues/1356)
 ### Changed
 - Modify Wellness Answer Center button [#1364](https://github.com/rokwire/illinois-app/issues/1364).
+### Removed
+- Retrieve group by canvas course [#1274](https://github.com/rokwire/illinois-app/issues/1274).
 
 ## [3.2.25] - 2022-02-23
 ### Added
