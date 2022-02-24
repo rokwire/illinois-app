@@ -46,7 +46,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
   GlobalKey _validationErrorKey = GlobalKey();
 
   bool _isLoading = false;
-  PanelMode _panelMode = PanelMode.BOTH;
+  _LoginMode _loginMode = _LoginMode.both;
   bool _link = false;
   String? _identifier;
 
@@ -62,9 +62,9 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
 
     String? panelMode = widget.onboardingContext?["mode"];
     if (panelMode == "phone") {
-      _panelMode = PanelMode.PHONE;
+      _loginMode = _LoginMode.phone;
     } else if (panelMode == "email") {
-      _panelMode = PanelMode.EMAIL;
+      _loginMode = _LoginMode.email;
     }
   }
 
@@ -79,14 +79,14 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     EdgeInsetsGeometry backButtonInsets = EdgeInsets.only(left: 10, top: 20 + MediaQuery.of(context).padding.top, right: 20, bottom: 20);
 
     String title, description, entryText;
-    switch (_panelMode) {
-      case PanelMode.PHONE : {
+    switch (_loginMode) {
+      case _LoginMode.phone : {
         title = Localization().getStringEx('panel.onboarding2.phone_or_email.phone.title.text', 'Add a phone number');
         description = Localization().getStringEx('panel.onboarding2.phone_or_email.phone.description', 'Please enter your phone number and we will send you a verification code.');
         entryText = Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.phone.text", "Phone number:");
         break;
       }
-      case PanelMode.EMAIL : {
+      case _LoginMode.email : {
         title = Localization().getStringEx('panel.onboarding2.phone_or_email.email.title.text', 'Add an email address');
         description = Localization().getStringEx('panel.onboarding2.phone_or_email.email.description', 'Please enter your email address and we will send you a verification email.');
         entryText = Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.email.text", "Email address:");
@@ -188,12 +188,12 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     if (_isLoading != true) {
       _clearErrorMsg();
       String validationText;
-      switch (_panelMode) {
-        case PanelMode.PHONE : {
+      switch (_loginMode) {
+        case _LoginMode.phone : {
           validationText = Localization().getStringEx("panel.onboarding2.phone_or_email.phone.validation.text", "Please enter your phone number.");
           break;
         }
-        case PanelMode.EMAIL : {
+        case _LoginMode.email : {
           validationText = Localization().getStringEx("panel.onboarding2.phone_or_email.email.validation.text", "Please enter your email address.");
           break;
         }
@@ -204,10 +204,10 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
 
       String phoneOrEmailValue = _phoneOrEmailController!.text;
       String? phone, email;
-      if (_panelMode == PanelMode.PHONE || _panelMode == PanelMode.BOTH) {
+      if (_loginMode == _LoginMode.phone || _loginMode == _LoginMode.both) {
         phone = _validatePhoneNumber(phoneOrEmailValue);
       }
-      if (_panelMode == PanelMode.EMAIL || _panelMode == PanelMode.BOTH) {
+      if (_loginMode == _LoginMode.email || _loginMode == _LoginMode.both) {
         email = StringUtils.isEmailValid(phoneOrEmailValue) ? phoneOrEmailValue : null;
       }
 
@@ -342,4 +342,4 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
   }
 }
 
-enum PanelMode {PHONE, EMAIL, BOTH}
+enum _LoginMode {phone, email, both}
