@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -60,10 +63,22 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget {
   }
 
   void _onTapContacts() {
-    //TBD implement
+    Analytics().logSelect(target: 'Contacts for Covid-19 Questions');
+    String? contactsGuideId = Config().saferWellness['contacts_guide_id'];
+    if (StringUtils.isNotEmpty(contactsGuideId)) {
+      _launchGuideDeepLink(contactsGuideId!);
+    }
   }
 
   void _onTapFaqs() {
-    //TBD implement
+    Analytics().logSelect(target: 'Building Access FAQs');
+    String? faqsGuideId = Config().saferWellness['faqs_guide_id'];
+    if (StringUtils.isNotEmpty(faqsGuideId)) {
+      _launchGuideDeepLink(faqsGuideId!);
+    }
+  }
+
+  void _launchGuideDeepLink(String guideId) {
+    DeepLink().launchUrl('${Guide().guideDetailUrl}?guide_id=$guideId');
   }
 }
