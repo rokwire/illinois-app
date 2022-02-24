@@ -94,8 +94,8 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
         }
         else if (contentListCode == 'wellness_answer_center') {
           contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Wellness Answer Center'),
-            description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Contact Wellness Answer Center for issues'),
+            title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Answer Center'),
+            description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Get answers to your questions.'),
             onTap: _onWellnessAnswerCenter,
           );
         }
@@ -166,7 +166,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   void _onWellnessAnswerCenter() {
-    Analytics().logSelect(target: 'Wellness Answer Center');
+    Analytics().logSelect(target: 'Answer Center');
     Navigator.push(context, CupertinoPageRoute(
       builder: (context) => HomeSaferWellnessAnswerCenterPanel()
     ));
