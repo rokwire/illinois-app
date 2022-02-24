@@ -14,8 +14,8 @@
 		"wallet.cards":["bus_pass", "illini_id", "library_card"],
 
 		"browse": ["all", "content"],
-		"browse.all": ["athletics",  "building_status", "campus_guide", "crisis_help", "dining", "events", "groups", "inbox", "privacy_center", "quick_polls", "saved", "wellness", ""],
-		"browse.content": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding"],
+		"browse.all": ["athletics",  "building_status", "campus_guide", "crisis_help", "dining", "events", "groups", "inbox", "privacy_center", "quick_polls", "saved", "wellness"],
+		"browse.content": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "date_cat", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding", "faqs"],
 
 		"settings": ["user_info", "privacy_center", "privacy", "connect", "connected", "linked", "link", "feedback", "delete"],
 		"settings.connect": ["netid", "phone_or_email"],
@@ -168,7 +168,8 @@
 			"mtd_bus_number"                : true,
 			"parking_lot_directions"        : true,
 			"library_card"                  : false,
-			"emergency"                     : false
+			"emergency"                     : false,
+			"faqs"                          : false
 		}
 	}
 }
