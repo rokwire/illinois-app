@@ -1947,9 +1947,10 @@
     "panel.guide_detail.label.content.empty": "Contenido de la guía vacía",
 
 	"panel.home.safer.wellness_answer_center.header.title": "Answer Center",
-	"panel.home.safer.wellness_answer_center.label.description": "If you are having issues with the app or getting a test result, contact the Wellness Answer Center for assistance.",
-	"panel.home.safer.wellness_answer_center.label.email": "Email the Wellness Answer Center at ",
-	"panel.home.safer.wellness_answer_center.label.phone": "Phone the Answer Center at ",
+	"panel.home.safer.wellness_answer_center.contacts.title": "Contacts for Covid-19 Questions",
+	"panel.home.safer.wellness_answer_center.contacts.description": "Find the right department for your particular question regarding Covid-19 rules, testing, software, etc.",
+	"panel.home.safer.wellness_answer_center.faqs.title": "Building Access FAQs",
+	"panel.home.safer.wellness_answer_center.faqs.description": "See answers to common questions about building access.",
 
 	"panel.home.safer.test_locations.header.title": "Test Locations",
 	"panel.home.safer.test_locations.label.contact.title": "Contact",
