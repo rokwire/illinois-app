@@ -46,6 +46,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
   GlobalKey _validationErrorKey = GlobalKey();
 
   bool _isLoading = false;
+  _LoginMode _loginMode = _LoginMode.both;
   bool _link = false;
   String? _identifier;
 
@@ -57,6 +58,13 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     _identifier = widget.onboardingContext?["identifier"];
     if (_identifier != null) {
       _phoneOrEmailController!.text = _identifier!;
+    }
+
+    String? panelMode = widget.onboardingContext?["mode"];
+    if (panelMode == "phone") {
+      _loginMode = _LoginMode.phone;
+    } else if (panelMode == "email") {
+      _loginMode = _LoginMode.email;
     }
   }
 
@@ -70,6 +78,27 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
   Widget build(BuildContext context) {
     EdgeInsetsGeometry backButtonInsets = EdgeInsets.only(left: 10, top: 20 + MediaQuery.of(context).padding.top, right: 20, bottom: 20);
 
+    String title, description, entryText;
+    switch (_loginMode) {
+      case _LoginMode.phone : {
+        title = Localization().getStringEx('panel.onboarding2.phone_or_email.phone.title.text', 'Add a phone number');
+        description = Localization().getStringEx('panel.onboarding2.phone_or_email.phone.description', 'Please enter your phone number and we will send you a verification code.');
+        entryText = Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.phone.text", "Phone number:");
+        break;
+      }
+      case _LoginMode.email : {
+        title = Localization().getStringEx('panel.onboarding2.phone_or_email.email.title.text', 'Add an email address');
+        description = Localization().getStringEx('panel.onboarding2.phone_or_email.email.description', 'Please enter your email address and we will send you a verification email.');
+        entryText = Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.email.text", "Email address:");
+        break;
+      }
+      default : {
+        title = Localization().getStringEx('panel.onboarding2.phone_or_email.title.text', 'Login by phone or email');
+        description = Localization().getStringEx("panel.onboarding2.phone_or_email.description", "Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email.");
+        entryText = Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.text", "Phone number or email address:");
+      }
+    }
+
     return Scaffold(backgroundColor: Styles().colors!.background, body:
       Stack(children: <Widget>[
         Image.asset("images/login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
@@ -82,24 +111,20 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                     Semantics(
                       header: true,
                       child: Padding(padding: EdgeInsets.symmetric(horizontal: 36), child:
-                        Text(_link ?
-                          Localization().getStringEx('panel.onboarding2.phone_or_email.link.title.text', 'Link a phone or email') :
-                          Localization().getStringEx('panel.onboarding2.phone_or_email.title.text', 'Login by phone or email'),
+                        Text(title,
                           textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary))
                     )),
                     Container(height: 24,),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
-                      Text(_link ?
-                        Localization().getStringEx("panel.onboarding2.phone_or_email.link.description", "Please enter the phone number or email address you wish to link to your account.") :
-                        Localization().getStringEx("panel.onboarding2.phone_or_email.description", "Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email."),
+                      Text(description,
                         textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary)),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
-                      Text(Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.text", "Phone number or email address:"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
+                      Text(entryText, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
                       Semantics(
-                        label: Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.text", "Phone number or email address:"),
+                        label: entryText,
                         hint: Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.hint", ""),
                         textField: true,
                         excludeSemantics: true,
@@ -162,10 +187,29 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
 
     if (_isLoading != true) {
       _clearErrorMsg();
+      String validationText;
+      switch (_loginMode) {
+        case _LoginMode.phone : {
+          validationText = Localization().getStringEx("panel.onboarding2.phone_or_email.phone.validation.text", "Please enter your phone number.");
+          break;
+        }
+        case _LoginMode.email : {
+          validationText = Localization().getStringEx("panel.onboarding2.phone_or_email.email.validation.text", "Please enter your email address.");
+          break;
+        }
+        default : {
+          validationText = Localization().getStringEx("panel.onboarding2.phone_or_email.validation.text", "Please enter your phone number or email address.");
+        }
+      }
 
       String phoneOrEmailValue = _phoneOrEmailController!.text;
-      String? phone = _validatePhoneNumber(phoneOrEmailValue);
-      String? email = StringUtils.isEmailValid(phoneOrEmailValue) ? phoneOrEmailValue : null;
+      String? phone, email;
+      if (_loginMode == _LoginMode.phone || _loginMode == _LoginMode.both) {
+        phone = _validatePhoneNumber(phoneOrEmailValue);
+      }
+      if (_loginMode == _LoginMode.email || _loginMode == _LoginMode.both) {
+        email = StringUtils.isEmailValid(phoneOrEmailValue) ? phoneOrEmailValue : null;
+      }
 
       if (StringUtils.isNotEmpty(phone)) {
         _loginByPhone(phone);
@@ -174,7 +218,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
         _loginByEmail(email);
       }
       else {
-        setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.validation.text", "Please enter your phone number or email address."));
+        setErrorMsg(validationText);
       }
     }
   }
@@ -200,7 +244,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
         }
       });
     } else {
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.linked.text", "You have already linked a phone number to your account."));
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.linked.text", "You have already added a phone number to your account."));
       if (mounted) {
         setState(() { _isLoading = false; });
       }
@@ -223,27 +267,40 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
 
   void _loginByEmail(String? email) {
     setState(() { _isLoading = true; });
-    
-    Auth2().checkEmailAccountState(email, _link ? "link" : "login").then((Auth2EmailAccountState? state) {
-      if (mounted) {
-        setState(() { _isLoading = false; });
-        if (state != null) {
-          if (_link) {
-            if (state == Auth2EmailAccountState.verified) {
+
+    if (_link) {
+      Auth2().canLink(email, Auth2LoginType.email).then((bool? result) {
+        if (mounted) {
+          setState(() { _isLoading = false; });
+          if (result != null) {
+            if (!result) {
               setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.link.failed.exists", "An existing account is already using this email address."));
               return;
             } else if (Auth2().isEmailLinked) { // at most one email address may be linked at a time
-              setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.linked.text", "You have already linked an email address to your account."));
+              setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.linked.text", "You have already added an email address to your account."));
               return;
             }
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: Auth2EmailAccountState.nonExistent, onboardingContext: widget.onboardingContext)));
           }
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: state, onboardingContext: widget.onboardingContext)));
+          else {
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));
+          }
         }
-        else {
-          setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));
+      });
+    } else {
+      Auth2().canSignIn(email, Auth2LoginType.email).then((bool? result) {
+        if (mounted) {
+          setState(() { _isLoading = false; });
+          if (result != null) {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email,
+                state: result ? Auth2EmailAccountState.verified : Auth2EmailAccountState.nonExistent, onboardingContext: widget.onboardingContext)));
+          }
+          else {
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   void setErrorMsg(String? msg) {
@@ -284,3 +341,5 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     return null;
   }
 }
+
+enum _LoginMode {phone, email, both}
