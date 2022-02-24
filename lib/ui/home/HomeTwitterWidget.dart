@@ -5,9 +5,12 @@ import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Twitter.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+//import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/service/Twitter.dart';
@@ -29,6 +32,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
   List<TweetsPage> _tweetsPages = <TweetsPage>[];
   String? _tweetsUserCategory;
+  String? _selectedUserCategory;
   bool _loadingPage = false;
   DateTime? _pausedDateTime;
   PageController? _pageController;
@@ -37,6 +41,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   @override
   void initState() {
     super.initState();
+    _selectedUserCategory = Storage().selectedTwitterAccount;
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       FlexUI.notifyChanged,
@@ -50,6 +55,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     }
 
     _loadingPage = true;
+    String? userCategory = _currentUserCategory;
     Twitter().loadTweetsPage(count: Config().twitterTweetsCount, userCategory: userCategory).then((TweetsPage? tweetsPage) {
       _setState(() {
         _loadingPage = false;
@@ -94,7 +100,11 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 
   void _onTwitterUserChanged() {
-    if (_tweetsUserCategory != userCategory) {
+    List<String>? userCategories = _userCategories;
+    if ((_selectedUserCategory != null) && !userCategories.contains(_selectedUserCategory)) {
+      Storage().selectedTwitterAccount = _selectedUserCategory = null;
+    }
+    if ((_tweetsUserCategory != _currentUserCategory)) {
       _refresh(count: Config().twitterTweetsCount);
     }
   }
@@ -116,15 +126,58 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 
   Widget _buildHeader() {
-    return Semantics(container: true , header: true,
-    child: Container(color: Styles().colors!.fillColorPrimary, child:
-      Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
-        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png', excludeFromSemantics: true,)),
-          Expanded(child: 
-            Text("Twitter", style:
-              TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),),
-      ],),),));
+    List<String> categories = _userCategories;
+    return Semantics(container: true , header: true, child:
+      Container(color: Styles().colors!.fillColorPrimary, child:
+        Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png', excludeFromSemantics: true,)),
+            Expanded(flex: 20, child: 
+              Text("Twitter", style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),
+            ),
+            (1 < categories.length) ? 
+              Padding(padding: EdgeInsets.only(right: 16), child: 
+                buildAccountDropDown(categories),
+              ) : Container(),
+        ],),),));
+  }
+
+  Widget buildAccountDropDown(List<String> categories) {
+    String currentUserName = "@${Config().twitterUserName(_currentUserCategory)}";
+
+    return Semantics(label: currentUserName, hint: "Double tap to select account", excludeSemantics:true, child:
+      DropdownButtonHideUnderline(child:
+        DropdownButton<String>(
+          icon: Padding(padding: EdgeInsets.only(left: 4), child: Image.asset('images/icon-down-white.png')),
+          isExpanded: false,
+          style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16, ),
+          hint: Text(currentUserName, style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)),
+          items: _buildDropDownItems(categories),
+          onChanged: _onDropDownValueChanged
+        ),
+      ),
+    );
+  }
+
+  List<DropdownMenuItem<String>>? _buildDropDownItems(List<String> categories) {
+    List<DropdownMenuItem<String>> dropDownItems = [];
+    for (String category in categories) {
+      String categoryUserName = "@${Config().twitterUserName(category)}";
+      dropDownItems.add(DropdownMenuItem<String>(value: category, child:
+        BlockSemantics(blocking: true, child:
+          Semantics(label: categoryUserName, hint: "Double tap to select account", excludeSemantics: true, button:false, child:
+            Text(categoryUserName, style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)),
+          )
+        )
+      ));
+    }
+    return dropDownItems;
+  }
+
+  void _onDropDownValueChanged(String? value) {
+    Analytics().logSelect(target: "Twitter account selected: $value");
+    Storage().selectedTwitterAccount = _selectedUserCategory = (value != _defaultUserCategory) ? value : null;
+    _refresh(count: Config().twitterTweetsCount);
   }
 
   Widget _buildSlant() {
@@ -188,6 +241,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       });
       TweetsPage? lastTweetsPage = (0 < _tweetsPages.length) ? _tweetsPages.last : null;
       Tweet? lastTweet = ((lastTweetsPage?.tweets != null) && (0 < lastTweetsPage!.tweets!.length)) ? lastTweetsPage.tweets!.last : null;
+      String? userCategory = _currentUserCategory;
       Twitter().loadTweetsPage(count: Config().twitterTweetsCount, endTimeUtc: lastTweet?.createdAtUtc, userCategory: userCategory).then((TweetsPage? tweetsPage) {
         _setState(() {
           _loadingPage = false;
@@ -204,6 +258,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     _setState(() {
       _loadingPage = true;
     });
+    String? userCategory = _currentUserCategory;
     Twitter().loadTweetsPage(
         count: count ?? max(tweetsCount, Config().twitterTweetsCount!),
         noCache: noCache,
@@ -232,9 +287,18 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     _pageController?.nextPage(duration:  Duration(milliseconds: 500), curve: Curves.easeIn);
   }
 
-  String? get userCategory {
+  String? get _currentUserCategory =>
+    _selectedUserCategory ?? _defaultUserCategory;
+
+  String? get _defaultUserCategory {
     List<dynamic>? twitterUserList = FlexUI()['home.twitter.user'];
     return ((twitterUserList != null) && twitterUserList.isNotEmpty) ? twitterUserList.first : null;
+  }
+
+  List<String> get _userCategories {
+    List<dynamic>? twitterUserList = FlexUI()['home.twitter.user'];
+    String? category = ((twitterUserList != null) && twitterUserList.isNotEmpty) ? twitterUserList.first : null;
+    return StringUtils.isNotEmpty(category) ? [category!, ''] : [''];
   }
 
   void _setState(VoidCallback fn) {
