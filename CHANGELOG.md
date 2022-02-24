@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Account linking UI improvements [#1378](https://github.com/rokwire/illinois-app/issues/1378)
 - Fix issues with account linking [#1356](https://github.com/rokwire/illinois-app/issues/1356)
+### Changed
+- Modify Wellness Answer Center button [#1364](https://github.com/rokwire/illinois-app/issues/1364).
 
 ## [3.2.25] - 2022-02-23
 ### Added
