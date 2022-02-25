@@ -86,7 +86,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   Widget _buildContent() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30), child: 
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly create and share polls."), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),),
+        Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly Create and Share Polls."), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),),
         Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
         Text((_canCreatePoll?Localization().getStringEx("widget.home_create_poll.text.description","People near you will be notified to vote through the Illinois app or you can provide them with the 4 Digit Poll #."):
         Localization().getStringEx("widget.home_create_poll.text.description.login","You need to be logged in to create and share polls with people near you.")),
@@ -98,7 +98,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   Widget _buildButtons(){
     return _canCreatePoll?
     RoundedButton(
-      label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a poll"),
+      label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a Poll"),
       textColor: Styles().colors!.fillColorPrimary,
       borderColor: Styles().colors!.fillColorSecondary,
       backgroundColor: Colors.white,
@@ -138,10 +138,10 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     Analytics().logSelect(target: "Login");
     if (_authLoading != true) {
       setState(() { _authLoading = true; });
-      Auth2().authenticateWithOidc().then((bool? result) {
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _authLoading = false; });
-          if (result == false) {
+          if (result != Auth2OidcAuthenticateResult.succeeded) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }

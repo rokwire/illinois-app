@@ -129,7 +129,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                             )),
                         Container(height: 10,),
                         Onboarding2UnderlinedButton(
-                          title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn more'),
+                          title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
                           fontSize: 14,
                           onTap: _onTapLearnMore,
                         ),

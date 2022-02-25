@@ -346,7 +346,7 @@ class ExplorePanelState extends State<ExplorePanel>
     _filterEventTimeValues = [
       Localization().getStringEx('panel.explore.filter.time.upcoming', 'Upcoming'),
       Localization().getStringEx('panel.explore.filter.time.today', 'Today'),
-      Localization().getStringEx('panel.explore.filter.time.next_7_days', 'Next 7 days'),
+      Localization().getStringEx('panel.explore.filter.time.next_7_days', 'Next 7 Days'),
       Localization().getStringEx('panel.explore.filter.time.this_weekend', 'This Weekend'),
       Localization().getStringEx('panel.explore.filter.time.this_month', 'Next 30 days'),
     ];

@@ -25,9 +25,10 @@ class Twitter  /* with Service */ {
 
   // Service
 
-  Future<TweetsPage?> loadTweetsPage({int? count, DateTime? startTimeUtc, DateTime? endTimeUtc, String? userCategory, String? token, bool? noCache}) async {
-    if ((Config().contentUrl != null) && (Config().twitterUserId(userCategory) != null)) {
-      String url = "${Config().contentUrl}/twitter/users/${Config().twitterUserId(userCategory)}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam";
+  Future<TweetsPage?> loadTweetsPage({int? count, DateTime? startTimeUtc, DateTime? endTimeUtc, String? accountKey, String? token, bool? noCache}) async {
+    String? twitterUserId = Config().twitterAccountId(accountKey);
+    if ((Config().contentUrl != null) && (twitterUserId != null)) {
+      String url = "${Config().contentUrl}/twitter/users/$twitterUserId/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam";
       if (token != null) {
         url += "&pagination_token=$token";
       }
@@ -51,9 +52,9 @@ class Twitter  /* with Service */ {
     return null;
   }
 
-  /*Future<TweetsPage> loadTweetsPage({int count, DateTime startTimeUtc, DateTime endTimeUtc, String userCategory, String token}) async {
-    if ((Config().twitterUrl != null) && (Config().twitterUserId(userCategory) != null)) {
-      String url = "${Config().twitterUrl}/users/${Config().twitterUserId(userCategory)}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam";
+  /*Future<TweetsPage> loadTweetsPage({int count, DateTime startTimeUtc, DateTime endTimeUtc, String accountKey, String token}) async {
+    if ((Config().twitterUrl != null) && (Config().twitterUserId(accountKey) != null)) {
+      String url = "${Config().twitterUrl}/users/${Config().twitterUserId(accountKey)}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam";
       if (token != null) {
         url += "&pagination_token=$token";
       }

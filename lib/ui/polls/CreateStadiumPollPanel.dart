@@ -217,7 +217,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   Widget _constructAddOptionButton() {
-    String label = Localization().getStringEx("panel.create_stadium_poll.button.add_option.text", "Add option");
+    String label = Localization().getStringEx("panel.create_stadium_poll.button.add_option.text", "Add Option");
     String? hint = Localization().getStringEx("panel.create_stadium_poll.button.add_option.hint", "");
     return Container(
       padding: EdgeInsets.symmetric(vertical: 24),
@@ -259,7 +259,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   Widget _buildSettingsHeader() {
-    String additionalSettingsText = Localization().getStringEx("panel.create_poll.text.add_option", "Additional settings");
+    String additionalSettingsText = Localization().getStringEx("panel.create_poll.text.add_option", "Additional Settings");
     return Padding(
         padding: EdgeInsets.only(top: 3),
         child: Container(

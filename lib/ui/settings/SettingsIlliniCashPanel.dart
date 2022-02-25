@@ -302,7 +302,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
-              Localization().getStringEx("panel.settings.illini_cash.label.custom_period", "CUSTOM PERIOD"),
+              Localization().getStringEx("panel.settings.illini_cash.label.custom_period", "Custom Period"),
               style: TextStyle(
                   color: Styles().colors!.fillColorPrimary,
                   fontSize: 16,
@@ -548,10 +548,10 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     Analytics().logSelect(target: "Log in");
     if (_authLoading != true) {
       setState(() { _authLoading = true; });
-      Auth2().authenticateWithOidc().then((bool? result) {
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _authLoading = false; });
-          if (result == false) {
+          if (result != Auth2OidcAuthenticateResult.succeeded) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }

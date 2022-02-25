@@ -42,21 +42,21 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
             child: Column(
               children: [
                 RibbonButton(
-                  label: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.title',  'Personalize this app') ,
+                  label: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.title',  'Personalize This App') ,
                   hint: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.hint', '') ,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapPersonalize,
                 ),
                 Container(height: 12,),
                 RibbonButton(
-                  label: Localization().getStringEx('widgets.home_highlighted_features.button.notifications.title',  'Manage notification preferences') ,
+                  label: Localization().getStringEx('widgets.home_highlighted_features.button.notifications.title',  'Manage Notification Preferences') ,
                   hint: Localization().getStringEx('widgets.home_highlighted_features.button.notifications.hint', '') ,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapNotificationPreferences,
                 ),
                 Container(height: 12,),
                 RibbonButton(
-                  label: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.title',  'Manage my privacy') ,
+                  label: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.title',  'Manage My Privacy') ,
                   hint: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.hint', '') ,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapManagePrivacy,

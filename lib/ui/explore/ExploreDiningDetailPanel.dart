@@ -295,7 +295,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                 Row(
                   children: <Widget>[
                     Expanded(
-                      child: Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted payment"),
+                      child: Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted Payment"),
                         style: TextStyle(
                           color: Styles().colors!.textBackground
                         ),

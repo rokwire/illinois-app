@@ -58,7 +58,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
-        title: Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO YOU ARE'),
+        title: Localization().getStringEx('panel.onboarding.roles.label.title', 'Who Are You?'),
         onLeading: _onBack,
       ),
       body: _buildContent(),

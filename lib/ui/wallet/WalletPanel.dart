@@ -23,6 +23,7 @@ import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as plugin_auth;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -197,10 +198,10 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
         Analytics().logSelect(target: "Log in");
         if (_authLoading != true) {
           setState(() { _authLoading = true; });
-          Auth2().authenticateWithOidc().then((bool? result) {
+          Auth2().authenticateWithOidc().then((plugin_auth.Auth2OidcAuthenticateResult? result) {
             if (mounted) {
               setState(() { _authLoading = false; });
-              if (result == false) {
+              if (result != plugin_auth.Auth2OidcAuthenticateResult.succeeded) {
                 AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
               }
             }
@@ -427,7 +428,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
             Container(height: 5,),
             Semantics(explicitChildNodes: true,child:
               RoundedButton(
-                label: Localization().getStringEx("panel.wallet.button.use_bus_pass.title", "Use bus pass"),
+                label: Localization().getStringEx("panel.wallet.button.use_bus_pass.title", "Use Bus Pass"),
                 hint: Localization().getStringEx("panel.wallet.button.use_bus_pass.hint", ""),
                 textColor: Styles().colors!.fillColorPrimary,
                 backgroundColor: Styles().colors!.white,

@@ -2204,8 +2204,8 @@ class _AddImageWidgetState extends State<AddImageWidget> {
                                 keyboardType: TextInputType.text,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(),
-                                  hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image url"),
-                                  labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image url"),
+                                  hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image Url"),
+                                  labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image Url"),
                                 ))),
                         Padding(
                             padding: EdgeInsets.all(10),
@@ -2219,7 +2219,7 @@ class _AddImageWidgetState extends State<AddImageWidget> {
                             Padding(
                                 padding: EdgeInsets.all(10),
                                 child: RoundedButton(
-                                    label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
+                                    label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from Device"),
                                     borderColor: Styles().colors!.fillColorSecondary,
                                     backgroundColor: Styles().colors!.background,
                                     textColor: Styles().colors!.fillColorPrimary,

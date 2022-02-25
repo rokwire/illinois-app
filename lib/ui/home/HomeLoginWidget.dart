@@ -29,7 +29,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
   Widget _buildConnectPrimarySection() {
     List<Widget> contentList = [];
 
-    List<dynamic> codes = FlexUI()['home.content.connect'] ?? [];
+    List<dynamic> codes = FlexUI()['home.connect'] ?? [];
     for (String code in codes) {
       if (code == 'netid') {
         contentList.add(HomeLoginNetIdWidget());
@@ -119,10 +119,10 @@ class _HomeLoginNetIdWidgetState extends State<HomeLoginNetIdWidget> {
     }
     else if (_authLoading != true) {
       setState(() { _authLoading = true; });
-      Auth2().authenticateWithOidc().then((bool? result) {
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _authLoading = false; });
-          if (result == false) {
+          if (result != Auth2OidcAuthenticateResult.succeeded) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }

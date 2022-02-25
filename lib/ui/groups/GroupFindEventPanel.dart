@@ -84,7 +84,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   // Time Filter
   final String _timeFilterUpcoming = Localization().getStringEx("panel.find_event.filter.time.upcoming","Upcoming");
   final String _timeFilterToday = Localization().getStringEx("panel.find_event.filter.time.today","Today");
-  final String _timeFilterNextSevenDays = Localization().getStringEx("find_event.find_event.filter.time.next_7_days","Next 7 days");
+  final String _timeFilterNextSevenDays = Localization().getStringEx("find_event.find_event.filter.time.next_7_days","Next 7 Days");
   final String _timeFilterThisWeekend = Localization().getStringEx("panel.find_event.filter.time.this_weekend","This Weekend");
   final String _timeFilterNextMonth = Localization().getStringEx("panel.find_event.filter.time.next_30_days","Next 30 days");
   late List<String> _time;

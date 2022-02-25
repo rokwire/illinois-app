@@ -169,7 +169,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                               Expanded(
                                 flex: 5,
                                 child: RoundedButton(
-                                  label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See more events'),
+                                  label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See More Events'),
                                   hint: Localization().getStringEx("panel.athletics.button.see_more_events.hint", ''),
                                   onTap: _onTapMoreUpcomingEvents,
                                   backgroundColor: Styles().colors!.background,

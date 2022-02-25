@@ -87,9 +87,11 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   }
 
   void _loadRecentItems() {
-    setState(() {
-      _recentItems = RecentItems().recentItems.toSet().toList();
-    });
+    if (mounted) {
+      setState(() {
+        _recentItems = RecentItems().recentItems.toSet().toList();
+      });
+    }
   }
 
   // NotificationsListener
@@ -98,9 +100,13 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   void onNotification(String name, dynamic param) {
     if (name == RecentItems.notifyChanged) {
       if (mounted) {
-        SchedulerBinding.instance!.addPostFrameCallback((_) => setState(() {
-          _recentItems = RecentItems().recentItems.toSet().toList();
-        }));
+        SchedulerBinding.instance!.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              _recentItems = RecentItems().recentItems.toSet().toList();
+            });
+          }
+        });
       }
     }
   }

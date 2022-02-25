@@ -27,6 +27,8 @@ class Config extends rokwire.Config {
   static String get notifyConfigChanged       => rokwire.Config.notifyConfigChanged;
   static String get notifyEnvironmentChanged  => rokwire.Config.notifyEnvironmentChanged;
 
+  static const String twitterDefaultAccountKey = '';
+
   // Singletone Factory
 
   @protected
@@ -125,18 +127,18 @@ class Config extends rokwire.Config {
   
   // ""     : { "id":"18165866", "name":"illinois_alma" },
   // "gies" : { "id":"19615559", "name":"giesbusiness" }
-  Map<String, dynamic>? twitterUserAccount([String? category]) {
+  Map<String, dynamic>? twitterAccount([String? accountKey]) {
     Map<String, dynamic>? users = JsonUtils.mapValue(twitter['users']);
-    return (users != null) ? JsonUtils.mapValue(users[category ?? '']) : null;
+    return (users != null) ? JsonUtils.mapValue(users[accountKey ?? twitterDefaultAccountKey]) : null;
   }
   
-  String? twitterUserId([String? category]) {
-    Map<String, dynamic>? userAccount = twitterUserAccount(category);
+  String? twitterAccountId([String? accountKey]) {
+    Map<String, dynamic>? userAccount = twitterAccount(accountKey);
     return (userAccount != null) ? JsonUtils.stringValue(userAccount['id']) : null;
   }
   
-  String? twitterUserName([String? category]) {
-    Map<String, dynamic>? userAccount = twitterUserAccount(category);
+  String? twitterAccountName([String? accountKey]) {
+    Map<String, dynamic>? userAccount = twitterAccount(accountKey);
     return (userAccount != null) ? JsonUtils.stringValue(userAccount['name']) : null;
   }
 

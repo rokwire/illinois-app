@@ -47,7 +47,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
   @override
   Widget build(BuildContext context) {
     String titleString = Localization().getStringEx('panel.onboarding.login.netid.label.title', 'Connect your NetID');
-    String? skipTitle = Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.title', 'Not right now');
+    String? skipTitle = Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.title', 'Not Right Now');
     return Scaffold(
         backgroundColor: Styles().colors!.background,
         body: Stack(
@@ -106,7 +106,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 RoundedButton(
-                  label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign in with NetID'),
+                  label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign In with NetID'),
                   hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
                   fontSize: 16,
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -219,9 +219,9 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
     Analytics().logSelect(target: 'Log in with NetID');
     if (_progress != true) {
       setState(() { _progress = true; });
-      Auth2().authenticateWithOidc().then((bool? result) {
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
-          if (result == true) {
+          if (result == Auth2OidcAuthenticateResult.succeeded) {
             FlexUI().update().then((_) {
               if (mounted) {
                 setState(() { _progress = false; });
@@ -234,7 +234,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
               }
             });
           }
-          else if (result == false) {
+          else if (result == Auth2OidcAuthenticateResult.failed) {
             setState(() { _progress = false; });
             showDialog(context: context, builder: (context) => _buildDialogWidget(context));
           }

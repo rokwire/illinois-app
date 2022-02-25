@@ -357,7 +357,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   Widget? _exploreLocationDetail() {
     String locationText = widget.event?.getLongDisplayLocation(_locationData)??"";
     bool isVirtual = widget.event?.isVirtual ?? false;
-    String eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+    String eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
     bool hasEventUrl = StringUtils.isNotEmpty(widget.event?.location?.description);
     bool isOnlineUnderlined = isVirtual && hasEventUrl;
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));

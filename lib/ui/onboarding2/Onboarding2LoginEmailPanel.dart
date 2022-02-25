@@ -87,9 +87,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   @override
   Widget build(BuildContext context) {
     String title = (_state == Auth2EmailAccountState.nonExistent) ?
-      _link ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Add your email address') :
-      Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign up with email') :
-      Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign in with email');
+      _link ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Add Your Email Address') :
+      Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign Up with Email') :
+      Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign In with Email');
 
     String description = (_state == Auth2EmailAccountState.nonExistent) ?
       _link ? Localization().getStringEx('panel.onboarding2.email.link.description.text', 'Please enter a password to add your email address.') :
@@ -321,7 +321,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
         
         setState(() { _isLoading = false; });
         
-        if (result == Auth2EmailForgotPasswordResult.succeded) {
+        if (result == Auth2EmailForgotPasswordResult.succeeded) {
           _emailFocusNode.unfocus();
           _passwordFocusNode.unfocus();
           _confirmPasswordFocusNode.unfocus();
@@ -412,8 +412,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
             "confirm_password": confirmPassword
           };
           Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((result) {
-            if (result == Auth2LinkResult.succeded) {
-              _trySignUpCallback(Auth2EmailSignUpResult.succeded);
+            if (result == Auth2LinkResult.succeeded) {
+              _trySignUpCallback(Auth2EmailSignUpResult.succeeded);
             } else if (result == Auth2LinkResult.failedAccountExist) {
               _trySignUpCallback(Auth2EmailSignUpResult.failedAccountExist);
             } else {
@@ -429,7 +429,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
     setState(() { _isLoading = false; });
 
-    if (result == Auth2EmailSignUpResult.succeded) {
+    if (result == Auth2EmailSignUpResult.succeeded) {
       _emailFocusNode.unfocus();
       _passwordFocusNode.unfocus();
       _confirmPasswordFocusNode.unfocus();
@@ -479,7 +479,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
           Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((Auth2LinkResult result) {
             setState(() { _isLoading = false; });
             switch (result) {
-              case Auth2LinkResult.succeded: _trySignInCallback(Auth2EmailSignInResult.succeded); break;
+              case Auth2LinkResult.succeeded: _trySignInCallback(Auth2EmailSignInResult.succeeded); break;
               case Auth2LinkResult.failedNotActivated: _trySignInCallback(Auth2EmailSignInResult.failedNotActivated); break;
               case Auth2LinkResult.failedActivationExpired: _trySignInCallback(Auth2EmailSignInResult.failedActivationExpired); break;
               case Auth2LinkResult.failedInvalid: _trySignInCallback(Auth2EmailSignInResult.failedInvalid); break;

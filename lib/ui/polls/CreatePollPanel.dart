@@ -187,7 +187,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   Widget _constructAddOptionButton() {
-    String label = Localization().getStringEx("panel.create_poll.button.add_option.text", "Add option");
+    String label = Localization().getStringEx("panel.create_poll.button.add_option.text", "Add Option");
     String? hint = Localization().getStringEx("panel.create_poll.button.add_option.hint", "");
     return Container(
       padding: EdgeInsets.symmetric(vertical: 24),
@@ -229,7 +229,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   Widget _buildSettingsHeader() {
-    String additionalSettingsText = Localization().getStringEx("panel.create_poll.text.add_option", "Additional settings");
+    String additionalSettingsText = Localization().getStringEx("panel.create_poll.text.add_option", "Additional Settings");
     return Padding(
         padding: EdgeInsets.only(top: 3),
         child: Container(
@@ -346,7 +346,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
           ),
           Expanded(child:
             RoundedButton(
-              label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start poll!"),
+              label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start Poll"),
               backgroundColor: Colors.white,
               borderColor: Styles().colors!.fillColorSecondary,
               textColor: Styles().colors!.fillColorPrimary,
@@ -378,7 +378,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 26),
                     child: Text(
-                      Localization().getStringEx("panel.create_poll.cancel_dialog.message", "Are you sure you want to cancel this Quick Poll"),
+                      Localization().getStringEx("panel.create_poll.cancel_dialog.message", "Are you sure you want to cancel this Quick Poll?"),
                       textAlign: TextAlign.left,
                       style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
                     ),

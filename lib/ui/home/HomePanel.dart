@@ -74,7 +74,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       Assets.notifyChanged,
       HomeGiesWidget.notifyPageChanged,
     ]);
-    _contentListCodes = _buildContentListCodes() ?? [];
+    _contentListCodes = FlexUI()['home'] ?? [];
     super.initState();
   }
 
@@ -200,30 +200,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _updateContentListCodes() {
-    List<dynamic> contentListCodes = _buildContentListCodes() ?? [];
-    if (!DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
+    List<dynamic>? contentListCodes = FlexUI()['home'];
+    if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       setState(() {
         _contentListCodes = contentListCodes;
       });
     }
-  }
-
-  List<dynamic>? _buildContentListCodes({String source = 'home'}) {
-    List<dynamic>? result;
-    List<dynamic>? contentList = FlexUI()[source];
-    if (contentList != null) {
-      result = [];
-      for (String contentEntry in contentList) {
-        dynamic list = FlexUI()['$source.$contentEntry'];
-        if (list is List) {
-          result.addAll(list);
-        }
-        else {
-          result.add(contentEntry);
-        }
-      }
-    }
-    return result;
   }
 
   Future<void> _onPullToRefresh() async {

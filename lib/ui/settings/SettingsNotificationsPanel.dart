@@ -105,7 +105,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     widgets.add(_CustomToggleButton(
           enabled: _toggleButtonEnabled,
           borderRadius: _topRounding,
-          label: Localization().getStringEx("panel.settings.notifications.reminders", "Event reminders"),
+          label: Localization().getStringEx("panel.settings.notifications.reminders", "Event Reminders"),
           toggled: FirebaseMessaging().notifyEventReminders,
           onTap: _toggleButtonEnabled?_onEventRemindersToggled : (){},
           textStyle: _toggleButtonEnabled? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold) :
@@ -114,7 +114,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     widgets.add(_CustomToggleButton(
           enabled: _toggleButtonEnabled,
           borderRadius: BorderRadius.zero,
-          label: Localization().getStringEx("panel.settings.notifications.athletics_updates", "Athletics updates"),
+          label: Localization().getStringEx("panel.settings.notifications.athletics_updates", "Athletics Updates"),
           toggled: FirebaseMessaging().notifyAthleticsUpdates,
           onTap: _toggleButtonEnabled? _onAthleticsUpdatesToggled : (){},
           textStyle: _toggleButtonEnabled? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold) :
@@ -158,7 +158,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     widgets.add(_CustomToggleButton(
         enabled: _toggleButtonEnabled,
         borderRadius: BorderRadius.zero,
-        label: Localization().getStringEx("panel.settings.notifications.group_updates", "Group updates"),
+        label: Localization().getStringEx("panel.settings.notifications.group_updates", "Group Updates"),
         toggled: FirebaseMessaging().notifyGroupUpdates,
         onTap: _toggleButtonEnabled? _onGroupsUpdatesToggled : (){},
         textStyle: _toggleButtonEnabled? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold) :

@@ -68,7 +68,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
                   textColor: UiColors.fromHex("#f54400"),
                   fontSize: 16,
                   fontFamily: Styles().fontFamilies!.regular,
-                  label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal information"),
+                  label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete My Personal Information"),
                   borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
                   onTap: _onTapDeleteData,
                 ),
@@ -195,6 +195,6 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
   //Option keys
   //static const String OptionPersonalInformation = "Personal information";
   //static const String OptionWhoYouAre = "Who you are";
-  static const String OptionYourInterests = "Your interests";
-  static const String OptionFoodFilters = "Food filters";
+  static const String OptionYourInterests = "Your Interests";
+  static const String OptionFoodFilters = "Food Filters";
 }

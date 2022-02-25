@@ -206,7 +206,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                   RoundedButton(
                       label: _disabled
                           ? Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.disabled.title", "Scroll to Review")
-                          : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.title", "Set my Privacy"),
+                          : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.title", "Set My Privacy"),
                       hint: _disabled
                           ? Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.disabled.hint", "")
                           : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.hint", ""),
@@ -240,7 +240,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                               child:
                               Semantics(button:false,  hint: "${_sliderValue?.round().toString() ?? ""}",
                                 child: Text(
-                                  Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.title", "Your new \nprivacy level"),
+                                  Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.title", "Your New \nPrivacy Level"),
                                   style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies!.bold),
                                   textAlign: TextAlign.center,
                                 ),
