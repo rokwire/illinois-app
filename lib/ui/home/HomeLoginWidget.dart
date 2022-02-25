@@ -29,7 +29,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
   Widget _buildConnectPrimarySection() {
     List<Widget> contentList = [];
 
-    List<dynamic> codes = FlexUI()['home.content.connect'] ?? [];
+    List<dynamic> codes = FlexUI()['home.connect'] ?? [];
     for (String code in codes) {
       if (code == 'netid') {
         contentList.add(HomeLoginNetIdWidget());
