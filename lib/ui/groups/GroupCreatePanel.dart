@@ -119,7 +119,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   scrollDirection: Axis.vertical,
                   slivers: <Widget>[
                     SliverHeaderBar(
-                      title: Localization().getStringEx("panel.groups_create.label.heading", "Create a group"),
+                      title: Localization().getStringEx("panel.groups_create.label.heading", "Create a Group"),
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate([
@@ -184,12 +184,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               height: _imageHeight,
               child: Center(
                   child: Semantics(
-                      label: Localization().getStringEx("panel.groups_settings.add_image", "Add cover image"),
+                      label: Localization().getStringEx("panel.groups_settings.add_image", "Add Cover Image"),
                       hint: Localization().getStringEx("panel.groups_settings.add_image.hint", ""),
                       button: true,
                       excludeSemantics: true,
                       child: RoundedButton(
-                          label: Localization().getStringEx("panel.groups_settings.add_image", "Add cover image"),
+                          label: Localization().getStringEx("panel.groups_settings.add_image", "Add Cover Image"),
                           textColor: Styles().colors!.fillColorPrimary,
                           onTap: _onTapAddImage,
                           backgroundColor: Colors.transparent,

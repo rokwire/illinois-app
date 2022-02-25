@@ -98,7 +98,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   Widget _buildButtons(){
     return _canCreatePoll?
     RoundedButton(
-      label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a poll"),
+      label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a Poll"),
       textColor: Styles().colors!.fillColorPrimary,
       borderColor: Styles().colors!.fillColorSecondary,
       backgroundColor: Colors.white,

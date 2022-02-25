@@ -195,6 +195,6 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
   //Option keys
   //static const String OptionPersonalInformation = "Personal information";
   //static const String OptionWhoYouAre = "Who you are";
-  static const String OptionYourInterests = "Your interests";
-  static const String OptionFoodFilters = "Food filters";
+  static const String OptionYourInterests = "Your Interests";
+  static const String OptionFoodFilters = "Food Filters";
 }
