@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Account linking verbiage updates [#1393](https://github.com/rokwire/illinois-app/issues/1393)
 
 ## [3.2.26] - 2022-02-24
 ### Fixed
