@@ -511,7 +511,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.add(RibbonButton(
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-            label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Disconnect your NetID"),
+            label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Disconnect Your NetID"),
             onTap: _onDisconnectNetIdClicked));
       }
     }
@@ -1312,7 +1312,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         textColor: UiColors.fromHex("#f54400"),
         fontSize: 16,
         fontFamily: Styles().fontFamilies!.regular,
-        label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Forget all of my information"),
+        label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Forget All My Information"),
         hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
         borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
         onTap: _onTapDeleteData,

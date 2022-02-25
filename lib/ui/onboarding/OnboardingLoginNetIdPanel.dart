@@ -47,7 +47,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
   @override
   Widget build(BuildContext context) {
     String titleString = Localization().getStringEx('panel.onboarding.login.netid.label.title', 'Connect your NetID');
-    String? skipTitle = Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.title', 'Not right now');
+    String? skipTitle = Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.title', 'Not Right Now');
     return Scaffold(
         backgroundColor: Styles().colors!.background,
         body: Stack(
@@ -106,7 +106,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 RoundedButton(
-                  label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign in with NetID'),
+                  label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign In with NetID'),
                   hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
                   fontSize: 16,
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),

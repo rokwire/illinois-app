@@ -302,7 +302,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
-              Localization().getStringEx("panel.settings.illini_cash.label.custom_period", "CUSTOM PERIOD"),
+              Localization().getStringEx("panel.settings.illini_cash.label.custom_period", "Custom Period"),
               style: TextStyle(
                   color: Styles().colors!.fillColorPrimary,
                   fontSize: 16,

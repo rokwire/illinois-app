@@ -206,7 +206,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                   RoundedButton(
                       label: _disabled
                           ? Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.disabled.title", "Scroll to Review")
-                          : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.title", "Set my Privacy"),
+                          : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.title", "Set My Privacy"),
                       hint: _disabled
                           ? Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.disabled.hint", "")
                           : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.hint", ""),

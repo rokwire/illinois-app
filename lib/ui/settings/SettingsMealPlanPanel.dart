@@ -287,7 +287,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
-                Localization().getStringEx("panel.settings.meal_plan.label.custom_period", "CUSTOM PERIOD"),
+                Localization().getStringEx("panel.settings.meal_plan.label.custom_period", "Custom Period"),
                 style: TextStyle(
                     color: Styles().colors!.fillColorPrimary,
                     fontSize: 16,
