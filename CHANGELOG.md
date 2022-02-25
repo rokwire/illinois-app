@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 - Account linking verbiage updates [#1393](https://github.com/rokwire/illinois-app/issues/1393)
+### Changed
+- Text capitalization in various screens [#1386](https://github.com/rokwire/illinois-app/issues/1386).
 
 ## [3.2.26] - 2022-02-24
 ### Fixed
