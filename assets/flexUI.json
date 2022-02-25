@@ -32,6 +32,9 @@
 		"settings.privacy": ["buttons"],
 		"settings.privacy.buttons": ["personal_info", "notifications"],
 
+		"privacy_center": ["connect", "heading", "manage", "buttons", "policy", "delete", "version"],
+		"privacy_center.buttons": ["personal_info", "notifications"],
+
 		"roles": ["student", "visitor", "fan", "employee", "alumni", "parent", "resident"],
 		
 		"onboarding":["get_started", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
@@ -95,6 +98,9 @@
 			"tabbar.wallet"                   : 4,
 			"wallet.connect"                  : 4,
 
+			"privacy_center.connect"          : 4,
+			"privacy_center.buttons"          : 4,
+
 			"onboarding.notifications_auth"   : 4,
 			"onboarding.location_auth"        : 2,
 			"onboarding.roles"                : 3,
@@ -153,7 +159,9 @@
 			"settings.linked.phone.remove"        : { "phoneLinked": true },
 			"settings.linked.email"               : { "emailLinked": true },
 			"settings.linked.email.info"          : { "emailLinked": true },
-			"settings.linked.email.remove"        : { "emailLinked": true }
+			"settings.linked.email.remove"        : { "emailLinked": true },
+
+			"privacy_center.connect"              : { "loggedIn": false }
 		},
 		"platform":{
 			"onboarding.notifications_auth" : { "os": "ios" }
