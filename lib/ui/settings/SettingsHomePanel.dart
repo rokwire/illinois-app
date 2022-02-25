@@ -686,7 +686,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     contentList.add(_buildLink());
 
     return (contentList.isNotEmpty) ? _OptionsSection(
-      title: Localization().getStringEx("panel.settings.home.linked.title", "Alternative Logins"),
+      title: Localization().getStringEx("panel.settings.home.linked.title", "Alternate Logins"),
       widgets: contentList,
       showBox: false,
     ) : Container(height: 0.0,);
@@ -950,11 +950,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _removeAuthType(Auth2LoginType loginType, String identifier) {
-    Analytics().logSelect(target: "Remove alternative login");
+    Analytics().logSelect(target: "Remove alternate login");
     if (Connectivity().isNotOffline) {
       Auth2().unlinkAccountAuthType(loginType, identifier).then((bool? result) {
         if (mounted && result == false) {
-          AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.home.unlink.failed", "Failed to remove alternative login."));
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.home.unlink.failed", "Failed to remove alternate login."));
         }
       });
     } else {
