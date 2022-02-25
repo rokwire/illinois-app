@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Text capitalization in various screens [#1386](https://github.com/rokwire/illinois-app/issues/1386).
 - Reorder home panel widgets [#1397](https://github.com/rokwire/illinois-app/issues/1397).
+### Fixed
+- Crash on "Forget My Information" [#1392](https://github.com/rokwire/illinois-app/issues/1392).
 
 ## [3.2.26] - 2022-02-24
 ### Fixed
