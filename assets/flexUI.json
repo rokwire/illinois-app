@@ -87,6 +87,7 @@
 			"converge"                        : 5,
 
 			"home.connect"                    : 4,
+			"home.create_poll"                : 4,
 
 			"settings.user_info"              : 4,
 			"settings.connect"                : 4,
