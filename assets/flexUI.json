@@ -86,6 +86,8 @@
 			"saved"                           : 3,
 			"converge"                        : 5,
 
+			"home.connect"                    : 4,
+
 			"settings.user_info"              : 4,
 			"settings.connect"                : 4,
 			"settings.connected"              : 4,
