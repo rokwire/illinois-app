@@ -31,8 +31,8 @@ class HomeTwitterWidget extends StatefulWidget {
 class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements NotificationsListener {
 
   List<TweetsPage> _tweetsPages = <TweetsPage>[];
-  String? _tweetsUserCategory;
-  String? _selectedUserCategory;
+  String? _tweetsAccountKey;
+  String? _selectedAccountKey;
   bool _loadingPage = false;
   DateTime? _pausedDateTime;
   PageController? _pageController;
@@ -41,7 +41,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   @override
   void initState() {
     super.initState();
-    _selectedUserCategory = Storage().selectedTwitterAccount;
+    _selectedAccountKey = Storage().selectedTwitterAccount;
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       FlexUI.notifyChanged,
@@ -55,13 +55,13 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     }
 
     _loadingPage = true;
-    String? userCategory = _currentUserCategory;
-    Twitter().loadTweetsPage(count: Config().twitterTweetsCount, userCategory: userCategory).then((TweetsPage? tweetsPage) {
+    String? accountKey = _currentAccountKey;
+    Twitter().loadTweetsPage(count: Config().twitterTweetsCount, accountKey: accountKey).then((TweetsPage? tweetsPage) {
       _setState(() {
         _loadingPage = false;
         if (tweetsPage != null) {
           _tweetsPages.add(tweetsPage);
-          _tweetsUserCategory = userCategory;
+          _tweetsAccountKey = accountKey;
         }
       });
     });
@@ -81,7 +81,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       _onAppLivecycleStateChanged(param);
     }
     else if (name == FlexUI.notifyChanged) {
-      _onTwitterUserChanged();
+      _onTwitterAccountChanged();
     }
   }
 
@@ -96,16 +96,6 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
           _refresh(/*count: Config().twitterTweetsCount*/);
         }
       }
-    }
-  }
-
-  void _onTwitterUserChanged() {
-    List<String>? userCategories = _userCategories;
-    if ((_selectedUserCategory != null) && !userCategories.contains(_selectedUserCategory)) {
-      Storage().selectedTwitterAccount = _selectedUserCategory = null;
-    }
-    if ((_tweetsUserCategory != _currentUserCategory)) {
-      _refresh(count: Config().twitterTweetsCount);
     }
   }
 
@@ -126,7 +116,6 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 
   Widget _buildHeader() {
-    List<String> categories = _userCategories;
     return Semantics(container: true , header: true, child:
       Container(color: Styles().colors!.fillColorPrimary, child:
         Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
@@ -135,49 +124,42 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
             Expanded(flex: 20, child: 
               Text("Twitter", style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),
             ),
-            (1 < categories.length) ? 
-              Padding(padding: EdgeInsets.only(right: 16), child: 
-                buildAccountDropDown(categories),
-              ) : Container(),
+            (1 < _accountKeys.length) ? 
+              Padding(padding: EdgeInsets.only(right: 16), child: buildAccountDropDown(), ) :
+              Container(),
         ],),),));
   }
 
-  Widget buildAccountDropDown(List<String> categories) {
-    String currentUserName = "@${Config().twitterUserName(_currentUserCategory)}";
+  Widget buildAccountDropDown() {
+    String? currentAccountName = twitterAccountName(_currentAccountKey);
 
-    return Semantics(label: currentUserName, hint: "Double tap to select account", excludeSemantics:true, child:
+    return Semantics(label: currentAccountName, hint: "Double tap to select account", excludeSemantics:true, child:
       DropdownButtonHideUnderline(child:
         DropdownButton<String>(
           icon: Padding(padding: EdgeInsets.only(left: 4), child: Image.asset('images/icon-down-white.png')),
           isExpanded: false,
           style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16, ),
-          hint: Text(currentUserName, style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)),
-          items: _buildDropDownItems(categories),
+          hint: (currentAccountName != null) ? Text(currentAccountName, style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)) : null,
+          items: _buildDropDownItems(),
           onChanged: _onDropDownValueChanged
         ),
       ),
     );
   }
 
-  List<DropdownMenuItem<String>>? _buildDropDownItems(List<String> categories) {
+  List<DropdownMenuItem<String>>? _buildDropDownItems() {
     List<DropdownMenuItem<String>> dropDownItems = [];
-    for (String category in categories) {
-      String categoryUserName = "@${Config().twitterUserName(category)}";
-      dropDownItems.add(DropdownMenuItem<String>(value: category, child:
+    for (String accountKey in _accountKeys) {
+      String? accountName = twitterAccountName(accountKey);
+      dropDownItems.add(DropdownMenuItem<String>(value: accountKey, child:
         BlockSemantics(blocking: true, child:
-          Semantics(label: categoryUserName, hint: "Double tap to select account", excludeSemantics: true, button:false, child:
-            Text(categoryUserName, style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)),
+          Semantics(label: accountName, hint: "Double tap to select account", excludeSemantics: true, button:false, child:
+            Text(accountName ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)),
           )
         )
       ));
     }
     return dropDownItems;
-  }
-
-  void _onDropDownValueChanged(String? value) {
-    Analytics().logSelect(target: "Twitter account selected: $value");
-    Storage().selectedTwitterAccount = _selectedUserCategory = (value != _defaultUserCategory) ? value : null;
-    _refresh(count: Config().twitterTweetsCount);
   }
 
   Widget _buildSlant() {
@@ -241,13 +223,13 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       });
       TweetsPage? lastTweetsPage = (0 < _tweetsPages.length) ? _tweetsPages.last : null;
       Tweet? lastTweet = ((lastTweetsPage?.tweets != null) && (0 < lastTweetsPage!.tweets!.length)) ? lastTweetsPage.tweets!.last : null;
-      String? userCategory = _currentUserCategory;
-      Twitter().loadTweetsPage(count: Config().twitterTweetsCount, endTimeUtc: lastTweet?.createdAtUtc, userCategory: userCategory).then((TweetsPage? tweetsPage) {
+      String? accountKey = _currentAccountKey;
+      Twitter().loadTweetsPage(count: Config().twitterTweetsCount, endTimeUtc: lastTweet?.createdAtUtc, accountKey: accountKey).then((TweetsPage? tweetsPage) {
         _setState(() {
           _loadingPage = false;
           if (tweetsPage != null) {
             _tweetsPages.add(tweetsPage);
-            _tweetsUserCategory = userCategory;
+            _tweetsAccountKey = accountKey;
           }
         });
       });
@@ -258,16 +240,16 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     _setState(() {
       _loadingPage = true;
     });
-    String? userCategory = _currentUserCategory;
+    String? accountKey = _currentAccountKey;
     Twitter().loadTweetsPage(
         count: count ?? max(tweetsCount, Config().twitterTweetsCount!),
         noCache: noCache,
-        userCategory: userCategory).then((TweetsPage? tweetsPage) {
+        accountKey: accountKey).then((TweetsPage? tweetsPage) {
           _setState(() {
             _loadingPage = false;
             if (tweetsPage != null) {
               _tweetsPages = [tweetsPage];
-              _tweetsUserCategory = userCategory;
+              _tweetsAccountKey = accountKey;
             }
           });
         // Future.delayed((Duration.zero),(){
@@ -287,18 +269,30 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     _pageController?.nextPage(duration:  Duration(milliseconds: 500), curve: Curves.easeIn);
   }
 
-  String? get _currentUserCategory =>
-    _selectedUserCategory ?? _defaultUserCategory;
+  String get _currentAccountKey => _selectedAccountKey ?? _defaultAccountKey;
 
-  String? get _defaultUserCategory {
-    List<dynamic>? twitterUserList = FlexUI()['home.twitter.user'];
-    return ((twitterUserList != null) && twitterUserList.isNotEmpty) ? twitterUserList.first : null;
+  static String get _defaultAccountKey => _accountKeys.first;
+
+  static List<String> get _accountKeys => JsonUtils.listStringsValue(FlexUI()['home.twitter.account']) ?? [ Config.twitterDefaultAccountKey ];
+
+  static String? twitterAccountName(String accountKey) {
+    String? accountName = Config().twitterAccountName(accountKey);
+    return (accountName != null) ? "@$accountName" : null;
   }
 
-  List<String> get _userCategories {
-    List<dynamic>? twitterUserList = FlexUI()['home.twitter.user'];
-    String? category = ((twitterUserList != null) && twitterUserList.isNotEmpty) ? twitterUserList.first : null;
-    return StringUtils.isNotEmpty(category) ? [category!, ''] : [''];
+  void _onDropDownValueChanged(String? value) {
+    Analytics().logSelect(target: "Twitter account selected: $value");
+    Storage().selectedTwitterAccount = _selectedAccountKey = (value != _defaultAccountKey) ? value : null;
+    _refresh(count: Config().twitterTweetsCount);
+  }
+
+  void _onTwitterAccountChanged() {
+    if ((_selectedAccountKey != null) && (!_accountKeys.contains(_selectedAccountKey) || (_selectedAccountKey == _defaultAccountKey))) {
+      Storage().selectedTwitterAccount = _selectedAccountKey = null;
+    }
+    if ((_tweetsAccountKey != _currentAccountKey)) {
+      _refresh(count: Config().twitterTweetsCount);
+    }
   }
 
   void _setState(VoidCallback fn) {
