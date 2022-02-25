@@ -1114,6 +1114,8 @@
 	"panel.settings.login.netid.button.continue.hint":"",
 	"panel.settings.login.netid.button.dont_continue.hint":"跳过验证",
 	"panel.settings.netid.link.failed": "Failed to add Illinois NetID.",
+	"panel.settings.netid.link.failed.exists": "An account is already using this NetID.",
+	"panel.settings.netid.link.failed.exists.details": "1. You will need to sign in to the other account with this NetID.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login.",
 	"panel.settings.label.offline.netid":"Feature not available when offline.",
 
 	"panel.settings.login.phone.label.title":"验证您的电话号码",

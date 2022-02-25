@@ -347,10 +347,10 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     Analytics().logSelect(target: "Connect netId");
     if (_connectingNetId != true) {
       setState(() { _connectingNetId = true; });
-      Auth2().authenticateWithOidc().then((bool? result) {
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _connectingNetId = false; });
-          if (result == false) {
+          if (result != Auth2OidcAuthenticateResult.succeeded) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }
@@ -919,14 +919,39 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   void _onLinkNetIdClicked() {
     Analytics().logSelect(target: "Link Illinois NetID");
     if (Connectivity().isNotOffline) {
-      Auth2().authenticateWithOidc(link: true).then((bool? result) {
-        if (result == false) {
+      Auth2().authenticateWithOidc(link: true).then((Auth2OidcAuthenticateResult? result) {
+        if (result == Auth2OidcAuthenticateResult.failed) {
           AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add Illinois NetID."));
+        } else if (result == Auth2OidcAuthenticateResult.failedAccountExist) {
+          _showNetIDAccountExistsDialog();
         }
       });
     } else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.netid', 'Feature not available when offline.'));
     }
+  }
+
+  void _showNetIDAccountExistsDialog() {
+    AppAlert.showCustomDialog(context: context,
+      contentWidget: Column(children: [
+        Text(Localization().getStringEx("panel.settings.netid.link.failed.exists", "An account is already using this NetID."),
+          style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Text(Localization().getStringEx("panel.settings.netid.link.failed.exists",
+              "1. You will need to sign in to the other account with this NetID.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."),
+            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
+        ),
+      ]),
+      actions: [
+        TextButton(
+          child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
+          onPressed: () {
+            Navigator.pop(context, true);
+          }
+        ),
+      ]
+    );
   }
 
   void _onLinkPhoneOrEmailClicked(String mode) {

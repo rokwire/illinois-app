@@ -155,7 +155,10 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                           children: [
                             Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
                             Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
-                              Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
+                              ),
                             ),
                           ],
                         ),
@@ -243,8 +246,8 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
       };
       Map<String, dynamic> params = {};
       Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
-        if (result == Auth2LinkResult.succeded) {
-          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.succeded);
+        if (result == Auth2LinkResult.succeeded) {
+          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.succeeded);
         } else if (result == Auth2LinkResult.failedAccountExist) {
           _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.failedAccountExist);
         } else {
@@ -264,7 +267,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
       setState(() { _isLoading = false; });
     }
 
-    if (result == Auth2PhoneRequestCodeResult.succeded) {
+    if (result == Auth2PhoneRequestCodeResult.succeeded) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginPhoneConfirmPanel(phoneNumber: phoneNumber, onboardingContext: widget.onboardingContext)));
     } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
       setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists", "An account is already using this phone number."),

@@ -478,10 +478,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   void _onLoginTapped() {
     if (_loggingIn != true) {
       setState(() { _loggingIn = true; });
-      Auth2().authenticateWithOidc().then((bool? result) {
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _loggingIn = false; });
-          if (result == false) {
+          if (result != Auth2OidcAuthenticateResult.succeeded) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }
