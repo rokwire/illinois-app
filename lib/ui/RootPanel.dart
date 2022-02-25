@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -285,8 +286,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _initTabBarController() {
-    _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: _tabBarController?.index ?? 0);
+  void _initTabBarController({RootTab? rootTab}) {
+    int initialIndex = (rootTab != null) ? max(_getIndexByRootTab(rootTab), 0)  : 0;
+    _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: initialIndex);
   }
 
   void _selectTabAtIndex(int index) {
@@ -582,16 +584,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _updateContent() {
     List<RootTab> tabs = _getTabs();
     if (!DeepCollectionEquality().equals(_tabs, tabs)) {
+      RootTab? currentRootTab = getRootTabByIndex(_currentTabIndex);
       _updatePanels(tabs);
       if (mounted) {
         setState(() {
           _tabs = tabs;
-          _initTabBarController();
+          _initTabBarController(rootTab: currentRootTab);
         });
       }
       else {
         _tabs = tabs;
-        _initTabBarController();
+        _initTabBarController(rootTab: currentRootTab);
       }
     }
   }
