@@ -127,9 +127,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   void _refreshAllMembersFilterText(){
     if(_selectedMembersFilter == _allMembersFilter){
-      _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)").replaceAll("#", _members?.length.toString() ?? "0");
+      _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All Members (#)").replaceAll("#", _members?.length.toString() ?? "0");
     } else {
-      _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)").replaceAll("#", _members?.length.toString() ?? "0");
+      _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All Members (#)").replaceAll("#", _members?.length.toString() ?? "0");
     }
   }
   void _applyMembersFilter(){
@@ -430,7 +430,7 @@ class _PendingMemberCard extends StatelessWidget {
                   ),
                   Container(height: 4,),
                       RoundedButton(
-                        label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review request"),
+                        label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review Request"),
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
                         borderColor: Styles().colors!.fillColorSecondary,
                         textColor: Styles().colors!.fillColorPrimary,
