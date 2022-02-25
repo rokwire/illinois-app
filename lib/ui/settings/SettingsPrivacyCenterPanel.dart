@@ -60,60 +60,61 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:Container(
-        child: SafeArea(child:
-          Column(children: <Widget>[
-              Container(
-                color: Styles().colors!.fillColorPrimaryVariant,
-                  padding: EdgeInsets.only(),
-                  child: Column(
-                    children: <Widget>[
-                      Container(height: 14,),
-                      Container(
-                        child:
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Semantics(
-                                label: Localization().getStringEx('headerbar.back.title', 'Back'),
-                                hint: Localization().getStringEx('headerbar.back.hint', ''),
-                                button: true,
-                                excludeSemantics: true,
-                                child: Container(
-                                  width: 42,
-                                  alignment: Alignment.topCenter,
-                                  child: IconButton(
-                                    icon: Image.asset("images/chevron-left-white.png", excludeFromSemantics: true),
-                                    onPressed: _onTapBack))),
-                            Expanded(child:Container()),
-                            Container(height: 90,
-                              child: Image.asset("images/group-6.png",excludeFromSemantics: true,),
-                            ),
-                            Expanded(child:Container()),
-                            Container(width: 42,)
-                          ],
-                        )
+      body: Container(
+        child: Column(children: <Widget>[
+          Container(
+            color: Styles().colors!.fillColorPrimaryVariant,
+              padding: EdgeInsets.only(),
+              child: SafeArea(child:
+                Column(
+                  children: <Widget>[
+                    Container(height: 14,),
+                    Container(
+                      child:
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Semantics(
+                              label: Localization().getStringEx('headerbar.back.title', 'Back'),
+                              hint: Localization().getStringEx('headerbar.back.hint', ''),
+                              button: true,
+                              excludeSemantics: true,
+                              child: Container(
+                                width: 42,
+                                alignment: Alignment.topCenter,
+                                child: IconButton(
+                                  icon: Image.asset("images/chevron-left-white.png", excludeFromSemantics: true),
+                                  onPressed: _onTapBack))),
+                          Expanded(child:Container()),
+                          Container(height: 90,
+                            child: Image.asset("images/group-6.png",excludeFromSemantics: true,),
+                          ),
+                          Expanded(child:Container()),
+                          Container(width: 42,)
+                        ],
+                      )
 
+                    ),
+                    Container(height: 10,),
+                    Row(children: <Widget>[
+                      Expanded(child:
+                        Semantics(header: true, child:
+                          Text(
+                            Localization().getStringEx("panel.settings.privacy_center.label.title", "Privacy Center"),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: Styles().fontFamilies!.extraBold),
+                          ),)
                       ),
-                      Container(height: 10,),
-                      Row(children: <Widget>[
-                        Expanded(child:
-                          Semantics(header: true, child:
-                            Text(
-                              Localization().getStringEx("panel.settings.privacy_center.label.title", "Privacy Center"),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: Styles().fontFamilies!.extraBold),
-                            ),)
-                        ),
-                      ],),
-                      Container(height: 24,)
-                    ],
-                  )
-              ),
-              Expanded(child:
-                SingleChildScrollView(child:_buildContent()),
-              )
-          ],),)),
+                    ],),
+                    Container(height: 24,)
+                  ],
+                ),
+            ),
+          ),
+          Expanded(child:
+            SingleChildScrollView(child:_buildContent()),
+          )
+      ],),),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
