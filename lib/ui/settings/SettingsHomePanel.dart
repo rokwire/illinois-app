@@ -933,12 +933,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   void _showNetIDAccountExistsDialog() {
     AppAlert.showCustomDialog(context: context,
-      contentWidget: Column(children: [
+      contentWidget: Column(mainAxisSize: MainAxisSize.min, children: [
         Text(Localization().getStringEx("panel.settings.netid.link.failed.exists", "An account is already using this NetID."),
           style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
-          child: Text(Localization().getStringEx("panel.settings.netid.link.failed.exists",
+          child: Text(Localization().getStringEx("panel.settings.netid.link.failed.exists.details",
               "1. You will need to sign in to the other account with this NetID.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."),
             style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
         ),
