@@ -87,9 +87,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   @override
   Widget build(BuildContext context) {
     String title = (_state == Auth2EmailAccountState.nonExistent) ?
-      _link ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Add your email address') :
-      Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign up with email') :
-      Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign in with email');
+      _link ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Add Your Email Address') :
+      Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign Up with Email') :
+      Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign In with Email');
 
     String description = (_state == Auth2EmailAccountState.nonExistent) ?
       _link ? Localization().getStringEx('panel.onboarding2.email.link.description.text', 'Please enter a password to add your email address.') :

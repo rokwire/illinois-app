@@ -61,10 +61,10 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
               }),
             Expanded(child: Column(children: <Widget>[
               Semantics(
-                label: Localization().getStringEx('panel.onboarding.roles.label.title', 'Who are you?').toLowerCase(),
+                label: Localization().getStringEx('panel.onboarding.roles.label.title', 'Who Are You?').toLowerCase(),
                 hint: Localization().getStringEx('panel.onboarding.roles.label.title.hint', 'Header 1').toLowerCase(),
                 excludeSemantics: true,
-                child: Text(Localization().getStringEx('panel.onboarding.roles.label.title', 'Who are you?'),
+                child: Text(Localization().getStringEx('panel.onboarding.roles.label.title', 'Who Are You?'),
                   style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24, color: Styles().colors!.fillColorPrimary),
                 ),
               ),

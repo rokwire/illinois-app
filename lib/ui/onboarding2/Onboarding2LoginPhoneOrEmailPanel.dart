@@ -94,9 +94,9 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
         break;
       }
       default : {
-        title = Localization().getStringEx('panel.onboarding2.phone_or_email.title.text', 'Login by phone or email');
+        title = Localization().getStringEx('panel.onboarding2.phone_or_email.title.text', 'Sign In with Phone or Email');
         description = Localization().getStringEx("panel.onboarding2.phone_or_email.description", "Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email.");
-        entryText = Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.text", "Phone number or email address:");
+        entryText = Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.text", "Phone Number or Email Address:");
       }
     }
 

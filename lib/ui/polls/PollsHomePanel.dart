@@ -141,7 +141,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Widget _buildDescriptionLayout(){
-    String description = Localization().getStringEx("panel.polls_home.text.pin_description", "Ask the creator of the poll for its 4 Digit Poll #.");
+    String description = Localization().getStringEx("panel.polls_home.text.pin_description", "Ask the creator of the poll for its four-digit number.");
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
@@ -424,7 +424,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   Widget _buildCreatePollButton() {
     if (_canCreatePoll) {
       return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
-        RoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a poll"),
+        RoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a Poll"),
             textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
             backgroundColor: Styles().colors!.white,

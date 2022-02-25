@@ -169,7 +169,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
             Row(children: [
               Image.asset("images/user-check.png"),
               Container(width: 8,),
-              Text(Localization().getStringEx("panel.pending_member_detail.label.approval", "Member approval"),
+              Text(Localization().getStringEx("panel.pending_member_detail.label.approval", "Member Approval"),
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies!.bold,
                     fontSize: 16,
@@ -314,17 +314,17 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
   String? get _continueButtonText{
       if(_approved){
-        return Localization().getStringEx("panel.pending_member_detail.button.approve_member.title", "Approve member");
+        return Localization().getStringEx("panel.pending_member_detail.button.approve_member.title", "Approve Member");
       }
 
       if(_denied){
         if(_reasonController.text.isNotEmpty) {
-          return Localization().getStringEx("panel.pending_member_detail.button.deny_member.title", "Deny member");
+          return Localization().getStringEx("panel.pending_member_detail.button.deny_member.title", "Deny Member");
         } else {
-          return Localization().getStringEx("panel.pending_member_detail.button.deny_reason.title", "Provide deny reason");
+          return Localization().getStringEx("panel.pending_member_detail.button.deny_reason.title", "Provide Deny Reason");
         }
       }
-      return Localization().getStringEx("panel.pending_member_detail.button.selection.title", "Make selection above");
+      return Localization().getStringEx("panel.pending_member_detail.button.selection.title", "Make Selection Above");
   }
 }
 

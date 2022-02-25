@@ -17,7 +17,7 @@ extension EventExt on Event {
   // Explore
 
   String? get typeDisplayString => (isVirtual == true)
-      ? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event")
+      ? Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event")
       : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
 
   bool get isFavorite => isRecurring

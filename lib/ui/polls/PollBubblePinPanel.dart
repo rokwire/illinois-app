@@ -144,7 +144,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
       Padding(
         padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 52),
         child: Text(
-          Localization().getStringEx("panel.poll_pin_bouble.long_info_description", "Each poll has a 4-digit code associated with it. Only the poll creator can see and share this code. To participate in their poll, have them share the 4-digit code."),
+          Localization().getStringEx("panel.poll_pin_bouble.long_info_description", "Each poll has a four-digit number. The poll creator can share this code so others can respond."),
           style: TextStyle(
             fontFamily: Styles().fontFamilies!.regular,
             fontSize: 16,
@@ -163,7 +163,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         Padding(padding: EdgeInsets.only(right: 40), child:
           RichText(
             text: TextSpan(
-              text:Localization().getStringEx("panel.poll_pin_bouble.label_description", "Enter your 4-digit code to see poll.") + " ",
+              text:Localization().getStringEx("panel.poll_pin_bouble.label_description", "Enter the four-digit poll number to see the poll.") + " ",
               style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24),
               children:[
                 WidgetSpan(

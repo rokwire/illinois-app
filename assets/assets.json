@@ -367,37 +367,37 @@
 		"features2": [
 			{
 				"key":"com.illinois.features2.entry.disable_location_awareness",
-				"text":"Disable location awareness",
+				"text":"Disable location awareness.",
 				"max_level":1
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_store_location",
-				"text":"Don't store your location",
+				"text":"Don't store your location.",
 				"max_level":2
 			},
 			{
 				"key":"com.illinois.features2.entry.remove_preferences",
-				"text":"Remove your preferences",
+				"text":"Remove your preferences.",
 				"max_level":2
 			},
 			{
 				"key":"com.illinois.features2.entry.log_out",
-				"text":"Log you off system",
+				"text":"Log you off system.",
 				"max_level":3
 			},
 			{
 				"key":"com.illinois.features2.entry.disable_notifications",
-				"text":"Turn off notifications",
+				"text":"Turn off notifications.",
 				"max_level":3
 			},
 			{
 				"key":"com.illinois.features2.entry.remove_credit_card",
-				"text":"Remove your credit card info",
+				"text":"Remove your credit card info.",
 				"max_level":3
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_share_location",
-				"text":"Don’t share your data with other users",
+				"text":"Don’t share your data with other users.",
 				"max_level":4
 			}
 		]
@@ -660,37 +660,37 @@
 		"features2": [
 			{
 				"key":"com.illinois.features2.entry.disable_location_awareness",
-				"text":"Disable location awareness",
+				"text":"Disable location awareness.",
 				"max_level":1
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_store_location",
-				"text":"Don't store your location",
+				"text":"Don't store your location.",
 				"max_level":2
 			},
 			{
 				"key":"com.illinois.features2.entry.remove_preferences",
-				"text":"Remove your preferences",
+				"text":"Remove your preferences.",
 				"max_level":2
 			},
 			{
 				"key":"com.illinois.features2.entry.log_out",
-				"text":"Log you off system",
+				"text":"Log you off system.",
 				"max_level":3
 			},
 			{
 				"key":"com.illinois.features2.entry.disable_notifications",
-				"text":"Turn off notifications",
+				"text":"Turn off notifications.",
 				"max_level":3
 			},
 			{
 				"key":"com.illinois.features2.entry.remove_credit_card",
-				"text":"Remove your credit card info",
+				"text":"Remove your credit card info.",
 				"max_level":3
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_share_location",
-				"text":"Don’t share your data with other users",
+				"text":"Don’t share your data with other users.",
 				"max_level":4
 			}
 		]

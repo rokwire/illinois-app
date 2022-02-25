@@ -367,7 +367,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     String? eventType;
     if(widget.explore!=null && widget.explore is Event) {
       bool isVirtual = (widget.explore as Event).isVirtual ?? false;
-      eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+      eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
       iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
     }
     String? locationText = eventType ?? widget.explore?.getShortDisplayLocation(widget.locationData);

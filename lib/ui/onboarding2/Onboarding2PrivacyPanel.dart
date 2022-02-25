@@ -90,7 +90,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 //                                  },
 //                                  child:
                                   Semantics(
-                                      label: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy notice "),
+                                      label: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Notice "),
                                       hint: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.hint', ''),
                                       button: true,
                                       excludeSemantics: true,
@@ -464,7 +464,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
             child:
             Row(children: [
               Text(
-                Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy notice "),
+                Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Notice "),
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies!.regular,
                     fontSize: 14,
@@ -509,7 +509,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
       case 2 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.2.title', "Explore privately ");
       case 3 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.3.title', "Personalized for you");
       case 4 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.4.title', "Personalized for you");
-      case 5 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.5.title', "Full access");
+      case 5 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.5.title', "Full Access");
     }
     return description;
   }
@@ -532,7 +532,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
       case 1 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_browsing.title', "Start browsing");
       case 2 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_exploring.title', "Start exploring");
     }
-    return Localization().getStringEx('panel.onboarding2.privacy.button.save_privacy.title', "Save privacy level");
+    return Localization().getStringEx('panel.onboarding2.privacy.button.save_privacy.title', "Save Privacy Level");
   }
 
   void _goNext(BuildContext context) {

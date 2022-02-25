@@ -428,7 +428,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
             Container(height: 5,),
             Semantics(explicitChildNodes: true,child:
               RoundedButton(
-                label: Localization().getStringEx("panel.wallet.button.use_bus_pass.title", "Use bus pass"),
+                label: Localization().getStringEx("panel.wallet.button.use_bus_pass.title", "Use Bus Pass"),
                 hint: Localization().getStringEx("panel.wallet.button.use_bus_pass.hint", ""),
                 textColor: Styles().colors!.fillColorPrimary,
                 backgroundColor: Styles().colors!.white,

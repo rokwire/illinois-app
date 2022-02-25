@@ -40,7 +40,7 @@ enum _FilterType { none, category, tags }
 enum _TagFilter { all, my }
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener{
-  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories");
+  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All Categories");
 
   bool _isFilterLoading = false;
   bool _isGroupsLoading = false;
@@ -350,9 +350,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               child: IntrinsicWidth(child:
                 Row(
                   children: <Widget>[
-                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All groups'), hint: '', selected: !_myGroupsSelected ,onTap: _onTapAllGroups),
+                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups'), hint: '', selected: !_myGroupsSelected ,onTap: _onTapAllGroups),
                     Container(width: 15,),
-                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My groups'), hint: '', selected: _myGroupsSelected, onTap: _onTapMyGroups),
+                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups'), hint: '', selected: _myGroupsSelected, onTap: _onTapMyGroups),
                     Container(width: 15,),
                     Flexible(child: Container()),
                     Visibility(visible: _canCreateGroup, child: _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10, excludeFromSemantics: true), selected: false, onTap: _onTapCreate)),

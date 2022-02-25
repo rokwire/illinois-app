@@ -135,7 +135,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
       Expanded(child: Container(),),
       GroupMembershipAddButton(
         height: 26 + 16*MediaQuery.of(context).textScaleFactor ,
-        title: Localization().getStringEx("panel.membership_questions.button.add_question.title", 'Add question'),
+        title: Localization().getStringEx("panel.membership_questions.button.add_question.title", 'Add Question'),
         onTap: _addQuestion,
         enabled: _addButtonEnabled,
       ),
@@ -187,7 +187,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
         child: Row(children: <Widget>[
           Expanded(flex: 1,child: Container(),),
           Expanded(flex: 5,
-          child: RoundedButton(label: Localization().getStringEx("panel.membership_questions.button.update_question.title", 'Update questions'),
+          child: RoundedButton(label: Localization().getStringEx("panel.membership_questions.button.update_question.title", 'Update Questions'),
             backgroundColor: Styles().colors!.white,
             textColor: Styles().colors!.fillColorPrimary,
             fontFamily: Styles().fontFamilies!.bold,

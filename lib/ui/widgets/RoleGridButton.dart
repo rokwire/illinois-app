@@ -106,7 +106,7 @@ class RoleGridButton extends StatelessWidget {
   static RoleGridButton? fromRole(UserRole? role, { bool? selected, double? sortOrder, Function? onTap }) {
     if (role == UserRole.student) {
       return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.student.title', 'University student'),
+        title: Localization().getStringEx('panel.onboarding2.roles.button.student.title', 'University Student'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.student.hint', ''),
         iconPath: 'images/icon-persona-student-normal.png',
         selectedIconPath: 'images/icon-persona-student-selected.png',
@@ -132,7 +132,7 @@ class RoleGridButton extends StatelessWidget {
     }
     else if (role == UserRole.fan) {
       return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.fan.title', 'Athletics fan'),
+        title: Localization().getStringEx('panel.onboarding2.roles.button.fan.title', 'Athletics Fan'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.fan.hint', ''),
         iconPath: 'images/icon-persona-athletics-normal.png',
         selectedIconPath: 'images/icon-persona-athletics-selected.png',
@@ -145,7 +145,7 @@ class RoleGridButton extends StatelessWidget {
     }
     else if (role == UserRole.employee) {
       return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.employee.title', 'University employee'),
+        title: Localization().getStringEx('panel.onboarding2.roles.button.employee.title', 'University Employee'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.employee.hint', ''),
         iconPath: 'images/icon-persona-employee-normal.png',
         selectedIconPath: 'images/icon-persona-employee-selected.png',

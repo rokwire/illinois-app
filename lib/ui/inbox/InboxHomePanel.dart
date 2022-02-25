@@ -467,8 +467,8 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   Widget _buildOptions(BuildContext context) {
     String headingText = (_selectedMessageIds.length == 1) ?
-      '1 message selected' :
-      '${_selectedMessageIds.length} messages selected';
+      '1 Message Selected' :
+      '${_selectedMessageIds.length} Messages Selected';
 
     return Container(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), child:
       Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
