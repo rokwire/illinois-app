@@ -33,14 +33,12 @@ import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
-import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginEmailPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
-import 'package:illinois/ui/settings/SettingsRolesPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -49,10 +47,6 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:package_info/package_info.dart';
-
-import 'SettingsManageInterestsPanel.dart';
-import 'SettingsPersonalInfoPanel.dart';
-import 'SettingsPrivacyPanel.dart';
 
 class SettingsHomePanel extends StatefulWidget {
   @override
@@ -123,29 +117,17 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       else if (code == 'privacy_center') {
         contentList.add(_buildPrivacyCenterButton(),);
       }
+      else if (code == 'privacy') {
+        contentList.add(_buildPrivacy(),);
+      }
       else if (code == 'connect') {
         contentList.add(_buildConnect());
       }
       else if (code == 'connected') {
         contentList.add(_buildConnected());
       }
-      else if (code == 'customizations') {
-        contentList.add(_buildCustomizations());
-      }
-      else if (code == 'notifications') {
-        contentList.add(_buildNotifications());
-      }
-      else if (code == 'privacy0') {
-        contentList.add(_buildPrivacy0());
-      }
-      else if (code == 'privacy') {
-        contentList.add(_buildPrivacy(),);
-      }
       else if (code == 'linked') {
         contentList.add(_buildLinked());
-      }
-      else if (code == 'account') {
-        contentList.add(_buildAccount());
       }
       else if (code == 'feedback') {
         contentList.add(_buildFeedback(),);
@@ -382,62 +364,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     Navigator.of(context).popUntil((Route route){
       return AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType;
     });
-  }
-
-
-  // Customizations
-
-  Widget _buildCustomizations() {
-    List<Widget> customizationOptions =  [];
-    List<dynamic> codes = FlexUI()['settings.customizations'] ?? [];
-    for (int index = 0; index < codes.length; index++) {
-      String code = codes[index];
-      
-      BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
-      
-      if (code == 'roles') {
-        customizationOptions.add(RibbonButton(
-            borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-            label: Localization().getStringEx("panel.settings.home.customizations.role.title", "Who you are"),
-            onTap: _onWhoAreYouClicked));
-      }
-      else if (code == 'interests') {
-        customizationOptions.add(RibbonButton(
-            borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-            label: Localization().getStringEx("panel.settings.home.customizations.manage_interests.title", "Manage your interests"),
-            onTap: _onManageInterestsClicked));
-      }
-      else if (code == 'food_filters') {
-        customizationOptions.add(RibbonButton(
-            borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-            label: Localization().getStringEx("panel.settings.home.customizations.food_filters.title", "Food filters"),
-            onTap: _onFoodFlitersClicked));
-      }
-    }
-
-    return _OptionsSection(
-      title: Localization().getStringEx("panel.settings.home.customizations.title", "Customizations"),
-      widgets: customizationOptions,
-      description: Localization().getStringEx("panel.settings.home.customizations.description", "See Illinois events, places, and teams that matter most to you."),);
-
-  }
-
-  void _onWhoAreYouClicked() {
-    Analytics().logSelect(target: "Who are you");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsRolesPanel()));
-  }
-
-  void _onManageInterestsClicked() {
-    Analytics().logSelect(target: "Manage Your Interests");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsManageInterestsPanel()));
-  }
-
-  void _onFoodFlitersClicked() {
-    Analytics().logSelect(target: "Food Filters");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => FoodFiltersPanel()));
   }
 
   // Connected
@@ -1024,103 +950,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
 
-  // NotificationsOptions
-
-  Widget _buildNotifications() {
-    List<Widget> contentList =  [];
-
-    List<dynamic> codes = FlexUI()['settings.notifications'] ?? [];
-    for (int index = 0; index < codes.length; index++) {
-      String code = codes[index];
-      BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
-      if (code == 'reminders') {
-        contentList.add(ToggleRibbonButton(
-          borderRadius: borderRadius,
-          label: Localization().getStringEx("panel.settings.home.notifications.reminders", "Event reminders"),
-          toggled: FirebaseMessaging().notifyEventReminders ?? false,
-          onTap: _onEventRemindersToggled));
-      }
-      else if (code == 'athletics_updates') {
-        contentList.add(ToggleRibbonButton(
-          borderRadius: borderRadius,
-          label: Localization().getStringEx("panel.settings.home.notifications.athletics_updates", "Athletics updates"),
-          toggled: FirebaseMessaging().notifyAthleticsUpdates ?? false,
-          onTap: _onAthleticsUpdatesToggled));
-      }
-      else if (code == 'dining') {
-        contentList.add(ToggleRibbonButton(
-          borderRadius: borderRadius,
-          label: Localization().getStringEx("panel.settings.home.notifications.dining", "Dining specials"),
-          toggled: FirebaseMessaging().notifyDiningSpecials ?? false,
-          onTap: _onDiningSpecialsToggled));
-      }
-    }
-
-    return _OptionsSection(
-      title: Localization().getStringEx("panel.settings.home.notifications.title", "Notifications"),
-      widgets: contentList);
-  }
-
-  void _onEventRemindersToggled() {
-    Analytics().logSelect(target: "Event Reminders");
-    FirebaseMessaging().notifyEventReminders = !FirebaseMessaging().notifyEventReminders!;
-  }
-
-  void _onAthleticsUpdatesToggled() {
-    Analytics().logSelect(target: "Athletics updates");
-    FirebaseMessaging().notifyAthleticsUpdates = !FirebaseMessaging().notifyAthleticsUpdates!;
-  }
-
-  void _onDiningSpecialsToggled() {
-    Analytics().logSelect(target: "Dining Specials");
-    FirebaseMessaging().notifyDiningSpecials = !FirebaseMessaging().notifyDiningSpecials!;
-  }
-
-
-  // Privacy 0
-
-  Widget _buildPrivacy0() {
-    List<Widget> contentList =  [];
-
-    List<dynamic> codes = FlexUI()['settings.privacy0'] ?? [];
-    for (int index = 0; index < codes.length; index++) {
-      String code = codes[index];
-      BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
-      if (code == 'edit') {
-        contentList.add(RibbonButton(
-          borderRadius: borderRadius,
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-          label: Localization().getStringEx("panel.settings.home.privacy.edit_my_privacy.title", "Edit My Privacy"),
-          onTap: _onPrivacyClicked,
-        ));
-      }
-      else if (code == 'statement') {
-        contentList.add(RibbonButton(
-          borderRadius: borderRadius,
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-          label: Localization().getStringEx("panel.settings.home.privacy.privacy_statement.title", "Privacy Statement"),
-          onTap: _onPrivacyStatementClicked,
-        ));
-      }
-    }
-
-    return _OptionsSection(
-      title: Localization().getStringEx("panel.settings.home.privacy.title", "Privacy"),
-      widgets: contentList);
-  }
-
-  void _onPrivacyClicked() {
-    Analytics().logSelect(target: "Edit my privacy");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel()));
-  }
-
-  void _onPrivacyStatementClicked() {
-    Analytics().logSelect(target: "Privacy Statement");
-    if (Config().privacyPolicyUrl != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, title: Localization().getStringEx("panel.settings.privacy_statement.label.title", "Privacy Statement"),)));
-    }
-  }
-
   // Privacy
 
   Widget _buildPrivacy() {
@@ -1222,37 +1051,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   void _onTapNotifications() {
     Analytics().logSelect(target: "Notifications");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
-  }
-
-  // Account
-
-  Widget _buildAccount() {
-    List<Widget> contentList =  [];
-
-    List<dynamic> codes = FlexUI()['settings.account'] ?? [];
-    for (int index = 0; index < codes.length; index++) {
-      String code = codes[index];
-      BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
-      if (code == 'personal_info') {
-        contentList.add(RibbonButton(
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-          borderRadius: borderRadius,
-          label: Localization().getStringEx("panel.settings.home.account.personal_info.title", "Personal Info"),
-          onTap: _onPersonalInfoClicked));
-      }
-    }
-
-    return _OptionsSection(
-      title: Localization().getStringEx("panel.settings.home.account.title", "Your Account"),
-      widgets: contentList,
-    );
-  }
-
-  void _onPersonalInfoClicked() {
-    Analytics().logSelect(target: "Personal Info");
-    if (Auth2().isLoggedIn) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInfoPanel()));
-    }
   }
 
   // Feedback
