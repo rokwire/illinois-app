@@ -2,11 +2,10 @@
 	"content": {
 		"tabbar": ["home", "athletics", "explore", "wallet", "browse"],
 
-		"home": ["content"],
-		"home.content": ["emergency", "upgrade_version_message", "connect", "safer", "gies2", "canvas_courses", "twitter", "highlighted_features", "my_groups", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_guide_highlights"],
-		"home.content.connect": ["netid", "phone_or_email"],
-		"home.content.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
-		"home.content.campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help"],
+		"home": ["emergency", "upgrade_version_message", "connect", "safer", "gies2", "canvas_courses", "twitter", "highlighted_features", "my_groups", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_guide_highlights"],
+		"home.connect": ["netid", "phone_or_email"],
+		"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
+		"home.campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help"],
 
 		"home.twitter.account": ["gies", ""],
 
@@ -107,9 +106,9 @@
 			"onboarding.sport_prefs"          : 3
 		},
 		"auth": {
-			"home.content.connect"                : { "loggedIn": false },
-			"home.content.safer.building_access"  : { "shibbolethLoggedIn": true },
-			"home.content.safer.my_mckinley"      : { "shibbolethLoggedIn": true },
+			"home.connect"                        : { "loggedIn": false },
+			"home.safer.building_access"          : { "shibbolethLoggedIn": true },
+			"home.safer.my_mckinley"              : { "shibbolethLoggedIn": true },
 			"gies2"                               : { "shibbolethLoggedIn": true },
 			"canvas_courses"                      : { "shibbolethLoggedIn": true },
 			"browse.all.building_status"          : { "shibbolethLoggedIn": true },
