@@ -253,7 +253,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
             }
           });
         // Future.delayed((Duration.zero),(){
-        if (tweetsPage != null) {
+        if (mounted && (tweetsPage != null)) {
           _pageController!.animateToPage(
               0, duration: Duration(milliseconds: 500), curve: Curves.easeIn);
         }
