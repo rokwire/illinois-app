@@ -43,6 +43,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
   TextEditingController? _phoneOrEmailController;
   
   String? _validationErrorMsg;
+  String? _validationErrorDetails;
   GlobalKey _validationErrorKey = GlobalKey();
 
   bool _isLoading = false;
@@ -150,7 +151,17 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                     ),
                     Visibility(visible: StringUtils.isNotEmpty(_validationErrorMsg), child:
                       Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
-                        Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+                        Column(
+                          children: [
+                            Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+                            Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],),
@@ -235,8 +246,8 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
       };
       Map<String, dynamic> params = {};
       Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
-        if (result == Auth2LinkResult.succeded) {
-          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.succeded);
+        if (result == Auth2LinkResult.succeeded) {
+          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.succeeded);
         } else if (result == Auth2LinkResult.failedAccountExist) {
           _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.failedAccountExist);
         } else {
@@ -256,10 +267,12 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
       setState(() { _isLoading = false; });
     }
 
-    if (result == Auth2PhoneRequestCodeResult.succeded) {
+    if (result == Auth2PhoneRequestCodeResult.succeeded) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginPhoneConfirmPanel(phoneNumber: phoneNumber, onboardingContext: widget.onboardingContext)));
     } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists", "Failed to send phone verification code. Another account is already using this phone number."));
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists", "An account is already using this phone number."),
+          details: Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists.details",
+              "1. You will need to sign in to the other account with this phone number.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
     } else {
       setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed", "Failed to send phone verification code. An unexpected error has occurred."));
     }
@@ -274,7 +287,9 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
           setState(() { _isLoading = false; });
           if (result != null) {
             if (!result) {
-              setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.link.failed.exists", "An existing account is already using this email address."));
+              setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.link.failed.exists", "An account is already using this email address."),
+                  details: Localization().getStringEx("panel.onboarding2.phone_or_email.email.link.failed.exists.details",
+                      "1. You will need to sign in to the other account with this email address.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
               return;
             } else if (Auth2().isEmailLinked) { // at most one email address may be linked at a time
               setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.linked.text", "You have already added an email address to your account."));
@@ -303,9 +318,10 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     }
   }
 
-  void setErrorMsg(String? msg) {
+  void setErrorMsg(String? msg, {String? details}) {
     setState(() {
       _validationErrorMsg = msg;
+      _validationErrorDetails = details;
     });
 
     if (StringUtils.isNotEmpty(msg)) {

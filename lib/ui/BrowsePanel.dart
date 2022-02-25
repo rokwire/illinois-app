@@ -607,12 +607,12 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
     } else if (_groupsLogin != true) {
       setState(() { _groupsLogin = true; });
-      Auth2().authenticateWithOidc().then((bool? success) {
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? success) {
         if (mounted) {
           setState(() { _groupsLogin = false; });
-          if (success == true) {
+          if (success == Auth2OidcAuthenticateResult.succeeded) {
             Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
-          } else if (success == false) {
+          } else if (success == Auth2OidcAuthenticateResult.failed) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }

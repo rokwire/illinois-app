@@ -321,7 +321,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
         
         setState(() { _isLoading = false; });
         
-        if (result == Auth2EmailForgotPasswordResult.succeded) {
+        if (result == Auth2EmailForgotPasswordResult.succeeded) {
           _emailFocusNode.unfocus();
           _passwordFocusNode.unfocus();
           _confirmPasswordFocusNode.unfocus();
@@ -412,8 +412,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
             "confirm_password": confirmPassword
           };
           Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((result) {
-            if (result == Auth2LinkResult.succeded) {
-              _trySignUpCallback(Auth2EmailSignUpResult.succeded);
+            if (result == Auth2LinkResult.succeeded) {
+              _trySignUpCallback(Auth2EmailSignUpResult.succeeded);
             } else if (result == Auth2LinkResult.failedAccountExist) {
               _trySignUpCallback(Auth2EmailSignUpResult.failedAccountExist);
             } else {
@@ -429,7 +429,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
     setState(() { _isLoading = false; });
 
-    if (result == Auth2EmailSignUpResult.succeded) {
+    if (result == Auth2EmailSignUpResult.succeeded) {
       _emailFocusNode.unfocus();
       _passwordFocusNode.unfocus();
       _confirmPasswordFocusNode.unfocus();
@@ -479,7 +479,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
           Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((Auth2LinkResult result) {
             setState(() { _isLoading = false; });
             switch (result) {
-              case Auth2LinkResult.succeded: _trySignInCallback(Auth2EmailSignInResult.succeded); break;
+              case Auth2LinkResult.succeeded: _trySignInCallback(Auth2EmailSignInResult.succeeded); break;
               case Auth2LinkResult.failedNotActivated: _trySignInCallback(Auth2EmailSignInResult.failedNotActivated); break;
               case Auth2LinkResult.failedActivationExpired: _trySignInCallback(Auth2EmailSignInResult.failedActivationExpired); break;
               case Auth2LinkResult.failedInvalid: _trySignInCallback(Auth2EmailSignInResult.failedInvalid); break;

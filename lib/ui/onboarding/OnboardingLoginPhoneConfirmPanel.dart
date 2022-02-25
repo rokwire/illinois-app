@@ -248,8 +248,8 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
           setState(() {
             _isLoading = false;
           });
-          if (result == Auth2LinkResult.succeded) {
-            _onPhoneVerified(Auth2PhoneSendCodeResult.succeded);
+          if (result == Auth2LinkResult.succeeded) {
+            _onPhoneVerified(Auth2PhoneSendCodeResult.succeeded);
           } else if (result == Auth2LinkResult.failedInvalid) {
             _onPhoneVerified(Auth2PhoneSendCodeResult.failedInvalid);
           } else {

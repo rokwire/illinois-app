@@ -138,10 +138,10 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     Analytics().logSelect(target: "Login");
     if (_authLoading != true) {
       setState(() { _authLoading = true; });
-      Auth2().authenticateWithOidc().then((bool? result) {
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _authLoading = false; });
-          if (result == false) {
+          if (result != Auth2OidcAuthenticateResult.succeeded) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }
