@@ -23,16 +23,13 @@ import 'package:illinois/ui/canvas/CanvasCourseAssignmentsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseModulesPanel.dart';
 import 'package:illinois/ui/canvas/CanvasSyllabusHtmlPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
-import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:illinois/ui/canvas/CanvasCourseAnnouncementsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseCalendarPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseCollaborationsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasFileSystemEntitiesListPanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
-import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -52,14 +49,12 @@ class CanvasCourseHomePanel extends StatefulWidget {
 
 class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   CanvasCourse? _course;
-  Group? _group;
   int _loadingProgress = 0;
 
   @override
   void initState() {
     super.initState();
     _loadCourse();
-    _loadGroup();
   }
 
   @override
@@ -99,14 +94,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [CanvasCourseCard(course: _course!), _buildGroupContent(), _buildButtonsContent()]));
-  }
-
-  Widget _buildGroupContent() {
-    if (_group == null) {
-      return Container();
-    }
-    return Padding(padding: EdgeInsets.all(16), child: GroupCard(group: _group, displayType: GroupCardDisplayType.allGroups));
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [CanvasCourseCard(course: _course!), _buildButtonsContent()]));
   }
 
   Widget _buildButtonsContent() {
@@ -260,14 +248,6 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
     _increaseProgress();
     Canvas().loadCourse(widget.courseId).then((course) {
       _course = course;
-      _decreaseProgress();
-    });
-  }
-
-  void _loadGroup() {
-    _increaseProgress();
-    Groups().loadGroupByCanvasCourseId(widget.courseId).then((group) {
-      _group = group;
       _decreaseProgress();
     });
   }

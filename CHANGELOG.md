@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.26] - 2022-02-24
+### Fixed
+- Account linking UI improvements [#1378](https://github.com/rokwire/illinois-app/issues/1378)
+- Fix issues with account linking [#1356](https://github.com/rokwire/illinois-app/issues/1356)
+### Changed
+- Modify Wellness Answer Center button [#1364](https://github.com/rokwire/illinois-app/issues/1364).
+### Removed
+- Retrieve group by canvas course [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Added
+- Added account switch dropdown in Home Twitter widget [#1389](https://github.com/rokwire/illinois-app/issues/1389).
+
 ## [3.2.25] - 2022-02-23
 ### Added
 - Display Gies, Twitter and Canvas home widgets based on user group membership [#1377](https://github.com/rokwire/illinois-app/issues/1377).
