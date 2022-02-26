@@ -109,7 +109,7 @@
     "panel.home.connect.not_logged_in.netid.title": "连接您的NetID",
     "panel.home.connect.not_logged_in.phone_or_email.description.part_1": "沒有NetID？",
     "panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
-    "panel.home.connect.not_logged_in.phone_or_email.title": "Proceed",
+    "panel.home.connect.not_logged_in.phone_or_email.title": "继续",
     "panel.label.offline.phone_or_email": "Feature not available when offline.",
     "panel.wallet.label.title": "钱包",
     "panel.wallet.label.illini_cash.title": "ILLINI CASH",
