@@ -2,7 +2,7 @@
 	"content": {
 		"tabbar": ["home", "athletics", "explore", "wallet", "browse"],
 
-		"home": ["emergency", "upgrade_version_message", "connect", "safer", "gies2", "canvas_courses", "twitter", "highlighted_features", "my_groups", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_guide_highlights"],
+		"home": ["emergency", "upgrade_version_message", "connect", "safer", "gies", "canvas_courses", "twitter", "highlighted_features", "my_groups", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_guide_highlights"],
 		"home.connect": ["netid", "phone_or_email"],
 		"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 		"home.campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help"],
@@ -73,8 +73,7 @@
 			"bus_pass"                               : ["student", "OR", "employee", "OR", "resident"]
 		},
 		"groups": {
-			"home.twitter.account.gies"              : ["Authman test group"],
-			"gies2"                                  : ["Authman test group"],
+			"gies"                                   : ["Authman test group"],
 			"canvas_courses"                         : ["Canvas Beta"]
 		},
 		"privacy" : {
@@ -116,7 +115,7 @@
 			"home.connect"                        : { "loggedIn": false },
 			"home.safer.building_access"          : { "shibbolethLoggedIn": true },
 			"home.safer.my_mckinley"              : { "shibbolethLoggedIn": true },
-			"gies2"                               : { "shibbolethLoggedIn": true },
+			"gies"                                : { "shibbolethLoggedIn": true },
 			"canvas_courses"                      : { "shibbolethLoggedIn": true },
 			"browse.all.building_status"          : { "shibbolethLoggedIn": true },
 			"laundry"                             : { "shibbolethLoggedIn": true },

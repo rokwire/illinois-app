@@ -13,18 +13,18 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class HomeGies2Widget extends StatefulWidget{
+class HomeGiesWidget extends StatefulWidget{
 
   final StreamController<void>? refreshController;
 
-  const HomeGies2Widget({Key? key, this.refreshController}) : super(key: key);
+  const HomeGiesWidget({Key? key, this.refreshController}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => HomeGies2State();
+  State<StatefulWidget> createState() => _HomeGiesWidgetState();
 
 }
 
-class HomeGies2State extends State<HomeGies2Widget> implements NotificationsListener{
+class _HomeGiesWidgetState extends State<HomeGiesWidget> implements NotificationsListener{
   @override
   void initState() {
     super.initState();
@@ -159,7 +159,7 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                 Column(children: [
                   Container(height: 12,),
                   RoundedButton(
-                    label: Localization().getStringEx('widget.gies2.button.title.view_notes', "View My Notes"),
+                    label: Localization().getStringEx('widget.gies.button.title.view_notes', "View My Notes"),
                     backgroundColor: Styles().colors?.white!,
                     borderColor: Styles().colors?.fillColorSecondary!,
                     textColor: Styles().colors!.fillColorPrimary,
@@ -192,7 +192,7 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                     ],),
                 Container(height: 24,),
                 RoundedButton(
-                  label: Localization().getStringEx('widget.gies2.button.title.continue', "Continue"),
+                  label: Localization().getStringEx('widget.gies.button.title.continue', "Continue"),
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,

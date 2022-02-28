@@ -21,7 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
-import 'package:illinois/ui/home/HomeGies2Widget.dart';
+import 'package:illinois/ui/home/HomeGiesWidget.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -154,8 +154,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       else if (code == 'twitter') {
         widget = HomeTwitterWidget(refreshController: _refreshController);
       }
-      else if (code == 'gies2') {
-        widget = HomeGies2Widget(refreshController: _refreshController);
+      else if (code == 'gies') {
+        widget = HomeGiesWidget(refreshController: _refreshController);
       }
       else if (code == 'canvas_courses') {
         widget = HomeCanvasCoursesWidget(refreshController: _refreshController);
