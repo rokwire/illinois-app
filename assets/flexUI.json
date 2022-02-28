@@ -7,7 +7,7 @@
 		"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 		"home.campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help"],
 
-		"home.twitter.account": ["gies", ""],
+		"home.twitter.account": ["gies", "", "canvas"],
 
 		"wallet": ["connect", "content", "cards"],
 		"wallet.connect":["netid", "phone_or_email"],
@@ -76,7 +76,8 @@
 			"safer"                                  : ["NOT", ["Authman test group"]],
 			"safer.gies"                             : ["Authman test group"],
 			"gies"                                   : ["Authman test group"],
-			"canvas"                                 : ["Canvas Beta"]
+			"canvas"                                 : ["Canvas Beta"],
+			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", ["Authman test group"]]]
 		},
 		"privacy" : {
 			"illini_cash"                     : 3,
