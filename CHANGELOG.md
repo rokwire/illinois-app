@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Reorder Home panel widgets [#1402](https://github.com/rokwire/illinois-app/issues/1402).
+### Fixed
+- Android: plugin initialization [#1405](https://github.com/rokwire/illinois-app/issues/1405).
 
 ## [3.2.27] - 2022-02-25
 ### Added
