@@ -2306,6 +2306,12 @@
     "widget.gies.notes.label.add": "Agregar a notas:",
     "widget.gies.notes.button.save": "Ahorrar",
     "widget.gies.notes.button.skip": "Saltar",
+    "widget.gies.message.start": "¿Listo para empezar?",
+    "widget.gies.button.title.begin": "Comience la lista de verificación",
+    "widget.gies.message.finished": "Ha completado la lista de verificación.",
+    "widget.gies.button.title.review": "Revisar la lista de verificación",
+    "widget.gies.button.title.view_notes": "Ver mis notas",
+    "widget.gies.button.title.continue": "Continuar",
 
     "widgets.home_highlighted_features.header.title": "Funciones Destacadas",
     "widgets.home_highlighted_features.button.personalize.title": "Personaliza Esta Aplicación",

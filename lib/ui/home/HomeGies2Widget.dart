@@ -108,14 +108,14 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                   Semantics(
                     container: true,
                     child:Text(Localization().getStringEx(
-                        'widget.gies2.message.start', 'Ready to get started?'),
+                        'widget.gies.message.start', 'Ready to get started?'),
                       style: TextStyle(color: Styles().colors!.fillColorPrimary,
                         fontFamily: Styles().fontFamilies!.extraBold,
                         fontSize: 32,),),)),
                   ],),
                 Container(height: 24,),
                 RoundedButton(
-                  label: Localization().getStringEx('widget.gies2.button.title.begin', "Begin Checklist"),
+                  label: Localization().getStringEx('widget.gies.button.title.begin', "Begin Checklist"),
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,
@@ -142,14 +142,14 @@ class HomeGies2State extends State<HomeGies2Widget> implements NotificationsList
                       container: true,
                       child:
                       Text(Localization().getStringEx(
-                          'widget.gies2.message.finished', 'You’ve completed the checklist.'),
+                          'widget.gies.message.finished', 'You’ve completed the checklist.'),
                         style: TextStyle(color: Styles().colors!.fillColorPrimary,
                           fontFamily: Styles().fontFamilies!.extraBold,
                           fontSize: 32,),),)),
                 ],),
                 Container(height: 24,),
                 RoundedButton(
-                  label: Localization().getStringEx('widget.gies2.button.title.review', "Review Checklist"),
+                  label: Localization().getStringEx('widget.gies.button.title.review', "Review Checklist"),
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,

@@ -2310,6 +2310,12 @@
     "widget.gies.notes.label.add": "Add to Notes:",
     "widget.gies.notes.button.save": "Save",
     "widget.gies.notes.button.skip": "Skip",
+    "widget.gies.message.start": "Ready to get started?",
+    "widget.gies.button.title.begin": "Begin Checklist",
+    "widget.gies.message.finished": "You’ve completed the checklist.",
+    "widget.gies.button.title.review": "Review Checklist",
+    "widget.gies.button.title.view_notes": "View My Notes",
+    "widget.gies.button.title.continue": "Continue",
 
     "widgets.home_highlighted_features.header.title": "Highlighted Features",
     "widgets.home_highlighted_features.button.personalize.title": "Personalize This App",
