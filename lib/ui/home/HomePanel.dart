@@ -21,7 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
-import 'package:illinois/ui/home/HomeGies2Widget.dart';
+import 'package:illinois/ui/home/HomeGiesWidget.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -35,7 +35,6 @@ import 'package:illinois/ui/home/HomeCampusRemindersWidget.dart';
 import 'package:illinois/ui/home/HomeCampusToolsWidget.dart';
 import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
 import 'package:illinois/ui/home/HomeGameDayWidget.dart';
-import 'package:illinois/ui/home/HomeGiesWidget.dart';
 import 'package:illinois/ui/home/HomeHighligtedFeaturesWidget.dart';
 import 'package:illinois/ui/home/HomeInterestsSelectionWidget.dart';
 import 'package:illinois/ui/home/HomeLoginWidget.dart';
@@ -51,6 +50,7 @@ import 'package:illinois/ui/home/HomeUpcomingEventsWidget.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/FlexContentWidget.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
 class HomePanel extends StatefulWidget {
@@ -60,9 +60,8 @@ class HomePanel extends StatefulWidget {
 
 class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixin<HomePanel> implements NotificationsListener {
   
-  List<dynamic>? _contentListCodes;
+  List<String>? _contentListCodes;
   StreamController<void> _refreshController = StreamController.broadcast();
-  GlobalKey _giesWidgetKey = GlobalKey();
 
   @override
   void initState() {
@@ -72,9 +71,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       FlexUI.notifyChanged,
       Styles.notifyChanged,
       Assets.notifyChanged,
-      HomeGiesWidget.notifyPageChanged,
     ]);
-    _contentListCodes = FlexUI()['home'] ?? [];
+    _contentListCodes = JsonUtils.listStringsValue(FlexUI()['home'])  ?? [];
     super.initState();
   }
 
@@ -121,7 +119,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     List<Widget> widgets = [];
 
-    for (dynamic code in _contentListCodes!) {
+    for (String code in _contentListCodes!) {
       Widget? widget;
 
       if (code == 'game_day') {
@@ -157,13 +155,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       else if (code == 'twitter') {
         widget = HomeTwitterWidget(refreshController: _refreshController);
       }
-      else if (code == 'gies') { //TBD deprecate and use gies2 instead
-        widget = HomeGiesWidget(key: _giesWidgetKey, refreshController: _refreshController);
+      else if (code == 'gies') {
+        widget = HomeGiesWidget(refreshController: _refreshController);
       }
-      else if (code == 'gies2') {
-        widget = HomeGies2Widget(refreshController: _refreshController);
-      }
-      else if (code == 'canvas_courses') {
+      else if (code == 'canvas') {
         widget = HomeCanvasCoursesWidget(refreshController: _refreshController);
       }
       else if (code == 'voter_registration') {
@@ -184,7 +179,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       else if (code == 'my_groups') {
         widget = HomeMyGroupsWidget(refreshController: _refreshController,);
       }
-      else if (code == 'safer') {
+      else if ((code == 'safer') || code.startsWith('safer.')) {
         widget = HomeSaferWidget();
       }
       else {
@@ -200,7 +195,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _updateContentListCodes() {
-    List<dynamic>? contentListCodes = FlexUI()['home'];
+    List<String>? contentListCodes = JsonUtils.listStringsValue(FlexUI()['home']);
     if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       setState(() {
         _contentListCodes = contentListCodes;
@@ -211,12 +206,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   Future<void> _onPullToRefresh() async {
     LiveStats().refresh();
     _refreshController.add(null);
-  }
-
-  void _ensureGiesVisible() {
-    if (_giesWidgetKey.currentContext != null) {
-      Scrollable.ensureVisible(_giesWidgetKey.currentContext!, duration: Duration(milliseconds: 300));
-    }
   }
 
   // NotificationsListener
@@ -245,9 +234,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (name == Assets.notifyChanged) {
       setState(() {});
-    }
-    else if (name == HomeGiesWidget.notifyPageChanged) {
-      _ensureGiesVisible();
     }
   }
 }

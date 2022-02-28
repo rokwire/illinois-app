@@ -293,6 +293,9 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     if ((_tweetsAccountKey != _currentAccountKey)) {
       _refresh(count: Config().twitterTweetsCount);
     }
+    else if (mounted) {
+      setState(() {});
+    }
   }
 
   void _setState(VoidCallback fn) {

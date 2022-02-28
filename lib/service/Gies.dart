@@ -31,7 +31,7 @@ class Gies with Service{
     _navigationPages = Storage().giesNavPages ?? [];
     _completedPages = Storage().giesCompletedPages ?? Set<String>();
 
-    AppBundle.loadString('assets/gies2.json').then((String? assetsContentString) {
+    AppBundle.loadString('assets/gies.json').then((String? assetsContentString) {
         _pages = JsonUtils.decodeList(assetsContentString);
         _buildProgressSteps();
         _ensureNavigationPages();
