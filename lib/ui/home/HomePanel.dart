@@ -50,6 +50,7 @@ import 'package:illinois/ui/home/HomeUpcomingEventsWidget.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/FlexContentWidget.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
 class HomePanel extends StatefulWidget {
@@ -59,7 +60,7 @@ class HomePanel extends StatefulWidget {
 
 class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixin<HomePanel> implements NotificationsListener {
   
-  List<dynamic>? _contentListCodes;
+  List<String>? _contentListCodes;
   StreamController<void> _refreshController = StreamController.broadcast();
 
   @override
@@ -71,7 +72,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       Styles.notifyChanged,
       Assets.notifyChanged,
     ]);
-    _contentListCodes = FlexUI()['home'] ?? [];
+    _contentListCodes = JsonUtils.listStringsValue(FlexUI()['home'])  ?? [];
     super.initState();
   }
 
@@ -118,7 +119,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     List<Widget> widgets = [];
 
-    for (dynamic code in _contentListCodes!) {
+    for (String code in _contentListCodes!) {
       Widget? widget;
 
       if (code == 'game_day') {
@@ -178,7 +179,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       else if (code == 'my_groups') {
         widget = HomeMyGroupsWidget(refreshController: _refreshController,);
       }
-      else if (code == 'safer') {
+      else if ((code == 'safer') || code.startsWith('safer.')) {
         widget = HomeSaferWidget();
       }
       else {
@@ -194,7 +195,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _updateContentListCodes() {
-    List<dynamic>? contentListCodes = FlexUI()['home'];
+    List<String>? contentListCodes = JsonUtils.listStringsValue(FlexUI()['home']);
     if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       setState(() {
         _contentListCodes = contentListCodes;
