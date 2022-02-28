@@ -151,6 +151,7 @@ class ExplorePanelState extends State<ExplorePanel>
   ScrollController _scrollController = ScrollController();
 
   Future<List<Explore>?>? _loadingTask;
+  bool? _loadingProgress;
   
 
   // When we click item[index == 2] -the TabBar creates and immediately dispose item[index == 1] (But _state.mounted = true)
@@ -235,34 +236,38 @@ class ExplorePanelState extends State<ExplorePanel>
         leadingAsset: _showHeaderBack  ? HeaderBar.defaultLeadingAsset : null,
         onLeading: _onTapHeaderBackButton,
       ),
-      body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        ExploreDisplayTypeHeader(
-          displayType: _displayType,
-          searchVisible: (_selectedTab != ExploreTab.Dining),
-          additionalData: {"group_id": widget.browseGroupId},
-          onTapList: () => _selectDisplayType(ListMapDisplayType.List),
-          onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
+      body: RefreshIndicator(onRefresh: () => _loadExplores(progress: false), child: 
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          ExploreDisplayTypeHeader(
+            displayType: _displayType,
+            searchVisible: (_selectedTab != ExploreTab.Dining),
+            additionalData: {"group_id": widget.browseGroupId},
+            onTapList: () => _selectDisplayType(ListMapDisplayType.List),
+            onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
+          
           Padding(padding: EdgeInsets.all(12), child:
             Wrap(children: _buildTabWidgets(),
-            )),
-        Expanded(child:
-          Stack(children: <Widget>[
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
-                  Wrap(children: _buildFilterWidgets(),
-              ),),
-              Expanded(child:
-                Container(color: Styles().colors!.background, child:
-                  Stack(children: <Widget>[
-                    _buildMapView(),
-                    _buildListView(),
-                  ]),
-              ),),
+          )),
+          
+          Expanded(child:
+            Stack(children: <Widget>[
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
+                    Wrap(children: _buildFilterWidgets(),
+                ),),
+                Expanded(child:
+                  Container(color: Styles().colors!.background, child:
+                    Stack(children: <Widget>[
+                      _buildMapView(),
+                      _buildListView(),
+                    ]),
+                ),),
+              ],),
+              _buildFilterValuesContainer()
             ],),
-            _buildFilterValuesContainer()
-          ],),
-        ),
-      ]),
+          ),
+        ]),
+      ),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: _showTabBar ? TabBarWidget() : null,
     );
@@ -436,7 +441,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return tagsValues;
   }
 
-  void _loadExplores() {
+  Future<void> _loadExplores({bool progress = true}) async {
 
     _diningSpecials = null;
 
@@ -459,13 +464,12 @@ class ExplorePanelState extends State<ExplorePanel>
         case ExploreTab.Events: 
           {
             if (_initialSelectedFilter != null) {
-              ExploreFilter? filter = (CollectionUtils.isNotEmpty(selectedFilterList)) ? (selectedFilterList as List<ExploreFilter?>).firstWhereOrNull((selectedFilter) =>
-              selectedFilter?.type == _initialSelectedFilter?.type) : null;
+              ExploreFilter? filter = (CollectionUtils.isNotEmpty(selectedFilterList)) ?
+                (selectedFilterList as List<ExploreFilter?>).firstWhereOrNull((selectedFilter) => selectedFilter?.type == _initialSelectedFilter?.type) : null;
               if (filter != null) {
                 int filterIndex = selectedFilterList!.indexOf(filter);
                 selectedFilterList.remove(filter);
-                selectedFilterList.insert(filterIndex, ExploreFilter(
-                    type: _initialSelectedFilter!.type, selectedIndexes: _initialSelectedFilter!.selectedIndexes, active: _initialSelectedFilter!.active));
+                selectedFilterList.insert(filterIndex, ExploreFilter(type: _initialSelectedFilter!.type, selectedIndexes: _initialSelectedFilter!.selectedIndexes, active: _initialSelectedFilter!.active));
               }
             }
             task = _loadEvents(selectedFilterList);
@@ -482,14 +486,17 @@ class ExplorePanelState extends State<ExplorePanel>
     }
 
     if (task != null) {
+
       _refresh(() {
         _loadingTask = task;
-        _loadingTask!.then((List<Explore>? explores) {
-          if (_loadingTask == task) {
-            _applyExplores(explores);
-          }
-        });
+        _loadingProgress = (progress == true);
       });
+      
+      List<Explore>? explores = await task;
+
+      if (_loadingTask == task) {
+        _applyExplores(explores);
+      }
     }
     else {
       _applyExplores(null);
@@ -497,8 +504,9 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _applyExplores(List<Explore>? explores) {
-    _refresh(() {
+      _refresh(() {
         _loadingTask = null;
+        _loadingProgress = null;
         _displayExplores = explores;
         _placeExploresOnMap();
       });
@@ -783,7 +791,7 @@ class ExplorePanelState extends State<ExplorePanel>
   // Build UI
 
   Widget _buildListView() {
-    if (_loadingTask != null) {
+    if (_loadingProgress == true) {
       return _buildLoading();
     }
     
@@ -1006,12 +1014,14 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreTab.Dining: message = Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.'); break;
       default:                message =  ''; break;
     }
-    return Center(child:
-      Column(children: <Widget>[
-        Expanded(child: Container(), flex: 1),
-        Text(message, textAlign: TextAlign.center,),
-        Expanded(child: Container(), flex: 3),
-      ]),
+    return SingleChildScrollView(child:
+      Center(child:
+        Column(children: <Widget>[
+          Container(height: MediaQuery.of(context).size.height / 5),
+          Text(message, textAlign: TextAlign.center,),
+          Container(height: MediaQuery.of(context).size.height / 5 * 3),
+        ]),
+      ),
     );
   }
 
@@ -1024,14 +1034,16 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreTab.Dining: message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
       default:                message =  ''; break;
     }
-    return Center(child:
-      Column(children: <Widget>[
-        Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 16),),
-        Container(height:8),
-        Text(message),
-        Expanded(child: Container(), flex: 3),
-      ],),);
+    return SingleChildScrollView(child:
+      Center(child:
+        Column(children: <Widget>[
+          Container(height: MediaQuery.of(context).size.height / 5),
+          Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 16),),
+          Container(height: 8),
+          Text(message),
+          Container(height: MediaQuery.of(context).size.height / 5 * 3),
+        ],),),
+    );
   }
 
   Widget _buildDimmedContainer() {
