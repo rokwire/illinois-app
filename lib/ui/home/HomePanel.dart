@@ -35,7 +35,6 @@ import 'package:illinois/ui/home/HomeCampusRemindersWidget.dart';
 import 'package:illinois/ui/home/HomeCampusToolsWidget.dart';
 import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
 import 'package:illinois/ui/home/HomeGameDayWidget.dart';
-import 'package:illinois/ui/home/HomeGiesWidget.dart';
 import 'package:illinois/ui/home/HomeHighligtedFeaturesWidget.dart';
 import 'package:illinois/ui/home/HomeInterestsSelectionWidget.dart';
 import 'package:illinois/ui/home/HomeLoginWidget.dart';
@@ -62,7 +61,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   
   List<dynamic>? _contentListCodes;
   StreamController<void> _refreshController = StreamController.broadcast();
-  GlobalKey _giesWidgetKey = GlobalKey();
 
   @override
   void initState() {
@@ -72,7 +70,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       FlexUI.notifyChanged,
       Styles.notifyChanged,
       Assets.notifyChanged,
-      HomeGiesWidget.notifyPageChanged,
     ]);
     _contentListCodes = FlexUI()['home'] ?? [];
     super.initState();
@@ -157,9 +154,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       else if (code == 'twitter') {
         widget = HomeTwitterWidget(refreshController: _refreshController);
       }
-      else if (code == 'gies') { //TBD deprecate and use gies2 instead
-        widget = HomeGiesWidget(key: _giesWidgetKey, refreshController: _refreshController);
-      }
       else if (code == 'gies2') {
         widget = HomeGies2Widget(refreshController: _refreshController);
       }
@@ -213,12 +207,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     _refreshController.add(null);
   }
 
-  void _ensureGiesVisible() {
-    if (_giesWidgetKey.currentContext != null) {
-      Scrollable.ensureVisible(_giesWidgetKey.currentContext!, duration: Duration(milliseconds: 300));
-    }
-  }
-
   // NotificationsListener
 
   @override
@@ -245,9 +233,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (name == Assets.notifyChanged) {
       setState(() {});
-    }
-    else if (name == HomeGiesWidget.notifyPageChanged) {
-      _ensureGiesVisible();
     }
   }
 }
