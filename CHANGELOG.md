@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reorder Home panel widgets [#1402](https://github.com/rokwire/illinois-app/issues/1402).
 ### Fixed
 - Android: plugin initialization [#1405](https://github.com/rokwire/illinois-app/issues/1405).
+### Added
+- Added pull to refresh in Explore panel [#1404](https://github.com/rokwire/illinois-app/issues/1404).
 
 ## [3.2.27] - 2022-02-25
 ### Added
