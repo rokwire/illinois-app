@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsLinkedEmailPanel extends StatefulWidget{
   //TBD Localization
@@ -17,6 +19,7 @@ class SettingsLinkedEmailPanel extends StatefulWidget{
 }
 
 class _SettingsLinkedEmailState extends State<SettingsLinkedEmailPanel>{
+  bool _isLoading = false; //TBD show progress
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +37,36 @@ class _SettingsLinkedEmailState extends State<SettingsLinkedEmailPanel>{
                     )
                   )],),
                   Container(height: 48),
-                  LinkAccountContentWidget(linkedAccount: _linkedEmail,)
+                  LinkAccountContentWidget(linkedAccount: _linkedEmail, onTapDisconnect: _onTapDisconnect,)
     ]))))])
     );
+  }
+
+  void _onTapDisconnect(Auth2Type account){
+    setState(() {
+      _isLoading = true;
+    });
+
+    if(account.email != null)
+    Auth2().unlinkAccountAuthType(Auth2LoginType.email, account.email!).then((bool? result) {
+      if (mounted) {
+        setState(() { _isLoading = false; });
+        if (result != null) {
+          if (!result) {
+            setErrorMsg(Localization().getStringEx("panel.settings.linked.email.label.failed", "Failed to disconnect email"));
+            return;
+          }
+
+          Navigator.of(context).pop();
+        } else {
+          setErrorMsg(Localization().getStringEx("panel.settings.linked.email.label.failed", "Failed to disconnect email"));
+        }
+      }
+    });
+  }
+
+  void setErrorMsg(String msg){
+    AppToast.show(msg);
   }
 
   //TBD decide do we want to load it in the panel init phase 

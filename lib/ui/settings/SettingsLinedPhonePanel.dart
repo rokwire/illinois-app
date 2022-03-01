@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'SettingsWidgets.dart';
 
@@ -19,6 +21,7 @@ class SettingsLinkedPhonePanel extends StatefulWidget{
 }
 
 class _SettingsLinkedPhoneState extends State<SettingsLinkedPhonePanel>{
+  bool _isLoading = false; //TBD show progress
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +39,36 @@ class _SettingsLinkedPhoneState extends State<SettingsLinkedPhonePanel>{
                 )
                 )],),
                 Container(height: 48),
-                LinkAccountContentWidget(linkedAccount: _linkedPhone,)
+                LinkAccountContentWidget(linkedAccount: _linkedPhone, onTapDisconnect: _onTapDisconnect,)
               ]))))])
     );
+  }
+
+  void _onTapDisconnect(Auth2Type account){
+    setState(() {
+      _isLoading = true;
+    });
+
+    if(account.phone != null)
+      Auth2().unlinkAccountAuthType(Auth2LoginType.phone, account.phone!).then((bool? result) {
+        if (mounted) {
+          setState(() { _isLoading = false; });
+          if (result != null) {
+            if (!result) {
+              setErrorMsg(Localization().getStringEx("panel.settings.linked.phone.label.failed", "Failed to disconnect phone"));
+              return;
+            }
+
+            Navigator.of(context).pop();
+          } else {
+            setErrorMsg(Localization().getStringEx("panel.settings.linked.phone.label.failed", "Failed to disconnect phone"));
+          }
+        }
+      });
+  }
+
+  void setErrorMsg(String msg){
+    AppToast.show(msg);
   }
 
   //TBD decide do we want to load this in the panel init phase

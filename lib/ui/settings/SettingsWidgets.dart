@@ -314,7 +314,7 @@ class InfoButton extends StatelessWidget {
 
 class LinkAccountContentWidget extends StatelessWidget{
   final Auth2Type linkedAccount;
-  final Function? onTapDisconnect;
+  final void Function(Auth2Type)? onTapDisconnect;
 
   const LinkAccountContentWidget({Key? key, required this.linkedAccount, this.onTapDisconnect}) : super(key: key);
 
