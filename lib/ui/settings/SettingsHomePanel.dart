@@ -34,8 +34,6 @@ import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginEmailPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
@@ -59,6 +57,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5));
   static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
   static BorderRadius _allRounding = BorderRadius.all(Radius.circular(5));
+
+  static BorderSide _borderSide = BorderSide(color: Styles().colors!.surfaceAccent!, width: 1);
+  static BoxBorder _topBorder = Border(top: _borderSide);
   
   String _versionName = "";
   bool _connectingNetId = false;
@@ -632,7 +633,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     contentList.add(_buildLink());
 
     return (contentList.isNotEmpty) ? _OptionsSection(
-      title: Localization().getStringEx("panel.settings.home.linked.title", "Alternate Logins"),
+      title: Localization().getStringEx("panel.settings.home.linked.title", "Alternate Sign Ins"),
+      titlePadding: EdgeInsets.symmetric(horizontal: 4, vertical: 5),
       widgets: contentList,
       showBox: false,
     ) : Container(height: 0.0,);
@@ -651,28 +653,20 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           if (code == 'info') {
             contentList.add(Container(
                 width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
                 child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(Localization().getStringEx("panel.settings.home.linked.net_id.header", "UIN"),
-                            style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
-                        Text(linked.identifier!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+                            style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
+                        Text(linked.identifier!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
                       ],
                     )
                 )));
           }
-          else if (code == 'remove' && linked.unverified == false) {
-            contentList.add(RibbonButton(
-                borderRadius: borderRadius,
-                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-                label: Localization().getStringEx("panel.settings.home.linked.net_id.button.remove", "Remove"),
-                onTap: () => _removeAuthType(Auth2LoginType.oidcIllinois, linked.identifier!)));
-          }
         }
-        _addSpaceIfNeeded(linkedTypes, linked, contentList);
       }
     }
 
@@ -690,50 +684,29 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           String code = codes[index];
           BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
           if (code == 'info') {
-            contentList.add(Container(
+            contentList.add(GestureDetector(onTap: _onTapAlternatePhone, child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(Localization().getStringEx("panel.settings.home.linked.phone.header", "Phone"),
-                          style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
-                      Text(linked.identifier!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
-                    ],
-                  )
-                )));
-          }
-          else if (code == 'remove' && linked.unverified == false) {
-            contentList.add(RibbonButton(
-                borderRadius: borderRadius,
-                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-                label: Localization().getStringEx("panel.settings.home.linked.phone.button.remove", "Remove"),
-                onTap: () => _removeAuthType(Auth2LoginType.phoneTwilio, linked.identifier!)));
-          }
-          else if (code == 'verify' && linked.unverified == true) {
-            contentList.add(Row(
-              children: [
-                Expanded(
-                  child: RibbonButton(
-                      borderRadius: borderRadius,
-                      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-                      label: Localization().getStringEx("panel.settings.home.linked.phone.button.verify", "Verify"),
-                      onTap: () => _onVerifyAuthTypeClicked(Auth2LoginType.phoneTwilio, linked.identifier!)),
-                ),
-                Expanded(
-                  child: RibbonButton(
-                      borderRadius: borderRadius,
-                      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-                      label: Localization().getStringEx("panel.settings.home.linked.phone.button.remove", "Remove"),
-                      onTap: () => _removeAuthType(Auth2LoginType.phoneTwilio, linked.identifier!)),
-                ),
-              ],
-            ));
+                  child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(Localization().getStringEx("panel.settings.home.linked.phone.header", "Phone"),
+                            style: TextStyle(
+                                color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
+                        Text(linked.identifier!,
+                            style:
+                                TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
+                      ],
+                    ),
+                    Expanded(child: Container()),
+                    Image.asset('images/chevron-right.png')
+                  ])
+                ))));
           }
         }
-        _addSpaceIfNeeded(linkedTypes, linked, contentList);
       }
     }
 
@@ -751,50 +724,29 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           String code = codes[index];
           BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
           if (code == 'info') {
-            contentList.add(Container(
+            contentList.add(GestureDetector(onTap: _onTapAlternateEmail, child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
+                decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(Localization().getStringEx("panel.settings.home.linked.email.header", "Email"),
-                          style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
-                      Text(linked.identifier!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
-                    ],
-                  ),
-                )));
-          }
-          else if (code == 'remove' && linked.unverified == false) {
-            contentList.add(RibbonButton(
-                borderRadius: borderRadius,
-                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-                label: Localization().getStringEx("panel.settings.home.linked.email.button.remove", "Remove"),
-                onTap: () => _removeAuthType(Auth2LoginType.email, linked.identifier!)));
-          }
-          else if (code == 'verify' && linked.unverified == true) {
-            contentList.add(Row(
-              children: [
-                Expanded(
-                  child: RibbonButton(
-                      borderRadius: borderRadius,
-                      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-                      label: Localization().getStringEx("panel.settings.home.linked.email.button.verify", "Verify"),
-                      onTap: () => _onVerifyAuthTypeClicked(Auth2LoginType.email, linked.identifier!)),
-                ),
-                Expanded(
-                  child: RibbonButton(
-                      borderRadius: borderRadius,
-                      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-                      label: Localization().getStringEx("panel.settings.home.linked.email.button.remove", "Remove"),
-                      onTap: () => _removeAuthType(Auth2LoginType.email, linked.identifier!)),
-                ),
-              ],
-            ));
+                  child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(Localization().getStringEx("panel.settings.home.linked.email.header", "Email"),
+                            style: TextStyle(
+                                color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
+                        Text(linked.identifier!,
+                            style:
+                                TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
+                      ]
+                    ),
+                    Expanded(child: Container()),
+                    Image.asset('images/chevron-right.png')
+                  ]),
+                ))));
           }
         }
-        _addSpaceIfNeeded(linkedTypes, linked, contentList);
       }
     }
 
@@ -807,12 +759,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   Widget _buildLink() {
     List<Widget> contentList =  [];
     List<dynamic> codes = FlexUI()['settings.link'] ?? [];
-    for (String code in codes) {
+    for (int index = 0; index < codes.length; index++) {
+      String code = codes[index];
       if (code == 'netid') {
         contentList.add(Stack(children: [
           RibbonButton(
-              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-              borderRadius: _allRounding,
+              backgroundColor: Colors.transparent,
               label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
               onTap: _onLinkNetIdClicked),
           Visibility(visible: _connectingNetId == true, child:
@@ -830,36 +782,28 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'phone') {
         contentList.add(RibbonButton(
-            borderRadius: _allRounding,
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+            border: _borderFromIndex(index, codes.length),
+            backgroundColor: Colors.transparent,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
             onTap: () => _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode.phone)),);
       }
       else if (code == 'email') {
         contentList.add(RibbonButton(
-            borderRadius: _allRounding,
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+            border: _borderFromIndex(index, codes.length),
+            backgroundColor: Colors.transparent,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
             onTap: () => _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode.email)),);
       }
-
-      _addSpaceIfNeeded(codes, code, contentList);
     }
 
     if (contentList.length > 0) {
-      contentList.insert(0, Container(height: 16.0,));
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: contentList);
+      return Container(
+          decoration: BoxDecoration(
+              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.all(Radius.circular(5))),
+          child: Column(children: contentList));
     }
 
     return Container(height: 0.0,);
-  }
-
-  void _addSpaceIfNeeded(List<dynamic> listToCheck, dynamic element, List<Widget> contentList) {
-    if (listToCheck.indexOf(element) < listToCheck.length - 1) {
-      contentList.add(Container(height: 16.0,));
-    }
   }
 
   void _onLinkNetIdClicked() {
@@ -911,55 +855,13 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     }
   }
 
-  void _removeAuthType(Auth2LoginType loginType, String identifier) {
-    Analytics().logSelect(target: "Remove alternate login");
-    if (Connectivity().isNotOffline) {
-      Auth2().unlinkAccountAuthType(loginType, identifier).then((bool? result) {
-        if (mounted && result == false) {
-          AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.home.unlink.failed", "Failed to remove alternate login."));
-        }
-      });
-    } else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
-    }
+  void _onTapAlternateEmail() {
+    //TBD: implement when we have the panel
   }
 
-  void _onVerifyAuthTypeClicked(Auth2LoginType loginType, String identifier) {
-    Analytics().logSelect(target: "Verify auth type");
-    if (Connectivity().isNotOffline) {
-      if (loginType == Auth2LoginType.phoneTwilio) {
-        Navigator.push(context, CupertinoPageRoute(
-          settings: RouteSettings(),
-          builder: (context) => OnboardingLoginPhoneConfirmPanel(
-            phoneNumber: identifier,
-            onboardingContext: {
-              "link": true,
-              "onContinueAction": () {
-                _didLogin(context);
-              }
-            },
-          ),
-        ),);
-      } else if (loginType == Auth2LoginType.email) {
-        Navigator.push(context, CupertinoPageRoute(
-          settings: RouteSettings(),
-          builder: (context) => Onboarding2LoginEmailPanel(
-            email: identifier,
-            state: Auth2EmailAccountState.unverified,
-            onboardingContext: {
-              "link": true,
-              "onContinueAction": () {
-                _didLogin(context);
-              }
-            },
-          ),
-        ),);
-      }
-    } else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
-    }
+  void _onTapAlternatePhone() {
+    //TBD: implement when we have the panels
   }
-
 
   // Privacy
 
@@ -1259,6 +1161,15 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     }
   }
 
+  BoxBorder? _borderFromIndex(int index, int length) {
+    int first = 0;
+    if (index > first) {
+      return _topBorder;
+    } else {
+      return null;
+    }
+  }
+
   void _updateState() {
     if (mounted) {
       setState(() {});
@@ -1272,8 +1183,16 @@ class _OptionsSection extends StatelessWidget {
   final String? title;
   final String? description;
   final bool? showBox;
+  final EdgeInsetsGeometry titlePadding;
 
-  const _OptionsSection({Key? key, this.widgets, this.title, this.description, this.showBox}) : super(key: key);
+  const _OptionsSection(
+      {Key? key,
+      this.widgets,
+      this.title,
+      this.description,
+      this.showBox,
+      this.titlePadding = const EdgeInsets.symmetric(horizontal: 8, vertical: 12)})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1283,7 +1202,7 @@ class _OptionsSection extends StatelessWidget {
           Visibility(
             visible: StringUtils.isNotEmpty(title),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              padding: titlePadding,
               child: Text(
                 (title != null) ? title! : '',
                 style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),

@@ -1041,7 +1041,7 @@
     "panel.settings.home.email_login.message":"Inicia sesión con tu correo electrónico",
     "panel.settings.home.email_login.button.connect":"Login With Email",
     "panel.settings.home.email_login.button.disconnect":"Gritar",
-    "panel.settings.home.linked.title": "Alternate Logins",
+    "panel.settings.home.linked.title": "Inicios de sesión alternativos",
     "panel.settings.home.linked.net_id.header": "UIN",
     "panel.settings.home.linked.net_id.button.remove":"Remove",
     "panel.settings.home.linked.phone.header": "Phone",

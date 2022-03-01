@@ -1041,7 +1041,7 @@
 	"panel.settings.home.email_login.message":"使用您的電子郵件登錄",
 	"panel.settings.home.email_login.button.connect":"Login With Email",
 	"panel.settings.home.email_login.button.disconnect":"唱出來",
-	"panel.settings.home.linked.title": "Alternate Logins",
+	"panel.settings.home.linked.title": "備用登錄",
 	"panel.settings.home.linked.net_id.header": "UIN",
 	"panel.settings.home.linked.net_id.button.remove":"Remove",
 	"panel.settings.home.linked.phone.header": "Phone",
