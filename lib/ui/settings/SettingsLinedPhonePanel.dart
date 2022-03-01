@@ -18,6 +18,10 @@ class SettingsLinkedPhonePanel extends StatefulWidget{
 
   @override
   State<StatefulWidget> createState() => _SettingsLinkedPhoneState();
+
+  static Auth2Type get mocData{
+    return Auth2Type(id: "22222", identifier: "+359888123456", code: "0987");
+  }
 }
 
 class _SettingsLinkedPhoneState extends State<SettingsLinkedPhonePanel>{
@@ -72,11 +76,7 @@ class _SettingsLinkedPhoneState extends State<SettingsLinkedPhonePanel>{
   }
 
   //TBD decide do we want to load this in the panel init phase
-  Auth2Type get _linkedPhone{
-    return widget.linkedPhone ?? mocData; //TODO remove moc data
-  }
-
-  Auth2Type get mocData{
-    return Auth2Type(id: "22222", identifier: "+359888123456", code: "0987");
+  Auth2Type? get _linkedPhone{
+    return widget.linkedPhone;
   }
 }

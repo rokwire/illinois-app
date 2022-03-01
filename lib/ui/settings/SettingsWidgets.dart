@@ -313,10 +313,10 @@ class InfoButton extends StatelessWidget {
 }
 
 class LinkAccountContentWidget extends StatelessWidget{
-  final Auth2Type linkedAccount;
+  final Auth2Type? linkedAccount;
   final void Function(Auth2Type)? onTapDisconnect;
 
-  const LinkAccountContentWidget({Key? key, required this.linkedAccount, this.onTapDisconnect}) : super(key: key);
+  const LinkAccountContentWidget({Key? key, this.linkedAccount, this.onTapDisconnect}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

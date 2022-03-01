@@ -787,14 +787,18 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             border: _borderFromIndex(index, codes.length),
             backgroundColor: Colors.transparent,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
-            onTap: () => _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode.phone)),);
+            onTap: () =>
+                _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode.phone)),);
+              // _onTapAlternateEmail(SettingsLinkedEmailPanel.mocData)),); //TBD REMOVE MOCED DATA
       }
       else if (code == 'email') {
         contentList.add(RibbonButton(
             border: _borderFromIndex(index, codes.length),
             backgroundColor: Colors.transparent,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
-            onTap: () => _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode.email)),);
+            onTap: () =>
+                _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode.email)),);
+            // _onTapAlternatePhone(SettingsLinkedEmailPanel.mocData)));//TBD REMOVE MOCED DATA
       }
     }
 

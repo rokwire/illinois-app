@@ -16,6 +16,10 @@ class SettingsLinkedEmailPanel extends StatefulWidget{
 
   @override
   State<StatefulWidget> createState() => _SettingsLinkedEmailState();
+
+  static Auth2Type get mocData{
+    return Auth2Type(id: "1234", identifier: "test@todo.com", code: "5678");
+  }
 }
 
 class _SettingsLinkedEmailState extends State<SettingsLinkedEmailPanel>{
@@ -70,11 +74,7 @@ class _SettingsLinkedEmailState extends State<SettingsLinkedEmailPanel>{
   }
 
   //TBD decide do we want to load it in the panel init phase 
-  Auth2Type get _linkedEmail{
-    return widget.linkedEmail ?? mocData; //TODO remove moc data
-  }
-
-  Auth2Type get mocData{
-    return Auth2Type(id: "1234", identifier: "test@todo.com", code: "5678");
+  Auth2Type? get _linkedEmail{
+    return widget.linkedEmail;
   }
 }
