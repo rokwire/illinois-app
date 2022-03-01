@@ -58,19 +58,26 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   Widget _buildTitle() {
     String? progress = JsonUtils.intValue(_currentPage["progress"])?.toString();
-    return Container(key: _titleKey, color: Styles().colors!.fillColorPrimary, child:
+    return
+      Semantics(container: true,
+        child:Container(key: _titleKey, color: Styles().colors!.fillColorPrimary, child:
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10), child:
         Column(children: [
-          Visibility( visible:  progress!=null,
-            child:Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Expanded(child:
-                Semantics(child:Text(JsonUtils.stringValue(_currentPage["step_title"]) ?? "", textAlign: TextAlign.center,style: TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20,),),)),
-          ],)),
-          Container(height: 8,),
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Expanded(child:
-              Text(_currentPage["title"]??"", textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32,),),),
-          ],),
+          Semantics(
+            header: true,
+            child: Column(children: [
+              Visibility( visible:  progress!=null,
+                child:Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                  Expanded(child:
+                    Semantics(child:Text(JsonUtils.stringValue(_currentPage["step_title"]) ?? "", textAlign: TextAlign.center,style: TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20,),),)),
+              ],)),
+              Container(height: 8,),
+              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Expanded(child:
+                  Text(_currentPage["title"]??"", textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32,),),),
+              ],),
+            ],),
+          ),
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
             Expanded(child: Container()),
             Padding(padding: EdgeInsets.only(top: 3), child:
@@ -88,7 +95,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
             )
           ],),
         ],),
-    ),);
+    ),));
   }
 
   Widget _buildProgress() {
@@ -503,11 +510,17 @@ class _GiesPageState extends State<_GiesPageWidget> {
           String? title = JsonUtils.stringValue(button['title']);
           buttonWidgets.add(
               Semantics(container: true,
-                  child: RoundedButton(label: title ?? '',
+                  child: RoundedButton(label: "${position == "right"? "Next" : "Previous"} Page",
                       backgroundColor: Styles().colors!.white,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      fontFamily: Styles().fontFamilies!.bold,
-                      fontSize: 26,
+                      textWidget: Text(
+                        title ?? "",
+                        semanticsLabel: "",
+                        style: TextStyle(
+                          color: Styles().colors!.fillColorPrimary,
+                          fontFamily: Styles().fontFamilies!.bold,
+                          fontSize: 26,
+                        ),
+                      ),
                       borderColor: Styles().colors!.white,
                       borderWidth: 2,
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
