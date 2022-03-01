@@ -374,9 +374,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     List<dynamic> codes = FlexUI()['settings.connected'] ?? [];
     for (String code in codes) {
       if (code == 'netid') {
-        contentList.add(_OptionsSection(
-          title: Localization().getStringEx("panel.settings.home.net_id.title", "Illinois NetID"),
-          widgets: _buildConnectedNetIdLayout()));
+        contentList.addAll(_buildConnectedNetIdLayout());
       }
       else if (code == 'phone') {
         contentList.add(_OptionsSection(
@@ -384,13 +382,21 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           widgets: _buildConnectedPhoneLayout()));
       }
       else if (code == 'email') {
-        contentList.add(_OptionsSection(
-          title: Localization().getStringEx("panel.settings.home.email_login.title", "Email Login"),
-          widgets: _buildConnectedEmailLayout()));
+        contentList.addAll(_buildConnectedEmailLayout());
       }
     }
-    return Column(children: contentList,);
 
+    return Visibility(
+        visible: CollectionUtils.isNotEmpty(contentList),
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                    color: Styles().colors!.white,
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList))));
   }
 
   List<Widget> _buildConnectedNetIdLayout() {
@@ -401,17 +407,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       String code = codes[index];
       BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
       if (code == 'info') {
-        contentList.add(Container(
-          width: double.infinity,
-          decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
-          child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(Localization().getStringEx("panel.settings.home.net_id.message", "Connected as "),
-                    style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
-                Text(Auth2().fullName ?? "",
-                    style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
-              ]))));
+        contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Text(Localization().getStringEx("panel.settings.home.net_id.message", "Signed in with your NetID"),
+                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16)),
+              Padding(padding: EdgeInsets.only(top: 3), child: Text(Auth2().fullName ?? "",
+                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))),
+            ]));
       }
       else if (code == 'connect') {
         contentList.add(Stack(children: [
@@ -434,11 +435,15 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           ],),);
       }
       else if (code == 'disconnect') {
-        contentList.add(RibbonButton(
-            borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-            label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Disconnect Your NetID"),
-            onTap: _onDisconnectNetIdClicked));
+        contentList.add(Padding(
+            padding: EdgeInsets.only(top: 12),
+            child: RoundedButton(
+                contentWeight: 0.3,
+                fontSize: 16,
+                conentAlignment: MainAxisAlignment.start,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
+                onTap: _onDisconnectNetIdClicked)));
       }
     }
 
@@ -456,17 +461,20 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       String code = codes[index];
       BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
       if (code == 'info') {
-        contentList.add(Container(
-          width: double.infinity,
-          decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
-          child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Verified as "),
-                    style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
-                Visibility(visible: hasFullName, child: Text(fullName, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
-                Text(Auth2().account?.authType?.phone ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
-              ]))));
+        contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Signed in with your Phone"),
+              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16)),
+          Visibility(
+              visible: hasFullName,
+              child: Padding(
+                  padding: EdgeInsets.only(top: 3),
+                  child: Text(fullName,
+                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20)))),
+          Padding(
+              padding: EdgeInsets.only(top: 3),
+              child: Text(Auth2().account?.authType?.phone ?? "",
+                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20)))
+        ]));
       }
       else if (code == 'verify') {
         contentList.add(RibbonButton(
@@ -476,11 +484,15 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             onTap: _onPhoneOrEmailLoginClicked));
       }
       else if (code == 'disconnect') {
-        contentList.add(RibbonButton(
-            borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-            label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect","Disconnect your Phone",),
-            onTap: _onDisconnectNetIdClicked));
+        contentList.add(Padding(
+            padding: EdgeInsets.only(top: 12),
+            child: RoundedButton(
+                contentWeight: 0.3,
+                fontSize: 16,
+                conentAlignment: MainAxisAlignment.start,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect", "Sign Out"),
+                onTap: _onDisconnectNetIdClicked)));
       }
     }
     return contentList;
@@ -497,17 +509,20 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       String code = codes[index];
       BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
       if (code == 'info') {
-        contentList.add(Container(
-          width: double.infinity,
-          decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0.5)),
-          child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(Localization().getStringEx("panel.settings.home.email_login.message", "Logged in as "),
-                    style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
-                Visibility(visible: hasFullName, child: Text(fullName, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
-                Text(Auth2().account?.authType?.email ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
-              ]))));
+        contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Text(Localization().getStringEx("panel.settings.home.email_login.message", "Signed in with your Email"),
+              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16)),
+          Visibility(
+              visible: hasFullName,
+              child: Padding(
+                  padding: EdgeInsets.only(top: 3),
+                  child: Text(fullName,
+                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20)))),
+          Padding(
+              padding: EdgeInsets.only(top: 3),
+              child: Text(Auth2().account?.authType?.email ?? "",
+                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20)))
+        ]));
       }
       else if (code == 'login') {
         contentList.add(RibbonButton(
@@ -517,11 +532,15 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             onTap: _onPhoneOrEmailLoginClicked));
       }
       else if (code == 'disconnect') {
-        contentList.add(RibbonButton(
-            borderRadius: borderRadius,
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-            label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect","Logout",),
-            onTap: _onDisconnectNetIdClicked));
+        contentList.add(Padding(
+            padding: EdgeInsets.only(top: 12),
+            child: RoundedButton(
+                contentWeight: 0.3,
+                fontSize: 16,
+                conentAlignment: MainAxisAlignment.start,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect", "Sign Out"),
+                onTap: _onDisconnectNetIdClicked)));
       }
     }
     return contentList;
