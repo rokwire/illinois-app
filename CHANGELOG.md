@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Gies group name updated to "Gies Online Programs" to match production name [#1408](https://github.com/rokwire/illinois-app/issues/1408).
+- Alternate Login Changes (not finished) - Settings and Add panels [#1407](https://github.com/rokwire/illinois-app/issues/1407).
 
 ## [3.2.28] - 2022-02-28
 ### Changed

@@ -58,6 +58,12 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
   }
 
   @override
+  void dispose() {
+    _codeController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     String? phoneNumber = (widget.onboardingContext != null) ? widget.onboardingContext!["phone"] : widget.phoneNumber;
     String maskedPhoneNumber = StringUtils.getMaskedPhoneNumber(phoneNumber);
@@ -109,9 +115,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                 Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 6),
                   child: Text(
-                    Localization().getStringEx(
-                        "panel.onboarding.confirm_phone.code.label",
-                        "One-time code"),
+                    Localization().getStringEx("panel.onboarding.confirm_phone.code.label", "One-time code"),
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontSize: 16,
