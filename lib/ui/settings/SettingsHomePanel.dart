@@ -17,7 +17,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:illinois/ui/settings/SettingsLinedPhonePanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkPhoneOrEmailPanel.dart';
+import 'package:illinois/ui/settings/SettingsLinkedEmailPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -684,7 +686,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           String code = codes[index];
           BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
           if (code == 'info') {
-            contentList.add(GestureDetector(onTap: _onTapAlternatePhone, child: Container(
+            contentList.add(GestureDetector(onTap: (){_onTapAlternatePhone(linked);}, child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
                 child: Padding(
@@ -724,7 +726,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           String code = codes[index];
           BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
           if (code == 'info') {
-            contentList.add(GestureDetector(onTap: _onTapAlternateEmail, child: Container(
+            contentList.add(GestureDetector(onTap: (){_onTapAlternateEmail(linked);}, child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
                 child: Padding(
@@ -855,12 +857,14 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     }
   }
 
-  void _onTapAlternateEmail() {
-    //TBD: implement when we have the panel
+  void _onTapAlternateEmail(Auth2Type linked) {
+    Analytics().logSelect(target: "Alternate Email");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedEmailPanel(linkedEmail: linked)));
   }
 
-  void _onTapAlternatePhone() {
-    //TBD: implement when we have the panels
+  void _onTapAlternatePhone(Auth2Type linked) {
+    Analytics().logSelect(target: "Alternate Phone");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedPhonePanel(linkedPhone: linked)));
   }
 
   // Privacy

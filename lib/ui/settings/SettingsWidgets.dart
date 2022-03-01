@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -309,4 +310,18 @@ class InfoButton extends StatelessWidget {
           ],
         );
   }
+}
+
+class LinkAccountContentWidget extends StatelessWidget{
+  final Auth2Type linkedAccount;
+  final Function? onTapDisconnect;
+
+  const LinkAccountContentWidget({Key? key, required this.linkedAccount, this.onTapDisconnect}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    //TBD
+    return Container();
+  }
+
 }
