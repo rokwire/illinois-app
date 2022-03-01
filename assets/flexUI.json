@@ -73,11 +73,11 @@
 			"bus_pass"                               : ["student", "OR", "employee", "OR", "resident"]
 		},
 		"groups": {
-			"safer"                                  : ["NOT", ["Authman test group"]],
-			"safer.gies"                             : ["Authman test group"],
-			"gies"                                   : ["Authman test group"],
+			"safer"                                  : ["NOT", "Gies Online Programs"],
+			"safer.gies"                             : ["Gies Online Programs"],
+			"gies"                                   : ["Gies Online Programs"],
 			"canvas"                                 : ["Canvas Beta"],
-			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", ["Authman test group"]]]
+			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", "Gies Online Programs"]]
 		},
 		"privacy" : {
 			"illini_cash"                     : 3,
