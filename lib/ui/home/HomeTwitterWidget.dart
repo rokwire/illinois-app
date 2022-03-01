@@ -116,16 +116,24 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 
   Widget _buildHeader() {
-    return Semantics(container: true , header: true, child:
+    return Semantics(child:
       Container(color: Styles().colors!.fillColorPrimary, child:
         Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png', excludeFromSemantics: true,)),
-            Expanded(flex: 20, child: 
-              Text("Twitter", style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),
+            Expanded(child:
+              Semantics(header: true, container: true,
+                child:
+                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                  Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png', excludeFromSemantics: true,)),
+                  Expanded(flex: 20, child:
+                    Text("Twitter", style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),
+                  ),
+                ]),
+              ),
             ),
-            (1 < _accountKeys.length) ? 
-              Padding(padding: EdgeInsets.only(right: 16), child: buildAccountDropDown(), ) :
+            (1 < _accountKeys.length) ?
+            Semantics(container: true,  button: true,
+              child: Padding(padding: EdgeInsets.only(right: 16), child: buildAccountDropDown(), )) :
               Container(),
         ],),),));
   }
@@ -133,7 +141,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   Widget buildAccountDropDown() {
     String? currentAccountName = twitterAccountName(_currentAccountKey);
 
-    return Semantics(label: currentAccountName, hint: "Double tap to select account", excludeSemantics:true, child:
+    return Semantics(label: currentAccountName, hint: "Double tap to select account", button: true, container: true, child:
       DropdownButtonHideUnderline(child:
         DropdownButton<String>(
           icon: Padding(padding: EdgeInsets.only(left: 4), child: Image.asset('images/icon-down-white.png')),
@@ -152,11 +160,11 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     for (String accountKey in _accountKeys) {
       String? accountName = twitterAccountName(accountKey);
       dropDownItems.add(DropdownMenuItem<String>(value: accountKey, child:
-        BlockSemantics(blocking: true, child:
-          Semantics(label: accountName, hint: "Double tap to select account", excludeSemantics: true, button:false, child:
+        // BlockSemantics(blocking: true, child:
+          Semantics(label: accountName, hint: "Double tap to select account", button:false, excludeSemantics: true,child:
             Text(accountName ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)),
           )
-        )
+        // )
       ));
     }
     return dropDownItems;
@@ -364,33 +372,43 @@ class _TweetWidget extends StatelessWidget {
               children: [
                 Visibility(
                   visible: onTapPrevious!=null,
-                  child: GestureDetector(
-                    onTap: onTapPrevious?? (){},
-                    child: Container(
-                      padding: EdgeInsets.all(24),
-                      child: Text(
-                        "<",
-                        style: TextStyle(
-                          color : Styles().colors!.fillColorPrimary,
-                          fontFamily: Styles().fontFamilies!.bold,
-                          fontSize: 26,
-                        ),),)
-                  )
-                ),
-                Visibility(
-                    visible: onTapNext!=null,
+                  child: Semantics(
+                    label: "Previous Page",
+                    button: true,
                     child: GestureDetector(
-                      onTap: onTapNext?? (){},
+                      onTap: onTapPrevious?? (){},
                       child: Container(
                         padding: EdgeInsets.all(24),
                         child: Text(
-                          ">",
+                          "<",
+                          semanticsLabel: "",
                           style: TextStyle(
                             color : Styles().colors!.fillColorPrimary,
                             fontFamily: Styles().fontFamilies!.bold,
                             fontSize: 26,
                           ),),)
                     )
+                  )
+                ),
+                Visibility(
+                  visible: onTapNext!=null,
+                  child: Semantics(
+                    label: "Next Page",
+                    button: true,
+                    child: GestureDetector(
+                      onTap: onTapNext?? (){},
+                      child: Container(
+                        padding: EdgeInsets.all(24),
+                        child: Text(
+                          ">",
+                          semanticsLabel: "",
+                          style: TextStyle(
+                            color : Styles().colors!.fillColorPrimary,
+                            fontFamily: Styles().fontFamilies!.bold,
+                            fontSize: 26,
+                          ),),)
+                    )
+                  )
                 )
               ],
             )
