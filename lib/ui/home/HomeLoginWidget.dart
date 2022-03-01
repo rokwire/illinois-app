@@ -152,7 +152,7 @@ class HomeLoginPhoneOrEmailWidget extends StatelessWidget{
 
             Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
             Semantics(explicitChildNodes: true, child: RoundedButton(
-              label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Proceed"),
+              label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Continue"),
               hint: '',
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.surface,
