@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:illinois/ui/settings/SettingsLinkPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -832,14 +833,14 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             borderRadius: _allRounding,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
-            onTap: () => _onLinkPhoneOrEmailClicked(code)),);
+            onTap: () => _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode.phone)),);
       }
       else if (code == 'email') {
         contentList.add(RibbonButton(
             borderRadius: _allRounding,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
-            onTap: () => _onLinkPhoneOrEmailClicked(code)),);
+            onTap: () => _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode.email)),);
       }
 
       _addSpaceIfNeeded(codes, code, contentList);
@@ -899,21 +900,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     );
   }
 
-  void _onLinkPhoneOrEmailClicked(String mode) {
-    Analytics().logSelect(target: "Link $mode");
+  void _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode mode) {
+    Analytics().logSelect(target: "Link ${settingsLinkPhoneOrEmailModeToString(mode)}");
     if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(
-        settings: RouteSettings(),
-        builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
-          onboardingContext: {
-            "link": true,
-            "mode": mode,
-            "onContinueAction": () {
-              _didLogin(context);
-            }
-          },
-        ),
-      ),);
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLinkPhoneOrEmailPanel(mode: mode, onFinish: () {
+        _didLogin(context);
+      },)),);
     } else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
