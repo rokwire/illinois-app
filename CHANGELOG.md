@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.2.29] - 2022-03-01
 ### Changed
 - Gies group name updated to "Gies Online Programs" to match production name [#1408](https://github.com/rokwire/illinois-app/issues/1408).
 - Alternate Login Changes (not finished) - Settings and Add panels [#1407](https://github.com/rokwire/illinois-app/issues/1407).
