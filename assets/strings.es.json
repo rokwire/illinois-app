@@ -1129,7 +1129,8 @@
     "panel.settings.link.phone.label.linked": "You have already added a phone number to your account.",
     "panel.settings.link.phone.label.failed": "Failed to send phone verification code. An unexpected error has occurred.",
     "panel.settings.link.phone.label.failed.exists": "An account is already using this phone number.",
-    
+    "panel.settings.link.phone.label.detail": "1. You will need to sign in to the other account with this phone number.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login.",
+
     "panel.settings.login.email.label.title": "Sign In with Email",
     "panel.settings.login.email.label.description": "Please enter your email and we will send you a verification email.",
     "panel.settings.login.email.label.heading": "Email Address:",
@@ -1147,6 +1148,7 @@
     "panel.settings.link.email.label.linked": "You have already added an email address to your account.",
     "panel.settings.link.email.label.failed": "Failed to send verification email. An unexpected error has occurred.",
     "panel.settings.link.email.label.failed.exists": "An account is already using this email address.",
+    "panel.settings.link.email.label.detail": "1. You will need to sign in to the other account with this email address.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login.",
 
     "panel.settings.login.both.label.title": "Sign In with Phone or Email",
     "panel.settings.login.both.label.description": "Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email.",
