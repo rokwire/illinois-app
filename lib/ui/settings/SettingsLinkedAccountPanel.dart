@@ -24,9 +24,8 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(title: _title,),
-        body: Stack(children: [
-          Column(children: <Widget>[
+        appBar: HeaderBar(title: _title, leadingAsset: HeaderBar.defaultLeadingAsset),
+        body: Column(children: <Widget>[
             Expanded(child:
               SingleChildScrollView(scrollDirection: Axis.vertical, child:
                 Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -37,35 +36,33 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
                       )
                     )],),
                     Container(height: 48),
-                    LinkAccountContentWidget(linkedAccount: _linkedAccount, onTapDisconnect: _onTapDisconnect, mode: widget.mode,)
-          ]))))]),
-          Visibility(visible: _isLoading,
-              child: Center(
-                child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary)
-                ),))
-        ],)
-    );
+                    LinkAccountContentWidget(linkedAccount: _linkedAccount, onTapDisconnect: _onTapDisconnect, mode: widget.mode, isLoading: _isLoading,)
+          ]))))]),);
   }
 
   void _onTapDisconnect(Auth2Type? account){
-    setState(() {
-      _isLoading = true;
-    });
+    if(_isLoading != true) {//Disable while loading
 
-    if(widget.mode == LinkAccountMode.email && account?.email != null) {
-      Auth2().unlinkAccountAuthType(Auth2LoginType.email, account!.email!).then(_handleResult);
-    }
-    else if(widget.mode == LinkAccountMode.phone && account?.phone != null) {
-      Auth2().unlinkAccountAuthType(Auth2LoginType.phoneTwilio, account!.phone!).then(_handleResult);
-    }
-    else { //No Valid account identifier
-      setErrorMsg(_defaultErrorMsg);
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+      setState(() {
+        _isLoading = true;
+      });
+
+      if (widget.mode == LinkAccountMode.email && account?.email != null) {
+        Auth2()
+            .unlinkAccountAuthType(Auth2LoginType.email, account!.email!)
+            .then(_handleResult);
+      }
+      else if (widget.mode == LinkAccountMode.phone && account?.phone != null) {
+        Auth2().unlinkAccountAuthType(
+            Auth2LoginType.phoneTwilio, account!.phone!).then(_handleResult);
+      }
+      else { //No Valid account identifier
+        setErrorMsg(_defaultErrorMsg);
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     }
   }
@@ -124,9 +121,10 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
 class LinkAccountContentWidget extends StatelessWidget{
   final LinkAccountMode mode;
   final Auth2Type? linkedAccount;
+  final bool isLoading;
   final void Function(Auth2Type?)? onTapDisconnect;
 
-  const LinkAccountContentWidget({Key? key, this.linkedAccount, this.onTapDisconnect, required this.mode}) : super(key: key);
+  const LinkAccountContentWidget({Key? key, this.linkedAccount, this.onTapDisconnect, required this.mode, required this.isLoading}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -157,16 +155,26 @@ class LinkAccountContentWidget extends StatelessWidget{
           Container(height: 1, color: Styles().colors?.lightGray!,),
           Container(
             color: Styles().colors!.white,
-            child: RibbonButton(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-              textColor: Styles().colors!.textSurface,
-              label: _buttonText,
-              onTap: (){
-                if(onTapDisconnect!=null){
-                  onTapDisconnect!(linkedAccount);
-                }
-              },
-            ),
+            child:
+            Stack(children: [
+              RibbonButton(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                textColor: Styles().colors!.textSurface,
+                label: _buttonText,
+                onTap: (){
+                  if(onTapDisconnect!=null){
+                    onTapDisconnect!(linkedAccount);
+                  }
+                },
+              ),
+              Visibility(visible: isLoading,
+                  child: Container(height: 58, child:
+                    Align(alignment: Alignment.centerRight, child:
+                      Padding(padding: EdgeInsets.only(right: 10), child:
+                        SizedBox(height: 24, width: 24, child:
+                          CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                  ),)),),)
+            ],),
           )
         ],
       ),
