@@ -15,8 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
