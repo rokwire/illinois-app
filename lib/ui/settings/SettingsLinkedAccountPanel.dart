@@ -20,6 +20,7 @@ class SettingsLinkedAccountPanel extends StatefulWidget{
 
 class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
   bool _isLoading = false;
+  String _errorMsg = "";
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +37,15 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
                       )
                     )],),
                     Container(height: 48),
-                    LinkAccountContentWidget(linkedAccount: _linkedAccount, onTapDisconnect: _onTapDisconnect, mode: widget.mode, isLoading: _isLoading,)
+                    LinkAccountContentWidget(linkedAccount: _linkedAccount, onTapDisconnect: _onTapDisconnect, mode: widget.mode, isLoading: _isLoading,),
+                    Container(height: 36),
+                    Text(StringUtils.ensureNotEmpty(_errorMsg), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
           ]))))]),);
   }
 
   void _onTapDisconnect(Auth2Type? account){
     if(_isLoading != true) {//Disable while loading
-
+      _clearErrorMsg();
       setState(() {
         _isLoading = true;
       });
@@ -87,7 +90,19 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
   }
 
   void setErrorMsg(String msg){
-    AppToast.show(msg);
+    setState(() {
+      if(mounted){
+        _errorMsg = msg;
+      }
+    });
+  }
+
+  void _clearErrorMsg(){
+    setState(() {
+      if(mounted){
+        _errorMsg = "";
+      }
+    });
   }
 
   String get _title{
