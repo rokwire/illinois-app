@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/ui/settings/SettingsLinkedPhonePanel.dart';
-import 'package:illinois/ui/settings/SettingsLinkPhoneOrEmailPanel.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkedEmailPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
@@ -853,7 +853,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   void _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode mode) {
     Analytics().logSelect(target: "Link ${settingsLinkPhoneOrEmailModeToString(mode)}");
     if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLinkPhoneOrEmailPanel(mode: mode, onFinish: () {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(mode: mode, onFinish: () {
         _didLogin(context);
       },)),);
     } else {

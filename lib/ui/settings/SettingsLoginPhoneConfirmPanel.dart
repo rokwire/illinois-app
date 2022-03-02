@@ -10,17 +10,17 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class SettingsLinkPhoneConfirmPanel extends StatefulWidget {
+class SettingsLoginPhoneConfirmPanel extends StatefulWidget {
 
   final String? phoneNumber;
   final void Function()? onFinish;
 
-  SettingsLinkPhoneConfirmPanel({this.phoneNumber, this.onFinish});
+  SettingsLoginPhoneConfirmPanel({this.phoneNumber, this.onFinish});
 
-  _SettingsLinkPhoneConfirmPanelState createState() => _SettingsLinkPhoneConfirmPanelState();
+  _SettingsLoginPhoneConfirmPanelState createState() => _SettingsLoginPhoneConfirmPanelState();
 }
 
-class _SettingsLinkPhoneConfirmPanelState extends State<SettingsLinkPhoneConfirmPanel>  {
+class _SettingsLoginPhoneConfirmPanelState extends State<SettingsLoginPhoneConfirmPanel>  {
 
   TextEditingController _codeController = TextEditingController();
   String? _verificationErrorMsg;

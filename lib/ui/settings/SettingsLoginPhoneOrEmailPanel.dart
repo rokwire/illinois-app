@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/settings/SettingsLinkEmailPanel.dart';
-import 'package:illinois/ui/settings/SettingsLinkPhoneConfirmPanel.dart';
+import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -13,17 +13,17 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SettingsLinkPhoneOrEmailPanel extends StatefulWidget {
+class SettingsLoginPhoneOrEmailPanel extends StatefulWidget {
   final SettingsLinkPhoneOrEmailMode mode;
   final String? identifier;
   final void Function()? onFinish;
 
-  SettingsLinkPhoneOrEmailPanel({this.mode = SettingsLinkPhoneOrEmailMode.both, this.identifier, this.onFinish });
+  SettingsLoginPhoneOrEmailPanel({this.mode = SettingsLinkPhoneOrEmailMode.both, this.identifier, this.onFinish });
 
-  _SettingsLinkPhoneOrEmailPanelState createState() => _SettingsLinkPhoneOrEmailPanelState();
+  _SettingsLoginPhoneOrEmailPanelState createState() => _SettingsLoginPhoneOrEmailPanelState();
 }
 
-class _SettingsLinkPhoneOrEmailPanelState extends State<SettingsLinkPhoneOrEmailPanel>  {
+class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEmailPanel>  {
 
   TextEditingController? _phoneOrEmailController;
 
@@ -233,7 +233,7 @@ class _SettingsLinkPhoneOrEmailPanelState extends State<SettingsLinkPhoneOrEmail
     }
 
     if (result == Auth2PhoneRequestCodeResult.succeeded) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkPhoneConfirmPanel(phoneNumber: phoneNumber, onFinish: widget.onFinish)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginPhoneConfirmPanel(phoneNumber: phoneNumber, onFinish: widget.onFinish)));
     } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
       setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.failed.exists", "An account is already using this phone number."));
     } else {
@@ -256,7 +256,7 @@ class _SettingsLinkPhoneOrEmailPanelState extends State<SettingsLinkPhoneOrEmail
             return;
           }
           
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkEmailPanel(email: email, onFinish: widget.onFinish)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginEmailPanel(email: email, onFinish: widget.onFinish)));
         }
         else {
           setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.failed", "Failed to send verification email. An unexpected error has occurred."));

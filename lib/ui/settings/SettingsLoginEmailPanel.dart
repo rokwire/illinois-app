@@ -10,17 +10,17 @@ import 'package:rokwire_plugin/ui/widgets/header_bar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SettingsLinkEmailPanel extends StatefulWidget {
+class SettingsLoginEmailPanel extends StatefulWidget {
 
   final String? email;
   final void Function()? onFinish;
 
-  SettingsLinkEmailPanel({this.email, this.onFinish});
+  SettingsLoginEmailPanel({this.email, this.onFinish});
 
-  _SettingsLinkEmailPanelState createState() => _SettingsLinkEmailPanelState();
+  _SettingsLoginEmailPanelState createState() => _SettingsLoginEmailPanelState();
 }
 
-class _SettingsLinkEmailPanelState extends State<SettingsLinkEmailPanel>  {
+class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
 
   static final Color _successColor = Colors.green.shade800;
   static final Color _errorColor = Colors.red.shade700;
