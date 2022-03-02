@@ -17,7 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:illinois/ui/settings/SettingsLinedPhonePanel.dart';
+import 'package:illinois/ui/settings/SettingsLinkedPhonePanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkedEmailPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
