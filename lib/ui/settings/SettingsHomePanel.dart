@@ -442,7 +442,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.add(Padding(
             padding: EdgeInsets.only(top: 12),
             child: RoundedButton(
-                contentWeight: 0.3,
+                contentWeight: 0.45,
                 fontSize: 16,
                 conentAlignment: MainAxisAlignment.start,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -491,7 +491,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.add(Padding(
             padding: EdgeInsets.only(top: 12),
             child: RoundedButton(
-                contentWeight: 0.3,
+                contentWeight: 0.45,
                 fontSize: 16,
                 conentAlignment: MainAxisAlignment.start,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -539,7 +539,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.add(Padding(
             padding: EdgeInsets.only(top: 12),
             child: RoundedButton(
-                contentWeight: 0.3,
+                contentWeight: 0.45,
                 fontSize: 16,
                 conentAlignment: MainAxisAlignment.start,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
