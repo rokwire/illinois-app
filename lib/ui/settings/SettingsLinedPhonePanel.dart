@@ -43,18 +43,18 @@ class _SettingsLinkedPhoneState extends State<SettingsLinkedPhonePanel>{
                 )
                 )],),
                 Container(height: 48),
-                LinkAccountContentWidget(linkedAccount: _linkedPhone, onTapDisconnect: _onTapDisconnect,)
+                LinkAccountContentWidget(linkedAccount: _linkedPhone, onTapDisconnect: _onTapDisconnect,  mode: LinkAccountContentMode.phone,)
               ]))))])
     );
   }
 
-  void _onTapDisconnect(Auth2Type account){
+  void _onTapDisconnect(Auth2Type? account){
     setState(() {
       _isLoading = true;
     });
 
-    if(account.phone != null)
-      Auth2().unlinkAccountAuthType(Auth2LoginType.phone, account.phone!).then((bool? result) {
+    if(account?.phone != null)
+      Auth2().unlinkAccountAuthType(Auth2LoginType.phone, account!.phone!).then((bool? result) {
         if (mounted) {
           setState(() { _isLoading = false; });
           if (result != null) {

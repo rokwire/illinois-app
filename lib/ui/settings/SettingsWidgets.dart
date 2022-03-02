@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -313,15 +314,79 @@ class InfoButton extends StatelessWidget {
 }
 
 class LinkAccountContentWidget extends StatelessWidget{
+  final LinkAccountContentMode mode;
   final Auth2Type? linkedAccount;
-  final void Function(Auth2Type)? onTapDisconnect;
+  final void Function(Auth2Type?)? onTapDisconnect;
 
-  const LinkAccountContentWidget({Key? key, this.linkedAccount, this.onTapDisconnect}) : super(key: key);
+  const LinkAccountContentWidget({Key? key, this.linkedAccount, this.onTapDisconnect, required this.mode}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
     //TBD
-    return Container();
+    return Container(
+      decoration: BoxDecoration(border: Border.all(color: Styles().colors!.lightGray!),borderRadius: BorderRadius.all(Radius.circular(4))),
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 13),
+            color: Styles().colors!.white,
+            child: Column(
+              children: [
+                Container(height: 12,),
+                Row(
+                  children: [
+                    Expanded(child: Text(_accountTypeText, style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular,)))
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(child: Text(_identifier, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold,)))
+                  ],
+                ),
+                Container(height: 12,),
+              ],
+            ),
+          ),
+          Container(height: 1, color: Styles().colors?.lightGray!,),
+          Container(
+            color: Styles().colors!.white,
+            child: RibbonButton(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              textColor: Styles().colors!.textSurface,
+              label: _buttonText,
+              onTap: (){
+                if(onTapDisconnect!=null){
+                  onTapDisconnect!(linkedAccount);
+                }
+              },
+            ),
+          )
+        ],
+      ),
+    );
   }
 
+  String get _accountTypeText{
+    switch(mode){
+      case LinkAccountContentMode.phone: return "Phone";
+      case LinkAccountContentMode.email: return "Email";
+    }
+  }
+
+  String get _buttonText{
+    switch(mode){
+      case LinkAccountContentMode.phone: return "Remove this Phone Number";
+      case LinkAccountContentMode.email: return "Remove this Email Address";
+    }
+  }
+
+  String get _identifier{
+    return linkedAccount?.identifier ?? "";
+  }
+}
+
+enum LinkAccountContentMode {
+  phone,
+  email,
 }

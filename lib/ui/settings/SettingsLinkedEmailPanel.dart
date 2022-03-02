@@ -41,32 +41,40 @@ class _SettingsLinkedEmailState extends State<SettingsLinkedEmailPanel>{
                     )
                   )],),
                   Container(height: 48),
-                  LinkAccountContentWidget(linkedAccount: _linkedEmail, onTapDisconnect: _onTapDisconnect,)
+                  LinkAccountContentWidget(linkedAccount: _linkedEmail, onTapDisconnect: _onTapDisconnect, mode: LinkAccountContentMode.email,)
     ]))))])
     );
   }
 
-  void _onTapDisconnect(Auth2Type account){
+  void _onTapDisconnect(Auth2Type? account){
     setState(() {
       _isLoading = true;
     });
 
-    if(account.email != null)
-    Auth2().unlinkAccountAuthType(Auth2LoginType.email, account.email!).then((bool? result) {
-      if (mounted) {
-        setState(() { _isLoading = false; });
-        if (result != null) {
-          if (!result) {
-            setErrorMsg(Localization().getStringEx("panel.settings.linked.email.label.failed", "Failed to disconnect email"));
-            return;
-          }
+    if(account?.email != null) {
+      Auth2().unlinkAccountAuthType(Auth2LoginType.email, account!.email!)
+          .then((bool? result) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+          if (result != null) {
+            if (!result) {
+              setErrorMsg(Localization().getStringEx(
+                  "panel.settings.linked.email.label.failed",
+                  "Failed to disconnect email"));
+              return;
+            }
 
-          Navigator.of(context).pop();
-        } else {
-          setErrorMsg(Localization().getStringEx("panel.settings.linked.email.label.failed", "Failed to disconnect email"));
+            Navigator.of(context).pop();
+          } else {
+            setErrorMsg(Localization().getStringEx(
+                "panel.settings.linked.email.label.failed",
+                "Failed to disconnect email"));
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   void setErrorMsg(String msg){
