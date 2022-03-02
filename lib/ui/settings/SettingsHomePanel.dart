@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/ui/settings/SettingsLinkedPhonePanel.dart';
+import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkedEmailPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -36,7 +40,6 @@ import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
@@ -348,23 +351,15 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     Analytics().logSelect(target: "Phone or Email Login");
     Analytics().logSelect(target: "Phone or Email Login");
     if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(
-        settings: RouteSettings(),
-        builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
-          onboardingContext: {
-            "link": false,
-            "onContinueAction": () {
-              _didLogin(context);
-            }
-          },
-        ),
-      ),);
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(onFinish: () {
+        _popToMe();
+      },),),);
     } else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
   }
 
-  void _didLogin(_) {
+  void _popToMe() {
     Navigator.of(context).popUntil((Route route){
       return AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType;
     });
@@ -852,12 +847,69 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   void _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode mode) {
     Analytics().logSelect(target: "Link ${settingsLoginPhoneOrEmailModeToString(mode)}");
+
     if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(mode: mode, onFinish: () {
-        _didLogin(context);
-      },)),);
+      SettingsDialog.show(context,
+        title: Localization().getStringEx("panel.settings.link.login_prompt.title", "Sign In Requied"),
+        message: [
+          TextSpan(text: Localization().getStringEx("panel.settings.link.login_prompt.description", "For security, you must sign in again to confirm it's you before adding an alternate account.")),
+        ],
+        continueTitle: Localization().getStringEx("panel.settings.link.login_prompt.confirm.title", "Sign In"),
+        onContinue: (List<String> selectedValues, OnContinueProgressController progressController ) {
+          
+          progressController(loading: true);
+          _linkVerifySignIn().then((bool? result) {
+            progressController(loading: false);
+            _popToMe();
+            if (result == true) {
+              Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(mode: mode, link: true, onFinish: () {
+                _popToMe();
+              },)),);
+            }
+          });
+        },
+        longButtonTitle: true
+      );
     } else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
+    }
+  }
+
+  Future<bool?> _linkVerifySignIn() async {
+    if (Auth2().isOidcLoggedIn) {
+      Auth2OidcAuthenticateResult? result = await Auth2().authenticateWithOidc();
+      return (result != null) ? (result == Auth2OidcAuthenticateResult.succeeded) : null;
+    }
+    else if (Auth2().isEmailLoggedIn) {
+      Completer<bool?> completer = Completer<bool?>();
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
+        SettingsLoginEmailPanel(email: Auth2().account?.authType?.identifier, state: Auth2EmailAccountState.verified, onFinish: () {
+          completer.complete(true);
+        },)
+      ),).then((_) {
+        completer.complete(null);
+      });
+      return completer.future;
+    }
+    else if (Auth2().isPhoneLoggedIn) {
+      Completer<bool?> completer = Completer<bool?>();
+      Auth2().authenticateWithPhone(Auth2().account?.authType?.identifier).then((Auth2PhoneRequestCodeResult result) {
+        if (result == Auth2PhoneRequestCodeResult.succeeded) {
+          Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
+            SettingsLoginPhoneConfirmPanel(phoneNumber: Auth2().account?.authType?.identifier, onFinish: () {
+              completer.complete(true);
+            },)
+          ),).then((_) {
+            completer.complete(null);
+          });
+        }
+        else {
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed", "Failed to send phone verification code. An unexpected error has occurred.")).then((_) {
+            completer.complete(null);
+          });
+        }
+      });
+      return completer.future;
     }
   }
 

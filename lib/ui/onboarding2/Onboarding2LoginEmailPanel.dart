@@ -404,7 +404,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
         setState(() { _isLoading = true; });
 
         if (!_link) {
-          Auth2().signUpWithEmail(widget.email, password).then((Auth2EmailSignUpResult result) => _trySignUpCallback(result));
+          Auth2().signUpWithEmail(widget.email, password).then((Auth2EmailSignUpResult result) {
+            _trySignUpCallback(result);
+          } );
         } else {
           Map<String, dynamic> creds = {
             "email": widget.email,
@@ -414,14 +416,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
             "sign_up": true,
             "confirm_password": confirmPassword
           };
-          Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((result) {
-            if (result == Auth2LinkResult.succeeded) {
-              _trySignUpCallback(Auth2EmailSignUpResult.succeeded);
-            } else if (result == Auth2LinkResult.failedAccountExist) {
-              _trySignUpCallback(Auth2EmailSignUpResult.failedAccountExist);
-            } else {
-              _trySignUpCallback(Auth2EmailSignUpResult.failed);
-            }
+          Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((Auth2LinkResult result) {
+            _trySignUpCallback(auth2EmailSignUpResultFromAuth2LinkResult(result));
           });
         }
       }
@@ -471,7 +467,6 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
         if (!_link) {
           Auth2().authenticateWithEmail(widget.email, password).then((Auth2EmailSignInResult result) {
-            setState(() { _isLoading = false; });
             _trySignInCallback(result);
           });
         } else {
@@ -481,13 +476,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
           };
           Map<String, dynamic> params = {};
           Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((Auth2LinkResult result) {
-            switch (result) {
-              case Auth2LinkResult.succeeded: _trySignInCallback(Auth2EmailSignInResult.succeeded); break;
-              case Auth2LinkResult.failedNotActivated: _trySignInCallback(Auth2EmailSignInResult.failedNotActivated); break;
-              case Auth2LinkResult.failedActivationExpired: _trySignInCallback(Auth2EmailSignInResult.failedActivationExpired); break;
-              case Auth2LinkResult.failedInvalid: _trySignInCallback(Auth2EmailSignInResult.failedInvalid); break;
-              default: _trySignInCallback(Auth2EmailSignInResult.failed);
-            }
+            _trySignInCallback(auth2EmailSignInResultFromAuth2LinkResult(result));
           });
         }
       }
@@ -531,9 +520,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   }
 
   void _onTapCancel() {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() { _isLoading = true; });
 
     for (Auth2Type authType in Auth2().linkedEmail) {
       if (authType.identifier == widget.email) {

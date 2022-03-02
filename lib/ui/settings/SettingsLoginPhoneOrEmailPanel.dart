@@ -15,10 +15,11 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsLoginPhoneOrEmailPanel extends StatefulWidget {
   final SettingsLoginPhoneOrEmailMode mode;
+  final bool? link;
   final String? identifier;
   final void Function()? onFinish;
 
-  SettingsLoginPhoneOrEmailPanel({this.mode = SettingsLoginPhoneOrEmailMode.both, this.identifier, this.onFinish });
+  SettingsLoginPhoneOrEmailPanel({this.mode = SettingsLoginPhoneOrEmailMode.both, this.link, this.identifier, this.onFinish });
 
   _SettingsLoginPhoneOrEmailPanelState createState() => _SettingsLoginPhoneOrEmailPanelState();
 }
@@ -47,35 +48,70 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
 
   @override
   Widget build(BuildContext context) {
-    String title, description, headingTitle, headingHint, buttonAddTitle, buttonAddHint;
+    String title, description, headingTitle, headingHint, buttonProceedTitle, buttonProceedHint;
     TextInputType keyboardType;
-    if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
-      title = Localization().getStringEx('panel.settings.link.phone.label.title', 'Add Phone Number');
-      description = Localization().getStringEx('panel.settings.link.phone.label.description', 'You may sign in using your phone number as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
-      headingTitle = Localization().getStringEx('panel.settings.link.phone.label.heading', 'ADD MY PHONE NUMBER');
-      headingHint = Localization().getStringEx('panel.settings.link.phone.label.heading.hint', '');
-      buttonAddTitle = Localization().getStringEx('panel.settings.link.phone.button.add.title', 'Add Phone Number');
-      buttonAddHint = Localization().getStringEx('panel.settings.link.phone.button.add.hint', '');
-      keyboardType = TextInputType.phone;
-    }
-    else if (widget.mode == SettingsLoginPhoneOrEmailMode.email){
-      title = Localization().getStringEx('panel.settings.link.email.label.title', 'Add Email Address');
-      description = Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
-      headingTitle = Localization().getStringEx('panel.settings.link.email.label.heading', 'ADD MY EMAIL ADDRESS');
-      headingHint = Localization().getStringEx('panel.settings.link.email.label.heading.hint', '');
-      buttonAddTitle = Localization().getStringEx('panel.settings.link.email.button.add.title', 'Add Email Address');
-      buttonAddHint = Localization().getStringEx('panel.settings.link.email.button.add.hint', '');
-      keyboardType = TextInputType.emailAddress;
+    Widget? proceedRightIcon;
+    
+    if (widget.link == true) {
+      if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
+        title = Localization().getStringEx('panel.settings.link.phone.label.title', 'Add Phone Number');
+        description = Localization().getStringEx('panel.settings.link.phone.label.description', 'You may sign in using your phone number as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
+        headingTitle = Localization().getStringEx('panel.settings.link.phone.label.heading', 'ADD MY PHONE NUMBER');
+        headingHint = Localization().getStringEx('panel.settings.link.phone.label.heading.hint', '');
+        buttonProceedTitle =  Localization().getStringEx('panel.settings.link.phone.button.proceed.title', 'Add Phone Number');
+        buttonProceedHint = Localization().getStringEx('panel.settings.link.phone.button.proceed.hint', '');
+        keyboardType = TextInputType.phone;
+      }
+      else if (widget.mode == SettingsLoginPhoneOrEmailMode.email){
+        title = Localization().getStringEx('panel.settings.link.email.label.title', 'Add Email Address');
+        description = Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
+        headingTitle = Localization().getStringEx('panel.settings.link.email.label.heading', 'ADD MY EMAIL ADDRESS');
+        headingHint =  Localization().getStringEx('panel.settings.link.email.label.heading.hint', '');
+        buttonProceedTitle = Localization().getStringEx('panel.settings.link.email.button.proceed.title', 'Add Email Address');
+        buttonProceedHint = Localization().getStringEx('panel.settings.link.email.button.proceed.hint', '');
+        keyboardType = TextInputType.emailAddress;
+      }
+      else {
+        title = Localization().getStringEx('panel.settings.link.both.label.title', 'Add Phone or Email');
+        description = Localization().getStringEx('panel.settings.link.both.label.description', 'You may sign in using your email or phone number as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
+        headingTitle = Localization().getStringEx('panel.settings.link.both.label.heading', 'ADD MY PHONE NUMBER OR EMAIL ADDRESS');
+        headingHint =  Localization().getStringEx('panel.settings.link.both.label.heading.hint', '');
+        buttonProceedTitle = Localization().getStringEx('panel.settings.link.both.button.proceed.title', 'Add Phone or Email');
+        buttonProceedHint = Localization().getStringEx('panel.settings.link.both.button.proceed.hint', '');
+        keyboardType = TextInputType.emailAddress;
+      }
+      proceedRightIcon = Image.asset('images/icon-plus.png');
     }
     else {
-      title = Localization().getStringEx('panel.settings.link.both.label.title', 'Add Phone or Email');
-      description = Localization().getStringEx('panel.settings.link.both.label.description', 'You may sign in using your email or phone number as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
-      headingTitle = Localization().getStringEx('panel.settings.link.both.label.heading', 'ADD MY PHONE NUMBER OR EMAIL ADDRESS');
-      headingHint = Localization().getStringEx('panel.settings.link.both.label.heading.hint', '');
-      buttonAddTitle = Localization().getStringEx('panel.settings.link.both.button.add.title', 'Add Phone or Email');
-      buttonAddHint = Localization().getStringEx('panel.settings.link.both.button.add.hint', '');
-      keyboardType = TextInputType.emailAddress;
+      if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
+        title = Localization().getStringEx('panel.settings.login.phone.label.title', 'Sign In with Phone');
+        description = Localization().getStringEx('panel.settings.login.phone.label.description', 'Please enter your phone number and we will send you a verification code.');
+        headingTitle = Localization().getStringEx('panel.settings.login.phone.label.heading', 'Phone Number:');
+        headingHint = Localization().getStringEx('panel.settings.login.phone.label.heading.hint', '');
+        buttonProceedTitle = Localization().getStringEx('panel.settings.login.phone.button.proceed.title', 'Proceed');
+        buttonProceedHint = Localization().getStringEx('panel.settings.login.phone.button.proceed.hint', '');
+        keyboardType = TextInputType.phone;
+      }
+      else if (widget.mode == SettingsLoginPhoneOrEmailMode.email){
+        title = Localization().getStringEx('panel.settings.login.email.label.title', 'Sign In with Email');
+        description = Localization().getStringEx('panel.settings.login.email.label.description', 'Please enter your email and we will send you a verification email.');
+        headingTitle = Localization().getStringEx('panel.settings.login.email.label.heading', 'Email Address:');
+        headingHint = Localization().getStringEx('panel.settings.login.email.label.heading.hint', '');
+        buttonProceedTitle = Localization().getStringEx('panel.settings.login.email.button.proceed.title', 'Proceed');
+        buttonProceedHint = Localization().getStringEx('panel.settings.login.email.button.proceed.hint', '');
+        keyboardType = TextInputType.emailAddress;
+      }
+      else {
+        title = Localization().getStringEx('panel.settings.login.both.label.title', 'Sign In with Phone or Email');
+        description = Localization().getStringEx('panel.settings.login.both.label.description', 'Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email.');
+        headingTitle = Localization().getStringEx('panel.settings.login.both.label.heading', 'Phone Number or Email Address:');
+        headingHint = Localization().getStringEx('panel.settings.login.both.label.heading.hint', '');
+        buttonProceedTitle = Localization().getStringEx('panel.settings.login.both.button.proceed.title', 'Proceed');
+        buttonProceedHint = Localization().getStringEx('panel.settings.login.both.button.proceed.hint', '');
+        keyboardType = TextInputType.emailAddress;
+      }
     }
+
 
     return Scaffold(
       appBar: HeaderBar(title: title,),
@@ -106,41 +142,36 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                       keyboardType: keyboardType,
                       style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies?.regular, color: Styles().colors?.textBackground),
                       decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.background!, width: 2.0, style: BorderStyle.solid),),
-                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.background!, width: 2.0),),
+                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
                       ),
                     ),
                   ),
                 ),
                 Visibility(visible: StringUtils.isNotEmpty(_validationErrorMsg), child:
-                  Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
-                    Column(
-                      children: [
-                        Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
-                        Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
-                          ),
+                  Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(vertical: 12), child:
+                    Column(children: [
+                      Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+                      Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],),
                   ),
                 ),
                 Container(height: 12),
                 RoundedButton(
-                  label: buttonAddTitle,
-                  hint: buttonAddHint,
-                  onTap: _onTapAdd,
+                  label: buttonProceedTitle,
+                  hint: buttonProceedHint,
+                  onTap: _onTapProceed,
                   backgroundColor: Styles().colors?.white,
                   textColor: Styles().colors?.fillColorPrimary,
                   borderColor: Styles().colors?.fillColorSecondary,
-                  contentWeight: 0.65,
-                  conentAlignment: MainAxisAlignment.start,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                  rightIcon: Image.asset('images/icon-plus.png'),
-                  rightIconPadding: EdgeInsets.only(right: 8),
-                  leftIconPadding: EdgeInsets.zero,
+                  rightIcon: proceedRightIcon,
+                  iconPadding: 16,
                   progress: _isLoading,
                 ),
               ]),
@@ -160,7 +191,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
     });
   }
   
-  void _onTapAdd() {
+  void _onTapProceed() {
     String analyticsText, validationText;
     if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
       analyticsText = 'Add Phone Number';
@@ -205,19 +236,17 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
   void _loginByPhone(String? phoneNumber) {
     setState(() { _isLoading = true; });
 
-    if (!Auth2().isPhoneLinked){ // at most one phone number may be linked at a time
+    if (widget.link != true) {
+      Auth2().authenticateWithPhone(phoneNumber).then((Auth2PhoneRequestCodeResult result) {
+        _onPhoneInitiated(phoneNumber, result);
+      });
+    } else if (!Auth2().isPhoneLinked) { // at most one phone number may be linked at a time
       Map<String, dynamic> creds = {
         "phone": phoneNumber
       };
       Map<String, dynamic> params = {};
-      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
-        if (result == Auth2LinkResult.succeeded) {
-          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.succeeded);
-        } else if (result == Auth2LinkResult.failedAccountExist) {
-          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.failedAccountExist);
-        } else {
-          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.failed);
-        }
+      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((Auth2LinkResult result) {
+        _onPhoneInitiated(phoneNumber, auth2PhoneRequestCodeResultFromAuth2LinkResult(result));
       });
     } else {
       setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.linked", "You have already added a phone number to your account."));
@@ -230,39 +259,53 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
   void _onPhoneInitiated(String? phoneNumber, Auth2PhoneRequestCodeResult result) {
     if (mounted) {
       setState(() { _isLoading = false; });
-    }
 
-    if (result == Auth2PhoneRequestCodeResult.succeeded) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginPhoneConfirmPanel(phoneNumber: phoneNumber, onFinish: widget.onFinish)));
-    } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
-      setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.failed.exists", "An account is already using this phone number."));
-    } else {
-      setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.failed", "Failed to send phone verification code. An unexpected error has occurred."));
+      if (result == Auth2PhoneRequestCodeResult.succeeded) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginPhoneConfirmPanel(phoneNumber: phoneNumber, link: widget.link, onFinish: widget.onFinish)));
+      } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
+        setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.failed.exists", "An account is already using this phone number."));
+      } else {
+        setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.failed", "Failed to send phone verification code. An unexpected error has occurred."));
+      }
     }
   }
 
   void _loginByEmail(String? email) {
     setState(() { _isLoading = true; });
 
-    Auth2().canLink(email, Auth2LoginType.email).then((bool? result) {
-      if (mounted) {
-        setState(() { _isLoading = false; });
-        if (result != null) {
-          if (!result) {
-            setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.failed", "An account is already using this email address."),);
-            return;
-          } else if (Auth2().isEmailLinked) { // at most one email address may be linked at a time
-            setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.linked", "You have already added an email address to your account."));
-            return;
+    if (widget.link == true) {
+      Auth2().canLink(email, Auth2LoginType.email).then((bool? result) {
+        if (mounted) {
+          setState(() { _isLoading = false; });
+          if (result == null) {
+            setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.failed", "Failed to send verification email. An unexpected error has occurred."));
           }
-          
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginEmailPanel(email: email, onFinish: widget.onFinish)));
+          else if (result == false) {
+            setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.failed", "An account is already using this email address."),);
+          }
+          else if (Auth2().isEmailLinked) { // at most one email address may be linked at a time
+            setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.linked", "You have already added an email address to your account."));
+          }
+          else {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginEmailPanel(email: email, state: Auth2EmailAccountState.nonExistent, link: widget.link, onFinish: widget.onFinish)));
+          }
         }
-        else {
-          setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.failed", "Failed to send verification email. An unexpected error has occurred."));
+      });
+    }
+    else {
+      Auth2().canSignIn(email, Auth2LoginType.email).then((bool? result) {
+        if (mounted) {
+          setState(() { _isLoading = false; });
+          if (result != null) {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginEmailPanel(email: email,
+                state: result ? Auth2EmailAccountState.verified : Auth2EmailAccountState.nonExistent, link: widget.link, onFinish: widget.onFinish)));
+          }
+          else {
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   void setErrorMsg(String? msg, {String? details}) {

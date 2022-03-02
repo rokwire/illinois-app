@@ -239,20 +239,16 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     setState(() { _isLoading = true; });
 
     if (!_link) {
-      Auth2().authenticateWithPhone(phoneNumber).then((result) => _onPhoneInitiated(phoneNumber, result));
+      Auth2().authenticateWithPhone(phoneNumber).then((Auth2PhoneRequestCodeResult result) {
+        _onPhoneInitiated(phoneNumber, result);
+      } );
     } else if (!Auth2().isPhoneLinked){ // at most one phone number may be linked at a time
       Map<String, dynamic> creds = {
         "phone": phoneNumber
       };
       Map<String, dynamic> params = {};
-      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
-        if (result == Auth2LinkResult.succeeded) {
-          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.succeeded);
-        } else if (result == Auth2LinkResult.failedAccountExist) {
-          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.failedAccountExist);
-        } else {
-          _onPhoneInitiated(phoneNumber, Auth2PhoneRequestCodeResult.failed);
-        }
+      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((Auth2LinkResult result) {
+        _onPhoneInitiated(phoneNumber, auth2PhoneRequestCodeResultFromAuth2LinkResult(result));
       });
     } else {
       setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.linked.text", "You have already added a phone number to your account."));
@@ -265,17 +261,18 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
   void _onPhoneInitiated(String? phoneNumber, Auth2PhoneRequestCodeResult result) {
     if (mounted) {
       setState(() { _isLoading = false; });
+
+      if (result == Auth2PhoneRequestCodeResult.succeeded) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginPhoneConfirmPanel(phoneNumber: phoneNumber, onboardingContext: widget.onboardingContext)));
+      } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists", "An account is already using this phone number."),
+            details: Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists.details",
+                "1. You will need to sign in to the other account with this phone number.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
+      } else {
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed", "Failed to send phone verification code. An unexpected error has occurred."));
+      }
     }
 
-    if (result == Auth2PhoneRequestCodeResult.succeeded) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginPhoneConfirmPanel(phoneNumber: phoneNumber, onboardingContext: widget.onboardingContext)));
-    } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists", "An account is already using this phone number."),
-          details: Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed.exists.details",
-              "1. You will need to sign in to the other account with this phone number.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
-    } else {
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed", "Failed to send phone verification code. An unexpected error has occurred."));
-    }
   }
 
   void _loginByEmail(String? email) {
@@ -285,20 +282,18 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
       Auth2().canLink(email, Auth2LoginType.email).then((bool? result) {
         if (mounted) {
           setState(() { _isLoading = false; });
-          if (result != null) {
-            if (!result) {
-              setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.link.failed.exists", "An account is already using this email address."),
-                  details: Localization().getStringEx("panel.onboarding2.phone_or_email.email.link.failed.exists.details",
-                      "1. You will need to sign in to the other account with this email address.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
-              return;
-            } else if (Auth2().isEmailLinked) { // at most one email address may be linked at a time
-              setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.linked.text", "You have already added an email address to your account."));
-              return;
-            }
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: Auth2EmailAccountState.nonExistent, onboardingContext: widget.onboardingContext)));
+          
+          if (result == null) {
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));
+          }
+          else if (result == false) {
+            setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.failed", "An account is already using this email address."),);
+          }
+          else if (Auth2().isEmailLinked) { // at most one email address may be linked at a time
+            setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.linked", "You have already added an email address to your account."));
           }
           else {
-            setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: Auth2EmailAccountState.nonExistent, onboardingContext: widget.onboardingContext)));
           }
         }
       });
