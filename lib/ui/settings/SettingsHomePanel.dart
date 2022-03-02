@@ -19,11 +19,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:illinois/ui/settings/SettingsLinkedPhonePanel.dart';
+import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
-import 'package:illinois/ui/settings/SettingsLinkedEmailPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -793,7 +792,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
             onTap: () =>
                 _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.email)),);
-            // _onTapAlternatePhone(SettingsLinkedEmailPanel.mocData)));//TBD REMOVE MOCED DATA
+            // _onTapAlternatePhone(SettingsLinkedPhonePanel.mocData)));//TBD REMOVE MOCED DATA
       }
     }
 
@@ -915,12 +914,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   void _onTapAlternateEmail(Auth2Type linked) {
     Analytics().logSelect(target: "Alternate Email");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedEmailPanel(linkedEmail: linked)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.email,)));
   }
 
   void _onTapAlternatePhone(Auth2Type linked) {
     Analytics().logSelect(target: "Alternate Phone");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedPhonePanel(linkedPhone: linked)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.phone,)));
   }
 
   // Privacy
