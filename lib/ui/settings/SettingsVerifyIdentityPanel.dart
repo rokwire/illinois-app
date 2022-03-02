@@ -16,11 +16,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -138,12 +138,12 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
     Navigator.push(
         context,
         CupertinoPageRoute(
-            builder: (context) => Onboarding2LoginPhoneOrEmailPanel(onboardingContext: {
-                  "onContinueAction": () {
+            builder: (context) => SettingsLoginPhoneOrEmailPanel(
+                  onFinish: () {
                     _setLoading(false);
                     _didLogin(context);
                   }
-                })));
+                )));
   }
 
   void _didLogin(_) {

@@ -19,6 +19,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -28,7 +29,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
@@ -224,12 +224,10 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           Analytics().logSelect(target: "Log in");
           Navigator.push(context, CupertinoPageRoute(
             settings: RouteSettings(),
-            builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
-              onboardingContext: {
-                "onContinueAction": () {
-                  _didLogin(context);
-                }
-              },
+            builder: (context) => SettingsLoginPhoneOrEmailPanel(
+              onFinish: () {
+                _didLogin(context);
+              }
             ),
           ),);
         },
