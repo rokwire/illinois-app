@@ -10,17 +10,18 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-class SettingsLinkPhoneConfirmPanel extends StatefulWidget {
+class SettingsLoginPhoneConfirmPanel extends StatefulWidget {
 
   final String? phoneNumber;
+  final bool? link;
   final void Function()? onFinish;
 
-  SettingsLinkPhoneConfirmPanel({this.phoneNumber, this.onFinish});
+  SettingsLoginPhoneConfirmPanel({this.phoneNumber, this.link, this.onFinish});
 
-  _SettingsLinkPhoneConfirmPanelState createState() => _SettingsLinkPhoneConfirmPanelState();
+  _SettingsLoginPhoneConfirmPanelState createState() => _SettingsLoginPhoneConfirmPanelState();
 }
 
-class _SettingsLinkPhoneConfirmPanelState extends State<SettingsLinkPhoneConfirmPanel>  {
+class _SettingsLoginPhoneConfirmPanelState extends State<SettingsLoginPhoneConfirmPanel>  {
 
   TextEditingController _codeController = TextEditingController();
   String? _verificationErrorMsg;
@@ -53,7 +54,7 @@ class _SettingsLinkPhoneConfirmPanelState extends State<SettingsLinkPhoneConfirm
         Expanded(child:
           SingleChildScrollView(scrollDirection: Axis.vertical, child:
             Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              child: Column(children:[
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
                 Row(children: [ Expanded(child:
                   Text(description, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary),)
                 )],),
@@ -75,40 +76,42 @@ class _SettingsLinkPhoneConfirmPanelState extends State<SettingsLinkPhoneConfirm
                       keyboardType: TextInputType.phone,
                       style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies?.regular, color: Styles().colors?.textBackground),
                       decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.background!, width: 2.0, style: BorderStyle.solid),),
-                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.background!, width: 2.0),),
+                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
                       ),
                     ),
                   ),
                 ),
                 Visibility(visible: StringUtils.isNotEmpty(_verificationErrorMsg), child:
-                  Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12), child:
+                  Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
                     Text(StringUtils.ensureNotEmpty(_verificationErrorMsg), style: TextStyle(color: Colors.red, fontSize: 14, fontFamily: Styles().fontFamilies!.medium),),
                   ),
                 ),
                 
                 Container(height: 12),
-                Row(children: [
-                  Expanded(child: RoundedButton(
-                    label:  Localization().getStringEx("panel.onboarding.confirm_phone.button.confirm.short.label", "Confirm"),
-                    hint: Localization().getStringEx("panel.onboarding.confirm_phone.button.confirm.hint", ""),
-                    onTap: _onTapConfirm,
-                    backgroundColor: Styles().colors?.white,
-                    textColor: Styles().colors?.fillColorPrimary,
-                    borderColor: Styles().colors?.fillColorSecondary,
-                    progress: _isConfirming,
-                  ),),
-                  Container(width: 12),
-                  Expanded(child: RoundedButton(
-                    label:  Localization().getStringEx("panel.onboarding.confirm_phone.button.link.cancel.label", "Cancel"),
-                    hint: Localization().getStringEx("panel.onboarding.confirm_phone.button.link.cancel.hint", ""),
-                    onTap: _onTapCancel,
-                    backgroundColor: Styles().colors?.white,
-                    textColor: Styles().colors?.fillColorPrimary,
-                    borderColor: Styles().colors?.fillColorSecondary,
-                    progress: _isCanceling,
-                  ),),
-                ],),
+                RoundedButton(
+                  label:  Localization().getStringEx("panel.onboarding.confirm_phone.button.confirm.label", "Confirm phone number"),
+                  hint: Localization().getStringEx("panel.onboarding.confirm_phone.button.confirm.hint", ""),
+                  onTap: _onTapConfirm,
+                  backgroundColor: Styles().colors?.white,
+                  textColor: Styles().colors?.fillColorPrimary,
+                  borderColor: Styles().colors?.fillColorSecondary,
+                  progress: _isConfirming,
+                ),
+                Visibility(visible: (widget.link == true), child:
+                  Padding(padding: EdgeInsets.only(top: 8), child:
+                    RoundedButton(
+                      label:  Localization().getStringEx("panel.onboarding.confirm_phone.button.link.cancel.label", "Cancel"),
+                      hint: Localization().getStringEx("panel.onboarding.confirm_phone.button.link.cancel.hint", ""),
+                      onTap: _onTapCancel,
+                      backgroundColor: Styles().colors?.white,
+                      textColor: Styles().colors?.fillColorPrimary,
+                      borderColor: Styles().colors?.fillColorSecondary,
+                      progress: _isCanceling,
+                    ),
+                  ),
+                ),
 
               ]),
             ),
@@ -134,29 +137,47 @@ class _SettingsLinkPhoneConfirmPanelState extends State<SettingsLinkPhoneConfirm
       return;
     }
     String? phoneNumber = widget.phoneNumber;
-    setState(() {
-      _isConfirming = true;
-    });
+    
+    setState(() { _isConfirming = true; });
 
-    Map<String, dynamic> creds = {
-      "phone": phoneNumber,
-      "code": _codeController.text,
-    };
-    Map<String, dynamic> params = {};
-    Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
-      if(mounted) {
+    if (widget.link != true) {
+      Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text).then((result) {
+        _onPhoneVerified(result);
+      });
+    } else {
+      Map<String, dynamic> creds = {
+        "phone": phoneNumber,
+        "code": _codeController.text,
+      };
+      Map<String, dynamic> params = {};
+      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
+        _onPhoneVerified(auth2PhoneSendCodeResultFromAuth2LinkResult(result));
+      });
+    }
+  }
+
+  void _onPhoneVerified(Auth2PhoneSendCodeResult result) {
+    if (mounted) {
+      setState(() { _isConfirming = false; });
+
+      if (result == Auth2PhoneSendCodeResult.failed) {
         setState(() {
-          _isConfirming = false;
+          _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.server_error.text", "Failed to verify code. An unexpected error occurred.");
         });
-        if (result == Auth2LinkResult.succeeded) {
-          _onPhoneVerified(Auth2PhoneSendCodeResult.succeeded);
-        } else if (result == Auth2LinkResult.failedInvalid) {
-          _onPhoneVerified(Auth2PhoneSendCodeResult.failedInvalid);
-        } else {
-          _onPhoneVerified(Auth2PhoneSendCodeResult.failed);
-        }
+      } else if (result == Auth2PhoneSendCodeResult.failedInvalid) {
+        setState(() {
+          _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.invalid.text", "Incorrect code.");
+        });
+      } else {
+        _finishedPhoneVerification();
       }
-    });
+    }
+  }
+
+  void _finishedPhoneVerification() {
+    if (widget.onFinish != null) {
+      widget.onFinish!();
+    }
   }
 
   void _onTapCancel() {
@@ -184,26 +205,6 @@ class _SettingsLinkPhoneConfirmPanelState extends State<SettingsLinkPhoneConfirm
         }
       }
     });
-  }
-
-  void _onPhoneVerified(Auth2PhoneSendCodeResult result) {
-    if (result == Auth2PhoneSendCodeResult.failed) {
-      setState(() {
-        _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.server_error.text", "Failed to verify code. An unexpected error occurred.");
-      });
-    } else if (result == Auth2PhoneSendCodeResult.failedInvalid) {
-      setState(() {
-        _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.invalid.text", "Incorrect code.");
-      });
-    } else {
-      _finishedPhoneVerification();
-    }
-  }
-
-  void _finishedPhoneVerification() {
-    if (widget.onFinish != null) {
-      widget.onFinish!();
-    }
   }
 
   void _validateCode() {

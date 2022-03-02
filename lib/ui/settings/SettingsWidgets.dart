@@ -201,7 +201,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
                 width: 1),
             borderRadius: BorderRadius.circular(25),
           ),
-          padding: EdgeInsets.symmetric(horizontal: 16, ),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child:
           Row(children: <Widget>[
             Expanded(child:
@@ -228,16 +228,20 @@ class _SettingsDialogState extends State<SettingsDialog>{
                       width: 1),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 16,),
-                child: Text(widget.continueButtonTitle??"", textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: _getIsContinueEnabled?Styles().colors!.white: Styles().colors!.fillColorPrimary),),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(children: <Widget>[
+                  Expanded(child:
+                      Text(widget.continueButtonTitle??"", textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: _getIsContinueEnabled?Styles().colors!.white: Styles().colors!.fillColorPrimary),),
+                  )
+                ],)
               )),
           Visibility(
             visible: _loading!,
             child: Align(alignment: Alignment.center,
-              child:Container(
+              child: Container(
                 padding: EdgeInsets.all(8),
                 child: Center(child:
-                CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), strokeWidth: 2,),),),
+                CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white), strokeWidth: 2,),),),
             ))
         ],));
   }

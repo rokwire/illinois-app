@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -172,12 +172,10 @@ class HomeLoginPhoneOrEmailWidget extends StatelessWidget{
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(
         settings: RouteSettings(),
-        builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
-          onboardingContext: {
-            "onContinueAction": () {
-              _didLogin(context);
-            }
-          },
+        builder: (context) => SettingsLoginPhoneOrEmailPanel(
+          onFinish: () {
+            _didLogin(context);
+          }
         ),
       ),);
     } else {

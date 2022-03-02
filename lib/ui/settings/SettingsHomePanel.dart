@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:illinois/ui/settings/SettingsLinkPhoneOrEmailPanel.dart';
+import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
+import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -34,7 +39,6 @@ import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
@@ -346,23 +350,15 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     Analytics().logSelect(target: "Phone or Email Login");
     Analytics().logSelect(target: "Phone or Email Login");
     if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(
-        settings: RouteSettings(),
-        builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
-          onboardingContext: {
-            "link": false,
-            "onContinueAction": () {
-              _didLogin(context);
-            }
-          },
-        ),
-      ),);
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(onFinish: () {
+        _popToMe();
+      },),),);
     } else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
   }
 
-  void _didLogin(_) {
+  void _popToMe() {
     Navigator.of(context).popUntil((Route route){
       return AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType;
     });
@@ -440,7 +436,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.add(Padding(
             padding: EdgeInsets.only(top: 12),
             child: RoundedButton(
-                contentWeight: 0.3,
+                contentWeight: 0.45,
                 fontSize: 16,
                 conentAlignment: MainAxisAlignment.start,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -489,7 +485,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.add(Padding(
             padding: EdgeInsets.only(top: 12),
             child: RoundedButton(
-                contentWeight: 0.3,
+                contentWeight: 0.45,
                 fontSize: 16,
                 conentAlignment: MainAxisAlignment.start,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -537,7 +533,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.add(Padding(
             padding: EdgeInsets.only(top: 12),
             child: RoundedButton(
-                contentWeight: 0.3,
+                contentWeight: 0.45,
                 fontSize: 16,
                 conentAlignment: MainAxisAlignment.start,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -684,7 +680,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           String code = codes[index];
           BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
           if (code == 'info') {
-            contentList.add(GestureDetector(onTap: _onTapAlternatePhone, child: Container(
+            contentList.add(GestureDetector(onTap: (){_onTapAlternatePhone(linked);}, child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
                 child: Padding(
@@ -724,7 +720,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           String code = codes[index];
           BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
           if (code == 'info') {
-            contentList.add(GestureDetector(onTap: _onTapAlternateEmail, child: Container(
+            contentList.add(GestureDetector(onTap: (){_onTapAlternateEmail(linked);}, child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
                 child: Padding(
@@ -785,14 +781,18 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             border: _borderFromIndex(index, codes.length),
             backgroundColor: Colors.transparent,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
-            onTap: () => _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode.phone)),);
+            onTap: () =>
+                _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.phone)),);
+              // _onTapAlternateEmail(SettingsLinkedEmailPanel.mocData)),); //TBD REMOVE MOCED DATA
       }
       else if (code == 'email') {
         contentList.add(RibbonButton(
             border: _borderFromIndex(index, codes.length),
             backgroundColor: Colors.transparent,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
-            onTap: () => _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode.email)),);
+            onTap: () =>
+                _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.email)),);
+            // _onTapAlternatePhone(SettingsLinkedPhonePanel.mocData)));//TBD REMOVE MOCED DATA
       }
     }
 
@@ -844,23 +844,82 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     );
   }
 
-  void _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode mode) {
-    Analytics().logSelect(target: "Link ${settingsLinkPhoneOrEmailModeToString(mode)}");
+  void _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode mode) {
+    Analytics().logSelect(target: "Link ${settingsLoginPhoneOrEmailModeToString(mode)}");
+
     if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLinkPhoneOrEmailPanel(mode: mode, onFinish: () {
-        _didLogin(context);
-      },)),);
+      SettingsDialog.show(context,
+        title: Localization().getStringEx("panel.settings.link.login_prompt.title", "Sign In Requied"),
+        message: [
+          TextSpan(text: Localization().getStringEx("panel.settings.link.login_prompt.description", "For security, you must sign in again to confirm it's you before adding an alternate account.")),
+        ],
+        continueTitle: Localization().getStringEx("panel.settings.link.login_prompt.confirm.title", "Sign In"),
+        onContinue: (List<String> selectedValues, OnContinueProgressController progressController ) {
+          
+          progressController(loading: true);
+          _linkVerifySignIn().then((bool? result) {
+            progressController(loading: false);
+            _popToMe();
+            if (result == true) {
+              Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(mode: mode, link: true, onFinish: () {
+                _popToMe();
+              },)),);
+            }
+          });
+        },
+        longButtonTitle: true
+      );
     } else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
   }
 
-  void _onTapAlternateEmail() {
-    //TBD: implement when we have the panel
+  Future<bool?> _linkVerifySignIn() async {
+    if (Auth2().isOidcLoggedIn) {
+      Auth2OidcAuthenticateResult? result = await Auth2().authenticateWithOidc();
+      return (result != null) ? (result == Auth2OidcAuthenticateResult.succeeded) : null;
+    }
+    else if (Auth2().isEmailLoggedIn) {
+      Completer<bool?> completer = Completer<bool?>();
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
+        SettingsLoginEmailPanel(email: Auth2().account?.authType?.identifier, state: Auth2EmailAccountState.verified, onFinish: () {
+          completer.complete(true);
+        },)
+      ),).then((_) {
+        completer.complete(null);
+      });
+      return completer.future;
+    }
+    else if (Auth2().isPhoneLoggedIn) {
+      Completer<bool?> completer = Completer<bool?>();
+      Auth2().authenticateWithPhone(Auth2().account?.authType?.identifier).then((Auth2PhoneRequestCodeResult result) {
+        if (result == Auth2PhoneRequestCodeResult.succeeded) {
+          Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
+            SettingsLoginPhoneConfirmPanel(phoneNumber: Auth2().account?.authType?.identifier, onFinish: () {
+              completer.complete(true);
+            },)
+          ),).then((_) {
+            completer.complete(null);
+          });
+        }
+        else {
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed", "Failed to send phone verification code. An unexpected error has occurred.")).then((_) {
+            completer.complete(null);
+          });
+        }
+      });
+      return completer.future;
+    }
   }
 
-  void _onTapAlternatePhone() {
-    //TBD: implement when we have the panels
+  void _onTapAlternateEmail(Auth2Type linked) {
+    Analytics().logSelect(target: "Alternate Email");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.email,)));
+  }
+
+  void _onTapAlternatePhone(Auth2Type linked) {
+    Analytics().logSelect(target: "Alternate Phone");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.phone,)));
   }
 
   // Privacy
