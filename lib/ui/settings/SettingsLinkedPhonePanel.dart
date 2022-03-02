@@ -60,7 +60,7 @@ class _SettingsLinkedPhoneState extends State<SettingsLinkedPhonePanel>{
     });
 
     if(account?.phone != null) {
-      Auth2().unlinkAccountAuthType(Auth2LoginType.phone, account!.phone!).then((bool? result) {
+      Auth2().unlinkAccountAuthType(Auth2LoginType.phoneTwilio, account!.phone!).then((bool? result) {
         if (mounted) {
           setState(() {
             _isLoading = false;
