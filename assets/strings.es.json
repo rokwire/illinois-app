@@ -1108,7 +1108,7 @@
     "panel.settings.label.offline.netid":"Feature not available when offline.",
     "panel.settings.label.offline.phone_ver":"Verifique que su número de teléfono no esté disponible sin conexión.",
 
-    "panel.settings.link.login_prompt.title": "Sign In Requied",
+    "panel.settings.link.login_prompt.title": "Sign In Required",
     "panel.settings.link.login_prompt.description": "For security, you must sign in again to confirm it's you before adding an alternate account.",
     "panel.settings.link.login_prompt.confirm.title": "Sign In",
 

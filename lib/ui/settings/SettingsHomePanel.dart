@@ -850,7 +850,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
     if (Connectivity().isNotOffline) {
       SettingsDialog.show(context,
-        title: Localization().getStringEx("panel.settings.link.login_prompt.title", "Sign In Requied"),
+        title: Localization().getStringEx("panel.settings.link.login_prompt.title", "Sign In Required"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.link.login_prompt.description", "For security, you must sign in again to confirm it's you before adding an alternate account.")),
         ],

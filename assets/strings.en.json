@@ -1039,7 +1039,7 @@
     "panel.settings.home.phone_ver.button.disconnect":"Sign Out",
     "panel.settings.home.email_login.message":"Signed in with your Email",
     "panel.settings.home.email_login.button.connect":"Login With Email",
-    "panel.settings.home.email_login.button.disconnect":"Sing Out",
+    "panel.settings.home.email_login.button.disconnect":"Sign Out",
     "panel.settings.home.linked.title": "Alternate Sign Ins",
     "panel.settings.home.linked.net_id.header": "UIN",
     "panel.settings.home.linked.net_id.button.remove":"Remove",
@@ -1109,7 +1109,7 @@
     "panel.settings.label.offline.netid":"Feature not available when offline.",
     "panel.settings.label.offline.phone_or_email":"Feature not available when offline.",
 
-    "panel.settings.link.login_prompt.title": "Sign In Requied",
+    "panel.settings.link.login_prompt.title": "Sign In Required",
     "panel.settings.link.login_prompt.description": "For security, you must sign in again to confirm it's you before adding an alternate account.",
     "panel.settings.link.login_prompt.confirm.title": "Sign In",
 

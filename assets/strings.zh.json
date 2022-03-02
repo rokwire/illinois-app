@@ -1110,7 +1110,7 @@
 
 	"panel.settings.label.offline.phone_ver":"确认您的电话号码在脱机时不可用.",
 
-	"panel.settings.link.login_prompt.title": "Sign In Requied",
+	"panel.settings.link.login_prompt.title": "Sign In Required",
 	"panel.settings.link.login_prompt.description": "For security, you must sign in again to confirm it's you before adding an alternate account.",
 	"panel.settings.link.login_prompt.confirm.title": "Sign In",
 
