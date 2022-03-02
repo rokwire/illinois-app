@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -25,6 +24,7 @@ class SettingsLinkedPhonePanel extends StatefulWidget{
 }
 
 class _SettingsLinkedPhoneState extends State<SettingsLinkedPhonePanel>{
+  // ignore: unused_field
   bool _isLoading = false; //TBD show progress
 
   @override

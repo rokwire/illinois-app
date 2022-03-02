@@ -23,7 +23,7 @@ class SettingsLinkedEmailPanel extends StatefulWidget{
 }
 
 class _SettingsLinkedEmailState extends State<SettingsLinkedEmailPanel>{
-  bool _isLoading = false; //TBD show progress
+  //TBD show progress: bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
