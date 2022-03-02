@@ -322,8 +322,6 @@ class LinkAccountContentWidget extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-
-    //TBD
     return Container(
       decoration: BoxDecoration(border: Border.all(color: Styles().colors!.lightGray!),borderRadius: BorderRadius.all(Radius.circular(4))),
       child: Column(
@@ -369,15 +367,15 @@ class LinkAccountContentWidget extends StatelessWidget{
 
   String get _accountTypeText{
     switch(mode){
-      case LinkAccountContentMode.phone: return "Phone";
-      case LinkAccountContentMode.email: return "Email";
+      case LinkAccountContentMode.phone: return Localization().getStringEx("panel.settings.linked.phone.field.label.phone","Phone");
+      case LinkAccountContentMode.email: return Localization().getStringEx("panel.settings.linked.email.field.label.email","Email");
     }
   }
 
   String get _buttonText{
     switch(mode){
-      case LinkAccountContentMode.phone: return "Remove this Phone Number";
-      case LinkAccountContentMode.email: return "Remove this Email Address";
+      case LinkAccountContentMode.phone: return Localization().getStringEx("panel.settings.linked.phone.button.label.phone", "Remove this Phone Number");
+      case LinkAccountContentMode.email: return Localization().getStringEx("panel.settings.linked.email.button.label.email", "Remove this Email Address");
     }
   }
 

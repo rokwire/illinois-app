@@ -1139,7 +1139,19 @@
     "panel.settings.link.both.label.button.add.title": "Add Phone or Email",
     "panel.settings.link.both.button.add.hint": "",
     "panel.settings.link.both.label.validation": "Please enter your phone number or email address.",
-    
+
+    "panel.settings.linked.phone.label.title": "Alternate Phone Number",
+    "panel.settings.linked.phone.label.description": "You may sign in using your phone number as an alternate way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.",
+    "panel.settings.linked.phone.label.failed": "Failed to disconnect phone",
+    "panel.settings.linked.phone.field.label.phone": "Phone",
+    "panel.settings.linked.phone.button.label.phone": "Remove this Phone Number",
+
+    "panel.settings.linked.email.label.title": "Alternate Email",
+    "panel.settings.linked.email.label.description": "You may sign in using your email as an alternate way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.",
+    "panel.settings.linked.email.label.failed": "Failed to disconnect email",
+    "panel.settings.linked.email.field.label.email": "Email",
+    "panel.settings.linked.email.button.label.email": "Remove this Email Address",
+
     "widget.settings.dialog.button.cancel.title": "Cancel",
 
     "panel.settings.notifications.label.title":"Notifications",
