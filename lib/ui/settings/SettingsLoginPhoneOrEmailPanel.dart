@@ -14,11 +14,11 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsLoginPhoneOrEmailPanel extends StatefulWidget {
-  final SettingsLinkPhoneOrEmailMode mode;
+  final SettingsLoginPhoneOrEmailMode mode;
   final String? identifier;
   final void Function()? onFinish;
 
-  SettingsLoginPhoneOrEmailPanel({this.mode = SettingsLinkPhoneOrEmailMode.both, this.identifier, this.onFinish });
+  SettingsLoginPhoneOrEmailPanel({this.mode = SettingsLoginPhoneOrEmailMode.both, this.identifier, this.onFinish });
 
   _SettingsLoginPhoneOrEmailPanelState createState() => _SettingsLoginPhoneOrEmailPanelState();
 }
@@ -49,7 +49,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
   Widget build(BuildContext context) {
     String title, description, headingTitle, headingHint, buttonAddTitle, buttonAddHint;
     TextInputType keyboardType;
-    if (widget.mode == SettingsLinkPhoneOrEmailMode.phone) {
+    if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
       title = Localization().getStringEx('panel.settings.link.phone.label.title', 'Add Phone Number');
       description = Localization().getStringEx('panel.settings.link.phone.label.description', 'You may sign in using your phone number as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
       headingTitle = Localization().getStringEx('panel.settings.link.phone.label.heading', 'ADD MY PHONE NUMBER');
@@ -58,7 +58,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
       buttonAddHint = Localization().getStringEx('panel.settings.link.phone.button.add.hint', '');
       keyboardType = TextInputType.phone;
     }
-    else if (widget.mode == SettingsLinkPhoneOrEmailMode.email){
+    else if (widget.mode == SettingsLoginPhoneOrEmailMode.email){
       title = Localization().getStringEx('panel.settings.link.email.label.title', 'Add Email Address');
       description = Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
       headingTitle = Localization().getStringEx('panel.settings.link.email.label.heading', 'ADD MY EMAIL ADDRESS');
@@ -162,11 +162,11 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
   
   void _onTapAdd() {
     String analyticsText, validationText;
-    if (widget.mode == SettingsLinkPhoneOrEmailMode.phone) {
+    if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
       analyticsText = 'Add Phone Number';
       validationText = Localization().getStringEx('panel.settings.link.phone.label.validation', 'Please enter your phone number.');
     }
-    else if (widget.mode == SettingsLinkPhoneOrEmailMode.email){
+    else if (widget.mode == SettingsLoginPhoneOrEmailMode.email){
       analyticsText = 'Add Email Address';
       validationText = Localization().getStringEx('panel.settings.link.email.label.validation', 'Please enter your email address.');
     }
@@ -183,10 +183,10 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
 
       String phoneOrEmailValue = _phoneOrEmailController!.text;
       String? phone, email;
-      if (widget.mode == SettingsLinkPhoneOrEmailMode.phone || widget.mode == SettingsLinkPhoneOrEmailMode.both) {
+      if (widget.mode == SettingsLoginPhoneOrEmailMode.phone || widget.mode == SettingsLoginPhoneOrEmailMode.both) {
         phone = _validatePhoneNumber(phoneOrEmailValue);
       }
-      if (widget.mode == SettingsLinkPhoneOrEmailMode.email || widget.mode == SettingsLinkPhoneOrEmailMode.both) {
+      if (widget.mode == SettingsLoginPhoneOrEmailMode.email || widget.mode == SettingsLoginPhoneOrEmailMode.both) {
         email = StringUtils.isEmailValid(phoneOrEmailValue) ? phoneOrEmailValue : null;
       }
 
@@ -299,16 +299,16 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
   }
 }
 
-enum SettingsLinkPhoneOrEmailMode {
+enum SettingsLoginPhoneOrEmailMode {
   phone,
   email,
   both
 }
 
-String settingsLinkPhoneOrEmailModeToString(SettingsLinkPhoneOrEmailMode mode) {
+String settingsLoginPhoneOrEmailModeToString(SettingsLoginPhoneOrEmailMode mode) {
   switch(mode) {
-    case SettingsLinkPhoneOrEmailMode.phone: return 'phone';
-    case SettingsLinkPhoneOrEmailMode.email: return 'email';
-    case SettingsLinkPhoneOrEmailMode.both: return 'both';
+    case SettingsLoginPhoneOrEmailMode.phone: return 'phone';
+    case SettingsLoginPhoneOrEmailMode.email: return 'email';
+    case SettingsLoginPhoneOrEmailMode.both: return 'both';
   }
 }

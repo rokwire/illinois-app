@@ -788,7 +788,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             backgroundColor: Colors.transparent,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
             onTap: () =>
-                _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode.phone)),);
+                _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.phone)),);
               // _onTapAlternateEmail(SettingsLinkedEmailPanel.mocData)),); //TBD REMOVE MOCED DATA
       }
       else if (code == 'email') {
@@ -797,7 +797,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             backgroundColor: Colors.transparent,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
             onTap: () =>
-                _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode.email)),);
+                _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.email)),);
             // _onTapAlternatePhone(SettingsLinkedEmailPanel.mocData)));//TBD REMOVE MOCED DATA
       }
     }
@@ -850,8 +850,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     );
   }
 
-  void _onLinkPhoneOrEmailClicked(SettingsLinkPhoneOrEmailMode mode) {
-    Analytics().logSelect(target: "Link ${settingsLinkPhoneOrEmailModeToString(mode)}");
+  void _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode mode) {
+    Analytics().logSelect(target: "Link ${settingsLoginPhoneOrEmailModeToString(mode)}");
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(mode: mode, onFinish: () {
         _didLogin(context);
