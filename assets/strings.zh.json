@@ -1007,16 +1007,16 @@
 	"panel.laundry_detail.available.format":"%s 可用",
 
 	"panel.settings.home.settings.header":"设置",
-	"panel.settings.home.connect.not_logged_in.title":"連接到伊利諾伊州",
+	"panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",
 	"panel.settings.home.connect.not_logged_in.netid.description.part_1": "你是不是一位",
 	"panel.settings.home.connect.not_logged_in.netid.description.part_2": "大學生",
 	"panel.settings.home.connect.not_logged_in.netid.description.part_3": "要么",
 	"panel.settings.home.connect.not_logged_in.netid.description.part_4": "員工",
 	"panel.settings.home.connect.not_logged_in.netid.description.part_5": "？ 使用您的NetID登錄以查看特定於您的伊利諾伊州信息，例如您的Illini Cash和膳食計劃",
-	"panel.settings.home.connect.not_logged_in.netid.title": "連接您的NetID",
+	"panel.settings.home.connect.not_logged_in.netid.title": "Sign in with your NetID",
 	"panel.settings.home.connect.not_logged_in.phone_or_email.description.part_1": "Don't have a NetID? ",
 	"panel.settings.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email to save your preferences and have the same experience on more than one device.",
-	"panel.settings.home.connect.not_logged_in.phone_or_email.title": "Proceed",
+	"panel.settings.home.connect.not_logged_in.phone_or_email.title": "Continue",
 	"panel.settings.home.connect.not_linked.netid.title": "Add a NetID",
 	"panel.settings.home.connect.not_linked.phone.title": "Add a phone number",
 	"panel.settings.home.connect.not_linked.email.title": "Add an email address",
@@ -1032,7 +1032,7 @@
 	"panel.settings.home.customizations.food_filters.title":"食物过滤器",
 	"panel.settings.home.customizations.display_times_in_central_time.title":"以中部时间显示所有时间",
 	"panel.settings.home.net_id.message":"使用您的 NetID 登錄",
-	"panel.settings.home.net_id.button.connect":"连接您的NetID",
+	"panel.settings.home.net_id.button.connect":"Sign in your NetID",
 	"panel.settings.home.net_id.button.disconnect":"登出",
 	"panel.settings.home.phone_ver.message":"使用您的手機登錄",
 	"panel.settings.home.phone_ver.button.connect":"验证您的电话号码",
@@ -1110,7 +1110,7 @@
 
 	"panel.settings.label.offline.phone_ver":"确认您的电话号码在脱机时不可用.",
 
-	"panel.settings.link.login_prompt.title": "Sign In Requied",
+	"panel.settings.link.login_prompt.title": "Sign In Required",
 	"panel.settings.link.login_prompt.description": "For security, you must sign in again to confirm it's you before adding an alternate account.",
 	"panel.settings.link.login_prompt.confirm.title": "Sign In",
 
@@ -1131,7 +1131,8 @@
 	"panel.settings.link.phone.label.linked": "You have already added a phone number to your account.",
 	"panel.settings.link.phone.label.failed": "Failed to send phone verification code. An unexpected error has occurred.",
 	"panel.settings.link.phone.label.failed.exists": "An account is already using this phone number.",
-	
+	"panel.settings.link.phone.label.detail": "1. You will need to sign in to the other account with this phone number.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login.",
+
 	"panel.settings.login.email.label.title": "Sign In with Email",
 	"panel.settings.login.email.label.description": "Please enter your email and we will send you a verification email.",
 	"panel.settings.login.email.label.heading": "Email Address:",
@@ -1149,6 +1150,7 @@
 	"panel.settings.link.email.label.linked": "You have already added an email address to your account.",
 	"panel.settings.link.email.label.failed": "Failed to send verification email. An unexpected error has occurred.",
 	"panel.settings.link.email.label.failed.exists": "An account is already using this email address.",
+	"panel.settings.link.email.label.detail": "1. You will need to sign in to the other account with this email address.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login.",
 
 	"panel.settings.login.both.label.title": "Sign In with Phone or Email",
 	"panel.settings.login.both.label.description": "Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email.",

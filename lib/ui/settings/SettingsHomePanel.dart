@@ -251,7 +251,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     contentList.add(Padding(
         padding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 2),
         child: Text(
-          Localization().getStringEx("panel.settings.home.connect.not_logged_in.title", "Connect to Illinois"),
+          Localization().getStringEx("panel.settings.home.connect.not_logged_in.title", "Sign in to Illinois"),
           style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
         ),
       ),
@@ -284,7 +284,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             RibbonButton(
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
               borderRadius: _allRounding,
-              label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Connect your NetID"),
+              label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Sign in with your NetID"),
               onTap: _onConnectNetIdClicked),
             Visibility(visible: _connectingNetId == true, child:
               Container(height: 46, child:
@@ -318,7 +318,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           contentList.add(RibbonButton(
             borderRadius: _allRounding,
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Proceed"),
+            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Continue"),
             onTap: _onPhoneOrEmailLoginClicked),);
       }
     }
@@ -375,9 +375,10 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.addAll(_buildConnectedNetIdLayout());
       }
       else if (code == 'phone') {
-        contentList.add(_OptionsSection(
-          title: Localization().getStringEx("panel.settings.home.phone_ver.title", "Phone Verification"),
-          widgets: _buildConnectedPhoneLayout()));
+        // contentList.add(_OptionsSection(
+        //   title: Localization().getStringEx("panel.settings.home.phone_ver.title", "Phone Verification"),
+        //   widgets: _buildConnectedPhoneLayout()));
+        contentList.addAll(_buildConnectedPhoneLayout());
       }
       else if (code == 'email') {
         contentList.addAll(_buildConnectedEmailLayout());
@@ -417,7 +418,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             RibbonButton(
               borderRadius: borderRadius,
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-              label: Localization().getStringEx("panel.settings.home.net_id.button.connect", "Connect your NetID"),
+              label: Localization().getStringEx("panel.settings.home.net_id.button.connect", "Sign in with your NetID"),
               onTap: _onConnectNetIdClicked),
             Visibility(visible: _connectingNetId == true, child:
               Container(height: 46, child:
@@ -849,7 +850,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
     if (Connectivity().isNotOffline) {
       SettingsDialog.show(context,
-        title: Localization().getStringEx("panel.settings.link.login_prompt.title", "Sign In Requied"),
+        title: Localization().getStringEx("panel.settings.link.login_prompt.title", "Sign In Required"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.link.login_prompt.description", "For security, you must sign in again to confirm it's you before adding an alternate account.")),
         ],
