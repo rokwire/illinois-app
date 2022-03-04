@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Center header bar in Wellness panels [#1417](https://github.com/rokwire/illinois-app/issues/1417).
 
 ## [3.2.31] - 2022-03-02
+### Changed
 - Alternate Login Changes [#1407](https://github.com/rokwire/illinois-app/issues/1407).
 
 ## [3.2.30] - 2022-03-02
+### Changed
 - Alternate Login Changes [#1407](https://github.com/rokwire/illinois-app/issues/1407).
 
 ## [3.2.29] - 2022-03-01
