@@ -375,9 +375,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         contentList.addAll(_buildConnectedNetIdLayout());
       }
       else if (code == 'phone') {
-        // contentList.add(_OptionsSection(
-        //   title: Localization().getStringEx("panel.settings.home.phone_ver.title", "Phone Verification"),
-        //   widgets: _buildConnectedPhoneLayout()));
         contentList.addAll(_buildConnectedPhoneLayout());
       }
       else if (code == 'email') {

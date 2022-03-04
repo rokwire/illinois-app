@@ -50,14 +50,8 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
         _isLoading = true;
       });
 
-      if (widget.mode == LinkAccountMode.email && account?.email != null) {
-        Auth2()
-            .unlinkAccountAuthType(Auth2LoginType.email, account!.email!)
-            .then(_handleResult);
-      }
-      else if (widget.mode == LinkAccountMode.phone && account?.phone != null) {
-        Auth2().unlinkAccountAuthType(
-            Auth2LoginType.phoneTwilio, account!.phone!).then(_handleResult);
+      if (account?.identifier != null) {
+        Auth2().unlinkAccountAuthType(_loginType, account!.identifier!).then(_handleResult);
       }
       else { //No Valid account identifier
         setErrorMsg(_defaultErrorMsg);
@@ -130,6 +124,13 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
 
   Auth2Type? get _linkedAccount{
     return widget.linkedAccount;
+  }
+
+  Auth2LoginType get _loginType{
+    switch (widget.mode){
+      case LinkAccountMode.phone: return Auth2LoginType.phoneTwilio;
+      case LinkAccountMode.email: return Auth2LoginType.email;
+    }
   }
 }
 

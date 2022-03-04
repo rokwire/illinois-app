@@ -151,9 +151,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                 ),
                 Visibility(visible: StringUtils.isNotEmpty(_validationErrorMsg), child:
                   Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(vertical: 12), child:
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
                       Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
                         Padding(
@@ -266,7 +264,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
         Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginPhoneConfirmPanel(phoneNumber: phoneNumber, link: widget.link, onFinish: widget.onFinish)));
       } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
         setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.failed.exists", "An account is already using this phone number."),
-            details: Localization().getStringEx("panel.settings.link.phone.label.detail", "1. You will need to sign in to the other account with this phone number.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
+            details: Localization().getStringEx("panel.settings.link.phone.label.failed.exists.detail", "1. You will need to sign in to the other account with this phone number.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
       } else {
         setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.failed", "Failed to send phone verification code. An unexpected error has occurred."));
       }
@@ -285,7 +283,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
           }
           else if (result == false) {
             setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.failed.exists", "An account is already using this email."),
-                details: Localization().getStringEx("panel.settings.link.email.label.detail", "1. You will need to sign in to the other account with this email address.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
+                details: Localization().getStringEx("panel.settings.link.email.label.failed.exists.detail", "1. You will need to sign in to the other account with this email address.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
           }
           else if (Auth2().isEmailLinked) { // at most one email address may be linked at a time
             setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.linked", "You have already added an email address to your account."));
