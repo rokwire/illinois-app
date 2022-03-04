@@ -151,9 +151,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                 ),
                 Visibility(visible: StringUtils.isNotEmpty(_validationErrorMsg), child:
                   Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(vertical: 12), child:
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
                       Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
                         Padding(
