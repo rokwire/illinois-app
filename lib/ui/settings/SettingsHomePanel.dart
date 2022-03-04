@@ -781,7 +781,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
             onTap: () =>
                 _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.phone)),);
-              // _onTapAlternateEmail(SettingsLinkedEmailPanel.mocData)),); //TBD REMOVE MOCED DATA
       }
       else if (code == 'email') {
         contentList.add(RibbonButton(
@@ -790,7 +789,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
             onTap: () =>
                 _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.email)),);
-            // _onTapAlternatePhone(SettingsLinkedPhonePanel.mocData)));//TBD REMOVE MOCED DATA
       }
     }
 
