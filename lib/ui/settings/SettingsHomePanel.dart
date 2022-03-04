@@ -348,7 +348,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   void _onPhoneOrEmailLoginClicked() {
     Analytics().logSelect(target: "Phone or Email Login");
-    Analytics().logSelect(target: "Phone or Email Login");
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(onFinish: () {
         _popToMe();
