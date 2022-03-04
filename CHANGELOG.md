@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Center header bar in Wellness panels [#1417](https://github.com/rokwire/illinois-app/issues/1417).
+- Require relogin when linking NetID account [#1420](https://github.com/rokwire/illinois-app/issues/1420).
 
 ## [3.2.31] - 2022-03-02
 ### Changed

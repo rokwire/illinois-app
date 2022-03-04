@@ -348,7 +348,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   void _onPhoneOrEmailLoginClicked() {
     Analytics().logSelect(target: "Phone or Email Login");
-    Analytics().logSelect(target: "Phone or Email Login");
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(onFinish: () {
         _popToMe();
@@ -781,7 +780,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
             onTap: () =>
                 _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.phone)),);
-              // _onTapAlternateEmail(SettingsLinkedEmailPanel.mocData)),); //TBD REMOVE MOCED DATA
       }
       else if (code == 'email') {
         contentList.add(RibbonButton(
@@ -790,7 +788,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
             onTap: () =>
                 _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.email)),);
-            // _onTapAlternatePhone(SettingsLinkedPhonePanel.mocData)));//TBD REMOVE MOCED DATA
       }
     }
 
@@ -807,16 +804,32 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   void _onLinkNetIdClicked() {
     Analytics().logSelect(target: "Link Illinois NetID");
     if (Connectivity().isNotOffline) {
-      Auth2().authenticateWithOidc(link: true).then((Auth2OidcAuthenticateResult? result) {
-        if (result == Auth2OidcAuthenticateResult.failed) {
-          AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add Illinois NetID."));
-        } else if (result == Auth2OidcAuthenticateResult.failedAccountExist) {
-          _showNetIDAccountExistsDialog();
-        }
-      });
+      SettingsDialog.show(context,
+        title: Localization().getStringEx("panel.settings.link.login_prompt.title", "Sign In Required"),
+        message: [ TextSpan(text: Localization().getStringEx("panel.settings.link.login_prompt.description", "For security, you must sign in again to confirm it's you before adding an alternate account.")), ],
+        continueTitle: Localization().getStringEx("panel.settings.link.login_prompt.confirm.title", "Sign In"),
+        onContinue: (List<String> selectedValues, OnContinueProgressController progressController ) => _onLinkNetIdReloginConfirmed(progressController),
+      );
     } else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.netid', 'Feature not available when offline.'));
     }
+  }
+
+  void _onLinkNetIdReloginConfirmed(OnContinueProgressController progressController) {
+      progressController(loading: true);
+      _linkVerifySignIn().then((bool? result) {
+        progressController(loading: false);
+        _popToMe();
+        if (result == true) {
+          Auth2().authenticateWithOidc(link: true).then((Auth2OidcAuthenticateResult? result) {
+            if (result == Auth2OidcAuthenticateResult.failed) {
+              AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add Illinois NetID."));
+            } else if (result == Auth2OidcAuthenticateResult.failedAccountExist) {
+              _showNetIDAccountExistsDialog();
+            }
+          });
+        }
+      });
   }
 
   void _showNetIDAccountExistsDialog() {
@@ -848,28 +861,26 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     if (Connectivity().isNotOffline) {
       SettingsDialog.show(context,
         title: Localization().getStringEx("panel.settings.link.login_prompt.title", "Sign In Required"),
-        message: [
-          TextSpan(text: Localization().getStringEx("panel.settings.link.login_prompt.description", "For security, you must sign in again to confirm it's you before adding an alternate account.")),
-        ],
+        message: [ TextSpan(text: Localization().getStringEx("panel.settings.link.login_prompt.description", "For security, you must sign in again to confirm it's you before adding an alternate account.")), ],
         continueTitle: Localization().getStringEx("panel.settings.link.login_prompt.confirm.title", "Sign In"),
-        onContinue: (List<String> selectedValues, OnContinueProgressController progressController ) {
-          
-          progressController(loading: true);
-          _linkVerifySignIn().then((bool? result) {
-            progressController(loading: false);
-            _popToMe();
-            if (result == true) {
-              Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(mode: mode, link: true, onFinish: () {
-                _popToMe();
-              },)),);
-            }
-          });
-        },
-        longButtonTitle: true
+        onContinue: (List<String> selectedValues, OnContinueProgressController progressController) => _onLinkPhoneOrEmailReloginConfirmed(mode, progressController),
       );
     } else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
+  }
+
+  void _onLinkPhoneOrEmailReloginConfirmed(SettingsLoginPhoneOrEmailMode mode, OnContinueProgressController progressController) {
+    progressController(loading: true);
+    _linkVerifySignIn().then((bool? result) {
+      progressController(loading: false);
+      _popToMe();
+      if (result == true) {
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(mode: mode, link: true, onFinish: () {
+          _popToMe();
+        },)),);
+      }
+    });
   }
 
   Future<bool?> _linkVerifySignIn() async {
