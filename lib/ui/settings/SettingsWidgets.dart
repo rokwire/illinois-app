@@ -64,12 +64,18 @@ class SettingsDialog extends StatefulWidget{
 }
 
 class _SettingsDialogState extends State<SettingsDialog>{
+  
+  final GlobalKey _confirmKey = GlobalKey();
+  Size? _confirmSize;
   List<String> selectedOptions = [];
   bool? _loading = false;
 
   @override
   void initState() {
     selectedOptions = widget.initialOptionsSelection ?? [];
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _evalConfirmSize();
+    });
     super.initState();
   }
 
@@ -219,6 +225,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
           GestureDetector(
               onTap: (){ widget.onContinue!(selectedOptions, ({bool? loading})=>setState((){_loading = loading;}));},
               child: Container(
+                key: _confirmKey,
                 alignment: Alignment.center,
 //                height: widget.longButtonTitle? 56: 42,
                 decoration: BoxDecoration(
@@ -235,14 +242,14 @@ class _SettingsDialogState extends State<SettingsDialog>{
                   )
                 ],)
               )),
-          Visibility(
-            visible: _loading!,
-            child: Align(alignment: Alignment.center,
-              child: Container(
-                padding: EdgeInsets.all(8),
-                child: Center(child:
-                CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white), strokeWidth: 2,),),),
-            ))
+          Visibility(visible: (_loading == true),
+            child: (_confirmSize != null) ?
+              SizedBox(width: _confirmSize!.width, height: _confirmSize!.height,
+              child: Align(alignment: Alignment.center,
+                child: SizedBox(height: 24, width: 24,
+                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white), strokeWidth: 2,),),),
+              ) : Container(),
+          )
         ],));
   }
 
@@ -250,6 +257,20 @@ class _SettingsDialogState extends State<SettingsDialog>{
      return widget.options == null || selectedOptions.isNotEmpty;
   }
 
+  void _evalConfirmSize() {
+    try {
+      final RenderObject? renderBox = _confirmKey.currentContext?.findRenderObject();
+      if (renderBox is RenderBox) {
+        if (mounted) {
+          setState(() {
+            _confirmSize = renderBox.size;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 
 }
 
