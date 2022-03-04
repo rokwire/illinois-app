@@ -93,7 +93,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
               child: IconButton(
                   icon: Image.asset('images/chevron-left-white.png'),
                   onPressed: () => _onTapBack(),)),
-          flexibleSpace: SingleChildScrollView(child:Column(
+          flexibleSpace: Align(alignment: Alignment.bottomCenter, child: SingleChildScrollView(child:Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               _buildImage(_jsonContent, 'header.image'),
@@ -106,7 +106,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
                 )),
               )
             ],
-          )),
+          ))),
           centerTitle: true,
         ),
       ),
