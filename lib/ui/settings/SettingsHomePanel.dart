@@ -280,24 +280,13 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 ],
               ),
             )),);
-          contentList.add(Stack(children: [
-            RibbonButton(
-              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-              borderRadius: _allRounding,
-              label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Sign in with your NetID"),
-              onTap: _onConnectNetIdClicked),
-            Visibility(visible: _connectingNetId == true, child:
-              Container(height: 46, child:
-                Align(alignment: Alignment.centerRight, child:
-                  Padding(padding: EdgeInsets.only(right: 10), child:
-                    SizedBox(height: 24, width: 24, child:
-                      CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
-                    ),
-                  )
-                ),
-              ),
-            ),
-          ],),);
+          contentList.add(RibbonButton(
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+            borderRadius: _allRounding,
+            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Sign in with your NetID"),
+            progress: _connectingNetId == true,
+            onTap: _onConnectNetIdClicked
+          ),);
       }
       else if (code == 'phone_or_email') {
           contentList.add(Padding(
@@ -410,24 +399,13 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             ]));
       }
       else if (code == 'connect') {
-        contentList.add(Stack(children: [
-            RibbonButton(
-              borderRadius: borderRadius,
-              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
-              label: Localization().getStringEx("panel.settings.home.net_id.button.connect", "Sign in with your NetID"),
-              onTap: _onConnectNetIdClicked),
-            Visibility(visible: _connectingNetId == true, child:
-              Container(height: 46, child:
-                Align(alignment: Alignment.centerRight, child:
-                  Padding(padding: EdgeInsets.only(right: 10), child:
-                    SizedBox(height: 24, width: 24, child:
-                      CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
-                    ),
-                  )
-                ),
-              ),
-            ),
-          ],),);
+        contentList.add(RibbonButton(
+          borderRadius: borderRadius,
+          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
+          label: Localization().getStringEx("panel.settings.home.net_id.button.connect", "Sign in with your NetID"),
+          progress: (_connectingNetId == true),
+          onTap: _onConnectNetIdClicked
+        ),);
       }
       else if (code == 'disconnect') {
         contentList.add(Padding(
@@ -755,23 +733,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     for (int index = 0; index < codes.length; index++) {
       String code = codes[index];
       if (code == 'netid') {
-        contentList.add(Stack(children: [
-          RibbonButton(
-              backgroundColor: Colors.transparent,
-              label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
-              onTap: _onLinkNetIdClicked),
-          Visibility(visible: _connectingNetId == true, child:
-            Container(height: 46, child:
-              Align(alignment: Alignment.centerRight, child:
-                Padding(padding: EdgeInsets.only(right: 10), child:
-                  SizedBox(height: 24, width: 24, child:
-                    CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
-                  ),
-                )
-              ),
-            ),
-          ),
-        ],),);
+        contentList.add(RibbonButton(
+            backgroundColor: Colors.transparent,
+            label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
+            progress: (_connectingNetId == true),
+            onTap: _onLinkNetIdClicked),
+        );
       }
       else if (code == 'phone') {
         contentList.add(RibbonButton(

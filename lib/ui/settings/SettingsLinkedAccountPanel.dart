@@ -171,26 +171,17 @@ class LinkAccountContentWidget extends StatelessWidget{
           Container(height: 1, color: Styles().colors?.lightGray!,),
           Container(
             color: Styles().colors!.white,
-            child:
-            Stack(children: [
-              RibbonButton(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                textColor: Styles().colors!.textSurface,
-                label: _buttonText,
-                onTap: (){
-                  if(onTapDisconnect!=null){
-                    onTapDisconnect!(linkedAccount);
-                  }
-                },
-              ),
-              Visibility(visible: isLoading,
-                  child: Container(height: 58, child:
-                    Align(alignment: Alignment.centerRight, child:
-                      Padding(padding: EdgeInsets.only(right: 10), child:
-                        SizedBox(height: 24, width: 24, child:
-                          CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
-                  ),)),),)
-            ],),
+            child: RibbonButton(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              textColor: Styles().colors!.textSurface,
+              label: _buttonText,
+              progress: isLoading,
+              onTap: (){
+                if(onTapDisconnect!=null){
+                  onTapDisconnect!(linkedAccount);
+                }
+              },
+            ),
           )
         ],
       ),
