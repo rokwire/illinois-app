@@ -1050,8 +1050,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           : Container();
   }
 
-  Widget _buildConfirmationDialog(
-      {String? confirmationTextMsg, String? positiveButtonLabel, String? negativeButtonLabel, Function? onPositiveTap, double positiveBtnHorizontalPadding = 16}) {
+  Widget _buildConfirmationDialog({String? confirmationTextMsg,
+    
+    String? positiveButtonLabel,
+    int positiveButtonFlex = 1,
+    Function? onPositiveTap,
+    
+    String? negativeButtonLabel,
+    int negativeButtonFlex = 1,
+    
+    int leftAreaFlex = 0,
+  }) {
     return Dialog(
         backgroundColor: Styles().colors!.fillColorPrimary,
         child: StatefulBuilder(builder: (context, setStateEx) {
@@ -1063,7 +1072,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     child: Text(confirmationTextMsg!,
                         textAlign: TextAlign.left, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.white))),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-                  RoundedButton(
+                  Expanded(flex: leftAreaFlex, child: Container()),
+                  Expanded(flex: negativeButtonFlex, child: RoundedButton(
                       label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
                       fontFamily: "ProximaNovaRegular",
                       textColor: Styles().colors!.fillColorPrimary,
@@ -1073,21 +1083,21 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                       onTap: () {
                         Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
                         Navigator.pop(context);
-                      }),
+                      }),),
                   Container(width: 16),
-                  RoundedButton(
+                  Expanded(flex: positiveButtonFlex, child: RoundedButton(
                     label: positiveButtonLabel ?? '',
                     fontFamily: "ProximaNovaBold",
                     textColor: Styles().colors!.fillColorPrimary,
                     borderColor: Styles().colors!.white,
                     backgroundColor: Styles().colors!.white,
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: positiveBtnHorizontalPadding),
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     progress: _confirmationLoading,
                     onTap: () {
                       Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
                       onPositiveTap!();
                     },
-                  ),
+                  ),),
                 ])
               ]));
         }));
@@ -1319,7 +1329,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             confirmationTextMsg:
                 Localization().getStringEx("panel.group_detail.label.confirm.cancel", "Are you sure you want to cancel your request to join this group?"),
             positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.dialog.cancel_request.title", "Cancel request"),
-            onPositiveTap: _onTapCancelMembershipDialog, positiveBtnHorizontalPadding: 1.5));
+            positiveButtonFlex: 2,
+            onPositiveTap: _onTapCancelMembershipDialog));
   }
 
   void _onTapCancelMembershipDialog() {
