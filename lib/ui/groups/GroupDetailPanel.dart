@@ -937,7 +937,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         Padding(padding: EdgeInsets.only(bottom: 4), child:
           Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16, color: Color(0xff494949), ),),
         ),
-        ExpandableText(description, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground, ), trimLines: 4, iconColor: Styles().colors!.fillColorPrimary,),
+        ExpandableText(description,
+          textStyle: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground, ),
+          trimLinesCount: 4,
+          readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
       ],),);
   }
 
