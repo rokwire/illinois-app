@@ -16,14 +16,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Onboarding.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/onboarding.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class OnboardingLoginPhonePanel extends StatefulWidget with OnboardingPanel {
 
@@ -50,7 +50,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
 
   @override
   Widget build(BuildContext context) {
-    String titleString = Localization().getStringEx('panel.onboarding.login.phone.label.title', 'Verify your phone number')!;
+    String titleString = Localization().getStringEx('panel.onboarding.login.phone.label.title', 'Verify your phone number');
     String? skipTitle = Localization().getStringEx('panel.onboarding.login.phone.button.dont_continue.title', 'Not right now');
     return Scaffold(
         backgroundColor: Styles().colors!.background,
@@ -73,7 +73,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                           OnboardingBackButton(
                               padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                               onTap: () {
-                                Analytics.instance.logSelect(target: "Back");
+                                Analytics().logSelect(target: "Back");
                                 Navigator.pop(context);
                               }),
                         ],
@@ -97,7 +97,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                       ),
                       Padding(
                           padding: EdgeInsets.symmetric(horizontal: 32),
-                          child: Text(Localization().getStringEx('panel.onboarding.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.')!,
+                          child: Text(Localization().getStringEx('panel.onboarding.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.'),
                               textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
                       Container(
                         height: 32,
@@ -109,11 +109,11 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    ScalableRoundedButton(
+                    RoundedButton(
                       label: Localization().getStringEx('panel.onboarding.login.phone.button.continue.title', 'Verify My Phone Number'),
                       hint: Localization().getStringEx('panel.onboarding.login.phone.button.continue.hint', ''),
                       fontSize: 16,
-                      padding: EdgeInsets.symmetric(vertical: 12),
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       borderColor: Styles().colors!.fillColorSecondary,
                       backgroundColor: Styles().colors!.white,
                       textColor: Styles().colors!.fillColorPrimary,
@@ -139,7 +139,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
   }
 
   void _onLoginTapped() {
-    Analytics.instance.logSelect(target: 'Verify My Phone Number');
+    Analytics().logSelect(target: 'Verify My Phone Number');
     if (widget.onboardingContext != null) {
       widget.onboardingContext!['shouldVerifyPhone'] = true;
       Onboarding().next(context, widget);
@@ -150,7 +150,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
   }
 
   void _onSkipTapped() {
-    Analytics.instance.logSelect(target: 'Not right now');
+    Analytics().logSelect(target: 'Not right now');
     Function? onSuccess = widget.onboardingContext!=null? widget.onboardingContext!["onContinueAction"] : null; // Hook this panels to Onboarding2
     if(onSuccess!=null){
       onSuccess();

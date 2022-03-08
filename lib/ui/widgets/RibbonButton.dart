@@ -15,134 +15,175 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart' as rokwire;
 
-class RibbonButton extends StatelessWidget {
-  final String? label;
-
-  final GestureTapCallback? onTap;
-  final EdgeInsets padding;
-  final BorderRadius? borderRadius;
-  final BoxBorder? border;
-  final List<BoxShadow>? shadow;
-  final TextStyle? style;
-  final double? height;
-  final String? leftIcon;
-  final String? icon;
-  final BuildContext? context;
-  final String? hint;
-  final Color backgroundColor;
-
+class RibbonButton extends rokwire.RibbonButton {
   RibbonButton({
-    this.label,
-    this.onTap,
-    this.borderRadius = BorderRadius.zero,
-    this.border,
-    this.shadow,
-    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-    this.style,
-    this.height = 48.0,
-    this.icon = 'images/chevron-right.png',
-    this.leftIcon,
-    this.context,
-    this.hint,
-    this.backgroundColor =  Colors.white,
-  });
+  Key? key,
+  String? label,
+  void Function()? onTap,
+  Color? backgroundColor,
+  EdgeInsetsGeometry padding          = const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
 
-  @override
-  Widget build(BuildContext context) {
-    return getSemantics();
-  }
+  Widget? textWidget,
+  TextStyle? textStyle,
+  Color? textColor,
+  String? fontFamily,
+  double fontSize                     = 16.0,
+  TextAlign textAlign                 = TextAlign.left,
 
-  Semantics getSemantics() {
-    return Semantics(label: label, hint : hint, button: true, excludeSemantics: true, child: _content());
-  }
+  Widget? leftIcon,
+  String? leftIconAsset,
+  EdgeInsetsGeometry leftIconPadding  = const EdgeInsets.only(right: 8),
+  
+  Widget? rightIcon,
+  String? rightIconAsset              = 'images/chevron-right.png',
+  EdgeInsetsGeometry rightIconPadding = const EdgeInsets.only(left: 8),
 
-  Widget _content() {
-    Widget? image = getImage();
-    return GestureDetector(
-      onTap: () { onTap!(); anaunceChange(); },
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[ Expanded(
-        child: Container(
-          decoration: BoxDecoration(color: backgroundColor, border:border, borderRadius: borderRadius, boxShadow: shadow),
-          height: this.height,
-          child: Padding(
-            padding: padding,
-            child:  Row(
-              children: <Widget>[
-                AppString.isStringNotEmpty(leftIcon) ? Padding(padding: EdgeInsets.only(right: 7), child: Image.asset(leftIcon!, excludeFromSemantics: true)) : Container(),
-                Expanded(child:
-                  Text(label!,
-                    style: style ?? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
-                  )
-                ),
-                (image != null) ? Padding(padding: EdgeInsets.only(left: 7), child: image) : Container(),
-              ],
-            ),
-          ),
-        )
-      ),],),
-    );
-  }
+  BoxBorder? border,
+  BorderRadius? borderRadius,
+  List<BoxShadow>? borderShadow,
 
-  Widget? getImage() {
-    return (icon != null) ? Image.asset(icon!, excludeFromSemantics: true) : null;
-  }
+  bool? progress,
+  Color? progressColor,
+  double? progressSize,
+  double? progressStrokeWidth,
+  EdgeInsetsGeometry progressPadding  = const EdgeInsets.symmetric(horizontal: 12),
+  AlignmentGeometry progressAlignment = Alignment.centerRight,
+  bool progressHidesIcon              = true,
 
-  void anaunceChange() {}
+  String? hint,
+  String? semanticsValue,
+  }): super(
+    key: key,
+    label: label,
+    onTap: onTap,
+    backgroundColor: backgroundColor,
+    padding: padding,
+
+    textWidget: textWidget,
+    textStyle: textStyle,
+    textColor: textColor,
+    fontFamily: fontFamily,
+    fontSize: fontSize,
+    textAlign: textAlign,
+
+    leftIcon: leftIcon,
+    leftIconAsset: leftIconAsset,
+    leftIconPadding: leftIconPadding,
+    
+    rightIcon: rightIcon,
+    rightIconAsset: rightIconAsset,
+    rightIconPadding: rightIconPadding,
+
+    border: border,
+    borderRadius: borderRadius,
+    borderShadow: borderShadow,
+
+    progress: progress,
+    progressColor: progressColor,
+    progressSize: progressSize,
+    progressStrokeWidth: progressStrokeWidth,
+    progressPadding: progressPadding,
+    progressAlignment: progressAlignment,
+    progressHidesIcon: progressHidesIcon,
+
+    hint: hint,
+    semanticsValue: semanticsValue,
+  );
 }
 
-class ToggleRibbonButton extends RibbonButton {
-  final String? label;
-  final GestureTapCallback? onTap;
-  final bool? toggled;
-  final BorderRadius? borderRadius;
-  final BoxBorder? border;
-  final BuildContext? context; //Required in order to announce the VO status change
-  final TextStyle? style;
-  final double? height;
-  final EdgeInsets padding;
-  final Color backgroundColor;
+class ToggleRibbonButton extends rokwire.ToggleRibbonButton {
 
-  ToggleRibbonButton ({
-    this.label,
-    this.onTap,
-    this.toggled = false,
-    this.borderRadius = BorderRadius.zero,
-    this.border,
-    this.context,
-    this.height = 48.0,
-    this.style,
-    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    this.backgroundColor =  Colors.white
-  });
+  static const Map<bool, String> _rightIconAssets = {
+    true: 'images/switch-on.png',
+    false: 'images/switch-off.png',
+  };
+
+  final Map<bool, String> _semanticsValues = {
+    true: Localization().getStringEx("toggle_button.status.checked", "checked",),
+    false: Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
+  };
+
+  ToggleRibbonButton({
+    Key? key,
+    String? label,
+    void Function()? onTap,
+    Color? backgroundColor,
+    EdgeInsetsGeometry padding          = const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+
+    Widget? textWidget,
+    TextStyle? textStyle,
+    Color? textColor,
+    String? fontFamily,
+    double fontSize                     = 16.0,
+    TextAlign textAlign                 = TextAlign.left,
+
+    Widget? leftIcon,
+    String? leftIconAsset,
+    EdgeInsetsGeometry leftIconPadding  = const EdgeInsets.only(right: 8),
+    
+    Widget? rightIcon,
+    String? rightIconAsset,
+    EdgeInsetsGeometry rightIconPadding = const EdgeInsets.only(left: 8),
+
+    BoxBorder? border,
+    BorderRadius? borderRadius,
+    List<BoxShadow>? borderShadow,
+
+    String? hint,
+    String? semanticsValue,
+
+    bool toggled = false,
+    Map<bool, Widget>? leftIcons,
+    Map<bool, String>? leftIconAssets,
+
+    Map<bool, Widget>? rightIcons,
+    Map<bool, String>? rightIconAssets = _rightIconAssets,
+
+    Map<bool, String>? semanticsValues,
+  }) : super(
+    key: key,
+    label: label,
+    onTap: onTap,
+    backgroundColor: backgroundColor,
+    padding: padding,
+
+    textWidget: textWidget,
+    textStyle: textStyle,
+    textColor: textColor,
+    fontFamily: fontFamily,
+    fontSize: fontSize,
+    textAlign: textAlign,
+
+    leftIcon: leftIcon,
+    leftIconAsset: leftIconAsset,
+    leftIconPadding: leftIconPadding,
+    
+    rightIcon: rightIcon,
+    rightIconAsset: rightIconAsset,
+    rightIconPadding: rightIconPadding,
+
+    border: border,
+    borderRadius: borderRadius,
+    borderShadow: borderShadow,
+
+    hint: hint,
+    semanticsValue: semanticsValue,
+
+    toggled: toggled,
+    leftIcons: leftIcons,
+    leftIconAssets: leftIconAssets,
+
+    rightIcons: rightIcons,
+    rightIconAssets: rightIconAssets,
+
+    semanticsValues : semanticsValues,
+  );
 
   @override
-  Widget getImage() {
-    return Image.asset(toggled! ? 'images/switch-on.png' : 'images/switch-off.png', excludeFromSemantics: true);
-  }
+  Map<bool, String>? get semanticsValues => _semanticsValues;
 
-  @override
-  Semantics getSemantics() {
-    return Semantics(
-        label: label,
-        value: (toggled!
-                ? Localization().getStringEx(
-                    "toggle_button.status.checked",
-                    "checked",
-                  )
-                : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
-            ", " +
-            Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
-        excludeSemantics: true,
-        child: _content());
-  }
-
-  @override
-  void anaunceChange() {
-    AppSemantics.announceCheckBoxStateChange(context, !toggled!, label); // !toggled because we announce before the state got updated
-    super.anaunceChange();
-  }
 }
+

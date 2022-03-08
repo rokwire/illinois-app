@@ -15,19 +15,20 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/GeoFence.dart';
-import 'package:illinois/model/Poll.dart';
+import 'package:rokwire_plugin/model/geo_fence.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/GeoFence.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Log.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:rokwire_plugin/service/geo_fence.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 
 class CreateStadiumPollPanel extends StatefulWidget {
@@ -60,14 +61,10 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SimpleHeaderBarWithBack(
-          context: context,
-          backIconRes: 'images/close-white.png',
-          onBackPressed: _onTapCancel,
-          titleWidget: Text(
-            Localization().getStringEx("panel.create_stadium_poll.header.title", "Create a Stadium Poll")!,
-            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-          ),
+        appBar: HeaderBar(
+          title: Localization().getStringEx("panel.create_stadium_poll.header.title", "Create a Stadium Poll"),
+          leadingAsset: 'images/close-white.png',
+          onLeading: _onTapCancel,
         ),
         body: Container(
             color: Styles().colors!.white,
@@ -85,7 +82,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
 
   void _initGeoFenceValues() {
     _geoFenceRegions = GeoFence().regionsList(type: 'stadium');
-    _selectedGeofence = !AppCollection.isCollectionEmpty(_geoFenceRegions)?_geoFenceRegions![0] : null; //Default value;
+    _selectedGeofence = !CollectionUtils.isEmpty(_geoFenceRegions)?_geoFenceRegions![0] : null; //Default value;
   }
 
   _initDefaultOptionsControllers() {
@@ -111,10 +108,8 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
             ToggleRibbonButton(
                 label: Localization().getStringEx("panel.create_stadium_poll.setting.geofence", "Geofence poll to venue"),
                 toggled: _selectedGeofenceResult,
-                context: context,
                 borderRadius:  BorderRadius.all(Radius.circular(5)),
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
-                height: null,
+                textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
                 onTap: () {
                   if (_progressPollStatus == null) {
                     setState(() {
@@ -170,7 +165,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   _onDropDownValueChanged(dynamic value){
-    Analytics.instance.logSelect(target: "Geofence selected: $value");
+    Analytics().logSelect(target: "Geofence selected: $value");
     setState(() {
       _selectedGeofence = value;
     });
@@ -206,7 +201,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     if (_optionsControllers?.isNotEmpty ?? false) {
       for (int i = 0; i < _optionsControllers!.length; i++) {
         TextEditingController controller = _optionsControllers![i];
-        String title = Localization().getStringEx("panel.create_stadium_poll.text.option", "OPTION")! + " " + (i + 1).toString();
+        String title = Localization().getStringEx("panel.create_stadium_poll.text.option", "OPTION") + " " + (i + 1).toString();
         options.add(PollOptionView(title: title, textController: controller, enabled: (_progressPollStatus == null),));
       }
 
@@ -222,7 +217,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   Widget _constructAddOptionButton() {
-    String label = Localization().getStringEx("panel.create_stadium_poll.button.add_option.text", "Add option")!;
+    String label = Localization().getStringEx("panel.create_stadium_poll.button.add_option.text", "Add Option");
     String? hint = Localization().getStringEx("panel.create_stadium_poll.button.add_option.hint", "");
     return Container(
       padding: EdgeInsets.symmetric(vertical: 24),
@@ -264,7 +259,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   Widget _buildSettingsHeader() {
-    String additionalSettingsText = Localization().getStringEx("panel.create_poll.text.add_option", "Additional settings")!;
+    String additionalSettingsText = Localization().getStringEx("panel.create_poll.text.add_option", "Additional Settings");
     return Padding(
         padding: EdgeInsets.only(top: 3),
         child: Container(
@@ -307,10 +302,8 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     widgets.add(ToggleRibbonButton(
         label: Localization().getStringEx("panel.create_stadium_poll.setting.multy_choice", "Allow selecting more than one choice"),
         toggled: _selectedMultichoice,
-        context: context,
         borderRadius: rounding,
-        style: _textStyle,
-        height: null,
+        textStyle: _textStyle,
         onTap: () {
           if (_progressPollStatus == null) {
             setState(() {
@@ -324,10 +317,8 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     widgets.add(ToggleRibbonButton(
         label: Localization().getStringEx("panel.create_stadium_poll.setting.repeat_vote", "Allow repeat votes"),
         toggled: _selectedRepeatVotes,
-        context: context,
         borderRadius: rounding,
-        style: _textStyle,
-        height: null,
+        textStyle: _textStyle,
         onTap: () {
           if (_progressPollStatus == null) {
             setState(() {
@@ -341,10 +332,8 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     widgets.add(ToggleRibbonButton(
         label: Localization().getStringEx("panel.create_stadium_poll.setting.hide_result", "Hide results until poll ends"),
         toggled: _selectedHideResult,
-        context: context,
         borderRadius: rounding,
-        style: _textStyle,
-        height: null,
+        textStyle: _textStyle,
         onTap: () {
           if (_progressPollStatus == null) {
             setState(() {
@@ -367,62 +356,40 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Expanded(
-                    child: Stack(children: <Widget>[
+                    child:
                       RoundedButton(
                         label: Localization().getStringEx("panel.create_stadium_poll.setting.button.save.title", "Save"),
                         backgroundColor: Colors.white,
                         borderColor: Styles().colors!.fillColorPrimary,
                         textColor: Styles().colors!.fillColorPrimary,
+                        progress: (_progressPollStatus == PollStatus.created),
                         onTap: () {
                           _onCreatePoll(status: PollStatus.created);
                         },
-                        height: 48,
                       ),
-                      Visibility(visible: (_progressPollStatus == PollStatus.created),
-                        child: Container(
-                          height: 48,
-                          child: Align(alignment: Alignment.center,
-                            child: SizedBox(height: 24, width: 24,
-                                child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],),
                   ),
                   Container(
                     width: 6,
                   ),
                   Expanded(
-                    child: Stack(children: <Widget>[
+                    child:
                       RoundedButton(
                         label: Localization().getStringEx("panel.create_stadium_poll.setting.start.preview.title", "Start poll!"),
                         backgroundColor: Colors.white,
                         borderColor: Styles().colors!.fillColorSecondary,
                         textColor: Styles().colors!.fillColorPrimary,
+                        progress: (_progressPollStatus == PollStatus.opened),
                         onTap: () {
                           _onCreatePoll(status: PollStatus.opened);
                         },
-                        height: 48,
                       ),
-                      Visibility(visible: (_progressPollStatus == PollStatus.opened),
-                        child: Container(
-                          height: 48,
-                          child: Align(alignment: Alignment.center,
-                            child: SizedBox(height: 24, width: 24,
-                                child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],),
                   ),
                 ],
               )),
         ));
   }
 
-  _onTapCancel() {
+  void _onTapCancel() {
     if (_progressPollStatus == null) {
       showDialog(context: context, builder: (context) =>
           Dialog(
@@ -432,13 +399,13 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.title", "Illinois")!,
+                    Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.title", "Illinois"),
                     style: TextStyle(fontSize: 24, color: Colors.black),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 26),
                     child: Text(
-                      Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.message", "Are you sure you want to cancel this Stadium Poll")!,
+                      Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.message", "Are you sure you want to cancel this Stadium Poll"),
                       textAlign: TextAlign.left,
                       style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
                     ),
@@ -451,12 +418,12 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                             Navigator.pop(context);
                             Navigator.pop(context);
                           },
-                          child: Text(Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.button.yes", "Yes")!)),
+                          child: Text(Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.button.yes", "Yes"))),
                       TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text(Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.button.no", "No")!))
+                          child: Text(Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.button.no", "No")))
                     ],
                   ),
                 ],
@@ -469,7 +436,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
 
   void _onCreatePoll({PollStatus? status}) {
     String? validationErrorMsg = _getValidationErrorMsg();
-    if (AppString.isStringNotEmpty(validationErrorMsg)) {
+    if (StringUtils.isNotEmpty(validationErrorMsg)) {
       AppAlert.showDialogResult(context, validationErrorMsg);
       return;
     }
@@ -521,12 +488,12 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     if (_selectedGeofence == null) {
       return Localization().getStringEx('panel.create_stadium_poll.not_valid.geofence.msg', "Please, select value for Geofence!");
     }
-    if (AppString.isStringEmpty(_questionController.text)) {
+    if (StringUtils.isEmpty(_questionController.text)) {
       return Localization().getStringEx('panel.create_stadium_poll.not_valid.question.msg', "Please, fill value for 'Question'!");
     }
-    if (AppCollection.isCollectionNotEmpty(_optionsControllers)) {
+    if (CollectionUtils.isNotEmpty(_optionsControllers)) {
       for (TextEditingController optionController in _optionsControllers!) {
-        if (AppString.isStringEmpty(optionController.text)) {
+        if (StringUtils.isEmpty(optionController.text)) {
           return Localization().getStringEx('panel.create_stadium_poll.not_valid.option.msg', "Please, provide value for each option!");
         }
       }

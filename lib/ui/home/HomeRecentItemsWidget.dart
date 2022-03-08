@@ -19,16 +19,18 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -36,10 +38,9 @@ import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class HomeRecentItemsWidget extends StatefulWidget {
 
@@ -86,9 +87,11 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   }
 
   void _loadRecentItems() {
-    setState(() {
-      _recentItems = RecentItems().recentItems.toSet().toList();
-    });
+    if (mounted) {
+      setState(() {
+        _recentItems = RecentItems().recentItems.toSet().toList();
+      });
+    }
   }
 
   // NotificationsListener
@@ -97,9 +100,13 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   void onNotification(String name, dynamic param) {
     if (name == RecentItems.notifyChanged) {
       if (mounted) {
-        SchedulerBinding.instance!.addPostFrameCallback((_) => setState(() {
-          _recentItems = RecentItems().recentItems.toSet().toList();
-        }));
+        SchedulerBinding.instance!.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              _recentItems = RecentItems().recentItems.toSet().toList();
+            });
+          }
+        });
       }
     }
   }
@@ -114,7 +121,6 @@ class _RecentItemsList extends StatelessWidget{
   final String slantImageRes;
   final Color? slantColor;
   final void Function()? tapMore;
-  final bool showMoreChevron;
   final bool showMoreButtonExplicitly;
   final String? moreButtonLabel;
 
@@ -123,30 +129,29 @@ class _RecentItemsList extends StatelessWidget{
 
   const _RecentItemsList(
       {Key? key, this.items, this.heading, this.subTitle, this.headingIconRes,
-        this.slantImageRes = 'images/slant-down-right-blue.png', this.slantColor, this.tapMore, this.cardShowDate = false, this.limit = 3, this.showMoreChevron = true,
+        this.slantImageRes = 'images/slant-down-right-blue.png', this.slantColor, this.tapMore, this.cardShowDate = false, this.limit = 3,
         this.moreButtonLabel, this.showMoreButtonExplicitly = false,})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     bool showMoreButton =showMoreButtonExplicitly ||( tapMore!=null && limit<(items?.length??0));
-    String? moreLabel = AppString.isStringEmpty(moreButtonLabel)? Localization().getStringEx('widget.home_recent_items.button.more.title', 'View All'): moreButtonLabel;
+    String? moreLabel = StringUtils.isEmpty(moreButtonLabel)? Localization().getStringEx('widget.home_recent_items.button.more.title', 'View All'): moreButtonLabel;
     return items!=null && items!.isNotEmpty? Column(
       children: <Widget>[
-        SectionTitlePrimary(
+        SectionHeading(
             title:heading,
             subTitle: subTitle,
-            iconPath: headingIconRes,
+            titleIconAsset: headingIconRes,
             children: _buildListItems(context)
         ),
         !showMoreButton?Container():
         Container(height: 20,),
         !showMoreButton?Container():
         SmallRoundedButton(
-          label: moreLabel,
+          label: moreLabel ?? '',
           hint: Localization().getStringEx('widget.home_recent_items.button.more.hint', ''),
-          onTap: tapMore,
-          showChevron: showMoreChevron,),
+          onTap: tapMore ?? (){},),
         Container(height: 48,),
       ],
     ) : Container();
@@ -171,7 +176,7 @@ class _RecentItemsList extends StatelessWidget{
       item: recentItem,
       showDate: cardShowDate,
       onTap: () {
-        Analytics.instance.logSelect(target: "HomeRecentItemCard clicked: " + recentItem!.recentTitle!);
+        Analytics().logSelect(target: "HomeRecentItemCard clicked: " + recentItem!.recentTitle!);
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => _getDetailPanel(recentItem)));
       },);
   }
@@ -189,7 +194,7 @@ class _RecentItemsList extends StatelessWidget{
       return ExploreDetailPanel(explore: originalObject,);
     }
     else if ((item.recentItemType == RecentItemType.guide) && (originalObject is Map)) {
-      return GuideDetailPanel(guideEntryId: Guide().entryId(AppJson.mapValue(originalObject)));
+      return GuideDetailPanel(guideEntryId: Guide().entryId(JsonUtils.mapValue(originalObject)));
     }
 
     return Container();
@@ -235,7 +240,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
       isFavorite = Auth2().isFavorite(originalItem);
     }
     else if ((widget.item!.recentItemType == RecentItemType.guide) && (originalItem is Map)) {
-      isFavorite = Auth2().isFavorite(GuideFavorite(id: Guide().entryId(AppJson.mapValue(originalItem))));
+      isFavorite = Auth2().isFavorite(GuideFavorite(id: Guide().entryId(JsonUtils.mapValue(originalItem))));
     }
     else {
       isFavorite = false;
@@ -284,7 +289,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
 
   List<Widget> _buildDetails() {
     List<Widget> details =  [];
-    if(AppString.isStringNotEmpty(widget.item!.recentTime)) {
+    if(StringUtils.isNotEmpty(widget.item!.recentTime)) {
       Widget? dateDetail = widget.showDate ? _dateDetail() : null;
       if (dateDetail != null) {
         details.add(dateDetail);
@@ -297,7 +302,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
         details.add(timeDetail);
       }
     }
-    Widget? descriptionDetail = ((widget.item!.recentItemType == RecentItemType.guide) && AppString.isStringNotEmpty(widget.item!.recentDescripton)) ? _descriptionDetail() : null;
+    Widget? descriptionDetail = ((widget.item!.recentItemType == RecentItemType.guide) && StringUtils.isNotEmpty(widget.item!.recentDescripton)) ? _descriptionDetail() : null;
     if (descriptionDetail != null) {
       if (details.isNotEmpty) {
         details.add(Container(height: 8,));
@@ -311,7 +316,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
   Widget? _dateDetail(){
     String? displayTime = widget.item!.recentTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
-      String displayDate = Localization().getStringEx('widget.home_recent_item_card.label.date', 'Date')!;
+      String displayDate = Localization().getStringEx('widget.home_recent_item_card.label.date', 'Date');
       return Semantics(label: displayDate, excludeSemantics: true, child:
         Row(children: <Widget>[
           Image.asset('images/icon-calendar.png'),
@@ -361,15 +366,15 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
   }
 
   void _onTapFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.item?.recentTitle}");
+    Analytics().logSelect(target: "Favorite: ${widget.item?.recentTitle}");
     Object? originalItem = widget.item!.fromOriginalJson();
     if (originalItem is Favorite) {
       Auth2().prefs?.toggleFavorite(originalItem);
     }
     else if ((widget.item!.recentItemType == RecentItemType.guide) && (originalItem is Map)) {
       Auth2().prefs?.toggleFavorite(GuideFavorite(
-        id: Guide().entryId(AppJson.mapValue(originalItem)),
-        title: Guide().entryTitle(AppJson.mapValue(originalItem))
+        id: Guide().entryId(JsonUtils.mapValue(originalItem)),
+        title: Guide().entryTitle(JsonUtils.mapValue(originalItem))
       ));
     }
   }

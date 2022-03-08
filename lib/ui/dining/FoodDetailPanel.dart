@@ -16,8 +16,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/DiningService.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Dinings.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -25,8 +25,8 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 
 class FoodDetailPanel extends StatefulWidget {
@@ -54,7 +54,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
     setState(() {
       _isLoading = true;
     });
-    DiningService().loadNutritionItemWithId(widget.productItem.itemID).then((item){
+    Dinings().loadNutritionItemWithId(widget.productItem.itemID).then((item){
       _nutritionItem = item;
       setState(() {
         _isLoading = false;
@@ -65,14 +65,9 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(widget.productItem.name ?? "",
-          style: TextStyle(
-            fontFamily: Styles().fontFamilies!.extraBold,
-            fontSize: 16
-          ),
-        ),
+      appBar: HeaderBar(
+        title: widget.productItem.name,
+        //textStyle: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16),
       ),
       body: Column(
         children: <Widget>[
@@ -104,7 +99,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
             Container(height: 20,),
             _nutritionItem == null ? Container(
               child: Center(
-                child: Text(Localization().getStringEx("panel.food_details.label.nutrition_fatcts_not_available.title", "Nutrition information not available")!,
+                child: Text(Localization().getStringEx("panel.food_details.label.nutrition_fatcts_not_available.title", "Nutrition information not available"),
                   style: TextStyle(
                       color: Styles().colors!.fillColorPrimary,
                       fontSize: 14,
@@ -131,7 +126,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
                     children: <Widget>[
                       Expanded(child:
                         Text(
-                          Localization().getStringEx("panel.food_details.label.nutrition_fatcts.title", "NUTRITION FACTS")!,
+                          Localization().getStringEx("panel.food_details.label.nutrition_fatcts.title", "NUTRITION FACTS"),
                           textAlign: TextAlign.left,
                           style: TextStyle(
                               fontFamily: Styles().fontFamilies!.bold,
@@ -152,7 +147,6 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
               hint: Localization().getStringEx("panel.food_details.button.view_full_list_of_ingredients.title", ""),
               button: true,
               child: RibbonButton(
-                height: null,
                 label: Localization().getStringEx("panel.food_details.button.view_full_list_of_ingredients.title", "View full list of ingredients"),
                 borderRadius: BorderRadius.all(Radius.circular(4)),
                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -174,7 +168,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       list.add(_FactItem(label: Localization().getStringEx('com.illinois.nutrition_type.entry.Serving', 'Serving'), value: _nutritionItem!.serving));
 
       for(NutritionNameValuePair nutritionEntry in _nutritionItem!.nutritionList!){
-        String? foodTypeLabel = DiningService().getLocalizedString(nutritionEntry.name);
+        String? foodTypeLabel = Dinings().getLocalizedString(nutritionEntry.name);
         list.add(_FactItem(label: foodTypeLabel, value: nutritionEntry.value));
       }
     }
@@ -207,7 +201,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
               children: <Widget>[
                 Expanded(
                   child:Text(
-                    Localization().getStringEx("panel.food_details.label.include_ingredients.title", "INCLUDES THESE INGREDIENTS")!,
+                    Localization().getStringEx("panel.food_details.label.include_ingredients.title", "INCLUDES THESE INGREDIENTS"),
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies!.bold,
@@ -224,7 +218,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       for (String entry in ingredients) {
         entry = entry.trim();
         if(entry.isNotEmpty) {
-          String? ingredientLabel = DiningService().getLocalizedString(entry);
+          String? ingredientLabel = Dinings().getLocalizedString(entry);
           list.add(_IngredientItem(label: ingredientLabel));
         }
       }
@@ -258,7 +252,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
               children: <Widget>[
                 Expanded(child:
                 Text(
-                  Localization().getStringEx("panel.food_details.label.dietary_preferences.title", "DIETARY PREFERENCES")!,
+                  Localization().getStringEx("panel.food_details.label.dietary_preferences.title", "DIETARY PREFERENCES"),
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies!.bold,
@@ -274,7 +268,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       for (String entry in preferences) {
         entry = entry.trim();
         if(entry.isNotEmpty) {
-          String? ingredientLabel = DiningService().getLocalizedString(entry);
+          String? ingredientLabel = Dinings().getLocalizedString(entry);
           list.add(_IngredientItem(label: ingredientLabel));
         }
       }
@@ -286,7 +280,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
   }
 
   void _onEatSmartTapped(BuildContext context){
-    Analytics.instance.logSelect(target: "View full list of ingredients");
+    Analytics().logSelect(target: "View full list of ingredients");
     if (Config().eatSmartUrl != null) {
       Navigator.push(context, CupertinoPageRoute(
           builder: (context)=>WebPanel(url: Config().eatSmartUrl )
@@ -326,7 +320,7 @@ class _FactItem extends StatelessWidget {
               Expanded(
                 flex: 5,
                 child: Text(
-                  AppString.isStringNotEmpty(label) ? label! : "",
+                  StringUtils.isNotEmpty(label) ? label! : "",
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       color: Styles().colors!.fillColorPrimary,
@@ -337,7 +331,7 @@ class _FactItem extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: Text(
-                AppString.isStringNotEmpty(value) ? value! : "",
+                StringUtils.isNotEmpty(value) ? value! : "",
                 textAlign: TextAlign.right,
                 style: TextStyle(
                     color: Styles().colors!.mediumGray,
@@ -379,7 +373,7 @@ class _IngredientItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                AppString.isStringNotEmpty(label) ? label! : "",
+                StringUtils.isNotEmpty(label) ? label! : "",
                 style: TextStyle(
                     color: Styles().colors!.fillColorPrimary,
                     fontSize: 16,

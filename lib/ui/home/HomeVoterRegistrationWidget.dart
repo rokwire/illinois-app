@@ -15,22 +15,23 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/model/GeoFence.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:illinois/model/Voter.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/GeoFence.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/geo_fence.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Voter.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class HomeVoterRegistrationWidget extends StatefulWidget {
@@ -63,11 +64,11 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     bool voterWidgetVisible = _isVoterWidgetVisible();
     String voterTitle = _getVoterTitle(voterWidgetVisible)!;
     String voterText = _getVoterText(voterWidgetVisible)!;
-    String? vbmKey = AppString.getDefaultEmptyString(_voterRule?.vbmText);
+    String? vbmKey = StringUtils.ensureNotEmpty(_voterRule?.vbmText);
     String vbmText = Localization().getStringFromKeyMapping(vbmKey, _stringsContent)!;
-    bool vbmVisible = Auth2().isVoterRegistered && (Auth2().isVoterByMail == null) && AppString.isStringNotEmpty(vbmKey);
+    bool vbmVisible = Auth2().isVoterRegistered && (Auth2().isVoterByMail == null) && StringUtils.isNotEmpty(vbmKey);
     bool closeBtnVisible = !(_voterRule?.electionPeriod ?? false);
-    String? vbmButtonTitleKey = AppString.getDefaultEmptyString(_voterRule?.vbmButtonTitle);
+    String? vbmButtonTitleKey = StringUtils.ensureNotEmpty(_voterRule?.vbmButtonTitle);
     String? vbmButtonTitle = Localization().getStringFromKeyMapping(vbmButtonTitleKey, _stringsContent);
     return Visibility(
       visible: voterWidgetVisible,
@@ -91,7 +92,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 8, bottom: 16),
-                      child: Visibility(visible: AppString.isStringNotEmpty(voterText), child: Text(
+                      child: Visibility(visible: StringUtils.isNotEmpty(voterText), child: Text(
                         voterText,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 10,
@@ -128,11 +129,11 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
                 ),
               )),
               Row(children: <Widget>[RoundedButton(
-                label: vbmButtonTitle,
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                label: vbmButtonTitle ?? '',
                 textColor: Styles().colors!.fillColorPrimary,
                 borderColor: Styles().colors!.fillColorSecondary,
                 backgroundColor: Styles().colors!.white,
+                contentWeight: 0.0,
                 onTap: () => _onTapVbmButton(vbmButtonTitle),
               )
               ],)
@@ -164,7 +165,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
   }
 
   void _hideByUser() {
-    Analytics.instance.logSelect(target: "Voter Registration: Close");
+    Analytics().logSelect(target: "Voter Registration: Close");
     if (_voterRule?.hideForPeriod ?? false) {
       Storage().voterHiddenForPeriod = true;
     }
@@ -177,10 +178,10 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     if (_hiddenByUser) {
       return false;
     }
-    if (AppString.isStringEmpty(_voterRule?.nrvText) && AppString.isStringEmpty(_voterRule?.rvText)) {
+    if (StringUtils.isEmpty(_voterRule?.nrvText) && StringUtils.isEmpty(_voterRule?.rvText)) {
       return false;
     }
-    if ((_voterRule?.hideForPeriod ?? false) && Storage().voterHiddenForPeriod!) {
+    if ((_voterRule?.hideForPeriod ?? false) && (Storage().voterHiddenForPeriod == true)) {
       return false;
     }
     bool isElectionPeriod = (_voterRule?.electionPeriod ?? false);
@@ -255,15 +256,15 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
       } else if ((_voterRule?.electionPeriod ?? false) && !Auth2().didVote) {
         voterOptions = _voterRule!.rvOptions;
       }
-      if (AppCollection.isCollectionNotEmpty(voterOptions)) {
+      if (CollectionUtils.isNotEmpty(voterOptions)) {
         for (RuleOption ruleOption in voterOptions!) {
           if (ruleOption.value == 'vbm_no') { // Special case for showing two widgets
             optionWidgets.add(Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[RoundedButton(
-              label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent),
-              padding: EdgeInsets.symmetric(horizontal: 14),
+              label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent) ?? '',
               textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
+              contentWeight: 0.0,
               onTap: () => _onTapButtonOption(ruleOption),
             ), Expanded(child: Padding(padding: EdgeInsets.only(left: 8),
               child: Text(Localization().getStringFromKeyMapping('widget.voter.option.descr.vote_in_person', _stringsContent, defaults: 'I want to vote in person')!, overflow: TextOverflow.ellipsis,
@@ -272,11 +273,11 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
             ],));
           } else {
             optionWidgets.add(Row(mainAxisSize: MainAxisSize.min, children: <Widget>[RoundedButton(
-              label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent),
-              padding: EdgeInsets.symmetric(horizontal: 14),
+              label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent) ?? '',
               textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
+              contentWeight: 0.0,
               onTap: () => _onTapButtonOption(ruleOption),
             ),
             ],));
@@ -291,7 +292,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     if (ruleOption == null) {
       return;
     }
-    Analytics.instance.logSelect(target: "Voter Registration: ${Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent)}");
+    Analytics().logSelect(target: "Voter Registration: ${Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent)}");
     switch (ruleOption.value) {
       case 'rv_yes':
         Auth2().prefs?.voter?.registeredVoter = true;
@@ -318,7 +319,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
         Auth2().prefs?.voter?.votePlace = _getPlaceToString(_VotePlace.Elsewhere);
         break;
       default:
-        if (AppString.isStringNotEmpty(ruleOption.value)) {
+        if (StringUtils.isNotEmpty(ruleOption.value)) {
           Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: ruleOption.value))).then((_) {
             _showNrvPlaces(false);
           });
@@ -328,7 +329,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
   }
 
   void _onTapVbmButton(String? vbmButtonTitle) {
-    Analytics.instance.logSelect(target: "Vote By Mail: ${AppString.getDefaultEmptyString(vbmButtonTitle)}");
+    Analytics().logSelect(target: "Vote By Mail: ${StringUtils.ensureNotEmpty(vbmButtonTitle)}");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: _voterRule?.vbmUrl)));
   }
 
@@ -337,11 +338,11 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
       return;
     }
     Set<String> currentRegionIds = GeoFence().currentRegionIds;
-    if (AppCollection.isCollectionEmpty(currentRegionIds)) {
+    if (CollectionUtils.isEmpty(currentRegionIds)) {
       return;
     }
     List<GeoFenceRegion> voterRegions = GeoFence().regionsList(type: 'voter', enabled: true);
-    if (AppCollection.isCollectionEmpty(voterRegions)) {
+    if (CollectionUtils.isEmpty(voterRegions)) {
       return;
     }
     String? currentVoterRegionName;
@@ -351,7 +352,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
         break;
       }
     }
-    if (AppString.isStringEmpty(currentVoterRegionName)) {
+    if (StringUtils.isEmpty(currentVoterRegionName)) {
       return;
     }
     String? alertFormat;
@@ -360,7 +361,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     } else if (!Auth2().didVote) {
       alertFormat = Localization().getStringFromKeyMapping(_voterRule!.rvAlert, _stringsContent);
     }
-    if (AppString.isStringEmpty(alertFormat)) {
+    if (StringUtils.isEmpty(alertFormat)) {
       return;
     }
     String? enteredRegionMsg = sprintf(alertFormat!, [currentVoterRegionName]);

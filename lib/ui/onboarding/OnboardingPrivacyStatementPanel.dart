@@ -15,13 +15,13 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Onboarding.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/SwipeDetector.dart';
+import 'package:rokwire_plugin/service/onboarding.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class OnboardingPrivacyStatementPanel extends StatefulWidget with OnboardingPanel {
 
@@ -58,8 +58,8 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding.privacy.label.title', 'We care about your privacy')!;
-    String descriptionText = Localization().getStringEx('panel.onboarding.privacy.label.description', 'We only ask for personal information when we can use it to enhance your experience by enabling more features.')!;
+    String titleText = Localization().getStringEx('panel.onboarding.privacy.label.title', 'We care about your privacy');
+    String descriptionText = Localization().getStringEx('panel.onboarding.privacy.label.description', 'We only ask for personal information when we can use it to enhance your experience by enabling more features.');
 
     double headingWidth = MediaQuery.of(context).size.width;
     double headingHeight = _headingHeight ?? 0;
@@ -89,7 +89,7 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                         ),
                         OnboardingBackButton( padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                         onTap:() {
-                          Analytics.instance.logSelect(target: "Back");
+                          Analytics().logSelect(target: "Back");
                           _goBack(context);
                         }),
                       ],),
@@ -138,7 +138,7 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                     Padding(
                       padding: EdgeInsets.only(
                           bottom: 24),
-                      child: ScalableRoundedButton(
+                      child: RoundedButton(
                         label: Localization().getStringEx('panel.onboarding.privacy.button.continue.title', 'Set your privacy level'),
                         hint: Localization().getStringEx('panel.onboarding.privacy.button.continue.hint', ''),
                         backgroundColor: Styles().colors!.background,

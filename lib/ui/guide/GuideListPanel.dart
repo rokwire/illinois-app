@@ -5,12 +5,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -26,7 +27,7 @@ import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -98,15 +99,15 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     if (_guideItems != null) {
 
         _guideItems!.sort((dynamic entry1, dynamic entry2) {
-          return AppSort.compareIntegers(
-            (entry1 is Map) ? AppJson.intValue(entry1['sort_order']) : null,
-            (entry2 is Map) ? AppJson.intValue(entry2['sort_order']) : null
+          return SortUtils.compare(
+            (entry1 is Map) ? JsonUtils.intValue(entry1['sort_order']) : null,
+            (entry2 is Map) ? JsonUtils.intValue(entry2['sort_order']) : null
           );
         });
 
       _features = LinkedHashSet<String>();
       for (Map<String, dynamic> guideEntry in _guideItems!) {
-        List<dynamic>? features = AppJson.listValue(Guide().entryValue(guideEntry, 'features'));
+        List<dynamic>? features = JsonUtils.listValue(Guide().entryValue(guideEntry, 'features'));
         if (features != null) {
           for (dynamic feature in features) {
             if ((feature is String) && !_features!.contains(feature)) {
@@ -133,10 +134,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     }
     
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
-      ),
+      appBar: HeaderBar(title: title),
       body: Column(children: _buildContent()),
       backgroundColor: Styles().colors!.background,
     );
@@ -188,7 +186,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         Expanded(child:
           Padding(padding: EdgeInsets.all(32), child:
             Center(child:
-              Text(Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+              Text(Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
             ,)
           ),
         ),
@@ -281,7 +279,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   GuideFeatureButton? _buildFeatureButton(String feature) {
 
-    List<dynamic> features = AppJson.listValue(FlexUI()['campus_guide.features']) ?? [];
+    List<dynamic> features = JsonUtils.listValue(FlexUI()['campus_guide.features']) ?? [];
     
     if (feature == 'athletics') {
       return features.contains('athletics') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.athletics.title", "Athletics"), icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,) : null;
@@ -331,32 +329,32 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
   }
 
   void _navigateAthletics() {
-    Analytics.instance.logSelect(target: "Athletics");
+    Analytics().logSelect(target: "Athletics");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
   void _navigateBusPass() {
-    Analytics.instance.logSelect(target: "Bus Pass");
+    Analytics().logSelect(target: "Bus Pass");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDBusPassPanel()));
   }
 
   void _navigateDining() {
-    Analytics.instance.logSelect(target: "Dining");
+    Analytics().logSelect(target: "Dining");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining, showHeaderBack: true,)));
   }
 
   void _navigateEvents() {
-    Analytics.instance.logSelect(target: "Events");
+    Analytics().logSelect(target: "Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events, showHeaderBack: true,)));
   }
 
   void _navigateGroups() {
-    Analytics.instance.logSelect(target: "Groups");
+    Analytics().logSelect(target: "Groups");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
   void _navigateIlliniCash() {
-    Analytics.instance.logSelect(target: "Illini Cash");
+    Analytics().logSelect(target: "Illini Cash");
     Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
         settings: RouteSettings(name: SettingsIlliniCashPanel.routeName),
         builder: (context){
@@ -366,22 +364,22 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
   }
 
   void _navigateIlliniId() {
-    Analytics.instance.logSelect(target: "Illini ID");
+    Analytics().logSelect(target: "Illini ID");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => IDCardPanel()));
   }
 
   void _navigateLaundry() {
-    Analytics.instance.logSelect(target: "Laundry");
+    Analytics().logSelect(target: "Laundry");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
   }
 
   void _navigateLibraryCard() {
-    Analytics.instance.logSelect(target: "Library Card");
+    Analytics().logSelect(target: "Library Card");
     showModalBottomSheet(context: context, isScrollControlled: true, isDismissible: true, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0),), builder: (context) => WalletSheet(ensureVisibleCard: 'library',));
   }
 
   void _navigateMealPlan() {
-    Analytics.instance.logSelect(target: "Meal Plan");
+    Analytics().logSelect(target: "Meal Plan");
     Navigator.of(context, rootNavigator: false).push(CupertinoPageRoute(
         builder: (context){
           return SettingsMealPlanPanel();
@@ -390,27 +388,27 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
   }
 
   void _navigateMyIllini() {
-    Analytics.instance.logSelect(target: "My Illini");
+    Analytics().logSelect(target: "My Illini");
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     }
-    else if (AppString.isStringNotEmpty(Config().myIlliniUrl)) {
+    else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
       launch(Config().myIlliniUrl!);
     }
   }
 
   void _navigateParking() {
-    Analytics.instance.logSelect(target: "Parking");
+    Analytics().logSelect(target: "Parking");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ParkingEventsPanel()));
   }
 
   void _navigateQuickPolls() {
-    Analytics.instance.logSelect(target: "Quick Polls");
+    Analytics().logSelect(target: "Quick Polls");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 
   void _navigateSaved() {
-    Analytics.instance.logSelect(target: "Saved");
+    Analytics().logSelect(target: "Saved");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
   }
 }

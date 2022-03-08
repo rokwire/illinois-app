@@ -16,8 +16,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/settings/SettingsNewPrivacyPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
@@ -42,25 +42,22 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
             child: Column(
               children: [
                 RibbonButton(
-                  label: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.title',  'Personalize this app') ,
+                  label: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.title',  'Personalize This App') ,
                   hint: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.hint', '') ,
-                  height: null,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapPersonalize,
                 ),
                 Container(height: 12,),
                 RibbonButton(
-                  label: Localization().getStringEx('widgets.home_highlighted_features.button.notifications.title',  'Manage notification preferences') ,
+                  label: Localization().getStringEx('widgets.home_highlighted_features.button.notifications.title',  'Manage Notification Preferences') ,
                   hint: Localization().getStringEx('widgets.home_highlighted_features.button.notifications.hint', '') ,
-                  height: null,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapNotificationPreferences,
                 ),
                 Container(height: 12,),
                 RibbonButton(
-                  label: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.title',  'Manage my privacy') ,
+                  label: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.title',  'Manage My Privacy') ,
                   hint: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.hint', '') ,
-                  height: null,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapManagePrivacy,
                 ),
@@ -68,7 +65,6 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
                 RibbonButton(
                   label: Localization().getStringEx('widgets.home_highlighted_features.button.guide.title',  'Campus Guide') ,
                   hint: Localization().getStringEx('widgets.home_highlighted_features.button.guide.hint', '') ,
-                  height: null,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapCampusGuide,
                 ),
@@ -87,28 +83,28 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),),
             Expanded(child:
-            Text(Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features') ?? '', style:
+            Text(Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features'), style:
             TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),),
     ],),),));
   }
 
   void _onTapPersonalize() {
-    Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Personalize");
+    Analytics().logSelect(target: "HomeHighlightedFeatures: Personalize");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInformationPanel()));
   }
 
   void _onTapNotificationPreferences() {
-    Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Notification Preferences");
+    Analytics().logSelect(target: "HomeHighlightedFeatures: Notification Preferences");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
   }
 
   void _onTapManagePrivacy() {
-    Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Manage Privacy");
+    Analytics().logSelect(target: "HomeHighlightedFeatures: Manage Privacy");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNewPrivacyPanel(mode: SettingsPrivacyPanelMode.regular)));
   }
 
   void _onTapCampusGuide() {
-    Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Campus Guide");
+    Analytics().logSelect(target: "HomeHighlightedFeatures: Campus Guide");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
 }

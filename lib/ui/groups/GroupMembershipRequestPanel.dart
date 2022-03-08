@@ -15,15 +15,16 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class GroupMembershipRequestPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
@@ -77,16 +78,9 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
     content.addAll(_buildQuestions());
 
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.membership_request.label.request.title", 'Membership Questions')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.membership_request.label.request.title", 'Membership Questions'),
+        leadingAsset: 'images/icon-circle-close.png',
       ),
       body: Column(
         children: <Widget>[
@@ -108,7 +102,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
   }
 
   Widget _buildHeading() {
-    return Text(Localization().getStringEx("panel.membership_request.label.description", 'This group asks you to answer the following question(s) for membership consideration.')!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949)));
+    return Text(Localization().getStringEx("panel.membership_request.label.description", 'This group asks you to answer the following question(s) for membership consideration.'), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949)));
   }
 
   List<Widget> _buildQuestions() {
@@ -147,10 +141,10 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
               textColor: Styles().colors!.fillColorPrimary,
               fontFamily: Styles().fontFamilies!.bold,
               fontSize: 16,
-              padding: EdgeInsets.symmetric(horizontal: 32, ),
               borderColor: Styles().colors!.fillColorSecondary,
               borderWidth: 2,
-              height: 42,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentWeight: 0.0,
               onTap:() { _onSubmit();  }
             ),
             Expanded(child: Container(),),
@@ -182,7 +176,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
           answers.add(GroupMembershipAnswer(question: question, answer: answer));
         }
         else {
-          AppAlert.showDialogResult(context,Localization().getStringEx("panel.membership_request.label.alert",  'Please answer ')!+ question!).then((_){
+          AppAlert.showDialogResult(context,Localization().getStringEx("panel.membership_request.label.alert",  'Please answer ')+ question!).then((_){
             focusNode.requestFocus();
           });
           return;

@@ -18,15 +18,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
-import 'package:illinois/model/Roster.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:illinois/model/sport/Roster.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 
 class AthleticsRosterListPanel extends StatefulWidget {
@@ -41,9 +41,9 @@ class AthleticsRosterListPanel extends StatefulWidget {
 
 class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> implements RoundedTabListener, _RosterItemListener{
 
-  final String _tabFilterByName = Localization().getStringEx("panel.athletics_roster_list.button.by_name.title", "By Name")!;
-  final String _tabFilterByPosition = Localization().getStringEx("panel.athletics_roster_list.button.by_position.title", "By Position")!;
-  final String _tabFilterByNumber = Localization().getStringEx("panel.athletics_roster_list.button.by_number.title", "By Number")!;
+  final String _tabFilterByName = Localization().getStringEx("panel.athletics_roster_list.button.by_name.title", "By Name");
+  final String _tabFilterByPosition = Localization().getStringEx("panel.athletics_roster_list.button.by_position.title", "By Position");
+  final String _tabFilterByNumber = Localization().getStringEx("panel.athletics_roster_list.button.by_number.title", "By Number");
 
   int? _selectedTabIndex = 0;
   late List<RoundedTab> _tabs;
@@ -64,16 +64,8 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   Widget build(BuildContext context) {
     _tabs = _constructTabWidgets();
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.athletics_roster_list.header.title', 'Roster')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.athletics_roster_list.header.title', 'Roster'),
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
@@ -212,7 +204,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   }
 
   void _onRosterItemTap(Roster roster){
-    Analytics.instance.logSelect(target: "Roster: "+roster.name!);
+    Analytics().logSelect(target: "Roster: "+roster.name!);
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -221,7 +213,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
 
   @override
   void onTabClicked(int? tabIndex, RoundedTab caller) {
-    Analytics.instance.logSelect(target: caller.title) ;
+    Analytics().logSelect(target: caller.title) ;
     setState(() {
       _selectedTabIndex = tabIndex;
       _tabs = _constructTabWidgets();
@@ -247,7 +239,7 @@ class _RosterListHeading extends StatelessWidget{
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  AppString.isStringNotEmpty(sport?.iconPath) ?
+                  StringUtils.isNotEmpty(sport?.iconPath) ?
                     Image.asset(sport!.iconPath!, width: 16, height: 16, excludeFromSemantics: true,) : Container(),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
@@ -262,7 +254,7 @@ class _RosterListHeading extends StatelessWidget{
                 ],
               ),
               SizedBox(height: 10.0,),
-              Text(Localization().getStringEx("panel.athletics_roster_list.label.heading.title", '2019-2020 Roster')! ,
+              Text(Localization().getStringEx("panel.athletics_roster_list.label.heading.title", '2019-2020 Roster') ,
                 style: TextStyle(
                     color: Colors.white,
                     fontFamily: Styles().fontFamilies!.extraBold,
@@ -353,7 +345,7 @@ class _RosterItem extends StatelessWidget{
                                 ),
                               ),
                             ),
-                            Text(AppString.getDefaultEmptyString(roster.numberString),
+                            Text(StringUtils.ensureNotEmpty(roster.numberString),
                               style: TextStyle(
                                   color: Styles().colors!.whiteTransparent06,
                                   fontFamily: Styles().fontFamilies!.medium,
@@ -397,7 +389,7 @@ class _RosterItem extends StatelessWidget{
                   child: Container(
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
-                    child: (AppString.isStringNotEmpty(roster.thumbPhotoUrl) ?
+                    child: (StringUtils.isNotEmpty(roster.thumbPhotoUrl) ?
                       Image.network(roster.thumbPhotoUrl!, excludeFromSemantics: true, width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,) :
                       Container(height: 96, width: 80, color: Colors.white,)),
                   ),
@@ -460,7 +452,7 @@ class _RosterInfoLine extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: AppString.isStringNotEmpty(value) ?
+      child: StringUtils.isNotEmpty(value) ?
       Row(
         children: <Widget>[
           Container(

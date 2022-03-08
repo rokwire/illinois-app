@@ -16,18 +16,18 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 import 'athletics/AthleticsGameDetailPanel.dart';
@@ -58,15 +58,8 @@ class _SearchPanelState extends State<SearchPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.search.header.title", "Search")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.search.header.title", "Search"),
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
@@ -190,7 +183,7 @@ class _SearchPanelState extends State<SearchPanel> {
     else if (_resultsCount == 1)
       return Localization().getStringEx('panel.search.label.found_single', '1 result found');
     else if (_resultsCount > 1)
-      return sprintf(Localization().getStringEx('panel.search.label.found_multi', '%d results found')!, [_resultsCount]);
+      return sprintf(Localization().getStringEx('panel.search.label.found_multi', '%d results found'), [_resultsCount]);
     else
       return "";
   }
@@ -241,7 +234,7 @@ class _SearchPanelState extends State<SearchPanel> {
           AthleticsGameDetailPanel(gameId: event!.speaker, sportName: event.registrationLabel,)));
     }
     else {
-      String? groupId = AppJson.stringValue(widget.searchData!= null ? widget.searchData!["group_id"] : null);
+      String? groupId = JsonUtils.stringValue(widget.searchData!= null ? widget.searchData!["group_id"] : null);
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
           ExploreDetailPanel(explore: explore, browseGroupId: groupId,))).
             then(
@@ -259,17 +252,17 @@ class _SearchPanelState extends State<SearchPanel> {
       return;
     }
     keyword = keyword.trim();
-    if (AppString.isStringEmpty(keyword)) {
+    if (StringUtils.isEmpty(keyword)) {
       return;
     }
-    ExploreService().loadEvents(searchText: keyword, eventFilter: EventTimeFilter.upcoming,).then((events) => _onEventsSearchFinished(events));
+    Events().loadEvents(searchText: keyword, eventFilter: EventTimeFilter.upcoming,).then((events) => _onEventsSearchFinished(events));
   }
 
   void _onEventsSearchFinished(List<Explore>? events) {
     _events = events;
     _resultsCount = _events?.length ?? 0;
     _resultsCountLabelVisible = true;
-    _searchLabel = Localization().getStringEx('panel.search.label.results_for', 'Results for ')! + _textEditingController.text;
+    _searchLabel = Localization().getStringEx('panel.search.label.results_for', 'Results for ') + _textEditingController.text;
     _setLoading(false);
   }
 
@@ -281,8 +274,8 @@ class _SearchPanelState extends State<SearchPanel> {
   }
 
   void _onTapClear() {
-    Analytics.instance.logSelect(target: "Clear");
-    if (AppString.isStringEmpty(_textEditingController.text)) {
+    Analytics().logSelect(target: "Clear");
+    if (StringUtils.isEmpty(_textEditingController.text)) {
       Navigator.pop(context);
       return;
     }
@@ -295,11 +288,11 @@ class _SearchPanelState extends State<SearchPanel> {
   }
 
   void _onTapSearch() {
-    Analytics.instance.logSelect(target: "Search");
+    Analytics().logSelect(target: "Search");
     FocusScope.of(context).requestFocus(new FocusNode());
     _setLoading(true);
     String searchValue = _textEditingController.text;
-    if (AppString.isStringEmpty(searchValue)) {
+    if (StringUtils.isEmpty(searchValue)) {
       return;
     }
     _searchEvents(searchValue);

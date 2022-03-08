@@ -15,8 +15,8 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class ExpandableText extends StatefulWidget {
   const ExpandableText(
@@ -91,7 +91,7 @@ class ExpandableTextState extends State<ExpandableText> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Text(Localization().getStringEx( "app.common.label.read_more", "Read more")!, style: TextStyle(fontSize: 16,
+                      Text(Localization().getStringEx( "app.common.label.read_more", "Read more"), style: TextStyle(fontSize: 16,
                           fontFamily: Styles().fontFamilies!.bold,
                           color: Styles().colors!.fillColorPrimary),),
                       Padding(

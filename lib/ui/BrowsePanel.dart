@@ -17,14 +17,15 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/SavedPanel.dart';
@@ -46,8 +47,8 @@ import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 class BrowsePanel extends StatefulWidget {
@@ -74,6 +75,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       Connectivity.notifyStatusChanged,
       Localization.notifyStringsUpdated,
       FlexUI.notifyChanged,
+      Config.notifyConfigChanged,
       Styles.notifyChanged,
       Storage.notifySettingChanged,
     ]);
@@ -109,7 +111,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
                   slivers: <Widget>[
                     SliverAppBar(pinned: true, floating: true, primary: true, forceElevated: true, centerTitle: true,
                       title: Text(
-                        Localization().getStringEx('panel.browse.label.title','Browse')!,
+                        Localization().getStringEx('panel.browse.label.title','Browse'),
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -247,7 +249,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (code == 'quick_polls') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.quick_polls.title', 'Quick polls'),
+        title: Localization().getStringEx('panel.browse.button.quick_polls.title', 'Quick Polls'),
         hint: Localization().getStringEx('panel.browse.button.quick_polls.hint', ''),
         icon: 'images/icon-browse-quick-polls.png',
         textColor: Styles().colors!.fillColorPrimary,
@@ -286,7 +288,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (code == 'building_status') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Entry'),
+        title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Access'),
         hint: Localization().getStringEx('panel.browse.button.building_status.hint', ''),
         icon: 'images/icon-browse-building-status.png',
         textColor: Styles().colors!.fillColorPrimary,
@@ -304,7 +306,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (code == 'inbox') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.inbox.title', 'Inbox'),
+        title: Localization().getStringEx('panel.browse.button.inbox.title', 'Notifications'),
         hint: Localization().getStringEx('panel.browse.button.inbox.hint', ''),
         icon: 'images/icon-browse-inbox.png',
         textColor: Styles().colors!.fillColorPrimary,
@@ -320,7 +322,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _navigatePrivacyCenter(),
       );
     }
-    else if (code == 'crisis_help') {
+    else if ((code == 'crisis_help') && _canCrisisHelp) {
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.crisis_help.title', 'Crisis Help'),
         hint: Localization().getStringEx('panel.browse.button.crisis_help.hint', ''),
@@ -470,7 +472,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _onFeedbackTap(),
       );
     }
-    else if (code == 'faqs') {
+    else if ((code == 'faqs') && _canFAQs) {
       return _RibbonButton(
         icon: Image.asset('images/icon-faqs.png'),
         accessoryIcon: Image.asset('images/link-out.png'),
@@ -480,6 +482,16 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _onFAQsTap(),
       );
     }
+    else if ((code == 'date_cat') && _canDateCat) {
+      return _RibbonButton(
+        icon: Image.asset('images/icon-settings.png'),
+        accessoryIcon: Image.asset('images/link-out.png'),
+        title: Localization().getStringEx('panel.browse.button.date_cat.title', 'Due Date Catalog'),
+        hint: Localization().getStringEx('panel.browse.button.date_cat.hint', ''),
+        padding: _ribbonButtonPadding,
+        onTap: () => _onDateCatTap(),
+      );
+    }
 
     else {
       return null;
@@ -487,42 +499,42 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateToExploreEvents() {
-    Analytics.instance.logSelect(target: "Events");
+    Analytics().logSelect(target: "Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events, showHeaderBack: true,)));
   }
 
   void _navigateToExploreDining() {
-    Analytics.instance.logSelect(target: "Dining");
+    Analytics().logSelect(target: "Dining");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining, showHeaderBack: true,)));
   }
 
   void _navigateToAthletics() {
-    Analytics.instance.logSelect(target: "Athletics");
+    Analytics().logSelect(target: "Athletics");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
   void _navigateToWellness() {
-    Analytics.instance.logSelect(target: "Wellness");
+    Analytics().logSelect(target: "Wellness");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessPanel()));
   }
 
   void _navigateSettings() {
-    Analytics.instance.logSelect(target: "Settings");
+    Analytics().logSelect(target: "Settings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
   }
 
   void _navigateMyIllini() {
-    Analytics.instance.logSelect(target: "My Illini");
+    Analytics().logSelect(target: "My Illini");
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     }
-    else if (AppString.isStringNotEmpty(Config().myIlliniUrl)) {
+    else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
       url_launcher.launch(Config().myIlliniUrl!);
     }
   }
 
   void _navigateIlliniCash() {
-    Analytics.instance.logSelect(target: "Illini Cash");
+    Analytics().logSelect(target: "Illini Cash");
     Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
         settings: RouteSettings(name: SettingsIlliniCashPanel.routeName),
         builder: (context){
@@ -532,7 +544,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateMealPlan() {
-    Analytics.instance.logSelect(target: "Meal Plan");
+    Analytics().logSelect(target: "Meal Plan");
     Navigator.of(context, rootNavigator: false).push(CupertinoPageRoute(
         builder: (context){
           return SettingsMealPlanPanel();
@@ -541,7 +553,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateLaundry() {
-    Analytics.instance.logSelect(target: "Laundry");
+    Analytics().logSelect(target: "Laundry");
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
     }
@@ -551,22 +563,22 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateSaved() {
-    Analytics.instance.logSelect(target: "Saved");
+    Analytics().logSelect(target: "Saved");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
   }
 
   void _navigateParking() {
-    Analytics.instance.logSelect(target: "Parking");
+    Analytics().logSelect(target: "Parking");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ParkingEventsPanel()));
   }
 
   void _navigateQuickPolls() {
-    Analytics.instance.logSelect(target: "Quick Polls");
+    Analytics().logSelect(target: "Quick Polls");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 
   void _navigateCreateEvent() {
-    Analytics.instance.logSelect(target: "Create an Event");
+    Analytics().logSelect(target: "Create an Event");
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
     }
@@ -576,12 +588,12 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateCreateStadiumPoll() {
-    Analytics.instance.logSelect(target: "Create Stadium Poll");
+    Analytics().logSelect(target: "Create Stadium Poll");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateStadiumPollPanel()));
   }
 
   void _navigateStateFarmWayfinding() {
-    Analytics.instance.logSelect(target: "State Farm Wayfinding");
+    Analytics().logSelect(target: "State Farm Wayfinding");
     NativeCommunicator().launchMap(target: {
       'latitude': 40.096247,
       'longitude': -88.235923,
@@ -590,17 +602,17 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateGroups() {
-    Analytics.instance.logSelect(target: "Groups");
+    Analytics().logSelect(target: "Groups");
     if(Auth2().isOidcLoggedIn) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
     } else if (_groupsLogin != true) {
       setState(() { _groupsLogin = true; });
-      Auth2().authenticateWithOidc().then((bool? success) {
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? success) {
         if (mounted) {
           setState(() { _groupsLogin = false; });
-          if (success == true) {
+          if (success == Auth2OidcAuthenticateResult.succeeded) {
             Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
-          } else if (success == false) {
+          } else if (success == Auth2OidcAuthenticateResult.failed) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }
@@ -609,33 +621,22 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateCampusGuide() {
-    Analytics.instance.logSelect(target: "Campus Guide");
+    Analytics().logSelect(target: "Campus Guide");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
 
   void _navigateInbox() {
-    Analytics.instance.logSelect(target: "Inbox");
+    Analytics().logSelect(target: "Inbox");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => InboxHomePanel()));
   }
 
   void _navigatePrivacyCenter() {
-    Analytics.instance.logSelect(target: "Privacy Center");
+    Analytics().logSelect(target: "Privacy Center");
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
   }
 
-  void _navigateCrisisHelp() {
-    Analytics.instance.logSelect(target: "Crisis Help");
-
-    if (Connectivity().isNotOffline && Config().crisisHelpUrl != null) {
-      url_launcher.launch(Config().crisisHelpUrl!);
-    }
-    else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
-    }
-  }
-
   void _onFeedbackTap() {
-    Analytics.instance.logSelect(target: "Provide Feedback");
+    Analytics().logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
       String? email = Auth2().email;
@@ -654,18 +655,45 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
 
-  void _onFAQsTap() {
-    Analytics.instance.logSelect(target: "FAQs");
+  bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
 
-    if (Connectivity().isNotOffline ) {
-      String faqsUrl = "http://mhcwellness.illinois.edu/faq"; // TBD from Config after confirmation Config().faqsUrl
+  void _navigateCrisisHelp() {
+    Analytics().logSelect(target: "Crisis Help");
 
-      String? panelTitle = Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs');
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WebPanel(url: faqsUrl, title: panelTitle,)));
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
     }
-    else {
+    else if (StringUtils.isNotEmpty(Config().crisisHelpUrl)) {
+      url_launcher.launch(Config().crisisHelpUrl!);
+    }
+  }
+
+  bool get _canFAQs => StringUtils.isNotEmpty(Config().faqsUrl);
+
+  void _onFAQsTap() {
+    Analytics().logSelect(target: "FAQs");
+
+    if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.faqs', 'FAQs is not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().faqsUrl)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+        url: Config().faqsUrl,
+        title: Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs'),
+      )));
+    }
+  }
+
+  bool get _canDateCat => StringUtils.isNotEmpty(Config().dateCatalogUrl);
+
+  void _onDateCatTap() {
+    Analytics().logSelect(target: "Due Date Catalog");
+    
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.date_cat', 'Due Date Catalog not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().dateCatalogUrl)) {
+      url_launcher.launch(Config().dateCatalogUrl!);
     }
   }
 
@@ -687,7 +715,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   Future<void> _navigateToSaferIllinois() async{
-    Analytics.instance.logSelect(target: "Safer Illinois");
+    Analytics().logSelect(target: "Safer Illinois");
     try {
 
       if (await url_launcher.canLaunch(_saferIllonoisAppDeeplink)) {
@@ -728,7 +756,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateToAddIlliniCash(){
-    Analytics.instance.logSelect(target: "Add Illini Cash");
+    Analytics().logSelect(target: "Add Illini Cash");
     Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsAddIlliniCashPanel()));
   }
 
@@ -739,6 +767,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     if ((name == Connectivity.notifyStatusChanged) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == FlexUI.notifyChanged) ||
+        (name == Config.notifyConfigChanged) ||
         (name == Styles.notifyChanged))
     {
       setState(() { });

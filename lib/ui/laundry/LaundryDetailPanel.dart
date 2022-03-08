@@ -15,19 +15,19 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/LaundryService.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/model/Location.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Laundries.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class LaundryDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -123,7 +123,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                       Text(
                                         Localization().getStringEx(
                                             'panel.laundry_detail.heading.laundry',
-                                            'Laundry')!,
+                                            'Laundry'),
                                         style: TextStyle(
                                             fontSize: 14,
                                             color: Styles().colors!.fillColorPrimary,
@@ -132,7 +132,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                       Visibility(visible: Auth2().canFavorite,
                                           child: GestureDetector(
                                             onTap: () {
-                                              Analytics.instance.logSelect(target: "Favorite: ${widget.room.title}");
+                                              Analytics().logSelect(target: "Favorite: ${widget.room.title}");
                                               Auth2().prefs?.toggleFavorite(widget.room);
                                             },
                                             child: Semantics(
@@ -194,7 +194,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                          Localization().getStringEx('panel.laundry_detail.label.washers', 'WASHERS')!,
+                                          Localization().getStringEx('panel.laundry_detail.label.washers', 'WASHERS'),
                                           style: TextStyle(
                                               color: Styles().colors!.fillColorPrimary,
                                               fontSize: 14,
@@ -202,7 +202,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                               letterSpacing: 1),
                                         ),
                                         Text(
-                                          sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"')!, [washersAvailable]),
+                                          sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [washersAvailable]),
                                           style: TextStyle(
                                               color: Styles().colors!.textBackground,
                                               fontSize: 16,
@@ -224,7 +224,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                          Localization().getStringEx('panel.laundry_detail.label.dryers', 'DRYERS')!,
+                                          Localization().getStringEx('panel.laundry_detail.label.dryers', 'DRYERS'),
                                           style: TextStyle(
                                               color: Styles().colors!.fillColorPrimary,
                                               fontSize: 14,
@@ -232,7 +232,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                               letterSpacing: 1),
                                         ),
                                         Text(
-                                          sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"')!, [dryersAvailable]),
+                                          sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [dryersAvailable]),
                                           style: TextStyle(
                                               color: Styles().colors!.textBackground,
                                               fontSize: 16,
@@ -260,31 +260,24 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   PreferredSizeWidget _buildHeaderBar() {
-    return SimpleHeaderBarWithBack(
-      context: context,
-      titleWidget: Text(Localization().getStringEx("panel.laundry_detail.header.title", "Laundry")!,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.0),
-      ),
+    return HeaderBar(
+      title: Localization().getStringEx("panel.laundry_detail.header.title", "Laundry"),
     );
   }
 
   Widget _buildLocationWidget() {
-    Location? laundryLocationDetails = widget.room.location;
+    ExploreLocation? laundryLocationDetails = widget.room.location;
     if (laundryLocationDetails == null) {
       return Container();
     }
     String? locationText = laundryLocationDetails.getDisplayAddress();
-    String? semanticText =sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location: %s "')!, [locationText]);
-    if (AppString.isStringEmpty(locationText)) {
+    String? semanticText =sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location: %s "'), [locationText]);
+    if (StringUtils.isEmpty(locationText)) {
       double? latitude = laundryLocationDetails.latitude?.toDouble();
       double? longitude = laundryLocationDetails.longitude?.toDouble();
       locationText = '$latitude, $longitude';
 
-      semanticText = sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location coordinates, Latitude:%s , Longitude:%s "')!, [latitude,longitude]);
+      semanticText = sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location coordinates, Latitude:%s , Longitude:%s "'), [latitude,longitude]);
     }
 
 
@@ -292,7 +285,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Visibility(
-          visible: AppString.isStringNotEmpty(locationText),
+          visible: StringUtils.isNotEmpty(locationText),
           child:Semantics(label:semanticText, excludeSemantics: true,child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -323,7 +316,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
             child:Padding(
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 24),
             child: Text(
-              Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map')!,
+              Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map'),
               style: TextStyle(
                   color: Styles().colors!.fillColorPrimary,
                   fontSize: 16,
@@ -361,8 +354,8 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   void _load() {
-    LaundryService().getNumAvailable(widget.room.id).then((roomAvailability) => _onAvailabilityLoaded(roomAvailability));
-    LaundryService().getAppliances(widget.room.id).then((roomAppliances) => _onAppliancesLoaded(roomAppliances));
+    Laundries().getNumAvailable(widget.room.id).then((roomAvailability) => _onAvailabilityLoaded(roomAvailability));
+    Laundries().getAppliances(widget.room.id).then((roomAppliances) => _onAppliancesLoaded(roomAppliances));
   }
 
   void _onAvailabilityLoaded(LaundryRoomAvailability? availability) {
@@ -378,7 +371,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   void _onTapViewMap() {
-    Analytics.instance.logSelect(target: "View Map");
+    Analytics().logSelect(target: "View Map");
     if (_detailVisible) {
       setState(() {
         _detailVisible = false;
@@ -446,7 +439,7 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
 
   String _getImageAssetPath(String? applianceType) {
     String defaultAssetPath = 'images/icon-washer-small.png';
-    if (AppString.isStringEmpty(applianceType)) {
+    if (StringUtils.isEmpty(applianceType)) {
       return defaultAssetPath;
     }
     switch (applianceType) {
@@ -460,7 +453,7 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
   }
 
   String? _getDeviceName(String? applianceType) {
-    if (AppString.isStringEmpty(applianceType)) {
+    if (StringUtils.isEmpty(applianceType)) {
       return Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER');
     }
     switch (applianceType) {

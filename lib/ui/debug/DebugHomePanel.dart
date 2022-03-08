@@ -18,15 +18,18 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/model/GeoFence.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/geo_fence.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/GeoFence.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/geo_fence.dart';
+import 'package:rokwire_plugin/service/firebase_core.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/debug/DebugCreateInboxMessagePanel.dart';
 import 'package:illinois/ui/debug/DebugInboxUserInfoPanel.dart';
@@ -36,11 +39,12 @@ import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/config.dart' as rokwire;
 
 class DebugHomePanel extends StatefulWidget {
   @override
@@ -50,7 +54,7 @@ class DebugHomePanel extends StatefulWidget {
 class _DebugHomePanelState extends State<DebugHomePanel> implements NotificationsListener {
 
   DateTime? _offsetDate;
-  ConfigEnvironment? _selectedEnv;
+  rokwire.ConfigEnvironment? _selectedEnv;
   Set<String> _rangingRegionIds = Set();
 
   final TextEditingController _mapThresholdDistanceController = TextEditingController();
@@ -108,7 +112,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   String? get _userDebugData{
-    String? userData = AppJson.encode(Auth2().account?.toJson(), prettify: true);
+    String? userData = JsonUtils.encode(Auth2().account?.toJson(), prettify: true);
     return userData;
   }
 
@@ -116,14 +120,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   Widget build(BuildContext context) {
     String? userUuid = Auth2().accountId;
     String? pid = Auth2().profile?.id;
-    String? firebaseProjectId = FirebaseMessaging().projectID;
+    String? firebaseProjectId = FirebaseCore().app?.options.projectId;
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx("panel.debug.header.title", "Debug")!,
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.debug.header.title", "Debug"),
       ),
       body: Column(
         children: <Widget>[
@@ -136,11 +136,11 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: Text(AppString.isStringNotEmpty(userUuid) ? 'Uuid: $userUuid' : "unknown uuid"),
+                      child: Text(StringUtils.isNotEmpty(userUuid) ? 'Uuid: $userUuid' : "unknown uuid"),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: Text(AppString.isStringNotEmpty(pid) ? 'PID: $pid' : "unknown pid"),
+                      child: Text(StringUtils.isNotEmpty(pid) ? 'PID: $pid' : "unknown pid"),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -156,9 +156,9 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     ),
                     
                     Container(height: 1, color: Styles().colors!.surfaceAccent),
-                    ToggleRibbonButton(label: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck, onTap: _onDisableLiveGameCheckToggled),
+                    ToggleRibbonButton(label: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck ?? false, onTap: _onDisableLiveGameCheckToggled),
                     ToggleRibbonButton(label: 'Display all times in Central Time', toggled: !Storage().useDeviceLocalTimeZone!, onTap: _onUseDeviceLocalTimeZoneToggled),
-                    ToggleRibbonButton(label: 'Show map location source', toggled: Storage().debugMapLocationProvider, onTap: _onMapLocationProvider),
+                    ToggleRibbonButton(label: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
                     ToggleRibbonButton(label: 'Show map levels', toggled: !Storage().debugMapHideLevels!, onTap: _onMapShowLevels),
                     Container(height: 1, color: Styles().colors!.surfaceAccent),
                     Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 5), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
@@ -191,11 +191,11 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       separatorBuilder: (context, index) => Divider(color: Colors.transparent),
-                      itemCount: ConfigEnvironment.values.length,
+                      itemCount: rokwire.ConfigEnvironment.values.length,
                       itemBuilder: (context, index) {
-                        ConfigEnvironment environment = ConfigEnvironment.values[index];
+                        rokwire.ConfigEnvironment environment = rokwire.ConfigEnvironment.values[index];
                         RadioListTile widget = RadioListTile(
-                            title: Text(configEnvToString(environment)!), value: environment, groupValue: _selectedEnv, onChanged: _onConfigChanged);
+                            title: Text(rokwire.configEnvToString(environment)!), value: environment, groupValue: _selectedEnv, onChanged: _onConfigChanged);
                         return widget;
                       },
                     )
@@ -211,6 +211,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               fontSize: 16.0,
                               textColor: Styles().colors!.fillColorPrimary,
                               borderColor: Styles().colors!.fillColorPrimary,
+                              contentWeight: 0.0,
                               onTap: () {
                                 _clearDateOffset();
                               },
@@ -218,7 +219,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                         Expanded(
                             child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                          child: Text(_offsetDate != null ? AppDateTime().formatDateTime(_offsetDate, format: AppDateTime.gameResponseDateTimeFormat2)! : "None",
+                          child: Text(_offsetDate != null ? AppDateTime().formatDateTime(_offsetDate, format: 'MM/dd/yyyy HH:mm:ss a')! : "None",
                               textAlign: TextAlign.end),
                         ))
                       ],
@@ -307,7 +308,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             borderColor: Styles().colors!.fillColorPrimary,
                             onTap: _onTapClearVoting)),
                     Visibility(
-                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
@@ -319,7 +320,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               onTap: _onTapGuide))
                     ),
                     Visibility(
-                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
@@ -339,8 +340,28 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             textColor: Styles().colors!.fillColorPrimary,
                             borderColor: Styles().colors!.fillColorPrimary,
                             onTap: _onTapRefreshToken)),
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: 'Canvas User',
+                            backgroundColor: Styles().colors!.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors!.fillColorPrimary,
+                            borderColor: Styles().colors!.fillColorPrimary,
+                            onTap: _onTapCanvasUser)),
                     Visibility(
-                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: 'Rewards',
+                            backgroundColor: Styles().colors!.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors!.fillColorPrimary,
+                            borderColor: Styles().colors!.fillColorPrimary,
+                            onTap: _onTapRewards))),
+                    Visibility(
+                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
@@ -491,7 +512,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     // 2. Start ranging for all current (inside) regions that are not already raning.
     for (String regionId in currentRegionIds) {
       GeoFenceRegion region = GeoFence().regions![regionId]!;
-      if ((region.regionType == GeoFenceRegionType.Beacon) && !_rangingRegionIds.contains(regionId)) {
+      if ((region.regionType == GeoFenceRegionType.beacon) && !_rangingRegionIds.contains(regionId)) {
         GeoFence().startRangingBeaconsInRegion(regionId).then((_) {
           _rangingRegionIds.add(regionId);
         });
@@ -508,7 +529,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onDisableLiveGameCheckToggled() {
     setState(() {
-      Storage().debugDisableLiveGameCheck = !Storage().debugDisableLiveGameCheck!;
+      Storage().debugDisableLiveGameCheck = (Storage().debugDisableLiveGameCheck != true);
     });
   }
 
@@ -548,8 +569,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onUserCardInfoClicked() {
-    String? cardInfo = AppJson.encode(Auth2().authCard?.toShortJson(), prettify: true);
-    if (AppString.isStringNotEmpty(cardInfo)) {
+    String? cardInfo = JsonUtils.encode(Auth2().authCard?.toShortJson(), prettify: true);
+    if (StringUtils.isNotEmpty(cardInfo)) {
       showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(cardInfo) );
     }
     else {
@@ -568,7 +589,9 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
               Expanded(child:
                 RoundedButton(
                   label: "Copy to clipboard",
+                  textColor: Styles().colors!.white,
                   borderColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors!.fillColorPrimary,
                   onTap: (){ _copyToClipboard(textContent); },
                 ),
               ),
@@ -582,7 +605,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
           ),
           Expanded(child:
             SingleChildScrollView(child:
-              Padding(padding: EdgeInsets.all(8), child: Text(AppString.getDefaultEmptyString(textContent), style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
+              Padding(padding: EdgeInsets.all(8), child: Text(StringUtils.ensureNotEmpty(textContent), style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
             )
           ),
         ])
@@ -607,7 +630,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onConfigChanged(dynamic env) {
-    if (env is ConfigEnvironment) {
+    if (env is rokwire.ConfigEnvironment) {
       setState(() {
         Config().configEnvironment = env;
         _selectedEnv = Config().configEnvironment;
@@ -616,7 +639,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onTapHttpProxy() {
-    if(Config().configEnvironment == ConfigEnvironment.dev) {
+    if(Config().configEnvironment == rokwire.ConfigEnvironment.dev) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHttpProxyPanel()));
     }
   }
@@ -652,6 +675,20 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     else {
       AppAlert.showDialogResult(context, "No token to refresh");
     }
+  }
+
+  void _onTapCanvasUser() {
+    Canvas().loadSelfUser().then((userJson) {
+      if (userJson != null) {
+        showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(JsonUtils.encode(userJson, prettify: true)));
+      } else {
+        AppAlert.showDialogResult(context, 'Failed to retrieve canvas user.');
+      }
+    });
+  }
+
+  void _onTapRewards() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugRewardsPanel()));
   }
 
   // SettingsListenerMixin

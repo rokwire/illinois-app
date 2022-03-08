@@ -15,8 +15,8 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class ImageHolderListItem extends StatelessWidget {
   final Color? placeHolderDividerResource;
@@ -55,7 +55,7 @@ class ImageHolderListItem extends StatelessWidget {
                       height: imageHeight,
                       width: MediaQuery.of(context).size.width,
                       fit: BoxFit.cover,
-                      headers: Network.authApiKeyHeader,
+                      headers: Config().networkAuthHeaders,
                       excludeFromSemantics: true,
                     ) : Container(height: 0),
                     Padding(

@@ -17,10 +17,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInfoPanel.dart';
@@ -29,7 +29,7 @@ import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 
 class SettingsPersonalInformationPanel extends StatefulWidget{
@@ -48,12 +48,8 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx("panel.settings.personal_information.label.title", "Personal Information")!,
-          style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.settings.personal_information.label.title", "Personal Information"),
       ),
       body: Column(
         children:[
@@ -66,17 +62,18 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
               children: <Widget>[
                 Container(height: 1, color: Styles().colors!.surfaceAccent,),
                 Container(height: 24,),
-                ScalableRoundedButton(
+                RoundedButton(
                   backgroundColor: Styles().colors!.white,
+                  borderColor: Styles().colors!.white,
                   textColor: UiColors.fromHex("#f54400"),
                   fontSize: 16,
                   fontFamily: Styles().fontFamilies!.regular,
-                  label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal information"),
-                  shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+                  label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete My Personal Information"),
+                  borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
                   onTap: _onTapDeleteData,
                 ),
                 Container(height: 16,),
-                Text(Localization().getStringEx("panel.settings.personal_information.label.description", "Delete your location history, your tags and categories, and saved events and dining locations.")!,
+                Text(Localization().getStringEx("panel.settings.personal_information.label.description", "Delete your location history, your tags and categories, and saved events and dining locations."),
                   style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textSurface),),
                 Container(height: 30,),
             ],),
@@ -125,21 +122,18 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
           Container(height: 8,),
           ToggleRibbonButton(
               label: 'Add saved events to calendar',
-              toggled: Storage().calendarEnabledToSave,
-              context: context,
+              toggled: Storage().calendarEnabledToSave ?? false,
               onTap: (){ setState(() {Storage().calendarEnabledToSave = !Storage().calendarEnabledToSave!;});}),
           Container(height: 8,),
           ToggleRibbonButton(
               label: 'Prompt when saving events to calendar',
-              style: TextStyle(fontSize: 16,fontFamily: Styles().fontFamilies!.bold, color: Storage().calendarEnabledToSave! ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,) ,
-              height: null,
-              toggled: Storage().calendarCanPrompt,
-              context: context,
+              textStyle: TextStyle(fontSize: 16,fontFamily: Styles().fontFamilies!.bold, color: Storage().calendarEnabledToSave! ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,) ,
+              toggled: Storage().calendarCanPrompt ?? false,
               onTap: (){
                 if(!Storage().calendarEnabledToSave!) {
                   return;
                 }
-                setState(() { Storage().calendarCanPrompt = !Storage().calendarCanPrompt!;});
+                setState(() { Storage().calendarCanPrompt = (Storage().calendarCanPrompt != true);});
               }),
           Container(height: 29,),
         ],));
@@ -154,17 +148,17 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
   }
 
   void _onTapWhoYouAre(){
-    Analytics.instance.logSelect(target: "Who are you");
+    Analytics().logSelect(target: "Who are you");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsRolesPanel()));
   }
 
   void _onTapInterests(){
-    Analytics.instance.logSelect(target: "Manage Your Interests");
+    Analytics().logSelect(target: "Manage Your Interests");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsManageInterestsPanel()));
   }
 
   void _onTapFoodFilters(){
-    Analytics.instance.logSelect(target: "Food Filters");
+    Analytics().logSelect(target: "Food Filters");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => FoodFiltersPanel()));
   }
 
@@ -201,6 +195,6 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
   //Option keys
   //static const String OptionPersonalInformation = "Personal information";
   //static const String OptionWhoYouAre = "Who you are";
-  static const String OptionYourInterests = "Your interests";
-  static const String OptionFoodFilters = "Food filters";
+  static const String OptionYourInterests = "Your Interests";
+  static const String OptionFoodFilters = "Food Filters";
 }

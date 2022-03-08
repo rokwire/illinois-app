@@ -18,18 +18,19 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Connectivity.dart';
-import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/ext/Event.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class GroupEventsContext {
   StreamController<void> eventsController = StreamController<void>();
@@ -70,22 +71,22 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   bool get _isLoading => _isCategoryLoading || _isEventLoading;
 
   // Categories Filter
-  final String _allCategoriesConst = Localization().getStringEx("panel.find_event.label.all_categories", "All categories")!;
+  final String _allCategoriesConst = Localization().getStringEx("panel.find_event.label.all_categories", "All categories");
   late List<String> _eventCategories;
   String? _selectedEventCategory;
 
   // Tags Filter
-  final String _tagFilterAllTags = Localization().getStringEx('panel.find_event.filter.tags.all', 'All Tags')!;
-  final String _tagFilterMyTags = Localization().getStringEx('panel.find_event.filter.tags.my', 'My Tags')!;
+  final String _tagFilterAllTags = Localization().getStringEx('panel.find_event.filter.tags.all', 'All Tags');
+  final String _tagFilterMyTags = Localization().getStringEx('panel.find_event.filter.tags.my', 'My Tags');
   late List<String> _tags;
   String? _selectedTag;
 
   // Time Filter
-  final String _timeFilterUpcoming = Localization().getStringEx("panel.find_event.filter.time.upcoming","Upcoming")!;
-  final String _timeFilterToday = Localization().getStringEx("panel.find_event.filter.time.today","Today")!;
-  final String _timeFilterNextSevenDays = Localization().getStringEx("find_event.find_event.filter.time.next_7_days","Next 7 days")!;
-  final String _timeFilterThisWeekend = Localization().getStringEx("panel.find_event.filter.time.this_weekend","This Weekend")!;
-  final String _timeFilterNextMonth = Localization().getStringEx("panel.find_event.filter.time.next_30_days","Next 30 days")!;
+  final String _timeFilterUpcoming = Localization().getStringEx("panel.find_event.filter.time.upcoming","Upcoming");
+  final String _timeFilterToday = Localization().getStringEx("panel.find_event.filter.time.today","Today");
+  final String _timeFilterNextSevenDays = Localization().getStringEx("find_event.find_event.filter.time.next_7_days","Next 7 Days");
+  final String _timeFilterThisWeekend = Localization().getStringEx("panel.find_event.filter.time.this_weekend","This Weekend");
+  final String _timeFilterNextMonth = Localization().getStringEx("panel.find_event.filter.time.next_30_days","Next 30 days");
   late List<String> _time;
   String? __selectedTime;
   String? get _selectedTime => __selectedTime;
@@ -141,12 +142,12 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   void _loadEventCategories() {
     if (Connectivity().isNotOffline) {
       setState(() {_isCategoryLoading = true;});
-      ExploreService().loadEventCategoriesEx().then((List<ExploreCategory>? result) {
+      Events().loadEventCategoriesEx().then((List<EventCategory>? result) {
         _eventCategories = [];
         _eventCategories.add(_allCategoriesConst);
-        if(AppCollection.isCollectionNotEmpty(result)){
-          for (ExploreCategory category in result!) {
-            AppList.add(_eventCategories, category.name);
+        if(CollectionUtils.isNotEmpty(result)){
+          for (EventCategory category in result!) {
+            ListUtils.add(_eventCategories, category.name);
           }
         }
         setState(() {_isCategoryLoading = false;});
@@ -170,7 +171,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
         eventFilter = EventTimeFilter.next30Days;
       }
 
-      ExploreService().loadEvents(searchText: _textEditingController.text, eventFilter: eventFilter).then((List<Event>? result) {
+      Events().loadEvents(searchText: _textEditingController.text, eventFilter: eventFilter).then((List<Event>? result) {
         _events = result;
         _isEventLoading = false;
         _applyFilter();
@@ -189,16 +190,9 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.find_event.header.title", "Find event")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.find_event.header.title", "Find event"),
+        leadingAsset: 'images/icon-circle-close.png',
       ),
       body: Column(
         children: <Widget>[
@@ -229,7 +223,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
             padding: EdgeInsets.all(16),
             color: Styles().colors!.white,
             child: RoundedButton(
-              label: Localization().getStringEx("panel.find_event.button.add_selected_events.title", "Add (#) event to group")!.replaceAll("#", _selectedEvents.length.toString()),
+              label: Localization().getStringEx("panel.find_event.button.add_selected_events.title", "Add (#) event to group").replaceAll("#", _selectedEvents.length.toString()),
               hint: Localization().getStringEx("panel.find_event.button.add_selected_events.hint", ""),
               backgroundColor: Styles().colors!.white,
               textColor: Styles().colors!.fillColorPrimary,
@@ -346,7 +340,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
       active: (_activeFilterType == filterType),
       visible: true,
       onTap: (){
-        Analytics.instance.logSelect(target: analyticsEvent);
+        Analytics().logSelect(target: analyticsEvent);
         setState(() {
           _activeFilterType = (_activeFilterType != filterType) ? filterType : FilterType.none;
         });
@@ -466,7 +460,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
 
   Widget _buildCardsContent(){
     if(!_isLoading) {
-      return AppCollection.isCollectionNotEmpty(_filteredEvents)
+      return CollectionUtils.isNotEmpty(_filteredEvents)
         ? ListView.builder(
             controller: _scrollController,
             itemBuilder: (BuildContext context, int index) => _EventCard(
@@ -477,7 +471,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
             ),
             itemCount: _filteredEvents! .length)
         :  Container(
-            child: Center(child: Text(Localization().getStringEx('panel.find_event.label.search.empty',  "Unable to find events")!),),
+            child: Center(child: Text(Localization().getStringEx('panel.find_event.label.search.empty',  "Unable to find events")),),
         );
     }
     else{
@@ -486,17 +480,17 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   }
 
   void _onTapSearch() {
-    Analytics.instance.logSelect(target: "Search");
+    Analytics().logSelect(target: "Search");
     _textFocusNode.unfocus();
-    if (AppString.isStringNotEmpty(_textEditingController.text)) {
+    if (StringUtils.isNotEmpty(_textEditingController.text)) {
       _loadEvents();
     }
   }
 
   void _onTapClear(){
-    Analytics.instance.logSelect(target: "Clear");
+    Analytics().logSelect(target: "Clear");
     _textFocusNode.unfocus();
-    if(AppString.isStringNotEmpty(_textEditingController.text)){
+    if(StringUtils.isNotEmpty(_textEditingController.text)){
       _textEditingController.text = "";
       _loadEvents();
     }
@@ -588,7 +582,7 @@ class _EventCardState extends State<_EventCard>{
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(AppString.isStringNotEmpty(widget.event.exploreTitle) ? widget.event.exploreTitle! : "",
+                          Text(StringUtils.isNotEmpty(widget.event.exploreTitle) ? widget.event.exploreTitle! : "",
                             style: TextStyle(
                               fontFamily: Styles().fontFamilies!.extraBold,
                               fontSize: 20,
@@ -612,7 +606,7 @@ class _EventCardState extends State<_EventCard>{
 
   Widget _exploreTimeDetail() {
     String? displayTime = widget.event.timeDisplayString;
-    if (AppString.isStringEmpty(displayTime)) {
+    if (StringUtils.isEmpty(displayTime)) {
       return Container();
     }
     return Semantics(label: displayTime, child: Row(

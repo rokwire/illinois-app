@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
@@ -29,8 +29,8 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 import 'AthleticsNewsArticlePanel.dart';
 
@@ -58,16 +58,8 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SimpleHeaderBarWithBack(
-          context: context,
-          titleWidget: Text(
-            Localization().getStringEx('panel.athletics_news_list.header.title', 'News')!,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.0),
-          ),
+        appBar: HeaderBar(
+          title: Localization().getStringEx('panel.athletics_news_list.header.title', 'News'),
         ),
         body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,12 +117,12 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
 
   _initFilter() async{
     _filters = [];
-   _filters.add(Localization().getStringEx("panel.athletics_news_list.label.all_news.title", "All Athletics News")!);
+   _filters.add(Localization().getStringEx("panel.athletics_news_list.label.all_news.title", "All Athletics News"));
     List<SportDefinition> sportTypes = Sports().sports!;
    sportTypes.forEach((SportDefinition type){
-      AppList.add(_filters, type.name);
+      ListUtils.add(_filters, type.name);
    });
-    if (AppString.isStringNotEmpty(widget.sportName)) {
+    if (StringUtils.isNotEmpty(widget.sportName)) {
       int initialSelectedFilterIndex = (widget.sportName != null) ? _filters.indexOf(widget.sportName!) : -1;
       if (initialSelectedFilterIndex >= 0 &&
           initialSelectedFilterIndex < _filters.length) {
@@ -234,7 +226,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   Widget _buildFilterLabel(){
     return _wrapWithBottomBorder(Styles().colors!.surfaceAccent!,
         Padding(padding: EdgeInsets.only(top: 14),
-        child:Text(Localization().getStringEx("panel.athletics_news_list.label.filter_by", "Filter by")!,
+        child:Text(Localization().getStringEx("panel.athletics_news_list.label.filter_by", "Filter by"),
           style: TextStyle(
           fontSize: 16,
           color: Styles().colors!.textBackground,
@@ -265,7 +257,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
 
   //Click listeners
   void _onNewsTap(News news) {
-    Analytics.instance.logSelect(target: "news: "+news.title!);
+    Analytics().logSelect(target: "news: "+news.title!);
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -273,14 +265,14 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   }
 
   void _onFilterTypeClicked() {
-    Analytics.instance.logSelect(target: "Filter");
+    Analytics().logSelect(target: "Filter");
     setState(() {
         _filterOptionsVisible = !_filterOptionsVisible;
     });
   }
 
   void _onFilterValueClick(int newValueIndex) {
-    Analytics.instance.logSelect(target: "Filter: ${_filters[newValueIndex]}") ;
+    Analytics().logSelect(target: "Filter: ${_filters[newValueIndex]}") ;
     setState(() {
       _selectedFilterIndex = newValueIndex;
       _filterOptionsVisible = false;

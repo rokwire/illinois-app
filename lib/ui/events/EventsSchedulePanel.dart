@@ -17,17 +17,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/explore.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Connectivity.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
@@ -35,11 +37,11 @@ import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 enum _EventTab { All, Saved }
@@ -123,15 +125,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule'),
       ),
       body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,7 +229,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
         Map? categoryEvents = _sortedEvents![date];
         if (categoryEvents != null && categoryEvents.isNotEmpty) {
           for (String? category in categoryEvents.keys) {
-            if (AppString.isStringNotEmpty(category)) {
+            if (StringUtils.isNotEmpty(category)) {
               content.add(_buildCategoryTitle(category!));
             }
             List<Event> events = categoryEvents[category];
@@ -275,11 +270,11 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   //Event utils
   String getEventDate(Event event) {
-    return AppDateTime().getDisplayDay(dateTimeUtc: event.startDateGmt, allDay: event.allDay)!;
+    return AppDateTimeUtils.getDisplayDay(dateTimeUtc: event.startDateGmt, allDay: event.allDay)!;
   }
 
   Widget _buildEmpty() {
-    String message =  Localization().getStringEx('panel.events_schedule.empty.events', 'No events.')!;
+    String message =  Localization().getStringEx('panel.events_schedule.empty.events', 'No events.');
     return Container(child: Align(alignment: Alignment.center,
       child: Text(message, textAlign: TextAlign.center,),
     ));
@@ -287,7 +282,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   //display type
   void _selectDisplayType(ListMapDisplayType displayType) {
-    Analytics.instance.logSelect(target: displayType.toString());
+    Analytics().logSelect(target: displayType.toString());
     if (_displayType != displayType) {
       _refresh(() {
         _displayType = displayType;
@@ -308,7 +303,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   Widget _buildFilterValuesContainer() {
     
     _EventFilter? selectedFilter;
-    if (AppCollection.isCollectionNotEmpty(_tabFilters)) {
+    if (CollectionUtils.isNotEmpty(_tabFilters)) {
       for (_EventFilter filter in _tabFilters!) {
         if (filter.active) {
           selectedFilter = filter;
@@ -347,7 +342,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                       label: filterValues[filterIndex],
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(filterIndex)),
                       onTap: () {
-                        Analytics.instance.logSelect(target: "FilterItem: ${filterValues[filterIndex]}");
+                        Analytics().logSelect(target: "FilterItem: ${filterValues[filterIndex]}");
                         _onFilterValueClick(selectedFilter!, filterIndex);
                       },
                     );
@@ -416,10 +411,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   void _onTapSearchTags() {
-    Analytics.instance.logSelect(target: "Search");
+    Analytics().logSelect(target: "Search");
     FocusScope.of(context).requestFocus(new FocusNode());
     String searchValue = _textEditingController.text;
-    if (AppString.isStringEmpty(searchValue)) {
+    if (StringUtils.isEmpty(searchValue)) {
       return;
     }
     _refreshVisibleSearchTags();
@@ -480,11 +475,11 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   List<String>? _getFilterCategoriesValues() {
-    if (AppCollection.isCollectionEmpty(_eventCategories)) {
+    if (CollectionUtils.isEmpty(_eventCategories)) {
       return null;
     }
     List<String> categoriesValues = [];
-    categoriesValues.add(Localization().getStringEx('panel.events_schedule.filter.tracks.all', 'All Tracks')!);
+    categoriesValues.add(Localization().getStringEx('panel.events_schedule.filter.tracks.all', 'All Tracks'));
     for (var category in _eventCategories!) {
       categoriesValues.add(category);
     }
@@ -493,7 +488,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   List<String>? _getFilterTagsValues() {
     List<String> tagsValues = [];
-    tagsValues.add(Localization().getStringEx('panel.events_schedule.filter.tags.all', 'All Tags')!);
+    tagsValues.add(Localization().getStringEx('panel.events_schedule.filter.tags.all', 'All Tags'));
 
     if (_visibleTags != null) {
       for (var tag in _visibleTags!) {
@@ -505,7 +500,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   List<Widget> _buildFilterWidgets() {
     List<Widget> filterTypeWidgets = [];
-    if (AppCollection.isCollectionEmpty(_tabFilters) || _eventCategories == null) {
+    if (CollectionUtils.isEmpty(_tabFilters) || _eventCategories == null) {
       filterTypeWidgets.add(Container());
       return filterTypeWidgets;
     }
@@ -521,7 +516,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
         _initialSelectedFilter = null;
       }
       List<String>? filterValues = _getFilterValuesByType(selectedFilter.type);
-      if (AppCollection.isCollectionEmpty(filterValues)) {
+      if (CollectionUtils.isEmpty(filterValues)) {
         continue;
       }
       int filterValueIndex = selectedFilter.firstSelectedIndex;
@@ -532,7 +527,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
         active: selectedFilter.active,
         visible: true,
         onTap: (){
-          Analytics.instance.logSelect(target: "Filter: $filterHeaderLabel");
+          Analytics().logSelect(target: "Filter: $filterHeaderLabel");
           return _onFilterTypeClicked(selectedFilter);},
       ));
     }
@@ -609,8 +604,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       exploreColor = _selectedMapExplore.uiColor;
     }
     else if  (_selectedMapExplore is List<Event>) {
-      String? exploreName = ExploreHelper.getExploresListDisplayTitle(_selectedMapExplore);
-      title = sprintf(Localization().getStringEx('panel.events_schedule.map.popup.title.format', '%d %s')!, [_selectedMapExplore?.length, exploreName]);
+      String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
+      title = sprintf(Localization().getStringEx('panel.events_schedule.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
       description = _selectedMapExplore?.first?.exploreLocation?.description;
       exploreColor = _selectedMapExplore.first?.uiColor;
     }
@@ -661,13 +656,12 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                                     label: Localization().getStringEx('panel.events_schedule.button.directions.title', 'Directions'),
                                     hint: Localization().getStringEx('panel.events_schedule.button.directions.hint', ''),
                                     backgroundColor: Colors.white,
-                                    height: 32,
+                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                     fontSize: 16.0,
                                     textColor: Styles().colors!.fillColorPrimary,
                                     borderColor: Styles().colors!.fillColorSecondary,
-                                    padding: EdgeInsets.symmetric(horizontal: 24),
                                     onTap: () {
-                                      Analytics.instance.logSelect(target: 'Directions');
+                                      Analytics().logSelect(target: 'Directions');
                                       _presentMapExploreDirections(context);
                                     }),),
                                 Container(
@@ -679,13 +673,12 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                               label: Localization().getStringEx('panel.events_schedule.button.details.title', 'Details'),
                               hint: Localization().getStringEx('panel.events_schedule.button.details.hint', ''),
                               backgroundColor: Colors.white,
-                              height: 32,
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               fontSize: 16.0,
                               textColor: Styles().colors!.fillColorPrimary,
                               borderColor: Styles().colors!.fillColorSecondary,
-                              padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
-                                Analytics.instance.logSelect(target: 'Details');
+                                Analytics().logSelect(target: 'Details');
                                 _presentMapExploreDetail(context);
                               }),),
 
@@ -788,7 +781,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   bool _userLocationEnabled() {
-    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
+    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
   //EventsLoading
@@ -804,7 +797,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   //Utils Sorting
   void _sortEvents() {
-    if (AppCollection.isCollectionEmpty(_events)) {
+    if (CollectionUtils.isEmpty(_events)) {
       return;
     }
     _sortedEvents = Map();
@@ -860,10 +853,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   void _initEventsCategories() {
     _eventCategories = [];
-    if (AppCollection.isCollectionNotEmpty(_events)) {
+    if (CollectionUtils.isNotEmpty(_events)) {
       for (Event event in _events!) {
         String? track = event.track;
-        if (AppString.isStringNotEmpty(track) && !_eventCategories!.contains(track))
+        if (StringUtils.isNotEmpty(track) && !_eventCategories!.contains(track))
           _eventCategories!.add(track);
       }
     }
@@ -887,7 +880,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   _refreshVisibleSearchTags(){
     _visibleTags = _eventTags;
     String searchPattern = _textEditingController.text;
-    if( AppString.isStringNotEmpty(searchPattern)){
+    if( StringUtils.isNotEmpty(searchPattern)){
       _visibleTags = _eventTags!.where((String tag){
           return tag.startsWith(searchPattern);
       }).toList();
@@ -931,11 +924,11 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   //LocationServices
   _initLocationService(){
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
-        if (_locationServicesStatus == LocationServicesStatus.PermissionNotDetermined) {
-          LocationServices.instance.requestPermission().then((LocationServicesStatus? locationServicesStatus) {
+        if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
+          LocationServices().requestPermission().then((LocationServicesStatus? locationServicesStatus) {
             _locationServicesStatus = locationServicesStatus;
             _refresh((){});
           });
@@ -979,7 +972,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   _onPrivacyLevelChanged(){
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _refresh((){});
       });
@@ -1117,7 +1110,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                             child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
-                                  Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
+                                  Analytics().logSelect(target: "Favorite: ${widget.event?.title}");
                                   Auth2().prefs?.toggleFavorite(widget.event);
                                 },
                                 child: Semantics(
@@ -1140,7 +1133,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 4, left: 28),
-                    child: Text(widget.event!.displaySuperTime, style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium)),
+                    child: Text(widget.event?.displaySuperTime ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium)),
                   )
                 ]),
               ),

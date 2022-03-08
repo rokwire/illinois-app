@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-import 'dart:ui';
-
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Location.dart';
-import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/service/assets.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Game with Explore implements Favorite {
   final String? id;
@@ -52,6 +48,10 @@ class Game with Explore implements Favorite {
   Map<String, dynamic>? jsonData;
 
   String? randomImageURL;
+
+  static final String dateFormat = 'MM/dd/yyyy';
+  static final String dateTimeFormat = 'MM/dd/yyyy HH:mm:ss a';
+  static final String utcDateTimeFormat = 'yyyy-MM-ddTHH:mm:ssZ';
 
   Game(
       {this.id,
@@ -83,11 +83,11 @@ class Game with Explore implements Favorite {
       dateToString: json['date'],
       timeToString: json['time'],
       dateTimeUtcString: json['datetime_utc'],
-      dateTimeUtc: AppDateTime().dateTimeFromString(json['datetime_utc'], format: AppDateTime.gameResponseDateTimeFormat, isUtc: true),
+      dateTimeUtc: DateTimeUtils.dateTimeFromString(json['datetime_utc'], format: utcDateTimeFormat, isUtc: true),
       endDateTimeUtcString: json['end_datetime_utc'],
-      endDateTimeUtc: AppDateTime().dateTimeFromString(json['end_datetime_utc'], format: AppDateTime.gameResponseDateTimeFormat, isUtc: true),
+      endDateTimeUtc: DateTimeUtils.dateTimeFromString(json['end_datetime_utc'], format: utcDateTimeFormat, isUtc: true),
       endDateTimeString: json['end_datetime'],
-      endDateTime: AppDateTime().dateTimeFromString(json['end_datetime'], format: AppDateTime.gameResponseDateTimeFormat2),
+      endDateTime: DateTimeUtils.dateTimeFromString(json['end_datetime'], format: dateTimeFormat),
       allDay: json['all_day'],
       status: json['status'],
       description: json['description'],
@@ -99,14 +99,18 @@ class Game with Explore implements Favorite {
       links: Links.fromJson(json['links']),
       opponent: Opponent.fromJson(json['opponent']),
       sponsor: json['sponsor'],
-      results: GameResult.listFromJson(AppJson.listValue(json['results'])),
+      results: GameResult.listFromJson(JsonUtils.listValue(json['results'])),
       jsonData: json,
     ) : null;
   }
 
+  static bool canJson(Map<String, dynamic>? json) {
+    return (json != null) && (json['sport'] != null) && (json['id'] != null);
+  }
+
   String get title {
     String? opponentName = opponent?.name;
-    String cancelledLabel = Localization().getStringEx("app.common.label.cancelled", "Cancelled") ?? '';
+    String cancelledLabel = Localization().getStringEx("app.common.label.cancelled", "Cancelled");
     String teamName = Localization().getString('app.team_name') ?? '';
     String title = isHomeGame ? '$opponentName at $teamName' : '$teamName at $opponentName';
 
@@ -147,7 +151,7 @@ class Game with Explore implements Favorite {
   }
 
   DateTime? get date {
-    return AppDateTime().dateTimeFromString(dateToString, format: AppDateTime.scheduleServerQueryDateTimeFormat);
+    return DateTimeUtils.dateTimeFromString(dateToString, format: dateFormat);
   }
 
   ///
@@ -176,19 +180,19 @@ class Game with Explore implements Favorite {
     int secondUtc = dateTimeUtc!.second;
     int millisUtc = dateTimeUtc!.millisecond;
     bool useStringDateTimes = (hourUtc == 0 && minuteUtc == 0 && secondUtc == 0 && millisUtc == 0);
-    final String dateFormat = 'MMM dd';
+    final String displayDateFormat = 'MMM dd';
     if (eventIsMoreThanOneDay) {
       DateTime? startDate = useStringDateTimes ? date : dateTimeUtc;
       DateTime? endDate = useStringDateTimes ? (endDateTime ?? endDateTimeUtc) : endDateTimeUtc;
-      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: dateFormat, ignoreTimeZone: useStringDateTimes);
-      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: dateFormat, ignoreTimeZone: useStringDateTimes);
+      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
+      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
       return '$startDateFormatted - $endDateFormatted';
     } else if (useStringDateTimes) {
-      String dateFormatted = AppDateTime().formatDateTime(date, format: dateFormat, ignoreTimeZone: true, showTzSuffix: false)!; //another workaround
-      dateFormatted += ' ${AppString.getDefaultEmptyString(timeToString)}';
+      String dateFormatted = AppDateTime().formatDateTime(date, format: displayDateFormat, ignoreTimeZone: true, showTzSuffix: false)!; //another workaround
+      dateFormatted += ' ${StringUtils.ensureNotEmpty(timeToString)}';
       return dateFormatted;
     } else {
-      return AppDateTime().getDisplayDateTime(dateTimeUtc, allDay: allDay ?? false);
+      return AppDateTimeUtils.getDisplayDateTime(dateTimeUtc, allDay: allDay ?? false);
     }
   }
 
@@ -233,11 +237,11 @@ class Game with Explore implements Favorite {
     return randomImageURL!.isNotEmpty ? randomImageURL : null;
   }
 
-  Location? get _exploreLocation {
+  ExploreLocation? get _exploreLocation {
     if (location == null) {
       return null;
     }
-    return Location(description: location!.location);
+    return ExploreLocation(description: location!.location);
   }
 
   ////////////////////////////
@@ -264,7 +268,7 @@ class Game with Explore implements Favorite {
   String? get exploreImageURL => imageUrl;
 
   @override
-  Location? get exploreLocation => _exploreLocation;
+  ExploreLocation? get exploreLocation => _exploreLocation;
 
   @override
   String? get exploreLongDescription => longDescription;
@@ -283,19 +287,6 @@ class Game with Explore implements Favorite {
 
   @override
   String get exploreTitle => title;
-
-  @override
-  Color? get uiColor => Styles().colors!.eventColor;
-
-  Map<String, dynamic> get analyticsAttributes {
-    Map<String, dynamic> attributes = {Analytics.LogAttributeGameId: id, Analytics.LogAttributeGameName: title};
-    attributes.addAll(location?.analyticsAttributes ?? {});
-    return attributes;
-  }
-
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) && (json['id'] != null);
-  }
 
   @override
   Map<String, dynamic> toJson() {
@@ -326,7 +317,7 @@ class Game with Explore implements Favorite {
     if (jsonList != null) {
       result = <Game>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, Game.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, Game.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -368,9 +359,7 @@ class GameLocation {
     return GameLocation(location: json['location'], han: json['HAN']);
   }
 
-  Map<String, dynamic> get analyticsAttributes {
-    return {Analytics.LogAttributeLocation: location};
-  }
+  String? get analyticsValue => location;
 }
 
 class Links {
@@ -457,7 +446,7 @@ class GameResult {
     if (jsonList != null) {
       result = <GameResult>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, GameResult.fromJson(AppJson.mapValue(jsonEntry)));
+        ListUtils.add(result, GameResult.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -465,7 +454,7 @@ class GameResult {
 
   static List<dynamic>? listToJson(List<GameResult?>? results) {
     List<dynamic>? jsonList;
-    if (AppCollection.isCollectionNotEmpty(results)) {
+    if (CollectionUtils.isNotEmpty(results)) {
       jsonList = [];
       for (GameResult? result in results!) {
         jsonList.add(result?.toJson());

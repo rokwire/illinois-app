@@ -19,10 +19,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/dining/LocationsWithSpecialPanel.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class HorizontalDiningSpecials extends StatelessWidget {
   final String? locationId;
@@ -45,7 +45,7 @@ class HorizontalDiningSpecials extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  Localization().getStringEx("panel.explore.label.spcial_offers.title", "Special Offers")!,
+                  Localization().getStringEx("panel.explore.label.spcial_offers.title", "Special Offers"),
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.extraBold,
                     fontSize: 16,
@@ -68,11 +68,11 @@ class HorizontalDiningSpecials extends StatelessWidget {
     List<Widget> offers = [];
 
     List<DiningSpecial>? limitedOffers = specials;
-    if (AppString.isStringNotEmpty(locationId) && AppCollection.isCollectionNotEmpty(specials)) {
+    if (StringUtils.isNotEmpty(locationId) && CollectionUtils.isNotEmpty(specials)) {
       limitedOffers = specials!.where((entry) => entry.locationIds!.contains(locationId)).toList();
     }
 
-    if (AppCollection.isCollectionNotEmpty(limitedOffers)) {
+    if (CollectionUtils.isNotEmpty(limitedOffers)) {
       for (DiningSpecial offer in limitedOffers!) {
         if (offers.isNotEmpty) {
           offers.add(Container(
@@ -168,7 +168,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
   }
 
   bool get _hasImage {
-    return AppString.isStringNotEmpty(widget.special!.imageUrl);
+    return StringUtils.isNotEmpty(widget.special!.imageUrl);
   }
 
   void _evalImageHeight() {
@@ -185,7 +185,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
   }
 
   void _onOfferTap(BuildContext context) {
-    Analytics.instance.logSelect(target: "Special Offer: ${widget.special!.text}");
+    Analytics().logSelect(target: "Special Offer: ${widget.special!.text}");
 
     Navigator.push(
         context,

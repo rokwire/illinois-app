@@ -18,11 +18,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/ext/Game.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -35,8 +37,8 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/OptionSelectionCell.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Game? game;
@@ -47,13 +49,10 @@ class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAt
   AthleticsGameDetailPanel({this.game, this.gameId, this.sportName});
 
   @override
-  _AthleticsGameDetailPanelState createState() =>
-      _AthleticsGameDetailPanelState(game);
+  _AthleticsGameDetailPanelState createState() => _AthleticsGameDetailPanelState(game);
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return game?.analyticsAttributes;
-  }
+  Map<String, dynamic>? get analyticsPageAttributes => game?.analyticsAttributes;
 }
 
 class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
@@ -103,7 +102,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
     }
 
     if (game == null) {
-      return Center(child: Text(Localization().getStringEx('panel.athletics_game_detail.load.failed.msg', 'Failed to load game. Please, try again.')!));
+      return Center(child: Text(Localization().getStringEx('panel.athletics_game_detail.load.failed.msg', 'Failed to load game. Please, try again.')));
     }
 
     String? sportKey = game?.sport?.shortName;
@@ -113,11 +112,10 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
       scrollDirection: Axis.vertical,
       slivers: <Widget>[
         SliverToutHeaderBar(
-          context: context,
-          imageUrl: game?.imageUrl,
-          backColor: Styles().colors!.fillColorPrimary,
-          leftTriangleColor: Styles().colors!.fillColorPrimary,
-          rightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
+          flexImageUrl: game?.imageUrl,
+          flexBackColor: Styles().colors?.fillColorPrimary,
+          flexRightToLeftTriangleColor: Styles().colors!.fillColorPrimary,
+          flexLeftToRightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
         ),
         SliverList(
           delegate: SliverChildListDelegate([
@@ -170,7 +168,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                 ),
                                 Expanded(child:
                                   Text(
-                                    Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More")! + " " + "$sportName",
+                                    Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More") + " " + "$sportName",
                                     style:
                                     TextStyle(color: Colors.white, fontSize: 20),
                                   )
@@ -203,7 +201,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        Analytics.instance.logSelect(target: "News");
+                                        Analytics().logSelect(target: "News");
                                         Navigator.push(
                                             context,
                                             CupertinoPageRoute(
@@ -241,7 +239,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        Analytics.instance.logSelect(target: "Teams");
+                                        Analytics().logSelect(target: "Teams");
                                         Navigator.push(
                                             context,
                                             CupertinoPageRoute(
@@ -280,7 +278,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
 
   List<Widget> _buildNewsWidgets() {
     List<Widget> widgets = [];
-    if (!AppString.isStringEmpty(game?.newsImageUrl)) {
+    if (!StringUtils.isEmpty(game?.newsImageUrl)) {
       widgets.add(Container(
         height: 200,
         child: SizedBox.expand(
@@ -292,7 +290,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         ),
       ));
     }
-    if (!AppString.isStringEmpty(game?.newsTitle)) {
+    if (!StringUtils.isEmpty(game?.newsTitle)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 16),
         child: Text(
@@ -302,7 +300,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         ),
       ));
     }
-    if (!AppString.isStringEmpty(game?.newsContent)) {
+    if (!StringUtils.isEmpty(game?.newsContent)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 16),
         child: Column(
@@ -333,8 +331,8 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                   children: <Widget>[
                     Text(
                       (_newsExpanded
-                          ? Localization().getStringEx("panel.athletics_game_detail.label.see_less.title", "See less")!
-                          : Localization().getStringEx("panel.athletics_game_detail.label.see_more.title", "See more")!),
+                          ? Localization().getStringEx("panel.athletics_game_detail.label.see_less.title", "See less")
+                          : Localization().getStringEx("panel.athletics_game_detail.label.see_more.title", "See more")),
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies!.bold,
                           color: Styles().colors!.fillColorPrimary,
@@ -359,21 +357,21 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
   }
 
   void _onTapNewsExpand() {
-    Analytics.instance.logSelect(target: "News Expand");
+    Analytics().logSelect(target: "News Expand");
     setState(() {
       _newsExpanded = !_newsExpanded;
     });
   }
 
   void _onScheduleTap() {
-    Analytics.instance.logSelect(target: "Schedule");
+    Analytics().logSelect(target: "Schedule");
     Sport? sport = game?.sport;
     SportDefinition? sportDefinition = Sports().getSportByShortName(sport?.shortName);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsSchedulePanel(sport: sportDefinition)));
   }
 
   void _onTapTickets() {
-    Analytics.instance.logSelect(target: "Tickets");
+    Analytics().logSelect(target: "Tickets");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _showTicketsPanel();

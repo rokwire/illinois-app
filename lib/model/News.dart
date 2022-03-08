@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class News implements Favorite {
   final String? id;
@@ -31,6 +31,8 @@ class News implements Favorite {
   final DateTime? pubDateUtc;
 
   final Map<String, dynamic>? json;
+
+  static final String dateTimeFormat = 'E, dd MMM yyyy HH:mm:ss v';
 
   News({this.id, this.title, this.link, this.category, this.description, this.fullText, this.fullTextRaw, this.imageUrl, this.pubDateUtc, this.json});
 
@@ -47,12 +49,12 @@ class News implements Favorite {
         fullText: json['fulltext'],
         fullTextRaw: json['fulltext_raw'],
         imageUrl: json['image_url'],
-        pubDateUtc: AppDateTime().dateTimeFromString(json['pub_date_utc'], format: AppDateTime.serverResponseDateTimeFormat, isUtc: true),
+        pubDateUtc: DateTimeUtils.dateTimeFromString(json['pub_date_utc'], format: dateTimeFormat, isUtc: true),
         json: json);
   }
 
   String? get fillText {
-    return AppString.isStringNotEmpty(fullText) ? fullText : fullTextRaw;
+    return StringUtils.isNotEmpty(fullText) ? fullText : fullTextRaw;
   }
 
   String? get displayTime {

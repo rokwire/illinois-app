@@ -18,11 +18,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/illinicash/Transaction.dart';
-import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart';
@@ -30,18 +31,24 @@ import 'package:crypto/crypto.dart';
 import 'package:convert/convert.dart';
 
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Log.dart';
-import 'package:illinois/service/Network.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/network.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart';
 
-class IlliniCash with Service implements NotificationsListener {
+class IlliniCash with Service, NetworkAuthProvider implements NotificationsListener {
 
   static const String notifyPaymentSuccess  = "edu.illinois.rokwire.illinicash.payment.success";
   static const String notifyBallanceUpdated  = "edu.illinois.rokwire.illinicash.ballance.updated";
+
+  static const String uiucAccessToken      = 'access_token';
+
+  static const String analyticsUin         = 'UINxxxxxx';
+  static const String analyticsFirstName   = 'FirstNameXXXXXX';
+  static const String analyticsLastName    = 'LastNameXXXXXX';
 
   IlliniCashBallance?  _ballance;
   DateTime?            _pausedDateTime;
@@ -85,6 +92,7 @@ class IlliniCash with Service implements NotificationsListener {
   Set<Service> get serviceDependsOn {
     return Set.from([Storage(), Config(), Auth2()]);
   }
+  
   // NotificationsListener
 
   @override
@@ -114,6 +122,28 @@ class IlliniCash with Service implements NotificationsListener {
     }
   }
 
+  // NetworkAuthProvider
+
+  @override
+  Map<String, String>? get networkAuthHeaders {
+    String? accessToken = Auth2().uiucToken?.accessToken;
+    if ((accessToken != null) && accessToken.isNotEmpty) {
+      return { uiucAccessToken : accessToken };
+    }
+    return null;
+  }
+
+  @override
+  dynamic get networkAuthToken => Auth2().token;
+  
+  @override
+  Future<bool> refreshNetworkAuthTokenIfNeeded(BaseResponse? response, dynamic token) async {
+    if ((response?.statusCode == 401) && (token is Auth2Token) && (Auth2().token == token)) {
+      return (await Auth2().refreshToken(token) != null);
+    }
+    return false;
+  }
+
   // Ballances
 
   IlliniCashBallance? get ballance {
@@ -125,11 +155,11 @@ class IlliniCash with Service implements NotificationsListener {
       bool? eligible = await _isEligible();
       if (eligible == true) {
         String url = "${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}";
-        String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/${Auth2.analyticsUin}";
-        Response? response = await Network().get(url, auth: NetworkAuth.UIUC_Access, analyticsUrl: analyticsUrl);
+        String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/$analyticsUin";
+        Response? response = await Network().get(url, auth: this, analyticsUrl: analyticsUrl);
         if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
           String responseBody = response.body;
-          Map<String, dynamic>? jsonData = AppJson.decode(responseBody);
+          Map<String, dynamic>? jsonData = JsonUtils.decode(responseBody);
           IlliniCashBallance? ballance = (jsonData != null) ? IlliniCashBallance.fromJson(jsonData) : null;
           if (ballance != null) {
             _applyBallance(ballance);
@@ -143,20 +173,20 @@ class IlliniCash with Service implements NotificationsListener {
   }
 
   Future<bool?> _isEligible({String? uin, String? firstName, String? lastName}) async {
-    uin = AppString.isStringNotEmpty(uin) ? uin : Auth2().uin;
-    firstName =  AppString.isStringNotEmpty(firstName) ? firstName : Auth2().account?.authType?.uiucUser?.firstName;
-    lastName = AppString.isStringNotEmpty(lastName) ? lastName : Auth2().account?.authType?.uiucUser?.lastName;
+    uin = StringUtils.isNotEmpty(uin) ? uin : Auth2().uin;
+    firstName =  StringUtils.isNotEmpty(firstName) ? firstName : Auth2().account?.authType?.uiucUser?.firstName;
+    lastName = StringUtils.isNotEmpty(lastName) ? lastName : Auth2().account?.authType?.uiucUser?.lastName;
 
-    if ((Config().illiniCashBaseUrl != null) && !AppString.isStringEmpty(uin) && !AppString.isStringEmpty(firstName) && !AppString.isStringEmpty(lastName)) {
+    if ((Config().illiniCashBaseUrl != null) && !StringUtils.isEmpty(uin) && !StringUtils.isEmpty(firstName) && !StringUtils.isEmpty(lastName)) {
       String url =  "${Config().illiniCashBaseUrl}/ICEligible/$uin/$firstName/$lastName";
-      String analyticsUrl = "${Config().illiniCashBaseUrl}/ICEligible/${Auth2.analyticsUin}/${Auth2.analyticsFirstName}/${Auth2.analyticsLastName}";
+      String analyticsUrl = "${Config().illiniCashBaseUrl}/ICEligible/$analyticsUin/$analyticsFirstName/$analyticsLastName";
       Response? response;
       try { response = await Network().get(url, analyticsUrl: analyticsUrl); } on Exception catch(e) { print(e.toString()); }
       int responseCode = response?.statusCode ?? -1;
       if ((response != null) && responseCode >= 200 && responseCode <= 301) {
         String responseString = response.body;
         Log.d('GET $url\n$responseCode $responseString');
-        Map<String, dynamic>? jsonData = AppJson.decode(responseString);
+        Map<String, dynamic>? jsonData = JsonUtils.decode(responseString);
         bool? eligible = (jsonData != null) ? jsonData['IlliniCashEligible'] : null;
         return eligible;
       }
@@ -188,15 +218,15 @@ class IlliniCash with Service implements NotificationsListener {
     }
     
     String uin = Auth2().uin ?? "";
-    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
-    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
+    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
-    String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
+    String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$analyticsUin/$startDateFormatted/$endDateFormatted";
 
-    final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.UIUC_Access, analyticsUrl: analyticsUrl );
+    final response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl );
     if (response != null && response.statusCode >= 200 && response.statusCode <= 301) {
       String responseBody = response.body;
-      List<dynamic>? jsonListData = AppJson.decode(responseBody);
+      List<dynamic>? jsonListData = JsonUtils.decode(responseBody);
       if (jsonListData != null) {
         List<IlliniCashTransaction> transactions = [];
         for (var jsonData in jsonListData) {
@@ -218,17 +248,17 @@ class IlliniCash with Service implements NotificationsListener {
       return null;
     }
     String uin = Auth2().uin ?? "";
-    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
-    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
+    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
-    String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
-    final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.UIUC_Access, analyticsUrl: analyticsUrl);
+    String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$analyticsUin/$startDateFormatted/$endDateFormatted";
+    final response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
 
     // TMP: "[{\"Amount\":\"1\",\"Date\":\"2017-01-19 18:24:09 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-19 11:41:07 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 18:42:01 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 11:36:14 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 18:40:11 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 11:27:49 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 18:40:20 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 12:42:43 \",\"Location\":\"IKE\",\"Description\":\"Lunch\"}]";
 
     if (response != null && response.statusCode >= 200 && response.statusCode <= 301) {
       String responseBody = response.body;
-      List<dynamic>? jsonListData = AppJson.decode(responseBody);
+      List<dynamic>? jsonListData = JsonUtils.decode(responseBody);
       if (jsonListData != null) {
         List<MealPlanTransaction> transactions = [];
         for (var jsonData in jsonListData) {
@@ -251,18 +281,18 @@ class IlliniCash with Service implements NotificationsListener {
       return null;
     }
     String uin = Auth2().uin ?? "";
-    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
-    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
+    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
-    String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
+    String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$analyticsUin/$startDateFormatted/$endDateFormatted";
 
-    final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.UIUC_Access, analyticsUrl: analyticsUrl);
+    final response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
 
     // TMP "[{\"Date\":\"1/18/2019 10:55:06 AM\",\"Description\":\"Rollover\",\"Location\":\"OFFICE-CDHAYES1\",\"Amount\":\"100.0\"}]";
 
     if (response != null && response.statusCode >= 200 && response.statusCode <= 301) {
       String responseBody = response.body;
-      List<dynamic>? jsonListData = AppJson.decode(responseBody);
+      List<dynamic>? jsonListData = JsonUtils.decode(responseBody);
       if (jsonListData != null) {
         List<CafeCreditTransaction> transactions = [];
         for (var jsonData in jsonListData) {
@@ -281,10 +311,10 @@ class IlliniCash with Service implements NotificationsListener {
   Future<void> _saveCreditCard(_TransactionContext context) async{
     String? token = await _loadDataToken();
 
-    if(AppString.isStringNotEmpty(token) && AppString.isStringNotEmpty(context.cc)){
+    if(StringUtils.isNotEmpty(token) && StringUtils.isNotEmpty(context.cc)){
       String? storeToken = await _loadStoreToken(token);
 
-      if(AppString.isStringNotEmpty(storeToken)){
+      if(StringUtils.isNotEmpty(storeToken)){
         String? baseUrl = (Config().illiniCashTrustcommerceHost != null) ? "${Config().illiniCashTrustcommerceHost}/trusteeapi/payment.php?action=store&cvv=${context.cvv}&cc=${context.cc}&name=${context.name}&exp=${context.expiry}&returnurl=xml&token=$storeToken" : null;
 
         Response? response = await Network().get(baseUrl);
@@ -328,7 +358,7 @@ class IlliniCash with Service implements NotificationsListener {
           // 1. Save Credit Card into the system and use the resulted billingId
           await _saveCreditCard(context);
 
-          if (context.cardStatusResponse?.status == "accepted" && AppString.isStringNotEmpty(context.cardStatusResponse?.billingId)) {
+          if (context.cardStatusResponse?.status == "accepted" && StringUtils.isNotEmpty(context.cardStatusResponse?.billingId)) {
             // 2. PreAuth
             await _preAuth(context);
 
@@ -364,10 +394,10 @@ class IlliniCash with Service implements NotificationsListener {
   Future<void> _preAuth(_TransactionContext context) async{
     String? token = await _loadDataToken();
 
-    if(AppString.isStringNotEmpty(token)){
+    if(StringUtils.isNotEmpty(token)){
       String? preAuthToken = await _loadPreAuthToken(token, context.cardStatusResponse!.billingId);
 
-      if(AppString.isStringNotEmpty(preAuthToken)){
+      if(StringUtils.isNotEmpty(preAuthToken)){
         String? baseUrl = (Config().illiniCashTrustcommerceHost != null) ? "${Config().illiniCashTrustcommerceHost}/trusteeapi/payment.php?action=preauth&returnurl=xml&amount=${context.amount}&billingid=${context.cardStatusResponse!.billingId}&exp=${context.expiry}&token=$preAuthToken" : null;
 
         Response? response = await Network().get(baseUrl);
@@ -420,7 +450,7 @@ class IlliniCash with Service implements NotificationsListener {
     String? responseString = response?.body;
     if ((response != null) && response.statusCode >= 200 &&
         response.statusCode <= 301) {
-      Map<String, dynamic>? jsonData = AppJson.decode(responseString);
+      Map<String, dynamic>? jsonData = JsonUtils.decode(responseString);
       if (jsonData != null) {
         Map<String, dynamic>? innerData = jsonData["d"];
         if (innerData != null && innerData.isNotEmpty) {
@@ -499,7 +529,7 @@ class IlliniCash with Service implements NotificationsListener {
 
   Future<_StatusResponse?> _completeToken(String? token, String? paymentToken) async{
 
-    if(AppString.isStringNotEmpty(token) && AppString.isStringNotEmpty(paymentToken)) {
+    if(StringUtils.isNotEmpty(token) && StringUtils.isNotEmpty(paymentToken)) {
       String? baseUrl = (Config().illiniCashTokenHost != null) ? "${Config().illiniCashTokenHost}/financeWS/cc/complete/edu.uillinois.aits.uiDining/$token/$paymentToken" : null;
 
       Response? response = await Network().get(baseUrl);
@@ -514,13 +544,13 @@ class IlliniCash with Service implements NotificationsListener {
   /////////////////////////
   // Enabled
 
-  bool get _enabled => AppString.isStringNotEmpty(Config().illiniCashBaseUrl);
+  bool get _enabled => StringUtils.isNotEmpty(Config().illiniCashBaseUrl);
 
   /////////////////////////
   // Helpers
 
   void _throwBuyIlliniCashError(String? message){
-    if(AppString.isStringEmpty(message)) {
+    if(StringUtils.isEmpty(message)) {
       throw BuyIlliniCashException(Localization().getStringEx(
           "panel.settings.add_illini_cash.error.buy_illini_cash.text",
           "Unable to complete transaction. Please try again later."));

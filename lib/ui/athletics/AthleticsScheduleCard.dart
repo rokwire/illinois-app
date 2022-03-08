@@ -16,19 +16,19 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsScheduleCard extends StatefulWidget {
   final Game? _game;
@@ -142,7 +142,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   Widget _cardSubTitle() {
-    return AppString.isStringNotEmpty(widget._game!.shortDescription)
+    return StringUtils.isNotEmpty(widget._game!.shortDescription)
         ? Padding(
             padding: EdgeInsets.only(left: 24, right: 24, top: 8),
             child: Row(
@@ -237,10 +237,10 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     if (result == null) {
       return null;
     }
-    String formattedResult = AppString.getDefaultEmptyString(result.status);
-    if (AppString.isStringNotEmpty(result.teamScore)) {
+    String formattedResult = StringUtils.ensureNotEmpty(result.status);
+    if (StringUtils.isNotEmpty(result.teamScore)) {
       formattedResult += ' ' + result.teamScore!;
-      if (AppString.isStringNotEmpty(result.opponentScore)) {
+      if (StringUtils.isNotEmpty(result.opponentScore)) {
         formattedResult += '-' + result.opponentScore!;
       }
     }
@@ -258,7 +258,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
               child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Row(children: <Widget>[
-                    Text(Localization().getStringEx("widget.schedule_card.final_score", "Final Score")!,
+                    Text(Localization().getStringEx("widget.schedule_card.final_score", "Final Score"),
                         style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
                     Expanded(
                       child: Container(),
@@ -271,7 +271,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   void _onTapSaveGame() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget._game?.title}");
+    Analytics().logSelect(target: "Favorite: ${widget._game?.title}");
     Auth2().prefs?.toggleFavorite(widget._game);
   }
 
@@ -285,7 +285,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   void _onTapGetTickets() {
-    Analytics.instance.logSelect(target: "SchedulteCard: " + widget._game!.title + " -Tickets");
+    Analytics().logSelect(target: "SchedulteCard: " + widget._game!.title + " -Tickets");
 
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
@@ -304,7 +304,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     bool homeGame = widget._game!.isHomeGame;
     SportDefinition? sportDefinition = Sports().getSportByShortName(widget._game?.sport?.shortName);
     bool ticketedSport = sportDefinition?.ticketed ?? false;
-    bool hasTicketsUrl = AppString.isStringNotEmpty(widget._game?.links?.tickets);
+    bool hasTicketsUrl = StringUtils.isNotEmpty(widget._game?.links?.tickets);
     return homeGame && ticketedSport && hasTicketsUrl;
   }
 }

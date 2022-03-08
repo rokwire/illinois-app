@@ -11,7 +11,9 @@ description: Illinois client application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 3.1.15+1115
+version: 3.2.33+1233
+
+publish_to: none
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
@@ -25,39 +27,18 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.4
-  shared_preferences: ^2.0.7
   intl: ^0.17.0
   http: ^0.13.3
-  mime_type: ^1.0.0
   flutter_widget_from_html: ^0.8.3
   geolocator: ^8.0.0
-  uni_links: ^0.5.1
   url_launcher: ^6.0.10
-  fluttertoast: ^8.0.8
-  #Firebase
-  firebase_core: ^1.10.0
-  firebase_messaging: ^11.1.0
-  firebase_crashlytics: ^2.3.0
-  # End Firebase
   xml: ^5.1.2
-  logger: ^1.1.0
-  flutter_local_notifications: ^9.1.4
   sprintf: ^6.0.0
-  sqflite: ^2.0.0+4
   path: ^1.8.0
-  encrypt: ^5.0.1
-  package_info: ^2.0.2
-  device_info: ^2.0.3
-  connectivity: ^3.0.6
   collection: ^1.15.0
   convert: ^3.0.1
-  uuid: ^3.0.5
-  image_picker: ^0.8.4+1
   roundcheckbox: ^2.0.4+1
-  timezone: ^0.8.0
-  flutter_native_timezone: ^2.0.0
   path_provider: ^2.0.4
-  cookie_jar: ^3.0.1
   share: ^2.0.4
   flutter_html: ^2.2.0
   qr_flutter: ^4.0.0
@@ -66,9 +47,21 @@ dependencies:
   app_settings: ^4.1.1
   currency_text_input_formatter: ^2.1.5
   flutter_multi_formatter: ^2.4.1
-  device_calendar: ^4.0.1
-  gallery_saver: ^2.3.2
   pinch_zoom: ^1.0.0
+  uuid: ^3.0.5
+  expandable_page_view: ^1.0.10
+  flutter_local_notifications: ^9.1.4
+  package_info: ^2.0.2
+  device_calendar: ^4.0.1
+  image_cropping: ^0.0.11
+
+  rokwire_plugin:
+    # When depending on this package from a real application you should use:
+    #   rokwire_plugin: ^x.y.z
+    # See https://dart.dev/tools/pub/dependencies#version-constraints
+    # The example app is bundled with the plugin so we use a path dependency on
+    # the parent directory to use the current plugin's version.
+    path: plugin
 
 dev_dependencies:
   flutter_test:

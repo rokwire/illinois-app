@@ -17,14 +17,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsCoachDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/model/Coach.dart';
+import 'package:illinois/model/sport/Coach.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 
 class AthleticsCoachListPanel extends StatefulWidget {
@@ -41,16 +41,8 @@ class _AthleticsCoachListPanelState extends State<AthleticsCoachListPanel> imple
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SimpleHeaderBarWithBack(
-          context: context,
-          titleWidget: Text(
-            Localization().getStringEx('panel.athletics_coach_list.header.title', 'Staff')!,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.0),
-          ),
+        appBar: HeaderBar(
+          title: Localization().getStringEx('panel.athletics_coach_list.header.title', 'Staff'),
         ),
         body: Column(
           children: <Widget>[
@@ -80,7 +72,7 @@ class _AthleticsCoachListPanelState extends State<AthleticsCoachListPanel> imple
   }
 
   void _onCoachItemTap(Coach coach){
-    Analytics.instance.logSelect(target: "Coach: "+coach.name!);
+    Analytics().logSelect(target: "Coach: "+coach.name!);
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -124,7 +116,7 @@ class _CoachListHeading extends StatelessWidget{
                 ],
               ),
               SizedBox(height: 10.0,),
-              Text(Localization().getStringEx("panel.athletics_coach_list.label.heading.title", "2019-2020 Coach")!,
+              Text(Localization().getStringEx("panel.athletics_coach_list.label.heading.title", "2019-2020 Coach"),
                 style: TextStyle(
                     color: Colors.white,
                     fontFamily: Styles().fontFamilies!.extraBold,
@@ -218,7 +210,7 @@ class _CoachItem extends StatelessWidget{
                           children: <Widget>[
                             Container(
                               width: 80,
-                              child: Text(Localization().getStringEx("panel.athletics_coach_list.label.position.title", "Position")!,
+                              child: Text(Localization().getStringEx("panel.athletics_coach_list.label.position.title", "Position"),
                                   style: TextStyle(
                                       color: Styles().colors!.textBackground,
                                       fontFamily: Styles().fontFamilies!.medium,
@@ -248,7 +240,7 @@ class _CoachItem extends StatelessWidget{
                   child: Container(
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
-                    child: (AppString.isStringNotEmpty(coach.thumbPhotoUrl) ?
+                    child: (StringUtils.isNotEmpty(coach.thumbPhotoUrl) ?
                       Image.network(coach.thumbPhotoUrl!, excludeFromSemantics: true, width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,):
                       Container(height: 96, width: 80, color: Colors.white,)),
                   ),

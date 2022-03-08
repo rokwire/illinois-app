@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/network.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 /////////////////////////////////////////////
 // HomeSaferTestLocationsPanel
@@ -75,8 +75,8 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
     else if (_statusString != null) {
       contentWidget = _buildStatus(_statusString!);
     }
-    else if (AppCollection.isCollectionEmpty(_locations)) {
-      contentWidget = _buildStatus(Localization().getStringEx("panel.home.safer.test_locations.no_locations.text", "No Locations found for selected provider and county")! );
+    else if (CollectionUtils.isEmpty(_locations)) {
+      contentWidget = _buildStatus(Localization().getStringEx("panel.home.safer.test_locations.no_locations.text", "No Locations found for selected provider and county") );
     }
     else {
       contentWidget = ListView.builder(
@@ -89,12 +89,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
 
     return Scaffold(
       backgroundColor: Styles().colors!.background,
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.home.safer.test_locations.header.title", "Test Locations")!,
-          style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),
-        ),
-      ),
+      appBar: HeaderBar(title: Localization().getStringEx("panel.home.safer.test_locations.header.title", "Test Locations"),),
       body: SafeArea(child:
         Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
           Column(children: [
@@ -127,8 +122,8 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
     String? contentUrl = Config().contentUrl;
     if ((contentUrl != null)) {
       String url = "$contentUrl/health_locations";
-      Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
-      return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(AppJson.decode(response!.body)) : null;
+      Response? response = await Network().get(url, auth: Auth2());
+      return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(JsonUtils.decode(response!.body)) : null;
     }
     return null;
   }
@@ -139,12 +134,12 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
       
       // Ensure current location, if available
       if (_currentLocation == null) {
-        LocationServicesStatus? status = await LocationServices.instance.status;
-        if (status == LocationServicesStatus.PermissionNotDetermined) {
-          status = await LocationServices.instance.requestPermission();
+        LocationServicesStatus? status = await LocationServices().status;
+        if (status == LocationServicesStatus.permissionNotDetermined) {
+          status = await LocationServices().requestPermission();
         }
-        if (status == LocationServicesStatus.PermissionAllowed) {
-          _currentLocation = await LocationServices.instance.location;
+        if (status == LocationServicesStatus.permissionAllowed) {
+          _currentLocation = await LocationServices().location;
         }
       }
 
@@ -153,8 +148,8 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
         locations.sort((fistLocation, secondLocation) {
           if ((fistLocation.latitude != null) && (fistLocation.longitude != null)) {
             if ((secondLocation.latitude != null) && (secondLocation.longitude != null)) {
-              double firstDistance = AppLocation.distance(fistLocation.latitude!, fistLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
-              double secondDistance = AppLocation.distance(secondLocation.latitude!, secondLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
+              double firstDistance = LocationUtils.distance(fistLocation.latitude!, fistLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
+              double secondDistance = LocationUtils.distance(secondLocation.latitude!, secondLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
               return firstDistance.compareTo(secondDistance);
             }
             else {
@@ -197,10 +192,10 @@ class _TestLocation extends StatelessWidget {
     ];
 
     if ((distance != null) && (distance! > 0)) {
-      String distanceText = distance!.toStringAsFixed(2) + Localization().getStringEx("panel.home.safer.test_locations.distance.text", "mi away")!;
+      String distanceText = distance!.toStringAsFixed(2) + Localization().getStringEx("panel.home.safer.test_locations.distance.text", "mi away");
       locationContent.add(Text(distanceText, style: textStyle,));
       if (canLocation) {
-        String directionsText = Localization().getStringEx("panel.home.safer.test_locations.distance.directions.text", "get directions")!;
+        String directionsText = Localization().getStringEx("panel.home.safer.test_locations.distance.directions.text", "get directions");
         locationContent.addAll(<Widget>[
           Text(" (", style: textStyle,),
           Text(directionsText, style: linkStyle,),
@@ -214,7 +209,7 @@ class _TestLocation extends StatelessWidget {
       ));
     }
     else {
-      String unknownLocationText = Localization().getStringEx("panel.home.safer.test_locations.location.unknown", "unknown location")!;
+      String unknownLocationText = Localization().getStringEx("panel.home.safer.test_locations.location.unknown", "unknown location");
       locationContent.add(
         Text(unknownLocationText, style: canLocation ? linkStyle : textStyle,
       ));
@@ -356,7 +351,7 @@ class _TestLocation extends StatelessWidget {
       }
     } else {
       return Container(
-        child: Text(Localization().getStringEx("panel.home.safer.test_locations.work_time.unknown","Unknown working time")!)
+        child: Text(Localization().getStringEx("panel.home.safer.test_locations.work_time.unknown","Unknown working time"))
       );
     }
 
@@ -454,7 +449,7 @@ class _TestLocation extends StatelessWidget {
   }*/
 
   void _onTapAddress(){
-    Analytics.instance.logSelect(target: "COVID-19 Test Location");
+    Analytics().logSelect(target: "COVID-19 Test Location");
     double? lat = testLocation?.latitude;
     double? lng = testLocation?.longitude;
     if ((lat != null) && (lng != null)) {
@@ -477,7 +472,7 @@ class _TestLocation extends StatelessWidget {
   /* Hide wait times
   bool get _isLocationOpen{
     HealthLocationDayOfOperation? todayPeriod;
-    if(AppCollection.isCollectionNotEmpty(testLocation?.daysOfOperation)) {
+    if(CollectionUtils.isNotEmpty(testLocation?.daysOfOperation)) {
       todayPeriod = _determineTodayPeriod(
           LinkedHashMap<int, HealthLocationDayOfOperation>.fromIterable(
               testLocation!.daysOfOperation!, key: (period) => period.weekDay ?? 0));
@@ -523,8 +518,8 @@ class HealthServiceLocation {
       zip: json["zip"],
       url: json["url"],
       notes: json["notes"],
-      latitude: AppJson.doubleValue(json["latitude"]),
-      longitude: AppJson.doubleValue(json["longitude"]),
+      latitude: JsonUtils.doubleValue(json["latitude"]),
+      longitude: JsonUtils.doubleValue(json["longitude"]),
       waitTimeColor: HealthServiceLocation.waitTimeColorFromString(json['wait_time_color']),
       daysOfOperation: HealthLocationDayOfOperation.listFromJson(json['days_of_operation']),
     ) : null;
@@ -572,7 +567,7 @@ class HealthServiceLocation {
     if (json != null) {
       values = <HealthServiceLocation>[];
       for (dynamic entry in json) {
-        AppList.add(values, HealthServiceLocation.fromJson(AppJson.mapValue(entry)));
+        ListUtils.add(values, HealthServiceLocation.fromJson(JsonUtils.mapValue(entry)));
       }
     }
     return values;
@@ -645,7 +640,7 @@ class HealthLocationDayOfOperation {
   final int? closeMinutes;
 
   HealthLocationDayOfOperation({this.name, this.openTime, this.closeTime}) :
-    weekDay = (name != null) ? AppDateTime.getWeekDayFromString(name.toLowerCase()) : null,
+    weekDay = (name != null) ? DateTimeUtils.getWeekDayFromString(name.toLowerCase()) : null,
     openMinutes = _timeMinutes(openTime),
     closeMinutes = _timeMinutes(closeTime);
 
@@ -685,7 +680,7 @@ class HealthLocationDayOfOperation {
     if (json != null) {
       values = <HealthLocationDayOfOperation>[];
       for (dynamic entry in json) {
-        AppList.add(values, HealthLocationDayOfOperation.fromJson(AppJson.mapValue(entry)));
+        ListUtils.add(values, HealthLocationDayOfOperation.fromJson(JsonUtils.mapValue(entry)));
       }
     }
     return values;
@@ -694,7 +689,7 @@ class HealthLocationDayOfOperation {
   // Helper function for conversion work time string to number of minutes
 
   static int? _timeMinutes(String? time, {String format = 'hh:mma'}) {
-    DateTime? dateTime = (time != null) ? AppDateTime.parseDateTime(time.toUpperCase(), format: format) : null;
+    DateTime? dateTime = (time != null) ? DateTimeUtils.parseDateTime(time.toUpperCase(), format: format) : null;
     TimeOfDay? timeOfDay = (dateTime != null) ? TimeOfDay.fromDateTime(dateTime) : null;
     return _timeOfDayMinutes(timeOfDay);
   }

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/model/Location.dart';
+import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
 enum LaundryRoomStatus { online, offline }
@@ -27,7 +27,7 @@ class LaundryRoom implements Favorite {
   String? title;
   String? campusName;
   LaundryRoomStatus? status;
-  Location? location;
+  ExploreLocation? location;
 
   LaundryRoom({this.id, this.title, this.campusName, this.status, this.location});
 
@@ -41,7 +41,7 @@ class LaundryRoom implements Favorite {
         title: json['title'],
         campusName: json['campus_name'],
         status: roomStatusFromString(json['status']),
-        location: Location.fromJSON(json['location'])
+        location: ExploreLocation.fromJSON(json['location'])
       ) : null;
   }
 
@@ -63,7 +63,7 @@ class LaundryRoom implements Favorite {
   }
 
   static LaundryRoomStatus? roomStatusFromString(String? roomStatusString) {
-    if (AppString.isStringEmpty(roomStatusString)) {
+    if (StringUtils.isEmpty(roomStatusString)) {
       return null;
     }
     switch (roomStatusString) {

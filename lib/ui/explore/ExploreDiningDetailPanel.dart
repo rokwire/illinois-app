@@ -20,30 +20,32 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
-import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/ext/Dining.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/DiningService.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/rokwire_plugin.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Dinings.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
-import 'package:illinois/model/Explore.dart';
 import 'package:illinois/ui/dining/FoodDetailPanel.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -54,13 +56,10 @@ class ExploreDiningDetailPanel extends StatefulWidget implements AnalyticsPageAt
   ExploreDiningDetailPanel({this.dining, this.initialLocationData});
 
   @override
-  _DiningDetailPanelState createState() =>
-      _DiningDetailPanelState(dining);
+  _DiningDetailPanelState createState() => _DiningDetailPanelState(dining);
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes {
-    return dining?.analyticsAttributes;
-  }
+  Map<String, dynamic>? get analyticsPageAttributes => dining?.analyticsAttributes;
 }
 
 class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements NotificationsListener {
@@ -109,7 +108,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if(!dining!.hasDiningSchedules){
       _isDiningLoading = true;
 
-      DiningService().loadBackendDinings(false, null, _locationData).then((List<Dining>? dinings){
+      Dinings().loadBackendDinings(false, null, _locationData).then((List<Dining>? dinings){
         if(dinings != null){
           Dining? foundDining = Dining.entryInList(dinings, id: dining!.id);
           if(foundDining != null){
@@ -124,7 +123,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   Future<void> _loadCurrentLocation() async {
-    _locationData = Auth2().privacyMatch(2) ? await LocationServices.instance.location : null;
+    _locationData = Auth2().privacyMatch(2) ? await LocationServices().location : null;
   }
 
   void _updateCurrentLocation() {
@@ -143,9 +142,9 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                 child: CustomScrollView(
                   scrollDirection: Axis.vertical,
                   slivers: <Widget>[
+                    
                     SliverToutHeaderBar(
-                      context: context,
-                      imageUrl: dining!.exploreImageURL,
+                      flexImageUrl: dining?.exploreImageUrl,
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate(
@@ -219,7 +218,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
             Visibility(visible: starVisible,child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: (){
-                  Analytics.instance.logSelect(target: "Favorite: ${dining?.title}");
+                  Analytics().logSelect(target: "Favorite: ${dining?.title}");
                   Auth2().prefs?.toggleFavorite(dining);},
                 child: Container( child: Semantics(
                     label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
@@ -287,7 +286,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     return ((details != null) && (0 < details.length)) ?
         Semantics(
           excludeSemantics: true,
-            label: Localization().getStringEx("panel.explore_detail.label.accepted_payments", "Accepted payments: ")! + paymentsToString(paymentTypes),
+            label: Localization().getStringEx("panel.explore_detail.label.accepted_payments", "Accepted payments: ") + paymentsToString(paymentTypes),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,7 +295,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                 Row(
                   children: <Widget>[
                     Expanded(
-                      child: Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted payment")!,
+                      child: Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted Payment"),
                         style: TextStyle(
                           color: Styles().colors!.textBackground
                         ),
@@ -348,7 +347,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if (onlineOrderPlatformDetails == null) {
       return null;
     }
-    if (AppString.isStringEmpty(onlineOrderPlatformDetails['deep_link'])) {
+    if (StringUtils.isEmpty(onlineOrderPlatformDetails['deep_link'])) {
       return null;
     }
     return Align(
@@ -366,7 +365,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   String paymentsToString(List<PaymentType>? payments){
     String result = "";
     final String paymentTypePrefix = "PaymentType.";
-    if(AppCollection.isCollectionNotEmpty(payments)) {
+    if(CollectionUtils.isNotEmpty(payments)) {
       payments!.forEach((payment) {
         String paymentType = payment.toString();
         if (paymentType.startsWith(paymentTypePrefix) && (paymentTypePrefix.length < paymentType.length)) {
@@ -390,7 +389,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   Widget? _exploreLocationDetail() {
-    String? locationText = ExploreHelper.getLongDisplayLocation(dining, _locationData);
+    String? locationText = dining?.getLongDisplayLocation(_locationData);
     if ((locationText != null) && locationText.isNotEmpty) {
       return GestureDetector(
         onTap: _onLoacationDetailTapped,
@@ -535,7 +534,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
   Widget _exploreSubTitle() {
     String? subTitle = dining!.exploreSubTitle;
-    if (AppString.isStringEmpty(subTitle)) {
+    if (StringUtils.isEmpty(subTitle)) {
       return Container();
     }
     return Padding(
@@ -550,7 +549,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
   Widget _exploreDescription() {
     String? longDescription = dining!.exploreLongDescription;
-    bool showDescription = AppString.isStringNotEmpty(longDescription);
+    bool showDescription = StringUtils.isNotEmpty(longDescription);
     if (!showDescription) {
       return Container();
     }
@@ -580,28 +579,28 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   void _onDiningWorktimeTapped(){
-    Analytics.instance.logSelect(target: "Dining Work Time");
+    Analytics().logSelect(target: "Dining Work Time");
     _diningWorktimeExpanded = !_diningWorktimeExpanded;
     setState(() {});
   }
 
   void _onDiningPaymentTypeTapped(){
-    Analytics.instance.logSelect(target: "Dining Payment Type");
+    Analytics().logSelect(target: "Dining Payment Type");
     _diningPaymentTypesExpanded = !_diningPaymentTypesExpanded;
     setState(() {});
   }
 
   void _onLoacationDetailTapped(){
-    Analytics.instance.logSelect(target: "Location Detail");
+    Analytics().logSelect(target: "Location Detail");
     NativeCommunicator().launchExploreMapDirections(target: dining);
   }
 
   void _onTapOrderOnline(Map<String, dynamic>? orderOnlineDetails) async {
     String? deepLink = (orderOnlineDetails != null) ? orderOnlineDetails['deep_link'] : null;
-    if (AppString.isStringEmpty(deepLink)) {
+    if (StringUtils.isEmpty(deepLink)) {
       return;
     }
-    bool? appLaunched = await NativeCommunicator().launchApp({"deep_link": deepLink});
+    bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": deepLink});
     if (appLaunched != true) {
       String storeUrl = orderOnlineDetails!['store_url'];
       url_launcher.launch(storeUrl);
@@ -609,8 +608,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   void _launchUrl(String? url, {BuildContext? context}) {
-    if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         launch(url!);
@@ -726,7 +725,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
   void _loadOffers(){
-    DiningService().loadDiningSpecials().then((List<DiningSpecial>? offers){
+    Dinings().loadDiningSpecials().then((List<DiningSpecial>? offers){
       if(offers != null && offers.isNotEmpty){
         _specials = offers.where((entry)=>entry.locationIds!.contains(widget.dining!.id)).toList();
         setState((){});
@@ -738,7 +737,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
     if(hasMenuData) {
       _isLoading = true;
       DateTime? filterDate = _filterDates![_selectedDateFilterIndex];
-      DiningService().loadMenuItemsForDate(widget.dining!.id, filterDate).then((
+      Dinings().loadMenuItemsForDate(widget.dining!.id, filterDate).then((
           List<DiningProductItem>? items) {
         _productItems = items;
         _productItemsMapping = Map<String, DiningProductItem>();
@@ -757,7 +756,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
   void onTabClicked(int tabIndex, RoundedTab caller){
-    Analytics.instance.logSelect(target: "Tab: ${caller.title}");
+    Analytics().logSelect(target: "Tab: ${caller.title}");
     _selectedScheduleIndex = tabIndex;
     if(mounted) {
       setState(() {});
@@ -765,7 +764,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
   void _onFoodFilersTapped(){
-    Analytics.instance.logSelect(target: "Food filters");
+    Analytics().logSelect(target: "Food filters");
     Navigator.push(context, CupertinoPageRoute(
         builder: (context) => FoodFiltersPanel()
     ));
@@ -782,7 +781,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
   void incrementDateFilter(){
-    Analytics.instance.logSelect(target: "Increment Date filter");
+    Analytics().logSelect(target: "Increment Date filter");
     if(_selectedDateFilterIndex < _filterDates!.length - 1) {
       _selectedDateFilterIndex++;
 
@@ -798,7 +797,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
   void decrementDateFilter(){
-    Analytics.instance.logSelect(target: "Decrement Date filter");
+    Analytics().logSelect(target: "Decrement Date filter");
     if(_selectedDateFilterIndex > 0) {
       _selectedDateFilterIndex--;
 
@@ -832,7 +831,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                 children: <Widget>[
                   Expanded(
                     flex: 2,
-                    child: Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu")!,
+                    child: Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu"),
                       style: TextStyle(
                         fontFamily: Styles().fontFamilies!.bold,
                         fontSize: 16,
@@ -858,8 +857,8 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                             children: <Widget>[
                               Expanded(child:
                               Text(hasFoodFilterApplied
-                                  ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")!
-                                  : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters")!,
+                                  ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")
+                                  : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters"),
                                 textAlign: TextAlign.right,
                                 style: TextStyle(
                                     color: Styles().colors!.fillColorPrimary,
@@ -935,7 +934,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                   CircularProgressIndicator(),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Text(Localization().getStringEx("widget.food_detail.label.loading.title", "Loading menu data")!),
+                    child: Text(Localization().getStringEx("widget.food_detail.label.loading.title", "Loading menu data")),
                   )
                 ],
               ),
@@ -1022,7 +1021,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
         hint: Localization().getStringEx("widget.food_detail.label.no_entries_for_desired_filter.hint", ""),
         button: false,
         child: Padding(padding: EdgeInsets.symmetric(vertical: 20,),
-          child: Text(Localization().getStringEx("widget.food_detail.button.no_entries_for_desired_filter.title", "There are no entries according to the current filter")!,),
+          child: Text(Localization().getStringEx("widget.food_detail.button.no_entries_for_desired_filter.title", "There are no entries according to the current filter"),),
         ),
       ));
     }
@@ -1082,7 +1081,7 @@ class _StationItemState extends State<_StationItem>{
   _StationItemState({this.expanded});
 
   void onTap(){
-    Analytics.instance.logSelect(target: "Station Item: ${widget.title}");
+    Analytics().logSelect(target: "Station Item: ${widget.title}");
     if(mounted) {
       setState(() {
         expanded = !expanded!;
@@ -1091,7 +1090,7 @@ class _StationItemState extends State<_StationItem>{
   }
 
   void _onProductItemTapped(DiningProductItem productItem){
-    Analytics.instance.logSelect(target: "Product Item: "+productItem.name!);
+    Analytics().logSelect(target: "Product Item: "+productItem.name!);
     Navigator.push(context, CupertinoPageRoute(
         builder: (context) => FoodDetailPanel(productItem: productItem,)
     ));

@@ -3,19 +3,19 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCampusGuideHighlightsWidget extends StatefulWidget {
 
@@ -81,11 +81,11 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(visible: AppCollection.isCollectionNotEmpty(_promotedItems), child:
+    return Visibility(visible: CollectionUtils.isNotEmpty(_promotedItems), child:
       Column(children: [
-          SectionTitlePrimary(
+          SectionHeading(
             title: Localization().getStringEx('widget.home_campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
-            iconPath: 'images/campus-tools.png',
+            titleIconAsset: 'images/campus-tools.png',
             children: _buildPromotedList()
           ),
         ]),
@@ -114,7 +114,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
       }
       if (_maxItems < _promotedItems!.length) {
         contentList.add(Container(height: 16,));
-        contentList.add(ScalableRoundedButton(
+        contentList.add(RoundedButton(
           label: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.title', 'View All'),
           hint: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.hint', 'Tap to view all highlights'),
           borderColor: Styles().colors!.fillColorSecondary,
@@ -128,7 +128,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
   }
 
   void _showAll() {
-    Analytics.instance.logSelect(target: "HomeCampusGuideHighlightsWidget View All");
+    Analytics().logSelect(target: "HomeCampusGuideHighlightsWidget View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _promotedItems, contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'))));
   }
 }

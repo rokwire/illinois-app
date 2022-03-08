@@ -16,15 +16,15 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupsSearchPanel extends StatefulWidget {
@@ -35,7 +35,7 @@ class GroupsSearchPanel extends StatefulWidget {
 class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
   List<Group>? _groups;
   TextEditingController _searchController = TextEditingController();
-  String? _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching only Groups Titles');
+  String? _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching Only Groups Titles');
   int _resultsCount = 0;
   bool _resultsCountLabelVisible = false;
   bool _loading = false;
@@ -49,15 +49,8 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.groups_search.header.title", "Search")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.groups_search.header.title", "Search"),
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
@@ -182,7 +175,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
         ),
       );
     }
-    int groupsCount = AppCollection.isCollectionNotEmpty(_groups) ? _groups!.length : 0;
+    int groupsCount = CollectionUtils.isNotEmpty(_groups) ? _groups!.length : 0;
     Widget? groupsContent;
     if (groupsCount > 0) {
       groupsContent = ListView.separated(
@@ -208,22 +201,22 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     } else if (_resultsCount == 1) {
       return Localization().getStringEx('panel.groups_search.label.found_single', '1 result found');
     } else if (_resultsCount > 1) {
-      return sprintf(Localization().getStringEx('panel.groups_search.label.found_multi', '%d results found')!, [_resultsCount]);
+      return sprintf(Localization().getStringEx('panel.groups_search.label.found_multi', '%d results found'), [_resultsCount]);
     } else {
       return "";
     }
   }
 
   void _onTapSearch() {
-    Analytics.instance.logSelect(target: "Search Groups");
+    Analytics().logSelect(target: "Search Groups");
     FocusScope.of(context).requestFocus(new FocusNode());
     _setLoading(true);
     String searchValue = _searchController.text;
-    if (AppString.isStringEmpty(searchValue)) {
+    if (StringUtils.isEmpty(searchValue)) {
       return;
     }
     searchValue = searchValue.trim();
-    if (AppString.isStringEmpty(searchValue)) {
+    if (StringUtils.isEmpty(searchValue)) {
       return;
     }
     _setLoading(true);
@@ -232,14 +225,14 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
       _groups = groups;
       _resultsCount = _groups?.length ?? 0;
       _resultsCountLabelVisible = true;
-      _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ')! + _searchController.text;
+      _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ') + _searchController.text;
       _setLoading(false);
     });
   }
 
   void _onTapClear() {
-    Analytics.instance.logSelect(target: "Clear Search");
-    if (AppString.isStringEmpty(_searchController.text)) {
+    Analytics().logSelect(target: "Clear Search");
+    if (StringUtils.isEmpty(_searchController.text)) {
       Navigator.pop(context);
       return;
     }
@@ -247,14 +240,14 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     _searchController.clear();
     _resultsCountLabelVisible = false;
     setState(() {
-      _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching only Groups Titles');
+      _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching Only Groups Titles');
     });
   }
 
   void _onTextChanged(String text) {
     _resultsCountLabelVisible = false;
     setState(() {
-      _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching only Groups Titles');
+      _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching Only Groups Titles');
     });
   }
 

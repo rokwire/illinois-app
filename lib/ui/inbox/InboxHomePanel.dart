@@ -3,21 +3,22 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/model/Inbox.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/Inbox.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class InboxHomePanel extends StatefulWidget {
   InboxHomePanel();
@@ -146,7 +147,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     else {
       return Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx('panel.inbox.label.content.empty', 'No messages')!, textAlign: TextAlign.center,),
+        Text(Localization().getStringEx('panel.inbox.label.content.empty', 'No messages'), textAlign: TextAlign.center,),
         Expanded(child: Container(), flex: 3),
       ]);
     }
@@ -206,14 +207,17 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _handleRedirectTap(InboxMessage message) {
-    FirebaseMessaging().processDataMessage(message.data, allowedTypes: {
-      FirebaseMessaging.payloadTypeEventDetail,
-      FirebaseMessaging.payloadTypeGameDetail,
-      FirebaseMessaging.payloadTypeAthleticsGameStarted,
-      FirebaseMessaging.payloadTypeAthleticsNewDetail,
-      FirebaseMessaging.payloadTypeGroup,
-    });
+    String? messageType = FirebaseMessaging.getMessageType(message.data);
+    if ((messageType == FirebaseMessaging.payloadTypeEventDetail) ||
+        (messageType == FirebaseMessaging.payloadTypeGameDetail) ||
+        (messageType == FirebaseMessaging.payloadTypeAthleticsGameStarted) ||
+        (messageType == FirebaseMessaging.payloadTypeAthleticsNewDetail) ||
+        (messageType == FirebaseMessaging.payloadTypeGroup))
+    {
+      FirebaseMessaging().processDataMessage(message.data);
+    }
   }
+  
   // Banner
   Widget _buildBanner(){ //TBD localize
     return
@@ -339,11 +343,11 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       _DateInterval? interval = intervals[timeEntry.value];
       if (interval != null) {
         DateTime startDate = interval.startDate!;
-        String? startStr = AppDateTime().formatDateTime(interval.startDate, format: AppDateTime.eventFilterDisplayDateFormat, ignoreTimeZone: true);
+        String? startStr = AppDateTime().formatDateTime(interval.startDate, format: 'MM/dd', ignoreTimeZone: true);
 
         DateTime endDate = interval.endDate ?? today;
         if (1 < endDate.difference(startDate).inDays) {
-          String? endStr = AppDateTime().formatDateTime(endDate, format: AppDateTime.eventFilterDisplayDateFormat, ignoreTimeZone: true);  
+          String? endStr = AppDateTime().formatDateTime(endDate, format: 'MM/dd', ignoreTimeZone: true);  
           timeDate = "$startStr - $endStr";
         }
         else {
@@ -410,7 +414,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   Widget _buildTitle() {
-    return Text(Localization().getStringEx('panel.inbox.label.heading', 'Inbox')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),);
+    return Text(Localization().getStringEx('panel.inbox.label.heading', 'Notifications'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),);
   }
 
   Widget _buildBackButton() {
@@ -436,35 +440,35 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   Widget _buildEditButton() {
     return Semantics(label: Localization().getStringEx('headerbar.edit.title', 'Edit'), hint: Localization().getStringEx('headerbar.edit.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onEdit, child:
-        Text(Localization().getStringEx('headerbar.edit.title', 'Edit')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildDoneButton() {
     return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDone, child:
-        Text(Localization().getStringEx('headerbar.done.title', 'Done')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildSelectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.select.all.title', 'Select All'), hint: Localization().getStringEx('headerbar.select.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onSelectAll, child:
-        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildDeselectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), hint: Localization().getStringEx('headerbar.deselect.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDeselectAll, child:
-        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildOptions(BuildContext context) {
     String headingText = (_selectedMessageIds.length == 1) ?
-      '1 message selected' :
-      '${_selectedMessageIds.length} messages selected';
+      '1 Message Selected' :
+      '${_selectedMessageIds.length} Messages Selected';
 
     return Container(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), child:
       Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -544,11 +548,11 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
                 Container(height: 32),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                   Expanded(child:
-                    RoundedButton(label: negativeButtonTitle, onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), backgroundColor: Colors.transparent, borderColor: Styles().colors!.fillColorPrimary, textColor: Styles().colors!.fillColorPrimary,),
+                    RoundedButton(label: negativeButtonTitle ?? '', onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), backgroundColor: Colors.transparent, borderColor: Styles().colors!.fillColorPrimary, textColor: Styles().colors!.fillColorPrimary,),
                   ),
                   Container(width: 8, ),
                   Expanded(child:
-                    RoundedButton(label: positiveButtonTitle, onTap: onPositive, backgroundColor: Styles().colors!.fillColorSecondaryVariant, borderColor: Styles().colors!.fillColorSecondaryVariant, textColor: Styles().colors!.surface, ),
+                    RoundedButton(label: positiveButtonTitle ?? '', onTap: onPositive ?? (){}, backgroundColor: Styles().colors!.fillColorSecondaryVariant, borderColor: Styles().colors!.fillColorSecondaryVariant, textColor: Styles().colors!.surface, ),
                   ),
                 ],)
               ],)
@@ -560,12 +564,12 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onBack() {
-    Analytics.instance.logSelect(target: "Back");
+    Analytics().logSelect(target: "Back");
     Navigator.pop(context);
   }
 
   void _onEdit() {
-    Analytics.instance.logSelect(target: "Edit");
+    Analytics().logSelect(target: "Edit");
     setState(() {
       _isEditMode = true;
       _selectedMessageIds.clear();
@@ -573,7 +577,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onDone() {
-    Analytics.instance.logSelect(target: "Done");
+    Analytics().logSelect(target: "Done");
     setState(() {
       _isEditMode = false;
       _selectedMessageIds.clear();
@@ -581,7 +585,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onSelectAll() {
-    Analytics.instance.logSelect(target: "Select All");
+    Analytics().logSelect(target: "Select All");
     setState(() {
       for (InboxMessage message in _messages) {
         if (message.messageId != null) {
@@ -592,24 +596,24 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onDeselectAll() {
-    Analytics.instance.logSelect(target: "Deselect All");
+    Analytics().logSelect(target: "Deselect All");
     setState(() {
       _selectedMessageIds.clear();
     });
   }
 
   void _onOptions() {
-    Analytics.instance.logSelect(target: "Options");
+    Analytics().logSelect(target: "Options");
     showModalBottomSheet(context: context, backgroundColor: Colors.white, isScrollControlled: true, isDismissible: true, builder: _buildOptions);
   }
 
   void _onCancelOptions(BuildContext context) {
-    Analytics.instance.logSelect(target: "Cancel");
+    Analytics().logSelect(target: "Cancel");
     Navigator.pop(context);
   }
 
   void _onDelete(BuildContext context) {
-    Analytics.instance.logSelect(target: "Delete");
+    Analytics().logSelect(target: "Delete");
     Navigator.pop(context);
 
     String message = (_selectedMessageIds.length == 1) ?
@@ -649,7 +653,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _onCancelConfirmation({String? message, String? selection}) {
-    Analytics.instance.logAlert(text: "Remove My Information", selection: "No");
+    Analytics().logAlert(text: "Remove My Information", selection: "No");
     Navigator.pop(context);
   }
 
@@ -933,21 +937,21 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
                 
                 Expanded(child:
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    AppString.isStringNotEmpty(widget.message?.category) ?
+                    StringUtils.isNotEmpty(widget.message?.category) ?
                       Padding(padding: EdgeInsets.only(bottom: 3), child:
                         Row(children: [
                           Expanded(child:
                             Text(widget.message?.category ?? '', semanticsLabel: "Category: ${widget.message?.category ?? ''}, ",style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))
                       )])) : Container(),
                     
-                    AppString.isStringNotEmpty(widget.message?.subject) ?
+                    StringUtils.isNotEmpty(widget.message?.subject) ?
                       Padding(padding: EdgeInsets.only(bottom: 4), child:
                         Row(children: [
                           Expanded(child:
                             Text(widget.message?.subject ?? '', semanticsLabel: "Subject: ${widget.message?.subject ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
                       )])) : Container(),
 
-                    AppString.isStringNotEmpty(widget.message?.body) ?
+                    StringUtils.isNotEmpty(widget.message?.body) ?
                       Padding(padding: EdgeInsets.only(bottom: 6), child:
                         Row(children: [
                           Expanded(child:
@@ -984,7 +988,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
   }
 
   void _onTapFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.message!.subject}");
+    Analytics().logSelect(target: "Favorite: ${widget.message!.subject}");
     setState(() {
       Auth2().prefs?.toggleFavorite(widget.message);
     });

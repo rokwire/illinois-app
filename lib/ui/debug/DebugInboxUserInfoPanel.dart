@@ -1,13 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Log.dart';
-import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/network.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class DebugInboxUserInfoPanel extends StatefulWidget{
   DebugInboxUserInfoPanel();
@@ -37,8 +37,8 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
   Future<void> _lodUserInfo() async{
       try {
         Response? response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user",
-            auth: NetworkAuth.Auth2) : null;
-        Map<String, dynamic>? jsonData = AppJson.decode(response?.body);
+            auth: Auth2()) : null;
+        Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
         if(jsonData != null){
           setState(() {
             _info = InboxUserInfo.fromJson(jsonData);
@@ -53,12 +53,8 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          "Inbox User Info",
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: "Inbox User Info",
       ),
       body: _loading
           ? Center(child: Column(
@@ -139,8 +135,8 @@ class InboxUserInfo{
       userId: json['user_id'],
       firebaseTokens: json['firebase_tokens']?.map((e) => FirebaseToken.fromJson(e))?.toList(),
       topics:  json['topics']?.map((e) => e.toString())?.toList(),
-      dateCreated: AppDateTime().dateTimeFromString(json['date_created']),
-      dateUpdated: AppDateTime().dateTimeFromString(json['date_updated']),
+      dateCreated: DateTimeUtils.dateTimeFromString(json['date_created']),
+      dateUpdated: DateTimeUtils.dateTimeFromString(json['date_updated']),
     ) : null;
   }
 }
@@ -157,7 +153,7 @@ class FirebaseToken{
       token: json['token'] ?? "",
       appPlatform: json['app_platform'] ?? "",
       appVersion: json['app_version'] ?? "",
-      dateCreated: AppDateTime().dateTimeFromString(json['date_created'] ?? "", format: "yyyy-MM-ddTHH:mm:ssZ", isUtc: true),
+      dateCreated: DateTimeUtils.dateTimeFromString(json['date_created'] ?? "", format: "yyyy-MM-ddTHH:mm:ssZ", isUtc: true),
     ) : null;
   }
 }

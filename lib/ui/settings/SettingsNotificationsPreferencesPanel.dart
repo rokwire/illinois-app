@@ -17,8 +17,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsBluetoothPanel.dart';
 import 'package:illinois/ui/settings/SettingsLocationPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
@@ -31,12 +31,8 @@ class SettingsNotificationsPreferencesPanel extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx("panel.settings.notification_prefferences.label.title", "Notifications Preferences")!,
-          style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.settings.notification_prefferences.label.title", "Notifications Preferences"),
       ),
       body: SingleChildScrollView(child: _buildContent(context)),
       backgroundColor: Styles().colors!.background,
@@ -78,16 +74,16 @@ class SettingsNotificationsPreferencesPanel extends StatelessWidget{
 
 
   void _onTapLocation(BuildContext context) {
-    Analytics.instance.logSelect(target: "Location");
+    Analytics().logSelect(target: "Location");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLocationPanel()));
   }
 
   void _onTapNotifications(BuildContext context) {
-    Analytics.instance.logSelect(target: "Notifications");
+    Analytics().logSelect(target: "Notifications");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));  }
 
   void _onTapBluetooth(BuildContext context) {
-    Analytics.instance.logSelect(target: "Bluetooth");
+    Analytics().logSelect(target: "Bluetooth");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsBluetoothPanel()));
   }
 }

@@ -16,24 +16,24 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/LiveStats.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -84,7 +84,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     bool showParking = widget.game?.parkingUrl != null;
     bool showGameDayGuide = widget.game?.isHomeGame ?? false;
     bool hasScores = sportDefinition?.hasScores ?? false;
-    bool hasLiveGame = Storage().debugDisableLiveGameCheck! ? true : LiveStats().hasLiveGame(widget.game?.id);
+    bool hasLiveGame = (Storage().debugDisableLiveGameCheck == true) || LiveStats().hasLiveGame(widget.game?.id);
     bool showScore = hasScores && (widget.game?.isGameDay ?? false) && hasLiveGame;
     bool isGameFavorite = Auth2().isFavorite(widget.game);
     String? liveStatsUrl = widget.game?.links?.liveStats;
@@ -92,8 +92,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     String? videoUrl = widget.game?.links?.video;
 
     double wrapperHeight = 30;
-    wrapperHeight += AppString.isStringNotEmpty(audioUrl) ? 48 : 0;
-    wrapperHeight += AppString.isStringNotEmpty(videoUrl) ? 48 : 0;
+    wrapperHeight += StringUtils.isNotEmpty(audioUrl) ? 48 : 0;
+    wrapperHeight += StringUtils.isNotEmpty(videoUrl) ? 48 : 0;
     wrapperHeight += showOrderFoodAndDrink ? 48 : 0;
     wrapperHeight += showGetTickets || showParking ? 48 : 0;
     wrapperHeight += showGameDayGuide ? 48 : 0;
@@ -162,7 +162,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                               style: TextStyle(fontSize: 32, color: Colors.white),
                             ),
                           ),
-                          (!AppString.isStringEmpty(widget.game?.longDescription)
+                          (!StringUtils.isEmpty(widget.game?.longDescription)
                               ? Padding(
                                   padding: EdgeInsets.symmetric(vertical: 16),
                                   child: Text(
@@ -175,7 +175,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   padding: EdgeInsets.only(top: 16),
                                 )),
                           Visibility(
-                              visible: AppString.isStringNotEmpty(widget.game?.displayTime),
+                              visible: StringUtils.isNotEmpty(widget.game?.displayTime),
                               child: Semantics(
                                 label: widget.game?.displayTime,
                                 button: false,
@@ -196,7 +196,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                 ),
                               )),
                           Visibility(
-                            visible: AppString.isStringNotEmpty(widget.game?.location?.location),
+                            visible: StringUtils.isNotEmpty(widget.game?.location?.location),
                             child: Padding(
                               padding: EdgeInsets.only(bottom: 20),
                               child: Semantics(
@@ -245,7 +245,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 showScore ? _createScoreBoard() : Container(),
-                AppString.isStringEmpty(liveStatsUrl)
+                StringUtils.isEmpty(liveStatsUrl)
                     ? Container()
                     : _DetailRibbonButton(
                         iconResource: 'images/icon-live-stats.png',
@@ -255,13 +255,13 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                           Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: liveStatsUrl)));
                         },
                       ),
-                AppString.isStringEmpty(liveStatsUrl)
+                StringUtils.isEmpty(liveStatsUrl)
                     ? Container()
                     : Container(
                         color: Styles().colors!.fillColorPrimaryTransparent015,
                         height: 1,
                       ),
-                AppString.isStringEmpty(audioUrl)
+                StringUtils.isEmpty(audioUrl)
                     ? Container()
                     : _DetailRibbonButton(
                         iconResource: 'images/icon-listen.png',
@@ -270,13 +270,13 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         subTitle: widget.game?.radio,
                         onTap: () => _onTapListen(audioUrl),
                       ),
-                AppString.isStringEmpty(audioUrl)
+                StringUtils.isEmpty(audioUrl)
                     ? Container()
                     : Container(
                         color: Styles().colors!.fillColorPrimaryTransparent015,
                         height: 1,
                       ),
-                AppString.isStringEmpty(videoUrl)
+                StringUtils.isEmpty(videoUrl)
                     ? Container()
                     : _DetailRibbonButton(
                         iconResource: 'images/icon-watch.png',
@@ -285,7 +285,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         subTitle: widget.game?.tv,
                         onTap: () => _onTapWatch(videoUrl),
                       ),
-                AppString.isStringEmpty(videoUrl)
+                StringUtils.isEmpty(videoUrl)
                     ? Container()
                     : Container(
                         color: Styles().colors!.fillColorPrimaryTransparent015,
@@ -303,7 +303,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             Visibility(
                               visible: showGetTickets,
                               child: Expanded(
-                                child: ScalableRoundedButton(
+                                child: RoundedButton(
                                   label: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.title', 'Get Tickets'),
                                   hint: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.hint', ''),
                                   backgroundColor: Colors.white,
@@ -321,7 +321,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             Visibility(
                               visible: showParking,
                               child: Expanded(
-                                child: ScalableRoundedButton(
+                                child: RoundedButton(
                                     label: Localization().getStringEx('widget.game_detail_heading.button.parking.title', 'Parking'),
                                     hint: Localization().getStringEx('widget.game_detail_heading.button.parking.hint', ''),
                                     backgroundColor: Colors.white,
@@ -340,7 +340,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                       ),
                       Visibility(
                         visible: showGameDayGuide,
-                        child: ScalableRoundedButton(
+                        child: RoundedButton(
                           label: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.title', 'Game Day Guide'),
                           hint: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.hint', ''),
                           backgroundColor: Colors.white,
@@ -353,7 +353,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         ),
                       ),
                       Padding(padding: EdgeInsets.only(bottom: 6)),
-                      ScalableRoundedButton(
+                      RoundedButton(
                         label: Localization().getStringEx('widget.game_detail_heading.button.roster.title', 'Roster'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.roster.hint', ''),
                         backgroundColor: Colors.white,
@@ -361,7 +361,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         textColor: Styles().colors!.fillColorPrimary,
                         borderColor: Styles().colors!.fillColorSecondary,
                         onTap: () {
-                          Analytics.instance.logSelect(target: "Roster");
+                          Analytics().logSelect(target: "Roster");
                           Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsRosterListPanel(sportDefinition, null)));
                         },
                       )
@@ -405,7 +405,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   List<Widget> _buildHeaderWidgets() {
     List<Widget> widgets = [];
     if(widget.showImageTout) {
-      if (!AppString.isStringEmpty(widget.game?.imageUrl)) {
+      if (!StringUtils.isEmpty(widget.game?.imageUrl)) {
         widgets.add(Positioned(
             child: Image.network(
               widget.game!.imageUrl!,
@@ -428,12 +428,12 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   }
 
   void _onTapSwitchFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.game?.title}");
+    Analytics().logSelect(target: "Favorite: ${widget.game?.title}");
     Auth2().prefs?.toggleFavorite(widget.game);
   }
 
   void _onTapGetTickets() {
-    Analytics.instance.logSelect(target: "Get Tickets");
+    Analytics().logSelect(target: "Get Tickets");
 
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
@@ -449,30 +449,30 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   }
 
   void _onTapParking() {
-    Analytics.instance.logSelect(target: "Parking");
+    Analytics().logSelect(target: "Parking");
 
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game?.parkingUrl)));
   }
 
   void _onTapGameDayGuide() {
-    Analytics.instance.logSelect(target: "Game Day");
+    Analytics().logSelect(target: "Game Day");
     String? sportKey = widget.game?.sport?.shortName;
-    String? url = AppUrl.getGameDayGuideUrl(sportKey);
+    String? url = Sports.getGameDayGuideUrl(sportKey);
     if (url != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
     }
   }
 
   void _onTapListen(String? audioUrl) {
-    Analytics.instance.logSelect(target: "Listen");
-    if (AppString.isStringNotEmpty(audioUrl)) {
+    Analytics().logSelect(target: "Listen");
+    if (StringUtils.isNotEmpty(audioUrl)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: audioUrl)));
     }
   }
 
   void _onTapWatch(String? videoUrl) {
-    Analytics.instance.logSelect(target: "Watch");
-    if (AppString.isStringNotEmpty(videoUrl)) {
+    Analytics().logSelect(target: "Watch");
+    if (StringUtils.isNotEmpty(videoUrl)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: videoUrl)));
     }
   }
@@ -524,7 +524,7 @@ class _DetailRibbonButton extends StatelessWidget {
                   ),
                   Visibility(
                       child: Text(
-                        (!AppString.isStringEmpty(subTitle) ? subTitle! : ''),
+                        (!StringUtils.isEmpty(subTitle) ? subTitle! : ''),
                         style: TextStyle(
                             fontFamily: Styles().fontFamilies!.medium,
                             color: Styles().colors!.textBackground,
@@ -722,7 +722,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       //return opponent image
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
-      if(AppString.isStringNotEmpty(opponentUrl)) {
+      if(StringUtils.isNotEmpty(opponentUrl)) {
         return Image.network(opponentUrl!, excludeFromSemantics: true);
       } else {
         return Container();
@@ -774,7 +774,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       //return opponent image
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
-      if(AppString.isStringNotEmpty(opponentUrl)) {
+      if(StringUtils.isNotEmpty(opponentUrl)) {
         return Image.network(opponentUrl!, excludeFromSemantics: true);
       } else {
         return Container();
@@ -838,9 +838,9 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     if (_currentLiveGame == null) return false;
 
     dynamic customData = _currentLiveGame!.custom;
-    if (AppString.isStringEmpty(customData)) return false;
+    if (StringUtils.isEmpty(customData)) return false;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(customData);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(customData);
     if (mapCustomData == null) {
       return null;
     }
@@ -861,7 +861,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     int period = _currentLiveGame!.period!;
     if (period <= 0) return "";
 
-    return _convertToOrdinal(period) + " " + Localization().getStringEx("widget.score.period.set", "Set")!;
+    return _convertToOrdinal(period) + " " + Localization().getStringEx("widget.score.period.set", "Set");
   }
 
   String _getHomeScore() {
@@ -883,7 +883,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game!.opponent?.logoImage;
-      return AppString.isStringNotEmpty(opponentUrl) ? Image.network(opponentUrl!, excludeFromSemantics: true) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? Image.network(opponentUrl!, excludeFromSemantics: true) : null;
     }
   }
 
@@ -894,7 +894,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game?.opponent?.logoImage;
-      return AppString.isStringNotEmpty(opponentUrl) ? Image.network(opponentUrl!, excludeFromSemantics: true) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? Image.network(opponentUrl!, excludeFromSemantics: true) : null;
     }
   }
 
@@ -902,9 +902,9 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     if (_currentLiveGame == null) return Container();
 
     dynamic customData = _currentLiveGame!.custom;
-    if (AppString.isStringEmpty(customData)) return Container();
+    if (StringUtils.isEmpty(customData)) return Container();
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(customData);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(customData);
     if (mapCustomData == null) return Container();
 
     String? phase = mapCustomData["Phase"];
@@ -1467,7 +1467,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
 
   Widget _buildBottomSection() {
     String? lastPlay = _getLastPlay();
-    bool hasLastPlay = AppString.isStringNotEmpty(lastPlay);
+    bool hasLastPlay = StringUtils.isNotEmpty(lastPlay);
     return hasLastPlay
         ? Container(
         decoration: new BoxDecoration(
@@ -1476,23 +1476,23 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),
-          child: Text(sprintf(Localization().getStringEx('widget.score.last_play', 'Last Play: %s')!, [lastPlay]), textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
+          child: Text(sprintf(Localization().getStringEx('widget.score.last_play', 'Last Play: %s'), [lastPlay]), textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
         ))
         : Container();
   }
 
   String? _getLastPlay() {
-    if (AppString.isStringEmpty(_currentLiveGame?.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame?.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["LastPlay"];
   }
 
   String? _getPossession() {
-    if (AppString.isStringEmpty(_currentLiveGame?.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame?.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Possession"];
   }
@@ -1514,9 +1514,9 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   String? _getCustomClock() {
-    if (AppString.isStringEmpty(_currentLiveGame!.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame!.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Clock"];
   }
@@ -1531,9 +1531,9 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   String? _getCustomPhase() {
-    if (AppString.isStringEmpty(_currentLiveGame!.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame!.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Phase"];
   }
@@ -1541,7 +1541,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
   String _getPeriod() {
     if (_currentLiveGame!.period! <= 0) return "";
 
-    return _convertToOrdinal(_currentLiveGame!.period) + " " + Localization().getStringEx("widget.score.period.quarter", "Quarter")!;
+    return _convertToOrdinal(_currentLiveGame!.period) + " " + Localization().getStringEx("widget.score.period.quarter", "Quarter");
   }
 }
 
@@ -1617,7 +1617,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
 
   Widget _buildBottomSection() {
     String? lastPlay = _getLastPlay();
-    bool hasLastPlay = AppString.isStringNotEmpty(lastPlay);
+    bool hasLastPlay = StringUtils.isNotEmpty(lastPlay);
     return hasLastPlay
         ? Container(
         decoration: new BoxDecoration(
@@ -1632,9 +1632,9 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   String? _getLastPlay() {
-    if (AppString.isStringEmpty(_currentLiveGame?.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame?.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["LastPlay"];
   }
@@ -1656,9 +1656,9 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   String? _getCustomClock() {
-    if (AppString.isStringEmpty(_currentLiveGame!.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame!.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Clock"];
   }
@@ -1673,9 +1673,9 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   String? _getCustomPhase() {
-    if (AppString.isStringEmpty(_currentLiveGame!.custom)) return null;
+    if (StringUtils.isEmpty(_currentLiveGame!.custom)) return null;
 
-    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
+    Map<String, dynamic>? mapCustomData = JsonUtils.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Phase"];
   }
@@ -1685,8 +1685,8 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
       return "";
     }
     String? shortName = widget._game!.sport!.shortName;
-    String periodName = (shortName == "mbball") ? Localization().getStringEx("widget.score.period.half", "Half")! : Localization().getStringEx(
-        "widget.score.period.quarter", "Quarter")!;
+    String periodName = (shortName == "mbball") ? Localization().getStringEx("widget.score.period.half", "Half") : Localization().getStringEx(
+        "widget.score.period.quarter", "Quarter");
     return _convertToOrdinal(_currentLiveGame!.period) + " " + periodName;
   }
 

@@ -18,8 +18,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/service/Connectivity.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDayWidget.dart';
 

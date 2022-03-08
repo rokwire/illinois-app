@@ -18,15 +18,15 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Parking.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/TransportationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class ParkingEventPanel extends StatefulWidget{
 
@@ -54,7 +54,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
     setState(() {
       _isLoading = true;
     });
-    TransportationService().loadParkingEventInventory(widget.event!.id).then((List<ParkingLot>? eventLots){
+    Transportation().loadParkingEventInventory(widget.event!.id).then((List<ParkingLot>? eventLots){
       _eventLots = eventLots;
       setState(() {
         _isLoading = false;
@@ -65,16 +65,8 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-        Localization().getStringEx("panel.parking_lots.label.heading","Parking Spots")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.parking_lots.label.heading","Parking Spots"),
       ),
       body: _buildScaffoldBody(),
       backgroundColor: Styles().colors!.background,
@@ -103,7 +95,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
                             Row(children:[
                               Expanded(child:
                                 Text(
-                                  Localization().getStringEx("panel.parking_lots.label.loading", "Loading parking lots. Please wait...")!,
+                                  Localization().getStringEx("panel.parking_lots.label.loading", "Loading parking lots. Please wait..."),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontFamily: Styles().fontFamilies!.regular,
@@ -131,7 +123,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
 
   Widget _buildLots(){
     List<Widget> widgets = [];
-    if(AppCollection.isCollectionNotEmpty(_eventLots)){
+    if(CollectionUtils.isNotEmpty(_eventLots)){
       for(ParkingLot inventory in _eventLots! ){
         if(inventory.totalSpots != null && inventory.totalSpots! > 0){
           if(widgets.isNotEmpty){
@@ -141,10 +133,10 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
         }
       }
     }
-    if(AppCollection.isCollectionEmpty(widgets)){
+    if(CollectionUtils.isEmpty(widgets)){
       widgets.add(Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Text(Localization().getStringEx("panel.parking_lots.label.empty","No parking lots available for this event")!,
+        child: Text(Localization().getStringEx("panel.parking_lots.label.empty","No parking lots available for this event"),
           style: TextStyle(
             fontFamily: Styles().fontFamilies!.regular,
             fontSize: 16,
@@ -230,7 +222,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
                   ),
                 ),
                 Text(
-                  "${AppString.getDefaultEmptyString(widget.inventory!.lotAddress)}",
+                  "${StringUtils.ensureNotEmpty(widget.inventory!.lotAddress)}",
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.medium,
                     fontSize: 16,
@@ -238,7 +230,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
                   ),
                 ),
                 Text(
-                  Localization().getStringEx("panel.parking_lots.label.available_spots", "Available Spots: ")! + "${widget.inventory!.availableSpots}",
+                  Localization().getStringEx("panel.parking_lots.label.available_spots", "Available Spots: ") + "${widget.inventory!.availableSpots}",
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.regular,
                     fontSize: 16,
@@ -252,14 +244,14 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
         Expanded(
           flex: 3,
           child: Semantics(explicitChildNodes: true, child: Visibility(
-          visible: directionsVisible, child: Padding(padding: EdgeInsets.only(right: 8), child: ScalableRoundedButton(
+          visible: directionsVisible, child: Padding(padding: EdgeInsets.only(right: 8), child: RoundedButton(
             label: Localization().getStringEx('panel.parking_lots.button.directions.title', 'Directions'),
             hint: Localization().getStringEx('panel.parking_lots.button.directions.hint', ''),
             backgroundColor: Colors.white,
             fontSize: 16.0,
             textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
-            padding: EdgeInsets.symmetric(horizontal: 12),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             onTap: _onTapDirections),),))
         )
       ],
@@ -267,7 +259,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
   }
 
   void _onTapDirections() {
-    Analytics.instance.logSelect(target: 'Parking Lot Directions');
+    Analytics().logSelect(target: 'Parking Lot Directions');
     NativeCommunicator().launchExploreMapDirections(target: widget.inventory);
   }
 }

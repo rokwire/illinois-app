@@ -20,10 +20,10 @@ import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/model/sport/Game.dart';
 
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsGameDayWidget extends StatefulWidget {
   final Game? game;
@@ -56,14 +56,14 @@ class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
               padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               child: Row(
                 children: <Widget>[
-                  AppString.isStringNotEmpty(widget.sportDefinition?.iconPath)
+                  StringUtils.isNotEmpty(widget.sportDefinition?.iconPath)
                       ? Image.asset(widget.sportDefinition!.iconPath!, excludeFromSemantics: true)
                       : Container(),
                   Container(
                     width: 10,
                   ),
                   Text(
-                    Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!')!,
+                    Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
                     style: TextStyle(
                         color: Colors.white,
                         fontFamily: Styles().fontFamilies!.extraBold,

@@ -17,11 +17,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class RoleGridButton extends StatelessWidget {
   final String? title;
@@ -64,8 +65,8 @@ class RoleGridButton extends StatelessWidget {
     } }, //onTap (this),
     child: Semantics(label: title, excludeSemantics: true, sortKey: sortOrder!=null?OrdinalSortKey(sortOrder!) : null,
         value: (selected?Localization().getStringEx("toggle_button.status.checked", "checked",) :
-        Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
-            ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
+        Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
+            ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
     child:Stack(
       children: <Widget>[
         Padding(
@@ -105,7 +106,7 @@ class RoleGridButton extends StatelessWidget {
   static RoleGridButton? fromRole(UserRole? role, { bool? selected, double? sortOrder, Function? onTap }) {
     if (role == UserRole.student) {
       return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.student.title', 'University student'),
+        title: Localization().getStringEx('panel.onboarding2.roles.button.student.title', 'University Student'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.student.hint', ''),
         iconPath: 'images/icon-persona-student-normal.png',
         selectedIconPath: 'images/icon-persona-student-selected.png',
@@ -131,7 +132,7 @@ class RoleGridButton extends StatelessWidget {
     }
     else if (role == UserRole.fan) {
       return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.fan.title', 'Athletics fan'),
+        title: Localization().getStringEx('panel.onboarding2.roles.button.fan.title', 'Athletics Fan'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.fan.hint', ''),
         iconPath: 'images/icon-persona-athletics-normal.png',
         selectedIconPath: 'images/icon-persona-athletics-selected.png',
@@ -144,7 +145,7 @@ class RoleGridButton extends StatelessWidget {
     }
     else if (role == UserRole.employee) {
       return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.employee.title', 'University employee'),
+        title: Localization().getStringEx('panel.onboarding2.roles.button.employee.title', 'University Employee'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.employee.hint', ''),
         iconPath: 'images/icon-persona-employee-normal.png',
         selectedIconPath: 'images/icon-persona-employee-selected.png',
@@ -214,7 +215,7 @@ class RoleGridButton extends StatelessWidget {
 
   static Widget gridFromFlexUI({ Set<UserRole>? selectedRoles, double gridSpacing = 5, Function? onTap }) {
     List<Widget> roleButtons1 = <Widget>[], roleButtons2 = <Widget>[];
-    List<String> codes = AppJson.listStringsValue(FlexUI()['roles']) ?? [];
+    List<String> codes = JsonUtils.listStringsValue(FlexUI()['roles']) ?? [];
     int index = 1;
     for (String code in codes) {
       

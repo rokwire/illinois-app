@@ -15,10 +15,10 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
-import 'RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class PopupDialog extends StatelessWidget {
   final String? _displayText;
@@ -46,7 +46,7 @@ class PopupDialog extends StatelessWidget {
                       padding: EdgeInsets.all(8),
                       child: Center(
                         child: Text(
-                          Localization().getStringEx("app.title", "Illinois")!,
+                          Localization().getStringEx("app.title", "Illinois"),
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                       ),
@@ -77,7 +77,7 @@ class PopupDialog extends StatelessWidget {
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors!.fillColorSecondary,
                       textColor: Styles().colors!.fillColorPrimary,
-                      label: _positiveButtonText),
+                      label: _positiveButtonText ?? ''),
                   Container(height: 10,),
                 ],
               ),

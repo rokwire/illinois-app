@@ -16,23 +16,24 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupMembersPanel.dart';
 import 'package:illinois/ui/groups/GroupSettingsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/ext/Group.dart';
+import 'package:illinois/ext/Event.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 import 'GroupFindEventPanel.dart';
@@ -67,16 +68,9 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.groups_admin.header.title", "Admin view")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.groups_admin.header.title", "Admin view"),
+        leadingAsset: 'images/icon-circle-close.png',
       ),
       body: Column(
         children: <Widget>[
@@ -99,7 +93,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
   }
 
   Widget _buildHeading(){
-    String? members;
+    String members;
     int membersCount = widget.group?.membersCount ?? 0;
     if (membersCount == 0) {
       members = Localization().getStringEx("panel.groups_admin.members.count.empty", "No Current Members");
@@ -108,7 +102,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
       members = Localization().getStringEx("panel.groups_admin.members.count.one", "1 Current Member");
     }
     else {
-      members = sprintf(Localization().getStringEx("panel.groups_admin.members.count.format", "%s Current Members")!,[membersCount]);
+      members = sprintf(Localization().getStringEx("panel.groups_admin.members.count.format", "%s Current Members"),[membersCount]);
     }
 
     return Container(
@@ -145,7 +139,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
             ),
           ),
           Container(height: 8,),
-          Text(members!,
+          Text(members,
             style: TextStyle(
               fontFamily: Styles().fontFamilies!.bold,
               fontSize: 16,
@@ -154,19 +148,17 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
           ),
           Container(height: 20,),
           RibbonButton(
-            height: null,
             label: Localization().getStringEx("panel.groups_admin.button.manage_members.title", "Manage Members"),
             hint: Localization().getStringEx("panel.groups_admin.button.manage_members.hint", ""),
-            leftIcon: 'images/icon-member.png',
+            leftIconAsset: 'images/icon-member.png',
             padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
             onTap: onTapMembers,
           ),
           Container(height: 1, color: Styles().colors!.surfaceAccent,),
           RibbonButton(
-            height: null,
             label: Localization().getStringEx("panel.groups_admin.button.group_settings.title", "Group Settings"),
             hint: Localization().getStringEx("panel.groups_admin.button.group_settings.hint", ""),
-            leftIcon: 'images/icon-gear.png',
+            leftIconAsset: 'images/icon-gear.png',
             padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
             onTap: onTapSettings,
           ),
@@ -177,7 +169,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
 
   Widget _buildEventsSection(){
     Widget eventsWidget;
-    if(AppCollection.isCollectionNotEmpty(widget.groupEvents)){
+    if(CollectionUtils.isNotEmpty(widget.groupEvents)){
       eventsWidget = Column(
         children: widget.groupEvents!.map((event){
           return Padding(
@@ -196,8 +188,8 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
     }
 
     int eventsCount = widget.groupEvents?.length ?? 0;
-    return SectionTitlePrimary(title: "${Localization().getStringEx("panel.groups_admin.label.upcoming_events", "Upcoming events")} ($eventsCount)",
-      iconPath: 'images/icon-calendar.png',
+    return SectionHeading(title: "${Localization().getStringEx("panel.groups_admin.label.upcoming_events", "Upcoming events")} ($eventsCount)",
+      titleIconAsset: 'images/icon-calendar.png',
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -233,7 +225,7 @@ class _NoUpcomingEvents extends StatelessWidget{
       child: Column(
         children: <Widget>[
           Text(
-            Localization().getStringEx("panel.groups_admin.label.no_upcoming_events", "No upcoming events")!,
+            Localization().getStringEx("panel.groups_admin.label.no_upcoming_events", "No upcoming events"),
             style: TextStyle(
               color: Styles().colors!.textBackground,
               fontSize: 20,
@@ -242,7 +234,7 @@ class _NoUpcomingEvents extends StatelessWidget{
           ),
           Container(height: 10,),
           Text(
-            Localization().getStringEx("panel.groups_admin.label.create_new_event", "Create a new event or share an existing event with your members. ")!,
+            Localization().getStringEx("panel.groups_admin.label.create_new_event", "Create a new event or share an existing event with your members. "),
             style: TextStyle(
               color: Styles().colors!.textBackground,
               fontSize: 16,
@@ -351,7 +343,7 @@ class _EventCard extends StatelessWidget {
                     flex: 5,
                     child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Padding(padding: EdgeInsets.only(bottom: 2), child:
-                    Text(comment.member!.name!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary),),
+                    Text(comment.member!.displayShortName, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary),),
                     ),
                     Row(children: <Widget>[
                       Padding(padding: EdgeInsets.only(right: 2), child:
@@ -362,7 +354,7 @@ class _EventCard extends StatelessWidget {
                   ],),),),
                   Expanded(
                     flex:3,
-                    child: Text(AppDateTime().getDisplayDateTime(comment.dateCreated), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textBackground),)
+                    child: Text(AppDateTimeUtils.getDisplayDateTime(comment.dateCreated), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textBackground),)
                   )
                 ],),
                 Padding(padding: EdgeInsets.only(top:8), child:
@@ -380,8 +372,7 @@ class _EventCard extends StatelessWidget {
     content.add(
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child:_buildAddPostButton(photoUrl: Groups().getUserMembership(groupId)?.photoURL,
-          onTap: (){
+          child:_buildAddPostButton(onTap: (){
             Analytics().logSelect(target: "Add post");
             // TBD: remove if not used
             // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: groupEvent,groupId: groupId,)));
@@ -426,14 +417,14 @@ class _EventCard extends StatelessWidget {
                   borderRadius: BorderRadius.all(Radius.circular(8))
               ),
               child:
-                Text(Localization().getStringEx("panel.groups_admin.button.post.text","Post about this event...")!,style: TextStyle(fontFamily: 'ProximaNovaExtraRegular', fontSize: 14, color: Styles().colors!.textBackground),)
+                Text(Localization().getStringEx("panel.groups_admin.button.post.text","Post about this event..."),style: TextStyle(fontFamily: 'ProximaNovaExtraRegular', fontSize: 14, color: Styles().colors!.textBackground),)
             ))
           ],),
       ));
   }
 
   void _onSettingsTap(BuildContext context, GroupEvent? event){
-    Analytics.instance.logSelect(target: "Settings");
+    Analytics().logSelect(target: "Settings");
     showDialog(
         context: context,
         builder: (_) => Material(
@@ -448,7 +439,7 @@ class _EventCard extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         Expanded(child: Container()),
-                        ScalableRoundedButton(
+                        RoundedButton(
                           label:Localization().getStringEx("panel.groups_admin.button.delete.title", "Delete"),
                           backgroundColor: Styles().colors!.white,
                           borderColor: Styles().colors!.fillColorPrimary,
@@ -463,7 +454,7 @@ class _EventCard extends StatelessWidget {
                           },
                         ),
                         Container(height: 8,),
-                        ScalableRoundedButton(
+                        RoundedButton(
                           label:Localization().getStringEx("panel.groups_admin.button.edit.title", "Edit"),
                           backgroundColor: Styles().colors!.white,
                           borderColor: Styles().colors!.fillColorPrimary,
@@ -477,7 +468,7 @@ class _EventCard extends StatelessWidget {
                             Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: event, onEditTap: (Event event){
                               //TBD notify service for Event Update
                               Groups().updateGroupEvents(event).then((String? id) {
-                                if (AppString.isStringNotEmpty(id)) {
+                                if (StringUtils.isNotEmpty(id)) {
                                   Navigator.pop(context);
                                 }
                                 else {
@@ -488,7 +479,7 @@ class _EventCard extends StatelessWidget {
                           },
                         ),
                         Container(height: 8,),
-                        ScalableRoundedButton(
+                        RoundedButton(
                           label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel"),
                           backgroundColor: Styles().colors!.white,
                           borderColor: Styles().colors!.fillColorSecondary,
@@ -513,7 +504,7 @@ class _EventCard extends StatelessWidget {
   }
 
   void _onDeleteTap(BuildContext context, GroupEvent? event){
-    Analytics.instance.logSelect(target: "Delete");
+    Analytics().logSelect(target: "Delete");
     showDialog(
         context: context,
         builder: (_) => Material(
@@ -536,7 +527,8 @@ class _EventCard extends StatelessWidget {
                             textColor: Styles().colors!.fillColorPrimary,
                             fontFamily: Styles().fontFamilies!.regular,
                             fontSize: 16,
-                            height: 42,
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            contentWeight: 0.0,
                             borderWidth: 2,
                             onTap: (){
                               Analytics().logAlert(text: 'Remove event', selection: 'OK');
@@ -551,7 +543,8 @@ class _EventCard extends StatelessWidget {
                             textColor: Styles().colors!.fillColorPrimary,
                             fontFamily: Styles().fontFamilies!.bold,
                             fontSize: 16,
-                            height: 42,
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            contentWeight: 0.0,
                             borderWidth: 2,
                             onTap: (){
                               Analytics().logAlert(text: 'Remove event', selection: 'Cancel');
@@ -591,7 +584,7 @@ class EventContent extends StatelessWidget {
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
       Expanded(
-        child: Text(event!.timeDisplayString!,  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),),
+        child: Text(event?.timeDisplayString ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),),
       )
     ],)),);
 

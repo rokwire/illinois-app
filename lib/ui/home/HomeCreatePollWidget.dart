@@ -17,13 +17,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
-import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class HomeCreatePollWidget extends StatefulWidget {
   @override
@@ -73,7 +73,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
       Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Expanded(child: 
           Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
-            Text(Localization().getStringEx("widget.home_create_poll.heading.title", "Polls")!, style:
+            Text(Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"), style:
               TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),),),
         Semantics(label: Localization().getStringEx("widget.home_create_poll.button.close.label","Close"), button: true, excludeSemantics: true, child:
           InkWell(onTap : _onClose, child:
@@ -86,10 +86,10 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   Widget _buildContent() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30), child: 
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly create and share polls.")!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),),
+        Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly Create and Share Polls."), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),),
         Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
         Text((_canCreatePoll?Localization().getStringEx("widget.home_create_poll.text.description","People near you will be notified to vote through the Illinois app or you can provide them with the 4 Digit Poll #."):
-        Localization().getStringEx("widget.home_create_poll.text.description.login","You need to be logged in to create and share polls with people near you.")) ?? '',
+        Localization().getStringEx("widget.home_create_poll.text.description.login","You need to be logged in to create and share polls with people near you.")),
           style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies!.medium, fontSize: 16,),),),
         _buildButtons()
       ],),);
@@ -97,37 +97,25 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
 
   Widget _buildButtons(){
     return _canCreatePoll?
-    Padding(padding: EdgeInsets.only(right: 120), child:
-    ScalableRoundedButton(
-      label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a poll"),
-      padding: EdgeInsets.symmetric(horizontal: 16),
+    RoundedButton(
+      label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a Poll"),
       textColor: Styles().colors!.fillColorPrimary,
       borderColor: Styles().colors!.fillColorSecondary,
       backgroundColor: Colors.white,
+      contentWeight: 0.6,
+      conentAlignment: MainAxisAlignment.start,
       onTap: _onCreatePoll,
-    )) :
+    ) :
     Padding(padding: EdgeInsets.only(right: 120), child:
-    Stack(children: <Widget>[
-      ScalableRoundedButton(
+      RoundedButton(
         label: Localization().getStringEx("widget.home_create_poll.button.login.label","Login"),
 //        height: 48,
-        padding: EdgeInsets.symmetric(horizontal: 16),
         textColor: Styles().colors!.fillColorPrimary,
         borderColor: Styles().colors!.fillColorSecondary,
         backgroundColor: Colors.white,
+        progress: _authLoading,
         onTap: _onLogin,
       ),
-      Visibility(visible: _authLoading,
-        child: Container(
-          height: 48,
-          child: Align(alignment: Alignment.center,
-            child: SizedBox(height: 24, width: 24,
-                child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
-            ),
-          ),
-        ),
-      ),
-    ],),
     );
   }
 
@@ -150,10 +138,10 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     Analytics().logSelect(target: "Login");
     if (_authLoading != true) {
       setState(() { _authLoading = true; });
-      Auth2().authenticateWithOidc().then((bool? result) {
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _authLoading = false; });
-          if (result == false) {
+          if (result != Auth2OidcAuthenticateResult.succeeded) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }

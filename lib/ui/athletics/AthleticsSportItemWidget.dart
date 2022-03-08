@@ -16,8 +16,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsSportItemWidget extends StatelessWidget {
   final SportDefinition sport;
@@ -44,8 +44,8 @@ class AthleticsSportItemWidget extends StatelessWidget {
         child: Semantics(
           label: label,
           value: (selected?Localization().getStringEx("toggle_button.status.checked", "checked",) :
-                Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
-                ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
+                Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
+                ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
           button:true,
           excludeSemantics: true,
           child: Container(

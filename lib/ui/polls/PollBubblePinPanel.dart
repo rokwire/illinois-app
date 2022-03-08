@@ -16,12 +16,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/model/Poll.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Polls.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/polls.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/service/Polls.dart' as illinois;
 
 class PollBubblePinPanel extends StatefulWidget {
 
@@ -142,7 +144,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
       Padding(
         padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 52),
         child: Text(
-          Localization().getStringEx("panel.poll_pin_bouble.long_info_description", "Each poll has a 4-digit code associated with it. Only the poll creator can see and share this code. To participate in their poll, have them share the 4-digit code.")!,
+          Localization().getStringEx("panel.poll_pin_bouble.long_info_description", "Each poll has a four-digit number. The poll creator can share this code so others can respond."),
           style: TextStyle(
             fontFamily: Styles().fontFamilies!.regular,
             fontSize: 16,
@@ -161,7 +163,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         Padding(padding: EdgeInsets.only(right: 40), child:
           RichText(
             text: TextSpan(
-              text:Localization().getStringEx("panel.poll_pin_bouble.label_description", "Enter your 4-digit code to see poll.")! + " ",
+              text:Localization().getStringEx("panel.poll_pin_bouble.label_description", "Enter the four-digit poll number to see the poll.") + " ",
               style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24),
               children:[
                 WidgetSpan(
@@ -261,29 +263,18 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
   Widget _buildContinueButton() {
     return Padding(
       padding: EdgeInsets.only(top: 20, left: 30, right: 30),
-        child: Stack(children: <Widget>[
-          RoundedButton(
+        child: RoundedButton(
             label: Localization().getStringEx('dialog.continue.title', 'Continue'),
             hint: Localization().getStringEx('dialog.continue.hint', ''),
             backgroundColor: Styles().colors!.white,
-            height: 20 + 16*MediaQuery.of(context).textScaleFactor,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            progress: _loading,
             fontSize: 16.0,
             textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
-            padding: EdgeInsets.symmetric(horizontal: 24),
             onTap: () { _onContinue(); }
           ),       
-          Visibility(visible: _loading,
-            child: Container(
-              height: 42,
-              child: Align(alignment: Alignment.center,
-                child: SizedBox(height: 21, width: 21,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                ),
-              ),
-            ),
-          ),      
-      ],),);
+      );
   } 
 
   Widget _buildCloseButton() {
@@ -299,30 +290,36 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
 
   void _onContinue() {
     if(_validate()) {
-      setState(() {
-        _loading = true;
-      });
-      
-      Polls().load(pollPin: _pinInt).then((Poll? poll) {
-        if (poll == null) {
-          AppAlert.showDialogResult(context, Localization().getStringEx('panel.poll_pin_bouble.unable_to_load_poll', 'Unable to load poll'));
-        }
-        else if (poll.status == PollStatus.created) {
-          AppAlert.showDialogResult(context, Localization().getStringEx('panel.poll_pin_bouble.poll_not_opened', 'Poll is not opened yet'));
-        }
-        else if (poll.status == PollStatus.closed) {
-          AppAlert.showDialogResult(context, Localization().getStringEx('panel.poll_pin_bouble.poll_closed', 'Poll is already closed'));
-        }
-        else {
-          Navigator.of(context).pop(poll);
-        }
-      }).catchError((e){
-        AppAlert.showDialogResult(context, e.toString());
-      }).whenComplete((){
+
+      if (!Connectivity().isNotOffline) {
+        AppAlert.showDialogResult(context, Localization().getStringEx('app.offline.message.title', 'You appear to be offline'));
+      }
+      else {
         setState(() {
-          _loading = false;
+          _loading = true;
         });
-      });
+        
+        Polls().load(pollPin: _pinInt).then((Poll? poll) {
+          if (poll == null) {
+            AppAlert.showDialogResult(context, Localization().getStringEx('panel.poll_pin_bouble.unable_to_load_poll', 'Unable to load poll'));
+          }
+          else if (poll.status == PollStatus.created) {
+            AppAlert.showDialogResult(context, Localization().getStringEx('panel.poll_pin_bouble.poll_not_opened', 'Poll is not opened yet'));
+          }
+          else if (poll.status == PollStatus.closed) {
+            AppAlert.showDialogResult(context, Localization().getStringEx('panel.poll_pin_bouble.poll_closed', 'Poll is already closed'));
+          }
+          else {
+            Navigator.of(context).pop(poll);
+          }
+        }).catchError((e){
+          AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
+        }).whenComplete((){
+          setState(() {
+            _loading = false;
+          });
+        });
+      }
     }
   }
 

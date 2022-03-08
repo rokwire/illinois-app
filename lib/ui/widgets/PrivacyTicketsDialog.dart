@@ -16,13 +16,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/service/Styles.dart';
-
-import 'RoundedButton.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class PrivacyTicketsDialog extends StatefulWidget {
   final Function? onContinueTap;
@@ -63,7 +62,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
   }
 
   Widget build(BuildContext context) {
-    String title = Localization().getStringEx("widget.privacy_tickets_modal.label.header", "Buy Tickets")!;
+    String title = Localization().getStringEx("widget.privacy_tickets_modal.label.header", "Buy Tickets");
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 22),
         child: Container(
@@ -121,7 +120,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                   child: Padding(
                       padding: EdgeInsets.all(12),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                        Text(Localization().getStringEx("widget.privacy_tickets_modal.label.your_privacy", "Your privacy setting")!,
+                        Text(Localization().getStringEx("widget.privacy_tickets_modal.label.your_privacy", "Your privacy setting"),
                             style: TextStyle(
                               color: Styles().colors!.textBackground,
                               fontSize: 18,
@@ -140,7 +139,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           height: 10,
                         ),
                         Text(
-                          Localization().getStringEx("widget.privacy_tickets_modal.label.not_allowed", "Does not allow us to collect payment information")!,
+                          Localization().getStringEx("widget.privacy_tickets_modal.label.not_allowed", "Does not allow us to collect payment information"),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 18,
@@ -153,7 +152,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                         ),
                         Text(
                             Localization().getStringEx("widget.privacy_tickets_modal.label.understand",
-                                "I understand that my information will be collected in the purchase process for any tickets I purchase.")!,
+                                "I understand that my information will be collected in the purchase process for any tickets I purchase."),
                             style: TextStyle(
                               color: Styles().colors!.textBackground,
                               fontSize: 16,
@@ -170,7 +169,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           borderColor: Styles().colors!.fillColorSecondary,
                           textColor: Styles().colors!.fillColorPrimary,
                           onTap: () {
-                            Analytics.instance.logAlert(text: "Buy Tickets Privacy Alert", selection: "Continue");
+                            Analytics().logAlert(text: "Buy Tickets Privacy Alert", selection: "Continue");
                             _closeModal();
                             widget.onContinueTap!();
                           },
@@ -180,7 +179,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                         ),
                         Text(
                             Localization()
-                                .getStringEx("widget.privacy_tickets_modal.label.change_privacy", "Change my privacy setting to allow tickets purchase")!,
+                                .getStringEx("widget.privacy_tickets_modal.label.change_privacy", "Change my privacy setting to allow tickets purchase"),
                             style: TextStyle(
                               color: Styles().colors!.textBackground,
                               fontSize: 16,
@@ -208,13 +207,13 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
   }
 
   _onTapChangePrivacySettings() {
-    Analytics.instance.logAlert(text: "Buy Tickets Privacy Alert", selection: "Edit my privacy");
+    Analytics().logAlert(text: "Buy Tickets Privacy Alert", selection: "Edit my privacy");
     _closeModal();
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel()));
   }
 
   _onTapClose() {
-    Analytics.instance.logAlert(text: "Buy Tickets Privacy Alert", selection: "Close");
+    Analytics().logAlert(text: "Buy Tickets Privacy Alert", selection: "Close");
     _closeModal();
   }
 

@@ -1,10 +1,9 @@
 
 import 'package:device_calendar/device_calendar.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
-import 'package:illinois/service/Styles.dart';
-
-import 'RoundedButton.dart';
+import 'package:rokwire_plugin/service/device_calendar.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class CalendarSelectionDialog extends StatefulWidget {
 //  final
@@ -85,6 +84,9 @@ class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
                   )),
                   Container(height: 10,),
                   RoundedButton(label: "Choose",
+                    textColor: Styles().colors!.white,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    backgroundColor: Styles().colors!.fillColorPrimary,
                     onTap: () {
                       if (widget.onContinue != null) {
                         widget.onContinue!(_selectedCalendar);
@@ -93,6 +95,9 @@ class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
                   ),
                   Container(height: 10,),
                   RoundedButton(label: "Refresh",
+                    textColor: Styles().colors!.white,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    backgroundColor: Styles().colors!.fillColorPrimary,
                     onTap: () {
                       _refreshCalendars();
                     }

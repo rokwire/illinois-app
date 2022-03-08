@@ -2,17 +2,17 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideEntryCard extends StatefulWidget {
@@ -104,9 +104,9 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
   }
 
   void _onTapLink(String? url) {
-    Analytics.instance.logSelect(target: 'Link: $url');
-    if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
+    Analytics().logSelect(target: 'Link: $url');
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         launch(url!);
@@ -116,12 +116,12 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
 
   void _onTapFavorite() {
     String? title = Guide().entryTitle(widget.guideEntry, stripHtmlTags: true);
-    Analytics.instance.logSelect(target: "Favorite: $title");
+    Analytics().logSelect(target: "Favorite: $title");
     Auth2().prefs?.toggleFavorite(GuideFavorite(id: guideEntryId, title: title,));
   }
 
   void _onTapEntry() {
-    Analytics.instance.logSelect(target: "Guide Entry: $guideEntryId");
+    Analytics().logSelect(target: "Guide Entry: $guideEntryId");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideEntryId,)));
   }
 

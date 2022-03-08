@@ -20,12 +20,14 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/Assets.dart';
+import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
+import 'package:illinois/ui/home/HomeGiesWidget.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/LiveStats.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/SearchPanel.dart';
@@ -33,7 +35,6 @@ import 'package:illinois/ui/home/HomeCampusRemindersWidget.dart';
 import 'package:illinois/ui/home/HomeCampusToolsWidget.dart';
 import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
 import 'package:illinois/ui/home/HomeGameDayWidget.dart';
-import 'package:illinois/ui/home/HomeGiesWidget.dart';
 import 'package:illinois/ui/home/HomeHighligtedFeaturesWidget.dart';
 import 'package:illinois/ui/home/HomeInterestsSelectionWidget.dart';
 import 'package:illinois/ui/home/HomeLoginWidget.dart';
@@ -48,7 +49,8 @@ import 'package:illinois/ui/home/HomeVoterRegistrationWidget.dart';
 import 'package:illinois/ui/home/HomeUpcomingEventsWidget.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/FlexContentWidget.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
 class HomePanel extends StatefulWidget {
@@ -58,9 +60,8 @@ class HomePanel extends StatefulWidget {
 
 class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixin<HomePanel> implements NotificationsListener {
   
-  List<dynamic>? _contentListCodes;
+  List<String>? _contentListCodes;
   StreamController<void> _refreshController = StreamController.broadcast();
-  GlobalKey _giesWidgetKey = GlobalKey();
 
   @override
   void initState() {
@@ -70,9 +71,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       FlexUI.notifyChanged,
       Styles.notifyChanged,
       Assets.notifyChanged,
-      HomeGiesWidget.notifyPageChanged,
     ]);
-    _contentListCodes = _buildContentListCodes() ?? [];
+    _contentListCodes = JsonUtils.listStringsValue(FlexUI()['home'])  ?? [];
     super.initState();
   }
 
@@ -119,7 +119,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     List<Widget> widgets = [];
 
-    for (dynamic code in _contentListCodes!) {
+    for (String code in _contentListCodes!) {
       Widget? widget;
 
       if (code == 'game_day') {
@@ -156,7 +156,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         widget = HomeTwitterWidget(refreshController: _refreshController);
       }
       else if (code == 'gies') {
-        widget = HomeGiesWidget(key: _giesWidgetKey, refreshController: _refreshController);
+        widget = HomeGiesWidget(refreshController: _refreshController);
+      }
+      else if (code == 'canvas') {
+        widget = HomeCanvasCoursesWidget(refreshController: _refreshController);
       }
       else if (code == 'voter_registration') {
         widget = HomeVoterRegistrationWidget();
@@ -176,7 +179,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       else if (code == 'my_groups') {
         widget = HomeMyGroupsWidget(refreshController: _refreshController,);
       }
-      else if (code == 'safer') {
+      else if ((code == 'safer') || code.startsWith('safer.')) {
         widget = HomeSaferWidget();
       }
       else {
@@ -192,41 +195,17 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _updateContentListCodes() {
-    List<dynamic> contentListCodes = _buildContentListCodes() ?? [];
-    if (!DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
+    List<String>? contentListCodes = JsonUtils.listStringsValue(FlexUI()['home']);
+    if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       setState(() {
         _contentListCodes = contentListCodes;
       });
     }
   }
 
-  List<dynamic>? _buildContentListCodes({String source = 'home'}) {
-    List<dynamic>? result;
-    List<dynamic>? contentList = FlexUI()[source];
-    if (contentList != null) {
-      result = [];
-      for (String contentEntry in contentList) {
-        dynamic list = FlexUI()['$source.$contentEntry'];
-        if (list is List) {
-          result.addAll(list);
-        }
-        else {
-          result.add(contentEntry);
-        }
-      }
-    }
-    return result;
-  }
-
   Future<void> _onPullToRefresh() async {
     LiveStats().refresh();
     _refreshController.add(null);
-  }
-
-  void _ensureGiesVisible() {
-    if (_giesWidgetKey.currentContext != null) {
-      Scrollable.ensureVisible(_giesWidgetKey.currentContext!, duration: Duration(milliseconds: 300));
-    }
   }
 
   // NotificationsListener
@@ -256,9 +235,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     else if (name == Assets.notifyChanged) {
       setState(() {});
     }
-    else if (name == HomeGiesWidget.notifyPageChanged) {
-      _ensureGiesVisible();
-    }
   }
 }
 
@@ -279,7 +255,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
           child: IconButton(
               icon: Image.asset('images/block-i-orange.png'),
               onPressed: () {
-                Analytics.instance.logSelect(target: "Home");
+                Analytics().logSelect(target: "Home");
                 Navigator.of(context).popUntil((route) => route.isFirst);
 //                NativeCommunicator().launchTest();
               }
@@ -296,7 +272,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
                 child: IconButton(
                     icon: Image.asset('images/icon-search.png'),
                     onPressed: () {
-                      Analytics.instance.logSelect(target: "Search");
+                      Analytics().logSelect(target: "Search");
                       Navigator.push(
                           context,
                           CupertinoPageRoute(
@@ -312,7 +288,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
               excludeSemantics: true,
               child: InkWell(
               onTap: () {
-                Analytics.instance.logSelect(target: "Saved");
+                Analytics().logSelect(target: "Saved");
                 Navigator.push(
                     context,
                     CupertinoPageRoute(
@@ -323,7 +299,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Text(Localization().getStringEx(
-                    'headerbar.saved.title', 'Saved')!,
+                    'headerbar.saved.title', 'Saved'),
                     style: TextStyle(color: Colors.white,
                         fontSize: 16,
                         fontFamily: Styles().fontFamilies!.semiBold,
@@ -343,7 +319,7 @@ class _SliverHomeHeaderBar extends SliverAppBar {
               child: IconButton(
                   icon: Image.asset('images/settings-white.png'),
                   onPressed: () {
-                    Analytics.instance.logSelect(target: "Settings");
+                    Analytics().logSelect(target: "Settings");
                     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
                   })))
 

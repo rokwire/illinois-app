@@ -18,19 +18,19 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/GeoFence.dart';
+import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/GeoFence.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/TransportationService.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/geo_fence.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:illinois/service/Transportation.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class MTDBusPassPanel extends StatefulWidget {
   _MTDBusPassPanelState createState() => _MTDBusPassPanelState();
@@ -82,7 +82,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
 
   Future<MemoryImage?> _loadAsyncPhotoImage() async{
     Uint8List? photoBytes = await  Auth2().authCard?.photoBytes;
-    return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
+    return CollectionUtils.isNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
   }
 
   // NotificationsListener
@@ -152,7 +152,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
                 Padding(
                     padding: EdgeInsets.all(16),
                     child:Semantics(header: true, child: Text(
-                      Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass")!,
+                      Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"),
                       style: TextStyle(color: Color(0xff0f2040), fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),
                     ),
                     )),
@@ -189,7 +189,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
                 width: _photoSize,
                 padding: EdgeInsets.only(top: 12, left: 6, right: 6),
                 child: Text(
-                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus driver as you board.")!,
+                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus driver as you board."),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.regular,
@@ -254,7 +254,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Widget _buildBusNumberContent() {
-    bool busNumberVisible = FlexUI().hasFeature('mtd_bus_number') && AppString.isStringNotEmpty(_busNumber);
+    bool busNumberVisible = FlexUI().hasFeature('mtd_bus_number') && StringUtils.isNotEmpty(_busNumber);
     return Visibility(visible: busNumberVisible, child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -288,13 +288,13 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   void _loadBusPass() async {
-    String? deviceId = await NativeCommunicator().getDeviceId(); //TMP: '1234'
+    String? deviceId = Auth2().deviceId; //TMP: '1234'
     Map<String, dynamic>? beaconData = (_currentBeacon != null) ? {
       'uuid': _currentBeacon!.uuid,
       'major': _currentBeacon!.major.toString(),
       'minor': _currentBeacon!.minor.toString(),
     } : null;
-    TransportationService().loadBusPass(deviceId: deviceId, userId: Auth2().accountId, iBeaconData: beaconData).then((dynamic result){
+    Transportation().loadBusPass(deviceId: deviceId, userId: Auth2().accountId, iBeaconData: beaconData).then((dynamic result){
 
       if (result is Map) {
         setState(() {
@@ -353,7 +353,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     // 2. Start ranging for all current (inside) regions that are not already raning.
     for (String regionId in currentRegionIds) {
       GeoFenceRegion region = GeoFence().regions![regionId]!;
-      if ((region.regionType == GeoFenceRegionType.Beacon) && region.types!.contains('MTD') && !_rangingRegionIds.contains(regionId)) {
+      if ((region.regionType == GeoFenceRegionType.beacon) && region.types!.contains('MTD') && !_rangingRegionIds.contains(regionId)) {
         GeoFence().startRangingBeaconsInRegion(regionId).then((_) {
           _rangingRegionIds.add(regionId);
         });
@@ -382,7 +382,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   String? get _busNumber {
-    return AppString.getDefaultEmptyString(_activeBusNumber, defaultValue: '');
+    return StringUtils.ensureNotEmpty(_activeBusNumber, defaultValue: '');
   }
 }
 

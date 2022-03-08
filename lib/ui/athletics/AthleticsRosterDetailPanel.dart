@@ -17,15 +17,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/model/Roster.dart';
+import 'package:illinois/model/sport/Roster.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/ModalImageDialog.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -49,7 +49,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
   }
 
   void _onTapPhoto(){
-    Analytics.instance.logSelect(target: "Photo");
+    Analytics().logSelect(target: "Photo");
     _modalPhotoVisibility = true;
     setState(() {});
   }
@@ -59,16 +59,8 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
     bool hasPosition = widget.sport != null ? widget.sport!.hasPosition! : false;
 
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.athletics_roster_detail.header.title', 'Roster')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.athletics_roster_detail.header.title', 'Roster'),
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
@@ -97,13 +89,13 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
                         title: Localization().getStringEx("panel.athletics_roster_detail.label.highschool.title", "High School"),
                         value: widget.roster.highSchool
                     ),
-                    Visibility(visible: AppString.isStringNotEmpty(widget.roster.htmlBio), child: Container(
+                    Visibility(visible: StringUtils.isNotEmpty(widget.roster.htmlBio), child: Container(
                         padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
                         color: Styles().colors!.background,
                         child: Column(
                             children: <Widget>[
                               Html(
-                                data: AppString.getDefaultEmptyString(widget.roster.htmlBio),
+                                data: StringUtils.ensureNotEmpty(widget.roster.htmlBio),
                                 onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
                                 style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
                               ),
@@ -128,7 +120,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
    return _modalPhotoVisibility ? ModalImageDialog(
      imageUrl: widget.roster.fullSizePhotoUrl,
      onClose: () {
-       Analytics.instance.logSelect(target: "Close");
+       Analytics().logSelect(target: "Close");
        _modalPhotoVisibility = false;
        setState(() {});
      }
@@ -166,8 +158,8 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
   }
 
   void _launchUrl(String? url, {BuildContext? context}) {
-    if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         launch(url!);
@@ -221,7 +213,7 @@ class _RosterDetailHeading extends StatelessWidget{
                                 Expanded(child:
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),
-                                    child: Text(AppString.getDefaultEmptyString(sport?.name),
+                                    child: Text(StringUtils.ensureNotEmpty(sport?.name),
                                       style: TextStyle(
                                           color: Styles().colors!.surfaceAccent,
                                           fontFamily: Styles().fontFamilies!.medium,
@@ -238,7 +230,7 @@ class _RosterDetailHeading extends StatelessWidget{
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(AppString.getDefaultEmptyString(roster?.name),
+                                    child: Text(StringUtils.ensureNotEmpty(roster?.name),
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontFamily: Styles().fontFamilies!.bold,
@@ -246,7 +238,7 @@ class _RosterDetailHeading extends StatelessWidget{
                                       ),
                                     ),
                                   ),
-                                  Text(AppString.getDefaultEmptyString(roster?.numberString),
+                                  Text(StringUtils.ensureNotEmpty(roster?.numberString),
                                     style: TextStyle(
                                         color: Styles().colors!.whiteTransparent06,
                                         fontFamily: Styles().fontFamilies!.medium,
@@ -271,7 +263,7 @@ class _RosterDetailHeading extends StatelessWidget{
                     child: Container(
                       margin: EdgeInsets.only(right: horizontalMargin + photoMargin, top: photoMargin),
                       decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
-                      child: (AppString.isStringNotEmpty(roster?.thumbPhotoUrl) ?
+                      child: (StringUtils.isNotEmpty(roster?.thumbPhotoUrl) ?
                       Image.network(roster!.thumbPhotoUrl!, excludeFromSemantics: true, width: photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: photoWidth, color: Colors.white,)
                       ),
@@ -297,11 +289,11 @@ class _LineEntryWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: AppString.isStringNotEmpty(semanticTitle) ? semanticTitle : title,
+      label: StringUtils.isNotEmpty(semanticTitle) ? semanticTitle : title,
       value: value,
       excludeSemantics: true,
       child: Container(
-        child: AppString.isStringNotEmpty(value) ?
+        child: StringUtils.isNotEmpty(value) ?
         Container(
           padding: EdgeInsets.all(8.0),
           child: Row(
@@ -309,7 +301,7 @@ class _LineEntryWidget extends StatelessWidget{
               Container(
                 width: 120.0,
                 child: Text(
-                  AppString.getDefaultEmptyString(title),
+                  StringUtils.ensureNotEmpty(title),
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.medium,
                     fontSize: 16,
@@ -318,7 +310,7 @@ class _LineEntryWidget extends StatelessWidget{
               ),
               Expanded(child:
               Text(
-                AppString.getDefaultEmptyString(value),
+                StringUtils.ensureNotEmpty(value),
                 style: TextStyle(
                   fontFamily: Styles().fontFamilies!.bold,
                   fontSize: 16,

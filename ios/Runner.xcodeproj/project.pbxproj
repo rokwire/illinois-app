@@ -13,7 +13,6 @@
 		2626D94B22DC99C800F6BC2F /* NSString+InaJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94922DC99C700F6BC2F /* NSString+InaJson.m */; };
 		2626D94E22DCB80000F6BC2F /* MapMarkerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94D22DCB80000F6BC2F /* MapMarkerView.m */; };
 		266FA50323E0388B00F800F5 /* MapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 266FA50223E0388B00F800F5 /* MapController.m */; };
-		268A628223A0E196004D7EE5 /* RegionMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 268A628023A0E195004D7EE5 /* RegionMonitor.m */; };
 		268F30F122E5DD7900547FE1 /* travel-mode-walk@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30ED22E5DD7900547FE1 /* travel-mode-walk@2x.png */; };
 		268F30F222E5DD7900547FE1 /* travel-mode-transit@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EE22E5DD7900547FE1 /* travel-mode-transit@2x.png */; };
 		268F30F322E5DD7900547FE1 /* travel-mode-bicycle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EF22E5DD7900547FE1 /* travel-mode-bicycle@2x.png */; };
@@ -88,8 +87,6 @@
 		2668953022E1E074003CAB94 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		266FA50123E0388B00F800F5 /* MapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapController.h; sourceTree = "<group>"; };
 		266FA50223E0388B00F800F5 /* MapController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapController.m; sourceTree = "<group>"; };
-		268A628023A0E195004D7EE5 /* RegionMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegionMonitor.m; sourceTree = "<group>"; };
-		268A628123A0E195004D7EE5 /* RegionMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegionMonitor.h; sourceTree = "<group>"; };
 		268F30ED22E5DD7900547FE1 /* travel-mode-walk@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "travel-mode-walk@2x.png"; sourceTree = "<group>"; };
 		268F30EE22E5DD7900547FE1 /* travel-mode-transit@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "travel-mode-transit@2x.png"; sourceTree = "<group>"; };
 		268F30EF22E5DD7900547FE1 /* travel-mode-bicycle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "travel-mode-bicycle@2x.png"; sourceTree = "<group>"; };
@@ -328,8 +325,6 @@
 				2696995A22C38B4000B3290E /* AppDelegate.m */,
 				2696995B22C38B4000B3290E /* AppKeys.h */,
 				2696995922C38B4000B3290E /* AppKeys.m */,
-				268A628123A0E195004D7EE5 /* RegionMonitor.h */,
-				268A628023A0E195004D7EE5 /* RegionMonitor.m */,
 				266FA50123E0388B00F800F5 /* MapController.h */,
 				266FA50223E0388B00F800F5 /* MapController.m */,
 				269F83FA22D77E5500CC11A4 /* MapDirectionsController.h */,
@@ -594,6 +589,7 @@
 				"${BUILT_PRODUCTS_DIR}/notification_permissions/notification_permissions.framework",
 				"${BUILT_PRODUCTS_DIR}/package_info/package_info.framework",
 				"${BUILT_PRODUCTS_DIR}/path_provider_ios/path_provider_ios.framework",
+				"${BUILT_PRODUCTS_DIR}/rokwire_plugin/rokwire_plugin.framework",
 				"${BUILT_PRODUCTS_DIR}/share/share.framework",
 				"${BUILT_PRODUCTS_DIR}/shared_preferences_ios/shared_preferences_ios.framework",
 				"${BUILT_PRODUCTS_DIR}/sqflite/sqflite.framework",
@@ -634,6 +630,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/notification_permissions.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/package_info.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/path_provider_ios.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/rokwire_plugin.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/share.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/shared_preferences_ios.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sqflite.framework",
@@ -683,7 +680,6 @@
 				269F83FC22D77E5500CC11A4 /* MapDirectionsController.m in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				268F647D22DF09D900A85AFD /* NSArray+InaTypedValue.m in Sources */,
-				268A628223A0E196004D7EE5 /* RegionMonitor.m in Sources */,
 				2696995D22C38B4000B3290E /* AppKeys.m in Sources */,
 				268F647A22DF050400A85AFD /* CLLocationCoordinate2D+InaUtils.m in Sources */,
 				2626D94E22DCB80000F6BC2F /* MapMarkerView.m in Sources */,

@@ -18,15 +18,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class SettingsRolesPanel extends StatefulWidget {
   _SettingsRolesPanelState createState() => _SettingsRolesPanelState();
@@ -57,13 +57,9 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO YOU ARE')!,
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-        ),
-        onBackPressed: _onBack,
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.onboarding.roles.label.title', 'Who Are You?'),
+        onLeading: _onBack,
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
@@ -85,7 +81,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
                 child: Padding(
                   padding: EdgeInsets.only(top: 16),
                   child: Text(
-                    Localization().getStringEx('panel.onboarding.roles.label.description', 'Select all that apply')!,
+                    Localization().getStringEx('panel.onboarding.roles.label.description', 'Select all that apply'),
                     style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),
                   ),
                 ),
@@ -128,7 +124,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
 
       UserRole? role = (button.data is UserRole) ? (button.data as UserRole) : null;
 
-      Analytics.instance.logSelect(target: "Role: " + role.toString());
+      Analytics().logSelect(target: "Role: " + role.toString());
 
       if (role != null) {
         if (_selectedRoles!.contains(role)) {

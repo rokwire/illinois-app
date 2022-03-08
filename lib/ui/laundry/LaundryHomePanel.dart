@@ -16,24 +16,24 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/LaundryService.dart';
-import 'package:illinois/service/LocationServices.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Laundries.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/explore/ExploreViewTypeTab.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryListPanel.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 
@@ -68,11 +68,11 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       Auth2UserPrefs.notifyPrivacyLevelChanged,
     ]);
 
-    LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+    LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
       _locationServicesStatus = locationServicesStatus;
 
-      if (_locationServicesStatus == LocationServicesStatus.PermissionNotDetermined) {
-        LocationServices.instance.requestPermission().then((LocationServicesStatus? locationServicesStatus) {
+      if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
+        LocationServices().requestPermission().then((LocationServicesStatus? locationServicesStatus) {
           _locationServicesStatus = locationServicesStatus;
         });
       }
@@ -119,7 +119,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
 
   void _updateOnPrivacyLevelChanged() {
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
+      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _enableMyLocationOnMap();
       });
@@ -140,7 +140,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     if (_nativeMapController!.mapId == mapID) {
       dynamic laundry;
       if (laundryJson is Map) {
-        laundry = LaundryRoom.fromJson(AppJson.mapValue(laundryJson));
+        laundry = LaundryRoom.fromJson(JsonUtils.mapValue(laundryJson));
       }
       else if (laundryJson is List) {
         laundry = [];
@@ -165,7 +165,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   void _refreshRooms() {
-    LaundryService().getRoomData().then((List<LaundryRoom>? laundryRooms) {
+    Laundries().getRoomData().then((List<LaundryRoom>? laundryRooms) {
       setState(() {
         _rooms = laundryRooms;
       });
@@ -221,7 +221,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       ],
       title: Text(
         Localization()
-            .getStringEx('panel.laundry_home.heading.laundry', 'Laundry')!,
+            .getStringEx('panel.laundry_home.heading.laundry', 'Laundry'),
         style: TextStyle(
             fontSize: 16,
             color: Colors.white,
@@ -238,7 +238,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       return Center(
         child: Text(
           Localization().getStringEx(
-              'panel.laundry_home.content.empty', 'No rooms available')!,
+              'panel.laundry_home.content.empty', 'No rooms available'),
           style: TextStyle(
               fontSize: 16,
               color: Styles().colors!.fillColorPrimary,
@@ -300,7 +300,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       description = _selectedMapLaundry.campusName ?? '';
     }
     else if (_selectedMapLaundry is List<LaundryRoom>) {
-      title = sprintf(Localization().getStringEx('panel.laundry_home.map.popup.title.format', '%d Laundries')!, [_selectedMapLaundry.length]);
+      title = sprintf(Localization().getStringEx('panel.laundry_home.map.popup.title.format', '%d Laundries'), [_selectedMapLaundry.length]);
       description = _selectedMapLaundry.first?.campusName ?? '';
     }
 
@@ -354,9 +354,9 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
                                     fontSize: 16.0,
                                     textColor: Styles().colors!.fillColorPrimary,
                                     borderColor: Styles().colors!.fillColorSecondary,
-                                    padding: EdgeInsets.symmetric(horizontal: 24),
+                                    contentWeight: 0.0,
                                     onTap: () {
-                                      Analytics.instance.logSelect(target: 'Directions');
+                                      Analytics().logSelect(target: 'Directions');
                                       _presentMapLaundryDirections(context);
                                     }),
                                 Container(
@@ -371,9 +371,8 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
                               fontSize: 16.0,
                               textColor: Styles().colors!.fillColorPrimary,
                               borderColor: Styles().colors!.fillColorSecondary,
-                              padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
-                                Analytics.instance.logSelect(target: 'Details');
+                                Analytics().logSelect(target: 'Details');
                                 _presentMapLaundryDetail(context);
                               }),
 
@@ -387,7 +386,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
 
   void _loadRooms() {
     _setLoading(true);
-    LaundryService()
+    Laundries()
         .getRoomData()
         .then((laundryRooms) => _onRoomsLoaded(laundryRooms));
   }
@@ -401,7 +400,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   void _selectDisplayType(_DisplayType displayType) {
-    Analytics.instance.logSelect(target: displayType.toString());
+    Analytics().logSelect(target: displayType.toString());
     if (_displayType != displayType) {
       setState(() {
         _displayType = displayType;
@@ -417,7 +416,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   void _onRoomTap(LaundryRoom room) {
-    Analytics.instance.logSelect(target: "Room Tap: " + room.id!);
+    Analytics().logSelect(target: "Room Tap: " + room.id!);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryDetailPanel(room: room,)));
   }
 
@@ -486,7 +485,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   bool _userLocationEnabled() {
-    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
+    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
   void _placeLaundryRoomsOnMap(List<LaundryRoom>? rooms) {

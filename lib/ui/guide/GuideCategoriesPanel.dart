@@ -4,14 +4,14 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class GuideCategoriesPanel extends StatefulWidget {
   final String? guide;
@@ -61,12 +61,12 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
       LinkedHashMap<String, LinkedHashSet<GuideSection>> categoriesMap = LinkedHashMap<String, LinkedHashSet<GuideSection>>();
       
       for (dynamic contentEntry in contentList) {
-        Map<String, dynamic>? guideEntry = AppJson.mapValue(contentEntry);
+        Map<String, dynamic>? guideEntry = JsonUtils.mapValue(contentEntry);
         if (guideEntry != null) {
-          String? category = AppJson.stringValue(Guide().entryValue(guideEntry, 'category'));
+          String? category = JsonUtils.stringValue(Guide().entryValue(guideEntry, 'category'));
           GuideSection? section = GuideSection.fromGuideEntry(guideEntry);
 
-          if (AppString.isStringNotEmpty(category) && (section != null)) {
+          if (StringUtils.isNotEmpty(category) && (section != null)) {
             LinkedHashSet<GuideSection>? categorySections = categoriesMap[category];
             if (categorySections == null) {
               categoriesMap[category!] = categorySections = LinkedHashSet<GuideSection>();
@@ -100,9 +100,8 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx('panel.guide_categories.label.heading', 'Campus Guide')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.guide_categories.label.heading', 'Campus Guide'), 
       ),
       body: Column(children: <Widget>[
           Expanded(child:
@@ -135,7 +134,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
     else {
       return Padding(padding: EdgeInsets.all(32), child:
         Center(child:
-          Text(Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+          Text(Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
         ,)
       );
     }
@@ -176,12 +175,12 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
   }
 
   void _onTapCategory(String category) {
-    Analytics.instance.logSelect(target: category);
+    Analytics().logSelect(target: category);
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(category: category,)));
   }
 
   void _onTapSection(GuideSection section, {String? category}) {
-    Analytics.instance.logSelect(target: "$category / ${section.name}");
+    Analytics().logSelect(target: "$category / ${section.name}");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(category: category, section: section,)));
   }
 }

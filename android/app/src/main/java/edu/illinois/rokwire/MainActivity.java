@@ -57,7 +57,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import edu.illinois.rokwire.geofence.GeofenceMonitor;
 import edu.illinois.rokwire.maps.MapActivity;
 import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
@@ -71,8 +70,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private static final String TAG = "MainActivity";
 
-    private final int REQUEST_LOCATION_PERMISSION_CODE = 1;
-
     private static MethodChannel METHOD_CHANNEL;
     private static final String NATIVE_CHANNEL = "edu.illinois.rokwire/native_call";
     private static MainActivity instance = null;
@@ -83,8 +80,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private int preferredScreenOrientation;
     private Set<Integer> supportedScreenOrientations;
-
-    private RequestLocationCallback rlCallback;
 
     private Toast statusToast;
 
@@ -99,16 +94,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        GeofenceMonitor.getInstance().unInit();
     }
 
     public static MainActivity getInstance() {
         return instance;
-    }
-
-    public App getApp() {
-        Application application = getApplication();
-        return (application instanceof App) ? (App) application : null;
     }
 
     public static void invokeFlutterMethod(String methodName, Object arguments) {
@@ -120,22 +109,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == REQUEST_LOCATION_PERMISSION_CODE) {
-            boolean granted;
-            if (grantResults.length > 1 &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "granted");
-                granted = true;
-            } else {
-                Log.d(TAG, "not granted");
-                granted = false;
-            }
-            if (rlCallback != null) {
-                rlCallback.onResult(granted);
-                rlCallback = null;
-            }
-        }
     }
 
     public HashMap getKeys() {
@@ -201,9 +174,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         {
             Log.d(TAG, "Failed to generate uuid");
         }
-
-        // Geofence
-        GeofenceMonitor.getInstance().init();
     }
 
     private void launchMapsDirections(Object explore, Object options) {
@@ -243,70 +213,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         Intent locationPickerIntent =  new Intent(this, MapPickLocationActivity.class);
         locationPickerIntent.putExtra("explore", explore);
         startActivityForResult(locationPickerIntent, Constants.SELECT_LOCATION_ACTIVITY_RESULT_CODE);
-    }
-
-    private void launchNotification(MethodCall methodCall) {
-        String title = methodCall.argument("title");
-        String body = methodCall.argument("body");
-        App app = getApp();
-        if (app != null) {
-            app.showNotification(title, body);
-        }
-    }
-
-    private void requestLocationPermission(MethodChannel.Result result) {
-        Utils.AppSharedPrefs.saveBool(this, Constants.LOCATION_PERMISSIONS_REQUESTED_KEY, true);
-        //check if granted
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED  ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "request permission");
-
-            rlCallback = new RequestLocationCallback() {
-                @Override
-                public void onResult(boolean granted) {
-                    if (granted) {
-                        result.success("allowed");
-
-                        GeofenceMonitor.getInstance().onLocationPermissionGranted();
-                    } else {
-                        result.success("denied");
-                    }
-                }
-            };
-
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    REQUEST_LOCATION_PERMISSION_CODE);
-        } else {
-            Log.d(TAG, "already granted");
-            GeofenceMonitor.getInstance().onLocationPermissionGranted();
-            result.success("allowed");
-        }
-    }
-
-    private String getLocationServicesStatus() {
-        boolean locationServicesEnabled;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            // This is new method provided in API 28
-            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationServicesEnabled = ((lm != null) && lm.isLocationEnabled());
-        } else {
-            // This is Deprecated in API 28
-            int mode = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE,
-                    Settings.Secure.LOCATION_MODE_OFF);
-            locationServicesEnabled = (mode != Settings.Secure.LOCATION_MODE_OFF);
-        }
-        if (locationServicesEnabled) {
-            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
-                return "allowed";
-            } else {
-                boolean locationPermissionRequested = Utils.AppSharedPrefs.getBool(this, Constants.LOCATION_PERMISSIONS_REQUESTED_KEY, false);
-                return locationPermissionRequested ? "denied" : "not_determined";
-            }
-        } else {
-            return "disabled";
-        }
     }
 
     private List<String> handleEnabledOrientations(Object orientations) {
@@ -349,30 +255,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         return resultList;
     }
 
-    private Object handleGeofence(Object params) {
-        HashMap paramsMap = (params instanceof HashMap) ? (HashMap) params : null;
-        Object regions = (paramsMap != null) ? paramsMap.get("regions") : null;
-        Object beacons = (paramsMap != null) ? paramsMap.get("beacons") : null;
-        if (regions != null) {
-            List<Map<String, Object>> geoFencesList = (regions instanceof List) ? (List<Map<String, Object>>) regions : null;
-            GeofenceMonitor.getInstance().monitorRegions(geoFencesList);
-            return GeofenceMonitor.getInstance().getCurrentIds();
-        } else if (beacons != null) {
-            HashMap beaconMap = (beacons instanceof HashMap) ? (HashMap) beacons : null;
-            String regionId = Utils.Map.getValueFromPath(beaconMap, "regionId", null);
-            String action = Utils.Map.getValueFromPath(beaconMap, "action", null);
-            if ("start".equals(action)) {
-                return GeofenceMonitor.getInstance().startRangingBeaconsInRegion(regionId);
-            } else if ("stop".equals(action)) {
-                return GeofenceMonitor.getInstance().stopRangingBeaconsInRegion(regionId);
-            } else {
-                return GeofenceMonitor.getInstance().getBeaconsInRegion(regionId);
-            }
-        } else {
-            return null;
-        }
-    }
-
     private String getScreenOrientationToString(int orientationValue) {
         switch (orientationValue) {
             case ActivityInfo.SCREEN_ORIENTATION_PORTRAIT:
@@ -385,45 +267,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 return "landscapeRight";
             default:
                 return null;
-        }
-    }
-
-    private String getDeviceId(){
-        String deviceId = "";
-        try
-        {
-            UUID uuid;
-            final String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8"));
-            deviceId = uuid.toString();
-        }
-        catch (Exception e)
-        {
-            Log.d(TAG, "Failed to generate uuid");
-        }
-        return deviceId;
-    }
-
-    private Object handleEncryptionKey(Object params) {
-        String identifier = Utils.Map.getValueFromPath(params, "identifier", null);
-        if (Utils.Str.isEmpty(identifier)) {
-            return null;
-        }
-        int keySize = Utils.Map.getValueFromPath(params, "size", 0);
-        if (keySize <= 0) {
-            return null;
-        }
-        String base64KeyValue = Utils.AppSecureSharedPrefs.getString(this, identifier, null);
-        byte[] encryptionKey = Utils.Base64.decode(base64KeyValue);
-        if ((encryptionKey != null) && (encryptionKey.length == keySize)) {
-            return base64KeyValue;
-        } else {
-            byte[] keyBytes = new byte[keySize];
-            SecureRandom secRandom = new SecureRandom();
-            secRandom.nextBytes(keyBytes);
-            base64KeyValue = Utils.Base64.encode(keyBytes);
-            Utils.AppSecureSharedPrefs.saveString(this, identifier, base64KeyValue);
-            return base64KeyValue;
         }
     }
 
@@ -533,36 +376,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         return barcodeImageData;
     }
 
-    private boolean handleLaunchApp(Object params) {
-        String deepLink = Utils.Map.getValueFromPath(params, "deep_link", null);
-        Uri deepLinkUri = !Utils.Str.isEmpty(deepLink) ? Uri.parse(deepLink) : null;
-        if (deepLinkUri == null) {
-            Log.d(TAG, "Invalid deep link: " + deepLink);
-            return false;
-        }
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, deepLinkUri);
-        boolean activityExists = appIntent.resolveActivityInfo(getPackageManager(), 0) != null;
-        if (activityExists) {
-            startActivity(appIntent);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean handleLaunchAppSettings(Object params) {
-        Uri settingsUri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
-        Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, settingsUri);
-        settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        boolean activityExists = settingsIntent.resolveActivityInfo(getPackageManager(), 0) != null;
-        if (activityExists) {
-            startActivity(settingsIntent);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     private void handleSetLaunchScreenStatus(Object params) {
         String statusText = Utils.Map.getValueFromPath(params, "status", null);
 
@@ -620,12 +433,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     launchMap(target, options,markers);
                     result.success(true);
                     break;
-                case Constants.SHOW_NOTIFICATION_KEY:
-                    launchNotification(methodCall);
-                    result.success(true);
-                    break;
-                case Constants.APP_DISMISS_SAFARI_VC_KEY:
                 case Constants.APP_DISMISS_LAUNCH_SCREEN_KEY:
+                    result.success(false);
+                    break;
                 case Constants.APP_SET_LAUNCH_SCREEN_STATUS_KEY:
                     handleSetLaunchScreenStatus(methodCall.arguments);
                     result.success(true);
@@ -638,45 +448,12 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     List<String> orientationsList = handleEnabledOrientations(orientations);
                     result.success(orientationsList);
                     break;
-                case Constants.APP_LOCATION_SERVICES_PERMISSION:
-                    String locationServicesMethod = Utils.Map.getValueFromPath(methodCall.arguments, "method", null);
-                    if ("query".equals(locationServicesMethod)) {
-                        String locationServicesStatus = getLocationServicesStatus();
-                        result.success(locationServicesStatus);
-                    } else if ("request".equals(locationServicesMethod)) {
-                        requestLocationPermission(result);
-                    }
-                    break;
-                case Constants.APP_TRACKING_AUTHORIZATION:
-                    result.success("allowed"); // tracking is allowed in Android by default
-                    break;
-                case Constants.FIREBASE_INFO:
-                    String projectId = FirebaseApp.getInstance().getOptions().getProjectId();
-                    result.success(projectId);
-                    break;
-                case Constants.GEOFENCE_KEY:
-                    Object resultParams = handleGeofence(methodCall.arguments);
-                    result.success(resultParams);
-                    break;
-                case Constants.DEVICE_ID_KEY:
-                    String deviceId = getDeviceId();
-                    result.success(deviceId);
-                    break;
-                case Constants.ENCRYPTION_KEY_KEY:
-                    Object encryptionKey = handleEncryptionKey(methodCall.arguments);
-                    result.success(encryptionKey);
-                    break;
                 case Constants.BARCODE_KEY:
                     String barcodeImageData = handleBarcode(methodCall.arguments);
                     result.success(barcodeImageData);
                     break;
-                case Constants.LAUNCH_APP:
-                    boolean appLaunched = handleLaunchApp(methodCall.arguments);
-                    result.success(appLaunched);
-                    break;
-                case Constants.LAUNCH_APP_SETTINGS:
-                    boolean settingsLaunched = handleLaunchAppSettings(methodCall.arguments);
-                    result.success(settingsLaunched);
+                case Constants.TEST_KEY:
+                    result.success(false);
                     break;
                 default:
                     result.notImplemented();

@@ -19,30 +19,30 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/model/Groups.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Content.dart';
-import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Location.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/content.dart';
+import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Network.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as timezone;
+import 'package:rokwire_plugin/service/config.dart';
 
 
 class CreateEventPanel extends StatefulWidget {
@@ -75,7 +75,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
   bool _allDay = false;
-  Location? _location;
+  ExploreLocation? _location;
   bool _isOnline = false;
   bool _isFree = false;
   String? _selectedPrivacy = eventPrivacyPublic;
@@ -118,16 +118,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SimpleHeaderBarWithBack(
-          context: context,
-          onBackPressed: _onTapBack,
-          titleWidget: Text(_panelTitleText!,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.0),
-          ),
+        appBar: HeaderBar(
+          title: _panelTitleText,
+          onLeading: _onTapBack,
         ),
         body: _buildContent(),
         backgroundColor: Styles().colors!.background,
@@ -181,10 +174,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           child: Stack(
                             alignment: Alignment.bottomCenter,
                             children: <Widget>[
-                              AppString.isStringNotEmpty(_imageUrl)
-                                  ? Positioned.fill(child: Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Network.authApiKeyHeader))
+                              StringUtils.isNotEmpty(_imageUrl)
+                                  ? Positioned.fill(child: Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))
                                   : Container(),
-                              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
+                              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.white), child: Container(height: 30)),
                               Container(
                                 height: _imageHeight,
@@ -192,12 +185,13 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   child:
                                   Semantics(label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
                                     hint: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image.hint","") : Localization().getStringEx("panel.create_event.add_image.hint",""), button: true, excludeSemantics: true, child:
-                                    ScalableSmallRoundedButton(
+                                    RoundedButton(
                                       label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
                                       onTap: _onTapAddImage,
                                       backgroundColor: Styles().colors!.white,
                                       textColor: Styles().colors!.fillColorPrimary,
                                       borderColor: Styles().colors!.fillColorSecondary,
+                                      contentWeight: 0.67,
                                     )
                                   ),
                                 ),
@@ -225,7 +219,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                           Padding(
                                             padding: EdgeInsets.only(left: 3),
                                             child: Text(
-                                              Localization().getStringEx("panel.create_event.date_time.title","Date and time")!,
+                                              Localization().getStringEx("panel.create_event.date_time.title","Date and time"),
                                               style: TextStyle(
                                                   color:
                                                       Styles().colors!.fillColorPrimary,
@@ -260,7 +254,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                    Row(
                                                      children: <Widget>[
                                                        Text(
-                                                         Localization().getStringEx("panel.create_event.date_time.start_date.title","START DATE")!,
+                                                         Localization().getStringEx("panel.create_event.date_time.start_date.title","START DATE"),
                                                          style: TextStyle(
                                                              color: Styles().colors!.fillColorPrimary,
                                                              fontSize: 14,
@@ -312,7 +306,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                 Row(
                                                   children: <Widget>[
                                                     Text(
-                                                      Localization().getStringEx("panel.create_event.date_time.start_time.title","START TIME")!,
+                                                      Localization().getStringEx("panel.create_event.date_time.start_time.title","START TIME"),
                                                       maxLines: 1,
                                                       overflow: TextOverflow.ellipsis,
                                                       style: TextStyle(
@@ -378,7 +372,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                     Row(
                                                       children: <Widget>[
                                                         Text(
-                                                          Localization().getStringEx("panel.create_event.date_time.end_date.title",'END DATE')!,
+                                                          Localization().getStringEx("panel.create_event.date_time.end_date.title",'END DATE'),
                                                           style: TextStyle(
                                                               color: Styles().colors!.fillColorPrimary,
                                                               fontSize: 14,
@@ -428,7 +422,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME")!,
+                                                            Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
                                                             maxLines: 1,
                                                             overflow: TextOverflow.ellipsis,
                                                             style: TextStyle(
@@ -478,12 +472,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   Semantics(label:Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
                                       hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: _allDay, excludeSemantics: true, child:
                                   ToggleRibbonButton(
-                                    height: null,
                                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                                     label: Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
                                     toggled: _allDay,
                                     onTap: _onAllDayToggled,
-                                    context: context,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(4)),
                                     border: Border.all(color: Styles().colors!.fillColorPrimary!),
@@ -492,12 +484,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   Semantics(label:Localization().getStringEx("panel.create_event.date_time.online","Make this an online event"),
                                       hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: _isOnline, excludeSemantics: true, child:
                                       ToggleRibbonButton(
-                                        height: null,
                                         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                                         label: Localization().getStringEx("panel.create_event.date_time.online","Make this an online event"),
                                         toggled: _isOnline,
                                         onTap: _onOnlineToggled,
-                                        context: context,
                                         border: Border.all(color: Styles().colors!.fillColorPrimary!),
                                         borderRadius:
                                         BorderRadius.all(Radius.circular(4)),
@@ -543,8 +533,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     padding: EdgeInsets.only(top: 0),
                                     child: Text(
                                       _isPrivateEvent? //TBD localozation
-                                      Localization().getStringEx("panel.create_event.additional_info.group.description.private","This event will only show up on your group's page.")!:
-                                      Localization().getStringEx("panel.create_event.additional_info.group.description.public","This event will show up on your group's page and also on the event's page.")!,
+                                      Localization().getStringEx("panel.create_event.additional_info.group.description.private","This event will only show up on your group's page."):
+                                      Localization().getStringEx("panel.create_event.additional_info.group.description.public","This event will show up on your group's page and also on the event's page."),
                                       style: TextStyle(
                                           color: Styles().colors!.textSurface,
                                           fontSize: 16,
@@ -587,7 +577,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               )),
                               (widget.group==null)? Container():
                               Expanded(
-                                  child: ScalableRoundedButton(
+                                  child: RoundedButton(
                                     label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
                                     Localization().getStringEx("panel.create_event.additional_info.button.create.title","Create event"),
                                     backgroundColor: Colors.white,
@@ -613,7 +603,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Semantics(label:Localization().getStringEx("panel.create_event.category.title","EVENT CATEGORY")! + ", required",
+            Semantics(label:Localization().getStringEx("panel.create_event.category.title","EVENT CATEGORY") + ", required",
                 hint: Localization().getStringEx("panel.create_event.category.title.hint","Choose the category your event may be filtered by."), header: true, excludeSemantics: true, child:
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -621,7 +611,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                       Row(
                         children: <Widget>[
                           Text(
-                            Localization().getStringEx("panel.create_event.category.title","EVENT CATEGORY")!,
+                            Localization().getStringEx("panel.create_event.category.title","EVENT CATEGORY"),
                             style: TextStyle(
                                 color: Styles().colors!.fillColorPrimary,
                                 fontSize: 14,
@@ -643,7 +633,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                       Padding(
                         padding: EdgeInsets.only(top: 2, bottom: 8),
                         child: Text(
-                          Localization().getStringEx("panel.create_event.category.description",'Choose the category your event may be filtered by.')!,
+                          Localization().getStringEx("panel.create_event.category.description",'Choose the category your event may be filtered by.'),
                           maxLines: 2,
                           style: TextStyle(
                               color: Styles().colors!.textBackground,
@@ -678,7 +668,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             (_selectedCategory != null)
                                 ? _selectedCategory[
                             'category']
-                                : Localization().getStringEx("panel.create_event.category.default","Category")!,
+                                : Localization().getStringEx("panel.create_event.category.default","Category"),
                           ),
                           items: _buildCategoryDropDownItems(),
                           onChanged:
@@ -702,12 +692,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                 Padding(
                     padding: EdgeInsets.only(bottom: 8),
                     child:
-                    Semantics(label:Localization().getStringEx("panel.create_event.title.title","EVENT TITLE")! + ", required",
+                    Semantics(label:Localization().getStringEx("panel.create_event.title.title","EVENT TITLE") + ", required",
                       hint: Localization().getStringEx("panel.create_event.title.title.hint",""), header: true, excludeSemantics: true, child:
                       Row(
                         children: <Widget>[
                           Text(
-                            Localization().getStringEx("panel.create_event.title.title","EVENT TITLE")!,
+                            Localization().getStringEx("panel.create_event.title.title","EVENT TITLE"),
                             style: TextStyle(
                                 color: Styles().colors!.fillColorPrimary,
                                 fontSize: 14,
@@ -770,7 +760,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                   child: Row(
                     children: <Widget>[
                       Text(
-                        Localization().getStringEx("panel.create_event.additional_info.description.title","DESCRIPTION")!,
+                        Localization().getStringEx("panel.create_event.additional_info.description.title","DESCRIPTION"),
                         style: TextStyle(
                             color: Styles().colors!.fillColorPrimary,
                             fontSize: 14,
@@ -789,7 +779,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                       Padding(
                         padding: EdgeInsets.only(bottom: 8),
                         child: Text(
-                          Localization().getStringEx("panel.create_event.additional_info.event.description","Tell the campus what your event is about.")!,
+                          Localization().getStringEx("panel.create_event.additional_info.event.description","Tell the campus what your event is about."),
                           maxLines: 2,
                           style: TextStyle(
                               color: Styles().colors!.textBackground,
@@ -851,7 +841,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                 children: <Widget>[
                   Expanded(child:
                     Text(
-                      Localization().getStringEx("panel.create_event.date_time.time_zone.title","TIME ZONE")!,
+                      Localization().getStringEx("panel.create_event.date_time.time_zone.title","TIME ZONE"),
                       style: TextStyle(
                           color: Styles().colors!.fillColorPrimary,
                           fontSize: 14,
@@ -890,7 +880,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 fontFamily:
                                 Styles().fontFamilies!.regular),
                             hint: Text(
-                              (_selectedTimeZone) ?? Localization().getStringEx("panel.create_event.timeZone.default","Time Zone")!,
+                              (_selectedTimeZone) ?? Localization().getStringEx("panel.create_event.timeZone.default","Time Zone"),
                             ),
                             items: _buildTimeZoneDropDownItems(),
                             onChanged:
@@ -928,7 +918,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 Padding(
                                   padding: EdgeInsets.only(left: 3),
                                   child: Text(
-                                    Localization().getStringEx("panel.create_event.location.button_title","Location")!,
+                                    Localization().getStringEx("panel.create_event.location.button_title","Location"),
                                     style: TextStyle(
                                         color:
                                         Styles().colors!.fillColorPrimary,
@@ -947,7 +937,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  Localization().getStringEx("panel.create_event.location.adress.title",'EVENT ADDRESS')!,
+                                  Localization().getStringEx("panel.create_event.location.adress.title",'EVENT ADDRESS'),
                                   style: TextStyle(
                                       color: Styles().colors!.fillColorPrimary,
                                       fontSize: 14,
@@ -993,7 +983,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  Localization().getStringEx("panel.create_event.location.lat.title",'EVENT LATITUDE')!,
+                                  Localization().getStringEx("panel.create_event.location.lat.title",'EVENT LATITUDE'),
                                   style: TextStyle(
                                       color: Styles().colors!.fillColorPrimary,
                                       fontSize: 14,
@@ -1039,7 +1029,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  Localization().getStringEx("panel.create_event.location.long.title",'EVENT LONGITUDE')!,
+                                  Localization().getStringEx("panel.create_event.location.long.title",'EVENT LONGITUDE'),
                                   style: TextStyle(
                                       color: Styles().colors!.fillColorPrimary,
                                       fontSize: 14,
@@ -1082,7 +1072,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           Row(
                             children: <Widget>[
                               Expanded(
-                                  child: ScalableRoundedButton(
+                                  child: RoundedButton(
                                     backgroundColor: Styles().colors!.white,
                                     textColor: Styles().colors!.fillColorPrimary,
                                     borderColor: Styles().colors!.fillColorSecondary,
@@ -1102,7 +1092,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           Padding(
                             padding: EdgeInsets.only(bottom: 8),
                             child: Text(
-                              Localization().getStringEx("panel.create_event.additional_info.purchase_tickets.title","ADD LINK FOR REGISTRATION")!,
+                              Localization().getStringEx("panel.create_event.additional_info.purchase_tickets.title","ADD LINK FOR REGISTRATION"),
                               style: TextStyle(
                                   color: Styles().colors!.fillColorPrimary,
                                   fontSize: 14,
@@ -1141,7 +1131,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                     child: GestureDetector(
                       onTap: _onTapConfirmPurchaseUrl,
                       child: Text(
-                        Localization().getStringEx("panel.create_event.additional_info.button.confirm.title",'Confirm URL')!,
+                        Localization().getStringEx("panel.create_event.additional_info.button.confirm.title",'Confirm URL'),
                         style: TextStyle(
                             color: Styles().colors!.fillColorPrimary,
                             fontSize: 16,
@@ -1162,7 +1152,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           Padding(
                             padding: EdgeInsets.only(bottom: 8),
                             child: Text(
-                              Localization().getStringEx("panel.create_event.additional_info.website.title",'ADD EVENT WEBSITE LINK')!,
+                              Localization().getStringEx("panel.create_event.additional_info.website.title",'ADD EVENT WEBSITE LINK'),
                               style: TextStyle(
                                   color: Styles().colors!.fillColorPrimary,
                                   fontSize: 14,
@@ -1201,7 +1191,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                     GestureDetector(
                       onTap: _onTapConfirmWebsiteUrl,
                       child: Text(
-                        Localization().getStringEx("panel.create_event.additional_info.button.confirm.title",'Confirm URL')!,
+                        Localization().getStringEx("panel.create_event.additional_info.button.confirm.title",'Confirm URL'),
                         style: TextStyle(
                             color: Styles().colors!.fillColorPrimary,
                             fontSize: 16,
@@ -1228,7 +1218,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               Container(
                                 padding: EdgeInsets.only(bottom: 8),
                                 child: Text(
-                                  Localization().getStringEx("panel.create_event.additional_info.call_url.title","ADD ONLINE EVENT LINK")!,
+                                  Localization().getStringEx("panel.create_event.additional_info.call_url.title","ADD ONLINE EVENT LINK"),
                                   style: TextStyle(
                                       color: Styles().colors!.fillColorPrimary,
                                       fontSize: 14,
@@ -1267,7 +1257,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         child: GestureDetector(
                           onTap: _onTapConfirmCallUrl,
                           child: Text(
-                            Localization().getStringEx("panel.create_event.additional_info.button.confirm.title",'Confirm URL')!,
+                            Localization().getStringEx("panel.create_event.additional_info.button.confirm.title",'Confirm URL'),
                             style: TextStyle(
                                 color: Styles().colors!.fillColorPrimary,
                                 fontSize: 16,
@@ -1295,12 +1285,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         Semantics(label:Localization().getStringEx("panel.create_event.button.free.title","Is this event free?"),//TBD localize
             hint: Localization().getStringEx("panel.create_event.button.free.hint",""), toggled: _isFree, excludeSemantics: true, child:
             ToggleRibbonButton(
-              height: null,
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               label: Localization().getStringEx("panel.create_event.button.free.title","Is this event free?"),
               toggled: _isFree,
               onTap: _onFreeToggled,
-              context: context,
               border: Border.all(color: Styles().colors!.fillColorPrimary!),
               borderRadius:
               BorderRadius.all(Radius.circular(4)),
@@ -1319,7 +1307,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                 children: <Widget>[
                   Expanded(
                   child: Text(
-                    Localization().getStringEx("panel.create_event.price.label.title","Cost Description (eg: \$10, Donation suggested)")!,//TBD localization
+                    Localization().getStringEx("panel.create_event.price.label.title","Cost Description (eg: \$10, Donation suggested)"),//TBD localization
                     style: TextStyle(
                         color: Styles().colors!.fillColorPrimary,
                         fontSize: 14,
@@ -1386,7 +1374,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                       children: <Widget>[
                         Expanded(child:
                         Text(
-                          Localization().getStringEx("panel.create_event.privacy.title","VISIBILITY")!,
+                          Localization().getStringEx("panel.create_event.privacy.title","VISIBILITY"),
                           style: TextStyle(
                               color: Styles().colors!.fillColorPrimary,
                               fontSize: 14,
@@ -1426,7 +1414,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       fontFamily:
                                       Styles().fontFamilies!.regular),
                                   hint: Text(
-                                    (_selectedPrivacy) ?? Localization().getStringEx("panel.create_event.privacy.default","Privacy")!,
+                                    (_selectedPrivacy) ?? Localization().getStringEx("panel.create_event.privacy.default","Privacy"),
                                   ),
                                   items: _privacyTypes.map((dynamic type) {
                                     return DropdownMenuItem<dynamic>(
@@ -1454,12 +1442,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       child: Semantics(label:Localization().getStringEx("panel.create_event.button.attendance.title","Attendance required"),//TBD localize
         hint: Localization().getStringEx("panel.create_event.button.attendance..hint",""), toggled: true, excludeSemantics: true, child:
         ToggleRibbonButton(
-          height: null,
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           label: Localization().getStringEx("panel.create_event.button.attendance.title","Attendance required"),
           toggled: _isAttendanceRequired,
           onTap: _onAttendanceRequiredToggled,
-          context: context,
           border: Border.all(color: Styles().colors.fillColorPrimary),
           borderRadius:
           BorderRadius.all(Radius.circular(4)),
@@ -1479,12 +1465,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       if(event.startDateGmt!=null) {
         _startDate =  timezone.TZDateTime.from(event.startDateGmt!, timezone.getLocation(_selectedTimeZone!));
         _startTime = TimeOfDay.fromDateTime(_startDate!);
-//      _endDate = AppDateTime().dateTimeFromString(event.endDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
       }
-//      _endDate = event.endDateGmt;
-//      if(_endDate==null && event.endDateString!=null){
-//        _endDate = AppDateTime().dateTimeFromString(event.endDateString, format: AppDateTime.serverResponseDateTimeFormat);
-//      }
       if(event.endDateGmt!=null) {
         _endDate = timezone.TZDateTime.from(event.endDateGmt!, timezone.getLocation(_selectedTimeZone!));
         _endTime = TimeOfDay.fromDateTime(_endDate!);
@@ -1527,7 +1508,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _loadEventCategories() async {
     _setLoading(true);
-    _eventCategories = await ExploreService().loadEventCategories();
+    _eventCategories = await Events().loadEventCategories();
     _setLoading(false);
   }
 
@@ -1547,7 +1528,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onCategoryDropDownValueChanged(dynamic value) {
-    Analytics.instance.logSelect(target: "Category selected: $value");
+    Analytics().logSelect(target: "Category selected: $value");
     setState(() {
       _selectedCategory = value;
       _modified = true;
@@ -1570,7 +1551,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTimeZoneDropDownValueChanged(dynamic value) {
-    Analytics.instance.logSelect(target: "Time Zone selected: $value");
+    Analytics().logSelect(target: "Time Zone selected: $value");
     setState(() {
       _selectedTimeZone = value;
       _modified = true;
@@ -1578,7 +1559,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onPrivacyDropDownValueChanged(dynamic value) {
-    Analytics.instance.logSelect(target: "Privacy selected: $value");
+    Analytics().logSelect(target: "Privacy selected: $value");
     setState(() {
       _selectedPrivacy = value;
       _modified = true;
@@ -1586,12 +1567,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapAddImage() async {
-    Analytics.instance.logSelect(target: "Add Image");
+    Analytics().logSelect(target: "Add Image");
     String? imageUrl = await showDialog(
         context: context,
         builder: (_) => AddImageWidget()
     );
-    if (AppString.isStringNotEmpty(imageUrl) && (_imageUrl != imageUrl)) {
+    if (StringUtils.isNotEmpty(imageUrl) && (_imageUrl != imageUrl)) {
       setState(() {
         _imageUrl = imageUrl;
         _modified = true;
@@ -1628,7 +1609,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }*/
 
   void _onTapSelectLocation() {
-    Analytics.instance.logSelect(target: "Select Location");
+    Analytics().logSelect(target: "Select Location");
     _performSelectLocation();
   }
 
@@ -1643,7 +1624,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           locationSelectionResult.isNotEmpty) {
         Map<String, dynamic>? locationData = locationSelectionResult["location"];
         if (locationData != null) {
-          _location = Location.fromJSON(locationData);
+          _location = ExploreLocation.fromJSON(locationData);
           _modified = true;
           _populateLocationField();
           setState(() {});
@@ -1663,9 +1644,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       }
 
       _location!.name = locationName;
-      _eventLocationController.text = AppString.getDefaultEmptyString(locationName);
+      _eventLocationController.text = StringUtils.ensureNotEmpty(locationName);
 
-      if(AppString.isStringNotEmpty(_location!.description)){
+      if(StringUtils.isNotEmpty(_location!.description)){
         if (_isOnline) {
           _eventCallUrlController.text = _location!.description!;
         }
@@ -1685,7 +1666,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapConfirmPurchaseUrl() {
-    Analytics.instance.logSelect(target: "Confirm Purchase url");
+    Analytics().logSelect(target: "Confirm Purchase url");
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -1694,7 +1675,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapConfirmCallUrl() {
-    Analytics.instance.logSelect(target: "Confirm Purchase url");
+    Analytics().logSelect(target: "Confirm Purchase url");
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -1703,7 +1684,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapConfirmWebsiteUrl() {
-    Analytics.instance.logSelect(target: "Confirm Website url");
+    Analytics().logSelect(target: "Confirm Website url");
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -1711,7 +1692,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapCancel() {
-    Analytics.instance.logSelect(target: "Cancel");
+    Analytics().logSelect(target: "Cancel");
     Navigator.pop(context);
     //TBD: prompt
   }
@@ -1738,19 +1719,19 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   Future<bool?> _promptBack() async {
-    String? message = Localization().getStringEx('panel.create_event.back.prompt', 'Do you want to save your changes?');
+    String message = Localization().getStringEx('panel.create_event.back.prompt', 'Do you want to save your changes?');
     return await showDialog(context: context, builder: (BuildContext context) {
       return AlertDialog(
-        content: Text(message!),
+        content: Text(message),
         actions: <Widget>[
-          TextButton(child: Text(Localization().getStringEx("dialog.yes.title", "Yes")!),
+          TextButton(child: Text(Localization().getStringEx("dialog.yes.title", "Yes")),
             onPressed:(){
-              Analytics.instance.logAlert(text: message, selection: "Yes");
+              Analytics().logAlert(text: message, selection: "Yes");
               Navigator.pop(context, true);
             }),
-          TextButton(child: Text(Localization().getStringEx("dialog.no.title", "No")!),
+          TextButton(child: Text(Localization().getStringEx("dialog.no.title", "No")),
             onPressed:(){
-              Analytics.instance.logAlert(text: message, selection: "No");
+              Analytics().logAlert(text: message, selection: "No");
               Navigator.pop(context, false);
             }),
         ]
@@ -1759,7 +1740,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapPreview() async {
-    Analytics.instance.logSelect(target: "Preview");
+    Analytics().logSelect(target: "Preview");
     if (_validateWithResult()) {
       Event event = _constructEventFromData();
       Navigator.push(
@@ -1783,7 +1764,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   /// Display all group titles that event is failed to be created or linked to.
   ///
   Future<void> _onTapCreate() async {
-    Analytics.instance.logSelect(target: "Create");
+    Analytics().logSelect(target: "Create");
     if (_validateWithResult()) {
       _setLoading(true);
       bool hasGroup = (widget.group != null);
@@ -1796,14 +1777,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
       if (hasGroup) {
         List<Group>? otherGroups = await _loadOtherAdminUserGroups();
-        if (AppCollection.isCollectionNotEmpty(otherGroups)) {
+        if (CollectionUtils.isNotEmpty(otherGroups)) {
           otherGroupsToSave = await showDialog(context: context, barrierDismissible: false, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
         }
       }
 
       // Save the initial event and link it to group if it's part of such one.
-      String? mainEventId = await ExploreService().postNewEvent(mainEvent);
-      if (AppString.isStringNotEmpty(mainEventId)) {
+      String? mainEventId = await Events().postNewEvent(mainEvent);
+      if (StringUtils.isNotEmpty(mainEventId)) {
         // Succeeded to create the main event
         if (hasGroup) {
           bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: mainEvent.createdByGroupId, eventId: mainEventId);
@@ -1813,23 +1794,23 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
             groupToDisplay = widget.group;
           } else {
             // Failed to link event to group
-            AppList.add(createEventFailedForGroupNames, widget.group?.title);
+            ListUtils.add(createEventFailedForGroupNames, widget.group?.title);
           }
         } else {
           // Succeeded to create event that has no group
           eventToDisplay = mainEvent;
         }
       } else if (hasGroup) {
-        AppList.add(createEventFailedForGroupNames, widget.group?.title);
+        ListUtils.add(createEventFailedForGroupNames, widget.group?.title);
       }
 
       // Save the event to the other selected groups that the user is admin.
-      if (hasGroup && AppCollection.isCollectionNotEmpty(otherGroupsToSave)) {
+      if (hasGroup && CollectionUtils.isNotEmpty(otherGroupsToSave)) {
         for (Group group in otherGroupsToSave!) {
           Event? groupEvent = Event.fromOther(mainEvent);
           groupEvent?.createdByGroupId = group.id;
-          String? groupEventId = await ExploreService().postNewEvent(groupEvent);
-          if (AppString.isStringNotEmpty(groupEventId)) {
+          String? groupEventId = await Events().postNewEvent(groupEvent);
+          if (StringUtils.isNotEmpty(groupEventId)) {
             bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent?.createdByGroupId, eventId: groupEventId);
             if (eventLinkedToGroup) {
               // Succeeded to link event to group
@@ -1839,28 +1820,28 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
               }
             } else {
               // Failed to link event to group
-              AppList.add(createEventFailedForGroupNames, group.title);
+              ListUtils.add(createEventFailedForGroupNames, group.title);
             }
           } else {
             // Failed to create event for group
-            AppList.add(createEventFailedForGroupNames, group.title);
+            ListUtils.add(createEventFailedForGroupNames, group.title);
           }
         }
       }
 
       String failedMsg;
-      if (AppCollection.isCollectionNotEmpty(createEventFailedForGroupNames)) {
-        failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error creating this event for the following groups: ') ?? '';
+      if (CollectionUtils.isNotEmpty(createEventFailedForGroupNames)) {
+        failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error creating this event for the following groups: ');
         failedMsg += createEventFailedForGroupNames.join(', ');
-      } else if (AppString.isStringEmpty(mainEventId)) {
-        failedMsg = Localization().getStringEx('panel.create_event.failed.msg', 'There was an error creating this event.') ?? '';
+      } else if (StringUtils.isEmpty(mainEventId)) {
+        failedMsg = Localization().getStringEx('panel.create_event.failed.msg', 'There was an error creating this event.');
       }
       else {
         failedMsg = '';
       }
 
       _setLoading(false);
-      if (AppString.isStringNotEmpty(failedMsg)) {
+      if (StringUtils.isNotEmpty(failedMsg)) {
         AppAlert.showDialogResult(context, failedMsg);
       }
 
@@ -1877,7 +1858,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   Future<List<Group>?> _loadOtherAdminUserGroups() async {
     List<Group>? userGroups = await Groups().loadGroups(myGroups: true);
     List<Group>? userAdminGroups;
-    if (AppCollection.isCollectionNotEmpty(userGroups)) {
+    if (CollectionUtils.isNotEmpty(userGroups)) {
       userAdminGroups = [];
       String? currentGroupId = widget.group?.id;
       for (Group? group in userGroups!) {
@@ -1895,7 +1876,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   
   Event _populateEventWithData(Event event){
     if(_location==null) {
-      _location = new Location();
+      _location = new ExploreLocation();
     }
     _location!.description = _isOnline? (_eventCallUrlController.text.toString()) : (_eventLocationController.text.toString());
     String? longitude = !_isOnline? (_eventLongitudeController.text.toString()) : null;
@@ -1907,23 +1888,23 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.category = _selectedCategory != null ? _selectedCategory["category"] : "";
     event.title = _eventTitleController.text;
     if(_startDate!=null) {
-      timezone.TZDateTime? startTime = AppDateTime().changeTimeZoneToDate(_startDate!, timezone.getLocation(_selectedTimeZone!));
+      timezone.TZDateTime? startTime = DateTimeUtils.changeTimeZoneToDate(_startDate!, timezone.getLocation(_selectedTimeZone!));
       timezone.TZDateTime? utcTTime = startTime?.toUtc();
       event.startDateString = AppDateTime().formatDateTime(
-          utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
+          utcTTime?.toUtc(), format: Event.serverRequestDateTimeFormat, ignoreTimeZone: true);
       event.startDateGmt = utcTTime?.toUtc();
     }
     if(_endDate!=null) {
-      timezone.TZDateTime? startTime = AppDateTime().changeTimeZoneToDate(_endDate!, timezone.getLocation(_selectedTimeZone!));
+      timezone.TZDateTime? startTime = DateTimeUtils.changeTimeZoneToDate(_endDate!, timezone.getLocation(_selectedTimeZone!));
       timezone.TZDateTime? utcTTime = startTime?.toUtc();
       event.endDateString = AppDateTime().formatDateTime(
-          utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
+          utcTTime?.toUtc(), format: Event.serverRequestDateTimeFormat, ignoreTimeZone: true);
       event.endDateGmt = utcTTime?.toUtc();
     }
     event.allDay = _allDay;
     event.location = _location;
     event.longDescription = _eventDescriptionController.text;
-    event.registrationUrl = AppString.isStringNotEmpty(_eventPurchaseUrlController.text)?_eventPurchaseUrlController.text : null;
+    event.registrationUrl = StringUtils.isNotEmpty(_eventPurchaseUrlController.text)?_eventPurchaseUrlController.text : null;
     event.titleUrl = _eventWebsiteController.text;
     event.isVirtual = _isOnline;
     event.recurringFlag = false;//decide do we need it
@@ -1944,7 +1925,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapStartDate() async {
-    Analytics.instance.logSelect(target: "Start Date");
+    Analytics().logSelect(target: "Start Date");
     timezone.TZDateTime? date = await _pickDate(_startDate, null);
 
     if (date != null) {
@@ -1956,7 +1937,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapStartTime() async {
-    Analytics.instance.logSelect(target: "Start Time");
+    Analytics().logSelect(target: "Start Time");
     timezone.TZDateTime start = _startDate ?? timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone!));
     TimeOfDay? time =
         await _pickTime(_startTime ?? (new TimeOfDay.fromDateTime(start)));
@@ -1968,7 +1949,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapEndDate() async {
-    Analytics.instance.logSelect(target: "End Date");
+    Analytics().logSelect(target: "End Date");
     timezone.TZDateTime? date = await _pickDate(_endDate, _startDate);
 
     if (date != null) {
@@ -1980,7 +1961,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapEndTime() async {
-    Analytics.instance.logSelect(target: "End Time");
+    Analytics().logSelect(target: "End Time");
     timezone.TZDateTime end = _endDate ?? timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone!));
     TimeOfDay? time =
         await _pickTime(_endTime ?? (new TimeOfDay.fromDateTime(end)));
@@ -2022,7 +2003,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       },
     );
 
-    return (resultDate != null) ? AppDateTime().changeTimeZoneToDate(resultDate, timezone.getLocation(_selectedTimeZone!)) : null;
+    return (resultDate != null) ? DateTimeUtils.changeTimeZoneToDate(resultDate, timezone.getLocation(_selectedTimeZone!)) : null;
   }
 
   Future<TimeOfDay?> _pickTime(TimeOfDay initialTime) async {
@@ -2043,7 +2024,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   bool _isFormValid() {
     bool _categoryValidation = _selectedCategory != null;
-    bool _titleValidation = AppString.isStringNotEmpty(_eventTitleController.text);
+    bool _titleValidation = StringUtils.isNotEmpty(_eventTitleController.text);
     bool _startDateValidation = _startDate != null;
     bool _startTimeValidation = _startTime != null || _allDay;
     bool _endDateValidation = _endDate != null;
@@ -2056,7 +2037,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   bool _validateWithResult() {
     bool _categoryValidation = _selectedCategory != null;
     bool _titleValidation =
-        AppString.isStringNotEmpty(_eventTitleController.text);
+        StringUtils.isNotEmpty(_eventTitleController.text);
     bool _startDateValidation = _startDate != null;
     bool _startTimeValidation = _startTime != null || _allDay;
     bool _endDateValidation = _endDate != null;
@@ -2128,7 +2109,7 @@ class _EventDateDisplayView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              AppString.getDefaultEmptyString(label, defaultValue: '-'),
+              StringUtils.ensureNotEmpty(label, defaultValue: '-'),
               style: TextStyle(
                   color: Styles().colors!.fillColorPrimary,
                   fontSize: 16,
@@ -2186,7 +2167,7 @@ class _AddImageWidgetState extends State<AddImageWidget> {
                 Padding(
                   padding: EdgeInsets.only(left: 10, top: 10),
                   child: Text(
-                    Localization().getStringEx("widget.add_image.heading", "Select Image")!,
+                    Localization().getStringEx("widget.add_image.heading", "Select Image"),
                     style: TextStyle(
                         color: Colors.white,
                         fontFamily: Styles().fontFamilies!.medium,
@@ -2223,37 +2204,27 @@ class _AddImageWidgetState extends State<AddImageWidget> {
                                 keyboardType: TextInputType.text,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(),
-                                  hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image url"),
-                                  labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image url"),
+                                  hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image Url"),
+                                  labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image Url"),
                                 ))),
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
+                        Padding(
+                            padding: EdgeInsets.all(10),
+                            child: RoundedButton(
+                                label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
+                                borderColor: Styles().colors!.fillColorSecondary,
+                                backgroundColor: Styles().colors!.background,
+                                textColor: Styles().colors!.fillColorPrimary,
+                                progress: _showUrlProgress,
+                                onTap: _onTapUseUrl)),
                             Padding(
                                 padding: EdgeInsets.all(10),
                                 child: RoundedButton(
-                                    label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
+                                    label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from Device"),
                                     borderColor: Styles().colors!.fillColorSecondary,
                                     backgroundColor: Styles().colors!.background,
                                     textColor: Styles().colors!.fillColorPrimary,
-                                    onTap: _onTapUseUrl)),
-                            _showUrlProgress ? CircularProgressIndicator() : Container(),
-                          ],
-                        ),
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Padding(
-                                padding: EdgeInsets.all(10),
-                                child: RoundedButton(
-                                    label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
-                                    borderColor: Styles().colors!.fillColorSecondary,
-                                    backgroundColor: Styles().colors!.background,
-                                    textColor: Styles().colors!.fillColorPrimary,
+                                    progress: _showGalleryProgress,
                                     onTap: _onTapChooseFromDevice)),
-                            _showGalleryProgress ? CircularProgressIndicator() : Container(),
-                          ],
-                        ),
                       ]),
 
                 ],
@@ -2264,22 +2235,22 @@ class _AddImageWidgetState extends State<AddImageWidget> {
   }
 
   void _onTapCloseImageSelection() {
-    Analytics.instance.logSelect(target: "Close image selection");
+    Analytics().logSelect(target: "Close image selection");
     Navigator.pop(context, "");
   }
 
   void _onTapUseUrl() {
-    Analytics.instance.logSelect(target: "Use Url");
+    Analytics().logSelect(target: "Use Url");
     String url = _imageUrlController.value.text;
     if (url == "") {
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url")!);
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
       return;
     }
 
     bool isReadyUrl = url.endsWith(".webp");
     if (isReadyUrl) {
       //ready
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
       Navigator.pop(context, url);
     } else {
       //we need to process it
@@ -2294,15 +2265,15 @@ class _AddImageWidgetState extends State<AddImageWidget> {
 
         ImagesResultType? resultType = logicResult.resultType;
         switch (resultType) {
-          case ImagesResultType.CANCELLED:
+          case ImagesResultType.cancelled:
           //do nothing
             break;
-          case ImagesResultType.ERROR_OCCURRED:
-            AppToast.show(logicResult.errorMessage ?? '');
+          case ImagesResultType.error:
+            AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
             break;
-          case ImagesResultType.SUCCEEDED:
+          case ImagesResultType.succeeded:
           //ready
-            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
+            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
             Navigator.pop(context, logicResult.data);
             break;
           default:
@@ -2313,7 +2284,7 @@ class _AddImageWidgetState extends State<AddImageWidget> {
   }
 
   void _onTapChooseFromDevice() {
-    Analytics.instance.logSelect(target: "Choose From Device");
+    Analytics().logSelect(target: "Choose From Device");
 
     setState(() {
       _showGalleryProgress = true;
@@ -2328,15 +2299,15 @@ class _AddImageWidgetState extends State<AddImageWidget> {
 
       ImagesResultType? resultType = logicResult!.resultType;
       switch (resultType) {
-        case ImagesResultType.CANCELLED:
+        case ImagesResultType.cancelled:
         //do nothing
           break;
-        case ImagesResultType.ERROR_OCCURRED:
-          AppToast.show(logicResult.errorMessage ?? '');
+        case ImagesResultType.error:
+          AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
           break;
-        case ImagesResultType.SUCCEEDED:
+        case ImagesResultType.succeeded:
         //ready
-          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
+          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
           Navigator.pop(context, logicResult.data);
           break;
         default:
@@ -2361,9 +2332,9 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
   @override
   void initState() {
     super.initState();
-    if (AppCollection.isCollectionNotEmpty(widget.groups)) {
+    if (CollectionUtils.isNotEmpty(widget.groups)) {
       for (Group group in widget.groups!) {
-        AppList.add(_selectedGroupIds, group.id);
+        ListUtils.add(_selectedGroupIds, group.id);
       }
     }
   }
@@ -2383,7 +2354,7 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
             Padding(
                 padding: EdgeInsets.all(10),
                 child: Text(
-                    Localization().getStringEx("widget.groups.selection.heading", "Select Group")!,
+                    Localization().getStringEx("widget.groups.selection.heading", "Select Group"),
                     style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 24)))
           ])),
       Padding(
@@ -2403,7 +2374,7 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
   }
 
   Widget _buildGroupsList() {
-    if (AppCollection.isCollectionEmpty(widget.groups)) {
+    if (CollectionUtils.isNotEmpty(widget.groups)) {
       return Container();
     }
     List<Widget> groupWidgetList = [];
@@ -2413,9 +2384,8 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
           borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
           label: group.title,
           toggled: _isGroupSelected(index),
-          context: context,
           onTap: () => _onTapGroup(index),
-          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold));
+          textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold));
 
       groupWidgetList.add(groupSelectionWidget);
     }
@@ -2436,7 +2406,7 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
   }
 
   bool _isGroupSelected(int index) {
-    if ((widget.groups != null) && (index >= 0) && (index < widget.groups!.length) && AppCollection.isCollectionNotEmpty(_selectedGroupIds)) {
+    if ((widget.groups != null) && (index >= 0) && (index < widget.groups!.length) && CollectionUtils.isNotEmpty(_selectedGroupIds)) {
       Group group = widget.groups![index];
       for (String groupId in _selectedGroupIds) {
         if (groupId == group.id) {
@@ -2449,7 +2419,7 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
 
   void _onTapSelect() {
     List<Group>? selectedGroups;
-    if (AppCollection.isCollectionNotEmpty(_selectedGroupIds)) {
+    if (CollectionUtils.isNotEmpty(_selectedGroupIds)) {
       selectedGroups = [];
       if (widget.groups != null) {
         for (Group group in widget.groups!) {

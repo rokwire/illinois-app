@@ -15,18 +15,19 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/events.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 enum _InterestTab { Categories, Tags, Athletics }
 
@@ -100,12 +101,8 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.settings.manage_interests.title', 'Manage My Interests')!,
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.settings.manage_interests.title', 'Manage My Interests'),
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
@@ -124,9 +121,9 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
                 color: Styles().colors!.background,
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Semantics(
-                      label: Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the")! +
-                          Localization().getStringEx("panel.settings.manage_interests.instructions.check_mark", "check-mark")! +
-                          Localization().getStringEx('panel.settings.manage_interests.instructions.follow', ' to follow the tags that interest you most')!,
+                      label: Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the") +
+                          Localization().getStringEx("panel.settings.manage_interests.instructions.check_mark", "check-mark") +
+                          Localization().getStringEx('panel.settings.manage_interests.instructions.follow', ' to follow the tags that interest you most'),
                       excludeSemantics: true,
                       child: Container(
                           alignment: Alignment.topCenter,
@@ -138,7 +135,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
-                                    Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the")!,
+                                    Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the"),
                                     style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.white, fontSize: 16),
                                     textAlign: TextAlign.start,
                                   ),
@@ -146,7 +143,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
                                   Expanded(child: Container(
                                       child:Text(
                                         Localization()
-                                            .getStringEx('panel.settings.manage_interests.instructions.follow', ' to follow the tags that interest you most')!,
+                                            .getStringEx('panel.settings.manage_interests.instructions.follow', ' to follow the tags that interest you most'),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.white, fontSize: 16),
@@ -187,7 +184,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   //Categories
   void _initCategories() {
-    ExploreService().loadEventCategories().then((List<dynamic>? categories) {
+    Events().loadEventCategories().then((List<dynamic>? categories) {
       if (mounted) {
         setState(() {
           _categories = categories != null ? categories : [];
@@ -229,12 +226,12 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
           ));
         }
 
-        String? categoryName = AppString.isStringNotEmpty(category['category']) ? category['category'] : "";
+        String? categoryName = StringUtils.isNotEmpty(category['category']) ? category['category'] : "";
         categoryWidgets.add(_SelectionItemWidget(
             label: categoryName,
             selected: _preferredCategories!.contains(categoryName),
             onTap: () {
-              Analytics.instance.logSelect(target: "Category: $categoryName");
+              Analytics().logSelect(target: "Category: $categoryName");
               AppSemantics.announceCheckBoxStateChange(context, _preferredCategories!.contains(categoryName), categoryName);
               Auth2().prefs?.toggleInterestCategory(categoryName);
             }));
@@ -247,7 +244,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   //Tags
   void _initTags() {
-    ExploreService().loadEventTags().then((List<String>? tagList) {
+    Events().loadEventTags().then((List<String>? tagList) {
       if (mounted) {
         setState(() {
           _tags = tagList ?? [];
@@ -261,13 +258,13 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
     return Column(
       children: <Widget>[
         _buildSearchField(),
-        _tagSearchMode || !AppCollection.isCollectionNotEmpty(_followingTags)
+        _tagSearchMode || !CollectionUtils.isNotEmpty(_followingTags)
             ? Container()
-            : Text(Localization().getStringEx('panel.settings.manage_interests.list.following', "FOLLOWING")!),
+            : Text(Localization().getStringEx('panel.settings.manage_interests.list.following', "FOLLOWING")),
         _tagSearchMode ? Container() : _buildTagsList(_followingTags),
-        _tagSearchMode ? Container() : Text(Localization().getStringEx('panel.settings.manage_interests.list.all_tags', "ALL TAGS")!),
+        _tagSearchMode ? Container() : Text(Localization().getStringEx('panel.settings.manage_interests.list.all_tags', "ALL TAGS")),
         _tagSearchMode ? Container() : _buildTagsList(_tags),
-        !_tagSearchMode ? Container() : Text(Localization().getStringEx('panel.settings.manage_interests.list.search', "SEARCH")!),
+        !_tagSearchMode ? Container() : Text(Localization().getStringEx('panel.settings.manage_interests.list.search', "SEARCH")),
         !_tagSearchMode ? Container() : _buildTagsList(_filterTags(_textEditingController.text)),
       ],
     );
@@ -340,14 +337,14 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }
 
   void _onSearchTap() async {
-    Analytics.instance.logSelect(target: "Search");
+    Analytics().logSelect(target: "Search");
     setState(() {
       _tagSearchMode = true;
     });
   }
 
   void _onCancelSearchTap() async {
-    Analytics.instance.logSelect(target: "Cancel Search");
+    Analytics().logSelect(target: "Cancel Search");
     setState(() {
       _textEditingController.text = "";
       _tagSearchMode = false;
@@ -356,9 +353,9 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   List<String>? _filterTags(String key) {
     List<String> result =  [];
-    if (AppString.isStringEmpty(key)) {
+    if (StringUtils.isEmpty(key)) {
       return _tags;
-    } else if (AppCollection.isCollectionNotEmpty(_tags)) {
+    } else if (CollectionUtils.isNotEmpty(_tags)) {
       result = _tags!.where((String tag) => tag.startsWith(key)).toList();
     }
 
@@ -367,7 +364,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   void _onTextChanged(String text) {
     setState(() {
-      _tagSearchMode = AppString.isStringNotEmpty(text);
+      _tagSearchMode = StringUtils.isNotEmpty(text);
     });
   }
 
@@ -432,7 +429,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }
 
   void _onTagTaped(String tag) {
-    Analytics.instance.logSelect(target: "Tag: $tag");
+    Analytics().logSelect(target: "Tag: $tag");
     AppSemantics.announceCheckBoxStateChange(context, _isTagSelected(tag)!, tag);
     Auth2().prefs?.toggleTag(tag);
 //    switchTag(tag);
@@ -485,7 +482,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   @override
   void onTabClicked(int? tabIndex, RoundedTab caller) {
     if ((0 <= tabIndex!) && (tabIndex < _tabs.length)) {
-      Analytics.instance.logSelect(target: caller.title);
+      Analytics().logSelect(target: caller.title);
       _selectTab(_tabs[tabIndex]);
     }
   }
@@ -578,8 +575,8 @@ class _SelectionItemWidget extends StatelessWidget {
     return Semantics(
         label: label,
         value: (selected!?Localization().getStringEx("toggle_button.status.checked", "checked",) :
-        Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
-            ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
+        Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
+            ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
         excludeSemantics: true,
         child: GestureDetector(
           onTap: onTap,

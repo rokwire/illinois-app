@@ -19,37 +19,36 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/sport/Team.dart';
-import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/News.dart';
-import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 
-import 'package:illinois/model/Coach.dart';
+import 'package:illinois/model/sport/Coach.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/model/Roster.dart';
-import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/Log.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/model/sport/Roster.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
+import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
-import 'package:illinois/service/Network.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-class Sports with Service implements NotificationsListener {
-
-  static const String GAME_URI = '${DeepLink.ROKWIRE_URL}/game_detail';
+class Sports with Service implements NotificationsListener, ExploreJsonHandler {
 
   static const String notifyChanged  = "edu.illinois.rokwire.sports.changed";
   static const String notifySocialMediasChanged  = "edu.illinois.rokwire.sports.social.medias.changed";
   static const String notifyGameDetail = "edu.illinois.rokwire.sports.game.detail";
 
   static const String _sportsCacheFileName = "sports.json";
-  static const String _sportsSocialMediaCacheFileName = "sports.social.mdeia.json";
+  static const String _sportsSocialMediaCacheFileName = "sportsSocialMedia.json";
 
   static final Sports _logic = Sports._internal();
 
@@ -72,6 +71,8 @@ class Sports with Service implements NotificationsListener {
 
   @override
   void createService() {
+    super.createService();
+    Explore.addJsonHandler(this);
     NotificationService().subscribe(this,[
       DeepLink.notifyUri,
       AppLivecycle.notifyStateChanged,
@@ -81,7 +82,9 @@ class Sports with Service implements NotificationsListener {
 
   @override
   void destroyService() {
+    Explore.removeJsonHandler(this);
     NotificationService().unsubscribe(this);
+    super.destroyService();
   }
 
   @override
@@ -134,6 +137,10 @@ class Sports with Service implements NotificationsListener {
     }
   }
 
+  // ExploreJsonHandler
+  @override bool exploreCanJson(Map<String, dynamic>? json) => Game.canJson(json);
+  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Game.fromJson(json);
+
   // Accessories
 
   List<SportDefinition>? get sports {
@@ -184,7 +191,7 @@ class Sports with Service implements NotificationsListener {
 
   static Future<String?> _loadContentStringFromNet(String url) async {
     try {
-      Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
+      Response? response = await Network().get(url, auth: Auth2());
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     }
     catch (e) { print(e.toString()); }
@@ -205,7 +212,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   static Future<List<SportDefinition>?> _loadSportsFromCache() async {
-    return SportDefinition.listFromJson(AppJson.decodeList(await _loadContentStringFromCache(_sportsCacheFileName)));
+    return SportDefinition.listFromJson(JsonUtils.decodeList(await _loadContentStringFromCache(_sportsCacheFileName)));
   }
 
   void _applySports(List<SportDefinition>? sports) {
@@ -217,9 +224,9 @@ class Sports with Service implements NotificationsListener {
 
   Future<bool> _applySportsFromNet() async {
     String? serviceUrl = Config().sportsServiceUrl;
-    if (AppString.isStringNotEmpty(serviceUrl)) {
+    if (StringUtils.isNotEmpty(serviceUrl)) {
       String? contentString = await _loadContentStringFromNet("$serviceUrl/api/v2/sports");
-      List<SportDefinition>? sports = SportDefinition.listFromJson(AppJson.decodeList(contentString));
+      List<SportDefinition>? sports = SportDefinition.listFromJson(JsonUtils.decodeList(contentString));
       if (sports != null) {
         _lastCheckSportsTime = DateTime.now().millisecondsSinceEpoch;
         if (!DeepCollectionEquality().equals(_sports, sports)) {
@@ -234,8 +241,8 @@ class Sports with Service implements NotificationsListener {
 
   Future<void> _updateSportsFromNet() async {
     // Update once daily
-    DateTime today = AppDateTime.midnight(DateTime.now())!;
-    DateTime lastCheck = AppDateTime.midnight(DateTime.fromMillisecondsSinceEpoch(_lastCheckSportsTime ?? 0))!;
+    DateTime today = DateTimeUtils.midnight(DateTime.now())!;
+    DateTime lastCheck = DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(_lastCheckSportsTime ?? 0))!;
     if (lastCheck.compareTo(today) < 0) {
       if (await _applySportsFromNet()) {
         NotificationService().notify(notifyChanged, null);
@@ -244,7 +251,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   void _sortSports() {
-    if (AppCollection.isCollectionNotEmpty(_menSports)) {
+    if (CollectionUtils.isNotEmpty(_menSports)) {
       SportDefinition? firstExplicitItem;
       try {
         firstExplicitItem = (_menSports as List<SportDefinition?>).firstWhere((SportDefinition? sportType) {
@@ -276,7 +283,7 @@ class Sports with Service implements NotificationsListener {
       }
     }
 
-    if (AppCollection.isCollectionNotEmpty(_womenSports)) {
+    if (CollectionUtils.isNotEmpty(_womenSports)) {
       SportDefinition? firstExplicitItem;
       try {
         firstExplicitItem = (_womenSports as List<SportDefinition?>).firstWhere((SportDefinition? sportType) {
@@ -332,14 +339,14 @@ class Sports with Service implements NotificationsListener {
   }
 
   static Future<List<SportSocialMedia>?> _loadSportSocialMediaFromCache() async {
-    return SportSocialMedia.listFromJson(AppJson.decodeList(await _loadContentStringFromCache(_sportsSocialMediaCacheFileName)));
+    return SportSocialMedia.listFromJson(JsonUtils.decodeList(await _loadContentStringFromCache(_sportsSocialMediaCacheFileName)));
   }
 
   Future<bool> _applySportSocialMediaFromNet() async {
     String? serviceUrl = Config().sportsServiceUrl;
-    if (AppString.isStringNotEmpty(serviceUrl)) {
+    if (StringUtils.isNotEmpty(serviceUrl)) {
       String? contentString = await _loadContentStringFromNet("$serviceUrl/api/v2/social");
-      List<SportSocialMedia>? socialMedias = SportSocialMedia.listFromJson(AppJson.decodeList(contentString));
+      List<SportSocialMedia>? socialMedias = SportSocialMedia.listFromJson(JsonUtils.decodeList(contentString));
       if (socialMedias != null) {
         _lastCheckSocialMediasTime = DateTime.now().millisecondsSinceEpoch;
         if (!DeepCollectionEquality().equals(_socialMedias, socialMedias)) {
@@ -354,8 +361,8 @@ class Sports with Service implements NotificationsListener {
 
   Future<void> _updateSportSocialMediaFromNet() async {
     // Update once daily
-    DateTime today = AppDateTime.midnight(DateTime.now())!;
-    DateTime lastCheck = AppDateTime.midnight(DateTime.fromMillisecondsSinceEpoch(_lastCheckSocialMediasTime ?? 0))!;
+    DateTime today = DateTimeUtils.midnight(DateTime.now())!;
+    DateTime lastCheck = DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(_lastCheckSocialMediasTime ?? 0))!;
     if (lastCheck.compareTo(today) < 0) {
       if (await _applySportSocialMediaFromNet()) {
         NotificationService().notify(notifyChanged, null);
@@ -366,7 +373,7 @@ class Sports with Service implements NotificationsListener {
   // Getters
 
   SportDefinition? getSportByShortName(String? sportShortName) {
-    if (AppCollection.isCollectionNotEmpty(_sports) && AppString.isStringNotEmpty(sportShortName)) {
+    if (CollectionUtils.isNotEmpty(_sports) && StringUtils.isNotEmpty(sportShortName)) {
       for (SportDefinition sport in _sports!) {
         if (sportShortName == sport.shortName) {
           return sport;
@@ -378,7 +385,7 @@ class Sports with Service implements NotificationsListener {
 
 
   SportSocialMedia? getSocialMediaForSport(String? shortName) {
-    if (AppString.isStringNotEmpty(shortName) && AppCollection.isCollectionNotEmpty(_socialMedias)) {
+    if (StringUtils.isNotEmpty(shortName) && CollectionUtils.isNotEmpty(_socialMedias)) {
       try {
         return (_socialMedias as List<SportSocialMedia?>).firstWhere((socialMedia) => shortName == socialMedia?.shortName, orElse: () => null);
       }
@@ -387,20 +394,50 @@ class Sports with Service implements NotificationsListener {
     return null;
   }
 
+  static String? getGameDayGuideUrl(String? sportKey) {
+    if (sportKey == "football") {
+      return Config().gameDayFootballUrl;
+    } else if ((sportKey == "mbball") || (sportKey == "wbball")) {
+      return Config().gameDayBasketballUrl;
+    } else if ((sportKey == "mten") || (sportKey == "wten")) {
+      return Config().gameDayTennisUrl;
+    } else if (sportKey == "wvball") {
+      return Config().gameDayVolleyballUrl;
+    } else if (sportKey == "softball") {
+      return Config().gameDaySoftballUrl;
+    } else if (sportKey == "wswim") {
+      return Config().gameDaySwimDiveUrl;
+    } else if ((sportKey == "mcross") || (sportKey == "wcross")) {
+      return Config().gameDayCrossCountryUrl;
+    } else if (sportKey == "baseball") {
+      return Config().gameDayBaseballUrl;
+    } else if ((sportKey == "mgym") || (sportKey == "wgym")) {
+      return Config().gameDayGymnasticsUrl;
+    } else if (sportKey == "wrestling") {
+      return Config().gameDayWrestlingUrl;
+    } else if (sportKey == "wsoc") {
+      return Config().gameDaySoccerUrl;
+    } else if ((sportKey == "mtrack") || (sportKey == "wtrack")) {
+      return Config().gameDayTrackFieldUrl;
+    } else {
+      return Config().gameDayAllUrl;
+    }
+  }
+
   // APIs
 
   Future<List<Roster>?> loadRosters(String? sportKey) async {
-    if (AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
+    if (StringUtils.isNotEmpty(Config().sportsServiceUrl) && StringUtils.isNotEmpty(sportKey)) {
       final rostersUrl = "${Config().sportsServiceUrl}/api/v2/players?sport=$sportKey";
-      final response = await Network().get(rostersUrl, auth: NetworkAuth.Auth2);
+      final response = await Network().get(rostersUrl, auth: Auth2());
       String? responseBody = response?.body;
       int responseCode = response?.statusCode ?? -1;
       if (responseCode == 200) {
-        List<dynamic>? jsonData = AppJson.decode(responseBody);
-        if (AppCollection.isCollectionNotEmpty(jsonData)) {
+        List<dynamic>? jsonData = JsonUtils.decode(responseBody);
+        if (CollectionUtils.isNotEmpty(jsonData)) {
           List<Roster> rosters = [];
           for (dynamic jsonEntry in jsonData!) {
-            Roster? roster = Roster.fromJson(AppJson.mapValue(jsonEntry));
+            Roster? roster = Roster.fromJson(JsonUtils.mapValue(jsonEntry));
             if (roster != null) {
               rosters.add(roster);
             }
@@ -416,17 +453,17 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<List<Coach>?> loadCoaches(String? sportKey) async {
-    if (AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
+    if (StringUtils.isNotEmpty(Config().sportsServiceUrl) && StringUtils.isNotEmpty(sportKey)) {
       final coachesUrl = "${Config().sportsServiceUrl}/api/v2/coaches?sport=$sportKey";
-      final response = await Network().get(coachesUrl, auth: NetworkAuth.Auth2);
+      final response = await Network().get(coachesUrl, auth: Auth2());
       String? responseBody = response?.body;
       int? responseCode = response?.statusCode;
       if (responseCode == 200) {
-        List<dynamic>? jsonList = AppJson.decode(responseBody);
-        if (AppCollection.isCollectionNotEmpty(jsonList)) {
+        List<dynamic>? jsonList = JsonUtils.decode(responseBody);
+        if (CollectionUtils.isNotEmpty(jsonList)) {
           List<Coach> coaches = [];
           for (dynamic jsonEntry in jsonList!) {
-            Coach? coach = Coach.fromJson(AppJson.mapValue(jsonEntry));
+            Coach? coach = Coach.fromJson(JsonUtils.mapValue(jsonEntry));
             if (coach != null) {
               coaches.add(coach);
             }
@@ -442,15 +479,15 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<TeamSchedule?> loadScheduleForCurrentSeason(String? sportKey) async {
-    if (AppString.isStringEmpty(Config().sportsServiceUrl) || AppString.isStringEmpty(sportKey)) {
+    if (StringUtils.isEmpty(Config().sportsServiceUrl) || StringUtils.isEmpty(sportKey)) {
       return null;
     }
     String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-schedule?sport=$sportKey';
-    final response = await Network().get(scheduleUrl, auth: NetworkAuth.Auth2);
+    final response = await Network().get(scheduleUrl, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     String? responseBody = response?.body;
     if (responseCode == 200) {
-      Map<String, dynamic>? jsonData = AppJson.decode(responseBody);
+      Map<String, dynamic>? jsonData = JsonUtils.decode(responseBody);
       TeamSchedule? schedule = TeamSchedule.fromJson(jsonData);
       return schedule;
     } else {
@@ -460,15 +497,15 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<TeamRecord?> loadRecordForCurrentSeason(String? sportKey) async {
-    if (AppString.isStringEmpty(Config().sportsServiceUrl) && AppString.isStringEmpty(sportKey)) {
+    if (StringUtils.isEmpty(Config().sportsServiceUrl) && StringUtils.isEmpty(sportKey)) {
       return null;
     }
     String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-record?sport=$sportKey';
-    final response = await Network().get(scheduleUrl, auth: NetworkAuth.Auth2);
+    final response = await Network().get(scheduleUrl, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     String? responseBody = response?.body;
     if (responseCode == 200) {
-      Map<String, dynamic>? jsonData = AppJson.decode(responseBody);
+      Map<String, dynamic>? jsonData = JsonUtils.decode(responseBody);
       TeamRecord? record = TeamRecord.fromJson(jsonData);
       return record;
     } else {
@@ -483,7 +520,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   List<Game>? getTopScheduleGamesFromList(List<Game>? gamesList) {
-    if (AppCollection.isCollectionEmpty(gamesList)) {
+    if (CollectionUtils.isEmpty(gamesList)) {
       return null;
     }
 
@@ -548,7 +585,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<Game?> loadGame(String? sportKey, String? gameId) async {
-    if (AppString.isStringEmpty(gameId)) {
+    if (StringUtils.isEmpty(gameId)) {
       Log.d('Missing game id to load.');
       return null;
     }
@@ -557,13 +594,13 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<List<Game>?> loadGames({String? id, List<String?>? sports, DateTime? startDate, DateTime? endDate, int? limit}) async {
-    if (AppString.isStringEmpty(Config().sportsServiceUrl)) {
+    if (StringUtils.isEmpty(Config().sportsServiceUrl)) {
       return null;
     }
 
     String queryParams = '';
 
-    if (AppString.isStringNotEmpty(id)) {
+    if (StringUtils.isNotEmpty(id)) {
       queryParams += '?id=$id';
     } else if (startDate == null) {
       startDate = AppDateTime().now;
@@ -571,19 +608,19 @@ class Sports with Service implements NotificationsListener {
 
     if (startDate != null) {
       startDate = startDate.toUtc();
-      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
+      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: 'MM/dd/yyyy', ignoreTimeZone: true);
       queryParams += '&start=$startDateFormatted';
     }
 
     if (endDate != null) {
       endDate = endDate.toUtc();
-      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
+      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: 'MM/dd/yyyy', ignoreTimeZone: true);
       queryParams += '&end=$endDateFormatted';
     }
 
-    if (AppCollection.isCollectionNotEmpty(sports)) {
+    if (CollectionUtils.isNotEmpty(sports)) {
       for (String? sport in sports!) {
-        if (AppString.isStringNotEmpty(sport)) {
+        if (StringUtils.isNotEmpty(sport)) {
           queryParams += '&sport=$sport';
         }
       }
@@ -593,20 +630,20 @@ class Sports with Service implements NotificationsListener {
     }
     String gamesUrl = '${Config().sportsServiceUrl}/api/v2/games';
 
-    if (AppString.isStringNotEmpty(queryParams)) {
+    if (StringUtils.isNotEmpty(queryParams)) {
       if (queryParams.startsWith('&')) {
         queryParams = queryParams.replaceFirst('&', '?');
       }
       gamesUrl += queryParams;
     }
 
-    final response = await Network().get(gamesUrl, auth: NetworkAuth.Auth2);
+    final response = await Network().get(gamesUrl, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
     String? responseBody = response?.body;
 
     if (responseCode == 200) {
-      List<dynamic>? jsonData = AppJson.decode(responseBody);
-      if (AppCollection.isCollectionNotEmpty(jsonData)) {
+      List<dynamic>? jsonData = JsonUtils.decode(responseBody);
+      if (CollectionUtils.isNotEmpty(jsonData)) {
         List<Game> gamesList = [];
         for (dynamic entry in jsonData!) {
           Game? game = Game.fromJson(entry);
@@ -623,13 +660,13 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<News?> loadNewsArticle(String? id) async {
-    if (AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(id)) {
+    if (StringUtils.isNotEmpty(Config().sportsServiceUrl) && StringUtils.isNotEmpty(id)) {
       String newsUrl = Config().sportsServiceUrl! + '/api/v2/news?id=$id';
-      final response = await Network().get(newsUrl, auth: NetworkAuth.Auth2);
+      final response = await Network().get(newsUrl, auth: Auth2());
       String? responseBody = response?.body;
       if (response?.statusCode == 200) {
-        List<dynamic>? jsonData = AppJson.decode(responseBody);
-        if (AppCollection.isCollectionNotEmpty(jsonData)) {
+        List<dynamic>? jsonData = JsonUtils.decode(responseBody);
+        if (CollectionUtils.isNotEmpty(jsonData)) {
           return News.fromJson(jsonData!.first);
         }
       } else {
@@ -643,7 +680,7 @@ class Sports with Service implements NotificationsListener {
   Future<List<News>?> loadNews(String? sportKey, int? count) async {
     if (Config().sportsServiceUrl != null) {
       String newsUrl = Config().sportsServiceUrl! + '/api/v2/news';
-      bool hasSportParam = AppString.isStringNotEmpty(sportKey);
+      bool hasSportParam = StringUtils.isNotEmpty(sportKey);
       if (hasSportParam) {
         newsUrl += '?sport=$sportKey';
       }
@@ -656,14 +693,14 @@ class Sports with Service implements NotificationsListener {
         newsUrl += 'limit=$count';
       }
 
-      final response = await Network().get(newsUrl, auth: NetworkAuth.Auth2);
+      final response = await Network().get(newsUrl, auth: Auth2());
       String? responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
-        List<dynamic>? jsonData = AppJson.decode(responseBody);
-        if (AppCollection.isCollectionNotEmpty(jsonData)) {
+        List<dynamic>? jsonData = JsonUtils.decode(responseBody);
+        if (CollectionUtils.isNotEmpty(jsonData)) {
           List<News> newsList = [];
           for (dynamic jsonEntry in jsonData!) {
-            News? news = News.fromJson(AppJson.mapValue(jsonEntry));
+            News? news = News.fromJson(JsonUtils.mapValue(jsonEntry));
             if (news != null) {
               newsList.add(news);
             }
@@ -681,7 +718,7 @@ class Sports with Service implements NotificationsListener {
   ///Game Helpers
 
   Game? getFirstUpcomingGame(List<Game> games) {
-    if (AppCollection.isCollectionNotEmpty(games)) {
+    if (CollectionUtils.isNotEmpty(games)) {
       return games.first;
     } else {
       return null;
@@ -689,7 +726,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   List<Game>? getTodayGames(List<Game>? games) {
-    if (AppCollection.isCollectionEmpty(games)) {
+    if (CollectionUtils.isEmpty(games)) {
       return null;
     }
     List<Game> todayGames = [];
@@ -698,7 +735,7 @@ class Sports with Service implements NotificationsListener {
         todayGames.add(game);
       }
     }
-    if (AppCollection.isCollectionEmpty(todayGames)) {
+    if (CollectionUtils.isEmpty(todayGames)) {
       return null;
     }
     _sortTodayGames(todayGames);
@@ -706,7 +743,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   void _sortTodayGames(List<Game> todayGames) {
-    if (AppCollection.isCollectionEmpty(todayGames)) {
+    if (CollectionUtils.isEmpty(todayGames)) {
       return;
     }
     final List<String?> gameDaySortOrder = [
@@ -785,9 +822,11 @@ class Sports with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
+  String get gameDetailUrl => '${DeepLink().appUrl}/game_detail';
+
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri? gameUri = Uri.tryParse(GAME_URI);
+      Uri? gameUri = Uri.tryParse(gameDetailUrl);
       if ((gameUri != null) &&
           (gameUri.scheme == uri.scheme) &&
           (gameUri.authority == uri.authority) &&

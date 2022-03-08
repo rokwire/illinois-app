@@ -15,13 +15,14 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class GroupTagsPanel extends StatefulWidget {
   final List<String>? selectedTags;
@@ -55,27 +56,26 @@ class _GroupTagsState extends State<GroupTagsPanel> {
 
   @override
   Widget build(BuildContext context) {
-    bool hasGroupTags = AppCollection.isCollectionNotEmpty(_groupTags);
+    bool hasGroupTags = CollectionUtils.isNotEmpty(_groupTags);
 
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-          context: context,
-          titleWidget: Text(Localization().getStringEx('panel.group.tags.header.title', 'Group Tags')!,
-              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0))),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.group.tags.header.title', 'Group Tags'),
+      ),
       backgroundColor: Styles().colors!.background,
       body: Stack(alignment: Alignment.center, children: <Widget>[
         SingleChildScrollView(
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
                 Expanded(child: Container()),
-                RoundedButton(label: Localization().getStringEx('panel.group.tags.button.done.title', 'Done'), width: 120, textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary, backgroundColor: Styles().colors!.white, onTap: _onTapDone)
+                RoundedButton(label: Localization().getStringEx('panel.group.tags.button.done.title', 'Done'), contentWeight: 0.0, textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary, backgroundColor: Styles().colors!.white, onTap: _onTapDone)
               ])),
               Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
-              Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.search.label', "SEARCH")!))),
+              Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.search.label', "SEARCH")))),
               Visibility(visible: _searchView, child: _buildTagsWidget(_filterTags(_searchController.text))),
-              Visibility(visible: hasGroupTags, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.selected.label', "SELECTED")!))),
+              Visibility(visible: hasGroupTags, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.selected.label', "SELECTED")))),
               Visibility(visible: hasGroupTags, child: _buildTagsWidget(_groupTags)),
-              Visibility(visible: !_searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.all.label', "ALL TAGS")!))),
+              Visibility(visible: !_searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.all.label', "ALL TAGS")))),
               Visibility(visible: !_searchView, child: _buildTagsWidget(_allTags))
             ]))),
         Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: Styles().colors!.background, child: CircularProgressIndicator()))
@@ -85,7 +85,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
 
   void _initTags() {
     _setLoading(true);
-    _groupTags = AppCollection.isCollectionNotEmpty(widget.selectedTags) ? List.from(widget.selectedTags!) : [];
+    _groupTags = CollectionUtils.isNotEmpty(widget.selectedTags) ? List.from(widget.selectedTags!) : [];
     Groups().loadTags().then((List<String>? tagList) {
       _allTags = tagList;
       _setLoading(false);
@@ -93,13 +93,13 @@ class _GroupTagsState extends State<GroupTagsPanel> {
   }
 
   Widget _buildTagsWidget(List<String>? tags) {
-    if (AppCollection.isCollectionEmpty(tags)) {
+    if (CollectionUtils.isEmpty(tags)) {
       return Container();
     }
 
     List<Widget> tagWidgets = [];
     for (String tag in tags!) {
-      if (AppCollection.isCollectionNotEmpty(tagWidgets)) {
+      if (CollectionUtils.isNotEmpty(tagWidgets)) {
         tagWidgets.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
       }
       tagWidgets.add(_TagSelectionWidget(label: tag, selected: _isTagSelected(tag), onTap: () => _onTagTaped(tag)));
@@ -119,7 +119,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
   }
 
   void _onTagTaped(String tag) {
-    Analytics.instance.logSelect(target: "Group Tag: $tag");
+    Analytics().logSelect(target: "Group Tag: $tag");
     _hideKeyboard();
     _switchTag(tag);
     AppSemantics.announceCheckBoxStateChange(context, _isTagSelected(tag), tag);
@@ -210,7 +210,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
 
   void _onTextChanged(text) {
     setState(() {
-      _searchView = AppString.isStringNotEmpty(text);
+      _searchView = StringUtils.isNotEmpty(text);
     });
   }
 
@@ -230,9 +230,9 @@ class _GroupTagsState extends State<GroupTagsPanel> {
   }
 
   List<String>? _filterTags(String key) {
-    if (AppString.isStringEmpty(key)) {
+    if (StringUtils.isEmpty(key)) {
       return _allTags;
-    } else if (AppCollection.isCollectionNotEmpty(_allTags)) {
+    } else if (CollectionUtils.isNotEmpty(_allTags)) {
       return _allTags!.where((String tag) => tag.toLowerCase().contains(key.toLowerCase())).toList();
     }
     return null;
@@ -267,9 +267,9 @@ class _TagSelectionWidget extends StatelessWidget {
                     "toggle_button.status.checked",
                     "checked",
                   )
-                : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
+                : Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
             ", " +
-            Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
+            Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
         excludeSemantics: true,
         child: GestureDetector(
             onTap: onTap,

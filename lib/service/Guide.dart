@@ -4,17 +4,17 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
+import 'package:rokwire_plugin/service/network.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:timezone/timezone.dart';
@@ -23,8 +23,6 @@ enum GuideContentSource { Net, Debug }
 
 class Guide with Service implements NotificationsListener {
   
-  static const String GUIDE_URI = '${DeepLink.ROKWIRE_URL}/guide_detail';
-
   static const String notifyChanged  = "edu.illinois.rokwire.guide.changed";
   static const String notifyGuideDetail = "edu.illinois.rokwire.guide.detail";
 
@@ -76,7 +74,7 @@ class Guide with Service implements NotificationsListener {
     }
     else {
       String? contentString = await _loadContentStringFromNet();
-      _contentList = AppJson.decodeList(contentString);
+      _contentList = JsonUtils.decodeList(contentString);
       if (_contentList != null) {
         _contentMap = _buildContentMap(_contentList);
         _contentSource = GuideContentSource.Net;
@@ -160,12 +158,12 @@ class Guide with Service implements NotificationsListener {
   }
 
   Future<List<dynamic>?> _loadContentJsonFromCache() async {
-    return AppJson.decodeList(await _loadContentStringFromCache());
+    return JsonUtils.decodeList(await _loadContentStringFromCache());
   }
 
   Future<String?> _loadContentStringFromNet() async {
     try {
-      Response? response = await Network().get("${Config().contentUrl}/student_guides", auth: NetworkAuth.Auth2);
+      Response? response = await Network().get("${Config().contentUrl}/student_guides", auth: Auth2());
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     }
     catch (e) { print(e.toString()); }
@@ -175,7 +173,7 @@ class Guide with Service implements NotificationsListener {
   Future<void> _updateContentFromNet() async {
     if ((_contentSource == null) || (_contentSource == GuideContentSource.Net)) {
       String? contentString = await _loadContentStringFromNet();
-      List<dynamic>? contentList = AppJson.decodeList(contentString);
+      List<dynamic>? contentList = JsonUtils.decodeList(contentString);
       if ((contentList != null) && !DeepCollectionEquality().equals(_contentList, contentList)) {
         _contentList = contentList;
         _contentMap = _buildContentMap(_contentList);
@@ -192,8 +190,8 @@ class Guide with Service implements NotificationsListener {
     if (contentList != null) {
       contentMap = LinkedHashMap<String, Map<String, dynamic>?>();
       for (dynamic contentEntry in contentList) {
-        Map<String, dynamic>? mapEntry = AppJson.mapValue(contentEntry);
-        String? id = (mapEntry != null) ? AppJson.stringValue(mapEntry['_id']) : null;
+        Map<String, dynamic>? mapEntry = JsonUtils.mapValue(contentEntry);
+        String? id = (mapEntry != null) ? JsonUtils.stringValue(mapEntry['_id']) : null;
         if (id != null) {
           contentMap[id] = mapEntry;
         }
@@ -226,42 +224,42 @@ class Guide with Service implements NotificationsListener {
       if (value != null) {
         return value;
       }
-      entry = entryById(AppJson.stringValue(entry['content_ref']));
+      entry = entryById(JsonUtils.stringValue(entry['content_ref']));
     }
     return null;
   }
 
   String? entryId(Map<String, dynamic>? entry) {
-    return AppJson.stringValue(entryValue(entry, '_id'));
+    return JsonUtils.stringValue(entryValue(entry, '_id'));
   }
 
   String? entryTitle(Map<String, dynamic>? entry, { bool stripHtmlTags = true }) {
-    String? result = AppJson.stringValue(entryValue(entry, 'title')) ?? AppJson.stringValue(entryValue(entry, 'list_title')) ?? AppJson.stringValue(entryValue(entry, 'detail_title'));
-    return ((result != null) && (stripHtmlTags == true)) ? AppString.stripHtmlTags(result) : result;
+    String? result = JsonUtils.stringValue(entryValue(entry, 'title')) ?? JsonUtils.stringValue(entryValue(entry, 'list_title')) ?? JsonUtils.stringValue(entryValue(entry, 'detail_title'));
+    return ((result != null) && (stripHtmlTags == true)) ? StringUtils.stripHtmlTags(result) : result;
     // Bidi.stripHtmlIfNeeded(result);
   }
 
   String? entryListTitle(Map<String, dynamic>? entry, { bool? stripHtmlTags }) {
-    String? result = AppJson.stringValue(entryValue(entry, 'list_title')) ?? AppJson.stringValue(entryValue(entry, 'title'));
-    return ((result != null) && (stripHtmlTags == true)) ? AppString.stripHtmlTags(result) : result;
+    String? result = JsonUtils.stringValue(entryValue(entry, 'list_title')) ?? JsonUtils.stringValue(entryValue(entry, 'title'));
+    return ((result != null) && (stripHtmlTags == true)) ? StringUtils.stripHtmlTags(result) : result;
     // Bidi.stripHtmlIfNeeded(result);
   }
 
   String? entryListDescription(Map<String, dynamic>? entry, { bool? stripHtmlTags }) {
-    String? result = AppJson.stringValue(entryValue(entry, 'list_description')) ?? AppJson.stringValue(entryValue(entry, 'description'));
-    return ((result != null) && (stripHtmlTags == true)) ? AppString.stripHtmlTags(result) : result;
+    String? result = JsonUtils.stringValue(entryValue(entry, 'list_description')) ?? JsonUtils.stringValue(entryValue(entry, 'description'));
+    return ((result != null) && (stripHtmlTags == true)) ? StringUtils.stripHtmlTags(result) : result;
     // Bidi.stripHtmlIfNeeded(result);
   }
 
   bool isEntryReminder(Map<String, dynamic>? entry) {
-    return AppJson.stringValue(entryValue(entry, 'content_type')) == campusReminderContentType;
+    return JsonUtils.stringValue(entryValue(entry, 'content_type')) == campusReminderContentType;
   }
 
   // Returns the date in:
   // A) if universityLocation exits => in Univerity timezone;
   // B) otherwise => in local timezone.
   DateTime? reminderDate(Map<String, dynamic>? entry) {
-    DateTime? dateUtc = AppDateTime().dateTimeFromString(AppJson.stringValue(entryValue(entry, 'date')), format: "yyyy-MM-dd", isUtc: true);
+    DateTime? dateUtc = DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(entryValue(entry, 'date')), format: "yyyy-MM-dd", isUtc: true);
     if (dateUtc != null) {
       Location? universityLocation = AppDateTime().universityLocation;
       return (universityLocation != null) ? TZDateTime(universityLocation, dateUtc.year, dateUtc.month, dateUtc.day) : DateTime(dateUtc.year, dateUtc.month, dateUtc.day);
@@ -278,7 +276,7 @@ class Guide with Service implements NotificationsListener {
     if (_contentList != null) {
       List<Map<String, dynamic>> guideList = <Map<String, dynamic>>[];
       for (dynamic contentEntry in _contentList!) {
-        Map<String, dynamic>? guideEntry = AppJson.mapValue(contentEntry);
+        Map<String, dynamic>? guideEntry = JsonUtils.mapValue(contentEntry);
         if ((guideEntry != null) &&
             ((guide == null) || (Guide().entryValue(guideEntry, 'guide') == guide)) &&
             ((category == null) || (Guide().entryValue(guideEntry, 'category')) == category) &&
@@ -304,7 +302,7 @@ class Guide with Service implements NotificationsListener {
 
       List<Map<String, dynamic>> remindersList = <Map<String, dynamic>>[];
       for (dynamic entry in _contentList!) {
-        Map<String, dynamic>? guideEntry = AppJson.mapValue(entry);
+        Map<String, dynamic>? guideEntry = JsonUtils.mapValue(entry);
         if (isEntryReminder(guideEntry)) {
           DateTime? entryDate = reminderDate(guideEntry);
           if ((entryDate != null) && (midnight.compareTo(entryDate) <= 0)) {
@@ -314,7 +312,7 @@ class Guide with Service implements NotificationsListener {
       }
 
       remindersList.sort((Map<String, dynamic>? entry1, Map<String, dynamic>? entry2) {
-        return AppSort.compareDateTimes(Guide().reminderDate(entry1), Guide().reminderDate(entry2));
+        return SortUtils.compare(Guide().reminderDate(entry1), Guide().reminderDate(entry2));
       });
 
       return remindersList;
@@ -326,7 +324,7 @@ class Guide with Service implements NotificationsListener {
     if (_contentList != null) {
       List<Map<String, dynamic>> promotedList = <Map<String, dynamic>>[];
       for (dynamic contentEntry in _contentList!) {
-        Map<String, dynamic>? guideEntry = AppJson.mapValue(contentEntry);
+        Map<String, dynamic>? guideEntry = JsonUtils.mapValue(contentEntry);
         if (_isEntryPromoted(guideEntry)) {
           promotedList.add(guideEntry!);
         }
@@ -337,7 +335,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   bool _isEntryPromoted(Map<String, dynamic>? entry) {
-    Map<String, dynamic>? promotion = (entry != null) ? AppJson.mapValue(entryValue(entry, 'promotion')) : null;
+    Map<String, dynamic>? promotion = (entry != null) ? JsonUtils.mapValue(entryValue(entry, 'promotion')) : null;
     return (promotion != null) ?
       _checkPromotionInterval(promotion) &&
       _checkPromotionRoles(promotion) &&
@@ -346,17 +344,17 @@ class Guide with Service implements NotificationsListener {
   }
 
   static bool _checkPromotionInterval(Map<String, dynamic>? promotion) {
-    Map<String, dynamic>? interval = (promotion != null) ? AppJson.mapValue(promotion['interval']) : null;
+    Map<String, dynamic>? interval = (promotion != null) ? JsonUtils.mapValue(promotion['interval']) : null;
     if (interval != null) {
       DateTime now = DateTime.now().toUtc();
       
-      String? startString = AppJson.stringValue(interval['start']);
+      String? startString = JsonUtils.stringValue(interval['start']);
       DateTime? startTime = (startString != null) ? DateTime.tryParse(startString)?.toUtc() : null;
       if ((startTime != null) && now.isBefore(startTime)) {
         return false;
       }
       
-      String? endString = AppJson.stringValue(interval['end']);
+      String? endString = JsonUtils.stringValue(interval['end']);
       DateTime? endTime = (endString != null) ? DateTime.tryParse(endString)?.toUtc() : null;
       if ((endTime != null) && now.isAfter(endTime)) {
         return false;
@@ -367,22 +365,22 @@ class Guide with Service implements NotificationsListener {
 
   static bool _checkPromotionRoles(Map<String, dynamic>? promotion) {
     dynamic roles = (promotion != null) ? promotion['roles'] : null;
-    return (roles != null) ? AppBoolExpr.eval(roles, (String? argument) {
+    return (roles != null) ? BoolExpr.eval(roles, (String? argument) {
       UserRole? userRole = UserRole.fromString(argument);
       return (userRole != null) ? (Auth2().prefs?.roles?.contains(userRole) ?? false) : null;
     }) : true; 
   }
 
   static bool _checkPromotionCard(Map<String, dynamic>? promotion) {
-    Map<String, dynamic>? card = (promotion != null) ? AppJson.mapValue(promotion['card']) : null;
+    Map<String, dynamic>? card = (promotion != null) ? JsonUtils.mapValue(promotion['card']) : null;
     if (card != null) {
       dynamic cardRole = card['role'];
-      if ((cardRole != null) && !AppBoolExpr.eval(cardRole, (String? role) { return Auth2().authCard?.role?.toLowerCase() == role?.toLowerCase(); })) {
+      if ((cardRole != null) && !BoolExpr.eval(cardRole, (String? role) { return Auth2().authCard?.role?.toLowerCase() == role?.toLowerCase(); })) {
         return false;
       }
 
       dynamic cardStudentLevel = card['student_level'];
-      if ((cardStudentLevel != null) && !AppBoolExpr.eval(cardStudentLevel, (String? studentLevel) { return Auth2().authCard?.studentLevel?.toLowerCase() == studentLevel?.toLowerCase(); })) {
+      if ((cardStudentLevel != null) && !BoolExpr.eval(cardStudentLevel, (String? studentLevel) { return Auth2().authCard?.studentLevel?.toLowerCase() == studentLevel?.toLowerCase(); })) {
         return false;
       }
     }
@@ -408,7 +406,7 @@ class Guide with Service implements NotificationsListener {
       contentSource = GuideContentSource.Net;
     }
 
-    contentList = AppJson.decodeList(contentString);
+    contentList = JsonUtils.decodeList(contentString);
     if (contentList != null) {
       _contentSource = contentSource;
       Storage().guideContentSource = guideContentSourceToString(_contentSource);
@@ -429,9 +427,11 @@ class Guide with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
+  String get guideDetailUrl => '${DeepLink().appUrl}/guide_detail';
+
   void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri? guideUri = Uri.tryParse(GUIDE_URI);
+      Uri? guideUri = Uri.tryParse(guideDetailUrl);
       if ((guideUri != null) &&
           (guideUri.scheme == uri.scheme) &&
           (guideUri.authority == uri.authority) &&
@@ -479,10 +479,10 @@ class Guide with Service implements NotificationsListener {
     String sourceFilePath = join(appDocDir.path, sourceFileName);
     File sourceFile = File(sourceFilePath);
     String sourceString = await sourceFile.exists() ? await sourceFile.readAsString() : null;
-    List<dynamic> sourceList = AppJson.decodeList(sourceString);
+    List<dynamic> sourceList = JsonUtils.decodeList(sourceString);
     
     List<dynamic> contentList = _convertContent(sourceList);
-    String contentString = AppJson.encode(contentList, /*prettify: true*/);
+    String contentString = JsonUtils.encode(contentList, /*prettify: true*/);
     if (contentString != null) {
       String contentFilePath = join(appDocDir.path, contentFileName);
       File contentFile = File(contentFilePath);
@@ -523,7 +523,7 @@ class Guide with Service implements NotificationsListener {
 
     // Features
     List<dynamic> features = <dynamic>[];
-    String sourceFeaturesString = AppJson.stringValue(sourceEntry['features']);
+    String sourceFeaturesString = JsonUtils.stringValue(sourceEntry['features']);
     if (sourceFeaturesString != null) {
       List<String> sourceFeatures = sourceFeaturesString.split(RegExp('[;,\n]'));
       for (String sourceFeature in sourceFeatures) {
@@ -540,7 +540,7 @@ class Guide with Service implements NotificationsListener {
     // Links
     List<dynamic> contentLinks = <dynamic>[];
 
-    String phoneLinksString = AppJson.stringValue(sourceEntry['phone_links']);
+    String phoneLinksString = JsonUtils.stringValue(sourceEntry['phone_links']);
     if (phoneLinksString != null) {
       List<String> phoneLinks = phoneLinksString.split(RegExp('[;,\n ]'));
       for (String phoneLink in phoneLinks) {
@@ -549,7 +549,7 @@ class Guide with Service implements NotificationsListener {
         }
       }
     }
-    String emailLinksString = AppJson.stringValue(sourceEntry['email_links']);
+    String emailLinksString = JsonUtils.stringValue(sourceEntry['email_links']);
     if (emailLinksString != null) {
       List<String> emailLinks = emailLinksString.split(RegExp('[;,\n ]'));
       for (String emailLink in emailLinks) {
@@ -558,7 +558,7 @@ class Guide with Service implements NotificationsListener {
         }
       }
     }
-    String webLinksString = AppJson.stringValue(sourceEntry['web_links']);
+    String webLinksString = JsonUtils.stringValue(sourceEntry['web_links']);
     if (webLinksString != null) {
       List<String> webLinks = webLinksString.split(RegExp('[;,\n ]'));
       for (String webLink in webLinks) {
@@ -567,7 +567,7 @@ class Guide with Service implements NotificationsListener {
         }
       }
     }
-    String locationLinkString = AppJson.stringValue(sourceEntry['location_links']);
+    String locationLinkString = JsonUtils.stringValue(sourceEntry['location_links']);
     if (locationLinkString != null) {
       List<String> locationItems = locationLinkString.split(RegExp('[\n]'));
       String locationTitle = locationLinkString;
@@ -586,8 +586,8 @@ class Guide with Service implements NotificationsListener {
     }
 
     // Buttons
-    String buttonText = AppJson.stringValue(sourceEntry['button_text']);
-    String buttonUrl = AppJson.stringValue(sourceEntry['button_link']);
+    String buttonText = JsonUtils.stringValue(sourceEntry['button_text']);
+    String buttonUrl = JsonUtils.stringValue(sourceEntry['button_link']);
     if ((buttonText != null) && (0 < buttonText.length) || (buttonUrl != null) && (0 < buttonUrl.length)) {
       contentEntry['buttons'] = [{ "text": buttonText, "url": buttonUrl }];
     }
@@ -597,20 +597,20 @@ class Guide with Service implements NotificationsListener {
     for (int index = 1; index <= 5; index++) {
       
       Map<String, dynamic> subDetail = <String, dynamic>{};
-      String sectionTitle = AppJson.stringValue(sourceEntry['sub_details_section${index}_title'])?.replaceAll('\n', '');
+      String sectionTitle = JsonUtils.stringValue(sourceEntry['sub_details_section${index}_title'])?.replaceAll('\n', '');
       if (sectionTitle != null) {
         subDetail['section'] = sectionTitle;
       }
 
       Map<String, dynamic> sectionEntry = <String, dynamic>{};
       
-      String sectionHeading = AppJson.stringValue(sourceEntry['sub_details_section${index}_headings'])?.replaceAll('\n', '');
+      String sectionHeading = JsonUtils.stringValue(sourceEntry['sub_details_section${index}_headings'])?.replaceAll('\n', '');
       if (sectionHeading != null) {
         sectionEntry['heading'] = sectionHeading;
       }
 
       List<dynamic> numbers = <dynamic>[];
-      String sectionNumbersString = AppJson.stringValue(sourceEntry['sub_details_section${index}_numbers']);
+      String sectionNumbersString = JsonUtils.stringValue(sourceEntry['sub_details_section${index}_numbers']);
       if (sectionNumbersString != null) {
         List<String> sectionNumers = sectionNumbersString.split(RegExp('[;\n]'));
         if (sectionNumers.length < 2) {
@@ -628,7 +628,7 @@ class Guide with Service implements NotificationsListener {
       }
 
       List<dynamic> bullets = <dynamic>[];
-      String sectionBulletsString = AppJson.stringValue(sourceEntry['sub_details_section${index}_bullets']);
+      String sectionBulletsString = JsonUtils.stringValue(sourceEntry['sub_details_section${index}_bullets']);
       if (sectionBulletsString != null) {
         List<String> sectionBullets = sectionBulletsString.split(RegExp('[;\n]'));
         if (sectionBullets.length < 2) {
@@ -659,7 +659,7 @@ class Guide with Service implements NotificationsListener {
 
     // Related
     List<dynamic> relatedList = <dynamic>[];
-    String relatedString = AppJson.stringValue(sourceEntry['related']);
+    String relatedString = JsonUtils.stringValue(sourceEntry['related']);
     if (relatedString != null) {
       List<String> related = relatedString.split(RegExp('[;,\n ]'));
       for (String relatedEntry in related) {
@@ -697,7 +697,7 @@ class GuideSection {
 
   static GuideSection? fromGuideEntry(Map<String, dynamic>? guideEntry) {
     return (guideEntry != null) ? GuideSection(
-        name: AppJson.stringValue(Guide().entryValue(guideEntry, 'section')),
+        name: JsonUtils.stringValue(Guide().entryValue(guideEntry, 'section')),
         date: Guide().isEntryReminder(guideEntry) ? Guide().reminderSectionDate(guideEntry) : null,
     ) : null;
   }

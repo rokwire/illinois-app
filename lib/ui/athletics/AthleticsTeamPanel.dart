@@ -16,23 +16,23 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/model/Coach.dart';
+import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/model/sport/Coach.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Team.dart';
-import 'package:illinois/model/Roster.dart';
+import 'package:illinois/model/sport/Roster.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/athletics/AthleticsSchedulePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
@@ -45,8 +45,8 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsTeamPanel extends StatefulWidget {
   final SportDefinition? sport;
@@ -93,16 +93,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.athletics_team.header.title', 'Team')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.athletics_team.header.title', 'Team'),
       ),
       body: _buildContentWidget(),
       backgroundColor: Styles().colors!.background,
@@ -119,16 +111,16 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
     String? facebookPageUrl = sportSocialMedia?.facebookPage;
     String? instagramUrl;
     String? instagramName = sportSocialMedia?.instagramName;
-    if (AppString.isStringNotEmpty(Config().instagramHostUrl) && AppString.isStringNotEmpty(instagramName)) {
+    if (StringUtils.isNotEmpty(Config().instagramHostUrl) && StringUtils.isNotEmpty(instagramName)) {
       instagramUrl = '${Config().instagramHostUrl}$instagramName';
     }
     String? twitterUrl;
     String? twitterName = sportSocialMedia?.twitterName;
-    if (AppString.isStringNotEmpty(Config().twitterHostUrl) && AppString.isStringNotEmpty(twitterName)) {
+    if (StringUtils.isNotEmpty(Config().twitterHostUrl) && StringUtils.isNotEmpty(twitterName)) {
       twitterUrl = '${Config().twitterHostUrl}$twitterName';
     }
 
-    String followLabel = Localization().getStringEx("panel.athletics_team.label.follow.title", "Follow")! + " ${widget.sport?.name}";
+    String followLabel = Localization().getStringEx("panel.athletics_team.label.follow.title", "Follow") + " ${widget.sport?.name}";
     String randomImageURL = Assets().randomStringFromListWithKey('images.random.sports.$sportShortName') ?? '';
     return SingleChildScrollView(
       child: Container(
@@ -197,7 +189,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                   children: <Widget>[
                     Expanded(child:
                     Text(
-                      Localization().getStringEx("panel.athletics_team.label.record.title", "Record")!,
+                      Localization().getStringEx("panel.athletics_team.label.record.title", "Record"),
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           color: Styles().colors!.fillColorPrimary,
@@ -206,7 +198,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     ),),
                     Expanded(
                       child: Text(
-                        AppString.getDefaultEmptyString(_record?.overallRecordUnformatted),
+                        StringUtils.ensureNotEmpty(_record?.overallRecordUnformatted),
                         textAlign: TextAlign.right,
                         style: TextStyle(
                             color: Styles().colors!.fillColorPrimary,
@@ -232,27 +224,27 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     _GameResult(
                       header: Localization().getStringEx("panel.athletics_team.label.conf.title", 'Conf'),
                       hint: Localization().getStringEx("panel.athletics_team.label.conf.hint", ''),
-                      result: AppString.getDefaultEmptyString(_record?.conferenceRecord),
+                      result: StringUtils.ensureNotEmpty(_record?.conferenceRecord),
                     ),
                     _GameResult(
                       header: Localization().getStringEx("panel.athletics_team.label.home.title", 'Home'),
                       hint: Localization().getStringEx("panel.athletics_team.label.home.hint", ''),
-                      result: AppString.getDefaultEmptyString(_record?.homeRecord),
+                      result: StringUtils.ensureNotEmpty(_record?.homeRecord),
                     ),
                     _GameResult(
                       header: Localization().getStringEx("panel.athletics_team.label.away.title", 'Away'),
                       hint: Localization().getStringEx("panel.athletics_team.label.away.hint", ''),
-                      result: AppString.getDefaultEmptyString(_record?.awayRecord),
+                      result: StringUtils.ensureNotEmpty(_record?.awayRecord),
                     ),
                     _GameResult(
                       header: Localization().getStringEx("panel.athletics_team.label.neutral.title", 'Neutral'),
                       hint: Localization().getStringEx("panel.athletics_team.label.neutral.hint", ''),
-                      result: AppString.getDefaultEmptyString(_record?.neutralRecord),
+                      result: StringUtils.ensureNotEmpty(_record?.neutralRecord),
                     ),
                     _GameResult(
                       header: Localization().getStringEx("panel.athletics_team.label.streak.title", 'Streak'),
                       hint: Localization().getStringEx("panel.athletics_team.label.streak.hint", ''),
-                      result: AppString.getDefaultEmptyString(_record?.streak),
+                      result: StringUtils.ensureNotEmpty(_record?.streak),
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 6, right: 10),
@@ -301,7 +293,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                               child: Image.asset('images/icon-schedule.png', excludeFromSemantics: true),
                             ),
                             Text(
-                              Localization().getStringEx("panel.athletics_team.label.schedule.title", 'Schedule')!,
+                              Localization().getStringEx("panel.athletics_team.label.schedule.title", 'Schedule'),
                               style:
                               TextStyle(color: Colors.white, fontSize: 20),
                             )
@@ -335,7 +327,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     ),
                     Padding(
                       padding: EdgeInsets.only(bottom: 48, left: 10, right: 10),
-                      child: ScalableRoundedButton(
+                      child: RoundedButton(
                         label: Localization().getStringEx("panel.athletics_team.button.full_schedule.title", 'Full Schedule'),
                         hint: Localization().getStringEx("panel.athletics_team.button.full_schedule.hint", ''),
                         onTap: _showScheduleListPanel(),
@@ -385,7 +377,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                                 child: Image.asset('images/icon-news.png', excludeFromSemantics: true),
                               ),
                               Text(
-                                Localization().getStringEx("panel.athletics_team.button.news.title", 'News')!,
+                                Localization().getStringEx("panel.athletics_team.button.news.title", 'News'),
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 20),
                               )
@@ -409,11 +401,11 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       ),
                       Expanded(
                         flex: 5,
-                        child: ScalableRoundedButton(
+                        child: RoundedButton(
                           label: Localization().getStringEx("panel.athletics_team.button.all_news.title", 'All News'),
                           hint: Localization().getStringEx("panel.athletics_team.button.all_news.hint", ''),
                           onTap: () {
-                            Analytics.instance.logSelect(target:"All News");
+                            Analytics().logSelect(target:"All News");
                             Navigator.push(
                               context,
                               CupertinoPageRoute(
@@ -434,7 +426,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
               ],
             ),
             Visibility(
-              visible: AppCollection.isCollectionNotEmpty(_allRosters),
+              visible: CollectionUtils.isNotEmpty(_allRosters),
               child: Stack(
                 alignment: Alignment.topCenter,
                 children: <Widget>[
@@ -445,7 +437,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     child: Padding(
                       padding: EdgeInsets.only(left: 16, top: 16),
                       child: Text(
-                        Localization().getStringEx("panel.athletics_team.label.team_roster.title", 'Team Roster')!,
+                        Localization().getStringEx("panel.athletics_team.label.team_roster.title", 'Team Roster'),
                         style: TextStyle(
                             color: Styles().colors!.fillColorPrimary, fontSize: 20),
                       ),
@@ -465,7 +457,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
               ),
             ),
             Visibility(
-              visible: AppCollection.isCollectionNotEmpty(_allRosters),
+              visible: CollectionUtils.isNotEmpty(_allRosters),
               child: Padding(
                 padding: EdgeInsets.only(bottom: 32, left: 10, right: 10),
                 child:
@@ -475,7 +467,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     child: Container(),),
                   Expanded(
                     flex: 5,
-                    child: ScalableRoundedButton(
+                    child: RoundedButton(
                       label: Localization().getStringEx("panel.athletics_team.button.full_roster.title", 'Full Roster'),
                       hint: Localization().getStringEx("panel.athletics_team.button.full_roster.hint", ''),
                       onTap: _showRosterListPanel(),
@@ -492,7 +484,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
               ),
             ),
             Visibility(
-              visible: AppCollection.isCollectionNotEmpty(_allCoaches),
+              visible: CollectionUtils.isNotEmpty(_allCoaches),
               child: Stack(
                 alignment: Alignment.topCenter,
                 children: <Widget>[
@@ -503,7 +495,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     child: Padding(
                       padding: EdgeInsets.only(left: 16, top: 16),
                       child: Text(
-                        Localization().getStringEx("panel.athletics_team.label.coaching_staff.title", 'Coaching Staff')!,
+                        Localization().getStringEx("panel.athletics_team.label.coaching_staff.title", 'Coaching Staff'),
                         style: TextStyle(
                             color: Styles().colors!.fillColorPrimary,
                             fontSize: 20,
@@ -525,7 +517,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
               ),
             ),
             Visibility(
-              visible: AppCollection.isCollectionNotEmpty(_allCoaches),
+              visible: CollectionUtils.isNotEmpty(_allCoaches),
               child: Padding(
                 padding: EdgeInsets.only(bottom: 48, left: 10, right: 10),
                 child:
@@ -536,7 +528,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     ),
                     Expanded(
                       flex: 5,
-                      child: ScalableRoundedButton(
+                      child: RoundedButton(
                         label: Localization().getStringEx("panel.athletics_team.button.all_staff.title", 'All Staff'),
                         hint: Localization().getStringEx("panel.athletics_team.button.all_staff.hint", ''),
                         onTap:_showCoachListPanel(),
@@ -627,7 +619,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   }
 
   Widget _buildNewsList() {
-    return AppCollection.isCollectionNotEmpty(_teamNews) ? ListView.separated(
+    return CollectionUtils.isNotEmpty(_teamNews) ? ListView.separated(
       shrinkWrap: true,
       separatorBuilder: (context, index) => Divider(
         color: Colors.transparent,
@@ -644,7 +636,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
             child: AthleticsNewsCard(
               news: news,
               onTap: () {
-                Analytics.instance.logSelect(target:"NewsCard: "+news.title!);
+                Analytics().logSelect(target:"NewsCard: "+news.title!);
                 Navigator.push(
                     context,
                     CupertinoPageRoute(
@@ -708,7 +700,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
 
   GestureTapCallback _showRosterListPanel() {
     return () {
-      Analytics.instance.logSelect(target:"Full Rosters");
+      Analytics().logSelect(target:"Full Rosters");
       Navigator.push(
           context,
           CupertinoPageRoute(
@@ -718,7 +710,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
 
   GestureTapCallback _showCoachListPanel() {
     return () {
-      Analytics.instance.logSelect(target:"All Staff");
+      Analytics().logSelect(target:"All Staff");
       Navigator.push(
           context,
           CupertinoPageRoute(
@@ -728,7 +720,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
 
   GestureTapCallback _showScheduleListPanel() {
     return () {
-      Analytics.instance.logSelect(target:"Full Schedule List");
+      Analytics().logSelect(target:"Full Schedule List");
       Navigator.push(
           context,
           CupertinoPageRoute(
@@ -738,12 +730,12 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   }
 
   void _onTapSportPreference() {
-    Analytics.instance.logSelect(target:"Category -Favorite");
+    Analytics().logSelect(target:"Category -Favorite");
     Auth2().prefs?.toggleSportInterest(widget.sport!.shortName);
   }
 
   void _onTapRosterItem(BuildContext context, Roster roster) {
-    Analytics.instance.logSelect(target:"Roster: "+roster.name!);
+    Analytics().logSelect(target:"Roster: "+roster.name!);
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -752,7 +744,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   }
 
   void _onTapCoachItem(BuildContext context, Coach coach) {
-    Analytics.instance.logSelect(target:"Coach: "+coach.title!);
+    Analytics().logSelect(target:"Coach: "+coach.title!);
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -912,7 +904,7 @@ class _RosterItem extends StatelessWidget {
                     fontSize: 16),
               ),
               Text(
-                AppString.getDefaultEmptyString(position),
+                StringUtils.ensureNotEmpty(position),
                 softWrap: true,
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies!.medium,
@@ -929,7 +921,7 @@ class _RosterItem extends StatelessWidget {
   Widget _imageContainer() {
     double width = 128;
     double height = 144;
-    if (AppString.isStringNotEmpty(imageUrl)) {
+    if (StringUtils.isNotEmpty(imageUrl)) {
       return Image.network(imageUrl!, excludeFromSemantics: true, width: width, height: height, fit: BoxFit.cover, alignment: Alignment.topCenter);
     } else {
       return Container(width: width, height: height, color: Styles().colors!.background);
@@ -1016,8 +1008,8 @@ class _TeamSocialCell extends StatelessWidget {
   }
 
   void _onTap(BuildContext context) {
-    Analytics.instance.logSelect(target:"Social: "+name!);
-    if (AppString.isStringNotEmpty(webUrl)) {
+    Analytics().logSelect(target:"Social: "+name!);
+    if (StringUtils.isNotEmpty(webUrl)) {
       Navigator.push(
           context,
           CupertinoPageRoute(

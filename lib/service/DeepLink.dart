@@ -14,53 +14,23 @@
  * limitations under the License.
  */
 
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
-import 'package:uni_links/uni_links.dart';
+import 'package:flutter/foundation.dart';
+import 'package:rokwire_plugin/service/deep_link.dart' as rokwire;
 
-class DeepLink with Service {
+class DeepLink extends rokwire.DeepLink {
   
-  static const String ROKWIRE_SCHEME = 'edu.illinois.rokwire';
-  static const String ROKWIRE_HOST = 'rokwire.illinois.edu';
-  static const String ROKWIRE_URL = '$ROKWIRE_SCHEME://$ROKWIRE_HOST';
+  // Singletone Factory
   
-  static const String notifyUri  = "edu.illinois.rokwire.deeplink.uri";
+  @protected
+  DeepLink.internal() : super.internal();
 
-  static final DeepLink _deepLink = DeepLink._internal();
+  factory DeepLink() => ((rokwire.DeepLink.instance is DeepLink) ? (rokwire.DeepLink.instance as DeepLink) : (rokwire.DeepLink.instance = DeepLink.internal()));
 
-  factory DeepLink() {
-    return _deepLink;
-  }
-
-  DeepLink._internal();
+  // Overrides
 
   @override
-  Future<void> initService() async {
-
-    // 1. Initial Uri
-    getInitialUri().then((uri) {
-      if (uri != null) {
-        NotificationService().notify(notifyUri, uri);
-      }
-    });
-
-    // 2. Updated uri
-    uriLinkStream.listen((Uri? uri) {
-      if (uri != null) {
-        NotificationService().notify(notifyUri, uri);
-      }
-    });
-
-    await super.initService();
-  }
-
-  static bool isRokwireUri(Uri? uri) => (uri?.scheme == ROKWIRE_SCHEME) && (uri?.host == ROKWIRE_HOST);
-  static bool isRokwireUrl(String? url) =>  isRokwireUri((url != null) ? Uri.tryParse(url) : null);
-  static void launchUrl(String? url) => launchUri((url != null) ? Uri.tryParse(url) : null);
-
-  static void launchUri(Uri? uri) {
-    if (uri != null) {
-      NotificationService().notify(notifyUri, uri);
-    }
-  }
+  String? get appScheme => 'edu.illinois.rokwire';
+  
+  @override
+  String? get appHost => 'rokwire.illinois.edu';
 }

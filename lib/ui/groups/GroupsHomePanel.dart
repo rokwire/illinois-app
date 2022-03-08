@@ -16,21 +16,21 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class GroupsHomePanel extends StatefulWidget{
   _GroupsHomePanelState createState() => _GroupsHomePanelState();
@@ -40,7 +40,7 @@ enum _FilterType { none, category, tags }
 enum _TagFilter { all, my }
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener{
-  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories")!;
+  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All Categories");
 
   bool _isFilterLoading = false;
   bool _isGroupsLoading = false;
@@ -56,21 +56,23 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   _TagFilter? _selectedTagFilter = _TagFilter.all;
   _FilterType __activeFilterType = _FilterType.none;
 
+  String? _modalImageUrl; // ModalImageDial presentation
+
   //TBD: this filtering has to be done on the server side.
   List<Group>? _getFilteredAllGroupsContent() {
-    if (AppCollection.isCollectionEmpty(_allGroups)) {
+    if (CollectionUtils.isEmpty(_allGroups)) {
       return _allGroups;
     }
     // Filter By Category
     String? selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
     List<Group>? filteredGroups = _allGroups;
-    if (AppString.isStringNotEmpty(selectedCategory)) {
+    if (StringUtils.isNotEmpty(selectedCategory)) {
       filteredGroups = _allGroups!.where((group) => (selectedCategory == group.category)).toList();
     }
     // Filter by User Tags
     if (_selectedTagFilter == _TagFilter.my) {
       Set<String>? userTags = Auth2().prefs?.positiveTags;
-      if (AppCollection.isCollectionNotEmpty(userTags) && AppCollection.isCollectionNotEmpty(filteredGroups)) {
+      if (CollectionUtils.isNotEmpty(userTags) && CollectionUtils.isNotEmpty(filteredGroups)) {
         filteredGroups = filteredGroups!.where((group) => group.tags?.any((tag) => userTags!.contains(tag)) ?? false).toList();
       }
     }
@@ -245,7 +247,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     List<String> categories = [];
     categories.add(_allCategoriesValue);
     List<String>? groupCategories = await Groups().loadCategories();
-    if (AppCollection.isCollectionNotEmpty(groupCategories)) {
+    if (CollectionUtils.isNotEmpty(groupCategories)) {
       categories.addAll(groupCategories!);
     }
     _categories = categories;
@@ -257,7 +259,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   List<Group>? _sortGroups(List<Group>? groups) {
-    if (AppCollection.isCollectionEmpty(groups)) {
+    if (CollectionUtils.isEmpty(groups)) {
       return groups;
     }
     groups!.sort((group1, group2) {
@@ -285,17 +287,26 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.groups_home.label.heading","Groups")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.groups_home.label.heading","Groups"),
       ),
-      body: Column(children: <Widget>[
+      body: ModalImageDialog.modalDialogContainer(
+          content: _buildContent(),
+          imageUrl: _modalImageUrl,
+          onClose: () {
+            Analytics().logSelect(target: "Close");
+            _modalImageUrl = null;
+            setState(() {});
+          }
+      ),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: TabBarWidget(),
+    );
+  }
+
+  Widget _buildContent(){
+    return
+      Column(children: <Widget>[
         _buildTabs(),
         _buildFilterButtons(),
         Expanded(
@@ -305,11 +316,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             alignment: AlignmentDirectional.topCenter,
             children: <Widget>[
               Container(color: Styles().colors!.background, child:
-                RefreshIndicator(onRefresh: _onPullToRefresh, child: 
-                  SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
-                    Column( children: <Widget>[ _myGroupsSelected ? _buildMyGroupsContent() : _buildAllGroupsContent(), ],),
-                  ),
-                ),
+              RefreshIndicator(onRefresh: _onPullToRefresh, child:
+              SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+              Column( children: <Widget>[ _myGroupsSelected ? _buildMyGroupsContent() : _buildAllGroupsContent(), ],),
+              ),
+              ),
               ),
               Visibility(
                   visible: _hasActiveFilter,
@@ -321,10 +332,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             ],
           ),
         ),
-      ],),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
-    );
+      ],);
   }
 
   Widget _buildTabs(){
@@ -342,9 +350,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               child: IntrinsicWidth(child:
                 Row(
                   children: <Widget>[
-                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All groups'), hint: '', selected: !_myGroupsSelected ,onTap: _onTapAllGroups),
+                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups'), hint: '', selected: !_myGroupsSelected ,onTap: _onTapAllGroups),
                     Container(width: 15,),
-                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My groups'), hint: '', selected: _myGroupsSelected, onTap: _onTapMyGroups),
+                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups'), hint: '', selected: _myGroupsSelected, onTap: _onTapMyGroups),
                     Container(width: 15,),
                     Flexible(child: Container()),
                     Visibility(visible: _canCreateGroup, child: _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10, excludeFromSemantics: true), selected: false, onTap: _onTapCreate)),
@@ -359,7 +367,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildFilterButtons() {
-    bool hasCategories = AppCollection.isCollectionNotEmpty(_categories);
+    bool hasCategories = CollectionUtils.isNotEmpty(_categories);
     return _isFilterLoading || _myGroupsSelected
       ? Container()
       : Container(
@@ -377,7 +385,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                   active: (_activeFilterType == _FilterType.category),
                   visible: true,
                   onTap: (){
-                    Analytics.instance.logSelect(target: "GroupFilter - Category");
+                    Analytics().logSelect(target: "GroupFilter - Category");
                     setState(() {
                       _activeFilterType = (_activeFilterType != _FilterType.category) ? _FilterType.category : _FilterType.none;
                     });
@@ -385,12 +393,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                 )),
                 Visibility(visible: hasCategories, child: Container(width: 8)),
                 FilterSelectorWidget(
-                  label: AppString.getDefaultEmptyString(_tagFilterToDisplayString(_selectedTagFilter)),
+                  label: StringUtils.ensureNotEmpty(_tagFilterToDisplayString(_selectedTagFilter)),
                   hint: "",
                   active: (_activeFilterType == _FilterType.tags),
                   visible: true,
                   onTap: (){
-                    Analytics.instance.logSelect(target: "GroupFilter - Tags");
+                    Analytics().logSelect(target: "GroupFilter - Tags");
                     setState(() {
                       _activeFilterType = (_activeFilterType != _FilterType.tags) ? _FilterType.tags : _FilterType.none;
                     });
@@ -409,7 +417,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                       height: 25,
                     ),
                     onPressed: () {
-                      Analytics.instance.logSelect(target: "Search");
+                      Analytics().logSelect(target: "Search");
                       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
                     },
                   ),
@@ -425,7 +433,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         itemCount: _activeFilterList!.length,
         itemBuilder: (context, index) {
           return FilterListItemWidget(
-            label: AppString.getDefaultEmptyString(_getFilterItemLabel(index)),
+            label: StringUtils.ensureNotEmpty(_getFilterItemLabel(index)),
             selected: _isFilterItemSelected(index),
             onTap: ()=> _onTapFilterEntry(_activeFilterList![index]),
             selectedIconRes: "images/checkbox-selected.png",
@@ -436,7 +444,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   bool _isFilterItemSelected(int filterListIndex) {
-    if (AppCollection.isCollectionEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
+    if (CollectionUtils.isEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
       return false;
     }
     switch (_activeFilterType) {
@@ -450,7 +458,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   String? _getFilterItemLabel(int filterListIndex) {
-    if (AppCollection.isCollectionEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
+    if (CollectionUtils.isEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
       return null;
     }
     switch (_activeFilterType) {
@@ -502,10 +510,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildMyGroupsContent(){
-    if (AppCollection.isCollectionEmpty(_myGroups) && AppCollection.isCollectionEmpty(_myPendingGroups)) {
+    if (CollectionUtils.isEmpty(_myGroups) && CollectionUtils.isEmpty(_myPendingGroups)) {
       String text = ((_myGroups != null) && (_myPendingGroups != null)) ?
-        Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet")! :
-        Localization().getStringEx("panel.groups_home.label.my_groups.failed", "Failed to load groups")!;
+        Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet") :
+        Localization().getStringEx("panel.groups_home.label.my_groups.failed", "Failed to load groups");
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
         child: Text(text,
@@ -527,12 +535,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildMyGroupsSection() {
     List<Widget> widgets = [];
-    if(AppCollection.isCollectionNotEmpty(_myGroups)) {
+    if(CollectionUtils.isNotEmpty(_myGroups)) {
       widgets.add(Container(height: 8,));
       for (Group? group in _myGroups!) {
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup),
+          child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup, onImageTap: (){ onTapImage(group);} ,),
         ));
       }
       widgets.add(Container(height: 8,));
@@ -541,13 +549,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildMyPendingGroupsSection(){
-    if(AppCollection.isCollectionNotEmpty(_myPendingGroups)) {
+    if(CollectionUtils.isNotEmpty(_myPendingGroups)) {
       List<Widget> widgets = [];
       widgets.add(Container(height: 16,));
       widgets.add(
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending")!,
+          child: Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"),
             style: TextStyle(
                 fontFamily: Styles().fontFamilies!.bold,
                 fontSize: 20,
@@ -589,8 +597,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildAllGroupsContent(){
-    List<Group>? filteredGroups = AppCollection.isCollectionNotEmpty(_allGroups) ? _getFilteredAllGroupsContent() : null;
-    if(AppCollection.isCollectionNotEmpty(filteredGroups)){
+    List<Group>? filteredGroups = CollectionUtils.isNotEmpty(_allGroups) ? _getFilteredAllGroupsContent() : null;
+    if(CollectionUtils.isNotEmpty(filteredGroups)){
       List<Widget> widgets = [];
       widgets.add(Container(height: 8,));
       for(Group? group in filteredGroups!){
@@ -602,7 +610,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       return Column(children: widgets,);
     }
     else{
-      String? text;
+      String text;
       if (_allGroups == null) {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.failed", "Failed to load groups");
       }
@@ -614,7 +622,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       }
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
-        child: Text(text!,
+        child: Text(text,
           style: TextStyle(
             fontFamily: Styles().fontFamilies!.regular,
             fontSize: 16,
@@ -646,33 +654,33 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       default:
         break;
     }
-    Analytics.instance.logSelect(target: "$analyticsTarget: $entry");
+    Analytics().logSelect(target: "$analyticsTarget: $entry");
     setState(() {
       _activeFilterType = _FilterType.none;
     });
   }
 
   void _onTapAllGroups(){
-    Analytics.instance.logSelect(target: "All Groups");
+    Analytics().logSelect(target: "All Groups");
     if(_myGroupsSelected){
       switchTabSelection();
     }
   }
 
   void _onTapMyGroups(){
-    Analytics.instance.logSelect(target: "My Groups");
+    Analytics().logSelect(target: "My Groups");
     if(!_myGroupsSelected){
       switchTabSelection();
     }
   }
 
   void _onTapCreate(){
-    Analytics.instance.logSelect(target: "Create Group");
+    Analytics().logSelect(target: "Create Group");
     Navigator.push(context, MaterialPageRoute(builder: (context)=>GroupCreatePanel()));
   }
 
   Future<void> _onPullToRefresh() async {
-    Analytics.instance.logSelect(target: "Pull To Refresh");
+    Analytics().logSelect(target: "Pull To Refresh");
     List<Group>? groups = await Groups().loadGroups(myGroups: _myGroupsSelected);
     if (mounted && (groups != null)) {
       List<Group>? sortedGroups = _sortGroups(groups);
@@ -688,8 +696,21 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
+  void onTapImage(Group? group){
+    _showModalImage(group?.imageURL ?? "");
+  }
+
   bool get _canCreateGroup {
     return Auth2().isOidcLoggedIn;
+  }
+
+  //Modal Image Dialog
+  void _showModalImage(String? url){
+    if(url != null) {
+      setState(() {
+        _modalImageUrl = url;
+      });
+    }
   }
 
   ///////////////////////////////////

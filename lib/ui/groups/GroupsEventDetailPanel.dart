@@ -2,29 +2,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/ExploreService.dart';
-import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Log.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Event.dart';
+import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -144,15 +147,16 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventImageHeader(){
+    String? imageUrl = widget.event?.eventImageUrl;
     return Container(
       height: 200,
       color: Styles().colors!.background,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          AppString.isStringNotEmpty(_event?.exploreImageURL) ?  Positioned.fill(child:Image.network(widget.event!.exploreImageURL!, fit: BoxFit.cover, headers: Network.authApiKeyHeader, excludeFromSemantics: true)) : Container(),
+          StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
           CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false),
+            painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(
               height: 53,
             ),
@@ -196,10 +200,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   Widget _eventTimeDetail() {
     String? displayTime = _event?.displayDateTime;
     //Newly created groups pass time in the string
-    if(AppString.isStringEmpty(displayTime?.trim())){
+    if(StringUtils.isEmpty(displayTime?.trim())){
       if(_event?.startDateString !=null || _event?.endDateString != null){
-        DateTime? startDate = AppDateTime().dateTimeFromString(_event?.startDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
-        DateTime? endDate = AppDateTime().dateTimeFromString(_event?.endDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
+        DateTime? startDate = DateTimeUtils.dateTimeFromString(_event?.startDateString, format: Event.serverRequestDateTimeFormat);
+        DateTime? endDate = DateTimeUtils.dateTimeFromString(_event?.endDateString, format: Event.serverRequestDateTimeFormat);
         if(startDate !=null){
           displayTime = AppDateTime().formatDateTime(startDate, format: "MMM dd, yyyy");
         } else if(endDate != null){
@@ -207,7 +211,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         }
       }
     }
-    if (AppString.isStringNotEmpty(displayTime)) {
+    if (StringUtils.isNotEmpty(displayTime)) {
       return Semantics(
           label: displayTime,
           excludeSemantics: true,
@@ -234,17 +238,17 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventLocationDetail() {
-    String? locationText = ExploreHelper.getLongDisplayLocation(_event, null); //TBD decide if we need distance calculation - pass _locationData
+    String? locationText = _event?.getLongDisplayLocation(null); //TBD decide if we need distance calculation - pass _locationData
     bool isVirtual = _event?.isVirtual ?? false;
-    String eventType = isVirtual? Localization().getStringEx('panel.groups_event_detail.label.online_event', "Online event")! : Localization().getStringEx('panel.groups_event_detail.label.in_person_event', "In-person event")!;
-    bool hasEventUrl = AppString.isStringNotEmpty(_event?.location?.description);
+    String eventType = isVirtual? Localization().getStringEx('panel.groups_event_detail.label.online_event', "Online Event") : Localization().getStringEx('panel.groups_event_detail.label.in_person_event', "In-person event");
+    bool hasEventUrl = StringUtils.isNotEmpty(_event?.location?.description);
     bool isOnlineUnderlined = isVirtual && hasEventUrl;
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
     String iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
-    String locationId = AppString.getDefaultEmptyString(_event?.location?.locationId);
+    String locationId = StringUtils.ensureNotEmpty(_event?.location?.locationId);
     bool isLocationIdUrl = Uri.tryParse(locationId)?.isAbsolute ?? false;
     String? value = isVirtual ? locationId : locationText;
-    bool isValueVisible = AppString.isStringNotEmpty(value) && (!isVirtual || !isLocationIdUrl);
+    bool isValueVisible = StringUtils.isNotEmpty(value) && (!isVirtual || !isLocationIdUrl);
     return GestureDetector(
       onTap: _onLocationDetailTapped,
       child: Semantics(
@@ -295,7 +299,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     bool isFree = _event?.isEventFree ?? false;
     String priceText =isFree? "Free" : (_event?.cost ?? "Free");
     String? additionalDescription = isFree? _event?.cost : null;
-    bool hasAdditionalDescription = AppString.isStringNotEmpty(additionalDescription);
+    bool hasAdditionalDescription = StringUtils.isNotEmpty(additionalDescription);
     if (priceText.isNotEmpty) {
       return Semantics(
           label: Localization().getStringEx("panel.explore_detail.label.price.title","Price"),
@@ -341,8 +345,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   Widget _eventPrivacyDetail() {
     String privacyText = _isPrivateGroupEvent
-        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')!
-        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event')!;
+        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')
+        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
     return Semantics(
         label: Localization().getStringEx('panel.explore_detail.label.privacy.title', 'Privacy'),
         value: privacyText,
@@ -359,34 +363,34 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventContacts() {
-    if (AppCollection.isCollectionEmpty(widget.event?.contacts)) {
+    if (CollectionUtils.isEmpty(widget.event?.contacts)) {
       return Container();
     }
     List<Widget> contactList = [];
     contactList.add(Padding(
-        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:')!)));
+        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:'))));
     for (Contact? contact in widget.event!.contacts!) {
       String contactDetails = '';
-      if (AppString.isStringNotEmpty(contact!.firstName)) {
+      if (StringUtils.isNotEmpty(contact!.firstName)) {
         contactDetails += contact.firstName!;
       }
-      if (AppString.isStringNotEmpty(contact.lastName)) {
-        if (AppString.isStringNotEmpty(contactDetails)) {
+      if (StringUtils.isNotEmpty(contact.lastName)) {
+        if (StringUtils.isNotEmpty(contactDetails)) {
           contactDetails += ' ';
         }
         contactDetails += contact.lastName!;
       }
-      if (AppString.isStringNotEmpty(contact.organization)) {
+      if (StringUtils.isNotEmpty(contact.organization)) {
         contactDetails += ' (${contact.organization})';
       }
-      if (AppString.isStringNotEmpty(contact.email)) {
-        if (AppString.isStringNotEmpty(contactDetails)) {
+      if (StringUtils.isNotEmpty(contact.email)) {
+        if (StringUtils.isNotEmpty(contactDetails)) {
           contactDetails += ', ';
         }
         contactDetails += contact.email!;
       }
-      if (AppString.isStringNotEmpty(contact.phone)) {
-        if (AppString.isStringNotEmpty(contactDetails)) {
+      if (StringUtils.isNotEmpty(contact.phone)) {
+        if (StringUtils.isNotEmpty(contactDetails)) {
           contactDetails += ', ';
         }
         contactDetails += contact.phone!;
@@ -398,7 +402,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   Widget _eventDescription() {
     String? longDescription = _event!.exploreLongDescription;
-    bool showDescription = AppString.isStringNotEmpty(longDescription);
+    bool showDescription = StringUtils.isNotEmpty(longDescription);
     if (!showDescription) {
       return Container();
     }
@@ -415,16 +419,16 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     List<Widget> buttons = <Widget>[];
     
     String? titleUrl = _event?.titleUrl;
-    bool hasTitleUrl = AppString.isStringNotEmpty(titleUrl);
+    bool hasTitleUrl = StringUtils.isNotEmpty(titleUrl);
 
     String? registrationUrl = _event?.registrationUrl;
-    bool hasRegistrationUrl = AppString.isStringNotEmpty(registrationUrl);
+    bool hasRegistrationUrl = StringUtils.isNotEmpty(registrationUrl);
 
     if (hasTitleUrl) {
       buttons.add(Row(children:<Widget>[
         Expanded(child:
           Padding(padding: EdgeInsets.only(bottom: 6), child:
-            ScalableRoundedButton(
+            RoundedButton(
               label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
               hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
               backgroundColor: hasRegistrationUrl ? Styles().colors!.background : Colors.white,
@@ -443,7 +447,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       buttons.add(Row(children:<Widget>[
         Expanded(child:
         Padding(padding: EdgeInsets.only(bottom: 6), child:
-          ScalableRoundedButton(
+          RoundedButton(
             label: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.title', 'Register'),
             hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
             backgroundColor: Colors.white,
@@ -465,7 +469,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            Analytics.instance.logSelect(target: "Favorite: ${_event?.title}");
+            Analytics().logSelect(target: "Favorite: ${_event?.title}");
             Auth2().prefs?.toggleFavorite(_event);
             setState(() {});
           },
@@ -485,10 +489,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
             RibbonButton(
-              leftIcon: "images/icon-edit.png",
               label: Localization().getStringEx('panel.groups_event_detail.button.edit.title',  'Edit') ,
               hint: Localization().getStringEx('panel.groups_event_detail.button.edit.hint', '') ,
-              padding: EdgeInsets.zero,
+              leftIconAsset: "images/icon-edit.png",
               onTap: _onTapEdit,
             ),
         Container(
@@ -502,10 +505,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           height: 14,
         ),
         RibbonButton(
-          leftIcon: "images/icon-leave-group.png",
           label: Localization().getStringEx('panel.groups_event_detail.button.delete.title', "Delete Event"),
           hint:  Localization().getStringEx('panel.groups_event_detail.button.delete.hint', ""),
-          padding: EdgeInsets.zero,
+          leftIconAsset: "images/icon-leave-group.png",
           onTap: _onTapDelete,
         )
       ],
@@ -516,7 +518,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     Analytics().logSelect(target: 'Edit Event');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: _event, onEditTap: (BuildContext context, Event event) {
       Groups().updateGroupEvents(event).then((String? id) {
-        if (AppString.isStringNotEmpty(id)) {
+        if (StringUtils.isNotEmpty(id)) {
           Navigator.pop(context);
         }
         else {
@@ -543,15 +545,15 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onTapWebButton(String? url, { String? analyticsName }) {
     if (analyticsName != null) {
-      Analytics.instance.logSelect(target: analyticsName);
+      Analytics().logSelect(target: analyticsName);
     }
-    if(AppString.isStringNotEmpty(url)){
+    if(StringUtils.isNotEmpty(url)){
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsName: "WebPanel($analyticsName)",)));
     }
   }
 
   void _onTapRegistration(String? registrationUrl) {
-    Analytics.instance.logSelect(target: "Registration");
+    Analytics().logSelect(target: "Registration");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _onTapWebButton(registrationUrl);
@@ -565,11 +567,11 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     Analytics().logSelect(target: 'Event location/url');
     if((_event?.isVirtual?? false) == true){
       String? url = _event?.location?.description;
-      if(AppString.isStringNotEmpty(url)) {
+      if(StringUtils.isNotEmpty(url)) {
         _onTapWebButton(url, analyticsName: "Event Link");
       }
     } else if(_event?.location?.latitude != null && _event?.location?.longitude != null) {
-      Analytics.instance.logSelect(target: "Location Detail");
+      Analytics().logSelect(target: "Location Detail");
       NativeCommunicator().launchExploreMapDirections(target: _event);
     }
   }
@@ -580,8 +582,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       return;
     }
 
-    String? title =  Localization().getStringEx('panel.groups_event_detail.label.options.add_event', "ADD EVENT");
-    String? description= Localization().getStringEx('panel.groups_event_detail.label.options.choose_group', "Choose a group you’re an admin for");
+    String title =  Localization().getStringEx('panel.groups_event_detail.label.options.add_event', "ADD EVENT");
+    String description= Localization().getStringEx('panel.groups_event_detail.label.options.choose_group', "Choose a group you’re an admin for");
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -611,14 +613,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           excludeSemantics: true,
                           child:
                           Text(
-                            title!,
+                            title,
                             style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),
                           ),
                         ),
                         Container(
                           padding: EdgeInsets.only(top: 2),
                           child: Text(
-                            description!,
+                            description,
                             style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
                           ),
                         )
@@ -638,7 +640,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                     }
                 ),
                 Container(height: 27,),
-                ScalableRoundedButton(
+                RoundedButton(
                   label: Localization().getStringEx('panel.groups_event_detail.button.add.title', "ADD "),
                   backgroundColor: Colors.white,
                   borderColor: Styles().colors!.fillColorSecondary,
@@ -649,7 +651,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       if(_currentlySelectedGroup!=null) {
                         Log.d("Selected group: $_currentlySelectedGroup");
                         AppToast.show(
-                            Localization().getStringEx('panel.groups_event_detail.label.link_result',  "Event has been linked to")! + (_currentlySelectedGroup?.title ?? ""));
+                            Localization().getStringEx('panel.groups_event_detail.label.link_result',  "Event has been linked to") + (_currentlySelectedGroup?.title ?? ""));
                         Groups().linkEventToGroup(groupId:_currentlySelectedGroup!.id,eventId: _event?.id);
                       }
                     });
@@ -664,8 +666,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _launchUrl(String? url, {BuildContext? context}) {
-    if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         launch(url!);
@@ -680,7 +682,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   @override
   void onNotification(String name, param) {
     if (name == Groups.notifyGroupEventsUpdated) {
-      ExploreService().getEventById(_event?.eventId).then((event) {
+      Events().getEventById(_event?.eventId).then((event) {
         setState(() {
           if (event != null)
             event = _event;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class PrivacyLevelSlider extends StatefulWidget {
   final double? initialValue;
@@ -66,9 +66,9 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                             child: Semantics(
                                 label: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.hint", "Privacy Level"),
                                 enabled: true,
-                                increasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.increase", "increased to")! +
+                                increasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.increase", "increased to") +
                                     (roundedValue + 1).toString(),
-                                decreasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.decrease", "decreased to")! +
+                                decreasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.decrease", "decreased to") +
                                     (roundedValue - 1).toString(),
                                 child:
                                 Padding(

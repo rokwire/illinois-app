@@ -16,31 +16,30 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Connectivity.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDayWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/OptionSelectionCell.dart';
@@ -85,30 +84,24 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(
-          context: context,
-          titleWidget: Semantics(label: Localization().getStringEx('panel.athletics.header.title', 'Athletics'),
-              excludeSemantics:true,
-              child:
-              Text(
-                Localization().getStringEx('panel.athletics.header.title', 'Athletics')!,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.0),
-              )
+      appBar: AppBar(
+        backgroundColor: Styles().colors!.fillColorPrimaryVariant,
+        leading: Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
+          IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),),
+        title: Semantics(label: Localization().getStringEx('panel.athletics.header.title', 'Athletics'), excludeSemantics: true, child:
+          Text(Localization().getStringEx('panel.athletics.header.title', 'Athletics'), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),),
+        actions: <Widget>[
+          Semantics(label: Localization().getStringEx('headerbar.teams.title', 'Teams'), button: true, excludeSemantics: true, child: 
+            InkWell(onTap: _onTapTeams, child:
+              Container(child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 19), child:
+                Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.semiBold, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid))
+              ),
+              ),
+            ),
           ),
-          rightButtonVisible: true,
-          rightButtonText: Localization().getStringEx('headerbar.teams.title', 'Teams')!,
-          onRightButtonTap: () {
-            Analytics.instance.logSelect(target: "Teams");
-            Navigator.push(
-                context,
-                CupertinoPageRoute(
-                    builder: (context) =>
-                        AthleticsTeamsPanel()));
-          },
+        ],
+
       ),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: _buildContentWidget()),
       backgroundColor: Styles().colors!.background,
@@ -175,8 +168,8 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                               Expanded(flex: 1, child: Container()),
                               Expanded(
                                 flex: 5,
-                                child: ScalableRoundedButton(
-                                  label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See more events'),
+                                child: RoundedButton(
+                                  label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See More Events'),
                                   hint: Localization().getStringEx("panel.athletics.button.see_more_events.hint", ''),
                                   onTap: _onTapMoreUpcomingEvents,
                                   backgroundColor: Styles().colors!.background,
@@ -202,7 +195,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                       child: Text(
-                                        Localization().getStringEx("panel.athletics.label.all_illinois_sports.title",'All Illinois Sports')!,
+                                        Localization().getStringEx("panel.athletics.label.all_illinois_sports.title",'All Illinois Sports'),
                                         style: TextStyle(
                                             color: Styles().colors!.fillColorPrimary,
                                             fontSize: 20,
@@ -218,7 +211,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                             MainAxisAlignment.start,
                                         children: <Widget>[
                                           Text(
-                                            Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the ")!,
+                                            Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the "),
                                             style: TextStyle(
                                                 fontFamily: Styles().fontFamilies!.medium,
                                                 color: Styles().colors!.textBackground,
@@ -228,7 +221,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                               'images/icon-check-example.png', excludeFromSemantics: true),
                                           Expanded(
                                             child:Text(
-                                              Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams")!,
+                                              Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                   fontFamily: Styles().fontFamilies!.medium,
@@ -290,7 +283,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 ),
                                                 Expanded(child:
                                                   Text(
-                                                    Localization().getStringEx("panel.athletics.label.explore_athletics.title", 'Explore Athletics')!,
+                                                    Localization().getStringEx("panel.athletics.label.explore_athletics.title", 'Explore Athletics'),
                                                     style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 20),
@@ -451,8 +444,17 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     _setLoading(false);
   }
 
+  void _onTapHome() {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  void _onTapTeams() {
+    Analytics().logSelect(target: "Teams");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamsPanel()));
+  }
+
   void _onTapMoreUpcomingEvents() {
-    Analytics.instance.logSelect(target: "More Events");
+    Analytics().logSelect(target: "More Events");
     if (Connectivity().isNotOffline) {
       ExploreFilter initialFilter = ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3});
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events, initialFilter: initialFilter, showHeaderBack: true,)));
@@ -463,7 +465,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   void _onTapNews() {
-    Analytics.instance.logSelect(target:"News");
+    Analytics().logSelect(target:"News");
     if (Connectivity().isNotOffline) {
       Navigator.push(
           context,
@@ -478,7 +480,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   void _onTapTickets() {
-    Analytics.instance.logSelect(target:"Tickets");
+    Analytics().logSelect(target:"Tickets");
     if (Connectivity().isNotOffline && (Config().ticketsUrl != null)) {
       Navigator.push(
           context,
@@ -494,7 +496,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   void _onTapGameDayGuide() {
-    Analytics.instance.logSelect(target:"Game Day Guide");
+    Analytics().logSelect(target:"Game Day Guide");
     if (Connectivity().isNotOffline && (Config().gameDayAllUrl != null)) {
         Navigator.push(
             context,
@@ -510,7 +512,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   void _onTapAthleticsGame(BuildContext context, Game game) {
-    Analytics.instance.logSelect(target: "Game: "+game.title);
+    Analytics().logSelect(target: "Game: "+game.title);
     if (Connectivity().isNotOffline) {
       Navigator.push(
           context,
@@ -595,10 +597,10 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
     bool isTicketedSport = (sport != null) ? sport.ticketed! : false;
     bool isGetTicketsVisible = isTicketedSport && (widget.game.links?.tickets != null);
     bool showImage =
-        (isTicketedSport && !AppString.isStringEmpty(widget.game.imageUrl));
+        (isTicketedSport && !StringUtils.isEmpty(widget.game.imageUrl));
     bool isFavorite = Auth2().isFavorite(widget.game);
     String? interestsLabelValue = _getInterestsLabelValue();
-    bool showInterests = AppString.isStringNotEmpty(interestsLabelValue);
+    bool showInterests = StringUtils.isNotEmpty(interestsLabelValue);
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -752,12 +754,12 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                                     children: <Widget>[
                                       Text(Localization().getStringEx(
                                           'widget.card.label.interests',
-                                          'Because of your interest in:')!,
+                                          'Because of your interest in:'),
                                         style: TextStyle(
                                             color: Styles().colors!.textBackground,
                                             fontSize: 12,
                                             fontFamily: Styles().fontFamilies!.bold),),
-                                      Text(AppString.getDefaultEmptyString(interestsLabelValue),
+                                      Text(StringUtils.ensureNotEmpty(interestsLabelValue),
                                         style: TextStyle(
                                             color: Styles().colors!.textBackground,
                                             fontSize: 12,
@@ -794,7 +796,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   }
 
   void _onTapGetTickets() {
-    Analytics.instance.logSelect(
+    Analytics().logSelect(
         target: "AthleticsCard:Item:${widget.game.title} -Get Tickets");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
@@ -916,12 +918,12 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   }
 
   void _onTapSave() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.game.title}");
+    Analytics().logSelect(target: "Favorite: ${widget.game.title}");
     Auth2().prefs?.toggleFavorite(widget.game);
   }
 
   void _onTapSportCategory(SportDefinition? sport) {
-    Analytics.instance.logSelect(target: "AthleticsCard:Item:${widget.game.title} -category: ${sport?.name}");
+    Analytics().logSelect(target: "AthleticsCard:Item:${widget.game.title} -category: ${sport?.name}");
     if (sport != null) {
       if (Connectivity().isNotOffline) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(sport)));

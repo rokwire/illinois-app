@@ -15,18 +15,19 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Groups.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupMemberPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -85,7 +86,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
 
   void _loadMember(){
     if(mounted) {
-      if (AppCollection.isCollectionNotEmpty(_group.members)) {
+      if (CollectionUtils.isNotEmpty(_group.members)) {
         setState(() {
           _member = _group.getMembersById(widget.memberId);
           _isAdmin = _member!.isAdmin;
@@ -126,7 +127,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   Future<void> _removeMembership() async{
     bool success = await Groups().deleteMembership(widget.group, widget.member);
     if(!success){
-      throw sprintf(Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group")!, [_member?.name ?? ""]);
+      throw sprintf(Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group"), [_member?.displayShortName ?? ""]);
     }
   }
 
@@ -134,9 +135,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors!.background,
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-      ),
+      appBar: HeaderBar(),
       body: _isLoading
           ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ))
           : Column(
@@ -162,7 +161,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
 
   Widget _buildHeading(){
     String? memberDateAdded = (_member?.dateCreatedUtc != null) ? AppDateTime().formatDateTime(_member?.dateCreatedUtc?.toLocal(), format: "MMMM dd") : null;
-    String memberSince = (memberDateAdded != null) ? (Localization().getStringEx("panel.member_detail.label.member_since", "Member since")! + memberDateAdded) : '';
+    String memberSince = (memberDateAdded != null) ? (Localization().getStringEx("panel.member_detail.label.member_since", "Member since") + memberDateAdded) : '';
 
     return Row(
       children: <Widget>[
@@ -172,7 +171,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
             borderRadius: BorderRadius.circular(65),
             child: Container(
                 width: 65, height: 65 ,
-                child: AppString.isStringNotEmpty(_member?.photoURL) ? Image.network(_member!.photoURL!, excludeFromSemantics: true,) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true,)
+                child: StringUtils.isNotEmpty(_member?.photoURL) ? Image.network(_member!.photoURL!, excludeFromSemantics: true,) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true,)
             ),
           ),
         ),
@@ -181,7 +180,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(_member?.name ?? "",
+              Text(_member?.displayShortName ?? "",
                 style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary
                 ),
               ),
@@ -213,11 +212,9 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                   alignment: Alignment.center,
                   children: [
                     ToggleRibbonButton(
-                        height: null,
                         borderRadius: BorderRadius.circular(4),
                         label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
                         toggled: _isAdmin,
-                        context: context,
                         onTap: _updateMemberStatus
                     ),
                     _updating ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ) : Container()
@@ -225,7 +222,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                 ),
               ),
               Container(height: 8,),
-              Text(Localization().getStringEx("panel.member_detail.label.admin_description", "Admins can manage settings, members, and events.")!,
+              Text(Localization().getStringEx("panel.member_detail.label.admin_description", "Admins can manage settings, members, and events."),
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies!.regular,
                     fontSize: 16,
@@ -242,8 +239,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   Widget _buildRemoveFromGroup() {
-    return Stack(children: <Widget>[
-        ScalableRoundedButton(label: Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
+    return
+        RoundedButton(label: Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
           backgroundColor: Styles().colors!.white,
           textColor: Styles().colors!.fillColorPrimary,
           fontFamily: Styles().fontFamilies!.bold,
@@ -255,8 +252,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
             Analytics().logSelect(target: 'Remove from Group');
             showDialog(context: context, builder: _buildRemoveFromGroupDialog);
           }
-        ),
-    ],);
+        );
   }
 
   Widget _buildRemoveFromGroupDialog(BuildContext context) {
@@ -272,7 +268,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 26),
                   child: Text(
-                    sprintf(Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?")!,[_member?.name]),
+                    sprintf(Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?"),[_member?.displayName]),
                     textAlign: TextAlign.left,
                     style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.white),
                   ),
@@ -287,15 +283,13 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                       borderColor: Styles().colors!.white,
                       backgroundColor: Styles().colors!.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      contentWeight: 0.0,
                       onTap: (){
                         Analytics().logAlert(text: "Remove member from this group?", selection: "Back");
                         Navigator.pop(context);
                       },
                     ),
                     Container(width: 16,),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
                         RoundedButton(
                           label: Localization().getStringEx("panel.member_detail.dialog.button.remove.title", "Remove"),
                           fontFamily: "ProximaNovaBold",
@@ -303,6 +297,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                           borderColor: Styles().colors!.white,
                           backgroundColor: Styles().colors!.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          contentWeight: 0.0,
+                          progress: _removing,
                           onTap: (){
                             Analytics().logAlert(text: "Remove member from this group?", selection: "Remove");
                             if(!_removing) {
@@ -327,9 +323,6 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                             }
                           },
                         ),
-                        _removing ? CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), strokeWidth: 2,) : Container(),
-                      ],
-                    ),
                   ],
                 ),
               ],

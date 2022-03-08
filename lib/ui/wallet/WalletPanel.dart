@@ -19,14 +19,16 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppNavigation.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
+import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as plugin_auth;
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
@@ -34,9 +36,8 @@ import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/VerticalTitleContentSection.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/service/Styles.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class WalletPanel extends StatefulWidget{
 
@@ -89,21 +90,11 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       body: CustomScrollView(
         slivers: <Widget>[
           SliverHeaderBar(
-            context: context,
-            backVisible: false,
-            onBackPressed: () {
-              Analytics().logSelect(target: 'Close');
-              Navigator.pop(context);
-            } ,
-            backgroundColor: Styles().colors!.surface,
-            titleWidget: Text(
-              Localization().getStringEx( "panel.wallet.label.title", "Wallet")!,
-              style: TextStyle(
-                  fontFamily: Styles().fontFamilies!.extraBold,
-                  color: Styles().colors!.fillColorPrimary,
-                  fontSize: 20,
-                  letterSpacing: 1.0),
-            ),
+            leadingAsset: null,
+            backgroundColor: Styles().colors?.surface,
+            title: Localization().getStringEx( "panel.wallet.label.title", "Wallet"),
+            textColor: Styles().colors!.fillColorPrimary,
+            fontSize: 20,
             actions: <Widget>[
               Visibility(
                 visible: widget.scrollController != null,
@@ -204,13 +195,13 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       textAlign: TextAlign.center,
       borderColor: Styles().colors!.fillColorSecondary,
       onTap: () {
-        Analytics.instance.logSelect(target: "Log in");
+        Analytics().logSelect(target: "Log in");
         if (_authLoading != true) {
           setState(() { _authLoading = true; });
-          Auth2().authenticateWithOidc().then((bool? result) {
+          Auth2().authenticateWithOidc().then((plugin_auth.Auth2OidcAuthenticateResult? result) {
             if (mounted) {
               setState(() { _authLoading = false; });
-              if (result == false) {
+              if (result != plugin_auth.Auth2OidcAuthenticateResult.succeeded) {
                 AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
               }
             }
@@ -230,15 +221,13 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
         textAlign: TextAlign.center,
         borderColor: Styles().colors!.fillColorSecondary,
         onTap: () {
-          Analytics.instance.logSelect(target: "Log in");
+          Analytics().logSelect(target: "Log in");
           Navigator.push(context, CupertinoPageRoute(
             settings: RouteSettings(),
-            builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
-              onboardingContext: {
-                "onContinueAction": () {
-                  _didLogin(context);
-                }
-              },
+            builder: (context) => SettingsLoginPhoneOrEmailPanel(
+              onFinish: () {
+                _didLogin(context);
+              }
             ),
           ),);
         },
@@ -277,7 +266,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   Widget _buildIlliniCash() {
     return _RoundedWidget(
       onView: (){
-        Analytics.instance.logSelect(target: "Illini Cash");
+        Analytics().logSelect(target: "Illini Cash");
         Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
             settings: RouteSettings(name: SettingsIlliniCashPanel.routeName),
             builder: (context){
@@ -309,7 +298,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
                 color: Styles().colors!.fillColorPrimary,
                 icon: Image.asset('images/button-plus-orange.png', excludeFromSemantics: true,),
                 onPressed: (){
-                  Analytics.instance.logSelect(target: "Add Illini Cash");
+                  Analytics().logSelect(target: "Add Illini Cash");
                   Navigator.push(context, CupertinoPageRoute(
                     builder: (context) => SettingsAddIlliniCashPanel()
                   ));
@@ -325,7 +314,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   Widget _buildMealPlan() {
     return _RoundedWidget(
       onView: (){
-        Analytics.instance.logSelect(target: "Meal plan");
+        Analytics().logSelect(target: "Meal plan");
         Navigator.of(context, rootNavigator: false).push(CupertinoPageRoute(
             builder: (context){
               return SettingsMealPlanPanel();
@@ -427,7 +416,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               ),
             ),
             Text(
-              Localization().getStringEx("panel.wallet.label.expires.title", "Card expires")! + " $expires",
+              Localization().getStringEx("panel.wallet.label.expires.title", "Card expires") + " $expires",
               style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.medium,
@@ -437,13 +426,13 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
             Container(height: 5,),
             Semantics(explicitChildNodes: true,child:
               RoundedButton(
-                label: Localization().getStringEx("panel.wallet.button.use_bus_pass.title", "Use bus pass"),
+                label: Localization().getStringEx("panel.wallet.button.use_bus_pass.title", "Use Bus Pass"),
                 hint: Localization().getStringEx("panel.wallet.button.use_bus_pass.hint", ""),
                 textColor: Styles().colors!.fillColorPrimary,
                 backgroundColor: Styles().colors!.white,
                 borderColor: Styles().colors!.fillColorSecondary,
                 onTap: (){
-                  Analytics.instance.logSelect(target: "MTD Bus Pass");
+                  Analytics().logSelect(target: "MTD Bus Pass");
                   Navigator.push(context, CupertinoPageRoute(
                       builder: (context) => MTDBusPassPanel()
                   ));
@@ -467,7 +456,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              Localization().getStringEx("panel.wallet.label.uin.title", "UIN",)!,
+              Localization().getStringEx("panel.wallet.label.uin.title", "UIN",),
               style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.medium,
@@ -491,7 +480,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
                 backgroundColor: Styles().colors!.white,
                 borderColor: Styles().colors!.fillColorSecondary,
                 onTap: (){
-                  Analytics.instance.logSelect(target: "Use ID");
+                  Analytics().logSelect(target: "Use ID");
                   Navigator.push(context, CupertinoPageRoute(
                       builder: (context) => IDCardPanel()
                   ));

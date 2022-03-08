@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeSaferWidget extends StatefulWidget {
@@ -59,43 +59,43 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   @override
   Widget build(BuildContext context) {
-    return SectionTitlePrimary(
+    return SectionHeading(
       title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
-      iconPath: 'images/campus-tools.png',
+      titleIconAsset: 'images/campus-tools.png',
       children: _buildCommandsList(),);
   }
 
   List<Widget> _buildCommandsList() {
     List<Widget> contentList = <Widget>[];
-    List<dynamic>? contentListCodes = FlexUI()['home.content.safer'];
+    List<dynamic>? contentListCodes = FlexUI()['home.safer'];
     if (contentListCodes != null) {
       for (dynamic contentListCode in contentListCodes) {
         Widget? contentEntry;
         if (contentListCode == 'building_access') {
           contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access')!,
+            title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access'),
             description: Localization().getStringEx('widget.home.safer.button.building_access.description', 'Check your current building access.'),
             onTap: _onBuildingAccess,
           );
         }
         else if (contentListCode == 'test_locations') {
           contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.test_locations.title', 'Test Locations')!,
+            title: Localization().getStringEx('widget.home.safer.button.test_locations.title', 'Test Locations'),
             description: Localization().getStringEx('widget.home.safer.button.test_locations.description', 'Find test locations'),
             onTap: _onTestLocations,
           );
         }
         else if (contentListCode == 'my_mckinley') {
           contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley')!,
+            title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley'),
             description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'MyMcKinley Patient Health Portal'),
             onTap: _onMyMcKinley,
           );
         }
         else if (contentListCode == 'wellness_answer_center') {
           contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Wellness Answer Center')!,
-            description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Contact Wellness Answer Center for issues'),
+            title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Answer Center'),
+            description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Get answers to your questions.'),
             onTap: _onWellnessAnswerCenter,
           );
         }
@@ -113,7 +113,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   Widget _buildCommandEntry({required String title, String? description, void Function()? onTap}) {
-    return Semantics(container: true, button: true, child:
+    return Semantics(label: title, container: true, button: true, child:
       InkWell(onTap: onTap, child:
         Container(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -121,11 +121,11 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Row(children: <Widget>[
               Expanded(child:
-                Text(title, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary),),
+                Text(title, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary), semanticsLabel: "",),
               ),
               Image.asset('images/chevron-right.png', excludeFromSemantics: true,),
             ],),
-            AppString.isStringNotEmpty(description) ?
+            StringUtils.isNotEmpty(description) ?
               Padding(padding: EdgeInsets.only(top: 5), child:
                 Text(description!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface),),
               ) :
@@ -160,13 +160,13 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   void _onMyMcKinley() {
     Analytics().logSelect(target: 'MyMcKinley');
-    if (AppString.isStringNotEmpty(Config().saferMcKinley['url'])) {
+    if (StringUtils.isNotEmpty(Config().saferMcKinley['url'])) {
       launch(Config().saferMcKinley['url']);
     }
   }
 
   void _onWellnessAnswerCenter() {
-    Analytics().logSelect(target: 'Wellness Answer Center');
+    Analytics().logSelect(target: 'Answer Center');
     Navigator.push(context, CupertinoPageRoute(
       builder: (context) => HomeSaferWellnessAnswerCenterPanel()
     ));

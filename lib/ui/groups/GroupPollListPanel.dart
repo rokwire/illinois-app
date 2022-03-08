@@ -15,17 +15,19 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Groups.dart';
-import 'package:illinois/model/Poll.dart';
+import 'package:rokwire_plugin/model/group.dart';
+import 'package:illinois/ext/Group.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Polls.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/polls.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/service/Polls.dart' as illinois;
 
 class GroupPollListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group group;
@@ -59,10 +61,9 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SimpleHeaderBarWithBack(
-            context: context,
-            titleWidget: Text(Localization().getStringEx('panel.group_polls.label.heading', 'All Polls')!,
-                style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0))),
+        appBar: HeaderBar(
+            title: Localization().getStringEx('panel.group_polls.label.heading', 'All Polls'),
+        ),
         body: CustomScrollView(controller: _scrollController, slivers: <Widget>[
           SliverList(
               delegate: SliverChildListDelegate([
@@ -113,8 +114,8 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
   }
 
   Widget _buildEmptyContent() {
-    String message = Localization().getStringEx('panel.group_polls.empty.message', 'There are no group polls.')!;
-    String description = Localization().getStringEx('panel.group_polls.empty.description', 'You will see the polls for your group here.')!;
+    String message = Localization().getStringEx('panel.group_polls.empty.message', 'There are no group polls.');
+    String description = Localization().getStringEx('panel.group_polls.empty.description', 'You will see the polls for your group here.');
 
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 24),
@@ -138,11 +139,11 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: Column(children: [
           Container(height: 46),
-          Text(Localization().getStringEx('panel.group_polls.text.error', 'Error')!,
+          Text(Localization().getStringEx('panel.group_polls.text.error', 'Error'),
               textAlign: TextAlign.center,
               style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24)),
           Container(height: 16),
-          Text(AppString.getDefaultEmptyString(_pollsError),
+          Text(StringUtils.ensureNotEmpty(_pollsError),
               textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16))
         ]));
   }
@@ -150,9 +151,9 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
   void _loadPolls() {
     if (((_polls == null) || (_pollsCursor != null)) && !_pollsLoading) {
       String? groupId = widget.group.id;
-      if (AppString.isStringNotEmpty(groupId)) {
+      if (StringUtils.isNotEmpty(groupId)) {
         _setGroupPollsLoading(true);
-        Polls().getGroupPolls([groupId!], cursor: _pollsCursor)!.then((PollsChunk? result) {
+        Polls().getGroupPolls([groupId!], cursor: _pollsCursor)?.then((PollsChunk? result) {
           if (result != null) {
             if (_polls == null) {
               _polls = [];
@@ -162,7 +163,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
             _pollsError = null;
           }
         }).catchError((e) {
-          _pollsError = e.toString();
+          _pollsError = illinois.Polls.localizedErrorString(e);
         }).whenComplete(() {
           _setGroupPollsLoading(false);
         });
@@ -182,7 +183,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
   }
 
   void _updatePoll(Poll poll) {
-    if (AppCollection.isCollectionNotEmpty(_polls)) {
+    if (CollectionUtils.isNotEmpty(_polls)) {
       for (int index = 0; index < _polls!.length; index++) {
         if (_polls![index].pollId == poll.pollId) {
           _polls![index] = poll;
@@ -206,7 +207,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
 
   @override
   void onNotification(String name, param) {
-    if((name == Polls.notifyStatusChanged) || (name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged)) {
+    if((name == Polls.notifyCreated) || (name == Polls.notifyStatusChanged) || (name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged)) {
       _onPollUpdated(param);
     }
   }

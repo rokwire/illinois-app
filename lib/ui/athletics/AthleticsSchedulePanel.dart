@@ -18,14 +18,14 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/model/sport/Team.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsScheduleCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsSchedulePanel extends StatefulWidget {
   final SportDefinition? sport;
@@ -53,13 +53,12 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
 
   @override
   Widget build(BuildContext context) {
-    String headerLabel = widget.sport?.name ?? Localization().getStringEx('panel.athletics_schedule.header.title', 'SCHEDULE')!;
-    String scheduleYear = AppString.getDefaultEmptyString(_scheduleYear);
-    String scheduleLabel = scheduleYear + " " + Localization().getStringEx("panel.athletics_schedule.label.schedule.title", "Schedule")!;
+    String headerLabel = widget.sport?.name ?? Localization().getStringEx('panel.athletics_schedule.header.title', 'SCHEDULE');
+    String scheduleYear = StringUtils.ensureNotEmpty(_scheduleYear);
+    String scheduleLabel = scheduleYear + " " + Localization().getStringEx("panel.athletics_schedule.label.schedule.title", "Schedule");
     int itemsCount = _displayList?.length ?? 0;
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context, titleWidget: Text(headerLabel, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),),
+      appBar: HeaderBar(title: headerLabel,),
       body: _loading ? Center(child: CircularProgressIndicator()) : Column(children: <Widget>[
         Container(color:Styles().colors!.fillColorPrimaryVariant, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(children: <Widget>[
           Row(children: <Widget>[
@@ -123,7 +122,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
 
   List _buildDisplayList() {
     List displayList = [];
-    if (AppCollection.isCollectionNotEmpty(_schedule?.games)) {
+    if (CollectionUtils.isNotEmpty(_schedule?.games)) {
       DateTime now = DateTime.now();
       for (Game? game in _schedule!.games!) {
         DateTime? gameDateTime = game!.dateTimeUniLocal;
@@ -172,7 +171,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
   }
 
   void _setDisplayUpcoming(bool displayUpcoming) {
-    Analytics.instance.logSelect(target: displayUpcoming ? "Upcoming" : "Past");
+    Analytics().logSelect(target: displayUpcoming ? "Upcoming" : "Past");
     if (_displayUpcoming != displayUpcoming) {
       setState(() {
         _scrollController.jumpTo(0);

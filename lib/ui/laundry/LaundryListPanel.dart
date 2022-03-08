@@ -16,11 +16,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Localization.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 
@@ -48,15 +48,8 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.laundry_detail.header.title", "Laundry")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.laundry_detail.header.title", "Laundry"),
       ),
       body: _buildContentWidget(),
       backgroundColor: Styles().colors!.background,
@@ -107,7 +100,7 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
   }
 
   void _onRoomTap(LaundryRoom room) {
-    Analytics.instance.logSelect(target: "Room" + room.title!);
+    Analytics().logSelect(target: "Room" + room.title!);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryDetailPanel(room: room,)));
   }
 }

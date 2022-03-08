@@ -15,13 +15,13 @@
  */
 
 import 'dart:collection';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
 
 import 'package:illinois/model/RecentItem.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class RecentItems with Service implements NotificationsListener {
   
@@ -79,7 +79,7 @@ class RecentItems with Service implements NotificationsListener {
     if (jsonListData != null) {
       List<RecentItem> recentItemsList = [];
       for (dynamic jsonData in jsonListData) {
-        AppList.add(recentItemsList, RecentItem.fromJson(AppJson.mapValue(jsonData) ));
+        ListUtils.add(recentItemsList, RecentItem.fromJson(JsonUtils.mapValue(jsonData) ));
       }
       _recentItems = Queue.from(recentItemsList);
       _notifyRecentItemsChanged();

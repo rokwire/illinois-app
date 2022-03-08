@@ -106,20 +106,6 @@
 		}
 	},
 
-	"geo_fence": {
-		"regions": [
-			{"id":"@Rokwire",          "types":["test"],             "name":"1301 W Springfield Ave, Urbana, IL 61801, USA", "enabled": true, "location": {"latitude": 40.112501, "longitude":  -88.226915, "radius": 200}},
-
-			{"id":"state_farm_center", "types":["stadium"],          "name":"State Farm Center",                             "enabled": true, "location": {"latitude": 40.096247, "longitude":  -88.235923, "radius": 280}},
-			{"id":"memorial_stadium",  "types":["stadium"],          "name":"Memorial Stadium",                              "enabled": true, "location": {"latitude": 40.099187, "longitude":  -88.235956, "radius": 150}},
-
-			{"id":"illini_union",      "types":["voter"],            "name":"Illini Union",                                  "enabled": true, "location": {"latitude": 40.109211, "longitude":  -88.227221, "radius": 100}},
-			{"id":"arc",               "types":["voter"],            "name":"ARC",                                           "enabled": true, "location": {"latitude": 40.100729, "longitude":  -88.235799, "radius": 150}},
-
-			{"id":"MTD",               "types":["test", "MTD"],      "name":"Champaign–Urbana MTD",                          "enabled": true, "beacon": {"uuid": "d7d5a51f-ce7f-4a4c-a944-bed73578b201"}}
-		]
-	},
-
 	"privacy": {
 		"levels":[
 			{"value":1,"title":"1"},
@@ -381,37 +367,37 @@
 		"features2": [
 			{
 				"key":"com.illinois.features2.entry.disable_location_awareness",
-				"text":"Disable location awareness",
+				"text":"Disable location awareness.",
 				"max_level":1
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_store_location",
-				"text":"Don't store your location",
+				"text":"Don't store your location.",
 				"max_level":2
 			},
 			{
 				"key":"com.illinois.features2.entry.remove_preferences",
-				"text":"Remove your preferences",
+				"text":"Remove your preferences.",
 				"max_level":2
 			},
 			{
 				"key":"com.illinois.features2.entry.log_out",
-				"text":"Log you off system",
+				"text":"Log you off system.",
 				"max_level":3
 			},
 			{
 				"key":"com.illinois.features2.entry.disable_notifications",
-				"text":"Turn off notifications",
+				"text":"Turn off notifications.",
 				"max_level":3
 			},
 			{
 				"key":"com.illinois.features2.entry.remove_credit_card",
-				"text":"Remove your credit card info",
+				"text":"Remove your credit card info.",
 				"max_level":3
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_share_location",
-				"text":"Don’t share your data with other users",
+				"text":"Don’t share your data with other users.",
 				"max_level":4
 			}
 		]
@@ -674,37 +660,37 @@
 		"features2": [
 			{
 				"key":"com.illinois.features2.entry.disable_location_awareness",
-				"text":"Disable location awareness",
+				"text":"Disable location awareness.",
 				"max_level":1
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_store_location",
-				"text":"Don't store your location",
+				"text":"Don't store your location.",
 				"max_level":2
 			},
 			{
 				"key":"com.illinois.features2.entry.remove_preferences",
-				"text":"Remove your preferences",
+				"text":"Remove your preferences.",
 				"max_level":2
 			},
 			{
 				"key":"com.illinois.features2.entry.log_out",
-				"text":"Log you off system",
+				"text":"Log you off system.",
 				"max_level":3
 			},
 			{
 				"key":"com.illinois.features2.entry.disable_notifications",
-				"text":"Turn off notifications",
+				"text":"Turn off notifications.",
 				"max_level":3
 			},
 			{
 				"key":"com.illinois.features2.entry.remove_credit_card",
-				"text":"Remove your credit card info",
+				"text":"Remove your credit card info.",
 				"max_level":3
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_share_location",
-				"text":"Don’t share your data with other users",
+				"text":"Don’t share your data with other users.",
 				"max_level":4
 			}
 		]

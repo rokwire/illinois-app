@@ -15,13 +15,13 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsNewsCard extends StatefulWidget {
   final GestureTapCallback? onTap;
@@ -212,7 +212,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
   }
 
   void _onTapSave() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.news?.title}");
+    Analytics().logSelect(target: "Favorite: ${widget.news?.title}");
     Auth2().prefs?.toggleFavorite(widget.news);
   }
 

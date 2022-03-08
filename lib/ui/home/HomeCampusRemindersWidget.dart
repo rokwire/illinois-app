@@ -19,19 +19,19 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppLivecycle.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/Styles.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCampusRemindersWidget extends StatefulWidget {
   final StreamController<void>? refreshController;
@@ -95,11 +95,11 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(visible: AppCollection.isCollectionNotEmpty(_reminderItems), child:
+    return Visibility(visible: CollectionUtils.isNotEmpty(_reminderItems), child:
       Column(children: [
-          SectionTitlePrimary(
+          SectionHeading(
             title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
-            iconPath: 'images/campus-tools.png',
+            titleIconAsset: 'images/campus-tools.png',
             children: _buildRemindersList()
           ),
         ]),
@@ -128,7 +128,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
       }
       if (_maxItems < _reminderItems!.length) {
         contentList.add(Container(height: 16,));
-        contentList.add(ScalableRoundedButton(
+        contentList.add(RoundedButton(
           label: Localization().getStringEx('widget.home_campus_reminders.button.more.title', 'View All'),
           hint: Localization().getStringEx('widget.home_campus_reminders.button.more.hint', 'Tap to view all reminders'),
           borderColor: Styles().colors!.fillColorSecondary,
@@ -142,7 +142,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   }
 
   void _showAll() {
-    Analytics.instance.logSelect(target: "HomeCampusRemindersWidget View All");
+    Analytics().logSelect(target: "HomeCampusRemindersWidget View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _reminderItems, contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'))));
   }
 }
