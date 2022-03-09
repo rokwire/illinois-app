@@ -30,6 +30,7 @@ class FilterListItemWidget extends rokwire.FilterListItemWidget {
     TextStyle? selectedDescriptionTextStyle,
 
     bool selected = false,
+    EdgeInsetsGeometry padding = const EdgeInsets.all(16),
     GestureTapCallback? onTap,
   
     Widget? icon,
@@ -49,6 +50,7 @@ class FilterListItemWidget extends rokwire.FilterListItemWidget {
     selectedDescriptionTextStyle: selectedDescriptionTextStyle,
 
     selected: selected,
+    padding: padding,
     onTap: onTap,
   
     icon: icon,
