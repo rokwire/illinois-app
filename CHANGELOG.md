@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Label in SettingsPersonalInfoPanel from 'NetID' to 'UIN' [#1334](https://github.com/rokwire/illinois-app/issues/1334).
 - Updated display of campus reminder card [#1401](https://github.com/rokwire/illinois-app/issues/1401).
 
+### Fixed
+- Groups - App is hanging when user selects an option in Image source [#1431](https://github.com/rokwire/illinois-app/issues/1431).
+- Groups - App results in a black screen when the user selects an image in the gallery [#1432](https://github.com/rokwire/illinois-app/issues/1432).
+
 ## [3.2.33] - 2022-03-07
 ### Fixed
 - Wrap confirmation buttons in Expanded widget when building a prompt in Group detail panel [#1426](https://github.com/rokwire/illinois-app/issues/1426).

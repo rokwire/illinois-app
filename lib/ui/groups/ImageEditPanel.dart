@@ -136,7 +136,6 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
               : Container()
         ],)))])),
           _loading?
-            Expanded(child:
               Center(child:
                 Container(
                   child: Align(alignment: Alignment.center,
@@ -146,7 +145,6 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                   ),
                 ),
               )
-            )
           : Container()
     ]);
   }
