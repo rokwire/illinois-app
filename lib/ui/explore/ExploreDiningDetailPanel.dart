@@ -29,7 +29,7 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -301,7 +301,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                         ),
                       ),
                     ),
-                    FilterSelectorWidget(
+                    FilterSelector(
                       title: Localization().getStringEx("panel.explore_detail.label.accepted_payment_details","Details"),
                       padding: EdgeInsets.symmetric(vertical: 5),
                       active: _diningPaymentTypesExpanded,

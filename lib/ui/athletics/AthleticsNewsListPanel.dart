@@ -23,7 +23,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -204,7 +204,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
                 ),
               itemCount: filterValues.length,
               itemBuilder: (context, index) {
-                return FilterListItemWidget(title: filterValues[index],
+                return FilterListItem(title: filterValues[index],
                   selected: (index == _selectedFilterIndex),
 
 

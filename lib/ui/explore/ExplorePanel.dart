@@ -29,7 +29,7 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
@@ -1105,7 +1105,7 @@ class ExplorePanelState extends State<ExplorePanel>
                       ),
                   itemCount: filterValues.length,
                   itemBuilder: (context, index) {
-                    return FilterListItemWidget(
+                    return  FilterListItem(
                       title: filterValues[index],
                       description: hasSubLabels ? filterSubLabels![index] : null,
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(index)),
@@ -1146,7 +1146,7 @@ class ExplorePanelState extends State<ExplorePanel>
       List<String> filterValues = _getFilterValuesByType(selectedFilter.type)!;
       int filterValueIndex = selectedFilter.firstSelectedIndex;
       String? filterHeaderLabel = filterValues[filterValueIndex];
-      filterTypeWidgets.add(FilterSelectorWidget(
+      filterTypeWidgets.add(FilterSelector(
         title: filterHeaderLabel,
         hint: _getFilterHintByType(selectedFilter.type),
         active: selectedFilter.active,
