@@ -204,7 +204,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
                 ),
               itemCount: filterValues.length,
               itemBuilder: (context, index) {
-                return FilterListItemWidget(label: filterValues[index],
+                return FilterListItemWidget(title: filterValues[index],
                   selected: (index == _selectedFilterIndex),
 
 

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - ExpandableText moved to the plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- FilterListItemWidget and FilterSelectorWidget controls [#1325](https://github.com/rokwire/app-flutter-plugin/issues/1325).
 - Label in SettingsPersonalInfoPanel from 'NetID' to 'UIN' [#1334](https://github.com/rokwire/illinois-app/issues/1334).
 - Updated display of campus reminder card [#1401](https://github.com/rokwire/illinois-app/issues/1401).
 

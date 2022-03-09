@@ -15,115 +15,88 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/filter_widgets.dart' as rokwire;
 
-class FilterListItemWidget extends StatelessWidget {
-  final String? label;
-  final String? subLabel;
-  final GestureTapCallback onTap;
-  final bool selected;
-  final String selectedIconRes;
-  final String unselectedIconRes;
+class FilterListItemWidget extends rokwire.FilterListItemWidget {
 
-  FilterListItemWidget({required this.label, this.subLabel, required this.onTap, this.selected = false,
-    this.selectedIconRes = 'images/icon-selected.png', this.unselectedIconRes = 'images/icon-unselected.png', });
+  FilterListItemWidget({ Key? key,
+    String? title,
+    TextStyle? titleTextStyle,
+    TextStyle? selectedTitleTextStyle,
 
-  @override
-  Widget build(BuildContext context) {
-    TextStyle labelsStyle = TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: (selected ? Styles().fontFamilies!.bold : Styles().fontFamilies!.medium));
-    bool hasSubLabel = StringUtils.isNotEmpty(subLabel);
-    return Semantics(
-        label: label,
-        button: true,
-        selected: selected,
-        excludeSemantics: true,
-        child: InkWell(
-            onTap: onTap,
-            child: Container(
-              color: (selected ? Styles().colors!.background : Colors.white),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    Expanded(child:
-                      Text(
-                        label!,
-//                        maxLines: 1,
-//                        overflow: TextOverflow.ellipsis,
-                        style: labelsStyle,
-                      ),
-                    ),
-                    hasSubLabel
-                        ? Text(
-                            subLabel!,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: labelsStyle,
-                          )
-                        : Container(),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Image.asset(selected ? selectedIconRes:unselectedIconRes, excludeFromSemantics: true),
-                    )
-                  ],
-                ),
-              ),
-            )));
-  }
+    String? description,
+    TextStyle? descriptionTextStyle,
+    TextStyle? selectedDescriptionTextStyle,
+
+    bool selected = false,
+    EdgeInsetsGeometry padding = const EdgeInsets.all(16),
+    GestureTapCallback? onTap,
+  
+    Widget? icon,
+    String? iconAsset = 'images/icon-unselected.png',
+    EdgeInsetsGeometry iconPadding = const EdgeInsets.only(left: 10),
+
+    Widget? selectedIcon,
+    String? selectedIconAsset = 'images/icon-selected.png',
+    EdgeInsetsGeometry selectedIconPadding = const EdgeInsets.only(left: 10),
+  }) : super(key: key,
+    title: title,
+    titleTextStyle: titleTextStyle,
+    selectedTitleTextStyle: selectedTitleTextStyle,
+
+    description: description,
+    descriptionTextStyle: descriptionTextStyle,
+    selectedDescriptionTextStyle: selectedDescriptionTextStyle,
+
+    selected: selected,
+    padding: padding,
+    onTap: onTap,
+  
+    icon: icon,
+    iconAsset: iconAsset,
+    iconPadding: iconPadding,
+
+    selectedIcon: selectedIcon,
+    selectedIconAsset: selectedIconAsset,
+    selectedIconPadding: selectedIconPadding,
+  );
 }
 
-class FilterSelectorWidget extends StatelessWidget {
-  final String? label;
-  final String? hint;
-  final String? labelFontFamily;
-  final double labelFontSize;
-  final bool active;
-  final EdgeInsets padding;
-  final bool visible;
-  final GestureTapCallback? onTap;
+class FilterSelectorWidget extends rokwire.FilterSelectorWidget {
 
-  FilterSelectorWidget(
-      {required this.label,
-        this.hint,
-        this.labelFontFamily,
-        this.labelFontSize = 16,
-        this.active = false,
-        this.padding = const EdgeInsets.only(left: 4, right: 4, top: 12),
-        this.visible = false,
-        this.onTap});
+  FilterSelectorWidget({ Key? key,
+    String? title,
+    TextStyle? titleTextStyle,
+    TextStyle? activeTitleTextStyle,
 
-  @override
-  Widget build(BuildContext context) {
-    return Visibility(
-        visible: visible,
-        child: Semantics(
-            label: label,
-            hint: hint,
-            excludeSemantics: true,
-            button: true,
-            child: InkWell(
-                onTap: onTap,
-                child: Container(
-                  child: Padding(
-                    padding: padding,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          label!,
-                          style: TextStyle(
-                              fontSize: labelFontSize, color: (active ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary), fontFamily: labelFontFamily ?? Styles().fontFamilies!.bold),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4),
-                          child: Image.asset(active ? 'images/icon-up.png' : 'images/icon-down.png', excludeFromSemantics: true),
-                        )
-                      ],
-                    ),
-                  ),
-                ))));
-  }
+    String? hint,
+    EdgeInsetsGeometry padding = const EdgeInsets.only(left: 4, right: 4, top: 12),
+    bool active = false,
+    GestureTapCallback? onTap,
+
+    Widget? icon,
+    String? iconAsset = 'images/icon-down.png',
+    EdgeInsetsGeometry iconPadding = const EdgeInsets.symmetric(horizontal: 4),
+
+    Widget? activeIcon,
+    String? activeIconAsset = 'images/icon-up.png',
+    EdgeInsetsGeometry activeIconPadding = const EdgeInsets.symmetric(horizontal: 4),
+  }) : super(key: key,
+    title: title,
+    titleTextStyle: titleTextStyle,
+    activeTitleTextStyle: activeTitleTextStyle,
+
+    hint: hint,
+    padding: padding,
+    active: active,
+    onTap: onTap,
+
+    icon: icon,
+    iconAsset: iconAsset,
+    iconPadding: iconPadding,
+
+    activeIcon: activeIcon,
+    activeIconAsset: activeIconAsset,
+    activeIconPadding: activeIconPadding,
+  );
 }

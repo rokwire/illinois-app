@@ -339,7 +339,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                     var filterIndex = index - 1;// 1 for Search field
                     return index == 0 ? constructSearchField(selectedFilter!) :
                     FilterListItemWidget(
-                      label: filterValues[filterIndex],
+                      title: filterValues[filterIndex],
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(filterIndex)),
                       onTap: () {
                         Analytics().logSelect(target: "FilterItem: ${filterValues[filterIndex]}");
@@ -522,10 +522,9 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       int filterValueIndex = selectedFilter.firstSelectedIndex;
       String? filterHeaderLabel = filterValues![filterValueIndex];
       filterTypeWidgets.add(FilterSelectorWidget(
-        label: filterHeaderLabel,
+        title: filterHeaderLabel,
         hint: _getFilterHintByType(selectedFilter.type),
         active: selectedFilter.active,
-        visible: true,
         onTap: (){
           Analytics().logSelect(target: "Filter: $filterHeaderLabel");
           return _onFilterTypeClicked(selectedFilter);},
