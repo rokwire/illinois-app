@@ -1299,7 +1299,7 @@
     "panel.create_event.groups.failed.msg": "Se produjo un error al crear este evento para los siguientes grupos: ",
 
     "panel.profile_info.header.title":"INFORMACIÓN PERSONAL",
-    "panel.profile_info.net_id.title":"NetID",
+    "panel.profile_info.net_id.title":"UIN",
     "panel.profile_info.full_name.title":"Nombre completo",
     "panel.profile_info.first_name.title":"Nombre",
     "panel.profile_info.middle_name.title":"Segundo nombre",

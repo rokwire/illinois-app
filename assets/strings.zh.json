@@ -1301,7 +1301,7 @@
 	"panel.create_event.groups.failed.msg": "為以下群組創建此活動時出錯: ",
 
 	"panel.profile_info.header.title":"个人信息",
-	"panel.profile_info.net_id.title":"NetID",
+	"panel.profile_info.net_id.title":"UIN",
 	"panel.profile_info.full_name.title":"全名",
 	"panel.profile_info.first_name.title":"名字",
 	"panel.profile_info.middle_name.title":"中间名",
