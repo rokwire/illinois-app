@@ -25,7 +25,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:path/path.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -70,7 +70,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
     return Scaffold(
       appBar: _buildHeaderBar(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
       body: buildContent()
     );
   }

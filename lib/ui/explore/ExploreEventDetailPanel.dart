@@ -40,7 +40,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -181,7 +181,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           ],
         ),
         backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: TabBarWidget(),
+        bottomNavigationBar: uiuc.TabBar(),
       );
   }
 

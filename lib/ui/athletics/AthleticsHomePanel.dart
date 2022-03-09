@@ -40,7 +40,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/OptionSelectionCell.dart';
 
@@ -105,7 +105,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
       ),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: _buildContentWidget()),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: widget.showTabBar ? TabBarWidget() : null,
+      bottomNavigationBar: widget.showTabBar ? uiuc.TabBar() : null,
       );
   }
 

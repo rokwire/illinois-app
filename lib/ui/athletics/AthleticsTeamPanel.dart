@@ -43,7 +43,7 @@ import 'package:illinois/ui/athletics/AthleticsCoachListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsScheduleCard.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -98,7 +98,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
       ),
       body: _buildContentWidget(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

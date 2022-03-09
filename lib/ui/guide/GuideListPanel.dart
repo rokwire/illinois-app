@@ -26,7 +26,7 @@ import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -192,7 +192,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         ),
       );
     }
-    contentList.add(TabBarWidget());
+    contentList.add(uiuc.TabBar());
 
     return contentList;
   }

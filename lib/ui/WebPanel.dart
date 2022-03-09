@@ -17,7 +17,7 @@
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:rokwire_plugin/ui/panels/web_panel.dart' as rokwire;
@@ -26,7 +26,7 @@ class WebPanel extends rokwire.WebPanel implements AnalyticsPageName, AnalyticsP
   final String? analyticsName;
 
   WebPanel({Key? key, String? url, String? title, this.analyticsName, bool showTabBar = true}) :
-    super(key: key, url: url, title: title, headerBar: HeaderBar(title: title), tabBar: showTabBar ? TabBarWidget() : null);
+    super(key: key, url: url, title: title, headerBar: HeaderBar(title: title), tabBar: showTabBar ? uiuc.TabBar() : null);
 
   @override
   String? get analyticsPageName {

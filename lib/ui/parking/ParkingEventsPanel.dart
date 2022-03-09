@@ -22,7 +22,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/ui/parking/ParkingEventPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 
 class ParkingEventsPanel extends StatefulWidget{
@@ -63,7 +63,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
       ),
       body: _buildScaffoldBody(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

@@ -354,7 +354,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.1.4] - 2021-12-22
 ### Fixed
-- Fixed content update check in HomeCampusToolsWidget, WalletSheet and TabBarWidget.
+- Fixed content update check in HomeCampusToolsWidget, WalletSheet and uiuc.TabBar.
 - Crashes in Athletics Roster [#1155](https://github.com/rokwire/illinois-app/issues/1155). 
 ### Added
 - Authman integration for Groups [#1159](https://github.com/rokwire/illinois-app/issues/1159).
@@ -380,7 +380,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.0.72] - 2021-12-23
 ### Fixed
-- Fixed content update check in HomeCampusToolsWidget, WalletSheet and TabBarWidget.
+- Fixed content update check in HomeCampusToolsWidget, WalletSheet and uiuc.TabBar.
 - Crashes in Athletics Roster [#1155](https://github.com/rokwire/illinois-app/issues/1155). 
 ### Changed
 - Request tracking authorization before displaying web content [#1161](https://github.com/rokwire/illinois-app/issues/1161). 

@@ -17,7 +17,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class InboxHomePanel extends StatefulWidget {
@@ -106,7 +106,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
           Expanded(child:
             _buildContent(),
           ),
-          TabBarWidget(),
+          uiuc.TabBar(),
         ],)),
       backgroundColor: Styles().colors!.background,
     );

@@ -27,7 +27,7 @@ import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -104,7 +104,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
               ],),),
             ]),
             backgroundColor: Styles().colors!.background,
-            bottomNavigationBar: TabBarWidget(),
+            bottomNavigationBar: uiuc.TabBar(),
           );
   }
 

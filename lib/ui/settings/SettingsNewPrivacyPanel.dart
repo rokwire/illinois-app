@@ -32,7 +32,7 @@ import "package:illinois/ui/onboarding/OnboardingBackButton.dart";
 import "package:illinois/ui/widgets/HeaderBar.dart";
 import 'package:illinois/ui/widgets/PrivacySlider.dart';
 import "package:rokwire_plugin/ui/widgets/rounded_button.dart";
-import "package:illinois/ui/widgets/TabBarWidget.dart";
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import "package:rokwire_plugin/utils/utils.dart";
 import "package:rokwire_plugin/service/styles.dart";
 
@@ -134,7 +134,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
         : null,
       body: _buildContentWidget(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: (widget.mode == SettingsPrivacyPanelMode.regular) ? TabBarWidget() : null,
+      bottomNavigationBar: (widget.mode == SettingsPrivacyPanelMode.regular) ? uiuc.TabBar() : null,
     );
   }
 

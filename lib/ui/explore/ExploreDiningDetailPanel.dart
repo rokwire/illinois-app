@@ -41,7 +41,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ui/dining/FoodDetailPanel.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -193,7 +193,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
           ],
         ),
         backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: TabBarWidget(),
+        bottomNavigationBar: uiuc.TabBar(),
       );
   }
 

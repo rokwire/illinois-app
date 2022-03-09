@@ -31,7 +31,7 @@ import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -269,7 +269,7 @@ class ExplorePanelState extends State<ExplorePanel>
         ]),
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: _showTabBar ? TabBarWidget() : null,
+      bottomNavigationBar: _showTabBar ? uiuc.TabBar() : null,
     );
   }
 
