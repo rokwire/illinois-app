@@ -433,11 +433,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         itemCount: _activeFilterList!.length,
         itemBuilder: (context, index) {
           return FilterListItemWidget(
-            label: StringUtils.ensureNotEmpty(_getFilterItemLabel(index)),
+            title: StringUtils.ensureNotEmpty(_getFilterItemLabel(index)),
             selected: _isFilterItemSelected(index),
             onTap: ()=> _onTapFilterEntry(_activeFilterList![index]),
-            selectedIconRes: "images/checkbox-selected.png",
-            unselectedIconRes: "images/oval-orange.png"
+            iconAsset: "images/oval-orange.png",
+            selectedIconAsset: "images/checkbox-selected.png",
           );
         }
     );

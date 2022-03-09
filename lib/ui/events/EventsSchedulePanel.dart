@@ -339,7 +339,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                     var filterIndex = index - 1;// 1 for Search field
                     return index == 0 ? constructSearchField(selectedFilter!) :
                     FilterListItemWidget(
-                      label: filterValues[filterIndex],
+                      title: filterValues[filterIndex],
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(filterIndex)),
                       onTap: () {
                         Analytics().logSelect(target: "FilterItem: ${filterValues[filterIndex]}");

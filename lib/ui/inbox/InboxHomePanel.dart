@@ -319,8 +319,8 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
               itemCount: filterValues.length,
               itemBuilder: (context, index) {
                 return FilterListItemWidget(
-                  label: filterValues[index].name,
-                  subLabel: (subLabels != null) ? subLabels[index] : null,
+                  title: filterValues[index].name,
+                  description: (subLabels != null) ? subLabels[index] : null,
                   selected: selectedFilterValue == filterValues[index].value,
                   onTap: () { _onFilterValue(_selectedFilter, filterValues[index]); },
                 );

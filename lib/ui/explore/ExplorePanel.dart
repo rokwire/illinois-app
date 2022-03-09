@@ -1106,8 +1106,8 @@ class ExplorePanelState extends State<ExplorePanel>
                   itemCount: filterValues.length,
                   itemBuilder: (context, index) {
                     return FilterListItemWidget(
-                      label: filterValues[index],
-                      subLabel: hasSubLabels ? filterSubLabels![index] : null,
+                      title: filterValues[index],
+                      description: hasSubLabels ? filterSubLabels![index] : null,
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(index)),
                       onTap: () {
                         Analytics().logSelect(target: "FilterItem: ${filterValues[index]}");

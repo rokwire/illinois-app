@@ -362,7 +362,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
         itemCount: _time.length,
         itemBuilder: (context, index) {
           return FilterListItemWidget(
-            label: _time[index],
+            title: _time[index],
             selected: (_selectedTime == _time[index]),
             onTap: (){
               Analytics().logSelect(target: 'Time: ${_time[index]}');
@@ -382,7 +382,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
         itemCount: _tags.length,
         itemBuilder: (context, index) {
           return FilterListItemWidget(
-            label: _tags[index],
+            title: _tags[index],
             selected: (_selectedTag == _tags[index]),
             onTap: (){
               Analytics().logSelect(target: 'Tag: ${_tags[index]}');
@@ -402,7 +402,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
         itemCount: _eventCategories.length,
         itemBuilder: (context, index) {
           return FilterListItemWidget(
-            label: _eventCategories[index],
+            title: _eventCategories[index],
             selected: (_selectedEventCategory == _eventCategories[index]),
             onTap: (){
               Analytics().logSelect(target: 'Category: ${_eventCategories[index]}');
