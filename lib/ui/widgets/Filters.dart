@@ -72,6 +72,7 @@ class FilterSelector extends rokwire.FilterSelector {
     String? hint,
     EdgeInsetsGeometry padding = const EdgeInsets.only(left: 4, right: 4, top: 12),
     bool active = false,
+    bool expanded = false,
     GestureTapCallback? onTap,
 
     Widget? icon,
@@ -89,6 +90,7 @@ class FilterSelector extends rokwire.FilterSelector {
     hint: hint,
     padding: padding,
     active: active,
+    expanded: expanded,
     onTap: onTap,
 
     icon: icon,

@@ -32,7 +32,6 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -442,12 +441,10 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                         padding: EdgeInsets.only(right: 10),
                         child:Image.asset('images/icon-time.png', excludeFromSemantics: true),),
                       Expanded(child:
-                        ScalableFilterSelectorWidget(
-                          label: displayTime,
-                          labelFontSize: 16,
-                          labelFontFamily: Styles().fontFamilies!.bold,
+                        FilterSelector(
+                          title: displayTime,
                           padding: EdgeInsets.symmetric(vertical: 5),
-                          visible: true,
+                          expanded: true,
                           active: _diningWorktimeExpanded,
                           onTap: _onDiningWorktimeTapped,
                         )
