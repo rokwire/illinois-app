@@ -265,15 +265,13 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
         Row(children: <Widget>[
           // Hide the "Categories" drop down in Inbox panel (#721)
           /*FilterSelectorWidget(
-            label: _FilterEntry.entryInList(_categories, _selectedCategory)?.name ?? '',
+            title: _FilterEntry.entryInList(_categories, _selectedCategory)?.name ?? '',
             active: _selectedFilter == _FilterType.Category,
-            visible: true,
             onTap: () { _onFilter(_FilterType.Category); }
           ),*/
           FilterSelectorWidget(
-            label: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
+            title: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
             active: _selectedFilter == _FilterType.Time,
-            visible: true,
             onTap: () { _onFilter(_FilterType.Time); }
           ),
         ],

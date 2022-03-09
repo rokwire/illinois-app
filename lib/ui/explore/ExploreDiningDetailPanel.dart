@@ -302,11 +302,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                       ),
                     ),
                     FilterSelectorWidget(
-                      label: Localization().getStringEx("panel.explore_detail.label.accepted_payment_details","Details"),
-                      labelFontSize: 16,
-                      labelFontFamily: Styles().fontFamilies!.bold,
+                      title: Localization().getStringEx("panel.explore_detail.label.accepted_payment_details","Details"),
                       padding: EdgeInsets.symmetric(vertical: 5),
-                      visible: true,
                       active: _diningPaymentTypesExpanded,
                       onTap: _onDiningPaymentTypeTapped,
                     )

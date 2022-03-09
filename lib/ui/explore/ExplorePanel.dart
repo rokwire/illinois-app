@@ -1147,10 +1147,9 @@ class ExplorePanelState extends State<ExplorePanel>
       int filterValueIndex = selectedFilter.firstSelectedIndex;
       String? filterHeaderLabel = filterValues[filterValueIndex];
       filterTypeWidgets.add(FilterSelectorWidget(
-        label: filterHeaderLabel,
+        title: filterHeaderLabel,
         hint: _getFilterHintByType(selectedFilter.type),
         active: selectedFilter.active,
-        visible: true,
         onTap: (){
           Analytics().logSelect(target: "Filter: $filterHeaderLabel");
           return _onFilterTypeClicked(selectedFilter);},

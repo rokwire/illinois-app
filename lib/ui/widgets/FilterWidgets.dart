@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/filter_widgets.dart' as rokwire;
 
 class FilterListItemWidget extends rokwire.FilterListItemWidget {
@@ -63,56 +62,41 @@ class FilterListItemWidget extends rokwire.FilterListItemWidget {
   );
 }
 
-class FilterSelectorWidget extends StatelessWidget {
-  final String? label;
-  final String? hint;
-  final String? labelFontFamily;
-  final double labelFontSize;
-  final bool active;
-  final EdgeInsets padding;
-  final bool visible;
-  final GestureTapCallback? onTap;
+class FilterSelectorWidget extends rokwire.FilterSelectorWidget {
 
-  FilterSelectorWidget(
-      {required this.label,
-        this.hint,
-        this.labelFontFamily,
-        this.labelFontSize = 16,
-        this.active = false,
-        this.padding = const EdgeInsets.only(left: 4, right: 4, top: 12),
-        this.visible = false,
-        this.onTap});
+  FilterSelectorWidget({ Key? key,
+    String? title,
+    TextStyle? titleTextStyle,
+    TextStyle? activeTitleTextStyle,
 
-  @override
-  Widget build(BuildContext context) {
-    return Visibility(
-        visible: visible,
-        child: Semantics(
-            label: label,
-            hint: hint,
-            excludeSemantics: true,
-            button: true,
-            child: InkWell(
-                onTap: onTap,
-                child: Container(
-                  child: Padding(
-                    padding: padding,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          label!,
-                          style: TextStyle(
-                              fontSize: labelFontSize, color: (active ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary), fontFamily: labelFontFamily ?? Styles().fontFamilies!.bold),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4),
-                          child: Image.asset(active ? 'images/icon-up.png' : 'images/icon-down.png', excludeFromSemantics: true),
-                        )
-                      ],
-                    ),
-                  ),
-                ))));
-  }
+    String? hint,
+    EdgeInsetsGeometry padding = const EdgeInsets.only(left: 4, right: 4, top: 12),
+    bool active = false,
+    GestureTapCallback? onTap,
+
+    Widget? icon,
+    String? iconAsset = 'images/icon-down.png',
+    EdgeInsetsGeometry iconPadding = const EdgeInsets.symmetric(horizontal: 4),
+
+    Widget? activeIcon,
+    String? activeIconAsset = 'images/icon-up.png',
+    EdgeInsetsGeometry activeIconPadding = const EdgeInsets.symmetric(horizontal: 4),
+  }) : super(key: key,
+    title: title,
+    titleTextStyle: titleTextStyle,
+    activeTitleTextStyle: activeTitleTextStyle,
+
+    hint: hint,
+    padding: padding,
+    active: active,
+    onTap: onTap,
+
+    icon: icon,
+    iconAsset: iconAsset,
+    iconPadding: iconPadding,
+
+    activeIcon: activeIcon,
+    activeIconAsset: activeIconAsset,
+    activeIconPadding: activeIconPadding,
+  );
 }

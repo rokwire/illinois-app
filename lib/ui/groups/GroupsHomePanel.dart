@@ -380,10 +380,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Visibility(visible: hasCategories, child: FilterSelectorWidget(
-                  label: _selectedCategory,
-                  hint: "",
+                  title: _selectedCategory,
                   active: (_activeFilterType == _FilterType.category),
-                  visible: true,
                   onTap: (){
                     Analytics().logSelect(target: "GroupFilter - Category");
                     setState(() {
@@ -393,10 +391,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                 )),
                 Visibility(visible: hasCategories, child: Container(width: 8)),
                 FilterSelectorWidget(
-                  label: StringUtils.ensureNotEmpty(_tagFilterToDisplayString(_selectedTagFilter)),
+                  title: StringUtils.ensureNotEmpty(_tagFilterToDisplayString(_selectedTagFilter)),
                   hint: "",
                   active: (_activeFilterType == _FilterType.tags),
-                  visible: true,
                   onTap: (){
                     Analytics().logSelect(target: "GroupFilter - Tags");
                     setState(() {

@@ -335,10 +335,8 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
 
   Widget _buildFilterButton(FilterType filterType, String? selectedValue, String analyticsEvent){
     return FilterSelectorWidget(
-      label: selectedValue,
-      hint: "",
+      title: selectedValue,
       active: (_activeFilterType == filterType),
-      visible: true,
       onTap: (){
         Analytics().logSelect(target: analyticsEvent);
         setState(() {
