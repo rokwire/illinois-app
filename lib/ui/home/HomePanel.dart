@@ -48,7 +48,7 @@ import 'package:illinois/ui/home/HomeUpgradeVersionWidget.dart';
 import 'package:illinois/ui/home/HomeVoterRegistrationWidget.dart';
 import 'package:illinois/ui/home/HomeUpcomingEventsWidget.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
-import 'package:illinois/ui/widgets/FlexContentWidget.dart';
+import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -183,7 +183,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         widget = HomeSaferWidget();
       }
       else {
-        widget = FlexContentWidget.fromAssets(code);
+        widget = FlexContent.fromAssets(code);
       }
 
 

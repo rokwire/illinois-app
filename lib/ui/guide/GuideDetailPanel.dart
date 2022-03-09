@@ -17,7 +17,7 @@ import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -127,7 +127,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
           Expanded(child:
             contentWidget
           ),
-          TabBarWidget(),
+          uiuc.TabBar(),
         ],),
       backgroundColor: Styles().colors!.background,
     );

@@ -50,7 +50,7 @@ import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -201,7 +201,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       ],),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: widget.scrollController == null
-          ? TabBarWidget()
+          ? uiuc.TabBar()
           : Container(height: 0,),
     );
   }

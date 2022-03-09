@@ -26,7 +26,7 @@ import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -688,7 +688,7 @@ class _SettingsAddIlliniCashPanelState
       ),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: widget.scrollController == null
-          ? TabBarWidget()
+          ? uiuc.TabBar()
           : Container(height: 0,),
     );
   }

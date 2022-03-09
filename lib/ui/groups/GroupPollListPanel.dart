@@ -24,7 +24,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
@@ -71,7 +71,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
           ]))
         ]),
         backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: TabBarWidget());
+        bottomNavigationBar: uiuc.TabBar());
   }
 
   Widget _buildPollsContent() {

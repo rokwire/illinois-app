@@ -25,9 +25,9 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -300,7 +300,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           }
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -379,7 +379,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Visibility(visible: hasCategories, child: FilterSelectorWidget(
+                Visibility(visible: hasCategories, child: FilterSelector(
                   title: _selectedCategory,
                   active: (_activeFilterType == _FilterType.category),
                   onTap: (){
@@ -390,7 +390,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                   }
                 )),
                 Visibility(visible: hasCategories, child: Container(width: 8)),
-                FilterSelectorWidget(
+                FilterSelector(
                   title: StringUtils.ensureNotEmpty(_tagFilterToDisplayString(_selectedTagFilter)),
                   hint: "",
                   active: (_activeFilterType == _FilterType.tags),
@@ -429,7 +429,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return _buildFilterContentEx(
         itemCount: _activeFilterList!.length,
         itemBuilder: (context, index) {
-          return FilterListItemWidget(
+          return  FilterListItem(
             title: StringUtils.ensureNotEmpty(_getFilterItemLabel(index)),
             selected: _isFilterItemSelected(index),
             onTap: ()=> _onTapFilterEntry(_activeFilterList![index]),

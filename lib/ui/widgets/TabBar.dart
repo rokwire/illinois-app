@@ -19,15 +19,15 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/wallet/WalletSheet.dart';
-import 'package:rokwire_plugin/ui/widgets/tabbar_widget.dart' as rokwire;
+import 'package:rokwire_plugin/ui/widgets/tab_bar.dart' as rokwire;
 
-class TabBarWidget extends rokwire.TabBarWidget {
+class TabBar extends rokwire.TabBar {
 
   static const String notifySelectionChanged = "edu.illinois.rokwire.tabbar_widget.selection.changed";
 
   final bool? walletExpanded;
 
-  TabBarWidget({Key? key, TabController? tabController, this.walletExpanded}) : super(key: key, tabController: tabController);
+  TabBar({Key? key, TabController? tabController, this.walletExpanded}) : super(key: key, tabController: tabController);
 
   @override
   Widget? buildTab(BuildContext context, String code, int index) {
@@ -84,7 +84,7 @@ class TabBarWidget extends rokwire.TabBarWidget {
 
   void _onSwitchTab(int tabIndex, rokwire.TabWidget tabWidget) {
     Analytics().logSelect(target: tabWidget.label);
-    NotificationService().notify(TabBarWidget.notifySelectionChanged, tabIndex);
+    NotificationService().notify(TabBar.notifySelectionChanged, tabIndex);
   }
 
   void _onShowWalletSheet(BuildContext context, rokwire.TabWidget tabWidget) {

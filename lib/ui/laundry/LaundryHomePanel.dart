@@ -31,7 +31,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryListPanel.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
@@ -182,7 +182,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       )
           : _buildContentWidget(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

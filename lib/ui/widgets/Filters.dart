@@ -15,11 +15,11 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/ui/widgets/filter_widgets.dart' as rokwire;
+import 'package:rokwire_plugin/ui/widgets/filters.dart' as rokwire;
 
-class FilterListItemWidget extends rokwire.FilterListItemWidget {
+class FilterListItem extends rokwire.FilterListItem {
 
-  FilterListItemWidget({ Key? key,
+  FilterListItem({ Key? key,
     String? title,
     TextStyle? titleTextStyle,
     TextStyle? selectedTitleTextStyle,
@@ -62,9 +62,9 @@ class FilterListItemWidget extends rokwire.FilterListItemWidget {
   );
 }
 
-class FilterSelectorWidget extends rokwire.FilterSelectorWidget {
+class FilterSelector extends rokwire.FilterSelector {
 
-  FilterSelectorWidget({ Key? key,
+  FilterSelector({ Key? key,
     String? title,
     TextStyle? titleTextStyle,
     TextStyle? activeTitleTextStyle,

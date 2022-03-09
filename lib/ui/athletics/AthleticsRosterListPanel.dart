@@ -22,7 +22,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RoundedTab.dart';
 import 'package:illinois/model/sport/Roster.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -69,7 +69,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

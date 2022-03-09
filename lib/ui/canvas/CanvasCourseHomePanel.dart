@@ -33,7 +33,7 @@ import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -65,7 +65,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

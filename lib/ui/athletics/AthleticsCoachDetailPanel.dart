@@ -22,7 +22,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/ModalImageDialog.dart';
 import 'package:illinois/model/sport/Coach.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -100,7 +100,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
         ],
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

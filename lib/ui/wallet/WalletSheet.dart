@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/wallet/WalletPanel.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 
 class WalletSheet extends StatelessWidget{
@@ -49,7 +49,7 @@ class WalletSheet extends StatelessWidget{
                       WalletPanel(scrollController: scrollController, ensureVisibleCard: ensureVisibleCard),
                     ),
 
-                    TabBarWidget(walletExpanded: true,),
+                    uiuc.TabBar(walletExpanded: true,),
                     //CloseSheetButton(onTap: ()=>Navigator.of(context, rootNavigator: true).pop(),),
                   ],
                 );

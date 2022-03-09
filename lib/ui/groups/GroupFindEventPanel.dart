@@ -26,7 +26,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -334,7 +334,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   }
 
   Widget _buildFilterButton(FilterType filterType, String? selectedValue, String analyticsEvent){
-    return FilterSelectorWidget(
+    return FilterSelector(
       title: selectedValue,
       active: (_activeFilterType == filterType),
       onTap: (){
@@ -359,7 +359,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     return _buildFilterContentEx(
         itemCount: _time.length,
         itemBuilder: (context, index) {
-          return FilterListItemWidget(
+          return  FilterListItem(
             title: _time[index],
             selected: (_selectedTime == _time[index]),
             onTap: (){
@@ -379,7 +379,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     return _buildFilterContentEx(
         itemCount: _tags.length,
         itemBuilder: (context, index) {
-          return FilterListItemWidget(
+          return  FilterListItem(
             title: _tags[index],
             selected: (_selectedTag == _tags[index]),
             onTap: (){
@@ -399,7 +399,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     return _buildFilterContentEx(
         itemCount: _eventCategories.length,
         itemBuilder: (context, index) {
-          return FilterListItemWidget(
+          return  FilterListItem(
             title: _eventCategories[index],
             selected: (_selectedEventCategory == _eventCategories[index]),
             onTap: (){

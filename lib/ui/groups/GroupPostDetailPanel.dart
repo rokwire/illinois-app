@@ -32,7 +32,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -116,7 +116,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             ),
             centerTitle: true),
         backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: TabBarWidget(),
+        bottomNavigationBar: uiuc.TabBar(),
         body: ModalImageDialog.modalDialogContainer(
           content: _buildContent(),
           imageUrl: _modalImageUrl,
