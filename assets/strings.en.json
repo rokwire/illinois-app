@@ -1301,7 +1301,7 @@
     "panel.create_event.groups.failed.msg": "There was an error creating this event for the following groups: ",
 
     "panel.profile_info.header.title":"PERSONAL INFO",
-    "panel.profile_info.net_id.title":"NetID",
+    "panel.profile_info.net_id.title":"UIN",
     "panel.profile_info.full_name.title":"Full Name",
     "panel.profile_info.first_name.title":"First Name",
     "panel.profile_info.middle_name.title":"Middle Name",
