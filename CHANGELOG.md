@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Widget class names updated to exclude "Widget" suffix [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 - ScalableFilterSelectorWidget merged to FilterSelector [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 - HomeHeader control moved to plugin as SectionRibbonHeader [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- ImageHolderListItem moved to plugin as ImageSlantHeader [#1325](https://github.com/rokwire/app-flutter-plugin/issues/1325).
 
 ## [3.2.35] - 2022-03-10
 ### Fixed
