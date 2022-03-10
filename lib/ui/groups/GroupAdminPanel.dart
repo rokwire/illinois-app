@@ -188,7 +188,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
     }
 
     int eventsCount = widget.groupEvents?.length ?? 0;
-    return SectionSlantHeading(title: "${Localization().getStringEx("panel.groups_admin.label.upcoming_events", "Upcoming events")} ($eventsCount)",
+    return SectionSlantHeader(title: "${Localization().getStringEx("panel.groups_admin.label.upcoming_events", "Upcoming events")} ($eventsCount)",
       titleIconAsset: 'images/icon-calendar.png',
       children: <Widget>[
         Padding(

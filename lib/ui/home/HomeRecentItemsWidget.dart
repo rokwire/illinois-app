@@ -139,7 +139,7 @@ class _RecentItemsList extends StatelessWidget{
     String? moreLabel = StringUtils.isEmpty(moreButtonLabel)? Localization().getStringEx('widget.home_recent_items.button.more.title', 'View All'): moreButtonLabel;
     return items!=null && items!.isNotEmpty? Column(
       children: <Widget>[
-        SectionSlantHeading(
+        SectionSlantHeader(
             title:heading,
             subTitle: subTitle,
             titleIconAsset: headingIconRes,
