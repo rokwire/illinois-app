@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Widget class names updated to exclude "Widget" suffix [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 - ScalableFilterSelectorWidget merged to FilterSelector [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 
+## [3.2.35] - 2022-03-10
 ### Fixed
 - GroupEditImagePanel: fix cancel button functionality [#1441](https://github.com/rokwire/illinois-app/issues/1441).
 
