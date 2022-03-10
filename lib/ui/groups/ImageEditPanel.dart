@@ -283,7 +283,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
 
   void _onBack(){
     Analytics().logSelect(target: "Back");
-
+    Navigator.pop(this.context, null);
   }
 
   void _onFinish() async{
