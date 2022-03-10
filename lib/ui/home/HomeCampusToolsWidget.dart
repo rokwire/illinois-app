@@ -32,7 +32,7 @@ import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -146,7 +146,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
     }
     return Column(
       children: <Widget>[
-        SectionHeading(title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
+        SectionSlantHeader(title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
           titleIconAsset: 'images/campus-tools.png',
           childrenPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           children: rows,),

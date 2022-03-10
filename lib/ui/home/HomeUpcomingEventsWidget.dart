@@ -35,7 +35,7 @@ import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
-import 'package:illinois/ui/widgets/HomeHeader.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -251,13 +251,12 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          HomeHeader(
-            title: Localization().getStringEx(
-                'widget.home_upcoming_events.label.events_for_you',
-                'Events For You'),
-            imageRes: 'images/icon-calendar.png',
+          SectionRibbonHeader(
+            title: Localization().getStringEx('widget.home_upcoming_events.label.events_for_you', 'Events For You'),
             subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home_upcoming_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
-            onSettingsTap: (){
+            titleIconAsset: 'images/icon-calendar.png',
+            rightIconAsset: 'images/settings-white.png',
+            rightIconAction: () {
               Analytics().logSelect(target: "Events for you - settings");
               Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsManageInterestsPanel()));
             },

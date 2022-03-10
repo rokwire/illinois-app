@@ -41,7 +41,7 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -811,7 +811,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     return Stack(children: [
       Column(children: <Widget>[
-        SectionHeading(
+        SectionSlantHeader(
             title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') + ' ($_allEventsCount)',
             titleIconAsset: 'images/icon-calendar.png',
             rightIconAsset: _canAddEvent ? "images/icon-add-20x18.png" : null,
@@ -834,7 +834,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (CollectionUtils.isEmpty(_visibleGroupPosts)) {
       if (_isMemberOrAdmin) {
         Column(children: <Widget>[
-          SectionHeading(
+          SectionSlantHeader(
               title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
               titleIconAsset: 'images/icon-calendar.png',
               rightIconAsset: _canCreatePost ? "images/icon-add-20x18.png" : null,
@@ -873,7 +873,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     return Column(children: <Widget>[
-      SectionHeading(
+      SectionSlantHeader(
           title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
           titleIconAsset: 'images/icon-calendar.png',
           rightIconAsset: _canCreatePost ? "images/icon-add-20x18.png" : null,
@@ -913,7 +913,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     return Stack(key: _pollsKey, children: [
       Column(children: <Widget>[
-        SectionHeading(
+        SectionSlantHeader(
             title: Localization().getStringEx('panel.group_detail.label.polls', 'Polls'),
             titleIconAsset: 'images/icon-calendar.png',
             rightIconAsset: _canCreatePoll? 'images/icon-add-20x18.png' : null,

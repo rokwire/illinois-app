@@ -27,9 +27,8 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupMemberPanel.dart';
 import 'package:illinois/ui/groups/GroupPendingMemberPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -205,7 +204,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         ));
       }
 
-      return SectionHeading(title: Localization().getStringEx("panel.manage_members.label.requests", "Requests"),
+      return SectionSlantHeader(title: Localization().getStringEx("panel.manage_members.label.requests", "Requests"),
         titleIconAsset: 'images/icon-reminder.png',
         children: <Widget>[
           Column(
@@ -238,9 +237,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         child: Column(
           children: <Widget>[
             Container(
-              child: HomeHeader(
+              child: SectionRibbonHeader(
                 title: Localization().getStringEx("panel.manage_members.label.members", "Members"),
-                imageRes: 'images/icon-member.png',
+                titleIconAsset: 'images/icon-member.png',
               ),
             ),
             _buildMembersFilter(),

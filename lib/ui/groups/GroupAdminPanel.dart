@@ -27,7 +27,7 @@ import 'package:illinois/ui/groups/GroupSettingsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/ext/Group.dart';
@@ -188,7 +188,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
     }
 
     int eventsCount = widget.groupEvents?.length ?? 0;
-    return SectionHeading(title: "${Localization().getStringEx("panel.groups_admin.label.upcoming_events", "Upcoming events")} ($eventsCount)",
+    return SectionSlantHeader(title: "${Localization().getStringEx("panel.groups_admin.label.upcoming_events", "Upcoming events")} ($eventsCount)",
       titleIconAsset: 'images/icon-calendar.png',
       children: <Widget>[
         Padding(
