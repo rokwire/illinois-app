@@ -27,7 +27,6 @@ import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -149,24 +148,18 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
     int newsCount = (_displayNews != null) ? _displayNews!.length : 0;
     if (newsCount > 0) {
       return ListView.separated(
-        separatorBuilder: (context, index) =>
-            Divider(
-              color: Colors.transparent,
-            ),
+        separatorBuilder: (context, index) => Divider(color: Colors.transparent,),
         itemCount: newsCount,
         itemBuilder: (context, index) {
 
           News news = _displayNews![index];
 
-          Widget newsView = ImageHolderListItem(
-              imageUrl: news.imageUrl,
-              placeHolderDividerResource: Styles().colors!.fillColorPrimaryTransparent03,
-              placeHolderSlantResource:  'images/slant-down-right-blue.png',
-          child:AthleticsNewsCard(
-                news: news,
-                onTap: () => _onNewsTap(news),
-          ));
-          return newsView;
+          return StringUtils.isNotEmpty(news.imageUrl) ? ImageSlantHeader(
+            imageUrl: news.imageUrl,
+            slantImageColor: Styles().colors!.fillColorPrimaryTransparent03,
+            slantImageAsset:  'images/slant-down-right-blue.png',
+            child: _buildAthleticsNewsCard(news)
+          ) : _buildAthleticsNewsCard(news);
         },
         controller: _scrollController,
       );
@@ -179,6 +172,12 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
               textAlign: TextAlign.center,
             )]);
     }
+  }
+
+  Widget _buildAthleticsNewsCard(News news ) {
+    return Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child:
+      AthleticsNewsCard(news: news, onTap: () => _onNewsTap(news)),
+    );
   }
 
   Widget _buildDimmedContainer() {
