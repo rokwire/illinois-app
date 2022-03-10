@@ -130,13 +130,14 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
         }
       }
     }
-    int widgetsCount = widgets.length;
-    if (widgetsCount == 0) {
+    if (widgets.length == 0) {
       return Container();
     }
-    int widgetsMod = (widgetsCount % widgetsPerRow);
-    int rowsWholePart = widgetsCount ~/ widgetsPerRow;
-    int rowsCount = (widgetsMod == 0) ? rowsWholePart : rowsWholePart + 1;
+    while(0 < (widgets.length % widgetsPerRow)) {
+      widgets.add(Expanded(child: Container(),));
+    }
+    int widgetsCount = widgets.length;
+    int rowsCount = widgetsCount ~/ widgetsPerRow;
     List<Widget> rows = [];
     for (int i = 0; i < rowsCount; i++) {
       int startRowIndex = i * widgetsPerRow;
