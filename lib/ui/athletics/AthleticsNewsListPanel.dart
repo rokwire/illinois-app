@@ -24,7 +24,7 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
-import 'package:illinois/ui/widgets/HomeHeader.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
@@ -66,9 +66,9 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
             Expanded(child: Stack( children: <Widget>[Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  HomeHeader(
+                  SectionRibbonHeader(
                       title: Localization().getStringEx("panel.athletics_news_list.title", 'Athletics News'),
-                      imageRes: 'images/icon-news.png'),
+                      titleIconAsset: 'images/icon-news.png'),
                   Container(
                     //height: 28 + 20*(MediaQuery.of(context).textScaleFactor),
                     child:Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),

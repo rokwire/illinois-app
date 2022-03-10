@@ -41,7 +41,7 @@ import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/widgets/HomeHeader.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/OptionSelectionCell.dart';
 
 import 'AthleticsTeamsPanel.dart';
@@ -136,9 +136,10 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                           hint: Localization().getStringEx("panel.athletics.label.upcoming_events.hint", ""),
                           header: true,
                           excludeSemantics: true,
-                          child: HomeHeader(
-                              title: Localization().getStringEx("panel.athletics.label.upcoming_events.title", "Upcoming Events"),
-                              imageRes: 'images/icon-calendar.png'),
+                          child: SectionRibbonHeader(
+                            title: Localization().getStringEx("panel.athletics.label.upcoming_events.title", "Upcoming Events"),
+                            titleIconAsset: 'images/icon-calendar.png',
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 0, right: 0),

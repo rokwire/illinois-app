@@ -27,7 +27,6 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupMemberPanel.dart';
 import 'package:illinois/ui/groups/GroupPendingMemberPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -238,9 +237,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         child: Column(
           children: <Widget>[
             Container(
-              child: HomeHeader(
+              child: SectionRibbonHeader(
                 title: Localization().getStringEx("panel.manage_members.label.members", "Members"),
-                imageRes: 'images/icon-member.png',
+                titleIconAsset: 'images/icon-member.png',
               ),
             ),
             _buildMembersFilter(),
