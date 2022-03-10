@@ -36,7 +36,6 @@ import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
-import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -291,27 +290,43 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   List<Widget> _buildListItems(BuildContext context) {
     List<Widget> widgets = [];
     if (_events?.isNotEmpty ?? false) {
-      for (int i = 0; i < _events!.length; i++) {
+      for (Event event in _events!) {
+        if (widgets.isEmpty && StringUtils.isNotEmpty(event.eventImageUrl)) {
+          widgets.add(ImageSlantHeader(
+            slantImageColor: Styles().colors!.fillColorSecondaryTransparent05,
+            slantImageAsset: 'images/slant-down-right.png',
+            //applyHorizontalPadding: false,
+            child: _buildItemCard(context: context, item: event, showSmallImage: false),
+            imageUrl: event.eventImageUrl
+          ));
+        }
+        else {
+          widgets.add(_buildItemCard(context: context, item: event),);
+        }
+      }
+
+      /*for (int i = widgets.isNotEmpty ? 1 : 0; i < _events!.length; i++) {
         Event event = _events![i];
         widgets.add(ImageHolderListItem(
             placeHolderDividerResource: Styles().colors!.fillColorSecondaryTransparent05,
             placeHolderSlantResource: 'images/slant-down-right.png',
             applyHorizontalPadding: false,
-            child: _buildItemCard(
-                context: context, item: event, showSmallImage: (i != 0)),
+            child: _buildItemCard(context: context, item: event, showSmallImage: (i != 0)),
             imageUrl: i == 0 ? event.eventImageUrl : null));
-      }
+      }*/
     }
     return widgets;
   }
 
   Widget _buildItemCard({BuildContext? context, Event? item, bool? showSmallImage}) {
     if (item != null) {
-      return ExploreCard(
-        explore: item,
-        showTopBorder: true,
-        showSmallImage: showSmallImage,
-        onTap: () => _onTapEvent(item),
+      return Padding(padding: EdgeInsets.only(top: 16), child:
+        ExploreCard(
+          explore: item,
+          showTopBorder: true,
+          showSmallImage: showSmallImage,
+          onTap: () => _onTapEvent(item),
+        ),
       );
     }
     return Container();
