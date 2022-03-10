@@ -51,7 +51,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
         content.add(Container(height: 20,),);
       }
 
-      return SectionHeading(
+      return SectionSlantHeading(
         title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
         titleIconAsset: 'images/icon-member.png',
         children: content,);

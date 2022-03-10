@@ -30,66 +30,33 @@ class HomeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     bool hasSubTitle = StringUtils.isNotEmpty(subTitle);
 
-    return Container(
-      color: Styles().colors!.fillColorPrimary,
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(right: 12),
-                child: ((imageRes != null) && imageRes!.isNotEmpty)
-                    ? Image.asset(
-                        imageRes!,
-                        excludeFromSemantics: true,
-                      )
-                    : Container(),
-              ),
-              Expanded(child:
-                Semantics(
-                  label: title,
-                  header: true,
-                  excludeSemantics: true,
-                  child: Text(
-                    title ?? '',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  )),
-              ),
-              (onSettingsTap == null) ? Container() :
-                Semantics(label: "Settings", button: true,
-                  child: GestureDetector(
-                    onTap: onSettingsTap,
-                    child: Container(
-                      padding: EdgeInsets.only(right: 20),
-                        alignment: Alignment.centerRight,
-                        child: Image.asset(
-                              'images/settings-white.png',
-                              excludeFromSemantics: true,
-                            ))))
-            ],
+    return Container(color: Styles().colors!.fillColorPrimary, padding: EdgeInsets.all(16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+          Padding(padding: EdgeInsets.only(right: 12), child:
+            ((imageRes != null) && imageRes!.isNotEmpty) ? Image.asset(imageRes!, excludeFromSemantics: true, ) : Container(),
           ),
-          Visibility(
-              visible: hasSubTitle,
-              child: Semantics(
-                label: StringUtils.ensureNotEmpty(subTitle),
-                header: true,
-                excludeSemantics: true,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 30),
-                  child: Text(
-                    StringUtils.ensureNotEmpty(subTitle),
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontFamily: Styles().fontFamilies!.regular),
-                  ),
-                ),
-              ))
-        ],
-      ),
+          Expanded(child:
+            Semantics(label: title, header: true, excludeSemantics: true, child:
+              Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 20),)
+            ),
+          ),
+          (onSettingsTap == null) ? Container() : Semantics(label: "Settings", button: true, child:
+            GestureDetector(onTap: onSettingsTap, child:
+              Container(padding: EdgeInsets.only(right: 20), alignment: Alignment.centerRight, child:
+                Image.asset('images/settings-white.png', excludeFromSemantics: true,)
+              ),
+            ),
+          )
+        ],),
+        Visibility(visible: hasSubTitle, child:
+          Semantics(label: StringUtils.ensureNotEmpty(subTitle), header: true, excludeSemantics: true, child:
+            Padding(padding: EdgeInsets.only(left: 30), child:
+              Text(StringUtils.ensureNotEmpty(subTitle), style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies!.regular),),
+            ),
+          ),
+        ),
+      ],),
     );
   }
 }

@@ -83,7 +83,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(_promotedItems), child:
       Column(children: [
-          SectionHeading(
+          SectionSlantHeading(
             title: Localization().getStringEx('widget.home_campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
             titleIconAsset: 'images/campus-tools.png',
             children: _buildPromotedList()

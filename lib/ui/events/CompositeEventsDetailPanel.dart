@@ -638,7 +638,7 @@ class _EventsListState extends State<_EventsList>{
     String titleKey = (widget.parentEvent?.isSuperEvent == true)
         ? "panel.explore_detail.super_event.schedule.heading.title"
         : "panel.explore_detail.recurring_event.schedule.heading.title";
-    return SectionHeading(
+    return SectionSlantHeading(
         title: Localization().getStringEx(titleKey, "Event Schedule"),
         slantImageAsset: "images/slant-down-right-grey.png",
         slantColor: Styles().colors!.backgroundVariant,

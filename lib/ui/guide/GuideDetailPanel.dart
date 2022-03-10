@@ -458,7 +458,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
 
     return ((contentList != null) && (0 < contentList.length)) ?
       Container(padding: EdgeInsets.symmetric(vertical: 16), child:
-        SectionHeading(title: "Related",
+        SectionSlantHeading(title: "Related",
           titleIconAsset: 'images/icon-related.png',
           children: contentList,
       )) :

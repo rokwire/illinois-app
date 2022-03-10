@@ -601,7 +601,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     bool showMoreButton = widget.limit < widget.items!.length;
     return Column(
       children: <Widget>[
-        SectionHeading(
+        SectionSlantHeading(
             title: widget.heading,
             titleIconAsset: widget.headingIconRes,
             slantImageAsset: widget.slantImageRes,

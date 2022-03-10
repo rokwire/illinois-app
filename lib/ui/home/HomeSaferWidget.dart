@@ -59,7 +59,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   @override
   Widget build(BuildContext context) {
-    return SectionHeading(
+    return SectionSlantHeading(
       title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
       titleIconAsset: 'images/campus-tools.png',
       children: _buildCommandsList(),);

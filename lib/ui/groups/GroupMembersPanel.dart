@@ -205,7 +205,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         ));
       }
 
-      return SectionHeading(title: Localization().getStringEx("panel.manage_members.label.requests", "Requests"),
+      return SectionSlantHeading(title: Localization().getStringEx("panel.manage_members.label.requests", "Requests"),
         titleIconAsset: 'images/icon-reminder.png',
         children: <Widget>[
           Column(
