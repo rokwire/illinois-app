@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - HomeHeader control moved to plugin as SectionRibbonHeader [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 - ImageHolderListItem moved to plugin as ImageSlantHeader [#1325](https://github.com/rokwire/app-flutter-plugin/issues/1325).
 
+### Fixed
+- PollBubblePinPanel: improve Accessibility [#1446](https://github.com/rokwire/illinois-app/issues/1446).
+
+
 ## [3.2.35] - 2022-03-10
 ### Fixed
 - GroupEditImagePanel: fix cancel button functionality [#1441](https://github.com/rokwire/illinois-app/issues/1441).
