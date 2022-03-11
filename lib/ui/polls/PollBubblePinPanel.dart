@@ -43,6 +43,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
   List<FocusNode> _digitFocusNodes = [];
   RegExp _digitRegExp = RegExp('[0-9]{1}');
 
+  bool _initialAnnounced = false;
   bool _loading = false;
   bool _showInfo = false;
 
@@ -57,7 +58,6 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
 
     _digitFocusNodes.first.requestFocus();
   }
-
   @override
   void dispose() {
     for (TextEditingController digitController in _digitControllers) {
@@ -138,7 +138,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
   List<Widget> _buildInfoContent() {
     return <Widget>[
       IconButton(
-        icon: Image.asset('images/chevron-left-white.png'),
+        icon: Semantics(label: "Back", child: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true,)),
         onPressed: ()=>setState((){_showInfo = false;}),
       ),
       Padding(
@@ -159,7 +159,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
   List<Widget> _buildMainContent() {
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
-      Semantics(label:'', excludeSemantics: true, child:
+      Semantics(label:'', excludeSemantics: false, focusable: true, focused: true, child:
         Padding(padding: EdgeInsets.only(right: 40), child:
           RichText(
             text: TextSpan(
@@ -167,28 +167,31 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
               style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24),
               children:[
                 WidgetSpan(
-                    child: GestureDetector(
-                      onTap: ()=>setState((){_showInfo = true;}),
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: new BorderRadius.circular(15.0),
-                          border: new Border.all(
-                            width: 2.0,
-                            color: Styles().colors!.fillColorSecondary!,
+                    child: Semantics(label: "Info", container:true, button: true,
+                      child: GestureDetector(
+                        onTap: ()=>setState((){_showInfo = true;}),
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            borderRadius: new BorderRadius.circular(15.0),
+                            border: new Border.all(
+                              width: 2.0,
+                              color: Styles().colors!.fillColorSecondary!,
+                            ),
                           ),
-                        ),
-                        child: Center(
-                          child: Text("i",
-                            style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.extraBold,
-                              fontSize: 20,
-                              color: Styles().colors!.fillColorSecondary,
+                          child: Center(
+                            child: Text("i",
+                              semanticsLabel: "",
+                              style: TextStyle(
+                                fontFamily: Styles().fontFamilies!.extraBold,
+                                fontSize: 20,
+                                color: Styles().colors!.fillColorSecondary,
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                      )
                     )
                 )
               ],
@@ -212,7 +215,10 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         _digitControllers[digit],
         _digitFocusNodes[digit],
         (0 <= (digit-1)) ? _digitFocusNodes[digit-1] : null,
-        ((digit+1) < _digitsCount) ? _digitFocusNodes[digit+1] : null));
+        ((digit+1) < _digitsCount) ? _digitFocusNodes[digit+1] : null,
+        position: digit
+      ),
+      );
 
     }
     return SingleChildScrollView(scrollDirection: Axis.horizontal,child:Row(
@@ -221,7 +227,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
       children: widgets,));
   }
 
-  Widget _buildPinField(TextEditingController controller, FocusNode focusNode, FocusNode? prevFocusNode, FocusNode? nextFocusNode){
+  Widget _buildPinField(TextEditingController controller, FocusNode focusNode, FocusNode? prevFocusNode, FocusNode? nextFocusNode, {int position = 0}){
     Function nextCallBack = (){
       if(_isDigit(controller.value.text)){
         if(nextFocusNode != null) {
@@ -234,29 +240,33 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
     };
     return Container(
       width: 20+ 20*MediaQuery.of(context).textScaleFactor,
-      child: TextFormField(
-        controller: controller,
-        focusNode: focusNode,
-        keyboardType: TextInputType.number,
-        inputFormatters: [new LengthLimitingTextInputFormatter(1),],
-        textAlign: TextAlign.center,
-        onEditingComplete: ()=> nextCallBack(),
-        onChanged: (values)=> nextCallBack(),
-        decoration: new InputDecoration(
-          filled: true,
-          fillColor: Styles().colors!.white,
-          border: new OutlineInputBorder(
-            borderRadius: const BorderRadius.all(
-              const Radius.circular(4),
+      child: Semantics(
+        label: _initialSemanticsAnnouncement(position),
+        hint: " ${position + 1} of $_digitsCount",
+        child: TextFormField(
+          controller: controller,
+          focusNode: focusNode,
+          keyboardType: TextInputType.number,
+          inputFormatters: [new LengthLimitingTextInputFormatter(1),],
+          textAlign: TextAlign.center,
+          onEditingComplete: ()=> nextCallBack(),
+          onChanged: (values)=> nextCallBack(),
+          decoration: new InputDecoration(
+            filled: true,
+            fillColor: Styles().colors!.white,
+            border: new OutlineInputBorder(
+              borderRadius: const BorderRadius.all(
+                const Radius.circular(4),
+              ),
             ),
           ),
+          style: TextStyle(
+            fontFamily: Styles().fontFamilies!.regular,
+            fontSize: 36,
+            color: Styles().colors!.fillColorPrimary,
+          ),
         ),
-        style: TextStyle(
-          fontFamily: Styles().fontFamilies!.regular,
-          fontSize: 36,
-          color: Styles().colors!.fillColorPrimary,
-        ),
-      ),
+      )
     );
   }
 
@@ -282,10 +292,22 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         label: Localization().getStringEx('dialog.close.title', 'Close'),
         hint: Localization().getStringEx('dialog.close.hint', ''),
         button: true,
-        excludeSemantics: true,
         child: InkWell(
             onTap : _onClose,
-            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-white.png'))));
+            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-white.png', semanticLabel: "",))));
+  }
+
+  //Workaround to pronounce the Dialog Message when entering the first field for first time.
+  //Needed because we can't manipulate the Semantics focus in order to focus and pronounce the message first.
+  String _initialSemanticsAnnouncement(int position){
+    if(position == 0 && _initialAnnounced == false) {
+      _initialAnnounced = true;
+      return Localization().getStringEx(
+          "panel.poll_pin_bouble.label_description",
+          "Enter the four-digit poll number to see the poll.");
+    }
+
+    return "";
   }
 
   void _onContinue() {
