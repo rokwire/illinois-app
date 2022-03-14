@@ -36,7 +36,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/widgets/OptionSelectionCell.dart';
+import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -105,9 +105,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
       return Center(child: Text(Localization().getStringEx('panel.athletics_game_detail.load.failed.msg', 'Failed to load game. Please, try again.')));
     }
 
-    String? sportKey = game?.sport?.shortName;
     String? sportName = game?.sport?.title;
-    SportDefinition? sportDefinition = Sports().getSportByShortName(sportKey);
     return CustomScrollView(
       scrollDirection: Axis.vertical,
       slivers: <Widget>[
@@ -176,93 +174,55 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                               ],
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: <Widget>[
-                                    GestureDetector(
-                                      onTap: () => _onScheduleTap(),
-                                      child: Padding(
-                                        padding: EdgeInsets.only(bottom: 8),
-                                        child: OptionSelectionCell(
-                                          label: Localization().getStringEx("panel.athletics_game_detail.button.schedule.title", "Schedule"),
-                                          hint: Localization().getStringEx("panel.athletics_game_detail.button.schedule.hint", ""),
-                                          iconPath:
-                                          'images/2.0x/schedule-orange.png',
-                                          selectedIconPath:
-                                          'images/2.0x/schedule-orange.png',
-                                        ),
-                                      ),
+                          Padding(padding: EdgeInsets.all(16), child:
+                            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                              Expanded(child:
+                                Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+                                  Padding( padding: EdgeInsets.only(bottom: 8), child:
+                                    SmallTileButton(
+                                      title: Localization().getStringEx("panel.athletics_game_detail.button.schedule.title", "Schedule"),
+                                      hint: Localization().getStringEx("panel.athletics_game_detail.button.schedule.hint", ""),
+                                      iconAsset: 'images/2.0x/schedule-orange.png',
+                                      contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
+                                      onTap: _onScheduleTap,
                                     ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Analytics().logSelect(target: "News");
-                                        Navigator.push(
-                                            context,
-                                            CupertinoPageRoute(
-                                                builder: (context) =>
-                                                    AthleticsNewsListPanel()));
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.only(bottom: 8),
-                                        child: OptionSelectionCell(
-                                            label: Localization().getStringEx("panel.athletics_game_detail.button.news.title", "News"),
-                                            hint: Localization().getStringEx("panel.athletics_game_detail.button.news.hint", ""),
-                                            iconPath:
-                                            'images/2.0x/teal.png',
-                                            selectedIconPath:
-                                            'images/2.0x/teal.png'),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: <Widget>[
-                                    GestureDetector(
+                                  ),
+                                  Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                    SmallTileButton(
+                                      title: Localization().getStringEx("panel.athletics_game_detail.button.news.title", "News"),
+                                      hint: Localization().getStringEx("panel.athletics_game_detail.button.news.hint", ""),
+                                      iconAsset: 'images/2.0x/teal.png',
+                                      contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
+                                      onTap: _onTapNews,
+                                    ),
+                                  ),
+                                ],),
+                              ),
+                              Container(width: 12,),
+                              Expanded(child:
+                                Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+                                  Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                    SmallTileButton(
+                                      title: Localization().getStringEx("panel.athletics_game_detail.button.tickets.title", "Tickets"),
+                                      hint: Localization().getStringEx("panel.athletics_game_detail.button.tickets.hint", ""),
+                                      iconAsset: 'images/2.0x/tickets_yellow.png',
+                                      contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                       onTap: _onTapTickets,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(bottom: 8),
-                                        child: OptionSelectionCell(
-                                            label: Localization().getStringEx("panel.athletics_game_detail.button.tickets.title", "Tickets"),
-                                            hint: Localization().getStringEx("panel.athletics_game_detail.button.tickets.hint", ""),
-                                            iconPath:
-                                            'images/2.0x/tickets_yellow.png',
-                                            selectedIconPath:
-                                            'images/2.0x/tickets_yellow.png'),
-                                      ),
                                     ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Analytics().logSelect(target: "Teams");
-                                        Navigator.push(
-                                            context,
-                                            CupertinoPageRoute(
-                                                builder: (context) =>
-                                                    AthleticsTeamPanel(
-                                                        sportDefinition)));
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.only(bottom: 8),
-                                        child: OptionSelectionCell(
-                                            label: Localization().getStringEx("panel.athletics_game_detail.button.teams.title", "Teams"),
-                                            hint: Localization().getStringEx("panel.athletics_game_detail.button.teams.hint", ""),
-                                            iconPath:
-                                            'images/2.0x/navy.png',
-                                            selectedIconPath:
-                                            'images/2.0x/navy.png'),
-                                      ),
-                                    )
-                                  ],
-                                )
-                              ],
-                            ),
-                          )
+                                  ),
+                                  Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                    SmallTileButton(
+                                      title: Localization().getStringEx("panel.athletics_game_detail.button.teams.title", "Teams"),
+                                      hint: Localization().getStringEx("panel.athletics_game_detail.button.teams.hint", ""),
+                                      iconAsset: 'images/2.0x/navy.png',
+                                      contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
+                                      onTap: _onTapTeams,
+                                    ),
+                                  ),
+                                ],),
+                              )
+                            ],),
+                          ),
                         ],
                       )
                     ],
@@ -368,6 +328,17 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
     Sport? sport = game?.sport;
     SportDefinition? sportDefinition = Sports().getSportByShortName(sport?.shortName);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsSchedulePanel(sport: sportDefinition)));
+  }
+
+  void _onTapNews() {
+    Analytics().logSelect(target: "News");
+    Navigator.push(context, CupertinoPageRoute( builder: (context) => AthleticsNewsListPanel()));
+  }
+
+  void _onTapTeams() {
+    Analytics().logSelect(target: "Teams");
+    SportDefinition? sportDefinition = Sports().getSportByShortName(game?.sport?.shortName);
+    Navigator.push(context, CupertinoPageRoute( builder: (context) => AthleticsTeamPanel(sportDefinition)));
   }
 
   void _onTapTickets() {
