@@ -46,7 +46,6 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
 
@@ -1449,92 +1448,6 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     if (name == Groups.notifyGroupPostsUpdated) {
       setState(() {});
     }
-  }
-}
-
-class ModalImageDialog extends StatelessWidget{
-  final String? imageUrl;
-  final GestureTapCallback? onClose;
-
-  ModalImageDialog({this.imageUrl, this.onClose});
-
-  static  Widget modalDialogContainer({Widget? content, String? imageUrl, GestureTapCallback? onClose}){
-      return Stack(children: [
-        content ?? Container(),
-        buildModalPhotoDialog(imageUrl: imageUrl, onClose: onClose)
-      ]);
-  }
-
-  static Widget buildModalPhotoDialog({String? imageUrl, GestureTapCallback? onClose}){
-    return imageUrl!=null ? ModalImageDialog(
-        imageUrl: imageUrl,
-        onClose: onClose
-    ) : Container();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-        container: true,
-        explicitChildNodes: true,
-        scopesRoute: true,
-        child:Column(children: [
-        Expanded(child:PinchZoom(
-          child: GestureDetector(
-            onTap: onClose, //dismiss
-            child: SingleChildScrollView(child:  Container(
-              color: Styles().colors!.blackTransparent06,
-              child:Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                      child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
-                          child: GestureDetector(
-                              onTap: (){}, //Do not dismiss when tap the dialog
-                              child: Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        color: Styles().colors!.fillColorPrimary,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: <Widget>[
-                                            Semantics(
-                                              button: true,
-                                              focusable: true,
-                                              focused: true,
-                                              child:GestureDetector(
-                                                onTap: onClose,
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(right: 10, top: 10),
-                                                  child: Text('\u00D7',
-                                                    semanticsLabel: "Close Button",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontFamily: Styles().fontFamilies!.medium,
-                                                        fontSize: 50
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        child: StringUtils.isNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders): Container(),
-                                      )
-                                    ],
-                                  )
-                          )
-                      )
-                  )),
-                ],
-              ))))
-      ))
-      ],));
   }
 }
 

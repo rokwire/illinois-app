@@ -23,9 +23,9 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/model/sport/Roster.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/widgets/ModalImageDialog.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 
 import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -41,8 +41,6 @@ class AthleticsRosterDetailPanel extends StatefulWidget{
 
 class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
 
-  bool _modalPhotoVisibility = false;
-
   @override
   void initState() {
     super.initState();
@@ -50,8 +48,9 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
 
   void _onTapPhoto(){
     Analytics().logSelect(target: "Photo");
-    _modalPhotoVisibility = true;
-    setState(() {});
+    if (widget.roster.fullSizePhotoUrl != null) {
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: widget.roster.fullSizePhotoUrl!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Photo"))));
+    }
   }
 
   @override
@@ -66,46 +65,40 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Expanded(
-            child:  Stack(
+            child:  ListView(
+              shrinkWrap: true,
               children: <Widget>[
-                ListView(
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    _RosterDetailHeading(sport: widget.sport, roster:widget.roster, onTapPhoto: _onTapPhoto,),
-                    hasPosition ? _LineEntryWidget(
-                        title: Localization().getStringEx("panel.athletics_roster_detail.label.position.title", "Position"),
-                        value: widget.roster.position
-                    ) : Container(),
-                    _createdHeightWeightWidget(),
-                    _LineEntryWidget(
-                        title: Localization().getStringEx("panel.athletics_roster_detail.label.year.title", "Year"),
-                        value: widget.roster.year
-                    ),
-                    _LineEntryWidget(
-                        title: Localization().getStringEx("panel.athletics_roster_detail.label.hometown.title", "Hometown"),
-                        value: widget.roster.hometown
-                    ),
-                    _LineEntryWidget(
-                        title: Localization().getStringEx("panel.athletics_roster_detail.label.highschool.title", "High School"),
-                        value: widget.roster.highSchool
-                    ),
-                    Visibility(visible: StringUtils.isNotEmpty(widget.roster.htmlBio), child: Container(
-                        padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
-                        color: Styles().colors!.background,
-                        child: Column(
-                            children: <Widget>[
-                              Html(
-                                data: StringUtils.ensureNotEmpty(widget.roster.htmlBio),
-                                onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-                                style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-                              ),
-                            ]
-                        )
-                    ))
-                  ],
+                _RosterDetailHeading(sport: widget.sport, roster:widget.roster, onTapPhoto: _onTapPhoto,),
+                hasPosition ? _LineEntryWidget(
+                    title: Localization().getStringEx("panel.athletics_roster_detail.label.position.title", "Position"),
+                    value: widget.roster.position
+                ) : Container(),
+                _createdHeightWeightWidget(),
+                _LineEntryWidget(
+                    title: Localization().getStringEx("panel.athletics_roster_detail.label.year.title", "Year"),
+                    value: widget.roster.year
                 ),
-                //modalPhotoVisibility ? Expanded
-                _createModalPhotoDialog(),
+                _LineEntryWidget(
+                    title: Localization().getStringEx("panel.athletics_roster_detail.label.hometown.title", "Hometown"),
+                    value: widget.roster.hometown
+                ),
+                _LineEntryWidget(
+                    title: Localization().getStringEx("panel.athletics_roster_detail.label.highschool.title", "High School"),
+                    value: widget.roster.highSchool
+                ),
+                Visibility(visible: StringUtils.isNotEmpty(widget.roster.htmlBio), child: Container(
+                    padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
+                    color: Styles().colors!.background,
+                    child: Column(
+                        children: <Widget>[
+                          Html(
+                            data: StringUtils.ensureNotEmpty(widget.roster.htmlBio),
+                            onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
+                            style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                          ),
+                        ]
+                    )
+                ))
               ],
             ),
           ),
@@ -114,17 +107,6 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
-  }
-
-  Widget _createModalPhotoDialog(){
-   return _modalPhotoVisibility ? ModalImageDialog(
-     imageUrl: widget.roster.fullSizePhotoUrl,
-     onClose: () {
-       Analytics().logSelect(target: "Close");
-       _modalPhotoVisibility = false;
-       setState(() {});
-     }
-   ) : Container();
   }
 
   Widget _createdHeightWeightWidget(){

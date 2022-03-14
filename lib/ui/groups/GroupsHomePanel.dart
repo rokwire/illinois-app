@@ -29,6 +29,7 @@ import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -55,8 +56,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   _TagFilter? _selectedTagFilter = _TagFilter.all;
   _FilterType __activeFilterType = _FilterType.none;
-
-  String? _modalImageUrl; // ModalImageDial presentation
 
   //TBD: this filtering has to be done on the server side.
   List<Group>? _getFilteredAllGroupsContent() {
@@ -290,15 +289,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       appBar: HeaderBar(
         title: Localization().getStringEx("panel.groups_home.label.heading","Groups"),
       ),
-      body: ModalImageDialog.modalDialogContainer(
-          content: _buildContent(),
-          imageUrl: _modalImageUrl,
-          onClose: () {
-            Analytics().logSelect(target: "Close");
-            _modalImageUrl = null;
-            setState(() {});
-          }
-      ),
+      body: _buildContent(),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
@@ -694,20 +685,14 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   void onTapImage(Group? group){
-    _showModalImage(group?.imageURL ?? "");
+    Analytics().logSelect(target: "Image");
+    if(group?.imageURL!=null){
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
+    }
   }
 
   bool get _canCreateGroup {
     return Auth2().isOidcLoggedIn;
-  }
-
-  //Modal Image Dialog
-  void _showModalImage(String? url){
-    if(url != null) {
-      setState(() {
-        _modalImageUrl = url;
-      });
-    }
   }
 
   ///////////////////////////////////
