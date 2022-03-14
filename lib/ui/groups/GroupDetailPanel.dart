@@ -48,6 +48,7 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
@@ -100,8 +101,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool?               _shouldScrollToLastAfterRefresh;
 
   DateTime?           _pausedDateTime;
-
-  String? _modalImageUrl;// Used to show image
 
   GlobalKey          _pollsKey = GlobalKey();
   List<Poll>?        _groupPolls;
@@ -511,14 +510,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     return
-      ModalImageDialog.modalDialogContainer(
-        imageUrl: _modalImageUrl,
-        onClose: () {
-          Analytics().logSelect(target: "Close");
-          _modalImageUrl = null;
-          setState(() {});
-        },
-        content: Column(children: <Widget>[
+        Column(children: <Widget>[
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
@@ -531,7 +523,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _buildMembershipRequest(),
           _buildCancelMembershipRequest(),
         ],
-      ));
+      );
   }
 
   Widget _buildImageHeader(){
@@ -1107,10 +1099,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _showModalImage(String? url){
-    if(url != null) {
-      setState(() {
-        _modalImageUrl = url;
-      });
+    Analytics().logSelect(target: "Image");
+    if (url != null) {
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
     }
   }
 

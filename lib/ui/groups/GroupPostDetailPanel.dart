@@ -34,6 +34,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 
 class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final GroupPost? post;
@@ -64,7 +65,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   GroupPost? _editingReply; //Edit Mode for Reply {Data Edit}
   PostDataModel? _replyEditData = PostDataModel(); //used for Reply Create / Edit; Empty data for new Reply
 
-  String? _modalImageUrl; // ModalImageDial presentation
   bool _loading = false;
 
   //Scroll and focus utils
@@ -117,15 +117,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             centerTitle: true),
         backgroundColor: Styles().colors!.background,
         bottomNavigationBar: uiuc.TabBar(),
-        body: ModalImageDialog.modalDialogContainer(
-          content: _buildContent(),
-          imageUrl: _modalImageUrl,
-          onClose: () {
-            Analytics().logSelect(target: "Close");
-            _modalImageUrl = null;
-            setState(() {});
-          }
-        ));
+        body: _buildContent(),
+      );
   }
 
   Widget _buildContent(){
@@ -897,11 +890,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   //Modal Image Dialog
   void _showModalImage(String? url){
-    if(url != null) {
-      setState(() {
-        _modalImageUrl = url;
-      });
-    }
+    Analytics().logSelect(target: "Image");
+    if (url != null) {
+Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));    }
   }
 
   //Scroll
