@@ -35,6 +35,7 @@ import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -42,7 +43,6 @@ import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
-import 'package:illinois/ui/widgets/OptionSelectionCell.dart';
 
 import 'AthleticsTeamsPanel.dart';
 
@@ -293,106 +293,54 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                               ],
                                             )),
                                           ),
-                                          Padding(
-                                            padding: EdgeInsets.all(16),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: <Widget>[
-                                                Column(
-                                                  children: <Widget>[
-                                                    GestureDetector(
-                                                      onTap:
-                                                          _onTapMoreUpcomingEvents,
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 8),
-                                                        child:
-                                                            OptionSelectionCell(
-                                                              label:
-                                                                Localization().getStringEx("panel.athletics.button.upcoming_events.title", 'Upcoming Events'),
-                                                              hint:
-                                                                Localization().getStringEx("panel.athletics.button.upcoming_events.hint", ''),
-                                                              iconPath:
-                                                                  'images/2.0x/upcoming_events_orange.png',
-                                                              selectedIconPath:
-                                                                  'images/2.0x/upcoming_events_orange.png',
-                                                        ),
+                                          Padding(padding: EdgeInsets.all(16), child:
+                                            Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
+                                              Expanded(child:
+                                                Column(children: <Widget>[
+                                                  Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                                    TileButton(
+                                                      title: Localization().getStringEx("panel.athletics.button.upcoming_events.title", 'Upcoming Events'),
+                                                      hint: Localization().getStringEx("panel.athletics.button.upcoming_events.hint", ''),
+                                                      iconAsset: 'images/2.0x/upcoming_events_orange.png',
+                                                      contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
+                                                      onTap: _onTapMoreUpcomingEvents,
+                                                    ),
+                                                  ),
+                                                  Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                                    TileButton(
+                                                      title: Localization().getStringEx("panel.athletics.button.news.title", 'News'),
+                                                      hint: Localization().getStringEx("panel.athletics.button.news.hint", ''),
+                                                      iconAsset: 'images/2.0x/teal.png',
+                                                      contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
+                                                      onTap: _onTapNews,
+                                                    ),
+                                                  ),
+                                                ],),
+                                              ),
+                                              Container(width: 12,),
+                                              Expanded(child:
+                                                Column(children: <Widget>[
+                                                  Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                                    TileButton(
+                                                      title: Localization().getStringEx("panel.athletics.button.tickets.title", 'Tickets'),
+                                                      hint: Localization().getStringEx("panel.athletics.button.tickets.hint", ''),
+                                                      iconAsset: 'images/2.0x/tickets_yellow.png',
+                                                      contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
+                                                      onTap: _onTapTickets,
                                                       ),
                                                     ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        _onTapNews();
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 8),
-                                                        child:
-                                                            OptionSelectionCell(
-                                                              label:
-                                                                Localization().getStringEx("panel.athletics.button.news.title", 'News'),
-                                                              hint:
-                                                                Localization().getStringEx("panel.athletics.button.news.hint", ''),
-                                                              iconPath:
-                                                                  'images/2.0x/teal.png',
-                                                              selectedIconPath:
-                                                                  'images/2.0x/teal.png',
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                Column(
-                                                  children: <Widget>[
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        _onTapTickets();
-                                                          },
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 8),
-                                                        child:
-                                                            OptionSelectionCell(
-                                                              label:
-                                                                Localization().getStringEx("panel.athletics.button.tickets.title", 'Tickets'),
-                                                              hint:
-                                                                Localization().getStringEx("panel.athletics.button.tickets.hint", ''),
-                                                              iconPath:
-                                                                'images/2.0x/tickets_yellow.png',
-                                                              selectedIconPath:
-                                                                'images/2.0x/tickets_yellow.png',
-                                                        ),
-                                                      ),
+                                                  Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                                    TileButton(
+                                                      title: Localization().getStringEx("panel.athletics.button.game_day_guide.title", 'Game Day Guide'),
+                                                      hint: Localization().getStringEx("panel.athletics.button.game_day_guide.hint", ''),
+                                                      iconAsset: 'images/2.0x/game_day_blue.png',
+                                                      contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
+                                                      onTap: _onTapGameDayGuide,
                                                     ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        _onTapGameDayGuide();
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 8),
-                                                        child:
-                                                            OptionSelectionCell(
-                                                              label:
-                                                                Localization().getStringEx("panel.athletics.button.game_day_guide.title", 'Game Day Guide'),
-                                                              hint:
-                                                                Localization().getStringEx("panel.athletics.button.game_day_guide.hint", ''),
-                                                              iconPath:
-                                                                  'images/2.0x/game_day_blue.png',
-                                                              selectedIconPath:
-                                                                  'images/2.0x/game_day_blue.png',
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                )
-                                              ],
-                                            ),
+                                                  ),
+                                                ],)
+                                              ),
+                                            ],),
                                           )
                                         ],
                                       )
