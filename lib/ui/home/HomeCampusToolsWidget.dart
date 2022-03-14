@@ -114,8 +114,8 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
     }
 
     return (countPerRow == 1) ?
-      WideTileButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap) :
-      SmallTileButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap);
+      TileWideButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap) :
+      TileButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap);
   }
 
   @override

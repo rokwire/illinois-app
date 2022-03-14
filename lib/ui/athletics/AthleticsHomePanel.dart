@@ -298,7 +298,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                               Expanded(child:
                                                 Column(children: <Widget>[
                                                   Padding(padding: EdgeInsets.only(bottom: 8), child:
-                                                    SmallTileButton(
+                                                    TileButton(
                                                       title: Localization().getStringEx("panel.athletics.button.upcoming_events.title", 'Upcoming Events'),
                                                       hint: Localization().getStringEx("panel.athletics.button.upcoming_events.hint", ''),
                                                       iconAsset: 'images/2.0x/upcoming_events_orange.png',
@@ -307,7 +307,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                     ),
                                                   ),
                                                   Padding(padding: EdgeInsets.only(bottom: 8), child:
-                                                    SmallTileButton(
+                                                    TileButton(
                                                       title: Localization().getStringEx("panel.athletics.button.news.title", 'News'),
                                                       hint: Localization().getStringEx("panel.athletics.button.news.hint", ''),
                                                       iconAsset: 'images/2.0x/teal.png',
@@ -321,7 +321,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                               Expanded(child:
                                                 Column(children: <Widget>[
                                                   Padding(padding: EdgeInsets.only(bottom: 8), child:
-                                                    SmallTileButton(
+                                                    TileButton(
                                                       title: Localization().getStringEx("panel.athletics.button.tickets.title", 'Tickets'),
                                                       hint: Localization().getStringEx("panel.athletics.button.tickets.hint", ''),
                                                       iconAsset: 'images/2.0x/tickets_yellow.png',
@@ -330,7 +330,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                       ),
                                                     ),
                                                   Padding(padding: EdgeInsets.only(bottom: 8), child:
-                                                    SmallTileButton(
+                                                    TileButton(
                                                       title: Localization().getStringEx("panel.athletics.button.game_day_guide.title", 'Game Day Guide'),
                                                       hint: Localization().getStringEx("panel.athletics.button.game_day_guide.hint", ''),
                                                       iconAsset: 'images/2.0x/game_day_blue.png',
