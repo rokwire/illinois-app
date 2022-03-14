@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - PollBubblePinPanel: improve Accessibility [#1446](https://github.com/rokwire/illinois-app/issues/1446).
+- Wrong game dates [#1451](https://github.com/rokwire/illinois-app/issues/1451).
 
 ## [3.2.35] - 2022-03-10
 ### Fixed
