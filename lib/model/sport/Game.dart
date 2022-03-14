@@ -30,8 +30,7 @@ class Game with Explore implements Favorite {
   final DateTime? dateTimeUtc;
   final String? endDateTimeUtcString;
   final DateTime? endDateTimeUtc;
-  final String? endDateTimeString;
-  final DateTime? endDateTime;
+  final String? endDateString;
   final bool? allDay;
   final String? status;
   final String? description;
@@ -61,8 +60,7 @@ class Game with Explore implements Favorite {
       this.dateTimeUtc,
       this.endDateTimeUtcString,
       this.endDateTimeUtc,
-      this.endDateTimeString,
-      this.endDateTime,
+      this.endDateString,
       this.allDay,
       this.status,
       this.description,
@@ -86,8 +84,7 @@ class Game with Explore implements Favorite {
       dateTimeUtc: DateTimeUtils.dateTimeFromString(json['datetime_utc'], format: utcDateTimeFormat, isUtc: true),
       endDateTimeUtcString: json['end_datetime_utc'],
       endDateTimeUtc: DateTimeUtils.dateTimeFromString(json['end_datetime_utc'], format: utcDateTimeFormat, isUtc: true),
-      endDateTimeString: json['end_datetime'],
-      endDateTime: DateTimeUtils.dateTimeFromString(json['end_datetime'], format: dateTimeFormat),
+      endDateString: json['end_date'],
       allDay: json['all_day'],
       status: json['status'],
       description: json['description'],
@@ -128,8 +125,8 @@ class Game with Explore implements Favorite {
       return false;
     }
     DateTime universityLocalGameStartDateTime = date!; //dateTimeUtc.add(durationDifferenceUniversityToGmt);
-    DateTime? universityLocalGameEndDateTime = AppDateTime().getUniLocalTimeFromUtcTime(endDateTimeUtc);
-    DateTime nowUtcDateTime = AppDateTime().now;
+    DateTime? universityLocalGameEndDateTime = endDate; //AppDateTime().getUniLocalTimeFromUtcTime(endDateTimeUtc);
+    DateTime nowUtcDateTime = AppDateTime().now.toUtc();
     DateTime nowUniversityDateTime = AppDateTime().getUniLocalTimeFromUtcTime(nowUtcDateTime)!;
     bool startDateIsToday = (nowUniversityDateTime.year == universityLocalGameStartDateTime.year) &&
         (nowUniversityDateTime.month == universityLocalGameStartDateTime.month) &&
@@ -152,6 +149,10 @@ class Game with Explore implements Favorite {
 
   DateTime? get date {
     return DateTimeUtils.dateTimeFromString(dateToString, format: dateFormat);
+  }
+
+  DateTime? get endDate {
+    return DateTimeUtils.dateTimeFromString(endDateString, format: dateFormat);
   }
 
   ///
@@ -182,10 +183,10 @@ class Game with Explore implements Favorite {
     bool useStringDateTimes = (hourUtc == 0 && minuteUtc == 0 && secondUtc == 0 && millisUtc == 0);
     final String displayDateFormat = 'MMM dd';
     if (eventIsMoreThanOneDay) {
-      DateTime? startDate = useStringDateTimes ? date : dateTimeUtc;
-      DateTime? endDate = useStringDateTimes ? (endDateTime ?? endDateTimeUtc) : endDateTimeUtc;
-      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
-      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
+      DateTime? startDisplayDate = useStringDateTimes ? date : dateTimeUtc;
+      DateTime? endDisplayDate = useStringDateTimes ? (endDate ?? endDateTimeUtc) : endDateTimeUtc;
+      String? startDateFormatted = AppDateTime().formatDateTime(startDisplayDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
+      String? endDateFormatted = AppDateTime().formatDateTime(endDisplayDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
       return '$startDateFormatted - $endDateFormatted';
     } else if (useStringDateTimes) {
       String dateFormatted = AppDateTime().formatDateTime(date, format: displayDateFormat, ignoreTimeZone: true, showTzSuffix: false)!; //another workaround
@@ -296,7 +297,7 @@ class Game with Explore implements Favorite {
       "time": timeToString,
       "datetime_utc": dateTimeUtcString,
       "end_datetime_utc": endDateTimeUtcString,
-      "end_datetime": endDateTimeString,
+      "end_date": endDateString,
       "all_day": allDay,
       "status": status,
       "description": description,
