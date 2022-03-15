@@ -25,7 +25,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/VerticalTitleContentSection.dart';
+import 'package:rokwire_plugin/ui/widgets/section.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -233,27 +233,27 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       ));
     }
     if (isSignedIn) {
-      widgets.add(VerticalTitleContentSection(
+      widgets.add(VerticalTitleValueSection(
         title: Localization().getStringEx(
             "panel.settings.meal_plan.label.meal_plan_type.text", "Meal Plan Type"),
-        content: StringUtils.isNotEmpty(IlliniCash().ballance?.mealPlanName) ? IlliniCash().ballance?.mealPlanName : Localization().getStringEx(
+        value: StringUtils.isNotEmpty(IlliniCash().ballance?.mealPlanName) ? IlliniCash().ballance?.mealPlanName : Localization().getStringEx(
             "panel.settings.meal_plan.label.meal_plan_unknown.text", "Unknown"),
       ));
       widgets.add(
         Row(
           children: <Widget>[
             Expanded(
-              child: VerticalTitleContentSection(
+              child: VerticalTitleValueSection(
                 title: Localization().getStringEx(
                     "panel.settings.meal_plan.label.meals_remaining.text", "Meals Remaining"),
-                content: IlliniCash().ballance?.mealBalanceDisplayText ?? "0",
+                value: IlliniCash().ballance?.mealBalanceDisplayText ?? "0",
               ),
             ),
             Expanded(
-              child: VerticalTitleContentSection(
+              child: VerticalTitleValueSection(
                 title: Localization().getStringEx(
                     "panel.settings.meal_plan.label.dining_dollars.text", "Dining Dollars"),
-                content: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
+                value: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
               ),
             )
           ],
