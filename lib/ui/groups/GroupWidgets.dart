@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -212,6 +213,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
     if (optionsCount == 0) {
       return null;
     }
+
     return widget.items!.map((Object? item) {
       String? name = widget.constructTitle!=null? widget.constructTitle!(item) : item?.toString();
       GroupDropDownDescriptionDataBuilder<T?>? constructDescriptionFn = widget.constructListItemDescription ?? widget.constructDescription;
@@ -1697,6 +1699,87 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                       fontSize: 16,
                       fontFamily: Styles().fontFamilies!.regular)))
         ]);
+  }
+}
+
+class GroupMembersSelectionWidget extends StatefulWidget{
+  final List<Member>? allMembers;
+  final List<Member>? selectedMembers;
+  final void Function(List<Member>?)? onSelectionChanged;
+  
+  const GroupMembersSelectionWidget({Key? key, this.selectedMembers, this.allMembers,this.onSelectionChanged}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _GroupMembersSelectionState();
+
+}
+
+class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text("To: "),
+              _buildDropDown(),
+            ],
+          ),
+          Container(height: 4,),
+          Text(selectedMembersText),
+          Container(height: 4,),
+          RoundedButton(label: "Edit", onTap: _onTapEdit, textColor: Styles().colors!.fillColorSecondary!,conentAlignment: MainAxisAlignment.start, contentWeight: 0.33, padding: EdgeInsets.all(3), maxBorderRadius: 5,)
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildDropDown(){
+    //TBD Dropdown
+    return Text(
+      _selectionText,
+      style: TextStyle(),
+    );
+  }
+
+  void _onTapEdit(){
+    Analytics().logSelect(target: "Edit Members");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSelectionPanel(allMembers: widget.allMembers, selectedMembers: widget.selectedMembers,))).then((result) {
+      _onSelectionChanged(result);
+    });
+  }
+
+  void _onSelectionChanged(List<Member>? selection){
+    if(widget.onSelectionChanged!=null){
+      widget.onSelectionChanged!(selection);
+    }
+  }
+  
+  String get _selectionText{
+    if(CollectionUtils.isNotEmpty(widget.selectedMembers)){
+      return "Selected Members (${widget.selectedMembers?.length ?? 0})";
+    } else {
+      return "All Members (${widget.allMembers?.length ?? 0})";
+    }
+  }
+
+  String get selectedMembersText{
+    String result = "";
+    if(_hasSelection){
+      widget.selectedMembers!.forEach((member) {
+        result += ((result.isNotEmpty) ? ", " : "");
+        result += member.displayShortName;
+      });
+    }
+    return result;
+  }
+
+  bool get _hasSelection{
+    return (widget.selectedMembers?.length ?? 0) > 0;
   }
 }
 
