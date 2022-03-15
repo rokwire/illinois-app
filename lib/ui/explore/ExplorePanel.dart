@@ -126,7 +126,7 @@ class ExplorePanelState extends State<ExplorePanel>
     with
         SingleTickerProviderStateMixin,
         AutomaticKeepAliveClientMixin<ExplorePanel>
-    implements NotificationsListener, RoundedTabListener {
+    implements NotificationsListener {
   
   List<ExploreTab> _exploreTabs = [];
   ExploreTab?    _selectedTab;
@@ -1162,7 +1162,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
     List<RoundedTab> tabs = [];
     for (ExploreTab exploreTab in _exploreTabs) {
-      tabs.add(RoundedTab(title: exploreTabName(exploreTab), hint: exploreTabHint(exploreTab), tabIndex: ExploreTab.values.indexOf(exploreTab), listener: this, selected: (_selectedTab == exploreTab)));
+      tabs.add(RoundedTab(title: exploreTabName(exploreTab), hint: exploreTabHint(exploreTab), tabIndex: ExploreTab.values.indexOf(exploreTab), onTap: _onTapTab, selected: (_selectedTab == exploreTab)));
     }
     return tabs;
   }
@@ -1246,11 +1246,10 @@ class ExplorePanelState extends State<ExplorePanel>
     Navigator.pop(context);
   }
 
-  @override
-  void onTabClicked(int? tabIndex, RoundedTab tab) {
-    if ((0 <= tabIndex!) && (tabIndex < ExploreTab.values.length)) {
+  void _onTapTab(RoundedTab tab) {
+    if ((0 <= tab.tabIndex) && (tab.tabIndex < ExploreTab.values.length)) {
       Analytics().logSelect(target: tab.title) ;
-      selectTab(ExploreTab.values[tabIndex]);
+      selectTab(ExploreTab.values[tab.tabIndex]);
     }
   }
 

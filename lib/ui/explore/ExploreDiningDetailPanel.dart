@@ -636,7 +636,7 @@ class _DiningDetail extends StatefulWidget {
   _DiningDetailState createState() => _DiningDetailState();
 }
 
-class _DiningDetailState extends State<_DiningDetail> implements NotificationsListener, RoundedTabListener{
+class _DiningDetailState extends State<_DiningDetail> implements NotificationsListener {
 
   List<DiningSpecial>? _specials;
 
@@ -749,9 +749,9 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
     }
   }
 
-  void onTabClicked(int tabIndex, RoundedTab caller){
-    Analytics().logSelect(target: "Tab: ${caller.title}");
-    _selectedScheduleIndex = tabIndex;
+  void _onTapTab(RoundedTab tab){
+    Analytics().logSelect(target: "Tab: ${tab.title}");
+    _selectedScheduleIndex = tab.tabIndex;
     if(mounted) {
       setState(() {});
     }
@@ -966,7 +966,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
 
       tabs.add(RoundedTab(title: schedule.meal,
           tabIndex: i,
-          listener: this,
+          onTap: _onTapTab,
           selected: (i == _selectedScheduleIndex)));
     }
 

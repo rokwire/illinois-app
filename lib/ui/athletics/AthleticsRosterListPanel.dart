@@ -39,7 +39,7 @@ class AthleticsRosterListPanel extends StatefulWidget {
   _AthleticsRosterListPanelState createState() => _AthleticsRosterListPanelState(allRosters);
 }
 
-class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> implements RoundedTabListener, _RosterItemListener{
+class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> implements _RosterItemListener {
 
   final String _tabFilterByName = Localization().getStringEx("panel.athletics_roster_list.button.by_name.title", "By Name");
   final String _tabFilterByPosition = Localization().getStringEx("panel.athletics_roster_list.button.by_position.title", "By Position");
@@ -123,7 +123,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
     if(_tabStrings.length > 1) {
       for (int i = 0; i < _tabStrings.length; i++) {
         tabs.add(
-            new RoundedTab(title: _tabStrings[i], tabIndex: i, listener: this, selected: (i == _selectedTabIndex)));
+            new RoundedTab(title: _tabStrings[i], tabIndex: i, onTap: _onTapTab, selected: (i == _selectedTabIndex)));
       }
     }
     return tabs;
@@ -211,14 +211,14 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
             builder: (context) => new AthleticsRosterDetailPanel(widget.sport, roster)));
   }
 
-  @override
-  void onTabClicked(int? tabIndex, RoundedTab caller) {
-    Analytics().logSelect(target: caller.title) ;
-    setState(() {
-      _selectedTabIndex = tabIndex;
-      _tabs = _constructTabWidgets();
-    });
+  void _onTapTab(RoundedTab tab) {
+      Analytics().logSelect(target: tab.title);
+      setState(() {
+        _selectedTabIndex = tab.tabIndex;
+        _tabs = _constructTabWidgets();
+      });
   }
+
 }
 
 class _RosterListHeading extends StatelessWidget{

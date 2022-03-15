@@ -21,15 +21,16 @@ class RoundedTab extends StatelessWidget {
   final String? title;
   final String? hint;
   final int tabIndex;
-  final RoundedTabListener? listener;
+  final void Function(RoundedTab tab)? onTap;
   final bool? selected;
+
   static const Color _borderColor = Color(0xffdadde1);
-  RoundedTab({this.title, this.hint, required this.tabIndex, this.listener, this.selected})
+  RoundedTab({this.title, this.hint, required this.tabIndex, this.onTap, this.selected})
       : super();
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: () => onPressed(), child: Semantics(label: title, hint: hint, button: true, selected: selected, excludeSemantics: true, child:Padding(
+    return GestureDetector(onTap: () => _onPressed(), child: Semantics(label: title, hint: hint, button: true, selected: selected, excludeSemantics: true, child:Padding(
         padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
         child:
         Container(
@@ -71,11 +72,9 @@ class RoundedTab extends StatelessWidget {
         : Styles().colors!.fillColorPrimary;
   }
 
-  void onPressed() {
-    listener?.onTabClicked(tabIndex, this);
+  void _onPressed() {
+    if (onTap != null) {
+      onTap!(this);
+    }
   }
-}
-
-abstract class RoundedTabListener {
-  void onTabClicked(int tabIndex, RoundedTab caller);
 }

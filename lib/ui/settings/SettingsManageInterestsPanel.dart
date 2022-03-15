@@ -39,7 +39,7 @@ class SettingsManageInterestsPanel extends StatefulWidget {
   _SettingsManageInterestsState createState() => _SettingsManageInterestsState();
 }
 
-class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> implements NotificationsListener, RoundedTabListener {
+class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> implements NotificationsListener {
   //Tabs
   List<_InterestTab> _tabs = [];
   _InterestTab? _selectedTab;
@@ -463,7 +463,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   List<RoundedTab> _buildTabWidgets() {
     List<RoundedTab> tabs = [];
     for (_InterestTab tab in _tabs) {
-      tabs.add(RoundedTab(title: _interestTabName(tab), tabIndex: _tabs.indexOf(tab), listener: this, selected: (_selectedTab == tab)));
+      tabs.add(RoundedTab(title: _interestTabName(tab), tabIndex: _tabs.indexOf(tab), onTap: _onTapTab, selected: (_selectedTab == tab)));
     }
     return tabs;
   }
@@ -479,11 +479,10 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
     });
   }
 
-  @override
-  void onTabClicked(int? tabIndex, RoundedTab caller) {
-    if ((0 <= tabIndex!) && (tabIndex < _tabs.length)) {
-      Analytics().logSelect(target: caller.title);
-      _selectTab(_tabs[tabIndex]);
+  void _onTapTab(RoundedTab tab) {
+    if ((0 <= tab.tabIndex) && (tab.tabIndex < _tabs.length)) {
+      Analytics().logSelect(target: tab.title);
+      _selectTab(_tabs[tab.tabIndex]);
     }
   }
 
