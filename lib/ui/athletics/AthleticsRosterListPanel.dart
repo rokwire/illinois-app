@@ -45,15 +45,15 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   final String _tabFilterByPosition = Localization().getStringEx("panel.athletics_roster_list.button.by_position.title", "By Position");
   final String _tabFilterByNumber = Localization().getStringEx("panel.athletics_roster_list.button.by_number.title", "By Number");
 
-  int? _selectedTabIndex = 0;
-  late List<RoundedTab> _tabs;
   late List<String> _tabStrings;
+  int? _selectedTabIndex = 0;
   List<Roster>? allRosters;
 
   _AthleticsRosterListPanelState(this.allRosters);
 
   @override
   void initState() {
+    _tabStrings = _buildTabString();
     if (allRosters == null || allRosters!.length == 0) {
       _loadAllRosters();
     }
@@ -62,7 +62,6 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
 
   @override
   Widget build(BuildContext context) {
-    _tabs = _constructTabWidgets();
     return Scaffold(
       appBar: HeaderBar(
         title: Localization().getStringEx('panel.athletics_roster_list.header.title', 'Roster'),
@@ -74,16 +73,13 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   }
 
   Widget _buildContent() {
-    _tabs = _constructTabWidgets();
+    List<Widget> tabs = _constructTabWidgets();
     return allRosters != null && allRosters!.length > 0 ? Column(
         children: <Widget>[
           _RosterListHeading(widget.sport),
-          _tabs.isNotEmpty ? SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Padding(padding: EdgeInsets.all(12),
-                child: Row(
-                  children: _tabs,
-                )
+          tabs.isNotEmpty ? Padding(padding: EdgeInsets.all(16), child:
+            SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+              Row(children: tabs,)
             ),
           ) : Container(),
           Expanded(
@@ -99,31 +95,34 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
     Sports().loadRosters(widget.sport!.shortName).then((List<Roster>? result) {
       setState(() {
         allRosters = result;
+        _tabStrings = _buildTabString();
       });
     });
   }
 
-  List<RoundedTab> _constructTabWidgets() {
-    _tabStrings = [];
-    List<RoundedTab> tabs = [];
-
+  List<String> _buildTabString() {
+    List<String> tabStrings = [];
     if(widget.sport != null) {
-      _tabStrings.add(_tabFilterByName);
+      tabStrings.add(_tabFilterByName);
       if (widget.sport!.hasSortByPosition! || widget.sport!.hasSortByNumber!) {
         if (widget.sport!.hasSortByPosition!) {
-          _tabStrings.add(_tabFilterByPosition);
+          tabStrings.add(_tabFilterByPosition);
         }
         if (widget.sport!.hasSortByNumber!) {
-          _tabStrings.add(_tabFilterByNumber);
+          tabStrings.add(_tabFilterByNumber);
         }
       }
     }
+    return tabStrings;
+  }
+
+  List<Widget> _constructTabWidgets() {
 
     // Tabs will be visible if there are more than 1
+    List<Widget> tabs = [];
     if(_tabStrings.length > 1) {
       for (int i = 0; i < _tabStrings.length; i++) {
-        tabs.add(
-            new RoundedTab(title: _tabStrings[i], tabIndex: i, onTap: _onTapTab, selected: (i == _selectedTabIndex)));
+        tabs.add(Padding(padding: EdgeInsets.only(right: 8), child: RoundedTab(title: _tabStrings[i], tabIndex: i, onTap: _onTapTab, selected: (i == _selectedTabIndex))));
       }
     }
     return tabs;
@@ -215,7 +214,6 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
       Analytics().logSelect(target: tab.title);
       setState(() {
         _selectedTabIndex = tab.tabIndex;
-        _tabs = _constructTabWidgets();
       });
   }
 

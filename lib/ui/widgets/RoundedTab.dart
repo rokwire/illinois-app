@@ -19,55 +19,48 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class RoundedTab extends StatelessWidget {
   final String? title;
+
   final String? hint;
   final int tabIndex;
   final void Function(RoundedTab tab)? onTap;
-  final bool? selected;
+  final bool selected;
 
   static const Color _borderColor = Color(0xffdadde1);
-  RoundedTab({this.title, this.hint, required this.tabIndex, this.onTap, this.selected})
-      : super();
+  
+  RoundedTab({ Key? key,
+    this.title,
+
+    this.hint,
+    this.tabIndex = 0,
+    this.onTap,
+    this.selected = false
+  }): super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: () => _onPressed(), child: Semantics(label: title, hint: hint, button: true, selected: selected, excludeSemantics: true, child:Padding(
-        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-        child:
-        Container(
-//            height: 40,
-            decoration: new ShapeDecoration(
-              color: _borderColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(34.0),
+    return GestureDetector(onTap: () => _onPressed(), child:
+      Semantics(label: title, hint: hint, button: true, selected: selected, excludeSemantics: true, child:
+        Container(decoration: ShapeDecoration(color: _borderColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(34),),), child:
+          Padding(padding: EdgeInsets.all(1), child:
+            Container(decoration: ShapeDecoration(color: getBackColor(), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35),),), child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
+                Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: getTextColor(), fontSize: 16,),),
               ),
             ),
-            child: Padding(
-                padding: EdgeInsets.all(1),
-                child: Container(
-                    decoration: new ShapeDecoration(
-                      color: getBackColor(),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(35.0),
-                      ),
-                    ),
-                    child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 20),
-                        child: Text(title!,
-                            style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: getTextColor(),
-                                fontSize: 16,)))))
-        )
-    ),),);
+          ),
+        ),
+      ),
+    );
   }
 
   Color? getBackColor() {
-    return selected!
+    return selected
         ? Styles().colors!.fillColorPrimary
         : Styles().colors!.surfaceAccent;
   }
 
   Color? getTextColor(){
-    return selected!
+    return selected
         ? Colors.white
         : Styles().colors!.fillColorPrimary;
   }

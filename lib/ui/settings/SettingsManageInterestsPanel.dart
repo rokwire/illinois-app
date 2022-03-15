@@ -150,13 +150,11 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
                                       )))
                                 ],
                               )))),
-                  Padding(
-                      padding: EdgeInsets.all(12),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child:Row(
-                        children: _buildTabWidgets(),
-                      ))),
+                  Padding(padding: EdgeInsets.all(16), child:
+                    SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+                      Row(children: _buildTabWidgets(),),
+                    ),
+                  ),
                   _buildTabContent(),
                 ])),
           )),
@@ -460,10 +458,10 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   /////
 
   //Tabs
-  List<RoundedTab> _buildTabWidgets() {
-    List<RoundedTab> tabs = [];
+  List<Widget> _buildTabWidgets() {
+    List<Widget> tabs = [];
     for (_InterestTab tab in _tabs) {
-      tabs.add(RoundedTab(title: _interestTabName(tab), tabIndex: _tabs.indexOf(tab), onTap: _onTapTab, selected: (_selectedTab == tab)));
+      tabs.add(Padding(padding: EdgeInsets.only(right: 8), child: RoundedTab(title: _interestTabName(tab), tabIndex: _tabs.indexOf(tab), onTap: _onTapTab, selected: (_selectedTab == tab))));
     }
     return tabs;
   }

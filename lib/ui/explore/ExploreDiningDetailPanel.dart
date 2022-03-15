@@ -909,13 +909,10 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                 ],
               ),
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Row(
-                    children: _buildScheduleTabs(),
-                  )),
+            Padding(padding: EdgeInsets.all(16), child: 
+              SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+                Row(children: _buildScheduleTabs(),),
+              ),
             ),
             _buildScheduleWorkTime(),
             _isLoading
@@ -959,15 +956,11 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
 
-  List<RoundedTab> _buildScheduleTabs() {
-    List<RoundedTab> tabs = [];
+  List<Widget> _buildScheduleTabs() {
+    List<Widget> tabs = [];
     for (int i = 0; i < _schedules!.length; i++) {
       DiningSchedule schedule = _schedules![i];
-
-      tabs.add(RoundedTab(title: schedule.meal,
-          tabIndex: i,
-          onTap: _onTapTab,
-          selected: (i == _selectedScheduleIndex)));
+      tabs.add(Padding(padding: EdgeInsets.only(right: 8), child: RoundedTab(title: schedule.meal, tabIndex: i, onTap: _onTapTab, selected: (i == _selectedScheduleIndex))));
     }
 
     return tabs;

@@ -245,8 +245,8 @@ class ExplorePanelState extends State<ExplorePanel>
             onTapList: () => _selectDisplayType(ListMapDisplayType.List),
             onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
           
-          Padding(padding: EdgeInsets.all(12), child:
-            Wrap(children: _buildTabWidgets(),
+          Padding(padding: EdgeInsets.all(16), child:
+            Wrap(spacing: 8, children: _buildTabWidgets(),
           )),
           
           Expanded(child:
