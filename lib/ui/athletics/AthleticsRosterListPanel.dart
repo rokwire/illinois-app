@@ -23,7 +23,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/widgets/RoundedTab.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:illinois/model/sport/Roster.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';

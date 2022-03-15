@@ -49,7 +49,7 @@ import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:illinois/ui/widgets/RoundedTab.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -246,7 +246,7 @@ class ExplorePanelState extends State<ExplorePanel>
             onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
           
           Padding(padding: EdgeInsets.all(16), child:
-            Wrap(spacing: 8, children: _buildTabWidgets(),
+            Wrap(spacing: 8, runSpacing: 8, children: _buildTabWidgets(),
           )),
           
           Expanded(child:

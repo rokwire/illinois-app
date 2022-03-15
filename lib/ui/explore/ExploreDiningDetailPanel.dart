@@ -42,7 +42,7 @@ import 'package:illinois/ui/dining/FoodDetailPanel.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedTab.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
