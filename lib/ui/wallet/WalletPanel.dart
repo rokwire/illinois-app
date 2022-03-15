@@ -280,7 +280,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
         child: Row(
           children: <Widget>[
             Expanded(
-              child: VerticalTitleContentSection(
+              child: VerticalTitleValueSection(
                 title: Localization().getStringEx('panel.settings.illini_cash.label.current_balance','Current Illini Cash Balance'),
                 value: IlliniCash().ballance?.balanceDisplayText ?? "\$0.00",
               ),
@@ -321,14 +321,14 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
         child: Row(
           children: <Widget>[
             Expanded(
-              child: VerticalTitleContentSection(
+              child: VerticalTitleValueSection(
                 title: Localization().getStringEx(
                     "panel.settings.meal_plan.label.meals_remaining.text", "Meals Remaining"),
                 value: IlliniCash().ballance?.mealBalanceDisplayText ?? "0",
               ),
             ),
             Expanded(
-              child: VerticalTitleContentSection(
+              child: VerticalTitleValueSection(
                 title: Localization().getStringEx(
                     "panel.settings.meal_plan.label.dining_dollars.text", "Dining Dollars"),
                 value: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
