@@ -35,7 +35,7 @@ import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/VerticalTitleContentSection.dart';
+import 'package:rokwire_plugin/ui/widgets/section.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -280,31 +280,25 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
         child: Row(
           children: <Widget>[
             Expanded(
-              child: VerticalTitleContentSection(
+              child: VerticalTitleValueSection(
                 title: Localization().getStringEx('panel.settings.illini_cash.label.current_balance','Current Illini Cash Balance'),
-                content: IlliniCash().ballance?.balanceDisplayText ?? "\$0.00",
+                value: IlliniCash().ballance?.balanceDisplayText ?? "\$0.00",
               ),
             ),
-            Semantics(
-              explicitChildNodes: true,
-              child: Container(child:
-              Semantics(
+            Semantics(button: true, excludeSemantics: true,
               label: Localization().getStringEx("panel.wallet.button.add_illini_cash.title","Add Illini Cash"),
               hint: Localization().getStringEx("panel.wallet.button.add_illini_cash.hint",""),
-              button: true,
-              excludeSemantics: true,
-              child:
-              IconButton(
-                color: Styles().colors!.fillColorPrimary,
-                icon: Image.asset('images/button-plus-orange.png', excludeFromSemantics: true,),
+              child: IconButton(
+              color: Styles().colors!.fillColorPrimary,
+              icon: Image.asset('images/button-plus-orange.png', excludeFromSemantics: true,),
                 onPressed: (){
                   Analytics().logSelect(target: "Add Illini Cash");
                   Navigator.push(context, CupertinoPageRoute(
                     builder: (context) => SettingsAddIlliniCashPanel()
                   ));
                 },
-              ))),
-            )
+              ),
+            ),
           ],
         ),
       ),
@@ -327,17 +321,17 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
         child: Row(
           children: <Widget>[
             Expanded(
-              child: VerticalTitleContentSection(
+              child: VerticalTitleValueSection(
                 title: Localization().getStringEx(
                     "panel.settings.meal_plan.label.meals_remaining.text", "Meals Remaining"),
-                content: IlliniCash().ballance?.mealBalanceDisplayText ?? "0",
+                value: IlliniCash().ballance?.mealBalanceDisplayText ?? "0",
               ),
             ),
             Expanded(
-              child: VerticalTitleContentSection(
+              child: VerticalTitleValueSection(
                 title: Localization().getStringEx(
                     "panel.settings.meal_plan.label.dining_dollars.text", "Dining Dollars"),
-                content: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
+                value: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
               ),
             )
           ],

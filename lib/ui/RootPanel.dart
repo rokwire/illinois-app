@@ -53,7 +53,7 @@ import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/widgets/PopupDialog.dart';
+import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -239,6 +239,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
+      //TMP:
+      _onFirebasePopupMessage({'display_text': 'Hi there', 'positive_button_text': 'Fine'});
     }
   }
 
@@ -462,14 +464,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebasePopupMessage(Map<String, dynamic> content) {
-    String? displayText = content["display_text"];
-    String? positiveButtonText = content["positive_button_text"];
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return PopupDialog(displayText: displayText, positiveButtonText: positiveButtonText);
-      },
+    PopupMessage.show(context: context,
+      title: Localization().getStringEx("app.title", "Illinois"),
+      message: JsonUtils.stringValue(content["display_text"]),
+      buttonTitle: JsonUtils.stringValue(content["positive_button_text"]) ?? Localization().getStringEx("dialog.ok.title", "OK")
     );
   }
 

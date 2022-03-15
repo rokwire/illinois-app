@@ -28,7 +28,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/VerticalTitleContentSection.dart';
+import 'package:rokwire_plugin/ui/widgets/section.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -162,11 +162,11 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                 children: <Widget>[
                   Stack(
                     children: <Widget>[
-                      VerticalTitleContentSection(
+                      VerticalTitleValueSection(
                         title: Localization().getStringEx(
                             'panel.settings.illini_cash.label.current_balance',
                             'Current Illini Cash Balance'),
-                        content: _illiniCashLoading ? "" : (IlliniCash().ballance?.balanceDisplayText ?? "\$0.00"),
+                        value: _illiniCashLoading ? "" : (IlliniCash().ballance?.balanceDisplayText ?? "\$0.00"),
                       ),
                       _illiniCashLoading ? Column(
                         children: <Widget>[

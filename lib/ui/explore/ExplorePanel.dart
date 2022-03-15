@@ -49,7 +49,7 @@ import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:illinois/ui/widgets/RoundedTab.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -126,7 +126,7 @@ class ExplorePanelState extends State<ExplorePanel>
     with
         SingleTickerProviderStateMixin,
         AutomaticKeepAliveClientMixin<ExplorePanel>
-    implements NotificationsListener, RoundedTabListener {
+    implements NotificationsListener {
   
   List<ExploreTab> _exploreTabs = [];
   ExploreTab?    _selectedTab;
@@ -245,8 +245,8 @@ class ExplorePanelState extends State<ExplorePanel>
             onTapList: () => _selectDisplayType(ListMapDisplayType.List),
             onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
           
-          Padding(padding: EdgeInsets.all(12), child:
-            Wrap(children: _buildTabWidgets(),
+          Padding(padding: EdgeInsets.all(16), child:
+            Wrap(spacing: 8, runSpacing: 8, children: _buildTabWidgets(),
           )),
           
           Expanded(child:
@@ -1162,7 +1162,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
     List<RoundedTab> tabs = [];
     for (ExploreTab exploreTab in _exploreTabs) {
-      tabs.add(RoundedTab(title: exploreTabName(exploreTab), hint: exploreTabHint(exploreTab), tabIndex: ExploreTab.values.indexOf(exploreTab), listener: this, selected: (_selectedTab == exploreTab)));
+      tabs.add(RoundedTab(title: exploreTabName(exploreTab), hint: exploreTabHint(exploreTab), tabIndex: ExploreTab.values.indexOf(exploreTab), onTap: _onTapTab, selected: (_selectedTab == exploreTab)));
     }
     return tabs;
   }
@@ -1246,11 +1246,10 @@ class ExplorePanelState extends State<ExplorePanel>
     Navigator.pop(context);
   }
 
-  @override
-  void onTabClicked(int? tabIndex, RoundedTab tab) {
-    if ((0 <= tabIndex!) && (tabIndex < ExploreTab.values.length)) {
+  void _onTapTab(RoundedTab tab) {
+    if ((0 <= tab.tabIndex) && (tab.tabIndex < ExploreTab.values.length)) {
       Analytics().logSelect(target: tab.title) ;
-      selectTab(ExploreTab.values[tabIndex]);
+      selectTab(ExploreTab.values[tab.tabIndex]);
     }
   }
 

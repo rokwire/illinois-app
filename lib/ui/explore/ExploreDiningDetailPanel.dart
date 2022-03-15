@@ -42,7 +42,7 @@ import 'package:illinois/ui/dining/FoodDetailPanel.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedTab.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
@@ -636,7 +636,7 @@ class _DiningDetail extends StatefulWidget {
   _DiningDetailState createState() => _DiningDetailState();
 }
 
-class _DiningDetailState extends State<_DiningDetail> implements NotificationsListener, RoundedTabListener{
+class _DiningDetailState extends State<_DiningDetail> implements NotificationsListener {
 
   List<DiningSpecial>? _specials;
 
@@ -749,9 +749,9 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
     }
   }
 
-  void onTabClicked(int tabIndex, RoundedTab caller){
-    Analytics().logSelect(target: "Tab: ${caller.title}");
-    _selectedScheduleIndex = tabIndex;
+  void _onTapTab(RoundedTab tab){
+    Analytics().logSelect(target: "Tab: ${tab.title}");
+    _selectedScheduleIndex = tab.tabIndex;
     if(mounted) {
       setState(() {});
     }
@@ -909,13 +909,10 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                 ],
               ),
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Row(
-                    children: _buildScheduleTabs(),
-                  )),
+            Padding(padding: EdgeInsets.all(16), child: 
+              SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+                Row(children: _buildScheduleTabs(),),
+              ),
             ),
             _buildScheduleWorkTime(),
             _isLoading
@@ -959,15 +956,11 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
 
-  List<RoundedTab> _buildScheduleTabs() {
-    List<RoundedTab> tabs = [];
+  List<Widget> _buildScheduleTabs() {
+    List<Widget> tabs = [];
     for (int i = 0; i < _schedules!.length; i++) {
       DiningSchedule schedule = _schedules![i];
-
-      tabs.add(RoundedTab(title: schedule.meal,
-          tabIndex: i,
-          listener: this,
-          selected: (i == _selectedScheduleIndex)));
+      tabs.add(Padding(padding: EdgeInsets.only(right: 8), child: RoundedTab(title: schedule.meal, tabIndex: i, onTap: _onTapTab, selected: (i == _selectedScheduleIndex))));
     }
 
     return tabs;
