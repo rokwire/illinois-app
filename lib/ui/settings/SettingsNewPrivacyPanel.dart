@@ -238,7 +238,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                             Container(
                               padding: EdgeInsets.only(top: 42, bottom: 10, left: 40, right: 40),
                               child:
-                              Semantics(button:false,  hint: "${_sliderValue?.round().toString() ?? ""}",
+                              Semantics(button:false,  hint: "${_sliderIntValue?.toString() ?? ""}",
                                 child: Text(
                                   Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.title", "Your New \nPrivacy Level"),
                                   style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies!.bold),
@@ -324,7 +324,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                                 child: Semantics(
                                   label: Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.label.new_privacy", "Privacy Level: "),
                                   child: Text(
-                                    _sliderValue?.round().toString() ?? "",
+                                    _sliderIntValue?.toString() ?? "",
                                     style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 24, fontFamily: Styles().fontFamilies!.extraBold),
                                   ),
                                 )
@@ -402,7 +402,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
     List<Widget> list = [];
     if (_data?.features2 != null) {
       for (PrivacyFeature2? feature2 in _data!.features2!) {
-        if (feature2!.maxLevel!.round() >= _sliderValue!.round()) {
+        if (feature2!.maxLevel!.round() >= _sliderIntValue!) {
           list.add(
               Row(children: <Widget>[
                 Container(
@@ -434,7 +434,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
   void _onSaveClicked() {
     if (!_disabled) {
       Analytics().logSelect(target: "Set Privacy");
-      if ((widget.mode == SettingsPrivacyPanelMode.regular) && (_sliderValue!.toInt() < this._privacyLevel)) {
+      if ((widget.mode == SettingsPrivacyPanelMode.regular) && (_sliderIntValue! < this._privacyLevel)) {
         AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.all(0), contentWidget: _buildUpdatePrivacyDialog(context));
       }
       else {
@@ -444,7 +444,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
   }
 
   void _save() {
-    Auth2().prefs?.privacyLevel = _sliderValue!.toInt();
+    Auth2().prefs?.privacyLevel = _sliderIntValue!;
     Storage().privacyUpdateVersion = Config().appVersion;
 
     if (widget.mode == SettingsPrivacyPanelMode.regular) {
@@ -550,7 +550,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
   }
 
   Widget _descriptionLayout() {
-    int level = _sliderValue?.round() ?? _privacyLevel.truncate();
+    int level = _sliderIntValue ?? _privacyLevel.truncate();
     PrivacyDescription? description;
     if (CollectionUtils.isNotEmpty(_data?.privacyDescription)) {
       for (PrivacyDescription desc in _data!.privacyDescription!) {
@@ -601,6 +601,10 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                     textAlign: TextAlign.left))
               ])));
 
+  }
+
+  int? get _sliderIntValue {
+    return _sliderValue?.round();
   }
 }
 
