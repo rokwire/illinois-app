@@ -116,8 +116,6 @@
 		},
 		"auth": {
 			"home.connect"                        : { "loggedIn": false },
-			"home.safer.building_access"          : { "shibbolethLoggedIn": true },
-			"home.safer.my_mckinley"              : { "shibbolethLoggedIn": true },
 			"gies"                                : { "shibbolethLoggedIn": true },
 			"canvas"                              : { "shibbolethLoggedIn": true },
 			"browse.all.building_status"          : { "shibbolethLoggedIn": true },
