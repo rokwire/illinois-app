@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Link to plugin 1.0.0.
 - Various controls moved to plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 
+## [3.2.36] - 2022-03-16
 ### Fixed
 - PollBubblePinPanel: improve Accessibility [#1446](https://github.com/rokwire/illinois-app/issues/1446).
 - Wrong game dates [#1451](https://github.com/rokwire/illinois-app/issues/1451).
