@@ -60,11 +60,18 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
     super.dispose();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     bool hasGroupMembers = CollectionUtils.isNotEmpty(_groupMembers);
 
-    return Scaffold(
+    return new WillPopScope(
+      onWillPop: () async{
+        _onTapDone();
+        return false;
+      },
+      child: Scaffold(
         appBar: HeaderBar(
           title: Localization().getStringEx('panel.group.members.header.title', 'Members'),
           onLeading: _onTapDone,
@@ -115,15 +122,15 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                   Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
                   Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.search.label', "SEARCH")))),
                   Visibility(visible: _searchView, child: _buildMembersWidget(_filterMembers(_searchController.text))),
-                  Visibility(visible: hasGroupMembers, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.selected.label', "SELECTED")))),
-                  Visibility(visible: hasGroupMembers, child: _buildMembersWidget(_groupMembers)),
-                  Visibility(visible: !_searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.all.label', "ALL MemberS")))),
-                  Visibility(visible: !_searchView, child: _buildMembersWidget(_allMembers))
+                  Visibility(visible: (!_searchView) && hasGroupMembers, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.selected.label', "To: ")))),
+                  Visibility(visible: (!_searchView) && hasGroupMembers, child: _buildMembersWidget(_groupMembers)),
+                  Visibility(visible: true, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.all.label', "ALL MEMBERS")))),
+                  Visibility(visible: true, child: _buildMembersWidget(_allMembers))
                 ]))
               ])),
           Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: Styles().colors!.background, child: CircularProgressIndicator()))
         ])
-    );
+    ));
   }
 
   void _initMembers() {
@@ -349,7 +356,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
          result = member.name;
          break;
       case _DetailTab.Uin:
-        result = member.userId;
+        result = member.externalId;
         break;
       case _DetailTab.Email:
         result = member.email;
@@ -397,12 +404,19 @@ class _MemberSelectionWidget extends StatelessWidget {
             child: Container(
                 color: Colors.white,
                 child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                    padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
+                    child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
                       Expanded(
-                          child: Text(label,
+                          child:
+                          Container(
+                            padding: EdgeInsets.only(top: 12),
+                            child: Text(label,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16))),
+                              style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16)))),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
@@ -420,7 +434,10 @@ class _MemberSelectionWidget extends StatelessWidget {
                         ),
                       ),
                       Container(width: 6,),
-                      Image.asset(selected ? 'images/deselected-dark.png' : 'images/deselected.png')
+                      Container(
+                        padding: EdgeInsets.only(top: 12),
+                        child: Image.asset(selected ? 'images/deselected-dark.png' : 'images/deselected.png')
+                      )
                     ])))));
   }
 }
