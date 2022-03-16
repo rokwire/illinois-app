@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -24,6 +23,9 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/ext/Group.dart';
+
+enum _DetailTab { Name, Uin, Email}
 
 class GroupMembersSelectionPanel extends StatefulWidget {
   final List<Member>? selectedMembers;
@@ -45,6 +47,8 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
 
   bool _loading = false;
 
+  _DetailTab _currentTab = _DetailTab.Name;
+
   @override
   void initState() {
     super.initState();
@@ -62,24 +66,61 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
 
     return Scaffold(
         appBar: HeaderBar(
-          title: Localization().getStringEx('panel.group.members.header.title', 'Group Members'),
+          title: Localization().getStringEx('panel.group.members.header.title', 'Members'),
+          onLeading: _onTapDone,
         ),
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors!.white,
         body: Stack(alignment: Alignment.center, children: <Widget>[
           SingleChildScrollView(
-              child: Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
-                  Expanded(child: Container()),
-                  RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'), contentWeight: 0.0, textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary, backgroundColor: Styles().colors!.white, onTap: _onTapDone)
-                ])),
-                Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
-                Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.search.label', "SEARCH")))),
-                Visibility(visible: _searchView, child: _buildMembersWidget(_filterMembers(_searchController.text))),
-                Visibility(visible: hasGroupMembers, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.selected.label', "SELECTED")))),
-                Visibility(visible: hasGroupMembers, child: _buildMembersWidget(_groupMembers)),
-                Visibility(visible: !_searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.all.label', "ALL MemberS")))),
-                Visibility(visible: !_searchView, child: _buildMembersWidget(_allMembers))
-              ]))),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                // Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
+                //   Expanded(child: Container()),
+                //   RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'), contentWeight: 0.0, textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary, backgroundColor: Styles().colors!.white, onTap: _onTapDone)
+                // ])),
+                Container(
+                  padding: EdgeInsets.only(left: 12,bottom: 32),
+                  color: Styles().colors!.fillColorPrimary!,
+                  child: Semantics(
+                    label: Localization().getStringEx("panel.group.members.label.tap_to_follow_team.title", "Tap the checkmark to select members"),
+                    hint: Localization().getStringEx("panel.group.members.label.tap_to_follow_team.hint", ""),
+                    excludeSemantics: true,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          Localization().getStringEx("panel.group.members.label.tap_the.title", "Tap the "),
+                          style: TextStyle(
+                              fontFamily: Styles().fontFamilies!.medium,
+                              color: Styles().colors!.white,
+                              fontSize: 16),
+                        ),
+                        Image.asset(
+                            'images/icon-check-example.png', excludeFromSemantics: true, color: Styles().colors!.white,),
+                        Expanded(
+                            child:Text(
+                              Localization().getStringEx("panel.group.members.label.follow_team.title", " to select members"),
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontFamily: Styles().fontFamilies!.medium,
+                                  color: Styles().colors!.white,
+                                  fontSize: 16),
+                            )
+                        )
+                      ],
+                    ),
+                  )
+                ),
+                _buildTabs(),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
+                  Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.search.label', "SEARCH")))),
+                  Visibility(visible: _searchView, child: _buildMembersWidget(_filterMembers(_searchController.text))),
+                  Visibility(visible: hasGroupMembers, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.selected.label', "SELECTED")))),
+                  Visibility(visible: hasGroupMembers, child: _buildMembersWidget(_groupMembers)),
+                  Visibility(visible: !_searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.all.label', "ALL MemberS")))),
+                  Visibility(visible: !_searchView, child: _buildMembersWidget(_allMembers))
+                ]))
+              ])),
           Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: Styles().colors!.background, child: CircularProgressIndicator()))
         ])
     );
@@ -102,7 +143,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
       if (CollectionUtils.isNotEmpty(memberWidgets)) {
         memberWidgets.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
       }
-      memberWidgets.add(_MemberSelectionWidget(label: member.displayName, selected: _isMemberSelected(member), onTap: () => _onMemberTaped(member)));
+      memberWidgets.add(_MemberSelectionWidget(member: member, label: _getMemberDisplayData(member), selected: _isMemberSelected(member), onTap: () => _onMemberTaped(member)));
     }
     return ClipRRect(
         borderRadius: BorderRadius.circular(15),
@@ -114,6 +155,59 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
             child: Column(children: memberWidgets)));
   }
 
+  Widget _buildTabs() {
+    List<Widget> tabs = [];
+    for (_DetailTab tab in _DetailTab.values) {
+      String title;
+      switch (tab) {
+        case _DetailTab.Name:
+          title = Localization().getStringEx("panel.group.members.button.events.title", 'Name');
+          break;
+        case _DetailTab.Uin:
+          title = Localization().getStringEx("panel.group.members.button.posts.title", 'UIN');
+          break;
+        case _DetailTab.Email:
+          title = Localization().getStringEx("panel.group.members.button.polls.title", 'Email');
+          break;
+      }
+      bool isSelected = (_currentTab == tab);
+
+      if (0 < tabs.length) {
+        tabs.add(Padding(
+          padding: EdgeInsets.only(left: 6),
+          child: Container(),
+        ));
+      }
+
+      Widget tabWidget = RoundedButton(
+          label: title,
+          backgroundColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.background,
+          textColor: (isSelected ? Colors.white : Styles().colors!.fillColorPrimary),
+          fontFamily: isSelected ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular,
+          fontSize: 16,
+          contentWeight: 0.0,
+          borderColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+          borderWidth: 1,
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+          onTap: () => _onTab(tab));
+
+      tabs.add(tabWidget);
+    }
+
+    return
+      Row(
+        children: [
+          Expanded(
+            child:
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+              color: Colors.white,
+              child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: tabs))
+            )
+          )
+        ]);
+  }
+
   bool _isMemberSelected(Member member) {
     return _groupMembers?.contains(member) ?? false;
   }
@@ -122,7 +216,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
     Analytics().logSelect(target: "Group Member: $member");
     _hideKeyboard();
     _switchMember(member);
-    AppSemantics.announceCheckBoxStateChange(context, _isMemberSelected(member), member.displayName);
+    AppSemantics.announceCheckBoxStateChange(context, _isMemberSelected(member), _getMemberDisplayData(member));
   }
 
   void _onTapDone() {
@@ -229,13 +323,39 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
     });
   }
 
+  void _onTab(_DetailTab tab) {
+    Analytics().logSelect(target: "Tab: $tab");
+    if (_currentTab != tab) {
+      setState(() {
+        _currentTab = tab;
+      });
+    }
+  }
+
   List<Member>? _filterMembers(String key) {
     if (StringUtils.isEmpty(key)) {
       return _allMembers;
     } else if (CollectionUtils.isNotEmpty(_allMembers)) {
-      return _allMembers!.where((Member member) => member.displayName.toLowerCase().contains(key.toLowerCase())).toList();
+      return _allMembers!.where((Member member) => _getMemberDisplayData(member).toLowerCase().contains(key.toLowerCase())).toList();
     }
     return null;
+  }
+
+  String _getMemberDisplayData(Member member){
+    String? result = "";
+    switch(_currentTab){
+
+      case _DetailTab.Name:
+         result = member.name;
+         break;
+      case _DetailTab.Uin:
+        result = member.userId;
+        break;
+      case _DetailTab.Email:
+        result = member.email;
+        break;
+    }
+    return result ?? "";
   }
 
   void _hideKeyboard() {
@@ -253,10 +373,11 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
 
 class _MemberSelectionWidget extends StatelessWidget {
   final String label;
+  final Member? member;
   final GestureTapCallback? onTap;
   final bool selected;
 
-  _MemberSelectionWidget({required this.label, this.onTap, this.selected = false});
+  _MemberSelectionWidget({required this.label, this.onTap, this.selected = false, this.member});
 
   @override
   Widget build(BuildContext context) {
@@ -278,10 +399,27 @@ class _MemberSelectionWidget extends StatelessWidget {
                 child: Padding(
                     padding: EdgeInsets.all(10),
                     child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                      Flexible(
+                      Expanded(
                           child: Text(label,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16))),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: groupMemberStatusToColor(member?.status) ?? Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(2)),
+                        ),
+                        child: Center(
+                          child: Text(groupMemberStatusToDisplayString(member?.status)?.toUpperCase() ?? "",
+                            style: TextStyle(
+                                fontFamily: Styles().fontFamilies!.bold,
+                                fontSize: 12,
+                                color: Styles().colors!.white
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(width: 6,),
                       Image.asset(selected ? 'images/deselected-dark.png' : 'images/deselected.png')
                     ])))));
   }
