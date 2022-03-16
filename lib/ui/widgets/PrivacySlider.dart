@@ -6,8 +6,9 @@ class PrivacyLevelSlider extends StatefulWidget {
   final double? initialValue;
   final Function? onValueChanged;
   final Color? color;
+  final bool readOnly;
 
-  const PrivacyLevelSlider({Key? key, this.onValueChanged, this.initialValue, this.color}) : super(key: key);
+  const PrivacyLevelSlider({Key? key, this.onValueChanged, this.initialValue, this.color, this.readOnly = false}) : super(key: key);
 
   @override
   _PrivacyLevelSliderState createState() => _PrivacyLevelSliderState();
@@ -82,13 +83,18 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                                       semanticFormatterCallback: (double value) => value.round().toString(),
                                       label: "$roundedValue",
                                       onChanged: (double value) {
-                                        setState(() {
+                                        if (!widget.readOnly) {
+                                          setState(() {
                                           _discreteValue = value;
-                                          if(value>3.3 && value<4) { // remove the second 3rd division caused by {max == division}
+                                          if (value > 3.3 && value < 4) {
+                                            // remove the second 3rd division caused by {max == division}
                                             _discreteValue = value = 4;
                                           }
-                                          widget.onValueChanged!(value);
-                                        });
+                                          if (widget.onValueChanged != null) {
+                                            widget.onValueChanged!(value);
+                                          }
+                                          });
+                                        }
                                       },
                                     )
                                 ))))
