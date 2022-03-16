@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Always show "Building Access" widgets on the home screen [#1460](https://github.com/rokwire/illinois-app/issues/1460).
 - Handle tap action on "Building Access" widget [#1462](https://github.com/rokwire/illinois-app/issues/1462).
 - Saving Privacy level [#1463](https://github.com/rokwire/illinois-app/issues/1463).
+- Fix crash in onboarding [#1448](https://github.com/rokwire/illinois-app/issues/1448).
 
 ## [3.2.35] - 2022-03-10
 ### Fixed
