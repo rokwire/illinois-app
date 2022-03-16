@@ -296,7 +296,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
               width: 30,
               child: Center(
                 child: Text(
-                  _sliderValue?.round().toString() ?? "",
+                  _sliderIntValue?.toString() ?? "",
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -361,7 +361,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     List<Widget> list = [];
     if (_data?.features2 != null) {
       for (PrivacyFeature2? feature2 in _data!.features2!) {
-        if (feature2!.maxLevel!.round() >= _sliderValue!.round()) {
+        if (feature2!.maxLevel!.round() >= _sliderIntValue!) {
           list.add(Text(
             Localization().getString(feature2.key, defaults: feature2.text) ?? '',
             style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Colors.black),
@@ -382,7 +382,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   void _onSaveClicked() {
     if (!_disabled) {
       Analytics().logSelect(target: 'Set Privacy');
-      if ((widget.mode == SettingsPrivacyPanelMode.regular) && (_sliderValue!.toInt() < this._privacyLevel)) {
+      if ((widget.mode == SettingsPrivacyPanelMode.regular) && (_sliderIntValue! < this._privacyLevel)) {
         AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.all(0), contentWidget: _buildUpdatePrivacyDialog(context));
       }
       else {
@@ -392,7 +392,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   }
 
   void _save() {
-    Auth2().prefs?.privacyLevel = _sliderValue!.toInt();
+    Auth2().prefs?.privacyLevel = _sliderIntValue!;
     Storage().privacyUpdateVersion = Config().appVersion;
     
     if (widget.mode == SettingsPrivacyPanelMode.regular) {
@@ -527,6 +527,10 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
       });
     }
     return tabs;
+  }
+
+  int? get _sliderIntValue {
+    return _sliderValue?.round();
   }
 }
 
