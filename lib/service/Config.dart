@@ -79,6 +79,7 @@ class Config extends rokwire.Config {
   String? get assetsUrl              => JsonUtils.stringValue(otherUniversityServices['assets_url']);                 // "https://rokwire-assets.s3.us-east-2.amazonaws.com"
   String? get eatSmartUrl            => JsonUtils.stringValue(otherUniversityServices['eat_smart_url']);              // "https://eatsmart.housing.illinois.edu/NetNutrition/46"
   String? get iCardUrl               => JsonUtils.stringValue(otherUniversityServices['icard_url']);                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
+  String? get iCardBoardingPassUrl   => JsonUtils.stringValue(otherUniversityServices['icard_boarding_pass_url']);    // "https://icard.uillinois.edu/CCBoardingPass"
   String? get illiniCashBaseUrl      => JsonUtils.stringValue(otherUniversityServices['illini_cash_base_url']);       // "https://shibtest.housing.illinois.edu/MobileAppWS/api"
   String? get illiniCashTrustcommerceHost => JsonUtils.stringValue(otherUniversityServices['illini_cash_trustcommerce_host']); // "https://vault.trustcommerce.com"
   String? get illiniCashTokenHost    => JsonUtils.stringValue(otherUniversityServices['illini_cash_token_host']);     // "https://webservices.admin.uillinois.edu"
