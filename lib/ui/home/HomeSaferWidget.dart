@@ -29,6 +29,7 @@ class HomeSaferWidget extends StatefulWidget {
 
 class _HomeSaferWidgetState extends State<HomeSaferWidget> implements NotificationsListener {
 
+  static const String _notifyOidcAuthenticated     = "edu.illinois.rokwire.home.safer.authenticated";
   bool _authLoading = false;
 
   @override
@@ -36,7 +37,8 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
     super.initState();
 
     NotificationService().subscribe(this, [
-      FlexUI.notifyChanged
+      FlexUI.notifyChanged,
+      _notifyOidcAuthenticated,
     ]);
 
     if (widget.refreshController != null) {
@@ -56,8 +58,14 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
-      setState(() {
-      });
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if (name == _notifyOidcAuthenticated) {
+      if (mounted) {
+        _processOidcAuthResult(param);
+      }
     }
   }
 
@@ -147,35 +155,36 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
       Analytics().logSelect(target: 'Building Access');
       if (Connectivity().isOffline) {
         AppAlert.showOfflineMessage(context, "");
-        return;
       }
-      if (Auth2().privacyMatch(4)) {
+      else if (Auth2().privacyMatch(4)) {
         if (Auth2().isOidcLoggedIn) {
           _showModalIdCardPanel();
-        } else {
-          setState(() {
-            _authLoading = true;
-          });
+        }
+        else {
+          setState(() { _authLoading = true; });
           Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
             if (mounted) {
-              setState(() {
-                _authLoading = false;
-              });
-              if (result == Auth2OidcAuthenticateResult.succeeded) {
-                _showModalIdCardPanel();
-              } else {
-                AppAlert.showDialogResult(
-                    context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
-              }
+              setState(() { _authLoading = false; });
+              _processOidcAuthResult(result);
+            }
+            else {
+              NotificationService().notify(_notifyOidcAuthenticated, result);
             }
           });
         }
-      } else {
-        String? iCardBoardingPassUrl = Config().iCardBoardingPassUrl;
-        if (StringUtils.isNotEmpty(iCardBoardingPassUrl)) {
-          launch(iCardBoardingPassUrl!);
-        }
       }
+      else if (StringUtils.isNotEmpty(Config().iCardBoardingPassUrl)) {
+        launch(Config().iCardBoardingPassUrl!);
+      }
+    }
+  }
+
+  void _processOidcAuthResult(Auth2OidcAuthenticateResult? result) {
+    if (result == Auth2OidcAuthenticateResult.succeeded) {
+      _showModalIdCardPanel();
+    }
+    else if (result != null) {
+      AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
     }
   }
 
