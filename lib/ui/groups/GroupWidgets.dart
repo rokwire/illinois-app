@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -212,6 +215,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
     if (optionsCount == 0) {
       return null;
     }
+
     return widget.items!.map((Object? item) {
       String? name = widget.constructTitle!=null? widget.constructTitle!(item) : item?.toString();
       GroupDropDownDescriptionDataBuilder<T?>? constructDescriptionFn = widget.constructListItemDescription ?? widget.constructDescription;
@@ -1698,6 +1702,201 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                       fontFamily: Styles().fontFamilies!.regular)))
         ]);
   }
+}
+
+class GroupMembersSelectionWidget extends StatefulWidget{
+  final String? groupId;
+  final List<Member>? allMembers;
+  final List<Member>? selectedMembers;
+  final void Function(List<Member>?)? onSelectionChanged;
+  
+  const GroupMembersSelectionWidget({Key? key, this.selectedMembers, this.allMembers,this.onSelectionChanged, this.groupId}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _GroupMembersSelectionState();
+
+}
+
+class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text("To: "),
+              Expanded(
+                child: _buildDropDown(),
+              )
+            ],
+          ),
+          Container(height: 4,),
+          Text(selectedMembersText),
+          Container(height: 4,),
+          RoundedButton(label: "Edit", onTap: _onTapEdit, textColor: Styles().colors!.fillColorSecondary!,conentAlignment: MainAxisAlignment.start, contentWeight: 0.33, padding: EdgeInsets.all(3), maxBorderRadius: 5,)
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildDropDown(){
+    return Container(
+        height: 48,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+        child: Padding(
+            padding: EdgeInsets.only(left: 10),
+            child:
+              DropdownButtonHideUnderline(
+                // child: ButtonTheme(
+                //   alignedDropdown: true,
+                  child: DropdownButton2<GroupMemberSelectionData>(
+                    isExpanded: true,
+                    dropdownPadding: EdgeInsets.zero,
+                    itemPadding: EdgeInsets.zero,
+                    dropdownDecoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid), borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8))),
+                    style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
+                    // value: _currentSelection,
+                    items: _buildDropDownItems,
+                    hint: Text(_selectionText),
+                    onChanged: (GroupMemberSelectionData? data) {
+                      _onDropDownItemChanged(data);
+                    },
+                )))
+              // )
+    );
+  }
+
+  List<DropdownMenuItem<GroupMemberSelectionData>> get _buildDropDownItems {
+    List<DropdownMenuItem<GroupMemberSelectionData>> items = [];
+
+    items.add(DropdownMenuItem(alignment: AlignmentDirectional.centerStart,enabled: false, value: null,
+        child:
+          Container(
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+              Expanded(child:
+                Container(color: Styles().colors!.fillColorPrimary,
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child:Text("Select Recipient(s)", style: TextStyle(color: Colors.white),))
+          )
+          ])))
+    );
+    items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: null), child: _buildDropDownItemLayout("All Members")));
+    items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.PerformNewSelection, selection: null) , child: _buildDropDownItemLayout("Select Members")));
+
+    //Stored Selections
+    List<List<Member>>? storedSelections = _storedMembersSelections;
+    if(CollectionUtils.isNotEmpty(storedSelections)){
+      items.add(DropdownMenuItem(enabled: false ,value: null, child: _buildDropDownHeaderLayout("RECENTLY USED")));
+      storedSelections!.forEach((selection){
+        items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: selection), child: _buildDropDownItemLayout(constructSelectionTitle(selection))));
+      });
+    }
+
+    return items;
+  }
+
+  Widget _buildDropDownHeaderLayout(String title){
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+          Expanded(
+              child:Container(
+                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  child: Text(title, maxLines: 2, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12),)
+              ))
+        ]
+    );
+  }
+
+  Widget _buildDropDownItemLayout(String title){
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+          Expanded(
+            child:Container(
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              child: Text(title, maxLines: 2, style: TextStyle(fontSize: 18,overflow: TextOverflow.ellipsis),)
+          ))
+      ]
+    );
+  }
+
+  void _onDropDownItemChanged(GroupMemberSelectionData? data){
+    if(data != null){
+      switch (data.type){
+        case GroupMemberSelectionDataType.Selection:
+          _onSelectionChanged(data.selection);
+          break;
+        case GroupMemberSelectionDataType.PerformNewSelection:
+          _onTapEdit();
+          break;
+      }
+    }
+  }
+
+  void _onTapEdit(){
+    Analytics().logSelect(target: "Edit Members");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSelectionPanel(allMembers: widget.allMembers, selectedMembers: widget.selectedMembers, groupId: widget.groupId,))).then((result) {
+      _onSelectionChanged(result);
+    });
+  }
+
+  void _onSelectionChanged(List<Member>? selection){
+    if(widget.onSelectionChanged!=null){
+      widget.onSelectionChanged!(selection);
+    }
+  }
+
+  List<List<Member>>? get _storedMembersSelections{
+    Map<String, List<List<Member>>>? selectionsTable = Storage().groupMembersSelection;
+    if(selectionsTable!=null && widget.groupId!=null){
+      return selectionsTable[widget.groupId!];
+    }
+
+    return null;
+  }
+
+  static String constructSelectionTitle(List<Member>? selection){
+    String result = "";
+    if(CollectionUtils.isNotEmpty(selection)){
+      selection!.forEach((member) {
+        result += ((result.isNotEmpty) ? ", " : "");
+        result += member.displayShortName;
+      });
+    }
+    return result;
+  }
+  
+  String get _selectionText{
+    if(CollectionUtils.isNotEmpty(widget.selectedMembers)){
+      return "Selected Members (${widget.selectedMembers?.length ?? 0})";
+    } else {
+      return "All Members (${widget.allMembers?.length ?? 0})";
+    }
+  }
+
+  String get selectedMembersText{
+    return constructSelectionTitle(widget.selectedMembers);
+  }
+
+}
+enum GroupMemberSelectionDataType {Selection, PerformNewSelection}
+class GroupMemberSelectionData {
+  final GroupMemberSelectionDataType type;
+  final List<Member>? selection;
+
+  GroupMemberSelectionData({required this.type, required this.selection});
 }
 
 class _FontIcon extends StatelessWidget {

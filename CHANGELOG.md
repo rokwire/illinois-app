@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Link to plugin 1.0.0.
 - Various controls moved to plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+###Added
+- Implement Group post for selected members [#1450](https://github.com/rokwire/illinois-app/issues/1450).
 
 ## [3.2.37] - 2022-03-17
 ### Fixed
