@@ -19,6 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -1704,11 +1705,12 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
 }
 
 class GroupMembersSelectionWidget extends StatefulWidget{
+  final String? groupId;
   final List<Member>? allMembers;
   final List<Member>? selectedMembers;
   final void Function(List<Member>?)? onSelectionChanged;
   
-  const GroupMembersSelectionWidget({Key? key, this.selectedMembers, this.allMembers,this.onSelectionChanged}) : super(key: key);
+  const GroupMembersSelectionWidget({Key? key, this.selectedMembers, this.allMembers,this.onSelectionChanged, this.groupId}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupMembersSelectionState();
@@ -1772,6 +1774,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
 
   List<DropdownMenuItem<GroupMemberSelectionData>> get _buildDropDownItems {
     List<DropdownMenuItem<GroupMemberSelectionData>> items = [];
+
     items.add(DropdownMenuItem(alignment: AlignmentDirectional.centerStart,enabled: false, value: null,
         child:
           Container(
@@ -1786,22 +1789,17 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
           )
           ])))
     );
-
     items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: null), child: _buildDropDownItemLayout("All Members")));
-    items.add(DropdownMenuItem(
-      //Not able to create PageRout so use onChanged instead
-      // onTap:
-      // (){
-      //   _onTapEdit();
-      // },
-      value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.PerformNewSelection, selection: null) , child: _buildDropDownItemLayout("Select Members")));
-    items.add(DropdownMenuItem(enabled: false ,value: null, child: _buildDropDownHeaderLayout("RECENTLY USED")));
-    //TODO USE REAL DATA
-    //TMP:
-    if((widget.selectedMembers?.length ?? 0 )>0)
-    items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection:widget.selectedMembers?.sublist(0, 1)), child: _buildDropDownItemLayout("Mark Henessy, 666666666, Daevid Allen, Todor Bachvarov, Mladen Dryankov, Peter Petrov")));
-    if((widget.selectedMembers?.length ?? 0 )>1)
-      items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: widget.selectedMembers?.sublist(1)), child: _buildDropDownItemLayout("666666666, Daevid Allen ")));
+    items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.PerformNewSelection, selection: null) , child: _buildDropDownItemLayout("Select Members")));
+
+    //Stored Selections
+    List<List<Member>>? storedSelections = _storedMembersSelections;
+    if(CollectionUtils.isNotEmpty(storedSelections)){
+      items.add(DropdownMenuItem(enabled: false ,value: null, child: _buildDropDownHeaderLayout("RECENTLY USED")));
+      storedSelections!.forEach((selection){
+        items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: selection), child: _buildDropDownItemLayout(constructSelectionTitle(selection))));
+      });
+    }
 
     return items;
   }
@@ -1828,7 +1826,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
           Expanded(
             child:Container(
               padding: EdgeInsets.symmetric(horizontal: 5),
-              child: Text(title, maxLines: 2, style: TextStyle(fontSize: 20,overflow: TextOverflow.ellipsis),)
+              child: Text(title, maxLines: 2, style: TextStyle(fontSize: 18,overflow: TextOverflow.ellipsis),)
           ))
       ]
     );
@@ -1849,7 +1847,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
 
   void _onTapEdit(){
     Analytics().logSelect(target: "Edit Members");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSelectionPanel(allMembers: widget.allMembers, selectedMembers: widget.selectedMembers,))).then((result) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSelectionPanel(allMembers: widget.allMembers, selectedMembers: widget.selectedMembers, groupId: widget.groupId,))).then((result) {
       _onSelectionChanged(result);
     });
   }
@@ -1858,6 +1856,26 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     if(widget.onSelectionChanged!=null){
       widget.onSelectionChanged!(selection);
     }
+  }
+
+  List<List<Member>>? get _storedMembersSelections{
+    Map<String, List<List<Member>>>? selectionsTable = Storage().groupMembersSelection;
+    if(selectionsTable!=null && widget.groupId!=null){
+      return selectionsTable[widget.groupId!];
+    }
+
+    return null;
+  }
+
+  static String constructSelectionTitle(List<Member>? selection){
+    String result = "";
+    if(CollectionUtils.isNotEmpty(selection)){
+      selection!.forEach((member) {
+        result += ((result.isNotEmpty) ? ", " : "");
+        result += member.displayShortName;
+      });
+    }
+    return result;
   }
   
   String get _selectionText{
@@ -1869,19 +1887,9 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
   }
 
   String get selectedMembersText{
-    String result = "";
-    if(_hasSelection){
-      widget.selectedMembers!.forEach((member) {
-        result += ((result.isNotEmpty) ? ", " : "");
-        result += member.displayShortName;
-      });
-    }
-    return result;
+    return constructSelectionTitle(widget.selectedMembers);
   }
 
-  bool get _hasSelection{
-    return (widget.selectedMembers?.length ?? 0) > 0;
-  }
 }
 enum GroupMemberSelectionDataType {Selection, PerformNewSelection}
 class GroupMemberSelectionData {

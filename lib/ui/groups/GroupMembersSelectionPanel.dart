@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -28,10 +29,11 @@ import 'package:illinois/ext/Group.dart';
 enum _DetailTab { Name, Uin, Email}
 
 class GroupMembersSelectionPanel extends StatefulWidget {
+  final String? groupId;
   final List<Member>? selectedMembers;
   final List<Member>? allMembers;
 
-  GroupMembersSelectionPanel({this.selectedMembers, this.allMembers});
+  GroupMembersSelectionPanel({this.selectedMembers, this.allMembers, this.groupId});
 
   @override
   _GroupMembersSelectionState createState() => _GroupMembersSelectionState();
@@ -229,7 +231,28 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
   void _onTapDone() {
     Analytics().logSelect(target: 'Done');
     _hideKeyboard();
+    _storeSelection();
     Navigator.of(context).pop(_groupMembers);
+  }
+
+  void _storeSelection(){
+    Map<String, List<List<Member>>>? selectionsTable = Storage().groupMembersSelection;
+    if(selectionsTable == null){
+      selectionsTable = Map<String, List<List<Member>>>();
+    }
+
+    List<List<Member>>? groupMemberSelection = widget.groupId!=null? selectionsTable[widget.groupId] : null;
+    if(groupMemberSelection == null){
+      groupMemberSelection = [];
+    }
+
+    if(_groupMembers!=null && widget.groupId!=null) {
+      groupMemberSelection.add(_groupMembers!);
+      selectionsTable[widget.groupId!] = groupMemberSelection;
+    }
+
+
+    Storage().groupMembersSelection = selectionsTable;
   }
 
   void _switchMember(Member member) {

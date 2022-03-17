@@ -72,7 +72,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(height: 12,),
-                  GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, onSelectionChanged: _onMembersSelectionChanged),
+                  GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group?.id, onSelectionChanged: _onMembersSelectionChanged),
                   Container(height: 12,),
                   Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
                     style: TextStyle(
