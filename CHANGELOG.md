@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Await complete initialization after OIDC login before displaying IDCardPanel from Building Access home widget [#1467](https://github.com/rokwire/illinois-app/issues/1467).
+### Changed
+- Link to rokwire plugin version 0.0.3.
 
 ## [3.2.36] - 2022-03-16
 ### Fixed
