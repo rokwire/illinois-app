@@ -509,6 +509,8 @@
     "panel.onboarding.base.not_now.hint":"",
     "panel.onboarding.base.not_now.title":"Not right now",
 
+    "panel.onboarding2.video.button.title": "Skip",
+    
     "panel.onboarding2.roles.label.title": "Who Are You?",
     "panel.onboarding2.roles.label.title.hint": "Header 1",
     "panel.onboarding2.roles.label.description": "Select all that apply to help us understand who you are.",

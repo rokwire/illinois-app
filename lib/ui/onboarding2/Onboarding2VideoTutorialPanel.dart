@@ -16,7 +16,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:video_player/video_player.dart';
 
 class Onboarding2VideoTutorialPanel extends StatefulWidget {
@@ -41,10 +46,10 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   }
 
   void _initVideoPlayer() {
-    _controller = VideoPlayerController.network('https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_overview+(1080p).mp4');
-    _controller.addListener(() { });
     //TBD: another url? url in config etc
-    _initializeVideoPlayerFuture = _controller.initialize();
+    _controller =
+        VideoPlayerController.network('https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_overview+(1080p).mp4');
+    _initializeVideoPlayerFuture = _controller.initialize().then((_) => _controller.play()); // Automatically play video after initialization
   }
 
   void _disposeVideoPlayer() {
@@ -54,30 +59,31 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: FutureBuilder(
-            future: _initializeVideoPlayerFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return AspectRatio(aspectRatio: _controller.value.aspectRatio, child: VideoPlayer(_controller));
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            }),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              _controller.value.isPlaying
-                  ? _controller.pause()
-                  : _controller.play();
-            });
-          },
-          child: Icon(
-            _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-          ),
-        ));
+        backgroundColor: Styles().colors!.blackTransparent06,
+        body: SafeArea(
+            child: Stack(alignment: Alignment.center, children: [
+          FutureBuilder(
+              future: _initializeVideoPlayerFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Center(child: AspectRatio(aspectRatio: _controller.value.aspectRatio, child: VideoPlayer(_controller)));
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              }),
+          Column(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Row(children: [
+              Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27), onTap: _onTapBack)
+            ]),
+            Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: RoundedButton(label: Localization().getStringEx('panel.onboarding2.video.button.title', 'Skip'), onTap: _onTapSkip))
+          ])
+        ])));
   }
 
   void _onTapBack() {
+    Analytics().logSelect(target: "Back");
     Navigator.pop(context);
   }
 
