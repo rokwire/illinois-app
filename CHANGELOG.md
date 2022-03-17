@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Onboarding2VideoTutorialPanel with playing video [#1470](https://github.com/rokwire/illinois-app/issues/1470).
 ### Changed
 - Link to plugin 1.0.0.
 - Various controls moved to plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
