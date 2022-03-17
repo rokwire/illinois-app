@@ -119,9 +119,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   Widget _buildCommandEntry({required String title, String? description, bool? loading, void Function()? onTap}) {
     return Semantics(label: title, container: true, button: true, child:
-      Stack(alignment: Alignment.center, children: [
-        Visibility(visible: (loading == true), child: CircularProgressIndicator()),
-        InkWell(onTap: onTap, child:
+      InkWell(onTap: onTap, child:
           Container(
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
@@ -130,15 +128,17 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
                 Expanded(child:
                   Text(title, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary), semanticsLabel: "",),
                 ),
-                Image.asset('images/chevron-right.png', excludeFromSemantics: true,),
+                ((loading == true)
+                      ? SizedBox(height: 16, width: 16,
+                          child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2))
+                      : Image.asset('images/chevron-right.png', excludeFromSemantics: true))
               ],),
               StringUtils.isNotEmpty(description) ?
                 Padding(padding: EdgeInsets.only(top: 5), child:
                   Text(description!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface),),
                 ) :
                 Container(),
-        ],),),)
-      ]),
+        ],),),),
       );
   }
 
