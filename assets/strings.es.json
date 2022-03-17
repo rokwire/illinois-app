@@ -510,6 +510,8 @@
     "panel.onboarding.base.not_now.hint":"",
     "panel.onboarding.base.not_now.title":"No en este momento",
 
+    "panel.onboarding2.video.button.title": "Saltar",
+
     "panel.onboarding2.roles.label.title": "Who Are You?",
     "panel.onboarding2.roles.label.title.hint": "Header 1",
     "panel.onboarding2.roles.label.description": "Select all that apply to help us understand who you are.",
