@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -1715,7 +1716,6 @@ class GroupMembersSelectionWidget extends StatefulWidget{
 }
 
 class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1726,7 +1726,9 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
           Row(
             children: [
               Text("To: "),
-              _buildDropDown(),
+              Expanded(
+                child: _buildDropDown(),
+              )
             ],
           ),
           Container(height: 4,),
@@ -1739,11 +1741,110 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
   }
   
   Widget _buildDropDown(){
-    //TBD Dropdown
-    return Text(
-      _selectionText,
-      style: TextStyle(),
+    return Container(
+        height: 48,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+        child: Padding(
+            padding: EdgeInsets.only(left: 10),
+            child:
+              DropdownButtonHideUnderline(
+                // child: ButtonTheme(
+                //   alignedDropdown: true,
+                  child: DropdownButton2<GroupMemberSelectionData>(
+                    isExpanded: true,
+                    dropdownPadding: EdgeInsets.zero,
+                    itemPadding: EdgeInsets.zero,
+                    dropdownDecoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid), borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8))),
+                    style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
+                    // value: _currentSelection,
+                    items: _buildDropDownItems,
+                    hint: Text(_selectionText),
+                    onChanged: (GroupMemberSelectionData? data) {
+                      _onDropDownItemChanged(data);
+                    },
+                )))
+              // )
     );
+  }
+
+  List<DropdownMenuItem<GroupMemberSelectionData>> get _buildDropDownItems {
+    List<DropdownMenuItem<GroupMemberSelectionData>> items = [];
+    items.add(DropdownMenuItem(alignment: AlignmentDirectional.centerStart,enabled: false, value: null,
+        child:
+          Container(
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+              Expanded(child:
+                Container(color: Styles().colors!.fillColorPrimary,
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child:Text("Select Recipient(s)", style: TextStyle(color: Colors.white),))
+          )
+          ])))
+    );
+
+    items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: null), child: _buildDropDownItemLayout("All Members")));
+    items.add(DropdownMenuItem(
+      //Not able to create PageRout so use onChanged instead
+      // onTap:
+      // (){
+      //   _onTapEdit();
+      // },
+      value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.PerformNewSelection, selection: null) , child: _buildDropDownItemLayout("Select Members")));
+    items.add(DropdownMenuItem(enabled: false ,value: null, child: _buildDropDownHeaderLayout("RECENTLY USED")));
+    //TODO USE REAL DATA
+    //TMP:
+    if((widget.selectedMembers?.length ?? 0 )>0)
+    items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection:widget.selectedMembers?.sublist(0, 1)), child: _buildDropDownItemLayout("Mark Henessy, 666666666, Daevid Allen, Todor Bachvarov, Mladen Dryankov, Peter Petrov")));
+    if((widget.selectedMembers?.length ?? 0 )>1)
+      items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: widget.selectedMembers?.sublist(1)), child: _buildDropDownItemLayout("666666666, Daevid Allen ")));
+
+    return items;
+  }
+
+  Widget _buildDropDownHeaderLayout(String title){
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+          Expanded(
+              child:Container(
+                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  child: Text(title, maxLines: 2, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12),)
+              ))
+        ]
+    );
+  }
+
+  Widget _buildDropDownItemLayout(String title){
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+          Expanded(
+            child:Container(
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              child: Text(title, maxLines: 2, style: TextStyle(fontSize: 20,overflow: TextOverflow.ellipsis),)
+          ))
+      ]
+    );
+  }
+
+  void _onDropDownItemChanged(GroupMemberSelectionData? data){
+    if(data != null){
+      switch (data.type){
+        case GroupMemberSelectionDataType.Selection:
+          _onSelectionChanged(data.selection);
+          break;
+        case GroupMemberSelectionDataType.PerformNewSelection:
+          _onTapEdit();
+          break;
+      }
+    }
   }
 
   void _onTapEdit(){
@@ -1781,6 +1882,13 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
   bool get _hasSelection{
     return (widget.selectedMembers?.length ?? 0) > 0;
   }
+}
+enum GroupMemberSelectionDataType {Selection, PerformNewSelection}
+class GroupMemberSelectionData {
+  final GroupMemberSelectionDataType type;
+  final List<Member>? selection;
+
+  GroupMemberSelectionData({required this.type, required this.selection});
 }
 
 class _FontIcon extends StatelessWidget {

@@ -54,6 +54,7 @@ dependencies:
   package_info: ^2.0.2
   device_calendar: ^4.0.1
   image_cropping: ^0.0.11
+  dropdown_button2: ^1.2.2
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:
