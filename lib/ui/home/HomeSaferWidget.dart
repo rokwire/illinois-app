@@ -29,6 +29,7 @@ class HomeSaferWidget extends StatefulWidget {
 
 class _HomeSaferWidgetState extends State<HomeSaferWidget> implements NotificationsListener {
 
+  static const String _notifyOidcAuthenticated     = "edu.illinois.rokwire.home.safer.authenticated";
   bool _authLoading = false;
 
   @override
@@ -36,7 +37,8 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
     super.initState();
 
     NotificationService().subscribe(this, [
-      FlexUI.notifyChanged
+      FlexUI.notifyChanged,
+      _notifyOidcAuthenticated,
     ]);
 
     if (widget.refreshController != null) {
@@ -56,8 +58,14 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
-      setState(() {
-      });
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if (name == _notifyOidcAuthenticated) {
+      if (mounted) {
+        _processOidcAuthResult(param);
+      }
     }
   }
 
@@ -119,26 +127,27 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   Widget _buildCommandEntry({required String title, String? description, bool? loading, void Function()? onTap}) {
     return Semantics(label: title, container: true, button: true, child:
-      Stack(alignment: Alignment.center, children: [
-        Visibility(visible: (loading == true), child: CircularProgressIndicator()),
-        InkWell(onTap: onTap, child:
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-            decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Row(children: <Widget>[
-                Expanded(child:
-                  Text(title, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary), semanticsLabel: "",),
-                ),
-                Image.asset('images/chevron-right.png', excludeFromSemantics: true,),
-              ],),
-              StringUtils.isNotEmpty(description) ?
-                Padding(padding: EdgeInsets.only(top: 5), child:
+      InkWell(onTap: onTap, child:
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Row(children: <Widget>[
+              Expanded(child:
+                Text(title, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary), semanticsLabel: "",),
+              ),
+              ((loading == true)
+                ? SizedBox(height: 16, width: 16, child:
+                    CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2),
+                  )
+                : Image.asset('images/chevron-right.png', excludeFromSemantics: true))
+            ],),
+            StringUtils.isNotEmpty(description)
+              ? Padding(padding: EdgeInsets.only(top: 5), child:
                   Text(description!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface),),
-                ) :
-                Container(),
-        ],),),)
-      ]),
+                )
+              : Container(),
+        ],),),),
       );
   }
 
@@ -147,35 +156,36 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
       Analytics().logSelect(target: 'Building Access');
       if (Connectivity().isOffline) {
         AppAlert.showOfflineMessage(context, "");
-        return;
       }
-      if (Auth2().privacyMatch(4)) {
+      else if (Auth2().privacyMatch(4)) {
         if (Auth2().isOidcLoggedIn) {
           _showModalIdCardPanel();
-        } else {
-          setState(() {
-            _authLoading = true;
-          });
+        }
+        else {
+          setState(() { _authLoading = true; });
           Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
             if (mounted) {
-              setState(() {
-                _authLoading = false;
-              });
-              if (result == Auth2OidcAuthenticateResult.succeeded) {
-                _showModalIdCardPanel();
-              } else {
-                AppAlert.showDialogResult(
-                    context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
-              }
+              setState(() { _authLoading = false; });
+              _processOidcAuthResult(result);
+            }
+            else {
+              NotificationService().notify(_notifyOidcAuthenticated, result);
             }
           });
         }
-      } else {
-        String? iCardBoardingPassUrl = Config().iCardBoardingPassUrl;
-        if (StringUtils.isNotEmpty(iCardBoardingPassUrl)) {
-          launch(iCardBoardingPassUrl!);
-        }
       }
+      else if (StringUtils.isNotEmpty(Config().iCardBoardingPassUrl)) {
+        launch(Config().iCardBoardingPassUrl!);
+      }
+    }
+  }
+
+  void _processOidcAuthResult(Auth2OidcAuthenticateResult? result) {
+    if (result == Auth2OidcAuthenticateResult.succeeded) {
+      _showModalIdCardPanel();
+    }
+    else if (result != null) {
+      AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
     }
   }
 
