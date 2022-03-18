@@ -239,8 +239,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
-      //TMP:
-      _onFirebasePopupMessage({'display_text': 'Hi there', 'positive_button_text': 'Fine'});
     }
   }
 
