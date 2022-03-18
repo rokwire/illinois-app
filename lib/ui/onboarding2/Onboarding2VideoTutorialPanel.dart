@@ -19,7 +19,9 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
+import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:video_player/video_player.dart';
@@ -29,18 +31,20 @@ class Onboarding2VideoTutorialPanel extends StatefulWidget {
   State<Onboarding2VideoTutorialPanel> createState() => _Onboarding2VideoTutorialPanelState();
 }
 
-class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorialPanel> {
+class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorialPanel> implements NotificationsListener {
   late VideoPlayerController _controller;
   late Future<void> _initializeVideoPlayerFuture;
 
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [AppNavigation.notifyEvent]);
     _initVideoPlayer();
   }
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     _disposeVideoPlayer();
     super.dispose();
   }
@@ -89,5 +93,29 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
 
   void _onTapSkip() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel()));
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (name == AppNavigation.notifyEvent) {
+      if (mounted) {
+        AppNavigationEvent? event = (param is Map) ? param[AppNavigation.notifyParamEvent] : null;
+        if (event == AppNavigationEvent.push) {
+          if (_controller.value.isPlaying) {
+            // Pause video when the panel is not on top
+            _controller.pause();
+          }
+        } else if (event == AppNavigationEvent.pop) {
+          Route? route = param[AppNavigation.notifyParamPreviousRoute];
+          if (route != null) {
+            bool isCurrent = (AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType);
+            if (isCurrent && !_controller.value.isPlaying) {
+              // Play again video when the panel is visible
+              _controller.play();
+            }
+          }
+        }
+      }
+    }
   }
 }
