@@ -491,8 +491,8 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                 Container(height: 6,),
                 PrivacyLevelSlider(
                   color: Styles().colors!.background,
-                  initialValue: _privacyLevel.toDouble(),
-                  onValueChanged: (){}),
+                  readOnly: true,
+                  initialValue: _privacyLevel.toDouble()),
               ],)
           ));
   }

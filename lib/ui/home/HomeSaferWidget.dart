@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -26,13 +29,16 @@ class HomeSaferWidget extends StatefulWidget {
 
 class _HomeSaferWidgetState extends State<HomeSaferWidget> implements NotificationsListener {
 
+  static const String _notifyOidcAuthenticated     = "edu.illinois.rokwire.home.safer.authenticated";
+  bool _authLoading = false;
 
   @override
   void initState() {
     super.initState();
 
     NotificationService().subscribe(this, [
-      FlexUI.notifyChanged
+      FlexUI.notifyChanged,
+      _notifyOidcAuthenticated,
     ]);
 
     if (widget.refreshController != null) {
@@ -52,8 +58,14 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
-      setState(() {
-      });
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if (name == _notifyOidcAuthenticated) {
+      if (mounted) {
+        _processOidcAuthResult(param);
+      }
     }
   }
 
@@ -75,6 +87,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
           contentEntry = _buildCommandEntry(
             title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access'),
             description: Localization().getStringEx('widget.home.safer.button.building_access.description', 'Check your current building access.'),
+            loading: _authLoading,
             onTap: _onBuildingAccess,
           );
         }
@@ -112,7 +125,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
    return contentList;
   }
 
-  Widget _buildCommandEntry({required String title, String? description, void Function()? onTap}) {
+  Widget _buildCommandEntry({required String title, String? description, bool? loading, void Function()? onTap}) {
     return Semantics(label: title, container: true, button: true, child:
       InkWell(onTap: onTap, child:
         Container(
@@ -123,33 +136,58 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
               Expanded(child:
                 Text(title, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary), semanticsLabel: "",),
               ),
-              Image.asset('images/chevron-right.png', excludeFromSemantics: true,),
+              ((loading == true)
+                ? SizedBox(height: 16, width: 16, child:
+                    CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2),
+                  )
+                : Image.asset('images/chevron-right.png', excludeFromSemantics: true))
             ],),
-            StringUtils.isNotEmpty(description) ?
-              Padding(padding: EdgeInsets.only(top: 5), child:
-                Text(description!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface),),
-              ) :
-              Container(),
-          ],),),),
+            StringUtils.isNotEmpty(description)
+              ? Padding(padding: EdgeInsets.only(top: 5), child:
+                  Text(description!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface),),
+                )
+              : Container(),
+        ],),),),
       );
   }
 
   void _onBuildingAccess() {
-    Analytics().logSelect(target: 'Building Access');
-    //Navigator.push(context, CupertinoPageRoute(
-    //  builder: (context) => IDCardPanel()
-    //));
-    showModalBottomSheet(context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24.0),
-        ),
-        builder: (context){
-          return IDCardPanel();
+    if (!_authLoading) {
+      Analytics().logSelect(target: 'Building Access');
+      if (Connectivity().isOffline) {
+        AppAlert.showOfflineMessage(context, "");
+      }
+      else if (Auth2().privacyMatch(4)) {
+        if (Auth2().isOidcLoggedIn) {
+          _showModalIdCardPanel();
         }
-    );
-}
+        else {
+          setState(() { _authLoading = true; });
+          Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+            if (mounted) {
+              setState(() { _authLoading = false; });
+              _processOidcAuthResult(result);
+            }
+            else {
+              NotificationService().notify(_notifyOidcAuthenticated, result);
+            }
+          });
+        }
+      }
+      else if (StringUtils.isNotEmpty(Config().iCardBoardingPassUrl)) {
+        launch(Config().iCardBoardingPassUrl!);
+      }
+    }
+  }
+
+  void _processOidcAuthResult(Auth2OidcAuthenticateResult? result) {
+    if (result == Auth2OidcAuthenticateResult.succeeded) {
+      _showModalIdCardPanel();
+    }
+    else if (result != null) {
+      AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+    }
+  }
 
   void _onTestLocations() {
     Analytics().logSelect(target: 'Locations');
@@ -170,5 +208,16 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
     Navigator.push(context, CupertinoPageRoute(
       builder: (context) => HomeSaferWellnessAnswerCenterPanel()
     ));
+  }
+
+  void _showModalIdCardPanel() {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+        builder: (context) {
+          return IDCardPanel();
+        });
   }
 }

@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.37] - 2022-03-17
+### Fixed
+- Await complete initialization after OIDC login before displaying IDCardPanel from Building Access home widget [#1467](https://github.com/rokwire/illinois-app/issues/1467).
+### Changed
+- Link to rokwire plugin version 0.0.3.
+
+## [3.2.36] - 2022-03-16
+### Fixed
+- PollBubblePinPanel: improve Accessibility [#1446](https://github.com/rokwire/illinois-app/issues/1446).
+- Wrong game dates [#1451](https://github.com/rokwire/illinois-app/issues/1451).
+- Always show "Building Access" widgets on the home screen [#1460](https://github.com/rokwire/illinois-app/issues/1460).
+- Handle tap action on "Building Access" widget [#1462](https://github.com/rokwire/illinois-app/issues/1462).
+- Saving Privacy level [#1463](https://github.com/rokwire/illinois-app/issues/1463).
+- Fix crash in onboarding [#1448](https://github.com/rokwire/illinois-app/issues/1448).
+
+## [3.2.35] - 2022-03-10
+### Fixed
+- GroupEditImagePanel: fix cancel button functionality [#1441](https://github.com/rokwire/illinois-app/issues/1441).
+
 ## [3.2.34] - 2022-03-09
 ### Changed
 - Label in SettingsPersonalInfoPanel from 'NetID' to 'UIN' [#1334](https://github.com/rokwire/illinois-app/issues/1334).
