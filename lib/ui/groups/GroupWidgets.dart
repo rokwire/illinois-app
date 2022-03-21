@@ -1790,16 +1790,17 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
   List<DropdownMenuItem<GroupMemberSelectionData>> get _buildDropDownItems {
     List<DropdownMenuItem<GroupMemberSelectionData>> items = [];
 
-    items.add(DropdownMenuItem(alignment: AlignmentDirectional.centerStart,enabled: false, value: null,
+    items.add(DropdownMenuItem(alignment: AlignmentDirectional.topCenter,enabled: false, value: null,
         child:
           Container(
+            color: Styles().colors!.fillColorPrimary,
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
               Expanded(child:
                 Container(color: Styles().colors!.fillColorPrimary,
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   child:Text("Select Recipient(s)", style: TextStyle(color: Colors.white),))
           )
           ])))
