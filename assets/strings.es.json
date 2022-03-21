@@ -209,6 +209,8 @@
     "panel.browse.button.faqs.hint": "",
     "panel.browse.button.date_cat.title":"Catálogo de fecha de vencimiento",
     "panel.browse.button.date_cat.hint":"",
+    "panel.browse.button.video_tutorial.title": "Videotutorial",
+    "panel.browse.button.video_tutorial.hint": "",
 
     "panel.browse.label.browse_all": "Explorar todo",
     "panel.browse.label.offline.sign_in": "Iniciar sesión no disponible sin conexión.",
@@ -223,6 +225,7 @@
     "panel.browse.label.offline.faqs": "Las preguntas frecuentes no están disponibles sin conexión.",
     "panel.browse.label.offline.crisis_help": "Crisis Help no está disponible sin conexión.",
     "panel.browse.label.offline.date_cat": "El catálogo de fecha de vencimiento no está disponible sin conexión.",
+    "panel.browse.label.offline.video_tutorial": "Video tutorial no disponible sin conexión.",
 
     "panel.browse.button.sign_in.title":"Iniciar sesión",
     "panel.browse.button.sign_in.hint":"",
@@ -511,6 +514,7 @@
     "panel.onboarding.base.not_now.title":"No en este momento",
 
     "panel.onboarding2.video.button.title": "Saltar",
+    "panel.onboarding2.video.missing.msg": "Vídeo faltante",
 
     "panel.onboarding2.roles.label.title": "Who Are You?",
     "panel.onboarding2.roles.label.title.hint": "Header 1",
@@ -1244,6 +1248,9 @@
     "panel.settings.new_privacy.privacy.button.set_privacy.slider.hint": "Nivel de privacidad",
     "panel.settings.new_privacy.privacy.button.set_privacy.slider.increase": "aumentado a",
     "panel.settings.new_privacy.privacy.button.set_privacy.slider.decrease": "disminuido a",
+
+    "panel.settings.video_tutorial.header.title": "Videotutorial",
+    "panel.settings.video_tutorial.video.missing.msg": "Vídeo faltante",
 
     "panel.create_event.header.title":"Crea Un Evento",
     "panel.create_event.title":"Crear un evento",
