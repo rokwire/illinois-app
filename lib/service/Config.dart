@@ -54,6 +54,8 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get saferMcKinley => JsonUtils.mapValue(safer['mckinley']) ?? {};
   Map<String, dynamic> get saferWellness => JsonUtils.mapValue(safer['wellness']) ?? {};
 
+  Map<String, dynamic> get videoTutorial => JsonUtils.mapValue(content['video_tutorial']) ?? {};
+
   // Getters: Secret Keys
 
   String? get shibbolethClientId     => JsonUtils.stringValue(secretShibboleth['client_id']);
@@ -149,6 +151,10 @@ class Config extends rokwire.Config {
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
+
+  // Getters: video tutorial
+
+  String? get videoTutorialUrl => JsonUtils.stringValue(videoTutorial['url']);
 
   // Upgrade
 

@@ -511,6 +511,7 @@
     "panel.onboarding.base.not_now.title":"No en este momento",
 
     "panel.onboarding2.video.button.title": "Saltar",
+    "panel.onboarding2.video.missing.msg": "Vídeo faltante",
 
     "panel.onboarding2.roles.label.title": "Who Are You?",
     "panel.onboarding2.roles.label.title.hint": "Header 1",
