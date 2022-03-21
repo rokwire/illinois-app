@@ -1709,12 +1709,21 @@ class GroupMembersSelectionWidget extends StatefulWidget{
   final List<Member>? allMembers;
   final List<Member>? selectedMembers;
   final void Function(List<Member>?)? onSelectionChanged;
-  
-  const GroupMembersSelectionWidget({Key? key, this.selectedMembers, this.allMembers,this.onSelectionChanged, this.groupId}) : super(key: key);
+  final bool enabled;
+
+  const GroupMembersSelectionWidget({Key? key, this.selectedMembers, this.allMembers,this.onSelectionChanged, this.groupId, this.enabled = true}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupMembersSelectionState();
 
+  //When we work with Update post the member stored in the post came with less populated fields and they do not match the == operator
+  static List<Member>? constructUpdatedMembersList({List<Member>? selection, List<Member>? upToDateMembers}){
+    if(CollectionUtils.isNotEmpty(selection) && CollectionUtils.isNotEmpty(upToDateMembers)){
+      return upToDateMembers!.where((member) => selection!.any((outdatedMember) => outdatedMember.userId == member.userId)).toList();
+    }
+
+    return selection;
+  }
 }
 
 class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
@@ -1727,16 +1736,19 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
         children: [
           Row(
             children: [
-              Text("To: "),
+              Text("To: ", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),),
               Expanded(
                 child: _buildDropDown(),
               )
             ],
           ),
           Container(height: 4,),
-          Text(selectedMembersText),
+          Text(selectedMembersText, style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.bold),),
           Container(height: 4,),
-          RoundedButton(label: "Edit", onTap: _onTapEdit, textColor: Styles().colors!.fillColorSecondary!,conentAlignment: MainAxisAlignment.start, contentWeight: 0.33, padding: EdgeInsets.all(3), maxBorderRadius: 5,)
+          Visibility(
+            visible: _showChangeButton,
+            child: RoundedButton(label: "Edit", onTap: _onTapEdit, textColor: Styles().colors!.fillColorSecondary!,conentAlignment: MainAxisAlignment.start, contentWeight: 0.33, padding: EdgeInsets.all(3), maxBorderRadius: 5,)
+          )
         ],
       ),
     );
@@ -1746,7 +1758,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     return Container(
         height: 48,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color:  widget.enabled? Colors.white: Styles().colors!.background!,
             border: Border.all(color: Styles().colors!.lightGray!, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
@@ -1759,14 +1771,17 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
                     isExpanded: true,
                     dropdownPadding: EdgeInsets.zero,
                     itemPadding: EdgeInsets.zero,
+                    iconEnabledColor: Styles().colors!.fillColorSecondary!,
+                    icon: widget.enabled? Icon(Icons.arrow_drop_down): Container(),
+                    // buttonDecoration: widget.enabled? null : BoxDecoration(color: Styles().colors!.background),
                     dropdownDecoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid), borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8))),
-                    style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
+                    // style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
                     // value: _currentSelection,
                     items: _buildDropDownItems,
-                    hint: Text(_selectionText),
-                    onChanged: (GroupMemberSelectionData? data) {
+                    hint: Text(_selectionText,  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),),
+                    onChanged: widget.enabled? (GroupMemberSelectionData? data) {
                       _onDropDownItemChanged(data);
-                    },
+                    } : null,
                 )))
               // )
     );
@@ -1775,16 +1790,17 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
   List<DropdownMenuItem<GroupMemberSelectionData>> get _buildDropDownItems {
     List<DropdownMenuItem<GroupMemberSelectionData>> items = [];
 
-    items.add(DropdownMenuItem(alignment: AlignmentDirectional.centerStart,enabled: false, value: null,
+    items.add(DropdownMenuItem(alignment: AlignmentDirectional.topCenter,enabled: false, value: null,
         child:
           Container(
+            color: Styles().colors!.fillColorPrimary,
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
               Expanded(child:
                 Container(color: Styles().colors!.fillColorPrimary,
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   child:Text("Select Recipient(s)", style: TextStyle(color: Colors.white),))
           )
           ])))
@@ -1796,8 +1812,8 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     List<List<Member>>? storedSelections = _storedMembersSelections;
     if(CollectionUtils.isNotEmpty(storedSelections)){
       items.add(DropdownMenuItem(enabled: false ,value: null, child: _buildDropDownHeaderLayout("RECENTLY USED")));
-      storedSelections!.forEach((selection){
-        items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: selection), child: _buildDropDownItemLayout(constructSelectionTitle(selection))));
+      storedSelections!.reversed.forEach((selection){
+        items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: selection, requiresValidation: true), child: _buildDropDownItemLayout(constructSelectionTitle(selection))));
       });
     }
 
@@ -1836,7 +1852,10 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     if(data != null){
       switch (data.type){
         case GroupMemberSelectionDataType.Selection:
-          _onSelectionChanged(data.selection);
+          _onSelectionChanged(data.requiresValidation?
+              /*Trim Members which are no longer present*/
+            GroupMembersSelectionWidget.constructUpdatedMembersList(selection: data.selection, upToDateMembers: widget.allMembers) :
+              data.selection);
           break;
         case GroupMemberSelectionDataType.PerformNewSelection:
           _onTapEdit();
@@ -1844,6 +1863,14 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
       }
     }
   }
+
+  // List<Member>? _validateSelection(List<Member>? selection, List<Member>? availableMembers){
+  //   if(CollectionUtils.isNotEmpty(selection) && CollectionUtils.isNotEmpty(availableMembers)){
+  //     return selection!.where((selectedMember) => availableMembers!.contains(selectedMember)).toList();
+  //   }
+  //
+  //   return selection;
+  // }
 
   void _onTapEdit(){
     Analytics().logSelect(target: "Edit Members");
@@ -1890,13 +1917,18 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     return constructSelectionTitle(widget.selectedMembers);
   }
 
+  bool get _showChangeButton{
+    return CollectionUtils.isNotEmpty(widget.selectedMembers) && widget.enabled;
+  }
+
 }
 enum GroupMemberSelectionDataType {Selection, PerformNewSelection}
 class GroupMemberSelectionData {
   final GroupMemberSelectionDataType type;
   final List<Member>? selection;
+  final bool requiresValidation;
 
-  GroupMemberSelectionData({required this.type, required this.selection});
+  GroupMemberSelectionData({required this.type, required this.selection, this.requiresValidation = false});
 }
 
 class _FontIcon extends StatelessWidget {
