@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.3.2] - 2022-03-21
 ### Added
 - SettingsideoTutorialPanel with playing video [#1470](https://github.com/rokwire/illinois-app/issues/1470).
+### Changed
+- Update Group post for selected members [#1450](https://github.com/rokwire/illinois-app/issues/1450).
 
 ## [3.3.1] - 2022-03-17
 ### Added
