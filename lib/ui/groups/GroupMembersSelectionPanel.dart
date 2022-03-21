@@ -42,7 +42,7 @@ class GroupMembersSelectionPanel extends StatefulWidget {
 class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
 
   List<Member>? _allMembers;
-  List<Member>? _groupMembers;
+  List<Member>? _selectedMembers;
 
   bool _searchView = false;
   TextEditingController _searchController = TextEditingController();
@@ -66,7 +66,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
 
   @override
   Widget build(BuildContext context) {
-    bool hasGroupMembers = CollectionUtils.isNotEmpty(_groupMembers);
+    bool hasGroupMembers = CollectionUtils.isNotEmpty(_selectedMembers);
 
     return new WillPopScope(
       onWillPop: () async{
@@ -125,7 +125,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                   Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.search.label', "SEARCH")))),
                   Visibility(visible: _searchView, child: _buildMembersWidget(_filterMembers(_searchController.text))),
                   Visibility(visible: (!_searchView) && hasGroupMembers, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.selected.label', "To: ")))),
-                  Visibility(visible: (!_searchView) && hasGroupMembers, child: _buildMembersWidget(_groupMembers)),
+                  Visibility(visible: (!_searchView) && hasGroupMembers, child: _buildMembersWidget(_selectedMembers)),
                   Visibility(visible: true, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.all.label', "ALL MEMBERS")))),
                   Visibility(visible: true, child: _buildMembersWidget(_allMembers))
                 ]))
@@ -137,7 +137,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
 
   void _initMembers() {
     _setLoading(true);
-    _groupMembers = CollectionUtils.isNotEmpty(widget.selectedMembers) ? List.from(widget.selectedMembers!) : [];
+    _selectedMembers = CollectionUtils.isNotEmpty(widget.selectedMembers) ? List.from(widget.selectedMembers!) : [];
     _allMembers = CollectionUtils.isNotEmpty(widget.allMembers) ? List.from(widget.allMembers!) : [];
     _setLoading(false);
   }
@@ -218,7 +218,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
   }
 
   bool _isMemberSelected(Member member) {
-    return _groupMembers?.contains(member) ?? false;
+    return _selectedMembers?.contains(member) ?? false;
   }
 
   void _onMemberTaped(Member member) {
@@ -232,22 +232,29 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
     Analytics().logSelect(target: 'Done');
     _hideKeyboard();
     _storeSelection();
-    Navigator.of(context).pop(_groupMembers);
+    Navigator.of(context).pop(_selectedMembers);
   }
 
-  void _storeSelection(){
+  void _storeSelection(){ //Too much logic. If we need it somewhere else we should move it in Service class
+    const int maxStoredSelections = 5;
+
     Map<String, List<List<Member>>>? selectionsTable = Storage().groupMembersSelection;
     if(selectionsTable == null){
       selectionsTable = Map<String, List<List<Member>>>();
-    }
+  }
 
     List<List<Member>>? groupMemberSelection = widget.groupId!=null? selectionsTable[widget.groupId] : null;
     if(groupMemberSelection == null){
       groupMemberSelection = [];
     }
 
-    if(_groupMembers!=null && widget.groupId!=null) {
-      groupMemberSelection.add(_groupMembers!);
+    if(_selectedMembers!=null && widget.groupId!=null) {
+      if(!groupMemberSelection.contains(_selectedMembers)) {
+        groupMemberSelection.add(_selectedMembers!);
+        if(groupMemberSelection.length> maxStoredSelections){ //Support Max Count
+          groupMemberSelection.removeAt(0);
+        }
+      }
       selectionsTable[widget.groupId!] = groupMemberSelection;
     }
 
@@ -256,13 +263,13 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
   }
 
   void _switchMember(Member member) {
-    if (_groupMembers == null) {
-      _groupMembers = [];
+    if (_selectedMembers == null) {
+      _selectedMembers = [];
     }
-    if (_groupMembers!.contains(member)) {
-      _groupMembers!.remove(member);
+    if (_selectedMembers!.contains(member)) {
+      _selectedMembers!.remove(member);
     } else {
-      _groupMembers!.add(member);
+      _selectedMembers!.add(member);
     }
     setState(() {});
   }

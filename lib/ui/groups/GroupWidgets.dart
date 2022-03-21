@@ -1709,12 +1709,21 @@ class GroupMembersSelectionWidget extends StatefulWidget{
   final List<Member>? allMembers;
   final List<Member>? selectedMembers;
   final void Function(List<Member>?)? onSelectionChanged;
+  final bool enabled;
   
-  const GroupMembersSelectionWidget({Key? key, this.selectedMembers, this.allMembers,this.onSelectionChanged, this.groupId}) : super(key: key);
+  const GroupMembersSelectionWidget({Key? key, this.selectedMembers, this.allMembers,this.onSelectionChanged, this.groupId, this.enabled = true}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupMembersSelectionState();
 
+  //When we work with Update post the member stored in the post came with less populated fields and they do not match the == operator
+  static List<Member>? constructUpdatedMembersList({List<Member>? selection, List<Member>? upToDateMembers}){
+    if(CollectionUtils.isNotEmpty(selection) && CollectionUtils.isNotEmpty(upToDateMembers)){
+      return upToDateMembers!.where((member) => selection!.any((outdatedMember) => outdatedMember.userId == member.userId)).toList();
+    }
+
+    return selection;
+  }
 }
 
 class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
@@ -1764,9 +1773,9 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
                     // value: _currentSelection,
                     items: _buildDropDownItems,
                     hint: Text(_selectionText),
-                    onChanged: (GroupMemberSelectionData? data) {
+                    onChanged: widget.enabled? (GroupMemberSelectionData? data) {
                       _onDropDownItemChanged(data);
-                    },
+                    } : null,
                 )))
               // )
     );
@@ -1797,7 +1806,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     if(CollectionUtils.isNotEmpty(storedSelections)){
       items.add(DropdownMenuItem(enabled: false ,value: null, child: _buildDropDownHeaderLayout("RECENTLY USED")));
       storedSelections!.forEach((selection){
-        items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: selection), child: _buildDropDownItemLayout(constructSelectionTitle(selection))));
+        items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: selection, requiresValidation: true), child: _buildDropDownItemLayout(constructSelectionTitle(selection))));
       });
     }
 
@@ -1836,7 +1845,10 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     if(data != null){
       switch (data.type){
         case GroupMemberSelectionDataType.Selection:
-          _onSelectionChanged(data.selection);
+          _onSelectionChanged(data.requiresValidation?
+              /*Trim Members which are no longer present*/
+            GroupMembersSelectionWidget.constructUpdatedMembersList(selection: data.selection, upToDateMembers: widget.allMembers) :
+              data.selection);
           break;
         case GroupMemberSelectionDataType.PerformNewSelection:
           _onTapEdit();
@@ -1844,6 +1856,14 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
       }
     }
   }
+
+  // List<Member>? _validateSelection(List<Member>? selection, List<Member>? availableMembers){
+  //   if(CollectionUtils.isNotEmpty(selection) && CollectionUtils.isNotEmpty(availableMembers)){
+  //     return selection!.where((selectedMember) => availableMembers!.contains(selectedMember)).toList();
+  //   }
+  //
+  //   return selection;
+  // }
 
   void _onTapEdit(){
     Analytics().logSelect(target: "Edit Members");
@@ -1895,8 +1915,9 @@ enum GroupMemberSelectionDataType {Selection, PerformNewSelection}
 class GroupMemberSelectionData {
   final GroupMemberSelectionDataType type;
   final List<Member>? selection;
+  final bool requiresValidation;
 
-  GroupMemberSelectionData({required this.type, required this.selection});
+  GroupMemberSelectionData({required this.type, required this.selection, this.requiresValidation = false});
 }
 
 class _FontIcon extends StatelessWidget {
