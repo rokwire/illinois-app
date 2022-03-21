@@ -209,6 +209,8 @@
 	"panel.browse.button.faqs.hint": "",
 	"panel.browse.button.date_cat.title":"到期日目錄",
 	"panel.browse.button.date_cat.hint":"",
+    "panel.browse.button.video_tutorial.title": "視頻教程",
+    "panel.browse.button.video_tutorial.hint": "",
 
 	"panel.browse.label.browse_all": "浏览全部",
 	"panel.browse.label.offline.sign_in":"离线时无法登录",
@@ -223,6 +225,7 @@
 	"panel.browse.label.offline.faqs": "離線時無法使用常見問題解答。",
 	"panel.browse.label.offline.crisis_help": "離線時無法使用危機幫助。",
 	"panel.browse.label.offline.date_cat": "截止日期目錄在離線時不可用。",
+    "panel.browse.label.offline.video_tutorial": "離線時無法使用視頻教程.",
 
 	"panel.browse.button.sign_in.title":"登录",
 	"panel.browse.button.sign_in.hint":"",
@@ -511,6 +514,7 @@
 	"panel.onboarding.base.not_now.title":"暂时不",
 
     "panel.onboarding2.video.button.title": "跳過",
+    "panel.onboarding2.video.missing.msg": "缺少視頻",
 
 	"panel.onboarding2.roles.label.title": "Who Are You?",
 	"panel.onboarding2.roles.label.title.hint": "Header 1",
@@ -1246,6 +1250,9 @@
 	"panel.settings.new_privacy.privacy.button.set_privacy.slider.hint": "隐私级别",
 	"panel.settings.new_privacy.privacy.button.set_privacy.slider.increase": "增加到",
 	"panel.settings.new_privacy.privacy.button.set_privacy.slider.decrease": "减少到",
+
+    "panel.settings.video_tutorial.header.title": "視頻教程",
+    "panel.settings.video_tutorial.video.missing.msg": "缺少視頻",
 
 	"panel.create_event.header.title":"创建活动",
 	"panel.create_event.title":"创建活动",
