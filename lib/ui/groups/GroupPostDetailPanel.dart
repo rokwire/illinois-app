@@ -366,7 +366,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                       color: Styles()
                                           .colors!
                                           .fillColorPrimary)))),
-
+                      Container(height: 6,),
                       GroupMembersSelectionWidget(
                         selectedMembers: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:(_isEditMainPost ? _mainPostUpdateData?.members : _post?.members), upToDateMembers: _allMembersAllowedToPost),
                         allMembers: _allMembersAllowedToPost,
@@ -390,8 +390,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   bool _isMemberAllowedToReceivePost(Member member){
-    //TMP:
-    // return true;
     return member.isMemberOrAdmin;
   }
 

@@ -1758,7 +1758,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     return Container(
         height: 48,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color:  widget.enabled? Colors.white: Styles().colors!.background!,
             border: Border.all(color: Styles().colors!.lightGray!, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
@@ -1772,6 +1772,8 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
                     dropdownPadding: EdgeInsets.zero,
                     itemPadding: EdgeInsets.zero,
                     iconEnabledColor: Styles().colors!.fillColorSecondary!,
+                    icon: widget.enabled? Icon(Icons.arrow_drop_down): Container(),
+                    // buttonDecoration: widget.enabled? null : BoxDecoration(color: Styles().colors!.background),
                     dropdownDecoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid), borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8))),
                     // style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
                     // value: _currentSelection,
