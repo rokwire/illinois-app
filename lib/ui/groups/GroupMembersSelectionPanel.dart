@@ -62,8 +62,6 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
     super.dispose();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     bool hasGroupMembers = CollectionUtils.isNotEmpty(_selectedMembers);
@@ -246,18 +244,17 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
     List<List<Member>>? groupMemberSelection = widget.groupId!=null? selectionsTable[widget.groupId] : null;
     if(groupMemberSelection == null){
       groupMemberSelection = [];
+      selectionsTable[widget.groupId!] = groupMemberSelection;
     }
 
     if(_selectedMembers!=null && widget.groupId!=null) {
-      if(!groupMemberSelection.contains(_selectedMembers)) {
+      if(!_memberSelectionsContainsSelection(groupMemberSelection, _selectedMembers!)) {
         groupMemberSelection.add(_selectedMembers!);
         if(groupMemberSelection.length> maxStoredSelections){ //Support Max Count
           groupMemberSelection.removeAt(0);
         }
       }
-      selectionsTable[widget.groupId!] = groupMemberSelection;
     }
-
 
     Storage().groupMembersSelection = selectionsTable;
   }
@@ -405,6 +402,15 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
         _loading = loading;
       });
     }
+  }
+
+  //Utils TBD better way is to create class MemberSelection which will override == properly
+  bool _memberSelectionsContainsSelection(List<List<Member>> collection, List<Member> item){
+    return collection.any(
+            (List<Member> selection) => //We have a selection
+              selection.length == item.length && //Which has same length as the desired one
+                selection.every((member) => // And for every member
+                (item.any((element) => element.userId == member.userId)))); // Items has member with same userId
   }
 }
 
