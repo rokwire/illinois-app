@@ -17,6 +17,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -492,6 +493,15 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _onDateCatTap(),
       );
     }
+    else if ((code == 'video_tutorial') && _canVideoTutorial) {
+      return _RibbonButton(
+        icon: Image.asset('images/icon-settings.png'),
+        title: Localization().getStringEx('panel.browse.button.video_tutorial.title', 'Video Tutorial'),
+        hint: Localization().getStringEx('panel.browse.button.video_tutorial.hint', ''),
+        padding: _ribbonButtonPadding,
+        onTap: () => _onVideoTutorialTap(),
+      );
+    }
 
     else {
       return null;
@@ -694,6 +704,19 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (StringUtils.isNotEmpty(Config().dateCatalogUrl)) {
       url_launcher.launch(Config().dateCatalogUrl!);
+    }
+  }
+
+  bool get _canVideoTutorial => StringUtils.isNotEmpty(Config().videoTutorialUrl);
+
+  void _onVideoTutorialTap() {
+    Analytics().logSelect(target: "Video Tutorial");
+    
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.video_tutorial', 'Video Tutorial not available while offline.'));
+    }
+    else if (_canVideoTutorial) {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel()));
     }
   }
 
