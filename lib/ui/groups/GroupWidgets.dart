@@ -1809,7 +1809,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     List<List<Member>>? storedSelections = _storedMembersSelections;
     if(CollectionUtils.isNotEmpty(storedSelections)){
       items.add(DropdownMenuItem(enabled: false ,value: null, child: _buildDropDownHeaderLayout("RECENTLY USED")));
-      storedSelections!.forEach((selection){
+      storedSelections!.reversed.forEach((selection){
         items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: selection, requiresValidation: true), child: _buildDropDownItemLayout(constructSelectionTitle(selection))));
       });
     }
