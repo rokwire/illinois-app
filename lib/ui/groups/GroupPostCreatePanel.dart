@@ -163,8 +163,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _setLoading(true);
 
-    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl); // if no parentId then this is a new post for the group.
-    Groups().createPost(widget.group?.id, post, members: _selectedMembers).then((succeeded) {
+    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers); // if no parentId then this is a new post for the group.
+    Groups().createPost(widget.group?.id, post).then((succeeded) {
       _onCreateFinished(succeeded);
     });
   }
