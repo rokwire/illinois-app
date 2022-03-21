@@ -1710,7 +1710,7 @@ class GroupMembersSelectionWidget extends StatefulWidget{
   final List<Member>? selectedMembers;
   final void Function(List<Member>?)? onSelectionChanged;
   final bool enabled;
-  
+
   const GroupMembersSelectionWidget({Key? key, this.selectedMembers, this.allMembers,this.onSelectionChanged, this.groupId, this.enabled = true}) : super(key: key);
 
   @override
@@ -1736,16 +1736,19 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
         children: [
           Row(
             children: [
-              Text("To: "),
+              Text("To: ", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),),
               Expanded(
                 child: _buildDropDown(),
               )
             ],
           ),
           Container(height: 4,),
-          Text(selectedMembersText),
+          Text(selectedMembersText, style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.bold),),
           Container(height: 4,),
-          RoundedButton(label: "Edit", onTap: _onTapEdit, textColor: Styles().colors!.fillColorSecondary!,conentAlignment: MainAxisAlignment.start, contentWeight: 0.33, padding: EdgeInsets.all(3), maxBorderRadius: 5,)
+          Visibility(
+            visible: _showChangeButton,
+            child: RoundedButton(label: "Edit", onTap: _onTapEdit, textColor: Styles().colors!.fillColorSecondary!,conentAlignment: MainAxisAlignment.start, contentWeight: 0.33, padding: EdgeInsets.all(3), maxBorderRadius: 5,)
+          )
         ],
       ),
     );
@@ -1768,11 +1771,12 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
                     isExpanded: true,
                     dropdownPadding: EdgeInsets.zero,
                     itemPadding: EdgeInsets.zero,
+                    iconEnabledColor: Styles().colors!.fillColorSecondary!,
                     dropdownDecoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid), borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8))),
-                    style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
+                    // style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
                     // value: _currentSelection,
                     items: _buildDropDownItems,
-                    hint: Text(_selectionText),
+                    hint: Text(_selectionText,  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),),
                     onChanged: widget.enabled? (GroupMemberSelectionData? data) {
                       _onDropDownItemChanged(data);
                     } : null,
@@ -1908,6 +1912,10 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
 
   String get selectedMembersText{
     return constructSelectionTitle(widget.selectedMembers);
+  }
+
+  bool get _showChangeButton{
+    return CollectionUtils.isNotEmpty(widget.selectedMembers) && widget.enabled;
   }
 
 }
