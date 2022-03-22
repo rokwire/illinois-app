@@ -22,6 +22,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
 import android.view.OrientationEventListener;
@@ -131,7 +132,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         orientationListener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
             @Override
             public void onOrientationChanged(int orientation) {
-                checkOrientationChange(orientation);
+                if (isAutoRotateEnabled()) {
+                    checkOrientationChange(orientation);
+                }
             }
         };
 
@@ -152,6 +155,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 setRequestedOrientation(desiredOrientation);
             }
         }
+    }
+
+    private boolean isAutoRotateEnabled() {
+        return (Settings.System.getInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0) == 1);
     }
 
     private void initWithParams(Object keys) {
