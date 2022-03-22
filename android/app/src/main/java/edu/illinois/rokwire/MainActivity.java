@@ -23,7 +23,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
@@ -31,6 +33,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
+import android.view.OrientationEventListener;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -45,6 +48,8 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.mapsindoors.mapssdk.MapsIndoors;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.security.SecureRandom;
@@ -80,6 +85,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private int preferredScreenOrientation;
     private Set<Integer> supportedScreenOrientations;
+    private OrientationEventListener orientationListener;
 
     private Toast statusToast;
 
@@ -94,6 +100,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        if (orientationListener != null) {
+            orientationListener.disable();
+        }
     }
 
     public static MainActivity getInstance() {
@@ -130,6 +140,35 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     private void initScreenOrientation() {
         preferredScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         supportedScreenOrientations = new HashSet<>(Collections.singletonList(preferredScreenOrientation));
+        setRequestedOrientation(preferredScreenOrientation);
+        initOrientationListener();
+    }
+
+    private void initOrientationListener() {
+        orientationListener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
+            @Override
+            public void onOrientationChanged(int orientation) {
+                checkOrientationChange(orientation);
+            }
+        };
+
+        if (orientationListener.canDetectOrientation()) {
+            orientationListener.enable();
+        } else {
+            orientationListener.disable();
+        }
+    }
+
+    private void checkOrientationChange(int orientationDegrees) {
+        int desiredOrientation = getScreenOrientationFromDegrees(orientationDegrees);
+        int currentOrientation = getRequestedOrientation();
+
+        // Prevent changing screen orientation if it's not supported
+        if (desiredOrientation != currentOrientation) {
+            if (supportedScreenOrientations.contains(desiredOrientation)) {
+                setRequestedOrientation(desiredOrientation);
+            }
+        }
     }
 
     private void initWithParams(Object keys) {
@@ -285,6 +324,18 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
             default:
                 return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+        }
+    }
+
+    private int getScreenOrientationFromDegrees(int orientationDegrees) {
+        if ((orientationDegrees > 315) || (orientationDegrees <= 45)) {
+            return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        } else if (orientationDegrees <= 135) {
+            return ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+        } else if (orientationDegrees <= 225) {
+            return ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+        } else { // (orientationDegrees > 225) && (orientationDegrees <= 315)
+            return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
         }
     }
 
