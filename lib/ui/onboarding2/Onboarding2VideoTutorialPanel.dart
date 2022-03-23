@@ -86,6 +86,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
 
   @override
   Widget build(BuildContext context) {
+    double buttonWidth = MediaQuery.of(context).textScaleFactor * 100;
     return Scaffold(
         backgroundColor: Styles().colors!.blackTransparent06,
         body: SafeArea(
@@ -97,7 +98,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
             ]),
             Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: SizedBox(width: 100, child: RoundedButton(label: Localization().getStringEx('panel.onboarding2.video.button.title', 'Skip'), fontSize: 16, onTap: _onTapSkip)))
+                child: SizedBox(width: buttonWidth, child: RoundedButton(label: Localization().getStringEx('panel.onboarding2.video.button.title', 'Skip'), fontSize: 16, onTap: _onTapSkip)))
           ])
         ])));
   }
