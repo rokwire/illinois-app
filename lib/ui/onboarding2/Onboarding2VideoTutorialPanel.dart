@@ -97,7 +97,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
             ]),
             Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: RoundedButton(label: Localization().getStringEx('panel.onboarding2.video.button.title', 'Skip'), onTap: _onTapSkip))
+                child: SizedBox(width: 100, child: RoundedButton(label: Localization().getStringEx('panel.onboarding2.video.button.title', 'Skip'), fontSize: 16, onTap: _onTapSkip)))
           ])
         ])));
   }
