@@ -578,14 +578,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     if (_isMemberOrAdmin) {
+      String membersTitle = _isAdmin ? Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members") : Localization().getStringEx("panel.group_detail.button.members.title", "Members");
+      String membersHint = _isAdmin ? Localization().getStringEx("panel.group_detail.button.manage_members.hint", "") : Localization().getStringEx("panel.group_detail.button.members.hint", "");
+      commands.add(RibbonButton(
+        label: membersTitle,
+        hint: membersHint,
+        leftIconAsset: 'images/icon-member.png',
+        padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+        onTap: _onTapMembers,
+      ));
       if(_isAdmin){
-        commands.add(RibbonButton(
-          label: Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
-          hint: Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
-          leftIconAsset: 'images/icon-member.png',
-          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
-          onTap: _onTapMembers,
-        ));
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent,));
         commands.add(RibbonButton(
           label: Localization().getStringEx("panel.group_detail.button.group_settings.title", "Group Settings"),
