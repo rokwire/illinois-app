@@ -1760,7 +1760,8 @@
 	"panel.find_event.button.add_selected_events.title": "Add (#) event to group",
 	"panel.find_event.button.add_selected_events.hint": "",
 
-	"panel.manage_members.header.title": "管理成员",
+	"panel.manage_members.header.admin.title": "管理成员",
+	"panel.manage_members.header.member.title": "成員",
 	"panel.manage_members.label.requests": "请求",
 	"panel.manage_members.label.members": "成员",
 	"panel.manage_members.button.review_request.title": "审查请求",

@@ -159,17 +159,18 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   @override
   Widget build(BuildContext context) {
+    String headerTitle = _isAdmin
+        ? Localization().getStringEx("panel.manage_members.header.admin.title", "Manage Members")
+        : Localization().getStringEx("panel.manage_members.header.member.title", "Members");
     return Scaffold(
         backgroundColor: Styles().colors!.background,
-        appBar: HeaderBar(
-          title: Localization().getStringEx("panel.manage_members.header.title", "Manage Members",),
-        ),
+        appBar: HeaderBar(title: headerTitle),
         body: _isLoading
             ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ))
             : SingleChildScrollView(
           child:Column(
             children: <Widget>[
-              _buildRequests(),
+              Visibility(visible: _isAdmin, child: _buildRequests()),
               _buildMembers()
             ],
           ),
@@ -391,6 +392,10 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     return _selectedMembersFilter == _allMembersFilter ||
         _selectedMembersFilter == member!.officerTitle;
   }
+
+  bool get _isAdmin {
+    return _group?.currentUserAsMember?.isAdmin ?? false;
+  }
 }
 
 class _PendingMemberCard extends StatelessWidget {
@@ -484,7 +489,7 @@ class _GroupMemberCard extends StatelessWidget{
                     Row(
                       children: <Widget>[
                         Expanded(child:
-                          Text(StringUtils.ensureNotEmpty(member?.displayName),
+                          Text(StringUtils.ensureNotEmpty(_memberDisplayName),
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies!.bold,
                                 fontSize: 20,
@@ -526,8 +531,22 @@ class _GroupMemberCard extends StatelessWidget{
     );
   }
 
-  void _onTapMemberCard(BuildContext context)async{
-    Analytics().logSelect(target: "Member Detail");
-    await Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupMemberPanel(group: group, member: member,)));
+  void _onTapMemberCard(BuildContext context) async {
+    if (_isAdmin) {
+      Analytics().logSelect(target: "Member Detail");
+      await Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberPanel(group: group, member: member)));
+    }
+  }
+
+  String? get _memberDisplayName {
+    if (_isAdmin) {
+      return member?.displayName;
+    } else {
+      return member?.name;
+    }
+  }
+
+  bool get _isAdmin {
+    return group?.currentUserAsMember?.isAdmin ?? false;
   }
 }

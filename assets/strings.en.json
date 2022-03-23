@@ -1764,7 +1764,8 @@
     "panel.find_event.button.add_selected_events.title": "Add (#) event to group",
     "panel.find_event.button.add_selected_events.hint": "",
 
-    "panel.manage_members.header.title": "Manage Members",
+    "panel.manage_members.header.admin.title": "Manage Members",
+    "panel.manage_members.header.member.title": "Members",
     "panel.manage_members.label.requests": "Requests",
     "panel.manage_members.label.members": "Members",
     "panel.manage_members.button.review_request.title": "Review Request",

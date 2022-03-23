@@ -1760,7 +1760,8 @@
     "panel.find_event.button.add_selected_events.title": "Add (#) event to group",
     "panel.find_event.button.add_selected_events.hint": "",
 
-    "panel.manage_members.header.title": "Administrar miembros",
+    "panel.manage_members.header.admin.title": "Administrar miembros",
+    "panel.manage_members.header.member.title": "Miembros",
     "panel.manage_members.label.requests": "Peticiones",
     "panel.manage_members.label.members": "Miembros",
     "panel.manage_members.button.review_request.title": "Solicitud de Revisión",
