@@ -1672,6 +1672,8 @@
     "panel.group_detail.pending_members.count.format": "%s Pending Member",
     "panel.group_detail.button.manage_members.title": "Manage Members",
     "panel.group_detail.button.manage_members.hint": "",
+    "panel.group_detail.button.members.title": "Members",
+    "panel.group_detail.button.members.hint": "",
     "panel.group_detail.button.group_settings.title": "Group Settings",
     "panel.group_detail.button.group_promote.title": "Promote this group",
     "panel.group_detail.button.group_promote.hint": "",
