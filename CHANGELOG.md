@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added "Health Illini Podcast" interactive activity in Wellness home panel [#1485](https://github.com/rokwire/illinois-app/issues/1485).
 ### Changed
 - The way group member goes to member list [#1484](https://github.com/rokwire/illinois-app/issues/1484).
+- Reordered buttons in DebugHomePanel.
 
 ## [3.3.4] - 2022-03-23
 ### Added
