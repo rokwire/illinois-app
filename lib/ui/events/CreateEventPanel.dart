@@ -19,6 +19,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -83,6 +84,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   bool _loading = false;
   bool _modified = false;
+
+  //Groups
+  List<Member>? _groupMembersSelection;
 
   final _eventTitleController = TextEditingController();
   final _eventDescriptionController = TextEditingController();
@@ -541,7 +545,35 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                           fontFamily: Styles().fontFamilies!.regular,
                                       ),
                                     ),
-                                  )
+                                  ),
+                                Container(height: 8,),
+                                Visibility(
+                                  visible: widget.group!=null,
+                                  child: Container(height: 10,)),
+                                Visibility(
+                                  visible: widget.group!=null,
+                                  child: Text(
+                                    "Please select the group members who can also see this event",
+                                    style: TextStyle(
+                                      color: Styles().colors!.textSurface,
+                                      fontSize: 16,
+                                      fontFamily: Styles().fontFamilies!.regular,
+                                    ),),
+                                ),
+                                Visibility(
+                                    visible: widget.group!=null,
+                                    child: Container(height: 6,)),
+                                Visibility(
+                                  visible: widget.group!=null,
+                                  child: GroupMembersSelectionWidget(
+                                    selectedMembers: _groupMembersSelection,
+                                    groupId: widget.group!.id,
+                                    onSelectionChanged: (members){
+                                      setState(() {
+                                        _groupMembersSelection = members;
+                                      });
+                                    },),)
+
                               ],
                             ),
                           ),
@@ -1787,7 +1819,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       if (StringUtils.isNotEmpty(mainEventId)) {
         // Succeeded to create the main event
         if (hasGroup) {
-          bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: mainEvent.createdByGroupId, eventId: mainEventId);
+          bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: mainEvent.createdByGroupId, eventId: mainEventId, toMembers: _groupMembersSelection);
           if (eventLinkedToGroup) {
             // Succeeded to link event to group
             eventToDisplay = mainEvent;
@@ -1811,7 +1843,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           groupEvent?.createdByGroupId = group.id;
           String? groupEventId = await Events().postNewEvent(groupEvent);
           if (StringUtils.isNotEmpty(groupEventId)) {
-            bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent?.createdByGroupId, eventId: groupEventId);
+            bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent?.createdByGroupId, eventId: groupEventId, toMembers: _groupMembersSelection);
             if (eventLinkedToGroup) {
               // Succeeded to link event to group
               if (eventToDisplay == null) {

@@ -20,8 +20,10 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -69,6 +71,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   //Maps
   Core.Position? _locationData;
   bool _addToGroupInProgress = false;
+
+  //Groups
+  List<Member>? _groupMembersSelection;
 
   @override
   void initState() {
@@ -738,16 +743,28 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     return (StringUtils.isEmpty(widget.browseGroupId) || (widget.event?.isGroupPrivate ?? false))? Container():
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
-          child:
-            RoundedButton(
-              label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
-              hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
-              backgroundColor: Colors.white,
-              borderColor: Styles().colors!.fillColorPrimary,
-              textColor: Styles().colors!.fillColorPrimary,
-              progress: _addToGroupInProgress,
-              onTap: _onTapAddToGroup,
-            ),
+          child: Column(
+            children: [
+              RoundedButton(
+                label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
+                hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+                backgroundColor: Colors.white,
+                borderColor: Styles().colors!.fillColorPrimary,
+                textColor: Styles().colors!.fillColorPrimary,
+                progress: _addToGroupInProgress,
+                onTap: _onTapAddToGroup,
+              ),
+              Container(height: 6,),
+              GroupMembersSelectionWidget(
+                selectedMembers: _groupMembersSelection,
+                groupId: widget.browseGroupId,
+                onSelectionChanged: (members){
+                  setState(() {
+                    _groupMembersSelection = members;
+                  });
+                },),
+            ],
+          )
         );
   }
 
@@ -802,7 +819,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     setState(() {
       _addToGroupInProgress = true;
     });
-    Groups().linkEventToGroup(groupId: widget.browseGroupId, eventId: widget.event?.id).then((value){
+    Groups().linkEventToGroup(groupId: widget.browseGroupId, eventId: widget.event?.id, toMembers: _groupMembersSelection).then((value){
       setState(() {
         _addToGroupInProgress = true;
       });

@@ -1727,6 +1727,14 @@ class GroupMembersSelectionWidget extends StatefulWidget{
 }
 
 class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
+  List<Member>? _allMembersAllowedToPost;
+
+  @override
+  void initState() {
+    super.initState();
+    _initAllMembersAllowedToPost();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1854,7 +1862,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
         case GroupMemberSelectionDataType.Selection:
           _onSelectionChanged(data.requiresValidation?
               /*Trim Members which are no longer present*/
-            GroupMembersSelectionWidget.constructUpdatedMembersList(selection: data.selection, upToDateMembers: widget.allMembers) :
+            GroupMembersSelectionWidget.constructUpdatedMembersList(selection: data.selection, upToDateMembers: _allMembersAllowedToPost) :
               data.selection);
           break;
         case GroupMemberSelectionDataType.PerformNewSelection:
@@ -1874,7 +1882,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
 
   void _onTapEdit(){
     Analytics().logSelect(target: "Edit Members");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSelectionPanel(allMembers: widget.allMembers, selectedMembers: widget.selectedMembers, groupId: widget.groupId,))).then((result) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSelectionPanel(allMembers: _allMembersAllowedToPost, selectedMembers: widget.selectedMembers, groupId: widget.groupId,))).then((result) {
       _onSelectionChanged(result);
     });
   }
@@ -1883,6 +1891,33 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     if(widget.onSelectionChanged!=null){
       widget.onSelectionChanged!(selection);
     }
+  }
+
+  void _initAllMembersAllowedToPost(){
+    if(widget.allMembers!=null){
+      _allMembersAllowedToPost = widget.allMembers;
+    } else if(widget.groupId!=null) {
+      _loadGroupMembers();
+    }
+
+  }
+
+  void _loadGroupMembers(){
+    Groups().loadGroup(widget.groupId).then((Group? group) {
+      if (mounted && (group != null)) {
+        setState(() {
+          if((group.members?.length ?? 0) >0) {
+            _allMembersAllowedToPost = group.members!.where((member) => _isMemberAllowedToReceivePost(member)).toList();
+          }
+        });
+      }
+    });
+  }
+
+  bool _isMemberAllowedToReceivePost(Member member){
+    //TMP:
+    // return true;
+    return member.isMemberOrAdmin;
   }
 
   List<List<Member>>? get _storedMembersSelections{
@@ -1909,7 +1944,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     if(CollectionUtils.isNotEmpty(widget.selectedMembers)){
       return "Selected Members (${widget.selectedMembers?.length ?? 0})";
     } else {
-      return "All Members (${widget.allMembers?.length ?? 0})";
+      return "All Members (${_allMembersAllowedToPost?.length ?? 0})";
     }
   }
 
