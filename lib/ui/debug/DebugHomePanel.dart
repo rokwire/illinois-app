@@ -659,10 +659,33 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onConfigChanged(dynamic env) {
     if (env is rokwire.ConfigEnvironment) {
-      setState(() {
-        Config().configEnvironment = env;
-        _selectedEnv = Config().configEnvironment;
-      });
+      _confirmConfigChange(env);
+    }
+  }
+
+  void _confirmConfigChange(rokwire.ConfigEnvironment env) {
+      AppAlert.showCustomDialog(context: context,
+        contentWidget: Text('Switch to ${rokwire.configEnvToString(env)}?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _changeConfig(env);
+            },
+            child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')))
+        ]);
+  }
+
+  void _changeConfig(rokwire.ConfigEnvironment env) {
+    if (mounted) {
+        setState(() {
+          _selectedEnv = Config().configEnvironment = env;
+        });
     }
   }
 
