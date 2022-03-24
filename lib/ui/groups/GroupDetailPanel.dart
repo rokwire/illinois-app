@@ -578,16 +578,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     if (_isMemberOrAdmin) {
-      String membersTitle = _isAdmin ? Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members") : Localization().getStringEx("panel.group_detail.button.members.title", "Members");
-      String membersHint = _isAdmin ? Localization().getStringEx("panel.group_detail.button.manage_members.hint", "") : Localization().getStringEx("panel.group_detail.button.members.hint", "");
-      commands.add(RibbonButton(
-        label: membersTitle,
-        hint: membersHint,
-        leftIconAsset: 'images/icon-member.png',
-        padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
-        onTap: _onTapMembers,
-      ));
       if(_isAdmin){
+        commands.add(RibbonButton(
+          label: Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
+          hint: Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
+          leftIconAsset: 'images/icon-member.png',
+          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+          onTap: _onTapMembers,
+        ));
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent,));
         commands.add(RibbonButton(
           label: Localization().getStringEx("panel.group_detail.button.group_settings.title", "Group Settings"),
@@ -695,9 +693,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               Padding(padding: EdgeInsets.symmetric(vertical: 4),
                 child: Text(_group?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32, color: Styles().colors!.fillColorPrimary),),
               ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                child: Text(members,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground, ),)
-              ),
+              GestureDetector(
+                    onTap: () => {
+                          if (_isMember) {_onTapMembers()}
+                        },
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4),
+                        child: Container(
+                            decoration: (_isMember
+                                ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2)))
+                                : null),
+                            child: Text(members,
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground))))),
               Visibility(
                 visible: StringUtils.isNotEmpty(pendingMembers),
                 child: Padding(padding: EdgeInsets.symmetric(vertical: 4),
