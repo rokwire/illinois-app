@@ -1051,19 +1051,19 @@
 								}
 							},
 							{
-								"title": "panel.wellness.home.activities.memory_mix_up",
-								"image": "group-2.png",
-								"action": {
-									"name": "web",
-									"source": "http://mhcwellness.illinois.edu/memory-mixup"
-								}
-							},
-							{
 								"title": "panel.wellness.common.interactive_activities.activity.reflection",
 								"image": "reflection.png",
 								"action": {
 									"name": "web",
 									"source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/"
+								}
+							},
+							{
+								"title": "panel.wellness.home.activities.memory_mix_up",
+								"image": "group-2.png",
+								"action": {
+									"name": "web",
+									"source": "http://mhcwellness.illinois.edu/memory-mixup"
 								}
 							},
 							{
@@ -1075,7 +1075,12 @@
 								}
 							},
 							{
-								
+								"title": "panel.wellness.common.interactive_activities.activity.podcast",
+								"image": "podcast.png",
+								"action": {
+									"name": "web",
+									"source": "https://anchor.fm/mckinley-health-center"
+								}
 							},
 							{
 								"title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk",
