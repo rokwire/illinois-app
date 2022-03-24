@@ -134,6 +134,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    Container(height: 16,),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Text(StringUtils.isNotEmpty(userUuid) ? 'Uuid: $userUuid' : "unknown uuid"),
@@ -154,18 +155,17 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Text('Beacon: $_beaconsStatus'),
                     ),
-                    
-                    Container(height: 1, color: Styles().colors!.surfaceAccent),
+
+                    Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent),),
+
                     ToggleRibbonButton(label: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck ?? false, onTap: _onDisableLiveGameCheckToggled),
                     ToggleRibbonButton(label: 'Display all times in Central Time', toggled: !Storage().useDeviceLocalTimeZone!, onTap: _onUseDeviceLocalTimeZoneToggled),
                     ToggleRibbonButton(label: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
                     ToggleRibbonButton(label: 'Show map levels', toggled: !Storage().debugMapHideLevels!, onTap: _onMapShowLevels),
-                    Container(height: 1, color: Styles().colors!.surfaceAccent),
-                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 5), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
-                    Container(
-                        color: Colors.white,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    //Container(height: 1, color: Styles().colors!.surfaceAccent),
+                    
+                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
+                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
                           child: TextFormField(
                               controller: _mapThresholdDistanceController,
                               keyboardType: TextInputType.number,
@@ -173,11 +173,9 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(), hintText: "Enter map threshold distance in meters", labelText: 'Threshold Distance (meters)')),
                         )),
-                    Container(color: Colors.white,child: Padding(padding: EdgeInsets.symmetric(vertical: 5), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
-                    Container(
-                        color: Colors.white,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    
+                    Container(color: Colors.white,child: Padding(padding: EdgeInsets.only(bottom: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
+                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                           child: TextFormField(
                               controller: _geoFenceRegionRadiusController,
                               keyboardType: TextInputType.number,
@@ -185,9 +183,9 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(), hintText: "Enter geo fence region radius in meters", labelText: 'Geo Fence Region Radius (meters)')),
                         )),
-                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 5), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[Padding(
-                      padding: EdgeInsets.only(left: 16), child: Text('Config Environment: '),), ListView.separated(
+                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
+                    Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[Padding(
+                      padding: EdgeInsets.only(left: 16, bottom: 16), child: Text('Config Environment: ', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20 )),), ListView.separated(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       separatorBuilder: (context, index) => Divider(color: Colors.transparent),
@@ -195,11 +193,13 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       itemBuilder: (context, index) {
                         rokwire.ConfigEnvironment environment = rokwire.ConfigEnvironment.values[index];
                         RadioListTile widget = RadioListTile(
-                            title: Text(rokwire.configEnvToString(environment)!), value: environment, groupValue: _selectedEnv, onChanged: _onConfigChanged);
+                            title: Text(rokwire.configEnvToString(environment) ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16 )), value: environment, groupValue: _selectedEnv, onChanged: _onConfigChanged);
                         return widget;
                       },
                     )
                     ],),),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
