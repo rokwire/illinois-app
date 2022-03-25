@@ -982,7 +982,8 @@
 					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
 						"items": [
 							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } }
+							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
+							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
 						]
 					}
 				],
@@ -1047,11 +1048,12 @@
 				"activities": [
 					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
 						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk_center", "image": "kognito.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito" } },
 							{ "title": "panel.wellness.common.interactive_activities.activity.mood_meter", "image": "group-7.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/interactive-mood-meter" } },
 							{ "title": "panel.wellness.mental.interactive_activities.activity.mixup", "image": "group-2.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/memory-mixup" } },
 							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } }
+							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
+							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } },
+							{ "title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk_center", "image": "kognito.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito" } }
 						]
 					}
 				],
@@ -1092,7 +1094,8 @@
 					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
 						"items": [
 							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } }
+							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
+							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
 						]
 					}
 				],
@@ -1137,10 +1140,11 @@
 				"header": { "title": "panel.wellness.spiritual.header.title", "image": "group-44.png" },
 				"description": { "main_text": "panel.wellness.spiritual.description.main_text", "secondary_text": "panel.wellness.spiritual.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
 				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png", },
+					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
 						"items": [
 							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } }
+							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
+							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
 						]
 					}
 				],
@@ -1185,7 +1189,8 @@
 					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
 						"items": [
 							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } }
+							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
+							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
 						]
 					}
 				],
@@ -1220,7 +1225,8 @@
 						"items": [
 							{ "title": "panel.wellness.common.interactive_activities.activity.mood_meter", "image": "group-7.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/interactive-mood-meter" } },
 							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } }
+							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
+							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
 						]
 					}
 				],
@@ -1266,13 +1272,14 @@
 			},
 			"social": {
 				"header": { "title": "panel.wellness.social.header.title", "image": "group-16.png" },
-				"description": { "main_text": "panel.wellness.social.description.main_text", "secondary_text": "panel.wellness.social.description.secondary_text", "bullet": "panel.wellness.common.description.bullet", },
+				"description": { "main_text": "panel.wellness.social.description.main_text", "secondary_text": "panel.wellness.social.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
 				"activities": [
 					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
 						"items": [
 							{ "title": "panel.wellness.common.interactive_activities.activity.mood_meter", "image": "group-7.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/interactive-mood-meter" } },
 							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } }
+							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
+							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
 						]
 					}
 				],
