@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Added "Health Illini Podcast" interactive activity to all Interactive Activities across the wellness panels [#1485](https://github.com/rokwire/illinois-app/issues/1485).
+- Updated GroupsMembersSelectionWidget [#1487](https://github.com/rokwire/illinois-app/issues/1487).
 
 ## [3.3.5] - 2022-03-25
 ### Added
