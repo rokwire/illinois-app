@@ -78,56 +78,69 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
         ),
         backgroundColor: Styles().colors!.white,
         body: Stack(alignment: Alignment.center, children: <Widget>[
-          SingleChildScrollView(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                // Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
-                //   Expanded(child: Container()),
-                //   RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'), contentWeight: 0.0, textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary, backgroundColor: Styles().colors!.white, onTap: _onTapDone)
-                // ])),
-                Container(
-                  padding: EdgeInsets.only(left: 12,bottom: 32),
-                  color: Styles().colors!.fillColorPrimary!,
-                  child: Semantics(
-                    label: Localization().getStringEx("panel.group.members.label.tap_to_follow_team.title", "Tap the checkmark to select members"),
-                    hint: Localization().getStringEx("panel.group.members.label.tap_to_follow_team.hint", ""),
-                    excludeSemantics: true,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          Localization().getStringEx("panel.group.members.label.tap_the.title", "Tap the "),
-                          style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.medium,
-                              color: Styles().colors!.white,
-                              fontSize: 16),
-                        ),
-                        Image.asset(
-                            'images/icon-check-example.png', excludeFromSemantics: true, color: Styles().colors!.white,),
-                        Expanded(
-                            child:Text(
-                              Localization().getStringEx("panel.group.members.label.follow_team.title", " to select members"),
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies!.medium,
-                                  color: Styles().colors!.white,
-                                  fontSize: 16),
-                            )
+          Column(
+            children:[
+              Expanded(child:
+                SingleChildScrollView(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    // Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
+                    //   Expanded(child: Container()),
+                    //   RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'), contentWeight: 0.0, textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary, backgroundColor: Styles().colors!.white, onTap: _onTapDone)
+                    // ])),
+                    Container(
+                        padding: EdgeInsets.only(left: 12,bottom: 32),
+                        color: Styles().colors!.fillColorPrimary!,
+                        child: Semantics(
+                          label: Localization().getStringEx("panel.group.members.label.tap_to_follow_team.title", "Tap the checkmark to select members"),
+                          hint: Localization().getStringEx("panel.group.members.label.tap_to_follow_team.hint", ""),
+                          excludeSemantics: true,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                Localization().getStringEx("panel.group.members.label.tap_the.title", "Tap the "),
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies!.medium,
+                                    color: Styles().colors!.white,
+                                    fontSize: 16),
+                              ),
+                              Image.asset(
+                                'images/icon-check-example.png', excludeFromSemantics: true, color: Styles().colors!.white,),
+                              Expanded(
+                                  child:Text(
+                                    Localization().getStringEx("panel.group.members.label.follow_team.title", " to select members"),
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontFamily: Styles().fontFamilies!.medium,
+                                        color: Styles().colors!.white,
+                                        fontSize: 16),
+                                  )
+                              )
+                            ],
+                          ),
                         )
-                      ],
                     ),
-                  )
-                ),
-                _buildTabs(),
-                Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
-                  Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.search.label', "SEARCH")))),
-                  Visibility(visible: _searchView, child: _buildMembersWidget(_filterMembers(_searchController.text))),
-                  Visibility(visible: (!_searchView) && hasGroupMembers, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.selected.label', "To: ")))),
-                  Visibility(visible: (!_searchView) && hasGroupMembers, child: _buildMembersWidget(_selectedMembers)),
-                  Visibility(visible: true, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.all.label', "ALL MEMBERS")))),
-                  Visibility(visible: true, child: _buildMembersWidget(_allMembers))
-                ]))
-              ])),
+                    _buildTabs(),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                      Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
+                      Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.search.label', "SEARCH")))),
+                      Visibility(visible: _searchView, child: _buildMembersWidget(_filterMembers(_searchController.text))),
+                      Visibility(visible: (!_searchView) && hasGroupMembers, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.selected.label', "To: ")))),
+                      Visibility(visible: (!_searchView) && hasGroupMembers, child: _buildMembersWidget(_selectedMembers)),
+                      Visibility(visible: true, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.all.label', "ALL MEMBERS")))),
+                      Visibility(visible: true, child: _buildMembersWidget(_allMembers))
+                    ])),
+                  ])),
+              ),
+              Padding(padding: EdgeInsets.only(top: 24, bottom: 24), child:
+              RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'),
+                  contentWeight: 0.5,
+                  textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors!.white,
+                  onTap: _onTapDone),
+              ),
+            ]),
+
           Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: Styles().colors!.background, child: CircularProgressIndicator()))
         ])
     ));
