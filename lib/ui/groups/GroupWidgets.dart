@@ -1750,9 +1750,13 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
               )
             ],
           ),
-          Container(height: 4,),
-          Text(selectedMembersText, style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.bold),),
-          Container(height: 4,),
+          GestureDetector(
+            onTap: _onTapEdit,
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Text(selectedMembersText, style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.bold, decoration: TextDecoration.underline),),
+            )
+          ),
           Visibility(
             visible: _showChangeButton,
             child: RoundedButton(label: "Edit", onTap: _onTapEdit, textColor: Styles().colors!.fillColorSecondary!,conentAlignment: MainAxisAlignment.start, contentWeight: 0.33, padding: EdgeInsets.all(3), maxBorderRadius: 5,)
@@ -1953,7 +1957,8 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
   }
 
   bool get _showChangeButton{
-    return CollectionUtils.isNotEmpty(widget.selectedMembers) && widget.enabled;
+    return false; //Remove entire button if we are sure that we are not gonna use it anymore.
+    // return CollectionUtils.isNotEmpty(widget.selectedMembers) && widget.enabled;
   }
 
 }
