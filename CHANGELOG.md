@@ -5,11 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.3.6] - 2022-03-25
 ### Changed
 - Added "Health Illini Podcast" interactive activity to all Interactive Activities across the wellness panels [#1485](https://github.com/rokwire/illinois-app/issues/1485).
 - Updated GroupsMembersSelectionWidget [#1487](https://github.com/rokwire/illinois-app/issues/1487).
 
-## [3.3.5] - 2022-03-25
+## [3.3.5] - 2022-03-24
 ### Added
 - Added "Health Illini Podcast" interactive activity in Wellness home panel [#1485](https://github.com/rokwire/illinois-app/issues/1485).
 - Added Member selection widget into the Group Event Add/Create panels [#1487](https://github.com/rokwire/illinois-app/issues/1487). 
