@@ -653,7 +653,7 @@
     "panel.explore.item.places.name": "地方",
     "panel.explore.item.unknown.name": "探索",
     "panel.explore.map.popup.title.format": "%d %s",
-    "panel.explore_list.header.title": "查看",
+    "panel.explore_list.header.title": "探索",
     "panel.explore_detail.button.get_tickets.title": "注册",
     "panel.explore_detail.button.get_tickets.hint": "点击以获取门票。",
     "panel.explore_detail.button.visit_website.title": "访问网站",
