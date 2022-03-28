@@ -72,60 +72,60 @@ class Config extends rokwire.Config {
 
 
   // Getters: Other University Services
-  String? get shibbolethAuthTokenUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_auth_token_url']);  // "https://{shibboleth_client_id}:{shibboleth_client_secret}@shibboleth.illinois.edu/idp/profile/oidc/token"
-  String? get shibbolethOauthHostUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_oauth_host_url']);  // "shibboleth.illinois.edu"
-  String? get shibbolethOauthPathUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_oauth_path_url']);  // "/idp/profile/oidc/authorize"
-  String? get userAuthUrl            => JsonUtils.stringValue(otherUniversityServices['user_auth_url']);              // "https://shibboleth.illinois.edu/idp/profile/oidc/userinfo"
-  String? get assetsUrl              => JsonUtils.stringValue(otherUniversityServices['assets_url']);                 // "https://rokwire-assets.s3.us-east-2.amazonaws.com"
-  String? get eatSmartUrl            => JsonUtils.stringValue(otherUniversityServices['eat_smart_url']);              // "https://eatsmart.housing.illinois.edu/NetNutrition/46"
-  String? get iCardUrl               => JsonUtils.stringValue(otherUniversityServices['icard_url']);                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
-  String? get iCardBoardingPassUrl   => JsonUtils.stringValue(otherUniversityServices['icard_boarding_pass_url']);    // "https://icard.uillinois.edu/CCBoardingPass"
-  String? get illiniCashBaseUrl      => JsonUtils.stringValue(otherUniversityServices['illini_cash_base_url']);       // "https://shibtest.housing.illinois.edu/MobileAppWS/api"
-  String? get illiniCashTrustcommerceHost => JsonUtils.stringValue(otherUniversityServices['illini_cash_trustcommerce_host']); // "https://vault.trustcommerce.com"
-  String? get illiniCashTokenHost    => JsonUtils.stringValue(otherUniversityServices['illini_cash_token_host']);     // "https://webservices.admin.uillinois.edu"
-  String? get illiniCashPaymentHost  => JsonUtils.stringValue(otherUniversityServices['illini_cash_payment_host']);   //"https://web.housing.illinois.edu"
-  String? get illiniCashTosUrl       => JsonUtils.stringValue(otherUniversityServices['illini_cash_tos_url']);        // "https://housing.illinois.edu/resources/illini-cash/terms"
-  String? get myIlliniUrl            => JsonUtils.stringValue(otherUniversityServices['myillini_url']);               // "https://myillini.illinois.edu/Dashboard"
-  String? get feedbackUrl            => JsonUtils.stringValue(otherUniversityServices['feedback_url']);               // "https://forms.illinois.edu/sec/1971889"
-  String? get crisisHelpUrl          => JsonUtils.stringValue(otherUniversityServices['crisis_help_url']);            // "https://wellness.web.illinois.edu/help/im-not-sure-where-to-start/"
-  String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);         // "https://go.illinois.edu/illinois-app-privacy"
-  String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);                // "https://api-test.test-compliance.rokwire.illinois.edu/padaapi"
-  String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);    // "https://apps.giesbusiness.illinois.edu/online/ZoomLinks"
-  String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);           // "https://apps.atlas.illinois.edu/datecat"
+  String? get shibbolethAuthTokenUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_auth_token_url']);
+  String? get shibbolethOauthHostUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_oauth_host_url']);
+  String? get shibbolethOauthPathUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_oauth_path_url']);
+  String? get userAuthUrl            => JsonUtils.stringValue(otherUniversityServices['user_auth_url']);
+  String? get assetsUrl              => JsonUtils.stringValue(otherUniversityServices['assets_url']);
+  String? get eatSmartUrl            => JsonUtils.stringValue(otherUniversityServices['eat_smart_url']);
+  String? get iCardUrl               => JsonUtils.stringValue(otherUniversityServices['icard_url']);
+  String? get iCardBoardingPassUrl   => JsonUtils.stringValue(otherUniversityServices['icard_boarding_pass_url']);
+  String? get illiniCashBaseUrl      => JsonUtils.stringValue(otherUniversityServices['illini_cash_base_url']);
+  String? get illiniCashTrustcommerceHost => JsonUtils.stringValue(otherUniversityServices['illini_cash_trustcommerce_host']);
+  String? get illiniCashTokenHost    => JsonUtils.stringValue(otherUniversityServices['illini_cash_token_host']);
+  String? get illiniCashPaymentHost  => JsonUtils.stringValue(otherUniversityServices['illini_cash_payment_host']);
+  String? get illiniCashTosUrl       => JsonUtils.stringValue(otherUniversityServices['illini_cash_tos_url']);
+  String? get myIlliniUrl            => JsonUtils.stringValue(otherUniversityServices['myillini_url']);
+  String? get feedbackUrl            => JsonUtils.stringValue(otherUniversityServices['feedback_url']);
+  String? get crisisHelpUrl          => JsonUtils.stringValue(otherUniversityServices['crisis_help_url']);
+  String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);
+  String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);
+  String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);
+  String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
   String? get videoTutorialUrl       => JsonUtils.stringValue(otherUniversityServices['video_tutorial_url']);
 
   // Getters: Platform Building Blocks
-  String? get lmsUrl                 => JsonUtils.stringValue(platformBuildingBlocks['lms_url']);                     // "https://api-dev.rokwire.illinois.edu/lms/api"
-  String? get rewardsUrl             => JsonUtils.stringValue(platformBuildingBlocks['rewards_url']);                 // "https://api-dev.rokwire.illinois.edu/rewards/api"
-  String? get rokwireAuthUrl         => JsonUtils.stringValue(platformBuildingBlocks['rokwire_auth_url']);            // "https://api-dev.rokwire.illinois.edu/authentication"
-  String? get sportsServiceUrl       => JsonUtils.stringValue(platformBuildingBlocks['sports_service_url']);          // "https://api-dev.rokwire.illinois.edu/sports-service";
-  String? get transportationUrl      => JsonUtils.stringValue(platformBuildingBlocks["transportation_url"]);          // "https://api-dev.rokwire.illinois.edu/transportation"
+  String? get lmsUrl                 => JsonUtils.stringValue(platformBuildingBlocks['lms_url']);
+  String? get rewardsUrl             => JsonUtils.stringValue(platformBuildingBlocks['rewards_url']);
+  String? get rokwireAuthUrl         => JsonUtils.stringValue(platformBuildingBlocks['rokwire_auth_url']);
+  String? get sportsServiceUrl       => JsonUtils.stringValue(platformBuildingBlocks['sports_service_url']);
+  String? get transportationUrl      => JsonUtils.stringValue(platformBuildingBlocks["transportation_url"]);
   
   // Getters: Third Party Services
-  String? get instagramHostUrl       => JsonUtils.stringValue(thirdPartyServices['instagram_host_url']);        // "https://instagram.com/"
-  String? get twitterHostUrl         => JsonUtils.stringValue(thirdPartyServices['twitter_host_url']);          // "https://twitter.com/"
-  String? get laundryHostUrl         => JsonUtils.stringValue(thirdPartyServices['launtry_host_url']);          // "http://api.laundryview.com/"
-  String? get ticketsUrl             => JsonUtils.stringValue(thirdPartyServices['tickets_url']);               // "https://ev11.evenue.net/cgi-bin/ncommerce3/SEGetGroupList?groupCode=EOS&linkID=illinois&shopperContext=&caller=&appCode=&utm_source=FI.com&utm_medium=TicketsPage&utm_content=MainImage&utm_campaign=AllTickets"
-  String? get youtubeUrl             => JsonUtils.stringValue(thirdPartyServices['youtube_url']);               // "https://www.youtube.com/c/fightingilliniathletics"
-  String? get gameDayFootballUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_football_url']);      // "https://fightingillini.com/sports/2015/7/31/football_gamedayguide.aspx"
-  String? get gameDayBasketballUrl   => JsonUtils.stringValue(thirdPartyServices['gameday_basketball_url']);    // "https://fightingillini.com/sports/2015/11/30/sfc_fanguide.aspx"
-  String? get gameDayTennisUrl       => JsonUtils.stringValue(thirdPartyServices['gameday_tennis_url']);        // "https://fightingillini.com/sports/2015/6/27/tennis_facilities.aspx#eventinfo"
-  String? get gameDayVolleyballUrl   => JsonUtils.stringValue(thirdPartyServices['gameday_volleyball_url']);    // "https://fightingillini.com/sports/2015/3/24/huffhall_volleyball.aspx#eventinfo"
-  String? get gameDaySoftballUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_softball_url']);      // "https://fightingillini.com/sports/2015/3/24/eichelbergerfield.aspx#eventinfo"
-  String? get gameDaySwimDiveUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_swim_dive_url']);     // "https://fightingillini.com/sports/2015/3/24/arcpool.aspx#eventinfo"
-  String? get gameDayCrossCountryUrl => JsonUtils.stringValue(thirdPartyServices['gameday_cross_country_url']); // "https://fightingillini.com/sports/2015/3/24/arboretum.aspx#eventinfo"
-  String? get gameDayBaseballUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_baseball_url']);      // "https://fightingillini.com/sports/2015/3/24/illinoisfield.aspx#eventinfo"
-  String? get gameDayGymnasticsUrl   => JsonUtils.stringValue(thirdPartyServices['gameday_gymnastics_url']);    // "https://fightingillini.com/sports/2015/6/27/huffhall_gymnastics.aspx#eventinfo"
-  String? get gameDayWrestlingUrl    => JsonUtils.stringValue(thirdPartyServices['gameday_wrestling_url']);     // "https://fightingillini.com/sports/2015/6/27/huffhall_wrestling.aspx#eventinfo"
-  String? get gameDaySoccerUrl       => JsonUtils.stringValue(thirdPartyServices['gameday_soccer_url']);        // "https://fightingillini.com/sports/2015/8/19/soccerstadium.aspx#eventinfo"
-  String? get gameDayTrackFieldUrl   => JsonUtils.stringValue(thirdPartyServices['gameday_track_field_url']);   // "https://fightingillini.com/sports/2015/3/24/armory.aspx#eventinfo"
-  String? get gameDayAllUrl          => JsonUtils.stringValue(thirdPartyServices['gameday_all_url']);           // "https://fightingillini.com/sports/2015/7/25/gameday.aspx"
-  String? get convergeUrl            => JsonUtils.stringValue(thirdPartyServices['converge_url']);              // "https://api.converge-engine.com/v1/rokwire"
+  String? get instagramHostUrl       => JsonUtils.stringValue(thirdPartyServices['instagram_host_url']);
+  String? get twitterHostUrl         => JsonUtils.stringValue(thirdPartyServices['twitter_host_url']);
+  String? get laundryHostUrl         => JsonUtils.stringValue(thirdPartyServices['launtry_host_url']);
+  String? get ticketsUrl             => JsonUtils.stringValue(thirdPartyServices['tickets_url']);
+  String? get youtubeUrl             => JsonUtils.stringValue(thirdPartyServices['youtube_url']);
+  String? get gameDayFootballUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_football_url']);
+  String? get gameDayBasketballUrl   => JsonUtils.stringValue(thirdPartyServices['gameday_basketball_url']);
+  String? get gameDayTennisUrl       => JsonUtils.stringValue(thirdPartyServices['gameday_tennis_url']);
+  String? get gameDayVolleyballUrl   => JsonUtils.stringValue(thirdPartyServices['gameday_volleyball_url']);
+  String? get gameDaySoftballUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_softball_url']);
+  String? get gameDaySwimDiveUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_swim_dive_url']);
+  String? get gameDayCrossCountryUrl => JsonUtils.stringValue(thirdPartyServices['gameday_cross_country_url']);
+  String? get gameDayBaseballUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_baseball_url']);
+  String? get gameDayGymnasticsUrl   => JsonUtils.stringValue(thirdPartyServices['gameday_gymnastics_url']);
+  String? get gameDayWrestlingUrl    => JsonUtils.stringValue(thirdPartyServices['gameday_wrestling_url']);
+  String? get gameDaySoccerUrl       => JsonUtils.stringValue(thirdPartyServices['gameday_soccer_url']);
+  String? get gameDayTrackFieldUrl   => JsonUtils.stringValue(thirdPartyServices['gameday_track_field_url']);
+  String? get gameDayAllUrl          => JsonUtils.stringValue(thirdPartyServices['gameday_all_url']);
+  String? get convergeUrl            => JsonUtils.stringValue(thirdPartyServices['converge_url']);
 
   // Getters: Twitter
-  String? get twitterUrl             => JsonUtils.stringValue(twitter['url']);                                  // "https://api.twitter.com/2"
-  int?    get twitterTweetsCount     => JsonUtils.intValue(twitter['tweets_count']);                            // 5
+  String? get twitterUrl             => JsonUtils.stringValue(twitter['url']);
+  int?    get twitterTweetsCount     => JsonUtils.intValue(twitter['tweets_count']);
   
   // ""     : { "id":"18165866", "name":"illinois_alma" },
   // "gies" : { "id":"19615559", "name":"giesbusiness" }
