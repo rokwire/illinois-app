@@ -181,6 +181,6 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
 
   void _onTapSection(GuideSection section, {String? category}) {
     Analytics().logSelect(target: "$category / ${section.name}");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(category: category, section: section,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(guide: widget.guide, category: category, section: section,)));
   }
 }
