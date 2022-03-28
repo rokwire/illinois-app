@@ -332,7 +332,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                         Padding(padding: EdgeInsets.only(top: numberTopPadding, bottom: numberBottomPadding), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Padding(padding: EdgeInsets.only(left: numberLeftPadding, right: numberRightPadding), child:
-                              Text(sprintf(numberTextFormat, numberIndex + 1), style: TextStyle(color: numberColor, fontSize: numberFontSize, fontFamily: numberFontFamily),),),
+                              Text(sprintf(numberTextFormat, [numberIndex + 1]), style: TextStyle(color: numberColor, fontSize: numberFontSize, fontFamily: numberFontFamily),),),
                             Expanded(child:
                               Html(data: numberHtml,
                               onLinkTap: (url, context, attributes, element) => _onTapLink(url),
