@@ -54,8 +54,6 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get saferMcKinley => JsonUtils.mapValue(safer['mckinley']) ?? {};
   Map<String, dynamic> get saferWellness => JsonUtils.mapValue(safer['wellness']) ?? {};
 
-  Map<String, dynamic> get videoTutorial => JsonUtils.mapValue(content['video_tutorial']) ?? {};
-
   // Getters: Secret Keys
 
   String? get shibbolethClientId     => JsonUtils.stringValue(secretShibboleth['client_id']);
@@ -95,6 +93,7 @@ class Config extends rokwire.Config {
   String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);    // "https://apps.giesbusiness.illinois.edu/online/ZoomLinks"
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);           // "https://apps.atlas.illinois.edu/datecat"
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
+  String? get videoTutorialUrl       => JsonUtils.stringValue(otherUniversityServices['video_tutorial_url']);
 
   // Getters: Platform Building Blocks
   String? get lmsUrl                 => JsonUtils.stringValue(platformBuildingBlocks['lms_url']);                     // "https://api-dev.rokwire.illinois.edu/lms/api"
@@ -151,10 +150,6 @@ class Config extends rokwire.Config {
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
-
-  // Getters: video tutorial
-
-  String? get videoTutorialUrl => JsonUtils.stringValue(videoTutorial['url']);
 
   // Upgrade
 
