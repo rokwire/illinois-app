@@ -40,7 +40,6 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   String? _initialEmail;
   String? _initialPhone;
 
-  //bool _isDeleting = false;
   bool _isSaving = false;
 
   @override
@@ -68,11 +67,6 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     if (name == Auth2.notifyLogout) {
       Navigator.of(context).pop();
     }
-  }
-
-  Future<void> _deleteUserData() async{
-    Analytics().logAlert(text: "Remove My Information", selection: "Yes");
-    await Auth2().deleteUser();
   }
 
   @override
