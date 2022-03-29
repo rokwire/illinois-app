@@ -20,7 +20,6 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -377,31 +376,11 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     );
   }
 
-  void onConfirmRemoveMyInfo(BuildContext context, Function setState){
-    setState(() {
-      //_isDeleting = true;
-    });
-    _deleteUserData()
-        .then((_){
-          Navigator.pop(context);
-        })
-        .whenComplete((){
-          setState(() {
-            //_isDeleting = false;
-          });
-        })
-        .catchError((error){
-          AppAlert.showDialogResult(context, error.toString()).then((_){
-            Navigator.pop(context);
-          });
-    });
-  }
-
-  _onSignOutClicked() {
+  void _onSignOutClicked() {
     showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
   }
 
-  _onSaveChangesClicked() async{
+  void _onSaveChangesClicked() async{
 
     String? email, phone, firstName, lastName, middleName;
     if (_isEmailChanged){
