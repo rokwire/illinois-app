@@ -1416,6 +1416,7 @@
 	"panel.polls_home.button.log_in.title": "登录查看",
 	"panel.polls_home.button.log_in.hint": "",
 	"panel.polls_home.text.unable_to_present": "目前无法进行投票",
+	"panel.polls_home.card.button.message.end_poll.success": "Poll ended successfully",
 
 	"panel.poll_prompt.text.someone": "某人",
 	"panel.poll_prompt.text.wants_to_know": "%s 想知道",

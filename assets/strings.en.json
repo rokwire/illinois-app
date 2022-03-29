@@ -1416,6 +1416,7 @@
     "panel.polls_home.button.log_in.title": "Log in to view",
     "panel.polls_home.button.log_in.hint": "",
     "panel.polls_home.text.unable_to_present": "Unable to present poll at the moment",
+    "panel.polls_home.card.button.message.end_poll.success": "Poll ended successfully",
 
     "panel.poll_prompt.text.someone": "Someone",
     "panel.poll_prompt.text.wants_to_know": "%s wants to know",
