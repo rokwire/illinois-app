@@ -150,7 +150,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         hint: Localization().getStringEx("panel.create_poll.hint.question", "Ask people near you…"),
         textController: _questionController,
         maxLength: 120,
-        height: 120,
+        minLines: 3,
         enabled: (_progressPollStatus == null),
       )),
     );
@@ -460,10 +460,11 @@ class PollOptionView extends StatefulWidget {
   final String? hint;
   final TextEditingController? textController;
   final int maxLength;
-  final double height;
+  final int minLines;
+  final int maxLines;
   final bool enabled;
 
-  const PollOptionView({Key? key, this.title, this.textController, this.maxLength = 25, this.height = 48, this.hint, this.enabled = true}) : super(key: key);
+  const PollOptionView({Key? key, this.title, this.textController, this.maxLength = 25, this.minLines = 1, this.maxLines = 10, this.hint, this.enabled = true}) : super(key: key);
 
   @override
   _PollOptionViewState createState() {
@@ -478,45 +479,29 @@ class _PollOptionViewState extends State<PollOptionView> {
   Widget build(BuildContext context) {
     String counterHint = Localization().getStringEx("panel.create_poll_panel.counter.hint", "maximum, %s, characters");
     String votesCount = widget.maxLength.toStringAsFixed(0);
-    return Container(
-        child: Column(
-      children: <Widget>[
-        Semantics(label: widget.title,hint: sprintf(counterHint,['$votesCount']) ,excludeSemantics: true,child:
-        Padding(
-            padding: EdgeInsets.only(bottom: 8, top: 24),
-            child: Row(children: <Widget>[
-              Expanded(
-                  child: Text(
-                widget.title!,
-                textAlign: TextAlign.left,
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 0.86),
-              )),
-              Text(
-                _getCounterText(),
-                style: TextStyle(
-                  color: Styles().colors!.mediumGray,
-                  fontSize: 14,
-                  fontFamily: Styles().fontFamilies!.regular,
-                ),
-              )
-            ]))),
+    return Column(children: <Widget>[
+        Semantics(label: widget.title, hint: sprintf(counterHint,['$votesCount']) , excludeSemantics: true, child:
+          Padding(padding: EdgeInsets.only(bottom: 8, top: 24), child:
+            Row(children: <Widget>[
+              Expanded(child:
+                Text(widget.title!, textAlign: TextAlign.left, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 0.86),
+                )
+              ),
+              Text(_getCounterText(), style: TextStyle( color: Styles().colors!.mediumGray, fontSize: 14, fontFamily: Styles().fontFamilies!.regular, ), )
+            ])
+          )
+        ),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
-          height: widget.height/2 + (16*MediaQuery.of(context).textScaleFactor),
-          width: double.infinity,
-          child: Semantics(
-              label: widget.title,
-              hint: Localization().getStringEx("panel.create_poll_panel.hint", ""),
-              textField: true,
-              excludeSemantics: true,
-              child: TextField(
+          child: Semantics(label: widget.title, hint: Localization().getStringEx("panel.create_poll_panel.hint", ""), textField: true, excludeSemantics: true, child:
+            TextField(
                 controller: widget.textController,
                 onChanged: (String text) {
                   setState(() {});
                 },
-                minLines: 4,
-                maxLines: 10,
+                minLines: widget.minLines,
+                maxLines: widget.maxLength,
                 decoration: InputDecoration(hintText: widget.hint, border: InputBorder.none, counterText: ""),
                 maxLength: widget.maxLength,
                 maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -526,7 +511,7 @@ class _PollOptionViewState extends State<PollOptionView> {
               )),
         )
       ],
-    ));
+    );
   }
 
   _getCounterText() {
