@@ -1433,6 +1433,7 @@
     "panel.poll_prompt.text.rule.detail.hide_result": "Los resultados no se mostrarán hasta que finalice la encuesta.",
     "panel.poll_prompt.button.vote.title":"Votar",
     "panel.poll_prompt.button.done_voting.title":"Votación terminada",
+    "panel.poll_prompt.button.done_voting.status.success": "Poll voting ended successfully",
     "panel.poll_prompt.button.view_poll_results.title":"Ver resultados de la encuesta",
     "panel.poll_prompt.button.close.title":"Cerrar",
     "panel.poll_prompt.hint.select_option":"Toca dos veces para seleccionar esta opción",
