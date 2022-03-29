@@ -567,7 +567,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   visible: widget.group!=null,
                                   child: GroupMembersSelectionWidget(
                                     selectedMembers: _groupMembersSelection,
-                                    groupId: widget.group!.id,
+                                    groupId: widget.group?.id,
                                     onSelectionChanged: (members){
                                       setState(() {
                                         _groupMembersSelection = members;
@@ -1534,7 +1534,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _populateDefaultValues(){
     if(widget.group?.privacy!=null){
-      _selectedPrivacy = (widget.group!.privacy == GroupPrivacy.private) ? eventPrivacyPrivate : eventPrivacyPublic;
+      _selectedPrivacy = (widget.group?.privacy == GroupPrivacy.private) ? eventPrivacyPrivate : eventPrivacyPublic;
     }
   }
 
@@ -1943,8 +1943,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.cost = _eventPriceController.text.toString();//decide do we need it
     event.isGroupPrivate = _isPrivateEvent;
     event.isEventFree = _isFree;
-    if(widget.group!=null) {
-      event.createdByGroupId = widget.group!.id;
+    if(widget.group?.id!=null) {
+      event.createdByGroupId = widget.group?.id;
     }
     //TBD populate Attendance required value
 
