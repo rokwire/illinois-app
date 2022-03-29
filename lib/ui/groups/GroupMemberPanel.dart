@@ -161,7 +161,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
 
   Widget _buildHeading(){
     String? memberDateAdded = (_member?.dateCreatedUtc != null) ? AppDateTime().formatDateTime(_member?.dateCreatedUtc?.toLocal(), format: "MMMM dd") : null;
-    String memberSince = (memberDateAdded != null) ? (Localization().getStringEx("panel.member_detail.label.member_since", "Member since") + memberDateAdded) : '';
+    String memberSince = (memberDateAdded != null) ? sprintf(Localization().getStringEx("panel.member_detail.label.member_since", "Member since %s"), [memberDateAdded]) : '';
 
     return Row(
       children: <Widget>[

@@ -1793,7 +1793,7 @@
     "panel.member_detail.label.officer_title": "OFFICER TITLE",
     "panel.member_detail.label.empty": "Failed to update member",
     "panel.member_detail.label.error.format": "Unable to remove %s from this group",
-    "panel.member_detail.label.member_since": "Member since",
+    "panel.member_detail.label.member_since": "Member since %s",
     "panel.member_detail.label.admin": "Admin",
     "panel.member_detail.label.admin_description": "Admins can manage settings, members, and events.",
     "panel.member_detail.button.remove.title": "Remove from Group",
