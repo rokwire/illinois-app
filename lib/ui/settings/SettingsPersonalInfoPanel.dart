@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -40,7 +44,10 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   String? _initialEmail;
   String? _initialPhone;
 
+  Uint8List? _profilePictureBytes;
+
   bool _isSaving = false;
+  bool _profilePicProcessing = false;
 
   @override
   void initState() {
@@ -48,6 +55,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     _nameController = TextEditingController(text: _initialName = Auth2().fullName ?? "");
     _emailController = TextEditingController(text: _initialEmail = Auth2().email ?? "");
     _phoneController = TextEditingController(text: _initialPhone = Auth2().phone ?? "");
+    _loadUserProfilePicture();
     super.initState();
   }
 
@@ -82,7 +90,10 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: Container(
-                child: _builInfoContent(),
+                child: Column(children: [
+                  _buildInfoContent(),
+                  _buildProfilePicture()
+                ]),
               ),
             ),
           ),
@@ -95,9 +106,9 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     );
   }
 
-  Widget _builInfoContent() {
+  Widget _buildInfoContent() {
     if (Auth2().isOidcLoggedIn) {
-      return _buildShibolethInfoContent();
+      return _buildShibbolethInfoContent();
     }
     else if (Auth2().isPhoneLoggedIn) {
       return _buildPhoneVerifiedInfoContent();
@@ -110,7 +121,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     }
   }
 
-  Widget _buildShibolethInfoContent(){
+  Widget _buildShibbolethInfoContent(){
     return Container(
       child: Column(
         children: <Widget>[
@@ -370,6 +381,43 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     );
   }
 
+  Widget _buildProfilePicture() {
+    late Widget contentWidget;
+    if (_profilePicProcessing) {
+      contentWidget = Center(child: CircularProgressIndicator());
+    } else if (_profilePictureBytes != null) {
+      //TBD: implement
+      contentWidget = Container(child: Text('imaaaa'));
+    } else {
+      contentWidget = RoundedButton(
+          label: Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Profile Picture"),
+          hint: Localization().getStringEx("panel.profile_info.button.profile_picture.hint", ""),
+          backgroundColor: Styles().colors!.background,
+          fontSize: 16.0,
+          textColor: Styles().colors!.fillColorPrimary,
+          borderColor: Styles().colors!.fillColorSecondary,
+          onTap: _onTapProfilePicture);
+    }
+    return Padding(padding: EdgeInsets.only(top: 25), child: contentWidget);
+  }
+
+  void _loadUserProfilePicture() {
+    _setProfilePicProcessing(true);
+    Content().loadLargeUserProfileImage().then((imageBytes) {
+      _profilePictureBytes = imageBytes;
+      _setProfilePicProcessing(false);
+    });
+  }
+
+  void _setProfilePicProcessing(bool processing) {
+    if (_profilePicProcessing != processing) {
+      _profilePicProcessing = processing;
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   void _onSignOutClicked() {
     showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
   }
@@ -447,6 +495,28 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
           setState(() { _isSaving = false; });
           AppToast.show("Unable to perform save");
         }
+      }
+    });
+  }
+
+  void _onTapProfilePicture() {
+    Analytics().logSelect(target: "Profile Picture");
+    _setProfilePicProcessing(true);
+    Content().selectImageFromDevice(isUserPic: true).then((imageUploadResult) {
+      ImagesResultType? resultType = imageUploadResult?.resultType;
+      switch (resultType) {
+        case ImagesResultType.cancelled:
+          _setProfilePicProcessing(false);
+          break;
+        case ImagesResultType.error:
+          AppAlert.showDialogResult(context, imageUploadResult?.errorMessage);
+          _setProfilePicProcessing(false);
+          break;
+        case ImagesResultType.succeeded:
+          _loadUserProfilePicture();
+          break;
+        default:
+          break;
       }
     });
   }
