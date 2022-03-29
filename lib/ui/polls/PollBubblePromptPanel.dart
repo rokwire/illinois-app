@@ -469,6 +469,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
     }).catchError((e){
       AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     }).whenComplete((){
+      AppSemantics.announceMessage(context,  Localization().getStringEx("panel.poll_prompt.vote.status.announce.success", "Successfully Voted"));
       setState(() {
         int? value = _votingOptions[optionIndex];
         if (value != null) {
