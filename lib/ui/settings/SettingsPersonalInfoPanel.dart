@@ -509,7 +509,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
           _setProfilePicProcessing(false);
           break;
         case ImagesResultType.error:
-          AppAlert.showDialogResult(context, imageUploadResult?.errorMessage);
+          AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
           _setProfilePicProcessing(false);
           break;
         case ImagesResultType.succeeded:

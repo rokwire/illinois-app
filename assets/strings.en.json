@@ -1333,6 +1333,7 @@
     "panel.profile_info.logout.message":"Are you sure you want to sign out?",
     "panel.profile_info.logout.button.yes":"Yes",
     "panel.profile_info.logout.no":"No",
+    "panel.profile_info.picture.upload.failed.msg":"Failed to upload profile picture. Please, try again later.",
 
     "panel.create_poll.header.title": "Create a Quick Poll",
     "panel.create_poll.description": "People can vote through the Illinois app by asking you for the 4 Digit Poll #.",
