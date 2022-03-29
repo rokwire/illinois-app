@@ -1435,6 +1435,7 @@
     "panel.poll_prompt.text.rule.detail.hide_result": "Results will not be shown until the poll ends.",
     "panel.poll_prompt.button.vote.title":"Vote",
     "panel.poll_prompt.button.done_voting.title":"Done Voting",
+    "panel.poll_prompt.button.done_voting.status.success": "Poll voting ended successfully",
     "panel.poll_prompt.button.view_poll_results.title":"View poll results",
     "panel.poll_prompt.button.close.title":"Close",
     "panel.poll_prompt.hint.select_option":"Double tab to select this option",

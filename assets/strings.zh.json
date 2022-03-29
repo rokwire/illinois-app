@@ -1435,6 +1435,7 @@
 	"panel.poll_prompt.text.rule.detail.hide_result": "投票结束后才会显示结果.",
 	"panel.poll_prompt.button.vote.title":"投票",
 	"panel.poll_prompt.button.done_voting.title":"结束投票",
+	"panel.poll_prompt.button.done_voting.status.success": "Poll voting ended successfully",
 	"panel.poll_prompt.button.view_poll_results.title":"查看投票结果",
 	"panel.poll_prompt.button.close.title":"关闭",
 	"panel.poll_prompt.hint.select_option":"双击以选择此选项",
