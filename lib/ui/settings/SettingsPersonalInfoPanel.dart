@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -44,7 +42,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   String? _initialEmail;
   String? _initialPhone;
 
-  Uint8List? _profilePictureBytes;
+  MemoryImage? _profileImage;
 
   bool _isSaving = false;
   bool _profilePicProcessing = false;
@@ -385,9 +383,41 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     late Widget contentWidget;
     if (_profilePicProcessing) {
       contentWidget = Center(child: CircularProgressIndicator());
-    } else if (_profilePictureBytes != null) {
-      //TBD: implement
-      contentWidget = Container(child: Text('imaaaa'));
+    } else if (_profileImage != null) {
+      contentWidget = Padding(
+          padding: EdgeInsets.only(bottom: 25),
+          child: Column(children: [
+            Container(
+              width: 240,
+              height: 240,
+              child: Container(
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle, color: Colors.white, image: DecorationImage(fit: BoxFit.cover, image: _profileImage!))),
+            ),
+            Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Row(children: [
+                  Expanded(
+                      child: RoundedButton(
+                          label: Localization().getStringEx("panel.profile_info.button.picture.edit.title", "Edit"),
+                          hint: Localization().getStringEx("panel.profile_info.button.picture.edit.hint", ""),
+                          backgroundColor: Styles().colors!.background,
+                          fontSize: 16.0,
+                          textColor: Styles().colors!.fillColorPrimary,
+                          borderColor: Styles().colors!.fillColorSecondary,
+                          onTap: _onTapEditPicture)),
+                  Container(width: 16),
+                  Expanded(
+                      child: RoundedButton(
+                          label: Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"),
+                          hint: Localization().getStringEx("panel.profile_info.button.picture.delete.hint", ""),
+                          backgroundColor: Styles().colors!.background,
+                          fontSize: 16.0,
+                          textColor: Styles().colors!.fillColorPrimary,
+                          borderColor: Styles().colors!.fillColorSecondary,
+                          onTap: _onTapDeletePicture))
+                ]))
+          ]));
     } else {
       contentWidget = RoundedButton(
           label: Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Profile Picture"),
@@ -404,7 +434,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   void _loadUserProfilePicture() {
     _setProfilePicProcessing(true);
     Content().loadLargeUserProfileImage().then((imageBytes) {
-      _profilePictureBytes = imageBytes;
+      _profileImage = imageBytes != null ? MemoryImage(imageBytes) : null;
       _setProfilePicProcessing(false);
     });
   }
@@ -501,6 +531,15 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
 
   void _onTapProfilePicture() {
     Analytics().logSelect(target: "Profile Picture");
+    _onChangeProfilePicture();
+  }
+
+  void _onTapEditPicture() {
+    Analytics().logSelect(target: "Edit Profile Picture");
+    _onChangeProfilePicture();
+  }
+
+  void _onChangeProfilePicture() {
     _setProfilePicProcessing(true);
     Content().selectImageFromDevice(isUserPic: true).then((imageUploadResult) {
       ImagesResultType? resultType = imageUploadResult?.resultType;
@@ -509,13 +548,40 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
           _setProfilePicProcessing(false);
           break;
         case ImagesResultType.error:
-          AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
+          AppAlert.showDialogResult(
+              context,
+              Localization().getStringEx(
+                  'panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
           _setProfilePicProcessing(false);
           break;
         case ImagesResultType.succeeded:
           _loadUserProfilePicture();
           break;
         default:
+          break;
+      }
+    });
+  }
+
+  void _onTapDeletePicture() {
+    Analytics().logSelect(target: "Delete Profile Picture");
+    _setProfilePicProcessing(true);
+    Content().deleteUserProfileImage().then((deleteImageResult) {
+      ImagesResultType? resultType = deleteImageResult.resultType;
+      switch (resultType) {
+        case ImagesResultType.error:
+          AppAlert.showDialogResult(
+              context,
+              Localization().getStringEx(
+                  'panel.profile_info.picture.delete.failed.msg', 'Failed to delete profile picture. Please, try again later.'));
+          _setProfilePicProcessing(false);
+          break;
+        case ImagesResultType.succeeded:
+          _profileImage = null;
+          _setProfilePicProcessing(false);
+          break;
+        default:
+          _setProfilePicProcessing(false);
           break;
       }
     });

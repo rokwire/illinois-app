@@ -1334,6 +1334,7 @@
 	"panel.profile_info.logout.button.yes":"是",
 	"panel.profile_info.logout.no":"否",
     "panel.profile_info.picture.upload.failed.msg":"上傳個人資料圖片失敗. 請稍後再試.",
+    "panel.profile_info.picture.delete.failed.msg":"無法刪除頭像. 請稍後再試.",
 
 	"panel.create_poll.header.title": "创建快速投票",
 	"panel.create_poll.description": "人們可以通過 Illinois 應用程序向您詢問 4 位民意調查#。",
