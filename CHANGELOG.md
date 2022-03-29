@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-- Semantics improvements: PollBubblePromptPanel - Announce when voting was successful[#1494](https://github.com/rokwire/illinois-app/issues/1494).
+- Semantics improvements: PollBubblePromptPanel - Announce when voting was successful [#1496](https://github.com/rokwire/illinois-app/issues/1496).
+- Semantics improvements: Announce when poll was closed successfully [#1494](https://github.com/rokwire/illinois-app/issues/1494).
 
 ## [3.3.7] - 2022-03-28
 ### Changed
