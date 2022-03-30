@@ -433,7 +433,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
 
   void _loadUserProfilePicture() {
     _setProfilePicProcessing(true);
-    Content().loadLargeUserProfileImage().then((imageBytes) {
+    Content().loadDefaultUserProfileImage().then((imageBytes) {
       _profileImage = imageBytes != null ? MemoryImage(imageBytes) : null;
       _setProfilePicProcessing(false);
     });
@@ -566,7 +566,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   void _onTapDeletePicture() {
     Analytics().logSelect(target: "Delete Profile Picture");
     _setProfilePicProcessing(true);
-    Content().deleteUserProfileImage().then((deleteImageResult) {
+    Content().deleteCurrentUserProfileImage().then((deleteImageResult) {
       ImagesResultType? resultType = deleteImageResult.resultType;
       switch (resultType) {
         case ImagesResultType.error:
