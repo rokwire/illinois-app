@@ -244,7 +244,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         child: SizedBox.expand(
           child: Image.network(
             game!.newsImageUrl!,
-            excludeFromSemantics: true,
+            semanticLabel: "game",
             fit: BoxFit.fitWidth,
           ),
         ),

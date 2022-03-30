@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Semantics improvements: PollBubblePromptPanel - Announce when voting was successful [#1496](https://github.com/rokwire/illinois-app/issues/1496).
 - Semantics improvements: Announce when poll was closed successfully [#1494](https://github.com/rokwire/illinois-app/issues/1494).
+- Semantics improvements: add semantics for Athletics images (game/roster/coach/etc.) [#510](https://github.com/rokwire/illinois-app/issues/510).
 
 ## [3.3.7] - 2022-03-28
 ### Changed

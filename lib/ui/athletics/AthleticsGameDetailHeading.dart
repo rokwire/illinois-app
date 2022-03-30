@@ -409,7 +409,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
         widgets.add(Positioned(
             child: Image.network(
               widget.game!.imageUrl!,
-              excludeFromSemantics: true
+              semanticLabel: widget.game?.sport?.title ?? "sport",
             )));
       }
       widgets.add(Semantics(

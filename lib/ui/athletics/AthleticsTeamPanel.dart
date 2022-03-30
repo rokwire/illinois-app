@@ -131,7 +131,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
               alignment: Alignment.bottomCenter,
               children: <Widget>[
                 Positioned(
-                    child: Image.network(randomImageURL, excludeFromSemantics: true)),
+                    child: Image.network(randomImageURL, semanticLabel: widget.sport?.name ?? "sport",)),
                 CustomPaint(
                   painter: TrianglePainter(painterColor: Colors.white),
                   child: Container(
