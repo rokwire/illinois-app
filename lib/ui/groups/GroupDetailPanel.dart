@@ -1459,26 +1459,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 }
 
-class _OfficerCard extends StatefulWidget {
+class _OfficerCard extends StatelessWidget {
   final Member? groupMember;
   
   _OfficerCard({this.groupMember});
-
-  @override
-  State<_OfficerCard> createState() => _OfficerCardState();
-}
-
-class _OfficerCardState extends State<_OfficerCard> {
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 128,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: widget.groupMember?.userId)),
+        Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: groupMember?.userId)),
         Padding(padding: EdgeInsets.only(top: 4),
-          child: Text(widget.groupMember?.name ?? "", style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),),
-        Text(widget.groupMember?.officerTitle ?? "", style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),),
+          child: Text(groupMember?.name ?? "", style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),),
+        Text(groupMember?.officerTitle ?? "", style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),),
       ],),
     );
   }

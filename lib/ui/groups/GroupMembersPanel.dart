@@ -398,16 +398,10 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 }
 
-class _PendingMemberCard extends StatefulWidget {
+class _PendingMemberCard extends StatelessWidget {
   final Member? member;
   final Group? group;
   _PendingMemberCard({required this.member, this.group});
-
-  @override
-  State<_PendingMemberCard> createState() => _PendingMemberCardState();
-}
-
-class _PendingMemberCardState extends State<_PendingMemberCard> {
 
   @override
   Widget build(BuildContext context) {
@@ -422,7 +416,7 @@ class _PendingMemberCardState extends State<_PendingMemberCard> {
         children: <Widget>[
           ClipRRect(
               borderRadius: BorderRadius.circular(65),
-              child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: widget.member?.userId))),
+              child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId))),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(left: 11),
@@ -430,7 +424,7 @@ class _PendingMemberCardState extends State<_PendingMemberCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    widget.member?.displayName ?? "",
+                    member?.displayName ?? "",
                     style: TextStyle(
                       fontFamily: Styles().fontFamilies!.bold,
                       fontSize: 20,
@@ -449,7 +443,7 @@ class _PendingMemberCardState extends State<_PendingMemberCard> {
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){
                           Analytics().logSelect(target:"Review request");
-                          Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupPendingMemberPanel(member: widget.member, group: widget.group,)));
+                          Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupPendingMemberPanel(member: member, group: group,)));
                         },
                       ),
                 ],
@@ -463,16 +457,10 @@ class _PendingMemberCardState extends State<_PendingMemberCard> {
   }
 }
 
-class _GroupMemberCard extends StatefulWidget {
+class _GroupMemberCard extends StatelessWidget {
   final Member? member;
   final Group? group;
   _GroupMemberCard({required this.member, required this.group});
-
-  @override
-  State<_GroupMemberCard> createState() => _GroupMemberCardState();
-}
-
-class _GroupMemberCardState extends State<_GroupMemberCard> {
 
   @override
   Widget build(BuildContext context) {
@@ -489,7 +477,7 @@ class _GroupMemberCardState extends State<_GroupMemberCard> {
           children: <Widget>[
             ClipRRect(
                 borderRadius: BorderRadius.circular(65),
-                child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: widget.member?.userId))),
+                child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId))),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 11),
@@ -515,11 +503,11 @@ class _GroupMemberCardState extends State<_GroupMemberCard> {
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: groupMemberStatusToColor(widget.member!.status),
+                            color: groupMemberStatusToColor(member!.status),
                             borderRadius: BorderRadius.all(Radius.circular(2)),
                           ),
                           child: Center(
-                            child: Text(groupMemberStatusToDisplayString(widget.member!.status)!.toUpperCase(),
+                            child: Text(groupMemberStatusToDisplayString(member!.status)!.toUpperCase(),
                               style: TextStyle(
                                   fontFamily: Styles().fontFamilies!.bold,
                                   fontSize: 12,
@@ -544,19 +532,19 @@ class _GroupMemberCardState extends State<_GroupMemberCard> {
   void _onTapMemberCard(BuildContext context) async {
     if (_isAdmin) {
       Analytics().logSelect(target: "Member Detail");
-      await Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberPanel(group: widget.group, member: widget.member)));
+      await Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberPanel(group: group, member: member)));
     }
   }
 
   String? get _memberDisplayName {
     if (_isAdmin) {
-      return widget.member?.displayName;
+      return member?.displayName;
     } else {
-      return widget.member?.name;
+      return member?.name;
     }
   }
 
   bool get _isAdmin {
-    return widget.group?.currentUserAsMember?.isAdmin ?? false;
+    return group?.currentUserAsMember?.isAdmin ?? false;
   }
 }

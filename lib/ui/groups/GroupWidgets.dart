@@ -2829,9 +2829,7 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> {
         : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true);
 
     return Stack(alignment: Alignment.center, children: [
-      Container(
-          decoration: BoxDecoration(
-              color: Colors.green, shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: profileImage.image))),
+      Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: profileImage.image))),
       Visibility(
           visible: _loading,
           child:
