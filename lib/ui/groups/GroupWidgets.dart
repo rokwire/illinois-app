@@ -2578,7 +2578,10 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
 
   void _onEndPollTapped(){
     _setEndButtonProgress(true);
-    Polls().close(widget.poll.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
+    Polls().close(widget.poll.pollId).then((result) {
+      AppSemantics.announceMessage(context, Localization().getStringEx('panel.polls_home.card.button.message.end_poll.success', 'Poll ended successfully'));
+      _setEndButtonProgress(false);
+    }).catchError((e){
       _setEndButtonProgress(false);
       AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     });
@@ -2845,7 +2848,10 @@ class _GroupPollCardState extends State<GroupPollCard>{
 
   void _onEndPollTapped(){
     _setEndButtonProgress(true);
-    Polls().close(widget.poll!.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
+    Polls().close(widget.poll!.pollId).then((result) {
+      AppSemantics.announceMessage(context, Localization().getStringEx('panel.polls_home.card.button.message.end_poll.success', 'Poll ended successfully'));
+      _setEndButtonProgress(false);
+    }).catchError((e){
       _setEndButtonProgress(false);
       AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     });

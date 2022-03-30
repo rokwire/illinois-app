@@ -1413,6 +1413,7 @@
     "panel.polls_home.button.log_in.title": "Log in to view",
     "panel.polls_home.button.log_in.hint": "",
     "panel.polls_home.text.unable_to_present": "Unable to present poll at the moment",
+    "panel.polls_home.card.button.message.end_poll.success": "Poll ended successfully",
 
     "panel.poll_prompt.text.someone": "Someone",
     "panel.poll_prompt.text.wants_to_know": "%s wants to know",
@@ -1431,9 +1432,11 @@
     "panel.poll_prompt.text.rule.detail.hide_result": "Results will not be shown until the poll ends.",
     "panel.poll_prompt.button.vote.title":"Vote",
     "panel.poll_prompt.button.done_voting.title":"Done Voting",
+    "panel.poll_prompt.button.done_voting.status.success": "Poll voting ended successfully",
     "panel.poll_prompt.button.view_poll_results.title":"View poll results",
     "panel.poll_prompt.button.close.title":"Close",
     "panel.poll_prompt.hint.select_option":"Double tab to select this option",
+    "panel.poll_prompt.vote.status.announce.success": "Successfully Voted",
 
     "panel.poll_pin_bouble.label_description": "Enter the four-digit poll number to see the poll.",
     "panel.poll_pin_bouble.validation_description": "Please enter correct 4 Digit Poll #",

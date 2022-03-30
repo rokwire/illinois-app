@@ -1411,6 +1411,7 @@
     "panel.polls_home.button.log_in.title": "Inicia sesión para ver",
     "panel.polls_home.button.log_in.hint": "",
     "panel.polls_home.text.unable_to_present": "No se puede presentar la encuesta en este momento",
+    "panel.polls_home.card.button.message.end_poll.success": "Poll ended successfully",
 
     "panel.poll_prompt.text.someone": "Alguien",
     "panel.poll_prompt.text.wants_to_know": "% s quiere saber",
@@ -1429,9 +1430,11 @@
     "panel.poll_prompt.text.rule.detail.hide_result": "Los resultados no se mostrarán hasta que finalice la encuesta.",
     "panel.poll_prompt.button.vote.title":"Votar",
     "panel.poll_prompt.button.done_voting.title":"Votación terminada",
+    "panel.poll_prompt.button.done_voting.status.success": "Poll voting ended successfully",
     "panel.poll_prompt.button.view_poll_results.title":"Ver resultados de la encuesta",
     "panel.poll_prompt.button.close.title":"Cerrar",
     "panel.poll_prompt.hint.select_option":"Toca dos veces para seleccionar esta opción",
+    "panel.poll_prompt.vote.status.announce.success": "Successfully Voted",
 
     "panel.poll_pin_bouble.label_description": "Ingrese el número de encuesta de cuatro dígitos para ver la encuesta.",
     "panel.poll_pin_bouble.validation_description": "Ingrese el número correcto de encuesta de 4 dígitos",

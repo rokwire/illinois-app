@@ -1413,6 +1413,7 @@
 	"panel.polls_home.button.log_in.title": "登录查看",
 	"panel.polls_home.button.log_in.hint": "",
 	"panel.polls_home.text.unable_to_present": "目前无法进行投票",
+	"panel.polls_home.card.button.message.end_poll.success": "Poll ended successfully",
 
 	"panel.poll_prompt.text.someone": "某人",
 	"panel.poll_prompt.text.wants_to_know": "%s 想知道",
@@ -1431,9 +1432,11 @@
 	"panel.poll_prompt.text.rule.detail.hide_result": "投票结束后才会显示结果.",
 	"panel.poll_prompt.button.vote.title":"投票",
 	"panel.poll_prompt.button.done_voting.title":"结束投票",
+	"panel.poll_prompt.button.done_voting.status.success": "Poll voting ended successfully",
 	"panel.poll_prompt.button.view_poll_results.title":"查看投票结果",
 	"panel.poll_prompt.button.close.title":"关闭",
 	"panel.poll_prompt.hint.select_option":"双击以选择此选项",
+	"panel.poll_prompt.vote.status.announce.success": "Successfully Voted",
 
 	"panel.poll_pin_bouble.label_description": "輸入四位數的投票號碼以查看投票.",
 	"panel.poll_pin_bouble.validation_description": "请输入正确的4位数投票 #",

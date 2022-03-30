@@ -1039,7 +1039,10 @@ class _PollCardState extends State<_PollCard>{
 
   void _onEndPollTapped(){
     _setEndButtonProgress(true);
-      Polls().close(widget.poll!.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
+      Polls().close(widget.poll!.pollId).then((result) {
+          AppSemantics.announceMessage(context, Localization().getStringEx('panel.polls_home.card.button.message.end_poll.success', 'Poll ended successfully'));
+          _setEndButtonProgress(false);
+      }).catchError((e){
         _setEndButtonProgress(false);
         AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
       });
