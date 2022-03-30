@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -23,11 +24,11 @@ class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttribu
 }
 
 class _GroupAllEventsState extends State<GroupAllEventsPanel>{
-  List<GroupEvent>?   _groupEvents;
+  List<Event>?   _groupEvents;
 
   @override
   void initState() {
-    Groups().loadEvents(widget.group).then((Map<int, List<GroupEvent>>? eventsMap) {
+    Groups().loadEvents(widget.group).then((Map<int, List<Event>>? eventsMap) {
       if (mounted) {
         setState(() {
           _groupEvents = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
@@ -63,7 +64,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
     bool isCurrentUserAdmin = widget.group?.currentUserIsAdmin ?? false;
 
     if (_groupEvents != null) {
-      for (GroupEvent? groupEvent in _groupEvents!) {
+      for (Event? groupEvent in _groupEvents!) {
         content.add(GroupEventCard(groupEvent: groupEvent, group: widget.group, isAdmin: isCurrentUserAdmin));
       }
     }
