@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -169,10 +170,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(65),
-            child: Container(
-                width: 65, height: 65 ,
-                child: StringUtils.isNotEmpty(_member?.photoURL) ? Image.network(_member!.photoURL!, excludeFromSemantics: true,) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true,)
-            ),
+            child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: _member?.userId)),
           ),
         ),
         Container(width: 16,),

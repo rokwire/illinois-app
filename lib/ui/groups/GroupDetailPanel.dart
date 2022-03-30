@@ -17,6 +17,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -88,7 +89,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _confirmationLoading = false;
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
-  List<GroupEvent>?  _groupEvents;
+  List<Event>?       _groupEvents;
   List<GroupPost>    _visibleGroupPosts = <GroupPost>[];
   List<Member>?      _groupAdmins;
 
@@ -225,7 +226,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     setState(() {
       _updatingEvents = true;
     });
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent>>? eventsMap) {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event>>? eventsMap) {
       if (mounted) {
         setState(() {
           bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
@@ -238,7 +239,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _refreshEvents() {
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent>>? eventsMap) {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event>>? eventsMap) {
       if (mounted) {
         setState(() {
           bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
@@ -790,7 +791,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 //    }
 
     if (CollectionUtils.isNotEmpty(_groupEvents)) {
-      for (GroupEvent? groupEvent in _groupEvents!) {
+      for (Event? groupEvent in _groupEvents!) {
         content.add(GroupEventCard(groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
       }
 
@@ -1465,20 +1466,10 @@ class _OfficerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ImageProvider<Object> image;
-    if (StringUtils.isNotEmpty(groupMember?.photoURL))
-      image = NetworkImage(groupMember!.photoURL!);
-    else
-      image = AssetImage('images/missing-photo-placeholder.png');
-
     return Container(
       width: 128,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(height: 144, width: 128,
-          decoration: BoxDecoration(
-            image: DecorationImage(image: image, fit: BoxFit.contain),
-              borderRadius: BorderRadius.all(Radius.circular(4))),
-          ),
+        Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: groupMember?.userId)),
         Padding(padding: EdgeInsets.only(top: 4),
           child: Text(groupMember?.name ?? "", style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),),
         Text(groupMember?.officerTitle ?? "", style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),),

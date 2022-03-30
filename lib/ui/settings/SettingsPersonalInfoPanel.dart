@@ -16,11 +16,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -41,8 +42,10 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   String? _initialEmail;
   String? _initialPhone;
 
-  //bool _isDeleting = false;
+  MemoryImage? _profileImage;
+
   bool _isSaving = false;
+  bool _profilePicProcessing = false;
 
   @override
   void initState() {
@@ -50,6 +53,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     _nameController = TextEditingController(text: _initialName = Auth2().fullName ?? "");
     _emailController = TextEditingController(text: _initialEmail = Auth2().email ?? "");
     _phoneController = TextEditingController(text: _initialPhone = Auth2().phone ?? "");
+    _loadUserProfilePicture();
     super.initState();
   }
 
@@ -71,11 +75,6 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     }
   }
 
-  Future<void> _deleteUserData() async{
-    Analytics().logAlert(text: "Remove My Information", selection: "Yes");
-    await Auth2().deleteUser();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +88,10 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: Container(
-                child: _builInfoContent(),
+                child: Column(children: [
+                  _buildInfoContent(),
+                  _buildProfilePicture()
+                ]),
               ),
             ),
           ),
@@ -102,9 +104,9 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     );
   }
 
-  Widget _builInfoContent() {
+  Widget _buildInfoContent() {
     if (Auth2().isOidcLoggedIn) {
-      return _buildShibolethInfoContent();
+      return _buildShibbolethInfoContent();
     }
     else if (Auth2().isPhoneLoggedIn) {
       return _buildPhoneVerifiedInfoContent();
@@ -117,7 +119,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     }
   }
 
-  Widget _buildShibolethInfoContent(){
+  Widget _buildShibbolethInfoContent(){
     return Container(
       child: Column(
         children: <Widget>[
@@ -377,31 +379,80 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     );
   }
 
-  void onConfirmRemoveMyInfo(BuildContext context, Function setState){
-    setState(() {
-      //_isDeleting = true;
-    });
-    _deleteUserData()
-        .then((_){
-          Navigator.pop(context);
-        })
-        .whenComplete((){
-          setState(() {
-            //_isDeleting = false;
-          });
-        })
-        .catchError((error){
-          AppAlert.showDialogResult(context, error.toString()).then((_){
-            Navigator.pop(context);
-          });
+  Widget _buildProfilePicture() {
+    late Widget contentWidget;
+    if (_profilePicProcessing) {
+      contentWidget = Center(child: CircularProgressIndicator());
+    } else if (_profileImage != null) {
+      contentWidget = Padding(
+          padding: EdgeInsets.only(bottom: 25),
+          child: Column(children: [
+            Container(
+              width: 240,
+              height: 240,
+              child: Container(
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle, color: Colors.white, image: DecorationImage(fit: BoxFit.cover, image: _profileImage!))),
+            ),
+            Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Row(children: [
+                  Expanded(
+                      child: RoundedButton(
+                          label: Localization().getStringEx("panel.profile_info.button.picture.edit.title", "Edit"),
+                          hint: Localization().getStringEx("panel.profile_info.button.picture.edit.hint", ""),
+                          backgroundColor: Styles().colors!.background,
+                          fontSize: 16.0,
+                          textColor: Styles().colors!.fillColorPrimary,
+                          borderColor: Styles().colors!.fillColorSecondary,
+                          onTap: _onTapEditPicture)),
+                  Container(width: 16),
+                  Expanded(
+                      child: RoundedButton(
+                          label: Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"),
+                          hint: Localization().getStringEx("panel.profile_info.button.picture.delete.hint", ""),
+                          backgroundColor: Styles().colors!.background,
+                          fontSize: 16.0,
+                          textColor: Styles().colors!.fillColorPrimary,
+                          borderColor: Styles().colors!.fillColorSecondary,
+                          onTap: _onTapDeletePicture))
+                ]))
+          ]));
+    } else {
+      contentWidget = RoundedButton(
+          label: Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Profile Picture"),
+          hint: Localization().getStringEx("panel.profile_info.button.profile_picture.hint", ""),
+          backgroundColor: Styles().colors!.background,
+          fontSize: 16.0,
+          textColor: Styles().colors!.fillColorPrimary,
+          borderColor: Styles().colors!.fillColorSecondary,
+          onTap: _onTapProfilePicture);
+    }
+    return Padding(padding: EdgeInsets.only(top: 25), child: contentWidget);
+  }
+
+  void _loadUserProfilePicture() {
+    _setProfilePicProcessing(true);
+    Content().loadDefaultUserProfileImage().then((imageBytes) {
+      _profileImage = imageBytes != null ? MemoryImage(imageBytes) : null;
+      _setProfilePicProcessing(false);
     });
   }
 
-  _onSignOutClicked() {
+  void _setProfilePicProcessing(bool processing) {
+    if (_profilePicProcessing != processing) {
+      _profilePicProcessing = processing;
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  void _onSignOutClicked() {
     showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
   }
 
-  _onSaveChangesClicked() async{
+  void _onSaveChangesClicked() async{
 
     String? email, phone, firstName, lastName, middleName;
     if (_isEmailChanged){
@@ -474,6 +525,64 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
           setState(() { _isSaving = false; });
           AppToast.show("Unable to perform save");
         }
+      }
+    });
+  }
+
+  void _onTapProfilePicture() {
+    Analytics().logSelect(target: "Profile Picture");
+    _onChangeProfilePicture();
+  }
+
+  void _onTapEditPicture() {
+    Analytics().logSelect(target: "Edit Profile Picture");
+    _onChangeProfilePicture();
+  }
+
+  void _onChangeProfilePicture() {
+    _setProfilePicProcessing(true);
+    Content().selectImageFromDevice(isUserPic: true).then((imageUploadResult) {
+      ImagesResultType? resultType = imageUploadResult?.resultType;
+      switch (resultType) {
+        case ImagesResultType.cancelled:
+          _setProfilePicProcessing(false);
+          break;
+        case ImagesResultType.error:
+          AppAlert.showDialogResult(
+              context,
+              Localization().getStringEx(
+                  'panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
+          _setProfilePicProcessing(false);
+          break;
+        case ImagesResultType.succeeded:
+          _loadUserProfilePicture();
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
+  void _onTapDeletePicture() {
+    Analytics().logSelect(target: "Delete Profile Picture");
+    _setProfilePicProcessing(true);
+    Content().deleteCurrentUserProfileImage().then((deleteImageResult) {
+      ImagesResultType? resultType = deleteImageResult.resultType;
+      switch (resultType) {
+        case ImagesResultType.error:
+          AppAlert.showDialogResult(
+              context,
+              Localization().getStringEx(
+                  'panel.profile_info.picture.delete.failed.msg', 'Failed to delete profile picture. Please, try again later.'));
+          _setProfilePicProcessing(false);
+          break;
+        case ImagesResultType.succeeded:
+          _profileImage = null;
+          _setProfilePicProcessing(false);
+          break;
+        default:
+          _setProfilePicProcessing(false);
+          break;
       }
     });
   }

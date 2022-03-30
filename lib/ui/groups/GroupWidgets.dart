@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:typed_data';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -356,7 +358,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
 //GroupEventCard
 
 class GroupEventCard extends StatefulWidget {
-  final GroupEvent? groupEvent;
+  final Event? groupEvent;
   final Group? group;
   final bool isAdmin;
 
@@ -366,71 +368,9 @@ class GroupEventCard extends StatefulWidget {
   createState()=> _GroupEventCardState();
 }
 class _GroupEventCardState extends State<GroupEventCard>{
-  bool _showAllComments = false;
-
   @override
   Widget build(BuildContext context) {
-    GroupEvent? event = widget.groupEvent;
-    List<Widget> content = [
-      _EventContent(event: event, isAdmin: widget.isAdmin, group: widget.group,),
-    ];
-    List<Widget> content2 = [];
-
-    if(_canPostComment){
-      content2.add(
-          Container(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child:_buildAddPostButton(onTap: (){
-                    Analytics().logSelect(target: "Add post");
-                    //TBD: remove if not used
-                    // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.group?.id,)));
-                  }))
-      );
-    }
-
-    if (0 < (event?.comments?.length ?? 0)) {
-      content.add(Container(color: Styles().colors!.surfaceAccent, height: 1,));
-
-      for (GroupEventComment? comment in event!.comments!) {
-        content2.add(_buildComment(comment!));
-        if(!_showAllComments){
-          break;
-        }
-      }
-      if(!_showAllComments && (1 < (event.comments?.length ?? 0))){
-        content2.add(
-            Container(color: Styles().colors!.fillColorSecondary,height: 1,margin: EdgeInsets.only(top:12, bottom: 10),)
-        );
-        content2.add(
-            Semantics(
-              button: true,
-              child: GestureDetector(
-                onTap: (){
-                  Analytics().logSelect(target: "See previous posts");
-                  setState(() {
-                    _showAllComments = true;
-                  });},
-                child: Center(child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(Localization().getStringEx("panel.group_detail.button.previous_post.title", "See previous posts"), style: TextStyle(fontSize: 16,
-                        fontFamily: Styles().fontFamilies!.bold,
-                        color: Styles().colors!.fillColorPrimary),),
-                    Padding(
-                      padding: EdgeInsets.only(left: 7), child: Image.asset('images/icon-down-orange.png', color:  Styles().colors!.fillColorPrimary,),),
-                  ],),
-                ),),
-            )
-        );
-        content2.add(Container(height: 7,));
-      }
-
-      content.add(Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children:content2))
-      );
-
-    }
+    Event? event = widget.groupEvent;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -440,85 +380,9 @@ class _GroupEventCardState extends State<GroupEventCard>{
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
             borderRadius: BorderRadius.all(Radius.circular(8))
         ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: content,),
+        child: _EventContent(event: event, isAdmin: widget.isAdmin, group: widget.group),
       ),
     );
-  }
-
-  Widget _buildComment(GroupEventComment comment){
-    String? memberName = comment.member!.displayShortName;
-    String postDate = AppDateTimeUtils.timeAgoSinceDate(comment.dateCreated!);
-    return
-      Semantics(
-          label: "$memberName posted, $postDate: ${comment.text}",
-          excludeSemantics: true,
-          child:Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              child: Container(
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                    color: Styles().colors!.white,
-                    boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-                    borderRadius: BorderRadius.all(Radius.circular(4))
-                ),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    Container(height: 32, width: 32,
-                      decoration: StringUtils.isNotEmpty(comment.member?.photoURL)
-                          ? BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(image:NetworkImage(comment.member!.photoURL!), fit: BoxFit.cover))
-                          : null,
-                    ),
-                    Expanded(
-                      flex: 5,
-                      child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                        Padding(padding: EdgeInsets.only(bottom: 2), child:
-                        Text(comment.member!.displayShortName , style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary),),
-                        ),
-                        Text(postDate, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textBackground),)
-                      ],),),),
-                  ],),
-                  Padding(padding: EdgeInsets.only(top:8), child:
-                  Text(comment.text!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),)
-                  ),
-                ],),
-              )));
-  }
-
-  Widget _buildAddPostButton({String? photoUrl,void onTap()?}){
-    return
-      InkWell(
-          onTap: onTap,
-          child: Container(
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              photoUrl == null ? Container():
-              Container(height: 32, width: 32,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(image:NetworkImage(photoUrl), fit: BoxFit.cover),
-                ),
-              ),
-              Container(width: 6,),
-              Expanded(child:
-              Container(
-                  height: 45,
-                  alignment: Alignment.centerLeft,
-                  padding:EdgeInsets.symmetric(horizontal: 12) ,
-                  decoration: BoxDecoration(
-                      color: Styles().colors!.white,
-                      boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
-                      borderRadius: BorderRadius.all(Radius.circular(8))
-                  ),
-                  child:
-                  Text(Localization().getStringEx("panel.group_detail.button.add_post.title", "Add a public post ..."),style: TextStyle(fontSize: 16, color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular),)
-              ))
-            ],),
-          ));
-  }
-
-  bool get _canPostComment{
-    return widget.isAdmin && false; //TBD for now hide all comment options. Determine who can add comment
   }
 }
 
@@ -2933,5 +2797,62 @@ class _GroupPollCardState extends State<GroupPollCard>{
 
   int get _groupMembersCount {
     return widget.group?.membersCount ?? 0;
+  }
+}
+
+/////////////////////////////////////
+// GroupMemberProfileImage
+
+class GroupMemberProfileImage extends StatefulWidget {
+  final String? userId;
+
+  GroupMemberProfileImage({this.userId});
+
+  @override
+  State<GroupMemberProfileImage> createState() => _GroupMemberProfileImageState();
+}
+
+class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> {
+  Uint8List? _imageBytes;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Image profileImage = (_imageBytes != null)
+        ? Image.memory(_imageBytes!)
+        : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true);
+
+    return Stack(alignment: Alignment.center, children: [
+      Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: profileImage.image))),
+      Visibility(
+          visible: _loading,
+          child:
+              SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2)))
+    ]);
+  }
+
+  void _loadImage() {
+    if (StringUtils.isNotEmpty(widget.userId)) {
+      _setImageLoading(true);
+      Content().loadSmallUserProfileImage(accountId: widget.userId).then((imageBytes) {
+        _imageBytes = imageBytes;
+        _setImageLoading(false);
+      });
+    }
+  }
+
+  void _setImageLoading(bool loading) {
+    if (_loading != loading) {
+      _loading = loading;
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 }

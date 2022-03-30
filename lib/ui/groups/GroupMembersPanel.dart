@@ -415,9 +415,8 @@ class _PendingMemberCard extends StatelessWidget {
       child: Row(
         children: <Widget>[
           ClipRRect(
-            borderRadius: BorderRadius.circular(65),
-            child: Container(width: 65, height: 65 ,child: StringUtils.isNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
-          ),
+              borderRadius: BorderRadius.circular(65),
+              child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId))),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(left: 11),
@@ -458,7 +457,7 @@ class _PendingMemberCard extends StatelessWidget {
   }
 }
 
-class _GroupMemberCard extends StatelessWidget{
+class _GroupMemberCard extends StatelessWidget {
   final Member? member;
   final Group? group;
   _GroupMemberCard({required this.member, required this.group});
@@ -477,9 +476,8 @@ class _GroupMemberCard extends StatelessWidget{
         child: Row(
           children: <Widget>[
             ClipRRect(
-              borderRadius: BorderRadius.circular(65),
-              child: Container(width: 65, height: 65 ,child: StringUtils.isNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
-            ),
+                borderRadius: BorderRadius.circular(65),
+                child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId))),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 11),

@@ -80,8 +80,8 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
           }
         }
       });
-      Groups().loadEvents(null).then((Map<int, List<GroupEvent>>? eventsMap) {
-        List<GroupEvent>? events = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
+      Groups().loadEvents(null).then((Map<int, List<Event>>? eventsMap) {
+        List<Event>? events = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
         if (CollectionUtils.isNotEmpty(events)) {
           for (Event event in events!) {
             if (event.id != null) {
