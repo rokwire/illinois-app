@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -53,6 +56,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   bool _isAdmin = false;
   bool _updating = false;
   bool _removing = false;
+  Uint8List? _profilePictureBytes;
+  bool _pictureLoading = false;
 
   @override
   void initState() {
@@ -90,6 +95,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
         setState(() {
           _member = _group.getMembersById(widget.memberId);
           _isAdmin = _member!.isAdmin;
+          _loadProfilePicture();
         });
       }
     }
@@ -121,6 +127,26 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
           }
         }
       });
+    }
+  }
+
+  void _loadProfilePicture() {
+    String? memberAccountId = _member?.userId;
+    if (StringUtils.isNotEmpty(memberAccountId)) {
+      _setProfilePictureLoading(true);
+      Content().loadSmallUserProfileImage(accountId: memberAccountId).then((imageBytes) {
+        _profilePictureBytes = imageBytes;
+        _setProfilePictureLoading(false);
+      });
+    }
+  }
+
+  void _setProfilePictureLoading(bool loading) {
+    if (_pictureLoading != loading) {
+      _pictureLoading = loading;
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -170,9 +196,22 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
           child: ClipRRect(
             borderRadius: BorderRadius.circular(65),
             child: Container(
-                width: 65, height: 65 ,
-                child: StringUtils.isNotEmpty(_member?.photoURL) ? Image.network(_member!.photoURL!, excludeFromSemantics: true,) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true,)
-            ),
+                width: 65,
+                height: 65,
+                child: Stack(alignment: Alignment.center, children: [
+                  ((_profilePictureBytes != null)
+                      ? Container(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(fit: BoxFit.cover, image: Image.memory(_profilePictureBytes!).image)))
+                      : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
+                  Visibility(
+                      visible: _pictureLoading,
+                      child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2)))
+                ])),
           ),
         ),
         Container(width: 16,),

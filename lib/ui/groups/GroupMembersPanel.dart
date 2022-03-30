@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -398,10 +401,25 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 }
 
-class _PendingMemberCard extends StatelessWidget {
+class _PendingMemberCard extends StatefulWidget {
   final Member? member;
   final Group? group;
   _PendingMemberCard({required this.member, this.group});
+
+  @override
+  State<_PendingMemberCard> createState() => _PendingMemberCardState();
+}
+
+class _PendingMemberCardState extends State<_PendingMemberCard> {
+  
+  Uint8List? _profilePictureBytes;
+  bool _pictureLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfilePicture();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -415,9 +433,23 @@ class _PendingMemberCard extends StatelessWidget {
       child: Row(
         children: <Widget>[
           ClipRRect(
-            borderRadius: BorderRadius.circular(65),
-            child: Container(width: 65, height: 65 ,child: StringUtils.isNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
-          ),
+              borderRadius: BorderRadius.circular(65),
+              child: Container(
+                  width: 65,
+                  height: 65,
+                  child: Stack(alignment: Alignment.center, children: [
+                    ((_profilePictureBytes != null)
+                        ? Container(
+                            decoration:
+                                BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: Image.memory(_profilePictureBytes!).image)))
+                        : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
+                    Visibility(
+                        visible: _pictureLoading,
+                        child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2)))
+                  ]))),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(left: 11),
@@ -425,7 +457,7 @@ class _PendingMemberCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    member?.displayName ?? "",
+                    widget.member?.displayName ?? "",
                     style: TextStyle(
                       fontFamily: Styles().fontFamilies!.bold,
                       fontSize: 20,
@@ -444,7 +476,7 @@ class _PendingMemberCard extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){
                           Analytics().logSelect(target:"Review request");
-                          Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupPendingMemberPanel(member: member, group: group,)));
+                          Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupPendingMemberPanel(member: widget.member, group: widget.group,)));
                         },
                       ),
                 ],
@@ -456,12 +488,47 @@ class _PendingMemberCard extends StatelessWidget {
       ),
     );
   }
+
+  void _loadProfilePicture() {
+    String? memberAccountId = widget.member?.userId;
+    if (StringUtils.isNotEmpty(memberAccountId)) {
+      _setProfilePictureLoading(true);
+      Content().loadSmallUserProfileImage(accountId: memberAccountId).then((imageBytes) {
+        _profilePictureBytes = imageBytes;
+        _setProfilePictureLoading(false);
+      });
+    }
+  }
+
+  void _setProfilePictureLoading(bool loading) {
+    if (_pictureLoading != loading) {
+      _pictureLoading = loading;
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
 }
 
-class _GroupMemberCard extends StatelessWidget{
+class _GroupMemberCard extends StatefulWidget {
   final Member? member;
   final Group? group;
   _GroupMemberCard({required this.member, required this.group});
+
+  @override
+  State<_GroupMemberCard> createState() => _GroupMemberCardState();
+}
+
+class _GroupMemberCardState extends State<_GroupMemberCard> {
+
+  Uint8List? _profileImageBytes;
+  bool _pictureLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfilePicture();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -477,9 +544,23 @@ class _GroupMemberCard extends StatelessWidget{
         child: Row(
           children: <Widget>[
             ClipRRect(
-              borderRadius: BorderRadius.circular(65),
-              child: Container(width: 65, height: 65 ,child: StringUtils.isNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
-            ),
+                borderRadius: BorderRadius.circular(65),
+                child: Container(
+                    width: 65,
+                    height: 65,
+                    child: Stack(alignment: Alignment.center, children: [
+                      ((_profileImageBytes != null)
+                          ? Container(
+                              decoration:
+                                  BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: Image.memory(_profileImageBytes!).image)))
+                          : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
+                      Visibility(
+                          visible: (_pictureLoading),
+                          child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2)))
+                    ]))),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 11),
@@ -505,11 +586,11 @@ class _GroupMemberCard extends StatelessWidget{
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: groupMemberStatusToColor(member!.status),
+                            color: groupMemberStatusToColor(widget.member!.status),
                             borderRadius: BorderRadius.all(Radius.circular(2)),
                           ),
                           child: Center(
-                            child: Text(groupMemberStatusToDisplayString(member!.status)!.toUpperCase(),
+                            child: Text(groupMemberStatusToDisplayString(widget.member!.status)!.toUpperCase(),
                               style: TextStyle(
                                   fontFamily: Styles().fontFamilies!.bold,
                                   fontSize: 12,
@@ -534,19 +615,39 @@ class _GroupMemberCard extends StatelessWidget{
   void _onTapMemberCard(BuildContext context) async {
     if (_isAdmin) {
       Analytics().logSelect(target: "Member Detail");
-      await Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberPanel(group: group, member: member)));
+      await Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberPanel(group: widget.group, member: widget.member)));
+    }
+  }
+
+  void _loadProfilePicture() {
+    String? memberAccountId = widget.member?.userId;
+    if (StringUtils.isNotEmpty(memberAccountId)) {
+      _setProfilePictureLoading(true);
+      Content().loadSmallUserProfileImage(accountId: memberAccountId).then((imageBytes) {
+        _profileImageBytes = imageBytes;
+        _setProfilePictureLoading(false);
+      });
+    }
+  }
+
+  void _setProfilePictureLoading(bool loading) {
+    if (_pictureLoading != loading) {
+      _pictureLoading = loading;
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
   String? get _memberDisplayName {
     if (_isAdmin) {
-      return member?.displayName;
+      return widget.member?.displayName;
     } else {
-      return member?.name;
+      return widget.member?.name;
     }
   }
 
   bool get _isAdmin {
-    return group?.currentUserAsMember?.isAdmin ?? false;
+    return widget.group?.currentUserAsMember?.isAdmin ?? false;
   }
 }
