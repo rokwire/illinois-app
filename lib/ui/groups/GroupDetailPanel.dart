@@ -15,8 +15,6 @@
  */
 
 
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -28,7 +26,6 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
-import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -1472,56 +1469,17 @@ class _OfficerCard extends StatefulWidget {
 }
 
 class _OfficerCardState extends State<_OfficerCard> {
-  
-  Uint8List? _profilePictureBytes;
-  bool _pictureLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProfilePicture();
-  }
 
   @override
   Widget build(BuildContext context) {
-    ImageProvider<Object> image = (_profilePictureBytes != null) ? Image.memory(_profilePictureBytes!).image : AssetImage('images/missing-photo-placeholder.png');
-
     return Container(
       width: 128,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Stack(alignment: Alignment.center, children: [
-          Container(height: 144, width: 128,
-          decoration: BoxDecoration(
-            image: DecorationImage(image: image, fit: BoxFit.contain),
-              borderRadius: BorderRadius.all(Radius.circular(4))),
-          ),
-          Visibility(
-                visible: _pictureLoading, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 3))
-        ]),
+        Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: widget.groupMember?.userId)),
         Padding(padding: EdgeInsets.only(top: 4),
           child: Text(widget.groupMember?.name ?? "", style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),),
         Text(widget.groupMember?.officerTitle ?? "", style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),),
       ],),
     );
-  }
-
-  void _loadProfilePicture() {
-    String? memberAccountId = widget.groupMember?.userId;
-    if (StringUtils.isNotEmpty(memberAccountId)) {
-      _setProfilePictureLoading(true);
-      Content().loadSmallUserProfileImage(accountId: memberAccountId).then((imageBytes) {
-        _profilePictureBytes = imageBytes;
-        _setProfilePictureLoading(false);
-      });
-    }
-  }
-
-  void _setProfilePictureLoading(bool loading) {
-    if (_pictureLoading != loading) {
-      _pictureLoading = loading;
-      if (mounted) {
-        setState(() {});
-      }
-    }
   }
 }

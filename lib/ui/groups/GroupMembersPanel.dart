@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -411,15 +408,6 @@ class _PendingMemberCard extends StatefulWidget {
 }
 
 class _PendingMemberCardState extends State<_PendingMemberCard> {
-  
-  Uint8List? _profilePictureBytes;
-  bool _pictureLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProfilePicture();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -434,22 +422,7 @@ class _PendingMemberCardState extends State<_PendingMemberCard> {
         children: <Widget>[
           ClipRRect(
               borderRadius: BorderRadius.circular(65),
-              child: Container(
-                  width: 65,
-                  height: 65,
-                  child: Stack(alignment: Alignment.center, children: [
-                    ((_profilePictureBytes != null)
-                        ? Container(
-                            decoration:
-                                BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: Image.memory(_profilePictureBytes!).image)))
-                        : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
-                    Visibility(
-                        visible: _pictureLoading,
-                        child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2)))
-                  ]))),
+              child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: widget.member?.userId))),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(left: 11),
@@ -488,26 +461,6 @@ class _PendingMemberCardState extends State<_PendingMemberCard> {
       ),
     );
   }
-
-  void _loadProfilePicture() {
-    String? memberAccountId = widget.member?.userId;
-    if (StringUtils.isNotEmpty(memberAccountId)) {
-      _setProfilePictureLoading(true);
-      Content().loadSmallUserProfileImage(accountId: memberAccountId).then((imageBytes) {
-        _profilePictureBytes = imageBytes;
-        _setProfilePictureLoading(false);
-      });
-    }
-  }
-
-  void _setProfilePictureLoading(bool loading) {
-    if (_pictureLoading != loading) {
-      _pictureLoading = loading;
-      if (mounted) {
-        setState(() {});
-      }
-    }
-  }
 }
 
 class _GroupMemberCard extends StatefulWidget {
@@ -520,15 +473,6 @@ class _GroupMemberCard extends StatefulWidget {
 }
 
 class _GroupMemberCardState extends State<_GroupMemberCard> {
-
-  Uint8List? _profileImageBytes;
-  bool _pictureLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProfilePicture();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -545,22 +489,7 @@ class _GroupMemberCardState extends State<_GroupMemberCard> {
           children: <Widget>[
             ClipRRect(
                 borderRadius: BorderRadius.circular(65),
-                child: Container(
-                    width: 65,
-                    height: 65,
-                    child: Stack(alignment: Alignment.center, children: [
-                      ((_profileImageBytes != null)
-                          ? Container(
-                              decoration:
-                                  BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: Image.memory(_profileImageBytes!).image)))
-                          : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
-                      Visibility(
-                          visible: (_pictureLoading),
-                          child: SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2)))
-                    ]))),
+                child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: widget.member?.userId))),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 11),
@@ -616,26 +545,6 @@ class _GroupMemberCardState extends State<_GroupMemberCard> {
     if (_isAdmin) {
       Analytics().logSelect(target: "Member Detail");
       await Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberPanel(group: widget.group, member: widget.member)));
-    }
-  }
-
-  void _loadProfilePicture() {
-    String? memberAccountId = widget.member?.userId;
-    if (StringUtils.isNotEmpty(memberAccountId)) {
-      _setProfilePictureLoading(true);
-      Content().loadSmallUserProfileImage(accountId: memberAccountId).then((imageBytes) {
-        _profileImageBytes = imageBytes;
-        _setProfilePictureLoading(false);
-      });
-    }
-  }
-
-  void _setProfilePictureLoading(bool loading) {
-    if (_pictureLoading != loading) {
-      _pictureLoading = loading;
-      if (mounted) {
-        setState(() {});
-      }
     }
   }
 

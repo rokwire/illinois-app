@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:typed_data';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -2795,5 +2797,64 @@ class _GroupPollCardState extends State<GroupPollCard>{
 
   int get _groupMembersCount {
     return widget.group?.membersCount ?? 0;
+  }
+}
+
+/////////////////////////////////////
+// GroupMemberProfileImage
+
+class GroupMemberProfileImage extends StatefulWidget {
+  final String? userId;
+
+  GroupMemberProfileImage({this.userId});
+
+  @override
+  State<GroupMemberProfileImage> createState() => _GroupMemberProfileImageState();
+}
+
+class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> {
+  Uint8List? _imageBytes;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Image profileImage = (_imageBytes != null)
+        ? Image.memory(_imageBytes!)
+        : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true);
+
+    return Stack(alignment: Alignment.center, children: [
+      Container(
+          decoration: BoxDecoration(
+              color: Colors.green, shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: profileImage.image))),
+      Visibility(
+          visible: _loading,
+          child:
+              SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2)))
+    ]);
+  }
+
+  void _loadImage() {
+    if (StringUtils.isNotEmpty(widget.userId)) {
+      _setImageLoading(true);
+      Content().loadSmallUserProfileImage(accountId: widget.userId).then((imageBytes) {
+        _imageBytes = imageBytes;
+        _setImageLoading(false);
+      });
+    }
+  }
+
+  void _setImageLoading(bool loading) {
+    if (_loading != loading) {
+      _loading = loading;
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 }
