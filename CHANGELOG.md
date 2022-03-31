@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Semantics improvements: WalletPanel added hint for "View" buttons [#503](https://github.com/rokwire/illinois-app/issues/503).
+- Semantics improvements: HomeSaferWidget try fixing semantics id by replacing InkWell with GestureDetector [#1281](https://github.com/rokwire/illinois-app/issues/1281).
 
 ## [3.3.8] - 2022-03-30
 ### Added
