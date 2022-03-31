@@ -608,6 +608,7 @@ class _RoundedWidget extends StatelessWidget{
                     Semantics(explicitChildNodes: true, child:
                       _ViewButton(
                         label: Localization().getStringEx( "panel.wallet.button.view.title", "View"),
+                        hint: title,
                         onTap: onView,
                       )
                     ),
@@ -633,30 +634,37 @@ class _RoundedWidget extends StatelessWidget{
 class _ViewButton extends StatelessWidget{
 
   final String? label;
+  final String? hint;
   final void Function() onTap;
 
-  _ViewButton({required this.label, required this.onTap});
+  _ViewButton({required this.label, required this.onTap, this.hint});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: <Widget>[
-            Text(label!,
-              style: TextStyle(
-                color: Styles().colors!.fillColorPrimary,
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 16,
+    return
+      Semantics(
+        label: label,
+        hint: hint ?? "",
+        child: GestureDetector(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            children: <Widget>[
+              Text(label!,
+                semanticsLabel: "",
+                style: TextStyle(
+                  color: Styles().colors!.fillColorPrimary,
+                  fontFamily: Styles().fontFamilies!.bold,
+                  fontSize: 16,
+                ),
               ),
-            ),
-            Container(width: 10,),
-            Image.asset('images/chevron-right.png', excludeFromSemantics: true),
-          ],
+              Container(width: 10,),
+              Image.asset('images/chevron-right.png', excludeFromSemantics: true),
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 }
