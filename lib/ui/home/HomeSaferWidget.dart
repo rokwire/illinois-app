@@ -126,9 +126,10 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   Widget _buildCommandEntry({required String title, String? description, bool? loading, void Function()? onTap}) {
-    return Semantics(label: title, container: true, button: true, child:
-      InkWell(onTap: onTap, child:
-        Container(
+    return Semantics(label: title, hint: description, button: true, child:
+      GestureDetector(
+        onTap: onTap,
+        child: Container(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -144,7 +145,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
             ],),
             StringUtils.isNotEmpty(description)
               ? Padding(padding: EdgeInsets.only(top: 5), child:
-                  Text(description!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface),),
+                  Text(description!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), semanticsLabel: "",),
                 )
               : Container(),
         ],),),),
