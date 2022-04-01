@@ -512,7 +512,8 @@
     "panel.onboarding.base.not_now.hint":"",
     "panel.onboarding.base.not_now.title":"Not right now",
 
-    "panel.onboarding2.video.button.title": "Skip",
+    "panel.onboarding2.video.button.skip.title": "Skip",
+    "panel.onboarding2.video.button.continue.title": "Continue",
     "panel.onboarding2.video.missing.msg": "Missing video",
     
     "panel.onboarding2.roles.label.title": "Who Are You?",
