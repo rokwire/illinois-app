@@ -513,7 +513,8 @@
 	"panel.onboarding.base.not_now.hint":"",
 	"panel.onboarding.base.not_now.title":"暂时不",
 
-    "panel.onboarding2.video.button.title": "跳過",
+    "panel.onboarding2.video.button.skip.title": "跳過",
+    "panel.onboarding2.video.button.continue.title": "繼續",
     "panel.onboarding2.video.missing.msg": "缺少視頻",
 
 	"panel.onboarding2.roles.label.title": "Who Are You?",

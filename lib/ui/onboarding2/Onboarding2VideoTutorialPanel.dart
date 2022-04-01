@@ -38,6 +38,7 @@ class Onboarding2VideoTutorialPanel extends StatefulWidget {
 class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorialPanel> implements NotificationsListener {
   VideoPlayerController? _controller;
   Future<void>? _initializeVideoPlayerFuture;
+  bool _isVideoEnded = false;
   List<DeviceOrientation>? _allowedOrientations;
 
   @override
@@ -60,8 +61,8 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     String? tutorialUrl = Config().videoTutorialUrl;
     if (StringUtils.isNotEmpty(tutorialUrl)) {
       _controller = VideoPlayerController.network(tutorialUrl!);
-      _initializeVideoPlayerFuture =
-          _controller!.initialize().then((_) => _controller!.play()); // Automatically play video after initialization
+      _controller!.addListener(_checkVideoEnded);
+      _initializeVideoPlayerFuture = _controller!.initialize().then((_) => _controller!.play()); // Automatically play video after initialization
     }
   }
 
@@ -86,7 +87,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
 
   @override
   Widget build(BuildContext context) {
-    double buttonWidth = MediaQuery.of(context).textScaleFactor * 100;
+    double buttonWidth = MediaQuery.of(context).textScaleFactor * 120;
     return Scaffold(
         backgroundColor: Styles().colors!.blackTransparent06,
         body: SafeArea(
@@ -98,7 +99,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
             ]),
             Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: SizedBox(width: buttonWidth, child: RoundedButton(label: Localization().getStringEx('panel.onboarding2.video.button.title', 'Skip'), fontSize: 16, onTap: _onTapSkip)))
+                child: SizedBox(width: buttonWidth, child: RoundedButton(label: _buttonLabel, fontSize: 16, onTap: _onTapSkip)))
           ])
         ])));
   }
@@ -129,6 +130,26 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   void _onTapSkip() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel()));
   }
+
+  void _checkVideoEnded() {
+    if (_controller != null) {
+      bool videoEnded = (_controller!.value.position == _controller!.value.duration);
+      if (_isVideoEnded != videoEnded) {
+        _isVideoEnded = videoEnded;
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    }
+  }
+
+  String get _buttonLabel {
+    return _isVideoEnded
+        ? Localization().getStringEx('panel.onboarding2.video.button.continue.title', 'Continue')
+        : Localization().getStringEx('panel.onboarding2.video.button.skip.title', 'Skip');
+  }
+
+  // NotificationsListener
 
   @override
   void onNotification(String name, param) {
@@ -164,8 +185,8 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
         if (isCurrent) {
           // Enable landscape orientations when the panel is visible
           _enableLandscapeOrientations();
-          // Play again video when the panel is visible
-          if (!_controller!.value.isPlaying) {
+          // Play again video when the panel is visible if it has not already ended
+          if (!_controller!.value.isPlaying && !_isVideoEnded) {
             _controller!.play();
           }
         }
