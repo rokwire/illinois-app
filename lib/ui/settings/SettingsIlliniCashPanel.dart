@@ -160,7 +160,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Stack(
+                  Expanded(child: Stack(
                     children: <Widget>[
                       VerticalTitleValueSection(
                         title: Localization().getStringEx(
@@ -177,7 +177,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                         ],
                       ) : Container(),
                     ],
-                  ),
+                  )),
                    !Auth2().isOidcLoggedIn ? Expanded(
                     child: Padding(
                       padding: EdgeInsets.only(left: 20, right: 20, bottom: 16),
