@@ -516,14 +516,24 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onTapEdit(){
     Analytics().logSelect(target: 'Edit Event');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: _event, onEditTap: (BuildContext context, Event event) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: _event, onEditTap: (BuildContext context, Event event, List<Member>? selection) {
       Groups().updateGroupEvents(event).then((String? id) {
         if (StringUtils.isNotEmpty(id)) {
-          Navigator.pop(context);
+          Groups().updateLinkedEventMembers(groupId: widget.groupId,eventId: event.id, toMembers: selection).then((success){
+              if(success){
+                Navigator.pop(context);
+              } else {
+                AppAlert.showDialogResult(context, "Unable to update event members");
+              }
+          }).catchError((_){
+            AppAlert.showDialogResult(context, "Error Occurred while updating event members");
+          });
         }
         else {
           AppAlert.showDialogResult(context, "Unable to update event");
         }
+      }).catchError((_){
+        AppAlert.showDialogResult(context, "Error Occurred while updating event");
       });
     },)));
   }

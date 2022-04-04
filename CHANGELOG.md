@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Change "log in" to "sign in" [#1514](https://github.com/rokwire/illinois-app/issues/1514).
+- Fixed Group event update members selection [#1519](https://github.com/rokwire/illinois-app/issues/1519).
 
 ## [3.3.9] - 2022-04-01
 ### Changed

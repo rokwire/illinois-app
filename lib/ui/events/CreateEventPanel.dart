@@ -103,6 +103,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     _populateDefaultValues();
     _loadEventCategories();
     _prepopulateWithUpdateEvent();
+    _initGroupValues();
     super.initState();
   }
 
@@ -1538,6 +1539,18 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     }
   }
 
+  void _initGroupValues(){
+    if(widget.group!=null && widget.editEvent!=null) {
+      Groups().loadGroupEventMemberSelection(widget.group?.id, widget.editEvent?.id).then((memberSelection) {
+        if (mounted) {
+          setState(() {
+            _groupMembersSelection = memberSelection;
+          });
+        }
+      });
+    }
+  }
+
   void _loadEventCategories() async {
     _setLoading(true);
     _eventCategories = await Events().loadEventCategories();
@@ -1903,7 +1916,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapUpdate() {
-    widget.onEditTap!(context, _populateEventWithData(widget.editEvent!));
+    widget.onEditTap!(context, _populateEventWithData(widget.editEvent!), _groupMembersSelection);
   }
   
   Event _populateEventWithData(Event event){
