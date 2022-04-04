@@ -556,14 +556,24 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   void _onEditEventTap(BuildContext context){
     Analytics().logSelect(target: "Update Event");
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event, onEditTap: (BuildContext context, Event event) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event, onEditTap: (BuildContext context, Event event, List<Member>? selection) {
       Groups().updateGroupEvents(event).then((String? id) {
         if (StringUtils.isNotEmpty(id)) {
-          Navigator.pop(context);
+          Groups().updateLinkedEventMembers(groupId: widget.group?.id,eventId: event.id, toMembers: selection).then((success){
+            if(success){
+              Navigator.pop(context);
+            } else {
+              AppAlert.showDialogResult(context, "Unable to update event members");
+            }
+          }).catchError((_){
+            AppAlert.showDialogResult(context, "Error Occurred while updating event members");
+          });
         }
         else {
           AppAlert.showDialogResult(context, "Unable to update event");
         }
+      }).catchError((_){
+        AppAlert.showDialogResult(context, "Error Occurred while updating event");
       });
     })));
   }
@@ -1765,17 +1775,20 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     if(widget.allMembers!=null){
       _allMembersAllowedToPost = widget.allMembers;
     } else if(widget.groupId!=null) {
-      _loadGroupMembers();
+      _loadAllMembersAllowedToPost();
     }
-
   }
 
-  void _loadGroupMembers(){
+  void _loadAllMembersAllowedToPost(){
     Groups().loadGroup(widget.groupId).then((Group? group) {
       if (mounted && (group != null)) {
         setState(() {
           if((group.members?.length ?? 0) >0) {
             _allMembersAllowedToPost = group.members!.where((member) => _isMemberAllowedToReceivePost(member)).toList();
+            if((_allMembersAllowedToPost?.isNotEmpty ?? false) && (widget.selectedMembers?.isNotEmpty ?? false)){
+              //If we have successfully loaded the group data -> refresh initial selection
+               _onSelectionChanged(GroupMembersSelectionWidget.constructUpdatedMembersList(upToDateMembers: _allMembersAllowedToPost, selection: widget.selectedMembers)); //Notify Parent widget with the updated values
+            }
           }
         });
       }
