@@ -184,7 +184,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                       child: RoundedButton(
                         label: Localization().getStringEx(
                             'panel.settings.illini_cash.button.log_in.title',
-                            'Log in to view'),
+                            'Sign in to View'),
                         hint: Localization().getStringEx(
                             'panel.settings.illini_cash.button.log_in.hint', ''),
                         backgroundColor: Styles().colors!.white,

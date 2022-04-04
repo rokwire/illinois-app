@@ -213,7 +213,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
 
   Widget _buildLoginPhoneOrEmailButton() {
     return RoundedButton(
-        label: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.title', 'Login By Email or Phone'),
+        label: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.title', 'Sign In by Email or Phone'),
         hint: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.hint', ''),
         backgroundColor: Styles().colors!.surface,
         fontSize: 16.0,

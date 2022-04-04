@@ -221,7 +221,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
         padding: EdgeInsets.only(left: 20, right: 20, bottom: 16),
         child: RoundedButton(
           label: Localization().getStringEx(
-              "panel.settings.meal_plan.button.login_to_view_meal_plan.text", "Log in to view your Meal Plan"),
+              "panel.settings.meal_plan.button.login_to_view_meal_plan.text", "Sign in to View Your Meal Plan"),
           hint: Localization().getStringEx(
               'panel.settings.meal_plan.button.login_to_view_meal_plan.hint', ''),
           backgroundColor: Styles().colors!.white,

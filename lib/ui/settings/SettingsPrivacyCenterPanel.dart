@@ -181,7 +181,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
             ),
           ),
           Container(height: 4,),
-          Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Log in with your NetID or Telephone number to get the full Illinois experience."),
+          Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Sign in with your NetID or Telephone number to get the full Illinois experience."),
             style: TextStyle(
                 fontFamily: Styles().fontFamilies!.regular,
                 fontSize: 16,

@@ -410,7 +410,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           crossAxisAlignment: CrossAxisAlignment.center,
           children:[
           Container(height: 100,),
-          Text(Localization().getStringEx("panel.polls_home.text.login_description", 'You need to be logged in to create and share polls with people near you.'),
+          Text(Localization().getStringEx("panel.polls_home.text.login_description", 'You need to be signed in to create and share polls with people near you.'),
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
@@ -433,7 +433,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     }
     else if (_couldCreatePoll) {
       return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
-          RoundedButton(label:Localization().getStringEx("panel.polls_home.text.login","Login"),
+          RoundedButton(label:Localization().getStringEx("panel.polls_home.text.login","Sign in"),
             textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
             backgroundColor: Styles().colors!.white,
