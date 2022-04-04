@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.3.10] - 2022-04-04
 ### Fixed
 - Change "log in" to "sign in" [#1514](https://github.com/rokwire/illinois-app/issues/1514).
 - Fixed Group event update members selection [#1519](https://github.com/rokwire/illinois-app/issues/1519).
