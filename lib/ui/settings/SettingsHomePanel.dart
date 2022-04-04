@@ -276,7 +276,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                       style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_5",
-                          "? Log in with your NetID to see Illinois information specific to you, like your Illini Cash and meal plan."))
+                          "? Sign in with your NetID to see Illinois information specific to you, like your Illini Cash and meal plan."))
                 ],
               ),
             )),);
