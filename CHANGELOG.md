@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.3.11] - 2022-04-05
 ###Fixed
 - Fixed missing Group Input box for Search field of select member [#1513](https://github.com/rokwire/illinois-app/issues/1513).
 
