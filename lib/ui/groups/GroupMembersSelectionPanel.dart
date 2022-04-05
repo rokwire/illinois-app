@@ -286,7 +286,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
 
   Widget _buildSearchWidget() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 0),
       color: Styles().colors!.surface,
       height: 48,
       child: Row(
@@ -304,9 +304,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                   cursorColor: Styles().colors!.fillColorSecondary,
                   keyboardType: TextInputType.text,
                   style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                  ),
+                  decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)))
                 )),
           ),
           Semantics(
