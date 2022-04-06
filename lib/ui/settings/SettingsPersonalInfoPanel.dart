@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -42,7 +44,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   String? _initialEmail;
   String? _initialPhone;
 
-  MemoryImage? _profileImage;
+  Uint8List? _profileImageBytes;
 
   bool _isSaving = false;
   bool _profilePicProcessing = false;
@@ -383,58 +385,66 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     late Widget contentWidget;
     if (_profilePicProcessing) {
       contentWidget = Center(child: CircularProgressIndicator());
-    } else if (_profileImage != null) {
+    } else {
+      Image profileImage = (_profileImageBytes != null)
+          ? Image.memory(_profileImageBytes!)
+          : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true);
       contentWidget = Padding(
           padding: EdgeInsets.only(bottom: 25),
-          child: Column(children: [
+          child: Stack(alignment: Alignment.center, children: [
             Container(
               width: 240,
               height: 240,
               child: Container(
                   decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.white, image: DecorationImage(fit: BoxFit.cover, image: _profileImage!))),
+                      shape: BoxShape.circle, color: Colors.white, image: DecorationImage(fit: BoxFit.cover, image: profileImage.image))),
             ),
-            Padding(
-                padding: EdgeInsets.only(top: 16),
-                child: Row(children: [
-                  Expanded(
-                      child: RoundedButton(
-                          label: Localization().getStringEx("panel.profile_info.button.picture.edit.title", "Edit"),
-                          hint: Localization().getStringEx("panel.profile_info.button.picture.edit.hint", ""),
-                          backgroundColor: Styles().colors!.background,
-                          fontSize: 16.0,
-                          textColor: Styles().colors!.fillColorPrimary,
-                          borderColor: Styles().colors!.fillColorSecondary,
-                          onTap: _onTapEditPicture)),
-                  Container(width: 16),
-                  Expanded(
-                      child: RoundedButton(
-                          label: Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"),
-                          hint: Localization().getStringEx("panel.profile_info.button.picture.delete.hint", ""),
-                          backgroundColor: Styles().colors!.background,
-                          fontSize: 16.0,
-                          textColor: Styles().colors!.fillColorPrimary,
-                          borderColor: Styles().colors!.fillColorSecondary,
-                          onTap: _onTapDeletePicture))
-                ]))
+            _buildProfileImageButtons()
           ]));
+    }
+    return Padding(padding: EdgeInsets.only(top: 25), child: contentWidget);
+  }
+
+  Widget _buildProfileImageButtons() {
+    List<Widget> buttonWidgets = [];
+    if (_profileImageBytes != null) {
+      buttonWidgets.add(RoundedButton(
+          label: Localization().getStringEx("panel.profile_info.button.picture.edit.title", "Edit"),
+          hint: Localization().getStringEx("panel.profile_info.button.picture.edit.hint", ""),
+          backgroundColor: Styles().colors!.whiteTransparent06,
+          fontSize: 16.0,
+          contentWeight: 0.5,
+          textColor: Styles().colors!.fillColorPrimary,
+          borderColor: Styles().colors!.fillColorSecondary,
+          onTap: _onTapEditPicture));
+      buttonWidgets.add(Container(height: 16));
+      buttonWidgets.add(RoundedButton(
+          label: Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"),
+          hint: Localization().getStringEx("panel.profile_info.button.picture.delete.hint", ""),
+          backgroundColor: Styles().colors!.whiteTransparent06,
+          fontSize: 16.0,
+          contentWeight: 0.5,
+          textColor: Styles().colors!.fillColorPrimary,
+          borderColor: Styles().colors!.fillColorSecondary,
+          onTap: _onTapDeletePicture));
     } else {
-      contentWidget = RoundedButton(
-          label: Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Profile Picture"),
+      buttonWidgets.add(RoundedButton(
+          label: Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Picture"),
           hint: Localization().getStringEx("panel.profile_info.button.profile_picture.hint", ""),
           backgroundColor: Styles().colors!.background,
           fontSize: 16.0,
+          contentWeight: 0.6,
           textColor: Styles().colors!.fillColorPrimary,
           borderColor: Styles().colors!.fillColorSecondary,
-          onTap: _onTapProfilePicture);
+          onTap: _onTapProfilePicture));
     }
-    return Padding(padding: EdgeInsets.only(top: 25), child: contentWidget);
+    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: buttonWidgets);
   }
 
   void _loadUserProfilePicture() {
     _setProfilePicProcessing(true);
     Content().loadDefaultUserProfileImage().then((imageBytes) {
-      _profileImage = imageBytes != null ? MemoryImage(imageBytes) : null;
+      _profileImageBytes = imageBytes;
       _setProfilePicProcessing(false);
     });
   }
@@ -577,7 +587,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
           _setProfilePicProcessing(false);
           break;
         case ImagesResultType.succeeded:
-          _profileImage = null;
+          _profileImageBytes = null;
           _setProfilePicProcessing(false);
           break;
         default:

@@ -48,6 +48,7 @@ import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -2841,13 +2842,16 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> {
         ? Image.memory(_imageBytes!)
         : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true);
 
-    return Stack(alignment: Alignment.center, children: [
-      Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: profileImage.image))),
-      Visibility(
-          visible: _loading,
-          child:
-              SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2)))
-    ]);
+    return GestureDetector(
+        onTap: _onImageTap,
+        child: Stack(alignment: Alignment.center, children: [
+          Container(
+              decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: profileImage.image))),
+          Visibility(
+              visible: _loading,
+              child: SizedBox(
+                  width: 20, height: 20, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2)))
+        ]));
   }
 
   void _loadImage() {
@@ -2857,6 +2861,21 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> {
         _imageBytes = imageBytes;
         _setImageLoading(false);
       });
+    }
+  }
+
+  void _onImageTap() {
+    Analytics().logSelect(target: "Group Member Image");
+    if (_imageBytes != null) {
+      String? imageUrl = Content().getUserProfileImage(accountId: widget.userId, type: UserProfileImageType.defaultType);
+      if (StringUtils.isNotEmpty(imageUrl)) {
+        Navigator.push(
+            context,
+            PageRouteBuilder(
+                opaque: false,
+                pageBuilder: (context, _, __) =>
+                    ModalImagePanel(imageUrl: imageUrl!, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
+      }
     }
   }
 
