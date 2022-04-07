@@ -1012,6 +1012,7 @@
 	"panel.laundry_detail.label.dryers":"烘干机",
 	"panel.laundry_detail.label.dryer":"烘干机",
 	"panel.laundry_detail.available.format":"%s 可用",
+	"panel.laundry_detail.available.undefined":"未知",
 
 	"panel.settings.home.settings.header":"设置",
 	"panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",

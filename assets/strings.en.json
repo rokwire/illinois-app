@@ -1012,6 +1012,7 @@
     "panel.laundry_detail.label.dryers":"DRYERS",
     "panel.laundry_detail.label.dryer":"DRYER",
     "panel.laundry_detail.available.format":"%s available",
+    "panel.laundry_detail.available.undefined":"unknown",
 
     "panel.settings.home.settings.header":"Settings",
     "panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",

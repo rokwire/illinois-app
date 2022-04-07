@@ -165,7 +165,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   void _refreshRooms() {
-    Laundries().getRoomData().then((List<LaundryRoom>? laundryRooms) {
+    Laundries().loadRooms().then((List<LaundryRoom>? laundryRooms) {
       setState(() {
         _rooms = laundryRooms;
       });
@@ -387,7 +387,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   void _loadRooms() {
     _setLoading(true);
     Laundries()
-        .getRoomData()
+        .loadRooms()
         .then((laundryRooms) => _onRoomsLoaded(laundryRooms));
   }
 

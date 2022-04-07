@@ -125,23 +125,74 @@ class LaundryRoomAppliance {
   String? avgCycleTime;
   String? timeRemaining;
 
-  LaundryRoomAppliance(
-      {this.applianceDescKey,
-      this.lrmStatus,
-      this.applianceType,
-      this.status,
-      this.outOfService,
-      this.label,
-      this.avgCycleTime,
-      this.timeRemaining});
+  LaundryRoomAppliance({
+    this.applianceDescKey,
+    this.lrmStatus,
+    this.applianceType,
+    this.status,
+    this.outOfService,
+    this.label,
+    this.avgCycleTime,
+    this.timeRemaining});
+
+  static LaundryRoomAppliance? fromXml(XmlElement? xml) {
+    return (xml != null) ? LaundryRoomAppliance(
+      applianceDescKey: XmlUtils.childText(xml, "appliance_desc_key"),
+      lrmStatus: XmlUtils.childText(xml, "lrm_status"),
+      applianceType: XmlUtils.childText(xml, "appliance_type"),
+      status: XmlUtils.childText(xml, "status"),
+      outOfService: XmlUtils.childText(xml, "out_of_service"),
+      label: XmlUtils.childText(xml, "label"),
+      avgCycleTime: XmlUtils.childText(xml, "avg_cycle_time"),
+      timeRemaining: XmlUtils.childText(xml, "time_remaining"),
+    ) : null;
+  }
+
+  static List<LaundryRoomAppliance>? listFromXml(Iterable<XmlElement>? xmlList) {
+    List<LaundryRoomAppliance>? resultList;
+    if (xmlList != null) {
+      resultList = [];
+      for (XmlElement xml in xmlList) {
+        ListUtils.add(resultList, LaundryRoomAppliance.fromXml(xml));
+      }
+    }
+    return resultList;
+  }
 }
 
 class LaundryRoomAvailability {
-  String? location;
-  String? availableWashers;
-  String? availableDryers;
+  String? roomId;
+  String? _availableWashers;
+  String? _availableDryers;
 
-  LaundryRoomAvailability({this.location, this.availableWashers, this.availableDryers});
+  static const String _undefined = "undefined";
+
+  LaundryRoomAvailability({this.roomId, String? availableWashers, String? availableDryers}) :
+    _availableWashers = availableWashers,
+    _availableDryers = availableDryers;
+
+  static LaundryRoomAvailability? fromXml(XmlElement? xml) {
+    return (xml != null) ? LaundryRoomAvailability(
+      roomId: XmlUtils.childText(xml, "location"),
+      availableWashers: XmlUtils.childText(xml, "available_washers"),
+      availableDryers: XmlUtils.childText(xml, "available_dryers"),
+    ) : null;
+  }
+
+  static LaundryRoomAvailability? fromXmlList(Iterable<XmlElement>? xmlList, { String? roomId } ) {
+    if (xmlList != null) {
+      for (XmlElement xml in xmlList) {
+        String? xmlRoomId = XmlUtils.childText(xml, "location");
+        if ((xmlRoomId != null) && (xmlRoomId == roomId)) {
+          return LaundryRoomAvailability.fromXml(xml);
+        }
+      }
+    }
+    return null;
+  }
+
+  String? get availableWashers => (_availableWashers != _undefined) ? _availableWashers : null;
+  String? get availableDryers => (_availableDryers != _undefined) ? _availableDryers : null;
 }
 
 // LaundryRoomStatus

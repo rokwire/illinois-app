@@ -36,7 +36,7 @@ class Laundries /* with Service */ {
 
   Laundries._internal();
 
-  Future<List<LaundryRoom>?> getRoomData() async {
+  Future<List<LaundryRoom>?> loadRooms() async {
     String? roomDataUrl = (Config().laundryHostUrl != null) ? "${Config().laundryHostUrl}/school?api_key=${Config().laundryApiKey}&method=getRoomData" : null;
     if (roomDataUrl != null) {
       Response? response = await Network().get(roomDataUrl);
@@ -52,83 +52,36 @@ class Laundries /* with Service */ {
     return null;
   }
 
-  Future<LaundryRoomAvailability?> getNumAvailable(String? laundryLocation) async {
-    if (StringUtils.isEmpty(laundryLocation)) {
-      return null;
-    }
-    final availabilityUrl = (Config().laundryHostUrl != null) ? "${Config().laundryHostUrl}/school?api_key=${Config().laundryApiKey}&method=getNumAvailable" : null;
-    final response = await Network().get(availabilityUrl);
-    String? responseBody = response?.body;
-    if (response?.statusCode == 200) {
-      final String undefinedValue = 'undefined';
-      final String zeroValue = '0';
-      XmlDocument roomsXmlResponse = XmlDocument.parse(responseBody!);
-      var laundryRoomsXml = roomsXmlResponse.findAllElements('laundryroom');
-      for (XmlElement item in laundryRoomsXml) {
-        String? location = _getValueFromXmlItem(item.findElements("location"));
-        if (laundryLocation == location) {
-          String? availableWashers = _getValueFromXmlItem(item.findElements("available_washers"));
-          String? availableDryers = _getValueFromXmlItem(item.findElements("available_dryers"));
-          if (undefinedValue == availableWashers) {
-            availableWashers = zeroValue;
-          }
-          if (undefinedValue == availableDryers) {
-            availableDryers = zeroValue;
-          }
-          return LaundryRoomAvailability(location: location, availableWashers: availableWashers, availableDryers: availableDryers);
-        } else {
-          continue;
-        }
+  Future<LaundryRoomAvailability?> loadRoomAvailability(String? laundryRoomId) async {
+    String? availabilityUrl = (Config().laundryHostUrl != null) ?  "${Config().laundryHostUrl}/school?api_key=${Config().laundryApiKey}&method=getNumAvailable" : null;
+    if (availabilityUrl != null) {
+      Response? response = await Network().get(availabilityUrl);
+      if (response?.statusCode == 200) {
+        XmlDocument? responseXml = XmlUtils.parse(response?.body);
+        Iterable<XmlElement>? xmlList = XmlUtils.children(XmlUtils.child(responseXml, "laundry_rooms"), "laundryroom");
+        return ((xmlList != null) && xmlList.isNotEmpty) ? LaundryRoomAvailability.fromXmlList(xmlList, roomId: laundryRoomId) : null;
       }
-    } else {
-      Log.e('Failed to load laundry room data:');
-      Log.e(responseBody);
+      else {
+        Log.e('Failed to load laundry room data:\n${response?.body}');
+      }
     }
     return null;
   }
 
-  Future<List<LaundryRoomAppliance>?> getAppliances(
-      String? laundryRoomLocation) async {
-    if (StringUtils.isEmpty(laundryRoomLocation)) {
-      return null;
+  Future<List<LaundryRoomAppliance>?> loadRoomAppliances(String? laundryRoomId) async {
+    String? appliancesUrl = ((Config().laundryHostUrl != null) && (laundryRoomId != null)) ? "${Config().laundryHostUrl}/room?api_key=${Config().laundryApiKey}&location=$laundryRoomId&method=getAppliances" : null;
+    if (appliancesUrl != null) {
+      Response? response = await Network().get(appliancesUrl);
+      if (response?.statusCode == 200) {
+        XmlDocument? responseXml = XmlUtils.parse(response?.body);
+        Iterable<XmlElement>? xmlList = XmlUtils.children(XmlUtils.child(XmlUtils.child(responseXml, "laundry_room"), "appliances"), "appliance");
+        return LaundryRoomAppliance.listFromXml(xmlList);
+      }
+      else {
+        Log.e('Failed to load laundry room appliances:\n${response?.body}');
+      }
     }
-    List<LaundryRoomAppliance>? laundryRoomAppliances;
-    final appliancesUrl = (Config().laundryHostUrl != null) ?  "${Config().laundryHostUrl}/room?api_key=${Config().laundryApiKey}&method=getAppliances&location=$laundryRoomLocation" : null;
-    final response = await Network().get(appliancesUrl);
-    String? responseBody = response?.body;
-    if (response?.statusCode == 200) {
-      XmlDocument roomsXmlResponse = XmlDocument.parse(responseBody!);
-      var appliancesXml = roomsXmlResponse.findAllElements('appliance');
-      laundryRoomAppliances = [];
-      appliancesXml.map((XmlElement item) {
-        String? applianceDescKey =
-            _getValueFromXmlItem(item.findElements("appliance_desc_key"));
-        String? lrmStatus = _getValueFromXmlItem(item.findElements("lrm_status"));
-        String? applianceType =
-            _getValueFromXmlItem(item.findElements("appliance_type"));
-        String? status = _getValueFromXmlItem(item.findElements("status"));
-        String? outOfService =
-            _getValueFromXmlItem(item.findElements("out_of_service"));
-        String? label = _getValueFromXmlItem(item.findElements("label"));
-        String? avgCycleTime =
-            _getValueFromXmlItem(item.findElements("avg_cycle_time"));
-        String? timeRemaining =
-            _getValueFromXmlItem(item.findElements("time_remaining"));
-        laundryRoomAppliances!.add(LaundryRoomAppliance(
-            applianceDescKey: applianceDescKey,
-            lrmStatus: lrmStatus,
-            applianceType: applianceType,
-            status: status,
-            outOfService: outOfService,
-            label: label,
-            avgCycleTime: avgCycleTime,
-            timeRemaining: timeRemaining));
-      }).toList();
-    } else {
-      Log.e('Failed to load laundry room appliances:');
-      Log.e(responseBody);
-    }
-    return laundryRoomAppliances;
+    return null;
   }
 
   Map<String, ExploreLocation>? get _laundryLocationMapping {
@@ -149,16 +102,5 @@ class Laundries /* with Service */ {
       }
     }
     return locationMapping;
-  }
-
-  String? _getValueFromXmlItem(Iterable<XmlElement> items) {
-    if (CollectionUtils.isEmpty(items)) {
-      return null;
-    }
-    var textValue;
-    items.map((XmlElement node) {
-      textValue = node.text;
-    }).toList();
-    return textValue;
   }
 }

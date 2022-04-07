@@ -1012,6 +1012,7 @@
     "panel.laundry_detail.label.dryers":"SECADORAS",
     "panel.laundry_detail.label.dryer":"SECADORA",
     "panel.laundry_detail.available.format":"%s disponible",
+    "panel.laundry_detail.available.undefined":"desconocida",
 
     "panel.settings.home.settings.header":"Configuración",
     "panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",

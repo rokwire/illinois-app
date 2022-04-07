@@ -81,8 +81,12 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
       );
     }
 
-    String? washersAvailable = (_laundryRoomAvailability?.availableWashers is String)  ? _laundryRoomAvailability?.availableWashers : '0';
-    String? dryersAvailable = (_laundryRoomAvailability?.availableDryers is String) ? _laundryRoomAvailability?.availableDryers : '0';
+    String? availableWashers = StringUtils.isNotEmpty(_laundryRoomAvailability?.availableWashers) ?
+      sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [_laundryRoomAvailability?.availableWashers]) : Localization().getStringEx("panel.laundry_detail.available.undefined", "unknown");
+    
+    String? availableDryers = StringUtils.isNotEmpty(_laundryRoomAvailability?.availableDryers) ?
+      sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [_laundryRoomAvailability?.availableDryers]) : Localization().getStringEx("panel.laundry_detail.available.undefined", "unknown");
+    
     bool isFavorite = Auth2().isFavorite(widget.room);
 
     return Scaffold(
@@ -202,7 +206,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                               letterSpacing: 1),
                                         ),
                                         Text(
-                                          sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [washersAvailable]),
+                                          availableWashers,
                                           style: TextStyle(
                                               color: Styles().colors!.textBackground,
                                               fontSize: 16,
@@ -232,7 +236,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                               letterSpacing: 1),
                                         ),
                                         Text(
-                                          sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [dryersAvailable]),
+                                          availableDryers,
                                           style: TextStyle(
                                               color: Styles().colors!.textBackground,
                                               fontSize: 16,
@@ -354,20 +358,26 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   void _load() {
-    Laundries().getNumAvailable(widget.room.id).then((roomAvailability) => _onAvailabilityLoaded(roomAvailability));
-    Laundries().getAppliances(widget.room.id).then((roomAppliances) => _onAppliancesLoaded(roomAppliances));
+    Laundries().loadRoomAvailability(widget.room.id).then((roomAvailability) => _onAvailabilityLoaded(roomAvailability));
+    Laundries().loadRoomAppliances(widget.room.id).then((roomAppliances) => _onAppliancesLoaded(roomAppliances));
   }
 
   void _onAvailabilityLoaded(LaundryRoomAvailability? availability) {
-    _laundryRoomAvailability = availability;
-    _availabilityLoaded = true;
-    setState(() {});
+    if (mounted) {
+      setState(() {
+        _laundryRoomAvailability = availability;
+        _availabilityLoaded = true;
+      });
+    }
   }
 
   void _onAppliancesLoaded(List<LaundryRoomAppliance>? appliances) {
-    _laundryRoomAppliances = appliances;
-    _appliancesLoaded = true;
-    setState(() {});
+    if (mounted) {
+      setState(() {
+        _laundryRoomAppliances = appliances;
+        _appliancesLoaded = true;
+      });
+    }
   }
 
   void _onTapViewMap() {
@@ -390,7 +400,9 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 }
