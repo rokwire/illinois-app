@@ -83,7 +83,6 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   Widget _buildRoomContentWidget() {
-
     return Stack(children: <Widget>[
       _mapAllowed ? MapWidget(onMapCreated: _onNativeMapCreated,) : Container(),
       Visibility(visible: _detailVisible, child:
@@ -106,15 +105,13 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   Widget _buildLoadingWidget() {
-    return Center(
-      child: CircularProgressIndicator(),
+    return Center(child:
+      CircularProgressIndicator(),
     );
   }
 
   PreferredSizeWidget _buildHeaderBar() {
-    return HeaderBar(
-      title: Localization().getStringEx("panel.laundry_detail.header.title", "Laundry"),
-    );
+    return HeaderBar(title: Localization().getStringEx("panel.laundry_detail.header.title", "Laundry"),);
   }
 
   Widget _buildLocationWidget() {
@@ -132,55 +129,26 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
       semanticText = sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location coordinates, Latitude:%s , Longitude:%s "'), [latitude,longitude]);
     }
 
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Visibility(
-          visible: StringUtils.isNotEmpty(locationText),
-          child:Semantics(label:semanticText, excludeSemantics: true,child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Image.asset('images/icon-location.png', excludeFromSemantics: true),
-                Padding(
-                  padding: EdgeInsets.only(right: 5),
-                ),
-                Flexible(
-                  child: Text(locationText,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies?.medium,
-                          fontSize: 16,
-                          color: Styles().colors?.textBackground)),
-                )
-              ],
-            ),
-          )
-        ),
-        GestureDetector(
-          onTap: _onTapViewMap,
-          child: Semantics(
-            label: Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map'),
-            hint: Localization().getStringEx('panel.laundry_detail.button.view_on_map.hint', ''),
-            excludeSemantics: true,
-            button:true,
-            child:Padding(
-            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 24),
-            child: Text(
-              Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map'),
-              style: TextStyle(
-                  color: Styles().colors?.fillColorPrimary,
-                  fontSize: 16,
-                  fontFamily: Styles().fontFamilies?.medium,
-                  decoration: TextDecoration.underline,
-                  decorationThickness: 1.17,
-                  decorationColor: Styles().colors?.fillColorSecondary),
-            ),
-          )),
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Visibility(visible: StringUtils.isNotEmpty(locationText), child:
+        Semantics(label:semanticText, excludeSemantics: true, child:
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+            Image.asset('images/icon-location.png', excludeFromSemantics: true),
+            Padding(padding: EdgeInsets.only(right: 5),),
+            Flexible(child:
+              Text(locationText, overflow: TextOverflow.ellipsis, maxLines: 2, style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground)),
+            )
+          ],),
         )
-      ],
-    );
+      ),
+      GestureDetector(onTap: _onTapViewMap, child:
+        Semantics(label: Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map'), hint: Localization().getStringEx('panel.laundry_detail.button.view_on_map.hint', ''), excludeSemantics: true, button:true, child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 5, horizontal: 24), child:
+            Text(Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map'), style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationThickness: 1.17, decorationColor: Styles().colors?.fillColorSecondary),),
+          ),
+        ),
+      ),
+    ],);
   }
 
   Widget _buildLaundryRoomCaptionSection() {
@@ -261,21 +229,22 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
     if (appliancesCount == 0) {
       return Container();
     }
-    return Padding(
-      padding: EdgeInsets.only(left: 16, right: 16, bottom: 48),
-      child: ListView.separated(
-          physics: NeverScrollableScrollPhysics(),
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 48), child:
+      ListView.separated(physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemBuilder: (context, index) {
-            LaundryRoomAppliance appliance = _laundryRoomAppliances![index];
-            return _LaundryRoomApplianceItem(appliance);
-          },
-          separatorBuilder: (context, index) => Container(
-                height: 1,
-                color: Styles().colors?.background,
-              ),
+          itemBuilder: _buildApplianceItem,
+          separatorBuilder: _buildApplianceSeparator,
           itemCount: appliancesCount),
     );
+  }
+
+  Widget _buildApplianceItem(BuildContext context, int index) {
+    LaundryRoomAppliance? appliance = (_laundryRoomAppliances != null) ? _laundryRoomAppliances![index] : null;
+    return (appliance != null) ? _LaundryRoomApplianceItem(appliance) : Container();
+  }
+
+  Widget _buildApplianceSeparator(BuildContext context, int index) {
+    return Container(height: 1, color: Styles().colors?.background,);
   }
 
   void _load() {
@@ -342,65 +311,34 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
   Widget build(BuildContext context) {
     String imageAssetPath = _getImageAssetPath(appliance.applianceType);
     String? deviceName = _getDeviceName(appliance.applianceType);
-    return Container(
-//      height: 46,
-      color: Colors.white,
-      child: Padding(
-        padding: EdgeInsets.all(12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Image.asset(imageAssetPath, semanticLabel: deviceName, excludeFromSemantics: true),
-            Padding(
-              padding: EdgeInsets.only(left: 12, right: 10),
-              child: Text(
-                appliance.label ?? '',
-                style: TextStyle(
-                    color: Styles().colors?.textBackground,
-                    fontSize: 16,
-                    fontFamily: Styles().fontFamilies?.regular),
-              ),
-            ),
-            Expanded(child:
-            Text(
-              appliance.status ?? '',
-              style: TextStyle(
-                  color: Styles().colors?.textBackground,
-                  fontSize: 16,
-                  fontFamily: Styles().fontFamilies?.regular),
-            ))
-          ],
-        ),
+    return Container(color: Colors.white, child:
+      Padding(padding: EdgeInsets.all(12), child:
+        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+          Image.asset(imageAssetPath, semanticLabel: deviceName, excludeFromSemantics: true),
+          Padding(padding: EdgeInsets.only(left: 12, right: 10), child:
+            Text(appliance.label ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),),
+          ),
+          Expanded(child:
+            Text(appliance.status ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),),
+          )
+        ],),
       ),
     );
   }
 
   String _getImageAssetPath(String? applianceType) {
-    String defaultAssetPath = 'images/icon-washer-small.png';
-    if (StringUtils.isEmpty(applianceType)) {
-      return defaultAssetPath;
-    }
     switch (applianceType) {
-      case 'WASHER':
-        return 'images/icon-washer-small.png';
-      case 'DRYER':
-        return 'images/icon-dryer-small.png';
-      default:
-        return defaultAssetPath;
+      case 'WASHER': return 'images/icon-washer-small.png';
+      case 'DRYER': return 'images/icon-dryer-small.png';
+      default: return 'images/icon-washer-small.png';
     }
   }
 
   String? _getDeviceName(String? applianceType) {
-    if (StringUtils.isEmpty(applianceType)) {
-      return Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER');
-    }
     switch (applianceType) {
-      case 'WASHER':
-        return Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER');
-      case 'DRYER':
-        return Localization().getStringEx('panel.laundry_detail.label.dryer', 'DRYER');
-      default:
-        return Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER');
+      case 'WASHER': return Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER');
+      case 'DRYER': return Localization().getStringEx('panel.laundry_detail.label.dryer', 'DRYER');
+      default: return Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER');
     }
   }
 }
