@@ -1,5 +1,6 @@
 // XmlUtils
 
+import 'package:flutter/foundation.dart';
 import 'package:xml/xml.dart';
 
 class XmlUtils {
@@ -8,6 +9,10 @@ class XmlUtils {
     try { return (xmlString != null) ? XmlDocument.parse(xmlString) : null; }
     catch(e) { print(e.toString()); }
     return null;
+  }
+
+  static Future<XmlDocument?> parseAsync(String? xmlString) async {
+    return (xmlString != null) ? compute(parse, xmlString) : null;
   }
 
   static Iterable<XmlElement>? children(XmlNode? xmlNode, String name, {String? namespace}) {

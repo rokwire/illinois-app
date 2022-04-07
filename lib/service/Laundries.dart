@@ -41,7 +41,7 @@ class Laundries /* with Service */ {
     if (roomDataUrl != null) {
       Response? response = await Network().get(roomDataUrl);
       if (response?.statusCode == 200) {
-        XmlDocument? responseXml = XmlUtils.parse(response?.body);
+        XmlDocument? responseXml = await XmlUtils.parseAsync(response?.body);
         Iterable<XmlElement>? xmlList = XmlUtils.children(XmlUtils.child(XmlUtils.child(responseXml, "school"), "laundry_rooms"), "laundryroom");
         return LaundryRoom.listFromXml(xmlList, locations: _laundryLocationMapping);
       }
@@ -57,7 +57,7 @@ class Laundries /* with Service */ {
     if (availabilityUrl != null) {
       Response? response = await Network().get(availabilityUrl);
       if (response?.statusCode == 200) {
-        XmlDocument? responseXml = XmlUtils.parse(response?.body);
+        XmlDocument? responseXml = await XmlUtils.parseAsync(response?.body);
         Iterable<XmlElement>? xmlList = XmlUtils.children(XmlUtils.child(responseXml, "laundry_rooms"), "laundryroom");
         return ((xmlList != null) && xmlList.isNotEmpty) ? LaundryRoomAvailability.fromXmlList(xmlList, roomId: laundryRoomId) : null;
       }
@@ -73,7 +73,7 @@ class Laundries /* with Service */ {
     if (appliancesUrl != null) {
       Response? response = await Network().get(appliancesUrl);
       if (response?.statusCode == 200) {
-        XmlDocument? responseXml = XmlUtils.parse(response?.body);
+        XmlDocument? responseXml = await XmlUtils.parseAsync(response?.body);
         Iterable<XmlElement>? xmlList = XmlUtils.children(XmlUtils.child(XmlUtils.child(responseXml, "laundry_room"), "appliances"), "appliance");
         return LaundryRoomAppliance.listFromXml(xmlList);
       }
