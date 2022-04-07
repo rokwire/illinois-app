@@ -105,7 +105,7 @@ class Config extends rokwire.Config {
   // Getters: Third Party Services
   String? get instagramHostUrl       => JsonUtils.stringValue(thirdPartyServices['instagram_host_url']);
   String? get twitterHostUrl         => JsonUtils.stringValue(thirdPartyServices['twitter_host_url']);
-  String? get laundryHostUrl         => JsonUtils.stringValue(thirdPartyServices['launtry_host_url']);
+  String? get laundryHostUrl         => JsonUtils.stringValue(thirdPartyServices['laundry_host_url']);
   String? get ticketsUrl             => JsonUtils.stringValue(thirdPartyServices['tickets_url']);
   String? get youtubeUrl             => JsonUtils.stringValue(thirdPartyServices['youtube_url']);
   String? get gameDayFootballUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_football_url']);

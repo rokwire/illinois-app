@@ -39,7 +39,7 @@ class Laundries /* with Service */ {
     bool mappingExists =
         ((locationMapping != null) && locationMapping.isNotEmpty);
     List<LaundryRoom>? rooms;
-    final roomDataUrl = (Config().laundryHostUrl != null) ? "${Config().laundryHostUrl}school?api_key=${Config().laundryApiKey}&method=getRoomData" : null;
+    final roomDataUrl = (Config().laundryHostUrl != null) ? "${Config().laundryHostUrl}/school?api_key=${Config().laundryApiKey}&method=getRoomData" : null;
     final response = await Network().get(roomDataUrl);
     String? responseBody = response?.body;
     if (response?.statusCode == 200) {
@@ -77,7 +77,7 @@ class Laundries /* with Service */ {
     if (StringUtils.isEmpty(laundryLocation)) {
       return null;
     }
-    final availabilityUrl = (Config().laundryHostUrl != null) ? "${Config().laundryHostUrl}school?api_key=${Config().laundryApiKey}&method=getNumAvailable" : null;
+    final availabilityUrl = (Config().laundryHostUrl != null) ? "${Config().laundryHostUrl}/school?api_key=${Config().laundryApiKey}&method=getNumAvailable" : null;
     final response = await Network().get(availabilityUrl);
     String? responseBody = response?.body;
     if (response?.statusCode == 200) {
@@ -114,7 +114,7 @@ class Laundries /* with Service */ {
       return null;
     }
     List<LaundryRoomAppliance>? laundryRoomAppliances;
-    final appliancesUrl = (Config().laundryHostUrl != null) ?  "${Config().laundryHostUrl}room?api_key=${Config().laundryApiKey}&method=getAppliances&location=$laundryRoomLocation" : null;
+    final appliancesUrl = (Config().laundryHostUrl != null) ?  "${Config().laundryHostUrl}/room?api_key=${Config().laundryApiKey}&method=getAppliances&location=$laundryRoomLocation" : null;
     final response = await Network().get(appliancesUrl);
     String? responseBody = response?.body;
     if (response?.statusCode == 200) {
