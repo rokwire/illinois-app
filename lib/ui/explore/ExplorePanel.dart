@@ -853,7 +853,7 @@ class ExplorePanelState extends State<ExplorePanel>
     if (_selectedMapExplore is Explore) {
       title = _selectedMapExplore?.exploreTitle;
       description = _selectedMapExplore.exploreLocation?.description;
-      exploreColor = _selectedMapExplore.uiColor;
+      exploreColor = _exploreColor(_selectedMapExplore) ?? Colors.white;
     }
     else if  (_selectedMapExplore is List<Explore>) {
       String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
@@ -861,6 +861,7 @@ class ExplorePanelState extends State<ExplorePanel>
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
       exploreColor = explore?.uiColor ?? Styles().colors!.fillColorSecondary!;
+      exploreColor = _exploreColor(explore) ?? Styles().colors?.fillColorSecondary;
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
@@ -941,6 +942,18 @@ class ExplorePanelState extends State<ExplorePanel>
                     ])),
           ))
     ]);
+  }
+
+  static Color? _exploreColor(Explore? explore) {
+    if (explore is Event) {
+      return explore.uiColor;
+    }
+    else if (explore is Dining) {
+      return explore.uiColor;
+    }
+    else {
+      return null;
+    }
   }
 
   void _selectMapExplore(dynamic explore) {
