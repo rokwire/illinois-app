@@ -15,6 +15,8 @@
  */
 
 import 'dart:async';
+import 'package:http/http.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/Config.dart';
@@ -22,7 +24,7 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:xml/xml.dart' as xml;
+import 'package:xml/xml.dart';
 
 // Laundries does rely on Service initialization API so it does not override service interfaces and is not registered in Services..
 class Laundries /* with Service */ {
@@ -35,42 +37,19 @@ class Laundries /* with Service */ {
   Laundries._internal();
 
   Future<List<LaundryRoom>?> getRoomData() async {
-    Map<String, ExploreLocation>? locationMapping = _loadLaundryLocationMapping();
-    bool mappingExists =
-        ((locationMapping != null) && locationMapping.isNotEmpty);
-    List<LaundryRoom>? rooms;
-    final roomDataUrl = (Config().laundryHostUrl != null) ? "${Config().laundryHostUrl}school?api_key=${Config().laundryApiKey}&method=getRoomData" : null;
-    final response = await Network().get(roomDataUrl);
-    String? responseBody = response?.body;
-    if (response?.statusCode == 200) {
-      xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody!);
-      var laundryRoomsXml = roomsXmlResponse.findAllElements('laundryroom');
-      rooms = [];
-      laundryRoomsXml.map((xml.XmlElement item) {
-        String? location = _getValueFromXmlItem(item.findElements("location"));
-        String? campusName =
-            _getValueFromXmlItem(item.findElements("campus_name"));
-        String? name =
-            _getValueFromXmlItem(item.findElements("laundry_room_name"));
-        String? statusValue = _getValueFromXmlItem(item.findElements("status"));
-        ExploreLocation? roomLocationDetails;
-        if (mappingExists) {
-          roomLocationDetails = locationMapping[location];
-        }
-        LaundryRoomStatus? roomStatus =
-            LaundryRoom.roomStatusFromString(statusValue);
-        rooms!.add(LaundryRoom(
-            id: location,
-            campusName: campusName,
-            title: name,
-            status: roomStatus,
-            location: roomLocationDetails));
-      }).toList();
-    } else {
-      Log.e('Failed to load laundry rooms:');
-      Log.e(responseBody);
+    String? roomDataUrl = (Config().laundryHostUrl != null) ? "${Config().laundryHostUrl}school?api_key=${Config().laundryApiKey}&method=getRoomData" : null;
+    if (roomDataUrl != null) {
+      Response? response = await Network().get(roomDataUrl);
+      if (response?.statusCode == 200) {
+        XmlDocument? responseXml = XmlUtils.parse(response?.body);
+        Iterable<XmlElement>? xmlList = XmlUtils.children(XmlUtils.child(XmlUtils.child(responseXml, "school"), "laundry_rooms"), "laundryroom");
+        return LaundryRoom.listFromXml(xmlList, locations: _laundryLocationMapping);
+      }
+      else {
+        Log.e('Failed to load laundry rooms:\n${response?.body}');
+      }
     }
-    return rooms;
+    return null;
   }
 
   Future<LaundryRoomAvailability?> getNumAvailable(String? laundryLocation) async {
@@ -83,9 +62,9 @@ class Laundries /* with Service */ {
     if (response?.statusCode == 200) {
       final String undefinedValue = 'undefined';
       final String zeroValue = '0';
-      xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody!);
+      XmlDocument roomsXmlResponse = XmlDocument.parse(responseBody!);
       var laundryRoomsXml = roomsXmlResponse.findAllElements('laundryroom');
-      for (xml.XmlElement item in laundryRoomsXml) {
+      for (XmlElement item in laundryRoomsXml) {
         String? location = _getValueFromXmlItem(item.findElements("location"));
         if (laundryLocation == location) {
           String? availableWashers = _getValueFromXmlItem(item.findElements("available_washers"));
@@ -118,10 +97,10 @@ class Laundries /* with Service */ {
     final response = await Network().get(appliancesUrl);
     String? responseBody = response?.body;
     if (response?.statusCode == 200) {
-      xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody!);
+      XmlDocument roomsXmlResponse = XmlDocument.parse(responseBody!);
       var appliancesXml = roomsXmlResponse.findAllElements('appliance');
       laundryRoomAppliances = [];
-      appliancesXml.map((xml.XmlElement item) {
+      appliancesXml.map((XmlElement item) {
         String? applianceDescKey =
             _getValueFromXmlItem(item.findElements("appliance_desc_key"));
         String? lrmStatus = _getValueFromXmlItem(item.findElements("lrm_status"));
@@ -152,29 +131,32 @@ class Laundries /* with Service */ {
     return laundryRoomAppliances;
   }
 
-  Map<String, ExploreLocation>? _loadLaundryLocationMapping() {
-    List<dynamic>? jsonData = Assets()['laundry.locations'];
-    if (CollectionUtils.isEmpty(jsonData)) {
-      return null;
-    }
-    Map<String, ExploreLocation> locationMapping = Map();
-    for (dynamic jsonEntry in jsonData!) {
-      String? locationIdentifier = jsonEntry['laundry_location'];
-      ExploreLocation? locationDetails =
-          ExploreLocation.fromJSON(jsonEntry['location_details']);
-      if ((locationIdentifier != null) && (locationDetails != null)) {
-        locationMapping.putIfAbsent(locationIdentifier, () => locationDetails);
+  Map<String, ExploreLocation>? get _laundryLocationMapping {
+    Map<String, ExploreLocation>? locationMapping;
+    List<dynamic>? jsonList = JsonUtils.listValue(Assets()['laundry.locations']);
+    if (jsonList != null) {
+      locationMapping = {};
+      for (dynamic jsonEntry in jsonList) {
+        if (jsonEntry is Map) {
+          String? locationIdentifier = JsonUtils.stringValue(jsonEntry['laundry_location']);
+          if ((locationIdentifier != null) && (locationMapping[locationIdentifier] == null)) {
+            ExploreLocation? locationDetails = ExploreLocation.fromJSON(JsonUtils.mapValue(jsonEntry['location_details']));
+            if (locationDetails != null) {
+              locationMapping[locationIdentifier] = locationDetails;
+            }
+          }
+        }
       }
     }
     return locationMapping;
   }
 
-  String? _getValueFromXmlItem(Iterable<xml.XmlElement> items) {
+  String? _getValueFromXmlItem(Iterable<XmlElement> items) {
     if (CollectionUtils.isEmpty(items)) {
       return null;
     }
     var textValue;
-    items.map((xml.XmlElement node) {
+    items.map((XmlElement node) {
       textValue = node.text;
     }).toList();
     return textValue;

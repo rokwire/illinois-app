@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:xml/xml.dart';
 
 
 enum LaundryRoomStatus { online, offline }
@@ -31,17 +33,13 @@ class LaundryRoom implements Favorite {
 
   LaundryRoom({this.id, this.title, this.campusName, this.status, this.location});
 
-  bool operator ==(o) => o is LaundryRoom && o.title == title && o.campusName == campusName && o.id == id;
-
-  int get hashCode => title.hashCode ^ id.hashCode ^ campusName.hashCode;
-
   static LaundryRoom? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? LaundryRoom(
-        id: json['id'],
-        title: json['title'],
-        campusName: json['campus_name'],
-        status: roomStatusFromString(json['status']),
-        location: ExploreLocation.fromJSON(json['location'])
+        id: JsonUtils.stringValue(json['id']) ,
+        title: JsonUtils.stringValue(json['title']),
+        campusName: JsonUtils.stringValue(json['campus_name']),
+        status: roomStatusFromString(JsonUtils.stringValue(json['status'])),
+        location: ExploreLocation.fromJSON(JsonUtils.mapValue(json['location']))
       ) : null;
   }
 
@@ -50,10 +48,51 @@ class LaundryRoom implements Favorite {
       "id": id,
       "title": title,
       "campus_name": campusName,
-      "status": _roomStatusToString(status),
-      "location": (location != null ? location!.toJson() : null)
+      "status": roomStatusToString(status),
+      "location": location?.toJson(),
     };
   }
+
+  static LaundryRoom? fromXml(XmlElement? xml, { Map<String, ExploreLocation>? locations }) {
+    if (xml != null) {
+      String? roomId = XmlUtils.childText(xml, "location");
+      return LaundryRoom(
+        id: roomId,
+        title: XmlUtils.childText(xml, "laundry_room_name"),
+        campusName: XmlUtils.childText(xml, "campus_name"),
+        status: roomStatusFromString(XmlUtils.childText(xml, "status")),
+        location: (locations != null) ? locations[roomId] : null,
+      );
+    }
+    return null;
+  }
+
+  static List<LaundryRoom>? listFromXml(Iterable<XmlElement>? xmlList, { Map<String, ExploreLocation>? locations }) {
+    List<LaundryRoom>? resultList;
+    if (xmlList != null) {
+      resultList = [];
+      for (XmlElement xml in xmlList) {
+        ListUtils.add(resultList, LaundryRoom.fromXml(xml, locations: locations));
+      }
+    }
+    return resultList;
+  }
+
+  @override
+  bool operator ==(other) => (other is LaundryRoom) &&
+    (other.id == id) &&
+    (other.title == title) &&
+    (other.campusName == campusName) &&
+    (other.status == status) &&
+    (other.location == location);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (title?.hashCode ?? 0) ^
+    (campusName?.hashCode ?? 0) ^
+    (status?.hashCode ?? 0) ^
+    (location?.hashCode ?? 0);
 
   Map<String, dynamic> get analyticsAttributes {
     return {
@@ -62,31 +101,7 @@ class LaundryRoom implements Favorite {
     };
   }
 
-  static LaundryRoomStatus? roomStatusFromString(String? roomStatusString) {
-    if (StringUtils.isEmpty(roomStatusString)) {
-      return null;
-    }
-    switch (roomStatusString) {
-      case 'online':
-        return LaundryRoomStatus.online;
-      case 'offline':
-        return LaundryRoomStatus.offline;
-      default:
-        return null;
-    }
-  }
-
-  static String? _roomStatusToString(LaundryRoomStatus? roomStatus) {
-    if (roomStatus != null) {
-      switch (roomStatus) {
-        case LaundryRoomStatus.online:
-          return 'online';
-        case LaundryRoomStatus.offline:
-          return 'offline';
-      }
-    }
-    return null;
-  }
+  // Favorite
 
   @override
   String? get favoriteId => id;
@@ -127,4 +142,32 @@ class LaundryRoomAvailability {
   String? availableDryers;
 
   LaundryRoomAvailability({this.location, this.availableWashers, this.availableDryers});
+}
+
+// LaundryRoomStatus
+
+LaundryRoomStatus? roomStatusFromString(String? roomStatusString) {
+  if (StringUtils.isEmpty(roomStatusString)) {
+    return null;
+  }
+  switch (roomStatusString) {
+    case 'online':
+      return LaundryRoomStatus.online;
+    case 'offline':
+      return LaundryRoomStatus.offline;
+    default:
+      return null;
+  }
+}
+
+String? roomStatusToString(LaundryRoomStatus? roomStatus) {
+  if (roomStatus != null) {
+    switch (roomStatus) {
+      case LaundryRoomStatus.online:
+        return 'online';
+      case LaundryRoomStatus.offline:
+        return 'offline';
+    }
+  }
+  return null;
 }
