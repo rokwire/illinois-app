@@ -176,12 +176,8 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildHeaderBar(),
-      body: _loading
-          ? Center(
-        child: CircularProgressIndicator(),
-      )
-          : _buildContentWidget(),
-      backgroundColor: Styles().colors!.background,
+      body: _loading ? Center(child: CircularProgressIndicator(),) : _buildContentWidget(),
+      backgroundColor: Styles().colors?.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -189,108 +185,112 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   AppBar _buildHeaderBar() {
     return AppBar(
       leading: Semantics(
-          label: Localization().getStringEx('headerbar.back.title', 'Back'),
-          hint: Localization().getStringEx('headerbar.back.hint', ''),
-          button: true,
-          child: IconButton(
-              icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true),
-              onPressed: () {
-                Navigator.pop(context);
-              })),
+        label: Localization().getStringEx('headerbar.back.title', 'Back'),
+        hint: Localization().getStringEx('headerbar.back.hint', ''),
+        button: true,
+        child: IconButton(
+          icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true),
+          onPressed: _onTapBack)
+        ),
       actions: <Widget>[
-        Column(
-            children: <Widget>[
-              Expanded(child: Row(children: <Widget>[
-                ExploreViewTypeTab(label: Localization().getStringEx('panel.laundry_home.button.list.title', 'List'),
-                  hint: Localization().getStringEx('panel.laundry_home.button.list.hint', ''),
-                  iconResource: 'images/icon-list-view.png',
-                  selected: (_displayType == _DisplayType.List),
-                  onTap: () {
-                    _selectDisplayType(_DisplayType.List);
-                  },),
-                Container(width: 10,),
-                ExploreViewTypeTab(label: Localization().getStringEx('panel.laundry_home.button.map.title', 'Map'),
-                  hint: Localization().getStringEx('panel.laundry_home.button.map.hint', ''),
-                  iconResource: 'images/icon-map-view.png',
-                  selected: (_displayType == _DisplayType.Map),
-                  onTap: () {
-                    _selectDisplayType(_DisplayType.Map);
-                  },),
-              ],)),
-            ]),
+        Column(children: <Widget>[
+          Expanded(child:
+            Row(children: <Widget>[
+              ExploreViewTypeTab(
+                label: Localization().getStringEx('panel.laundry_home.button.list.title', 'List'),
+                hint: Localization().getStringEx('panel.laundry_home.button.list.hint', ''),
+                iconResource: 'images/icon-list-view.png',
+                selected: (_displayType == _DisplayType.List),
+                onTap: _onTapList,
+              ),
+              
+              Container(width: 10,),
+              
+              ExploreViewTypeTab(
+                label: Localization().getStringEx('panel.laundry_home.button.map.title', 'Map'),
+                hint: Localization().getStringEx('panel.laundry_home.button.map.hint', ''),
+                iconResource: 'images/icon-map-view.png',
+                selected: (_displayType == _DisplayType.Map),
+                onTap: _onTapMap,
+              ),
+            ],),
+          ),
+        ]),
       ],
-      title: Text(
-        Localization()
-            .getStringEx('panel.laundry_home.heading.laundry', 'Laundry'),
-        style: TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-            fontFamily: Styles().fontFamilies!.extraBold,
-            letterSpacing: 1),
+      title: Text(Localization().getStringEx('panel.laundry_home.heading.laundry', 'Laundry'),
+        style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16, color: Colors.white, letterSpacing: 1),
       ),
       centerTitle: false,
     );
   }
 
   Widget _buildContentWidget() {
-    int roomsCount = _rooms?.length ?? 0;
-    if (roomsCount == 0) {
-      return Center(
-        child: Text(
-          Localization().getStringEx(
-              'panel.laundry_home.content.empty', 'No rooms available'),
-          style: TextStyle(
-              fontSize: 16,
-              color: Styles().colors!.fillColorPrimary,
-              fontFamily: Styles().fontFamilies!.bold),
-        ),
-      );
+    if (_loading == true) {
+      return _buildProgressContentWidget();
     }
-    return Column(
-      children: <Widget>[
-        Expanded(
-            child: Stack(
-              children: <Widget>[
-                _buildMapView(context),
-                Visibility(
-                    visible: (_displayType == _DisplayType.List),
-                    child: Container(
-                      color: Styles().colors!.background,
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 16),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Container(
-                              color: Styles().colors!.background,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 16, right: 16, bottom: 80),
-                                    child: ListView.separated(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemBuilder: (context, index) {
-                                          LaundryRoom laundryRoom = _rooms![index];
-                                          return LaundryRoomRibbonButton(
-                                            label: laundryRoom.title,
-                                            onTap: () => _onRoomTap(laundryRoom),
-                                          );
-                                        },
-                                        separatorBuilder: (context, index) =>
-                                            Container(),
-                                        itemCount: roomsCount),
-                                  )
-                                ],
-                              )),
+    else if (_rooms?.isEmpty ?? true) {
+      return _buildEmptyContentWidget();
+    }
+    else {
+      return _buildRoomsContentWidget();
+    }
+  }
+
+  Widget _buildRoomsContentWidget() {
+    return Column(children: <Widget>[
+      Expanded(child:
+        Stack(children: <Widget>[
+          _buildMapView(context),
+          Visibility(visible: (_displayType == _DisplayType.List), child:
+            Container(color: Styles().colors?.background, child:
+              Padding(padding: EdgeInsets.only(top: 16), child:
+                SingleChildScrollView(scrollDirection: Axis.vertical, child:
+                  Container(color: Styles().colors?.background, child:
+                    Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+                      Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 80), child:
+                        ListView.separated(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemBuilder: _buildListItem,
+                          separatorBuilder: _buildListSeparator,
+                          itemCount: _rooms?.length ?? 0
                         ),
                       ),
-                    )),
-              ],
-            )),
-      ],
+                    ],),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],),
+      ),
+    ],);
+  }
+
+  Widget _buildEmptyContentWidget() {
+    return Center(child:
+      Padding(padding: EdgeInsets.all(32), child:
+        Text(Localization().getStringEx('panel.laundry_home.content.empty', 'No rooms available'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,),),
+      )
     );
+  }
+
+  Widget _buildProgressContentWidget() {
+    return Center(child:
+      CircularProgressIndicator(),
+    );
+  }
+
+  Widget _buildListItem(BuildContext context, int index) {
+    LaundryRoom? laundryRoom = (_rooms != null) ? _rooms![index] : null;
+    return (laundryRoom != null) ? LaundryRoomRibbonButton(
+      label: laundryRoom.title,
+      onTap: () => _onRoomTap(laundryRoom),
+    ) : Container();
+  }
+
+  Widget _buildListSeparator(BuildContext context, int index) {
+    return Container();
   }
 
   Widget _buildMapView(BuildContext context) {
@@ -309,94 +309,46 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
         onMapCreated: _onNativeMapCreated,
         creationParams: { "myLocationEnabled": _userLocationEnabled()},
       ) : Container(),
-      Positioned(
-          bottom: _mapLaundryBarAnimationController.value,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: _MapBarHeight,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.black26, width: 1.0),
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(4),
-                  topRight: Radius.circular(4)),
-            ),
-            child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text((title != null) ? title : "",
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Styles().colors!.fillColorPrimary,
-                              fontFamily: Styles().fontFamilies!.bold,
-                              fontSize: 16)),
-                      Text((description != null) ? description : "",
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.black38,
-                              fontFamily: Styles().fontFamilies!.medium,
-                              fontSize: 14)),
-                      Container(
-                        height: 8,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          _userLocationEnabled() ?
-                          Row(
-                              children: <Widget>[
-                                RoundedButton(
-                                    label: Localization().getStringEx('panel.laundry_home.button.directions.title', 'Directions'),
-                                    hint: Localization().getStringEx('panel.laundry_home.button.directions.hint', ''),
-                                    backgroundColor: Colors.white,
-                                    fontSize: 16.0,
-                                    textColor: Styles().colors!.fillColorPrimary,
-                                    borderColor: Styles().colors!.fillColorSecondary,
-                                    contentWeight: 0.0,
-                                    onTap: () {
-                                      Analytics().logSelect(target: 'Directions');
-                                      _presentMapLaundryDirections(context);
-                                    }),
-                                Container(
-                                  width: 12,
-                                ),
-                              ]) :
-                          Container(),
-                          RoundedButton(
-                              label: Localization().getStringEx('panel.laundry_home.button.details.title', 'Details'),
-                              hint: Localization().getStringEx('panel.laundry_home.button.details.hint', ''),
-                              backgroundColor: Colors.white,
-                              fontSize: 16.0,
-                              textColor: Styles().colors!.fillColorPrimary,
-                              borderColor: Styles().colors!.fillColorSecondary,
-                              onTap: () {
-                                Analytics().logSelect(target: 'Details');
-                                _presentMapLaundryDetail(context);
-                              }),
-
-
-                        ],
-                      )
-                    ])),
-          ))
+      Positioned(bottom: _mapLaundryBarAnimationController.value, left: 0, right: 0, child:
+        Container(height: _MapBarHeight, decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black26, width: 1.0), borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),), child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Text(title ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,),),
+              Text(description ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Colors.black38,),),
+              Container(height: 8,),
+              Row(children: <Widget>[
+                _userLocationEnabled() ? Row(children: <Widget>[
+                  RoundedButton(
+                    label: Localization().getStringEx('panel.laundry_home.button.directions.title', 'Directions'),
+                    hint: Localization().getStringEx('panel.laundry_home.button.directions.hint', ''),
+                    backgroundColor: Colors.white,
+                    fontSize: 16.0,
+                    textColor: Styles().colors?.fillColorPrimary,
+                    borderColor: Styles().colors?.fillColorSecondary,
+                    contentWeight: 0.0,
+                    onTap: _onTapDirections),
+                  Container(width: 12,),
+                ]) : Container(),
+                RoundedButton(
+                  label: Localization().getStringEx('panel.laundry_home.button.details.title', 'Details'),
+                  hint: Localization().getStringEx('panel.laundry_home.button.details.hint', ''),
+                  backgroundColor: Colors.white,
+                  fontSize: 16.0,
+                  textColor: Styles().colors?.fillColorPrimary,
+                  borderColor: Styles().colors?.fillColorSecondary,
+                  onTap: _onTapDetails
+                ),
+              ],)
+            ]),
+          ),
+        ),
+      ),
     ]);
   }
 
   void _loadRooms() {
-    _setLoading(true);
-    Laundries()
-        .loadRooms()
-        .then((laundryRooms) => _onRoomsLoaded(laundryRooms));
-  }
-
-  void _setLoading(bool loading) {
-    if (mounted) {
-      setState(() {
-        _loading = loading;
-      });
-    }
+    setState(() { _loading = true; });
+    Laundries().loadRooms().then((List<LaundryRoom>? laundryRooms) => _onRoomsLoaded(laundryRooms));
   }
 
   void _selectDisplayType(_DisplayType displayType) {
@@ -411,8 +363,12 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   void _onRoomsLoaded(List<LaundryRoom>? laundryRooms) {
-    _rooms = laundryRooms;
-    _setLoading(false);
+    if (mounted) {
+      setState(() {
+        _rooms = laundryRooms;
+        _loading = false;
+      });
+    }
   }
 
   void _onRoomTap(LaundryRoom room) {
@@ -436,7 +392,8 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     }
   }
 
-  void _presentMapLaundryDirections(BuildContext context) async {
+  void _onTapDirections() {
+    Analytics().logSelect(target: 'Directions');
     dynamic laundry = _selectedMapLaundry;
     _mapLaundryBarAnimationController.reverse().then((_) {
       setState(() {
@@ -448,7 +405,8 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     }
   }
 
-  void _presentMapLaundryDetail(BuildContext context) {
+  void _onTapDetails() {
+    Analytics().logSelect(target: 'Details');
     dynamic laundry = _selectedMapLaundry;
     _mapLaundryBarAnimationController.reverse().then((_) {
       setState(() {
@@ -492,6 +450,21 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     if (_nativeMapController != null) {
       _nativeMapController!.placePOIs(rooms);
     }
+  }
+
+  void _onTapMap() {
+    Analytics().logSelect(target: 'Map');
+    _selectDisplayType(_DisplayType.Map);
+  }
+
+  void _onTapList() {
+    Analytics().logSelect(target: 'List');
+    _selectDisplayType(_DisplayType.List);
+  }
+
+  void _onTapBack() {
+    Analytics().logSelect(target: 'Back');
+    Navigator.pop(context);
   }
 }
 

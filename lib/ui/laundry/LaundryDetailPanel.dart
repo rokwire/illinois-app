@@ -55,12 +55,14 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   bool _detailVisible = true;
   bool _mapAllowed = false;
 
+  bool get _isLoading => (_availabilityLoaded != true) ||  (_appliancesLoaded != true);
+
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
-    _load();
     Analytics().logMapShow();
+    _load();
   }
 
   @override
@@ -72,194 +74,40 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
 
   @override
   Widget build(BuildContext context) {
-    if (!(_availabilityLoaded && _appliancesLoaded)) {
-      return Scaffold(
-        appBar: _buildHeaderBar(),
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
-    String? availableWashers = StringUtils.isNotEmpty(_laundryRoomAvailability?.availableWashers) ?
-      sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [_laundryRoomAvailability?.availableWashers]) : Localization().getStringEx("panel.laundry_detail.available.undefined", "unknown");
-    
-    String? availableDryers = StringUtils.isNotEmpty(_laundryRoomAvailability?.availableDryers) ?
-      sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [_laundryRoomAvailability?.availableDryers]) : Localization().getStringEx("panel.laundry_detail.available.undefined", "unknown");
-    
-    bool isFavorite = Auth2().isFavorite(widget.room);
-
     return Scaffold(
       appBar: _buildHeaderBar(),
-      body: Stack(
-        children: <Widget>[
-          _mapAllowed ? MapWidget(
-            onMapCreated: _onNativeMapCreated,
-          ) : Container(),
-          Visibility(
-              visible: _detailVisible,
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                      child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Container(
-                      color: Styles().colors!.background,
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            color: Styles().colors!.accentColor2,
-                            height: 4,
-                          ),
-                          Container(
-                            color: Colors.white,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  left: 24, right: 24, top: 11, bottom: 24),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(
-                                        Localization().getStringEx(
-                                            'panel.laundry_detail.heading.laundry',
-                                            'Laundry'),
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Styles().colors!.fillColorPrimary,
-                                            fontFamily: Styles().fontFamilies!.bold),
-                                      ),
-                                      Visibility(visible: Auth2().canFavorite,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              Analytics().logSelect(target: "Favorite: ${widget.room.title}");
-                                              Auth2().prefs?.toggleFavorite(widget.room);
-                                            },
-                                            child: Semantics(
-                                                label: isFavorite
-                                                    ? Localization().getStringEx(
-                                                    'widget.card.button.favorite.off.title',
-                                                    'Remove From Favorites')
-                                                    : Localization().getStringEx(
-                                                    'widget.card.button.favorite.on.title',
-                                                    'Add To Favorites'),
-                                                hint: isFavorite
-                                                    ? Localization().getStringEx(
-                                                    'widget.card.button.favorite.off.hint',
-                                                    '')
-                                                    : Localization().getStringEx(
-                                                    'widget.card.button.favorite.on.hint',
-                                                    ''),
-                                                button: true,
-                                                excludeSemantics: true,
-                                                child: Padding(
-                                                    padding: EdgeInsets.all(10),
-                                                    child: Image.asset(
-                                                        isFavorite
-                                                            ? 'images/icon-star-selected.png'
-                                                            : 'images/icon-star.png',
-                                                        excludeFromSemantics: true))),
-                                          ))
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(top: 2, bottom: 14),
-                                    child: Text(
-                                      widget.room.title ?? '',
-                                      style: TextStyle(
-                                          color: Styles().colors!.fillColorPrimary,
-                                          fontSize: 24,
-                                          fontFamily: Styles().fontFamilies!.extraBold),
-                                    ),
-                                  ),
-                                  _buildLocationWidget()
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(24),
-                            child: SingleChildScrollView(scrollDirection: Axis.horizontal, child:Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    Image.asset('images/icon-washer-big.png', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER'),),
-                                    Padding(
-                                      padding: EdgeInsets.only(right: 12),
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          Localization().getStringEx('panel.laundry_detail.label.washers', 'WASHERS'),
-                                          style: TextStyle(
-                                              color: Styles().colors!.fillColorPrimary,
-                                              fontSize: 14,
-                                              fontFamily: Styles().fontFamilies!.bold,
-                                              letterSpacing: 1),
-                                        ),
-                                        Text(
-                                          availableWashers,
-                                          style: TextStyle(
-                                              color: Styles().colors!.textBackground,
-                                              fontSize: 16,
-                                              fontFamily: Styles().fontFamilies!.regular),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                Padding(padding: EdgeInsets.only(right: 16)),
-                                Row(
-                                  children: <Widget>[
-                                    Image.asset('images/icon-dryer-big.png', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.dryer', 'DRYER')),
-                                    Padding(
-                                      padding: EdgeInsets.only(right: 12),
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          Localization().getStringEx('panel.laundry_detail.label.dryers', 'DRYERS'),
-                                          style: TextStyle(
-                                              color: Styles().colors!.fillColorPrimary,
-                                              fontSize: 14,
-                                              fontFamily: Styles().fontFamilies!.bold,
-                                              letterSpacing: 1),
-                                        ),
-                                        Text(
-                                          availableDryers,
-                                          style: TextStyle(
-                                              color: Styles().colors!.textBackground,
-                                              fontSize: 16,
-                                              fontFamily: Styles().fontFamilies!.regular),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                )
-                              ],
-                            )),
-                          ),
-                          _buildLaundryRoomAppliancesListWidget()
-                        ],
-                      ),
-                    ),
-                  )),
-                ],
-              ))
-        ],
+      body: _isLoading ? _buildLoadingWidget() : _buildRoomContentWidget(),
+      backgroundColor: Styles().colors?.background,
+      bottomNavigationBar: !_isLoading ? uiuc.TabBar() : null,
+    );
+  }
+
+  Widget _buildRoomContentWidget() {
+
+    return Stack(children: <Widget>[
+      _mapAllowed ? MapWidget(onMapCreated: _onNativeMapCreated,) : Container(),
+      Visibility(visible: _detailVisible, child:
+        Column(children: <Widget>[
+          Expanded(child:
+            SingleChildScrollView(scrollDirection: Axis.vertical, child:
+              Container(color: Styles().colors?.background, child:
+                Column(children: <Widget>[
+                  _buildLaundryRoomCaptionSection(),
+                  _buildLaundryRoomInfoSection(),
+                  _buildLaundryRoomAvailabilitySection(),
+                  _buildLaundryRoomAppliancesListSection()
+                ],),
+              ),
+            ),
+          ),
+        ],),
       ),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar(),
+    ],);
+  }
+
+  Widget _buildLoadingWidget() {
+    return Center(
+      child: CircularProgressIndicator(),
     );
   }
 
@@ -302,9 +150,9 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.medium,
+                          fontFamily: Styles().fontFamilies?.medium,
                           fontSize: 16,
-                          color: Styles().colors!.textBackground)),
+                          color: Styles().colors?.textBackground)),
                 )
               ],
             ),
@@ -322,12 +170,12 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
             child: Text(
               Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map'),
               style: TextStyle(
-                  color: Styles().colors!.fillColorPrimary,
+                  color: Styles().colors?.fillColorPrimary,
                   fontSize: 16,
-                  fontFamily: Styles().fontFamilies!.medium,
+                  fontFamily: Styles().fontFamilies?.medium,
                   decoration: TextDecoration.underline,
                   decorationThickness: 1.17,
-                  decorationColor: Styles().colors!.fillColorSecondary),
+                  decorationColor: Styles().colors?.fillColorSecondary),
             ),
           )),
         )
@@ -335,7 +183,80 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
     );
   }
 
-  Widget _buildLaundryRoomAppliancesListWidget() {
+  Widget _buildLaundryRoomCaptionSection() {
+    return Container(color: Styles().colors?.accentColor2, height: 4,);
+  }
+
+  Widget _buildLaundryRoomInfoSection() {
+    bool isFavorite = Auth2().isFavorite(widget.room);
+    
+    String favoriteLabel = isFavorite ?
+      Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') :
+      Localization().getStringEx('widget.card.button.favorite.on.title','Add To Favorites');
+
+    String favoriteHint = isFavorite ?
+      Localization().getStringEx('widget.card.button.favorite.off.hint', '') :
+      Localization().getStringEx('widget.card.button.favorite.on.hint', '');
+
+    String favoriteIcon = isFavorite? 'images/icon-star-selected.png' : 'images/icon-star.png';
+    return Container(color: Colors.white, child:
+      Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 11, bottom: 24), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+            Text(Localization().getStringEx('panel.laundry_detail.heading.laundry', 'Laundry'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 14, color: Styles().colors?.fillColorPrimary,),),
+            Visibility(visible: Auth2().canFavorite, child:
+              GestureDetector(onTap: _onTapFavorite, child:
+                Semantics(label: favoriteLabel, hint: favoriteHint, button: true, excludeSemantics: true, child:
+                  Padding(padding: EdgeInsets.all(10), child:
+                    Image.asset(favoriteIcon, excludeFromSemantics: true)
+                  ),
+                ),
+              ),
+            ),
+          ],),
+          Padding(padding:EdgeInsets.only(top: 2, bottom: 14), child:
+            Text(widget.room.title ?? '', style: TextStyle( fontFamily: Styles().fontFamilies?.extraBold, fontSize: 24, color: Styles().colors?.fillColorPrimary,),),
+          ),
+          _buildLocationWidget()
+        ],),
+      ),
+    );
+  }
+
+  Widget _buildLaundryRoomAvailabilitySection() {
+    String? availableWashers = StringUtils.isNotEmpty(_laundryRoomAvailability?.availableWashers) ?
+      sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [_laundryRoomAvailability?.availableWashers]) : Localization().getStringEx("panel.laundry_detail.available.undefined", "unknown");
+    
+    String? availableDryers = StringUtils.isNotEmpty(_laundryRoomAvailability?.availableDryers) ?
+      sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [_laundryRoomAvailability?.availableDryers]) : Localization().getStringEx("panel.laundry_detail.available.undefined", "unknown");
+
+    return Padding(padding: EdgeInsets.all(24), child:
+      SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+          Row(children: <Widget>[
+            Image.asset('images/icon-washer-big.png', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER'),),
+            Padding(padding: EdgeInsets.only(right: 12),),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Text(Localization().getStringEx('panel.laundry_detail.label.washers', 'WASHERS'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 14, letterSpacing: 1, color: Styles().colors?.fillColorPrimary,),),
+              Text(availableWashers, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground, ),),
+            ],)
+          ],),
+          Padding(padding: EdgeInsets.only(right: 16)),
+          Row(children: <Widget>[
+            Image.asset('images/icon-dryer-big.png', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.dryer', 'DRYER')),
+            Padding(padding: EdgeInsets.only(right: 12),),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Text(Localization().getStringEx('panel.laundry_detail.label.dryers', 'DRYERS'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 14, letterSpacing: 1, color: Styles().colors?.fillColorPrimary,),),
+              Text( availableDryers, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),),
+            ],),
+          ],)
+        ],),
+      ),
+    );
+
+  }
+
+  Widget _buildLaundryRoomAppliancesListSection() {
     int appliancesCount = _laundryRoomAppliances?.length ?? 0;
     if (appliancesCount == 0) {
       return Container();
@@ -351,7 +272,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
           },
           separatorBuilder: (context, index) => Container(
                 height: 1,
-                color: Styles().colors!.background,
+                color: Styles().colors?.background,
               ),
           itemCount: appliancesCount),
     );
@@ -388,6 +309,11 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
         _mapAllowed = true;
       });
     }
+  }
+
+  void _onTapFavorite() {
+    Analytics().logSelect(target: "Favorite: ${widget.room.title}");
+    Auth2().prefs?.toggleFavorite(widget.room);
   }
 
   void _onNativeMapCreated(mapController) {
@@ -430,18 +356,18 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
               child: Text(
                 appliance.label ?? '',
                 style: TextStyle(
-                    color: Styles().colors!.textBackground,
+                    color: Styles().colors?.textBackground,
                     fontSize: 16,
-                    fontFamily: Styles().fontFamilies!.regular),
+                    fontFamily: Styles().fontFamilies?.regular),
               ),
             ),
             Expanded(child:
             Text(
               appliance.status ?? '',
               style: TextStyle(
-                  color: Styles().colors!.textBackground,
+                  color: Styles().colors?.textBackground,
                   fontSize: 16,
-                  fontFamily: Styles().fontFamilies!.regular),
+                  fontFamily: Styles().fontFamilies?.regular),
             ))
           ],
         ),
