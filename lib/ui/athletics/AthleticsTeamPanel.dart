@@ -112,12 +112,12 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
     String? instagramUrl;
     String? instagramName = sportSocialMedia?.instagramName;
     if (StringUtils.isNotEmpty(Config().instagramHostUrl) && StringUtils.isNotEmpty(instagramName)) {
-      instagramUrl = '${Config().instagramHostUrl}$instagramName';
+      instagramUrl = '${Config().instagramHostUrl}/$instagramName';
     }
     String? twitterUrl;
     String? twitterName = sportSocialMedia?.twitterName;
     if (StringUtils.isNotEmpty(Config().twitterHostUrl) && StringUtils.isNotEmpty(twitterName)) {
-      twitterUrl = '${Config().twitterHostUrl}$twitterName';
+      twitterUrl = '${Config().twitterHostUrl}/$twitterName';
     }
 
     String followLabel = Localization().getStringEx("panel.athletics_team.label.follow.title", "Follow") + " ${widget.sport?.name}";
