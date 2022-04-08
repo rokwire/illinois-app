@@ -143,7 +143,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
         laundry = LaundryRoom.fromJson(JsonUtils.mapValue(laundryJson));
       }
       else if (laundryJson is List) {
-        laundry = [];
+        laundry = <LaundryRoom>[];
         for (dynamic jsonEntry in laundryJson) {
           LaundryRoom? laundryEntry = LaundryRoom.fromJson(jsonEntry);
           if (laundryEntry != null) {
@@ -304,11 +304,14 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       description = _selectedMapLaundry.first?.campusName ?? '';
     }
 
+    double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12 + 2)) / 2;
+
     return Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
       (_mapAllowed == true) ? MapWidget(
         onMapCreated: _onNativeMapCreated,
         creationParams: { "myLocationEnabled": _userLocationEnabled()},
       ) : Container(),
+      
       Positioned(bottom: _mapLaundryBarAnimationController.value, left: 0, right: 0, child:
         Container(height: _MapBarHeight, decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black26, width: 1.0), borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
@@ -318,25 +321,30 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
               Container(height: 8,),
               Row(children: <Widget>[
                 _userLocationEnabled() ? Row(children: <Widget>[
+                  SizedBox(width: buttonWidth, child:
+                    RoundedButton(
+                      label: Localization().getStringEx('panel.laundry_home.button.directions.title', 'Directions'),
+                      hint: Localization().getStringEx('panel.laundry_home.button.directions.hint', ''),
+                      backgroundColor: Colors.white,
+                      fontSize: 16.0,
+                      textColor: Styles().colors?.fillColorPrimary,
+                      borderColor: Styles().colors?.fillColorSecondary,
+                      contentWeight: 0.0,
+                      onTap: _onTapDirections
+                    ),
+                  ),
+                  Container(width: 12,),
+                ]) : Container(),
+                SizedBox(width: buttonWidth, child:
                   RoundedButton(
-                    label: Localization().getStringEx('panel.laundry_home.button.directions.title', 'Directions'),
-                    hint: Localization().getStringEx('panel.laundry_home.button.directions.hint', ''),
+                    label: Localization().getStringEx('panel.laundry_home.button.details.title', 'Details'),
+                    hint: Localization().getStringEx('panel.laundry_home.button.details.hint', ''),
                     backgroundColor: Colors.white,
                     fontSize: 16.0,
                     textColor: Styles().colors?.fillColorPrimary,
                     borderColor: Styles().colors?.fillColorSecondary,
-                    contentWeight: 0.0,
-                    onTap: _onTapDirections),
-                  Container(width: 12,),
-                ]) : Container(),
-                RoundedButton(
-                  label: Localization().getStringEx('panel.laundry_home.button.details.title', 'Details'),
-                  hint: Localization().getStringEx('panel.laundry_home.button.details.hint', ''),
-                  backgroundColor: Colors.white,
-                  fontSize: 16.0,
-                  textColor: Styles().colors?.fillColorPrimary,
-                  borderColor: Styles().colors?.fillColorSecondary,
-                  onTap: _onTapDetails
+                    onTap: _onTapDetails
+                  ),
                 ),
               ],)
             ]),
