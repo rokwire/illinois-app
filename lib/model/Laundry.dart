@@ -70,7 +70,7 @@ class LaundryRoom implements Favorite {
   static List<LaundryRoom>? listFromXml(Iterable<XmlElement>? xmlList, { Map<String, ExploreLocation>? locations }) {
     List<LaundryRoom>? resultList;
     if (xmlList != null) {
-      resultList = [];
+      resultList = <LaundryRoom>[];
       for (XmlElement xml in xmlList) {
         ListUtils.add(resultList, LaundryRoom.fromXml(xml, locations: locations));
       }
@@ -151,7 +151,7 @@ class LaundryRoomAppliance {
   static List<LaundryRoomAppliance>? listFromXml(Iterable<XmlElement>? xmlList) {
     List<LaundryRoomAppliance>? resultList;
     if (xmlList != null) {
-      resultList = [];
+      resultList = <LaundryRoomAppliance>[];
       for (XmlElement xml in xmlList) {
         ListUtils.add(resultList, LaundryRoomAppliance.fromXml(xml));
       }

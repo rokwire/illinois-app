@@ -433,7 +433,7 @@ class Storage extends rokwire.Storage {
     // catch(e) { debugPrint(e.toString()); return null; }
     if(table != null){
       table.forEach((key, selections) {
-        List<List<Member>> groupSelections = [];
+        List<List<Member>> groupSelections = <List<Member>>[];
         if(selections is List && CollectionUtils.isNotEmpty(selections)){
           selections.forEach((selection) {
             List<Member>? groupSelection;
@@ -449,7 +449,7 @@ class Storage extends rokwire.Storage {
       });
     // if(table != null){
     //   table.forEach((key, value) {
-    //     List<List<Member>> groupSelections = [];
+    //     List<List<Member>> groupSelections = <List<Member>>[];
     //     List<dynamic>? selections = JsonUtils.decodeList(value);
     //     if(CollectionUtils.isNotEmpty(selections)){
     //       selections!.forEach((element) {

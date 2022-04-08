@@ -141,7 +141,7 @@ class LiveStats with Service implements NotificationsListener {
 
   void _updateLiveGame(LiveGame liveGame) {
     if (_liveGames == null)
-      _liveGames = [];
+      _liveGames = <LiveGame>[];
 
     //1. find the item index
     int itemIndex = -1;
@@ -170,7 +170,7 @@ class LiveStats with Service implements NotificationsListener {
     String? responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
         List<dynamic>? gamesList = JsonUtils.decode(responseBody);
-        List<LiveGame> result = [];
+        List<LiveGame> result = <LiveGame>[];
         if (gamesList != null) {
           for (dynamic current in gamesList) {
             ListUtils.add(result, LiveGame.fromJson(current));

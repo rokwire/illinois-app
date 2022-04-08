@@ -55,7 +55,7 @@ class Guide with Service implements NotificationsListener {
       DeepLink.notifyUri,
       AppLivecycle.notifyStateChanged,
     ]);
-    _guideDetailsCache = [];
+    _guideDetailsCache = <Map<String, dynamic>>[];
   }
 
   @override

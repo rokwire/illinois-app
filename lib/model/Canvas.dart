@@ -131,7 +131,7 @@ class CanvasCourse {
     }
     List<CanvasCourse>? courses;
     if (jsonList != null) {
-      courses = [];
+      courses = <CanvasCourse>[];
       for (dynamic jsonEntry in jsonList) {
         ListUtils.add(courses, CanvasCourse.fromJson(jsonEntry));
       }

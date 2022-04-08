@@ -57,7 +57,7 @@ class Canvas with Service implements NotificationsListener{
     NotificationService().subscribe(this,[
       DeepLink.notifyUri,
     ]);
-    _canvasEventDetailCache = [];
+    _canvasEventDetailCache = <Map<String, dynamic>>[];
   }
 
   @override
@@ -162,7 +162,7 @@ class Canvas with Service implements NotificationsListener{
       folderId = folder?.id;
     }
     if (folderId != null) {
-      List<CanvasFileSystemEntity> fsEntities = [];
+      List<CanvasFileSystemEntity> fsEntities = <CanvasFileSystemEntity>[];
       List<CanvasFolder>? folders = await _loadSubFolders(folderId);
       if (CollectionUtils.isNotEmpty(folders)) {
         fsEntities.addAll(folders!);
