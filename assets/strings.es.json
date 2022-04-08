@@ -500,7 +500,7 @@
     "panel.onboarding2.explore_campus.button.continue.hint": "",
     "panel.onboarding2.explore_campus.learn_more.location_services.title": "Servicios de localización específicos ",
     "panel.onboarding2.explore_campus.learn_more.location_services.content1": "Cuando los servicios de localización están activados, la app puede encontrar eventos y servicios cerca de ti y proporcionarte mapas interactivos. ",
-    "panel.onboarding2.explore_campus.learn_more.location_services.content2": "Cuando el Bluetooth está activado, la app puede intercambiar información con otros dispositivos para el pase de MTD. El Bluetooth te ayuda a encontrar tu asiento, estacionamiento, sistemas de mensajería dentro del edificio y los servicios al aire libre que hay cerca de ti.",
+    "panel.onboarding2.explore_campus.learn_more.location_services.content2": "Cuando el Bluetooth está activado, la app puede intercambiar información con otros dispositivos para el pase de MTD. El Bluetooth te ayuda a encontrar tu asiento, estacionamiento, sistemas de mensajería dentro del recinto y los servicios al aire libre que hay cerca de ti.",
     "panel.onboarding2.explore_campus.label.title": "¿Quieres activar los servicios de localización específicos?",
     "panel.onboarding2.explore_campus.label.description": "Encuentra fácilmente eventos en el campus y conéctate con personas a tu alrededor que usan la aplicación.",
     "panel.onboarding2.explore_campus.button.toggle.title": "Activar los servicios de localización.",
