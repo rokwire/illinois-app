@@ -1639,7 +1639,7 @@
     "panel.find_event.button.add_selected_events.title": "Añadir evento de (#) al grupo",
     "panel.find_event.button.add_selected_events.hint": "",
     "panel.manage_members.header.admin.title": "Administrar usuarios",
-    "panel.manage_members.header.member.title": "Miembros",
+    "panel.manage_members.header.member.title": "Integrantes",
     "panel.manage_members.label.requests": "Solicitudes",
     "panel.manage_members.label.members": "Integrantes",
     "panel.manage_members.button.review_request.title": "Review Request",
