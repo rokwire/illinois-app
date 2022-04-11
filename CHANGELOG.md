@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- User's profile picture in group listing panel [#1534](https://github.com/rokwire/illinois-app/issues/1534).
 ### Changed
 - Buttons for editing user's profile picture [#1532](https://github.com/rokwire/illinois-app/issues/1532).
 

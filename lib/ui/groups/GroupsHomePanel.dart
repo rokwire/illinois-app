@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/settings/SettingsPersonalInfoPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -346,6 +347,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                     _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups'), hint: '', selected: _myGroupsSelected, onTap: _onTapMyGroups),
                     Container(width: 15,),
                     Flexible(child: Container()),
+                    Visibility(visible: Auth2().isLoggedIn, child: _buildUserProfilePicture()),
                     Visibility(visible: _canCreateGroup, child: _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10, excludeFromSemantics: true), selected: false, onTap: _onTapCreate)),
                   ],
                 ),
@@ -621,6 +623,14 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
+  Widget _buildUserProfilePicture() {
+    return Center(
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: Container(
+                height: 34, width: 34, child: GroupMemberProfileImage(userId: Auth2().accountId, onTap: _onTapUserProfileImage))));
+  }
+  
   void switchTabSelection() {
     setState(() {
       _myGroupsSelected = !_myGroupsSelected;
@@ -691,6 +701,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
+  void _onTapUserProfileImage() {
+    Analytics().logSelect(target: "User Profile Image");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInfoPanel()));
+  }
+  
   bool get _canCreateGroup {
     return Auth2().isOidcLoggedIn;
   }
