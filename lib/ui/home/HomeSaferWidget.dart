@@ -157,36 +157,74 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
       Analytics().logSelect(target: 'Building Access');
       if (Connectivity().isOffline) {
         AppAlert.showOfflineMessage(context, "");
-      }
-      else if (Auth2().privacyMatch(4)) {
-        if (Auth2().isOidcLoggedIn) {
-          _showModalIdCardPanel();
-        }
-        else {
-          setState(() { _authLoading = true; });
-          Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
-            if (mounted) {
-              setState(() { _authLoading = false; });
-              _processOidcAuthResult(result);
-            }
-            else {
-              NotificationService().notify(_notifyOidcAuthenticated, result);
-            }
-          });
-        }
-      }
-      else if (StringUtils.isNotEmpty(Config().iCardBoardingPassUrl)) {
-        launch(Config().iCardBoardingPassUrl!);
+      } else if (Auth2().privacyMatch(4)) {
+        _handlePrivacyMatch4();
+      } else {
+        _handlePrivacyBelow4();
       }
     }
+  }
+
+  void _handlePrivacyMatch4() {
+    if (Auth2().isOidcLoggedIn) {
+      _showModalIdCardPanel();
+    } else {
+      _oidcAuthenticate();
+    }
+  }
+
+  void _handlePrivacyBelow4() {
+    AppAlert.showCustomDialog(
+        context: context,
+        contentWidget: Text(Localization().getStringEx('widget.home.safer.alert.building_access.privacy_update.msg',
+            'Due to your current privacy level, you will have to sign in everytime you want to show your building access status. Do you want to Sign In and change your privacy level to 4?')),
+        actions: [
+          TextButton(child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')), onPressed: _increasePrivacyLevelAndAuthenticate),
+          TextButton(child: Text(Localization().getStringEx('dialog.no.title', 'No')), onPressed: _doNotIncreasePrivacyLevel)
+        ]);
+  }
+
+  void _increasePrivacyLevelAndAuthenticate() {
+    Analytics().logSelect(target: 'Yes');
+    Navigator.of(context).pop();
+    _oidcAuthenticate(privacyLevel: 4); // User is allowed, so increase privacy level to 4
+  }
+
+  void _doNotIncreasePrivacyLevel() {
+    Analytics().logSelect(target: 'No');
+    Navigator.of(context).pop();
+    if (StringUtils.isNotEmpty(Config().iCardBoardingPassUrl)) {
+      launch(Config().iCardBoardingPassUrl!);
+    }
+  }
+
+  void _oidcAuthenticate({int? privacyLevel}) {
+    if (mounted) {
+      setState(() {
+        _authLoading = true;
+      });
+    }
+    if (privacyLevel != null) {
+      Auth2().prefs?.privacyLevel = privacyLevel;
+    }
+    Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      if (mounted) {
+        _processOidcAuthResult(result);
+        setState(() {
+          _authLoading = false;
+        });
+      } else {
+        NotificationService().notify(_notifyOidcAuthenticated, result);
+      }
+    });
   }
 
   void _processOidcAuthResult(Auth2OidcAuthenticateResult? result) {
     if (result == Auth2OidcAuthenticateResult.succeeded) {
       _showModalIdCardPanel();
-    }
-    else if (result != null) {
-      AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+    } else if (result != null) {
+      AppAlert.showDialogResult(
+          context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
     }
   }
 
