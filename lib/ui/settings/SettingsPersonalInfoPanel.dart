@@ -16,8 +16,10 @@
 
 import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -398,6 +400,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
                     padding: EdgeInsets.only(bottom: 10),
                     child: _buildProfileImageButton(
                         Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Picture"),
+                        Localization().getStringEx("panel.profile_info.button.profile_picture.hint", ""),
                         _onTapProfilePicture))),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Visibility(
@@ -405,35 +408,44 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
                   child: Padding(
                       padding: EdgeInsets.only(right: 24),
                       child: _buildProfileImageButton(
-                          Localization().getStringEx("panel.profile_info.button.picture.edit.title", "Edit"), _onTapEditPicture))),
+                          Localization().getStringEx("panel.profile_info.button.picture.edit.title", "Edit"),
+                          Localization().getStringEx("panel.profile_info.button.picture.edit.hint", "Edit profile picture"),
+                          _onTapEditPicture))),
               Expanded(child: Container(
                   width: 189,
                   height: 189,
-                  child: Container(
+                  child: Semantics (
+                    image: true,
+                    label: "Profile",
+                    child: Container(
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
-                          image: DecorationImage(fit: BoxFit.cover, image: profileImage.image))))),
+                          image: DecorationImage(fit: BoxFit.cover, image: profileImage.image)))))),
               Visibility(
                   visible: _hasProfilePicture,
                   child: Padding(
                       padding: EdgeInsets.only(left: 24),
                       child: _buildProfileImageButton(
-                          Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"), _onTapDeletePicture)))
+                          Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"),
+                          Localization().getStringEx("panel.profile_info.button.picture.delete.hint", "Delete profile picture"),
+                          _onTapDeletePicture)))
             ])
           ]));
     }
     return Padding(padding: EdgeInsets.only(top: 25), child: contentWidget);
   }
 
-  Widget _buildProfileImageButton(String title, GestureTapCallback? onTap) {
-    return GestureDetector(
+  Widget _buildProfileImageButton(String title, String hint, GestureTapCallback? onTap) {
+    return Semantics(label: title, hint: hint, button: true,
+        child: GestureDetector(
         onTap: onTap,
         child: Container(
             decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1))),
             padding: EdgeInsets.only(bottom: 2),
             child: Text(title,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground))));
+                semanticsLabel: "",
+                style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))));
   }
 
   void _loadUserProfilePicture() {
@@ -546,26 +558,32 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
 
   void _onChangeProfilePicture() {
     _setProfilePicProcessing(true);
-    Content().selectImageFromDevice(isUserPic: true).then((imageUploadResult) {
-      ImagesResultType? resultType = imageUploadResult?.resultType;
-      switch (resultType) {
-        case ImagesResultType.cancelled:
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(isUserPic: true))).then(
+      (imageUploadResult) {
+        if(imageUploadResult != null) {
+          ImagesResultType? resultType = imageUploadResult?.resultType;
+          switch (resultType) {
+            case ImagesResultType.cancelled:
+              _setProfilePicProcessing(false);
+              break;
+            case ImagesResultType.error:
+              AppAlert.showDialogResult(
+                  context,
+                  Localization().getStringEx(
+                      'panel.profile_info.picture.upload.failed.msg',
+                      'Failed to upload profile picture. Please, try again later.'));
+              _setProfilePicProcessing(false);
+              break;
+            case ImagesResultType.succeeded:
+              _loadUserProfilePicture();
+              break;
+            default:
+              break;
+          }
+        } else {
           _setProfilePicProcessing(false);
-          break;
-        case ImagesResultType.error:
-          AppAlert.showDialogResult(
-              context,
-              Localization().getStringEx(
-                  'panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
-          _setProfilePicProcessing(false);
-          break;
-        case ImagesResultType.succeeded:
-          _loadUserProfilePicture();
-          break;
-        default:
-          break;
-      }
-    });
+        }
+      });
   }
 
   void _onTapDeletePicture() {
