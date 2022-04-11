@@ -2827,14 +2827,21 @@ class GroupMemberProfileImage extends StatefulWidget {
   State<GroupMemberProfileImage> createState() => _GroupMemberProfileImageState();
 }
 
-class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> {
+class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> implements NotificationsListener {
   Uint8List? _imageBytes;
   bool _loading = false;
 
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, Content.notifyUserProfilePictureChanged);
     _loadImage();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    NotificationService().unsubscribe(this);
   }
 
   @override
@@ -2885,6 +2892,18 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> {
       _loading = loading;
       if (mounted) {
         setState(() {});
+      }
+    }
+  }
+
+  // Notifications
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Content.notifyUserProfilePictureChanged) {
+      // If it's current user - reload profile picture
+      if (widget.userId == Auth2().accountId) {
+        _loadImage();
       }
     }
   }
