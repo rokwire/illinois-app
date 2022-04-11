@@ -2819,8 +2819,9 @@ class _GroupPollCardState extends State<GroupPollCard>{
 
 class GroupMemberProfileImage extends StatefulWidget {
   final String? userId;
+  final GestureTapCallback? onTap;
 
-  GroupMemberProfileImage({this.userId});
+  GroupMemberProfileImage({this.userId, this.onTap});
 
   @override
   State<GroupMemberProfileImage> createState() => _GroupMemberProfileImageState();
@@ -2843,7 +2844,7 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> {
         : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true);
 
     return GestureDetector(
-        onTap: _onImageTap,
+        onTap: widget.onTap ?? _onImageTap,
         child: Stack(alignment: Alignment.center, children: [
           Container(
               decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: profileImage.image))),
