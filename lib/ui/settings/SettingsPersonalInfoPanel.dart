@@ -386,59 +386,54 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     if (_profilePicProcessing) {
       contentWidget = Center(child: CircularProgressIndicator());
     } else {
-      Image profileImage = (_profileImageBytes != null)
+      Image profileImage = _hasProfilePicture
           ? Image.memory(_profileImageBytes!)
           : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true);
       contentWidget = Padding(
           padding: EdgeInsets.only(bottom: 25),
-          child: Stack(alignment: Alignment.center, children: [
-            Container(
-              width: 240,
-              height: 240,
-              child: Container(
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.white, image: DecorationImage(fit: BoxFit.cover, image: profileImage.image))),
-            ),
-            _buildProfileImageButtons()
+          child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Visibility(
+                visible: !_hasProfilePicture,
+                child: Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: _buildProfileImageButton(
+                        Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Picture"),
+                        _onTapProfilePicture))),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Visibility(
+                  visible: _hasProfilePicture,
+                  child: Padding(
+                      padding: EdgeInsets.only(right: 24),
+                      child: _buildProfileImageButton(
+                          Localization().getStringEx("panel.profile_info.button.picture.edit.title", "Edit"), _onTapEditPicture))),
+              Expanded(child: Container(
+                  width: 189,
+                  height: 189,
+                  child: Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          image: DecorationImage(fit: BoxFit.cover, image: profileImage.image))))),
+              Visibility(
+                  visible: _hasProfilePicture,
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 24),
+                      child: _buildProfileImageButton(
+                          Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"), _onTapDeletePicture)))
+            ])
           ]));
     }
     return Padding(padding: EdgeInsets.only(top: 25), child: contentWidget);
   }
 
-  Widget _buildProfileImageButtons() {
-    List<Widget> buttonWidgets = [];
-    if (_profileImageBytes != null) {
-      buttonWidgets.add(RoundedButton(
-          label: Localization().getStringEx("panel.profile_info.button.picture.edit.title", "Edit"),
-          hint: Localization().getStringEx("panel.profile_info.button.picture.edit.hint", ""),
-          backgroundColor: Styles().colors!.whiteTransparent06,
-          fontSize: 16.0,
-          contentWeight: 0.5,
-          textColor: Styles().colors!.fillColorPrimary,
-          borderColor: Styles().colors!.fillColorSecondary,
-          onTap: _onTapEditPicture));
-      buttonWidgets.add(Container(height: 16));
-      buttonWidgets.add(RoundedButton(
-          label: Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"),
-          hint: Localization().getStringEx("panel.profile_info.button.picture.delete.hint", ""),
-          backgroundColor: Styles().colors!.whiteTransparent06,
-          fontSize: 16.0,
-          contentWeight: 0.5,
-          textColor: Styles().colors!.fillColorPrimary,
-          borderColor: Styles().colors!.fillColorSecondary,
-          onTap: _onTapDeletePicture));
-    } else {
-      buttonWidgets.add(RoundedButton(
-          label: Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Picture"),
-          hint: Localization().getStringEx("panel.profile_info.button.profile_picture.hint", ""),
-          backgroundColor: Styles().colors!.background,
-          fontSize: 16.0,
-          contentWeight: 0.6,
-          textColor: Styles().colors!.fillColorPrimary,
-          borderColor: Styles().colors!.fillColorSecondary,
-          onTap: _onTapProfilePicture));
-    }
-    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: buttonWidgets);
+  Widget _buildProfileImageButton(String title, GestureTapCallback? onTap) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1))),
+            padding: EdgeInsets.only(bottom: 2),
+            child: Text(title,
+                style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground))));
   }
 
   void _loadUserProfilePicture() {
@@ -623,6 +618,10 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   
   String get _customPhone {
       return _phoneController?.value.text??"";
+  }
+
+  bool get _hasProfilePicture {
+    return (_profileImageBytes != null);
   }
 }
 
