@@ -82,7 +82,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     bool showOrderFoodAndDrink = (isMenBasketball && isHomeGame) || isGameDay;
     bool showGetTickets = isTicketedSport && (widget.game?.links?.tickets != null);
     bool showParking = widget.game?.parkingUrl != null;
-    bool showGameDayGuide = widget.game?.isHomeGame ?? false;
+    bool showGameDayGuide = (widget.game?.isHomeGame ?? false) && _hasGameDayGuide;
     bool hasScores = sportDefinition?.hasScores ?? false;
     bool hasLiveGame = (Storage().debugDisableLiveGameCheck == true) || LiveStats().hasLiveGame(widget.game?.id);
     bool showScore = hasScores && (widget.game?.isGameDay ?? false) && hasLiveGame;
@@ -456,8 +456,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
 
   void _onTapGameDayGuide() {
     Analytics().logSelect(target: "Game Day");
-    String? sportKey = widget.game?.sport?.shortName;
-    String? url = Sports.getGameDayGuideUrl(sportKey);
+    String? url = _gameDayGuideUrl;
     if (url != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
     }
@@ -475,6 +474,15 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     if (StringUtils.isNotEmpty(videoUrl)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: videoUrl)));
     }
+  }
+
+  String? get _gameDayGuideUrl {
+    String? sportKey = widget.game?.sport?.shortName;
+    return Sports.getGameDayGuideUrl(sportKey);
+  }
+
+  bool get _hasGameDayGuide {
+    return StringUtils.isNotEmpty(_gameDayGuideUrl);
   }
 }
 
