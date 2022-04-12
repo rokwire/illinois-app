@@ -180,8 +180,6 @@ class Gies with Service{
         }
       }
 
-      // String title = "${JsonUtils.intValue(currentPage!['progress'])}${JsonUtils.stringValue(currentPage['tab_index'])??""} ${JsonUtils.stringValue(currentPage['title'])}";
-      // String title = "${JsonUtils.stringValue(currentPage!['title'])}";
       String title = "${JsonUtils.stringValue(currentPage!["step_title"])}: ${JsonUtils.stringValue(currentPage['title'])}";
       notes.add({
         'id': currentPageId,
