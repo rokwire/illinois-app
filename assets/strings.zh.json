@@ -2202,6 +2202,7 @@
 	"widget.home.safer.button.my_mckinley.description": "MyMcKinley Patient Health Portal",
 	"widget.home.safer.button.wellness_answer_center.title": "Answer Center",
 	"widget.home.safer.button.wellness_answer_center.description": "Get answers to your questions.",
+    "widget.home.safer.alert.building_access.privacy_update.msg": "Due to your current privacy level, you will have to sign in everytime you want to show your building access status. Do you want to Sign In and change your privacy level to 4?",
 
 	"widget.athletics_card.button.get_tickets.title":"获取门票",
 	"widget.athletics_card.button.get_tickets.hint":"",

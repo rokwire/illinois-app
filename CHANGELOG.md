@@ -5,8 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.3.14] - 2022-04-11
+### Added
+- User's profile picture in group listing panel [#1534](https://github.com/rokwire/illinois-app/issues/1534).
 ### Changed
+- Show Edit Image panel for editing user's profile picture [#1538](https://github.com/rokwire/illinois-app/issues/1538).
 - Buttons for editing user's profile picture [#1532](https://github.com/rokwire/illinois-app/issues/1532).
+- App behavior when "Building Access" is tapped [#1536](https://github.com/rokwire/illinois-app/issues/1536).
 
 ## [3.3.13] - 2022-04-07
 ### Fixed

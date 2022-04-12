@@ -38,8 +38,9 @@ import 'package:mime_type/mime_type.dart';
 class ImageEditPanel extends StatefulWidget {
   final String? storagePath;
   final int? width;
+  final bool isUserPic;
 
-  const ImageEditPanel({Key? key, this.storagePath, this.width}) : super(key: key);
+  const ImageEditPanel({Key? key, this.storagePath, this.width = 1080, this.isUserPic = false}) : super(key: key);
 
   _ImageEditState createState() => _ImageEditState();
 }
@@ -273,7 +274,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
 
   /// to pop from current
   void _closeDialog() {
-    Navigator.of(this.context).pop();
+    Navigator.of(this.context).pop(ImagesResult.cancel());
 
   }
 
@@ -283,13 +284,13 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
 
   void _onBack(){
     Analytics().logSelect(target: "Back");
-    Navigator.pop(this.context, null);
+    Navigator.pop(this.context, ImagesResult.cancel());
   }
 
   void _onFinish() async{
-    if(widget.storagePath!=null){
+    if(widget.storagePath!=null || widget.isUserPic){
       _showLoader();
-      Content().uploadImage(imageBytes: _imageBytes, fileName: _imageName, mediaType: _contentType, storagePath: widget.storagePath, width: widget.width)
+      Content().uploadImage(imageBytes: _imageBytes, fileName: _imageName, mediaType: _contentType, storagePath: widget.storagePath, width: widget.width, isUserPic: widget.isUserPic)
           .then((value) {
             _hideLoader();
             Navigator.pop(this.context, value);
