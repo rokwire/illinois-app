@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Privacy alert content and fixed delay after user's selection [#1536](https://github.com/rokwire/illinois-app/issues/1536).
 - Gies cleanup [#1543](https://github.com/rokwire/illinois-app/issues/1543).
+### Fixed
+- Show "Game Day Guide" button only for men's basketball and football [#1531](https://github.com/rokwire/illinois-app/issues/1531).
 
 ## [3.3.14] - 2022-04-11
 ### Added
