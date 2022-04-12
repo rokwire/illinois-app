@@ -15,6 +15,7 @@ import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeSaferWidget extends StatefulWidget {
@@ -174,20 +175,26 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   void _handlePrivacyBelow4() {
-    AppAlert.showCustomDialog(
-        context: context,
-        contentWidget: Text(Localization().getStringEx('widget.home.safer.alert.building_access.privacy_update.msg',
-            'Due to your current privacy level, you will have to sign in everytime you want to show your building access status. Do you want to Sign In and change your privacy level to 4?')),
-        actions: [
-          TextButton(child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')), onPressed: _increasePrivacyLevelAndAuthenticate),
-          TextButton(child: Text(Localization().getStringEx('dialog.no.title', 'No')), onPressed: _doNotIncreasePrivacyLevel)
-        ]);
+    int userPrivacyLevel = Auth2().prefs?.privacyLevel ?? 0;
+    String msg = sprintf(
+        Localization().getStringEx('widget.home.safer.alert.building_access.privacy_update.msg',
+            'With your privacy level %s, you will have to sign in everytime to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?'),
+        [userPrivacyLevel.toString()]);
+    AppAlert.showCustomDialog(context: context, contentWidget: Text(msg), actions: [
+      TextButton(
+          child: Text(Localization().getStringEx('widget.home.safer.alert.building_access.privacy_level.4.button.label', 'Set to 4')),
+          onPressed: () => _increasePrivacyLevelAndAuthenticate(4)),
+      TextButton(
+          child: Text(Localization().getStringEx('widget.home.safer.alert.building_access.privacy_level.5.button.label', 'Set to 5')),
+          onPressed: () => _increasePrivacyLevelAndAuthenticate(5)),
+      TextButton(child: Text(Localization().getStringEx('dialog.no.title', 'No')), onPressed: _doNotIncreasePrivacyLevel)
+    ]);
   }
 
-  void _increasePrivacyLevelAndAuthenticate() {
+  void _increasePrivacyLevelAndAuthenticate(int privacyLevel) {
     Analytics().logSelect(target: 'Yes');
     Navigator.of(context).pop();
-    _oidcAuthenticate(privacyLevel: 4); // User is allowed, so increase privacy level to 4
+    _oidcAuthenticate(privacyLevel: privacyLevel); // User is allowed, so increase privacy level to privacyLevel
   }
 
   void _doNotIncreasePrivacyLevel() {
