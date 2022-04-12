@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added more sections in "privacy_new" group in assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+### Changed
+- Privacy alert content and fixed delay after user's selection [#1536](https://github.com/rokwire/illinois-app/issues/1536).
 
 ## [3.3.14] - 2022-04-11
 ### Added
