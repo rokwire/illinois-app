@@ -9,9 +9,6 @@
     {"key":"a", "page_id": "setup.email.account"},
     {"key":"b", "page_id": "verify.personal.information"},
     {"key":"c", "page_id": "setup.zoom.account"}
-  ],
-  "_buttons":[
-    {"title":"Continue", "page":"claim.netid.and.password"}
   ]
 },{
   "id":"setup.email.account",
@@ -20,9 +17,6 @@
   "tab_index": "a",
   "title":"Setup Your University Email Account",
   "text":"Most correspondence is sent to your Illinois email address, so it is imperative you set up your email and check it regularly. Microsoft Office 365 is a service used for email, calendaring, and contact and task management at the University of Illinois and is vital for receiving emails and information from the University. Approximately one hour after claiming your Net ID and setting your password, you will be able to login to and start using your <a href='https://outlook.office365.com/'>Office 365 Email Account</a>. If you have questions about your email or your Exchange account, please visit the <a href='http://techservices.illinois.edu/services/email'>Technology Services Website</a>, or email <a href='mailto:consult@illinois.edu'>consult@illinois.edu</a>.",
-  "_buttons":[
-    {"title":"Next", "_popup":"current-notes", "swipe_page":"verify.personal.information", "completes": true}
-  ],
   "navigation_buttons":[
     {"title":">","position":"right", "swipe_page":"verify.personal.information", "completes": true}
   ]
@@ -33,9 +27,6 @@
   "tab_index": "b",
   "title":"Verify Your Personal Information in Student Self-Service",
   "text":"Once you have established your NetID, use it to log into the online <a href='https://apps.uillinois.edu/selfservice/'>Student Self-Service</a> and verify your personal information, such as your contact information. Keeping this information up to date is extremely important and ensures proper delivery of important documents.",
-  "_buttons":[
-    {"title":"Next", "_popup":"current-notes", "swipe_page":"setup.zoom.account", "completes": true}
-  ],
   "navigation_buttons":[
     {"title":"<","position":"left", "swipe_page":"setup.email.account"},
     {"title":">","position":"right", "swipe_page":"setup.zoom.account", "completes": true}
@@ -48,7 +39,7 @@
   "title":"Set Up Your Illinois Zoom Pro Account",
   "text":"Zoom Pro is the way you will participate in your live sessions (lectures) for each course, office hours and more. Follow these <a href='https://uofi.box.com/s/j168hch5ro8188wkyhykunff84wwenps'>step-by-step instructions</a> to get setup with Zoom.",
   "buttons":[
-    {"title":"Done", "_popup":"current-notes", "page":"setup.coursera.account", "completes": true}
+    {"title":"Done", "page":"setup.coursera.account", "completes": true}
   ],
   "navigation_buttons":[
     {"title":"<","position":"left", "swipe_page":"verify.personal.information"}
@@ -61,9 +52,6 @@
   "text":"<p><i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i></p><p></p>",
   "steps":[
     {"key":"a", "page_id":"claim.coursera.account"}
-  ],
-  "_buttons":[
-    {"title":"Continue", "page":"claim.coursera.account"}
   ]
 },{
   "id":"claim.coursera.account",
@@ -78,7 +66,7 @@
       "<b>Join Coursera for Illinois:</b> Coursera for Illinois is a perk of being a student at the University of Illinois. Carefully follow these <a href='https://uofi.app.box.com/file/624565567278?s=6cyz7pxaqlwcjxyz1gf1p35mxah392p6'>step-by-step instructions</a> to successfully add your Coursera for Illinois dashboard. Coursera for Illinois ensures that you can access the University of Illinois Coursera MOOCs for free. If you previously had an account with Coursera then you will still need to enroll in Coursera for Illinois in order to avoid paying the MOOC enrollment fees."
     ]}],
   "buttons":[
-    {"title":"Done", "_popup":"current-notes", "page":"connect.workspace.and.student.guide", "completes": true}
+    {"title":"Done", "page":"connect.workspace.and.student.guide", "completes": true}
   ]
 },{
   "id":"connect.workspace.and.student.guide",
@@ -88,9 +76,6 @@
   "steps":[
     {"key":"a", "page_id":"join.workspace"},
     {"key":"b", "page_id":"connect.student.guide"}
-  ],
-  "_buttons":[
-    {"title":"Continue", "page":"join.workspace"}
   ]
 },{
   "id":"join.workspace",
@@ -106,9 +91,6 @@
     ]},{
     "heading":"Make sure to check your junk mail if you have not received an email regarding Workplace."
   }],
-  "_buttons":[
-    {"title":"Next", "_popup":"current-notes", "swipe_page":"connect.student.guide", "completes": true}
-  ],
   "navigation_buttons":[
     {"title":">","position":"right", "swipe_page":"connect.student.guide", "completes": true}
   ]
@@ -120,7 +102,7 @@
   "title":"Connect with your New Student Guide",
   "text":"Pairing with your Gies Online New Student Guide begins approximately four weeks prior to the term start. You will receive an email notifying you of your New Student Guide. Your guide will be able to assist you with orientation to the program and will be a resource moving forward for general questions and more.",
   "buttons":[
-    {"title":"Done", "_popup":"current-notes", "page":"complete.onboarding.course", "completes": true}
+    {"title":"Done", "page":"complete.onboarding.course", "completes": true}
   ],
   "navigation_buttons":[
     {"title":"<","position":"left", "swipe_page":"join.workspace"}
@@ -144,7 +126,7 @@
     "heading":"This onboarding course takes approximately 3-4 hours to complete but is essential in your success as a Gies online student. Please be sure to complete well in advance of starting your coursework."
   }],
   "buttons":[
-    {"title":"Done", "_popup":"current-notes", "page":"review.course.recommendations.and.register.for.courses", "completes": true}
+    {"title":"Done", "page":"review.course.recommendations.and.register.for.courses", "completes": true}
   ]
 },{
   "id":"review.course.recommendations.and.register.for.courses",
@@ -173,7 +155,7 @@
       "<a href='https://onlinestudents.giesbusiness.illinois.edu/newly-admitted/registration'>iMSA Course Registration</a>"
     ]}],
   "buttons":[
-    {"title":"Done", "_popup":"current-notes", "page":"sumbit.official.credentials", "completes": true}
+    {"title":"Done", "page":"sumbit.official.credentials", "completes": true}
   ]
 },{
   "id":"sumbit.official.credentials",
@@ -182,7 +164,7 @@
   "title":"Submit Your Official Credentials",
   "text":"Original credentials (transcripts, mark sheets, academic records, certificates of degree, etc.) need to be sent from your previous institution(s) to complete your admission. Please note that the credentials you provided as scans in your application are considered unofficial.<p><b>Electronic credentials can be sent to <a href='mailto:grad@illinois.edu'>grad@illinois.edu</a> from your institution. This is the preferred and fastest method.</b> Electronic credentials sent from a student are not official.</p><p><b>If you have international credentials that need to be returned because you have only one original copy:</b> you can send the credentials to the Graduate College (address below) but you must include a postage-paid return envelope (or label, if the envelope can be re-used) using FedEx or UPS. If you do not include a postage-paid return envelope or label, the Graduate College will not be able to return your credentials. Please make sure that you include all mark sheets, transcripts, and certificates of degrees in both English and native language (if applicable).</p><p><b>Please have your paper academic credentials sent to the following address:</b></p><p><b>Graduate College Admissions, Registration and Enrollment Services</b></p><p>507 E. Green Street</p><p>Suite 101, MC-434</p><p>Champaign, IL 61820</p><p>If you would like to visit campus to submit your credentials, you must email grad@illinois.edu to set up a time.</p>",
   "buttons":[
-    {"title":"Done", "_popup":"current-notes", "page":"new.student.office.hours", "completes": true}
+    {"title":"Done", "page":"new.student.office.hours", "completes": true}
   ]
 },{
   "id":"new.student.office.hours",
@@ -193,12 +175,4 @@
     "bullets":[
       "Fridays from 9:00 – 10:00 AM CST: <a href='https://illinois.zoom.us/meeting/register/tZEqdu6sqzIvHNLI_abCyDrnxHZQgJiddf2s'>Register Here</a>"
     ]}]
-},{
-  "id":"goodby.defered",
-  "title":"See you later",
-  "text":"We are sory for your decision. We are looking forward for your application next year."
-},{
-  "id":"goodby.declined",
-  "title":"Goodby",
-  "text":"We are sory for your decision. We are looking forward for your application next year."
 }]
