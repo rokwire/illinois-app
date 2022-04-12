@@ -2201,7 +2201,8 @@
     "widget.home.safer.button.my_mckinley.description": "MyMcKinley Patient Health Portal",
     "widget.home.safer.button.wellness_answer_center.title": "Answer Center",
     "widget.home.safer.button.wellness_answer_center.description": "Get answers to your questions.",
-    "widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level %s, you will have to sign in everytime to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
+    "widget.home.safer.alert.building_access.privacy_update.msg1": "With your privacy level ",
+    "widget.home.safer.alert.building_access.privacy_update.msg2": " , you will have to sign in everytime to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
 
     "widget.athletics_card.button.get_tickets.title":"Obtener boletos",
     "widget.athletics_card.button.get_tickets.hint":"",

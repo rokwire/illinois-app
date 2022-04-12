@@ -15,7 +15,6 @@ import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeSaferWidget extends StatefulWidget {
@@ -175,12 +174,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   void _handlePrivacyBelow4() {
-    int userPrivacyLevel = Auth2().prefs?.privacyLevel ?? 0;
-    String msg = sprintf(
-        Localization().getStringEx('widget.home.safer.alert.building_access.privacy_update.msg',
-            'With your privacy level %s, you will have to sign in everytime to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?'),
-        [userPrivacyLevel.toString()]);
-    AppAlert.showCustomDialog(context: context, contentWidget: Text(msg), actions: [
+    AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertContentWidget(), actions: [
       TextButton(
           child: Text(Localization().getStringEx('widget.home.safer.alert.building_access.privacy_level.4.button.label', 'Set to 4')),
           onPressed: () => _increasePrivacyLevelAndAuthenticate(4)),
@@ -189,6 +183,45 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
           onPressed: () => _increasePrivacyLevelAndAuthenticate(5)),
       TextButton(child: Text(Localization().getStringEx('dialog.no.title', 'No')), onPressed: _doNotIncreasePrivacyLevel)
     ]);
+  }
+
+  Widget _buildPrivacyAlertContentWidget() {
+    int userPrivacyLevel = Auth2().prefs?.privacyLevel ?? 0;
+    String privacyMsg1 =
+        Localization().getStringEx('widget.home.safer.alert.building_access.privacy_update.msg1', 'With your privacy level ');
+    String privacyMsg2 = Localization().getStringEx('widget.home.safer.alert.building_access.privacy_update.msg2',
+        ' , you will have to sign in everytime to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?');
+    return RichText(
+        text: TextSpan(
+            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold),
+            children: [
+          TextSpan(text: privacyMsg1),
+          WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget(userPrivacyLevel)),
+          TextSpan(text: privacyMsg2)
+        ]));
+  }
+
+  Widget _buildPrivacyLevelWidget(int privacyLevel) {
+    return Container(
+        height: 40,
+        width: 40,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2),
+          color: Styles().colors!.white,
+          borderRadius: BorderRadius.all(Radius.circular(100)),
+        ),
+        child: Container(
+            height: 32,
+            width: 32,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2),
+              color: Styles().colors!.white,
+              borderRadius: BorderRadius.all(Radius.circular(100)),
+            ),
+            child: Text(privacyLevel.toString(),
+                style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))));
   }
 
   void _increasePrivacyLevelAndAuthenticate(int privacyLevel) {
