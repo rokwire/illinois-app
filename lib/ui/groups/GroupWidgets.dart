@@ -1007,7 +1007,42 @@ class GroupCard extends StatelessWidget {
 
   void _onTapCard(BuildContext context) {
     Analytics().logSelect(target: "Group: ${group!.title}");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: group)));
+    if (Auth2().privacyMatch(3)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: group)));
+    }
+    else {
+      AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertWidget(), actions: [
+        TextButton(child: Text(Localization().getStringEx('dialog.ok.title', 'OK')), onPressed: () => _onDismissPrivacyAlert(context))
+      ]);
+    }
+  }
+
+  Widget _buildPrivacyAlertWidget() {
+    final String iconMacro = '{{privacy level icon}}';
+    String privacyMsg = Localization().getStringEx('panel.group_card.privacy_alert.msg', 'With your privacy level $iconMacro, you can only view existing groups.');
+    int position = privacyMsg.indexOf(iconMacro);
+    String leftMsg = (0 < position) ? privacyMsg.substring(0, position) : '';
+    String rightMsg = ((0 < position) && (position < privacyMsg.length)) ? privacyMsg.substring(position + iconMacro.length) : '';
+
+    return RichText(text: TextSpan(style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold), children: [
+      TextSpan(text: leftMsg),
+      WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
+      TextSpan(text: rightMsg)
+    ]));
+  }
+
+  Widget _buildPrivacyLevelWidget() {
+    String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '0';
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+        Text(privacyLevel, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))
+      ),
+    );
+  }
+
+  void _onDismissPrivacyAlert(BuildContext context) {
+    Analytics().logSelect(target: 'OK');
+    Navigator.of(context).pop();
   }
 
   String get _timeUpdatedText {
