@@ -46,11 +46,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   bool _isFilterLoading = false;
   bool _isGroupsLoading = false;
-  bool _myGroupsSelected = true;
+  bool _myGroupsSelected = false;
 
   List<Group>? _allGroups;
-  List<Group>? _myGroups;
-  List<Group>? _myPendingGroups;
 
   String? _selectedCategory;
   List<String>? _categories;
@@ -63,7 +61,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     super.initState();
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupDeleted]);
     _loadFilters();
-    _loadInitialGroupsContent();
+    _loadGroupsContent(autoUpdateTabSelection: true);
   }
 
   @override
@@ -87,114 +85,25 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   ///////////////////////////////////
   // Data Loading
 
-  void _loadInitialGroupsContent() {
+  void _loadGroupsContent({ bool autoUpdateTabSelection = false }) {
 
     setState(() {
       _isGroupsLoading = true;
     });
 
-    Groups().loadGroups(myGroups: _myGroupsSelected).then((List<Group>? groups) {
+    Groups().loadGroups().then((List<Group>? groups) {
       if (mounted) {
         if (groups != null) {
-          // Initial request succeded
-          List<Group>? sortedGroups = _sortGroups(groups);
-          if (_myGroupsSelected) {
-            List<Group>? myGroups = sortedGroups?.where((group) => group.currentUserIsMemberOrAdmin).toList();
-            List<Group>? myPendingGroups = sortedGroups?.where((group) => group.currentUserIsPendingMember).toList();
-            if ((myGroups?.isNotEmpty ?? false) || (myPendingGroups?.isNotEmpty ?? false)) {
-              // Non-Empty My Groups content => apply it
-              setState(() {
-                _isGroupsLoading = false;
-                _myGroups = myGroups;
-                _myPendingGroups = myPendingGroups;
-              });
+          setState(() {
+            _isGroupsLoading = false;
+            _allGroups = _sortGroups(groups);
+            if (autoUpdateTabSelection) {
+              _myGroupsSelected = _hasMyGroups;
             }
-            else {
-              // Empty My Groups content => Load All Groups content
-              Groups().loadGroups(myGroups: false).then((List<Group>? groups2) {
-                if (mounted) {
-                  if (groups2 != null) {
-                    // Empty My Groups content; All Groups request succeded => apply everything collected + switch tab seletion
-                    List<Group>? allGroups = _sortGroups(groups2);
-                    setState(() {
-                      _isGroupsLoading = false;
-                      _myGroupsSelected = false;
-                      _myGroups = myGroups;
-                      _myPendingGroups = myPendingGroups;
-                      _allGroups = allGroups;
-                    });
-                  }
-                  else {
-                    // Empty My Groups content; All Groups request failed => apply everything collected
-                    setState(() {
-                      _isGroupsLoading = false;
-                      _myGroups = myGroups;
-                      _myPendingGroups = myPendingGroups;
-                    });
-                  }
-                }
-              });
-            }
-          }
-          else {
-            // Apply All Groups content
-            setState(() {
-              _isGroupsLoading = false;
-              _allGroups = sortedGroups;
-            });
-          }
+          });
         }
         else {
           // Initial request failed
-          setState(() {
-            _isGroupsLoading = false;
-          });
-        }
-      }
-    });
-  }
-
-  void _loadTabContentIfNeeded() {
-    bool needsLoad = _myGroupsSelected ? ((_myGroups == null) || (_myPendingGroups == null)) : (_allGroups == null);
-    if (needsLoad) {
-      _loadCurrentTabContent();
-    }
-  }
-
-  void _refreshGroups() {
-    // Force other tab content reload on next tab switch
-    if (_myGroupsSelected) {
-      _allGroups = null;
-    }
-    else {
-      _myGroups = _myPendingGroups = null;
-    }
-    _loadCurrentTabContent();
-  }
-
-  void _loadCurrentTabContent() {
-    setState(() {
-      _isGroupsLoading = true;
-    });
-    Groups().loadGroups(myGroups: _myGroupsSelected).then((List<Group>? groups) {
-      if (mounted) {
-        if (groups != null) {
-          List<Group>? sortedGroups = _sortGroups(groups);
-          if (_myGroupsSelected) {
-            setState(() {
-              _isGroupsLoading = false;
-              _myGroups = sortedGroups?.where((group) => group.currentUserIsMemberOrAdmin).toList();
-              _myPendingGroups = sortedGroups?.where((group) => group.currentUserIsPendingMember).toList();
-            });
-          }
-          else {
-            setState(() {
-              _isGroupsLoading = false;
-              _allGroups = sortedGroups;
-            });
-          }
-        }
-        else {
           setState(() {
             _isGroupsLoading = false;
           });
@@ -244,6 +153,33 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         return Localization().getStringEx('panel.groups_home.filter.tag.my.label', 'My Tags');
       default:
         return null;
+    }
+  }
+
+  bool get _hasMyGroups {
+    if (Auth2().isOidcLoggedIn && Auth2().privacyMatch(4) && (_allGroups != null)) {
+      for (Group group in _allGroups!) {
+        if (group.currentUserIsMemberOrAdminOrPending) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  void _buildMyGroupsAndPending({List<Group>? myGroups, List<Group>? myPendingGroups}) {
+    if (_allGroups != null) {
+      for (Group group in _allGroups!) {
+        Member? currentUserAsMember = group.currentUserAsMember;
+        if (currentUserAsMember != null) {
+          if (currentUserAsMember.isMemberOrAdmin) {
+            myGroups?.add(group);
+          }
+          else if (currentUserAsMember.isPendingMember) {
+            myPendingGroups?.add(group);
+          }
+        }
+      }
     }
   }
 
@@ -492,34 +428,31 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildMyGroupsContent(){
-    if (CollectionUtils.isEmpty(_myGroups) && CollectionUtils.isEmpty(_myPendingGroups)) {
-      String text = ((_myGroups != null) && (_myPendingGroups != null)) ?
-        Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet") :
-        Localization().getStringEx("panel.groups_home.label.my_groups.failed", "Failed to load groups");
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
-        child: Text(text,
-          style: TextStyle(
-              fontFamily: Styles().fontFamilies!.regular,
-              fontSize: 16,
-              color: Styles().colors!.textBackground
-          ),
-        ),
+    // _myGroups = sortedGroups?.where((group) => group.currentUserIsMemberOrAdmin).toList();
+    // _myPendingGroups = sortedGroups?.where((group) => group.currentUserIsPendingMember).toList();
+    List<Group> myGroups = <Group>[], myPendingGroups = <Group>[];
+    _buildMyGroupsAndPending(myGroups: myGroups, myPendingGroups: myPendingGroups);
+
+    if (CollectionUtils.isEmpty(myGroups) && CollectionUtils.isEmpty(myPendingGroups)) {
+      String text = Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet");
+      //Localization().getStringEx("panel.groups_home.label.my_groups.failed", "Failed to load groups");
+      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
+        Text(text, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
       );
     }
     else {
       return Column(children: [
-        _buildMyGroupsSection(),
-        _buildMyPendingGroupsSection(),
+        _buildMyGroupsSection(myGroups),
+        _buildMyPendingGroupsSection(myPendingGroups),
       ],);
     }
   }
 
-  Widget _buildMyGroupsSection() {
+  Widget _buildMyGroupsSection(List<Group> myGroups) {
     List<Widget> widgets = [];
-    if(CollectionUtils.isNotEmpty(_myGroups)) {
+    if(CollectionUtils.isNotEmpty(myGroups)) {
       widgets.add(Container(height: 8,));
-      for (Group? group in _myGroups!) {
+      for (Group? group in myGroups) {
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup, onImageTap: (){ onTapImage(group);} ,),
@@ -530,24 +463,16 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return Column(children: widgets,);
   }
 
-  Widget _buildMyPendingGroupsSection(){
-    if(CollectionUtils.isNotEmpty(_myPendingGroups)) {
+  Widget _buildMyPendingGroupsSection(List<Group> myPendingGroups) {
+    if(CollectionUtils.isNotEmpty(myPendingGroups)) {
       List<Widget> widgets = [];
       widgets.add(Container(height: 16,));
-      widgets.add(
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"),
-            style: TextStyle(
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 20,
-                color: Styles().colors!.fillColorPrimary
-            ),
-          )
+      widgets.add(Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary),)
         )
       );
       widgets.add(Container(height: 8,));
-      for (Group? group in _myPendingGroups!) {
+      for (Group group in myPendingGroups) {
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup,),
@@ -596,15 +521,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       else {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.filtered.empty", "No groups match the selected filter");
       }
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
-        child: Text(text,
-          style: TextStyle(
-            fontFamily: Styles().fontFamilies!.regular,
-            fontSize: 16,
-            color: Styles().colors!.textBackground
-          ),
-        ),
+      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
+        Text(text, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
       );
     }
   }
@@ -621,7 +539,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     setState(() {
       _myGroupsSelected = !_myGroupsSelected;
     });
-    _loadTabContentIfNeeded();
   }
 
   void _onTapFilterEntry(dynamic entry) {
@@ -665,17 +582,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Future<void> _onPullToRefresh() async {
     Analytics().logSelect(target: "Pull To Refresh");
-    List<Group>? groups = await Groups().loadGroups(myGroups: _myGroupsSelected);
+    List<Group>? groups = await Groups().loadGroups();
     if (mounted && (groups != null)) {
-      List<Group>? sortedGroups = _sortGroups(groups);
       setState(() {
-        if (_myGroupsSelected) {
-          _myGroups = sortedGroups?.where((group) => group.currentUserIsMemberOrAdmin).toList();
-          _myPendingGroups = sortedGroups?.where((group) => group.currentUserIsPendingMember).toList();
-        }
-        else {
-          _allGroups = sortedGroups;
-        }
+        _allGroups = _sortGroups(groups);
       });
     }
   }
@@ -707,7 +617,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
     else if ((name == Groups.notifyGroupCreated) || (name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted)) {
       if (mounted) {
-        _refreshGroups();
+        _loadGroupsContent();
       }
     }
   }
