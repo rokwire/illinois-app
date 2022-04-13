@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated strings in "privacy_new" group in assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+### Fixed
+- Properly handle UI changes when privacy level is changed [#1546](https://github.com/rokwire/illinois-app/issues/1546).
 
 ## [3.3.15] - 2022-04-12
 ### Added
