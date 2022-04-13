@@ -444,7 +444,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
   }
 
   void _save() {
-    Auth2().prefs?.setPrivacyLevel(value: _sliderIntValue!);
+    Auth2().prefs?.privacyLevel = _sliderIntValue!;
     Storage().privacyUpdateVersion = Config().appVersion;
 
     if (widget.mode == SettingsPrivacyPanelMode.regular) {

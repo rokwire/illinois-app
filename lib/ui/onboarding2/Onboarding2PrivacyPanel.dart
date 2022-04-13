@@ -536,7 +536,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
   }
 
   void _goNext(BuildContext context) {
-    Auth2().prefs?.setPrivacyLevel(value: _privacyLevel);
+    Auth2().prefs?.privacyLevel = _privacyLevel;
     Storage().privacyUpdateVersion = Config().appVersion;
     Onboarding2().finalize(context);
   }

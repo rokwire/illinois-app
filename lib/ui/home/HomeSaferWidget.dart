@@ -245,7 +245,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
       });
     }
     if (privacyLevel != null) {
-      Auth2().prefs?.setPrivacyLevel(value: privacyLevel, preventNotification: true);
+      Auth2().prefs?.privacyLevel = privacyLevel;
     }
     Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
       if (mounted) {
