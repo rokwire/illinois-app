@@ -18,10 +18,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeSaferWidget extends StatefulWidget {
+  final bool? authLoading;
 
-  final StreamController<void>? refreshController;
-
-  HomeSaferWidget({this.refreshController});
+  HomeSaferWidget({this.authLoading});
 
   @override
   _HomeSaferWidgetState createState() => _HomeSaferWidgetState();
@@ -38,13 +37,11 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
+      Auth2.notifyLoginFinished,
       _notifyOidcAuthenticated,
     ]);
 
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-      });
-    }
+    _authLoading = widget.authLoading ?? false;
   }
 
   @override
@@ -65,6 +62,13 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
     else if (name == _notifyOidcAuthenticated) {
       if (mounted) {
         _processOidcAuthResult(param);
+      }
+    }
+    else if (name == Auth2.notifyLoginFinished) {
+      if (_authLoading && mounted) {
+        setState(() {
+          _authLoading = false;
+        });
       }
     }
   }
@@ -261,6 +265,12 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   void _processOidcAuthResult(Auth2OidcAuthenticateResult? result) {
     if (result == Auth2OidcAuthenticateResult.succeeded) {
+      if (_authLoading) {
+        _authLoading = false;
+        if (mounted) {
+          setState(() {});
+        }
+      }
       _showModalIdCardPanel();
     } else if (result != null) {
       AppAlert.showDialogResult(
