@@ -47,6 +47,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   bool _isFilterLoading = false;
   bool _isGroupsLoading = false;
   bool _myGroupsSelected = false;
+  bool _authenticating = false;
 
   List<Group>? _allGroups;
 
@@ -59,7 +60,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupDeleted]);
+    NotificationService().subscribe(this, [
+      Groups.notifyUserMembershipUpdated,
+      Groups.notifyGroupCreated,
+      Groups.notifyGroupUpdated,
+      Groups.notifyGroupDeleted,
+    ]);
     _loadFilters();
     _loadGroupsContent(autoUpdateTabSelection: true);
   }
@@ -167,6 +173,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return false;
   }
 
+  bool get _showMyGroups {
+    return Auth2().privacyMatch(4);
+  }
+
   void _buildMyGroupsAndPending({List<Group>? myGroups, List<Group>? myPendingGroups}) {
     if (_allGroups != null) {
       for (Group group in _allGroups!) {
@@ -269,27 +279,26 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildTabs(){
-    return Container(
-      color: Styles().colors!.fillColorPrimary,
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child:
+    return Container(padding: EdgeInsets.symmetric(horizontal: 10), color: Styles().colors!.fillColorPrimary, child:
       Row(children: [
         Expanded(child:
             SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-            ConstrainedBox(
-              constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width - 20 /*padding*/,),
-              child: IntrinsicWidth(child:
-                Row(
-                  children: <Widget>[
-                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups'), hint: '', selected: !_myGroupsSelected ,onTap: _onTapAllGroups),
-                    Container(width: 15,),
-                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups'), hint: '', selected: _myGroupsSelected, onTap: _onTapMyGroups),
-                    Container(width: 15,),
-                    Flexible(child: Container()),
-                    Visibility(visible: Auth2().isLoggedIn, child: _buildUserProfilePicture()),
-                    Visibility(visible: _canCreateGroup, child: _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10, excludeFromSemantics: true), selected: false, onTap: _onTapCreate)),
-                  ],
-                ),
+            ConstrainedBox(constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width - 20 /*padding*/,), child:
+              IntrinsicWidth(child:
+                Row(children: <Widget>[
+                  Padding(padding: EdgeInsets.only(right: 15), child:
+                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups'), hint: '', selected: !_myGroupsSelected , onTap: _onTapAllGroups),
+                  ),
+                  Visibility(visible: _showMyGroups, child:
+                    Padding(padding: EdgeInsets.only(right: 15), child:
+                      _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups'), hint: '', selected: _myGroupsSelected, progress: _authenticating, onTap: _onTapMyGroups),
+                    ),
+                  ),
+                  Container(width: 15,),
+                  Flexible(child: Container()),
+                  Visibility(visible: Auth2().isLoggedIn, child: _buildUserProfilePicture()),
+                  Visibility(visible: _canCreateGroup, child: _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10, excludeFromSemantics: true), selected: false, onTap: _onTapCreate)),
+                ],),
               )
             )
           )
@@ -571,7 +580,25 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   void _onTapMyGroups(){
     Analytics().logSelect(target: "My Groups");
     if(!_myGroupsSelected){
-      switchTabSelection();
+      if (Auth2().isOidcLoggedIn) {
+        switchTabSelection();  
+      }
+      else {
+        setState(() {
+          _authenticating = true;
+        });
+        Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+          if (mounted) {
+            setState(() {
+              _authenticating = true;
+            });
+            if (result == Auth2OidcAuthenticateResult.succeeded) {
+              switchTabSelection(); 
+            }
+          }
+        });
+
+      }
     }
   }
 
@@ -629,51 +656,34 @@ class _GroupTabButton extends StatelessWidget{
   final Image? rightIcon;
   final GestureDragCancelCallback onTap;
   final bool selected;
+  final bool progress;
 
-  _GroupTabButton({required this.title, required this.hint, this.rightIcon, required this.onTap, this.selected = false});
+  _GroupTabButton({required this.title, required this.hint, this.rightIcon, required this.onTap, this.selected = false, this.progress = false});
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      label: title,
-      hint: hint,
-      button: true,
-      selected: selected,
-      excludeSemantics: true,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          child: Row(
-            children: <Widget>[
-              Stack(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text(
-                      title!,
-                      style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.bold,
-                        fontSize: 16,
-                        color: Styles().colors!.white,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 0, right: 0, bottom: 0,
-                    child: Visibility(
-                      visible: selected,
-                      child: Container(height: 4, color: Styles().colors!.fillColorSecondary,)
-                    ),
-                  )
-                ],
+    return Semantics(label: title, hint: hint, button: true, selected: selected, excludeSemantics: true, child:
+      GestureDetector(onTap: onTap, child:
+          Row(children: <Widget>[
+            Stack(children: <Widget>[
+              Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+                Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.white,),),
               ),
-              rightIcon != null ? Padding(
-                padding: const EdgeInsets.only(left: 5),
-                child: rightIcon,
-              ) : Container()
-            ],
-          ),
-        ),
+              Positioned(left: 0, right: 0, bottom: 0, child:
+                Visibility(visible: selected, child:
+                  Container(height: 4, color: Styles().colors?.fillColorSecondary,)
+                ),
+              ),
+              Visibility(visible: progress, child:
+                Padding(padding: EdgeInsets.only(top: 8, left: 24), child: // TBD: align centered
+                  SizedBox(height: 16, width: 16, child:
+                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                  ),
+                ),
+              ),
+            ],),
+            (rightIcon != null) ? Padding(padding: const EdgeInsets.only(left: 5), child: rightIcon,) : Container()
+          ],),
       ),
     );
   }
