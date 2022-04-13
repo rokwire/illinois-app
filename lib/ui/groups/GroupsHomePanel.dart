@@ -58,58 +58,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   _TagFilter? _selectedTagFilter = _TagFilter.all;
   _FilterType __activeFilterType = _FilterType.none;
 
-  //TBD: this filtering has to be done on the server side.
-  List<Group>? _getFilteredAllGroupsContent() {
-    if (CollectionUtils.isEmpty(_allGroups)) {
-      return _allGroups;
-    }
-    // Filter By Category
-    String? selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
-    List<Group>? filteredGroups = _allGroups;
-    if (StringUtils.isNotEmpty(selectedCategory)) {
-      filteredGroups = _allGroups!.where((group) => (selectedCategory == group.category)).toList();
-    }
-    // Filter by User Tags
-    if (_selectedTagFilter == _TagFilter.my) {
-      Set<String>? userTags = Auth2().prefs?.positiveTags;
-      if (CollectionUtils.isNotEmpty(userTags) && CollectionUtils.isNotEmpty(filteredGroups)) {
-        filteredGroups = filteredGroups!.where((group) => group.tags?.any((tag) => userTags!.contains(tag)) ?? false).toList();
-      }
-    }
-
-    return filteredGroups;
-  }
-
-  bool get _isLoading {
-    return _isFilterLoading || _isGroupsLoading;
-  }
-
-  bool get _hasActiveFilter {
-    return _activeFilterType != _FilterType.none;
-  }
-
-  _FilterType get _activeFilterType {
-    return __activeFilterType;
-  }
-
-  set _activeFilterType(_FilterType value) {
-    if (__activeFilterType != value) {
-      __activeFilterType = value;
-      setState(() {});
-    }
-  }
-
-  List<dynamic>? get _activeFilterList {
-    switch (_activeFilterType) {
-      case _FilterType.category:
-        return _categories;
-      case _FilterType.tags:
-        return _TagFilter.values;
-      default:
-        return null;
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -123,6 +71,21 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     super.dispose();
     NotificationService().unsubscribe(this);
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.groups_home.label.heading","Groups"),
+      ),
+      body: _buildContent(),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: uiuc.TabBar(),
+    );
+  }
+
+  ///////////////////////////////////
+  // Data Loading
 
   void _loadInitialGroupsContent() {
 
@@ -284,17 +247,59 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx("panel.groups_home.label.heading","Groups"),
-      ),
-      body: _buildContent(),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
+  List<Group>? get _filteredAllGroupsContent {
+    if (CollectionUtils.isEmpty(_allGroups)) {
+      return _allGroups;
+    }
+    // Filter By Category
+    String? selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
+    List<Group>? filteredGroups = _allGroups;
+    if (StringUtils.isNotEmpty(selectedCategory)) {
+      filteredGroups = _allGroups!.where((group) => (selectedCategory == group.category)).toList();
+    }
+    // Filter by User Tags
+    if (_selectedTagFilter == _TagFilter.my) {
+      Set<String>? userTags = Auth2().prefs?.positiveTags;
+      if (CollectionUtils.isNotEmpty(userTags) && CollectionUtils.isNotEmpty(filteredGroups)) {
+        filteredGroups = filteredGroups!.where((group) => group.tags?.any((tag) => userTags!.contains(tag)) ?? false).toList();
+      }
+    }
+
+    return filteredGroups;
   }
+
+  bool get _isLoading {
+    return _isFilterLoading || _isGroupsLoading;
+  }
+
+  bool get _hasActiveFilter {
+    return _activeFilterType != _FilterType.none;
+  }
+
+  _FilterType get _activeFilterType {
+    return __activeFilterType;
+  }
+
+  set _activeFilterType(_FilterType value) {
+    if (__activeFilterType != value) {
+      __activeFilterType = value;
+      setState(() {});
+    }
+  }
+
+  List<dynamic>? get _activeFilterList {
+    switch (_activeFilterType) {
+      case _FilterType.category:
+        return _categories;
+      case _FilterType.tags:
+        return _TagFilter.values;
+      default:
+        return null;
+    }
+  }
+
+  ///////////////////////////////////
+  // Content Building
 
   Widget _buildContent(){
     return
@@ -336,9 +341,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         Expanded(child:
             SingleChildScrollView(scrollDirection: Axis.horizontal, child:
             ConstrainedBox(
-              constraints:BoxConstraints(
-                  minWidth: MediaQuery.of(context).size.width - 20/*padding*/,
-              ),
+              constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width - 20 /*padding*/,),
               child: IntrinsicWidth(child:
                 Row(
                   children: <Widget>[
@@ -395,17 +398,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                   }
                 ),
                 Expanded(child: Container()),
-                Semantics(
-                  label:Localization().getStringEx("panel.groups_home.button.search.title", "Search"),
-                  child:
+                Semantics(label:Localization().getStringEx("panel.groups_home.button.search.title", "Search"), child:
                   IconButton(
-                    icon: Image.asset(
-                      'images/icon-search.png',
-                      color: Styles().colors!.fillColorSecondary,
-                      excludeFromSemantics: true,
-                      width: 25,
-                      height: 25,
-                    ),
+                    icon: Image.asset('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25,),
                     onPressed: () {
                       Analytics().logSelect(target: "Search");
                       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
@@ -476,10 +471,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               color: Colors.white,
               child: ListView.separated(
                 shrinkWrap: true,
-                separatorBuilder: (context, index) => Divider(
-                  height: 1,
-                  color: Styles().colors!.fillColorPrimaryTransparent03,
-                ),
+                separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
                 itemCount: itemCount,
                 itemBuilder: itemBuilder,
               ),
@@ -563,31 +555,25 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       }
       return
         Stack(children: [
-          Container(
-            height: 112,
-            color: Styles().colors!.backgroundVariant,
-            child:
+          Container(height: 112, color: Styles().colors!.backgroundVariant, child:
             Column(children: [
               Container(height: 80,),
-              Container(
-                height: 32,
-                child: CustomPaint(
-                  painter: TrianglePainter(painterColor: Styles().colors!.background),
-                  child: Container(),
-                )
+              Container(height: 32, child:
+                CustomPaint(painter:
+                  TrianglePainter(painterColor: Styles().colors!.background), child:
+                    Container(),
+                ),
               ),
             ],)
           ),
-          Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: widgets,)
+          Column(crossAxisAlignment: CrossAxisAlignment.start,children: widgets,)
         ],);
     }
     return Container();
   }
 
   Widget _buildAllGroupsContent(){
-    List<Group>? filteredGroups = CollectionUtils.isNotEmpty(_allGroups) ? _getFilteredAllGroupsContent() : null;
+    List<Group>? filteredGroups = CollectionUtils.isNotEmpty(_allGroups) ? _filteredAllGroupsContent : null;
     if(CollectionUtils.isNotEmpty(filteredGroups)){
       List<Widget> widgets = [];
       widgets.add(Container(height: 8,));
