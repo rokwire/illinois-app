@@ -47,7 +47,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   bool _isFilterLoading = false;
   bool _isGroupsLoading = false;
   bool _myGroupsSelected = false;
-  bool _authenticating = false;
+  bool _myGroupsBussy = false;
 
   List<Group>? _allGroups;
 
@@ -291,7 +291,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                   ),
                   Visibility(visible: _showMyGroups, child:
                     Padding(padding: EdgeInsets.only(right: 15), child:
-                      _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups'), hint: '', selected: _myGroupsSelected, progress: _authenticating, onTap: _onTapMyGroups),
+                      _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups'), hint: '', selected: _myGroupsSelected, progress: _myGroupsBussy, onTap: _onTapMyGroups),
                     ),
                   ),
                   Container(width: 15,),
@@ -544,12 +544,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                 height: 34, width: 34, child: GroupMemberProfileImage(userId: Auth2().accountId, onTap: _onTapUserProfileImage))));
   }
   
-  void switchTabSelection() {
-    setState(() {
-      _myGroupsSelected = !_myGroupsSelected;
-    });
-  }
-
   void _onTapFilterEntry(dynamic entry) {
     String? analyticsTarget;
     switch (_activeFilterType) {
@@ -573,7 +567,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   void _onTapAllGroups(){
     Analytics().logSelect(target: "All Groups");
     if(_myGroupsSelected){
-      switchTabSelection();
+      setState(() {
+        _myGroupsSelected = false;
+      });
     }
   }
 
@@ -581,19 +577,31 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     Analytics().logSelect(target: "My Groups");
     if(!_myGroupsSelected){
       if (Auth2().isOidcLoggedIn) {
-        switchTabSelection();  
+        setState(() { _myGroupsSelected = true; });
       }
       else {
-        setState(() {
-          _authenticating = true;
-        });
+        setState(() { _myGroupsBussy = true; });
+        
         Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
           if (mounted) {
-            setState(() {
-              _authenticating = true;
-            });
-            if (result == Auth2OidcAuthenticateResult.succeeded) {
-              switchTabSelection(); 
+            if (result != Auth2OidcAuthenticateResult.succeeded) {
+              setState(() { _myGroupsBussy = false; });
+            }
+            else {
+              Groups().loadGroups().then((List<Group>? groups) {
+                if (mounted) {
+                  if (groups != null) {
+                    setState(() {
+                      _myGroupsBussy = false;
+                      _myGroupsSelected = true;
+                      _allGroups = _sortGroups(groups);
+                    });
+                  }
+                  else {
+                    setState(() { _myGroupsBussy = false; });
+                  }
+                }
+              });
             }
           }
         });
