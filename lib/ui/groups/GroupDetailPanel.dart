@@ -617,74 +617,51 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     }
 
-    return Container(color: Colors.white,
-      child: Stack(children: <Widget>[
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-               _showMembershipBadge ? Container():
-                Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Row(children: <Widget>[
-                    Expanded(child:
-                      Text(_group?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
-                    ),
-                  ],),),
-              (!_showMembershipBadge)? Container():
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: _group!.currentUserStatusColor,
-                          borderRadius: BorderRadius.all(Radius.circular(2)),
-                        ),
-                        child: Center(
-                          child:
-                          Semantics(
-                            label: _group?.currentUserStatusText?.toLowerCase(),
-                            excludeSemantics: true,
-                            child: Text(_group!.currentUserStatusText!.toUpperCase(),
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies!.bold,
-                                  fontSize: 12,
-                                  color: Styles().colors!.white
-                              ),
-                            )
-                          ),
-                        ),
-                      ),
-                      Expanded(child: Container(),),
-                    ],
+    Widget badgeOrCategoryWidget = _showMembershipBadge ?
+      Row(children: <Widget>[
+        Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+          Center(child:
+            Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
+              Text(_group!.currentUserStatusText!.toUpperCase(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white),)
+            ),
+          ),
+        ),
+        Expanded(child: Container(),),
+      ],) :
+    
+      Row(children: <Widget>[
+        Expanded(child:
+          Text(_group?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
+        ),
+      ],);
+
+    return Container(color: Colors.white, child:
+      Stack(children: <Widget>[
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 12), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                badgeOrCategoryWidget,
+              ),
+
+              Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                Text(_group?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32, color: Styles().colors!.fillColorPrimary),),
+              ),
+              
+              GestureDetector(onTap: () => { if (_isMember) {_onTapMembers()} }, child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                  Container(decoration: (_isMember ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
+                    Text(members, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground))
                   ),
                 ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                child: Text(_group?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32, color: Styles().colors!.fillColorPrimary),),
               ),
-              GestureDetector(
-                    onTap: () => {
-                          if (_isMember) {_onTapMembers()}
-                        },
-                    child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 4),
-                        child: Container(
-                            decoration: (_isMember
-                                ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2)))
-                                : null),
-                            child: Text(members,
-                                style: TextStyle(
-                                    fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground))))),
-              Visibility(
-                visible: StringUtils.isNotEmpty(pendingMembers),
-                child: Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                    child: Text(pendingMembers,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground, ),)
+              
+              Visibility(visible: StringUtils.isNotEmpty(pendingMembers), child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                  Text(pendingMembers,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground,),)
                 ),
               ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                child: Column(children: commands,),
-              ),
+              
+              Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Column(children: commands,),),
             ],),
           ),
         ],),
