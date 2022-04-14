@@ -1356,6 +1356,7 @@
     "panel.create_poll.cancel_dialog.button.no": "No",
     "panel.create_poll_panel.counter.hint": "maximum, %s, characters",
     "panel.create_poll.message.error.default": "Failed to create poll. Please fill all fields and try again.",
+    "panel.create_poll.description.non_editable.text": "Once started, you can no longer edit the poll.",
 
     "panel.create_stadium_poll.header.title": "Create a Stadium Poll",
     "panel.create_stadium_poll.text.wants_to_know": "wants to know…",

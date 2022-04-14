@@ -1356,6 +1356,7 @@
 	"panel.create_poll.cancel_dialog.button.no": "否",
 	"panel.create_poll_panel.counter.hint": "最多, %s, 字符",
 	"panel.create_poll.message.error.default": "創建投票失敗. 請填寫所有字段, 然後重試.",
+    "panel.create_poll.description.non_editable.text": "一旦開始, 您將無法再編輯投票.",
 
 	"panel.create_stadium_poll.header.title": " 创建体育场投票 ",
 	"panel.create_stadium_poll.text.wants_to_know": "想知道…",
