@@ -116,7 +116,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _isMemberOrAdmin {
-    return _isMember || _isAdmin;
+    return _group?.currentUserAsMember?.isMemberOrAdmin ?? false;
   }
 
   bool get _isPending{
@@ -157,12 +157,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _canCreatePost {
-    return _isAdmin || _isMember;
+    return _isAdmin || (_isMember && Auth2().privacyMatch(5));
   }
 
-  bool get _canCreatePoll{
-    return _isAdmin ||
-        ((!(_group?.onlyAdminsCanCreatePolls ?? true)) && _isMember);
+  bool get _canCreatePoll {
+    return _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && Auth2().privacyMatch(5));
   }
 
   @override
@@ -532,24 +531,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildImageHeader(){
-    return Container(
-      height: 200,
-      color: Styles().colors!.background,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)) : Container(),
-          CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
-            child: Container(
-              height: 53,
-            ),
+    return Container(height: 200, color: Styles().colors?.background, child:
+      Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)) : Container(),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
+            Container(height: 53,),
           ),
-          CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors!.white),
-            child: Container(
-              height: 30,
-            ),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.white), child:
+            Container(height: 30,),
           ),
         ],
       ),
@@ -583,7 +572,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     if (_isMemberOrAdmin) {
-      if(_isAdmin){
+      if(_isAdmin) {
         commands.add(RibbonButton(
           label: Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
           hint: Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
@@ -612,114 +601,66 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
         commands.add(_buildWebsiteLink());
       }
-    } else {
+    }
+    else {
       if (StringUtils.isNotEmpty(_group?.webURL)) {
         commands.add(_buildWebsiteLink());
       }
 
-      String tags = "";
-      if (_group?.tags?.isNotEmpty ?? false) {
-        for (String tag in _group!.tags!) {
-          if (0 < tag.length) {
-            tags+=((tags.isNotEmpty? ", ": "") + tag);
-          }
+      String? tags = _group?.displayTags;
+      if (StringUtils.isNotEmpty(tags)) {
+        if (commands.isNotEmpty) {
+          commands.add(Container(height: 12,));
         }
-      }
-
-      if(tags.isNotEmpty) {
-        commands.add(Container(height: 12,));
-        commands.add(
-          Padding(padding: EdgeInsets.symmetric(vertical: 4),
-            child: Row(children: [
-              Expanded(child:
-              RichText(
-                text: new TextSpan(
-                  style: TextStyle(color: Styles().colors!.textSurface,
-                      fontFamily: Styles().fontFamilies!.bold,
-                      fontSize: 12),
-                  children: <TextSpan>[
-                    new TextSpan(text: Localization().getStringEx("panel.group_detail.label.tags", "Group Tags: ")),
-                    new TextSpan(
-                        text: tags,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.regular)),
-                  ],
-                ),
-              )
-              )
-            ],),
-          ),);
+        commands.add(_buildTags(tags));
       }
     }
 
-    return Container(color: Colors.white,
-      child: Stack(children: <Widget>[
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-               _showMembershipBadge ? Container():
-                Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Row(children: <Widget>[
-                    Expanded(child:
-                      Text(_group?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
-                    ),
-                  ],),),
-              (!_showMembershipBadge)? Container():
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: _group!.currentUserStatusColor,
-                          borderRadius: BorderRadius.all(Radius.circular(2)),
-                        ),
-                        child: Center(
-                          child:
-                          Semantics(
-                            label: _group?.currentUserStatusText?.toLowerCase(),
-                            excludeSemantics: true,
-                            child: Text(_group!.currentUserStatusText!.toUpperCase(),
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies!.bold,
-                                  fontSize: 12,
-                                  color: Styles().colors!.white
-                              ),
-                            )
-                          ),
-                        ),
-                      ),
-                      Expanded(child: Container(),),
-                    ],
+    Widget badgeOrCategoryWidget = _showMembershipBadge ?
+      Row(children: <Widget>[
+        Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+          Center(child:
+            Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
+              Text(_group!.currentUserStatusText!.toUpperCase(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white),)
+            ),
+          ),
+        ),
+        Expanded(child: Container(),),
+      ],) :
+    
+      Row(children: <Widget>[
+        Expanded(child:
+          Text(_group?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
+        ),
+      ],);
+
+    return Container(color: Colors.white, child:
+      Stack(children: <Widget>[
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 12), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                badgeOrCategoryWidget,
+              ),
+
+              Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                Text(_group?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32, color: Styles().colors!.fillColorPrimary),),
+              ),
+              
+              GestureDetector(onTap: () => { if (_isMember) {_onTapMembers()} }, child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                  Container(decoration: (_isMember ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
+                    Text(members, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground))
                   ),
                 ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                child: Text(_group?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32, color: Styles().colors!.fillColorPrimary),),
               ),
-              GestureDetector(
-                    onTap: () => {
-                          if (_isMember) {_onTapMembers()}
-                        },
-                    child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 4),
-                        child: Container(
-                            decoration: (_isMember
-                                ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2)))
-                                : null),
-                            child: Text(members,
-                                style: TextStyle(
-                                    fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground))))),
-              Visibility(
-                visible: StringUtils.isNotEmpty(pendingMembers),
-                child: Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                    child: Text(pendingMembers,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground, ),)
+              
+              Visibility(visible: StringUtils.isNotEmpty(pendingMembers), child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                  Text(pendingMembers,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground,),)
                 ),
               ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                child: Column(children: commands,),
-              ),
+              
+              Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Column(children: commands,),),
             ],),
           ),
         ],),
@@ -799,21 +740,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         content.add(GroupEventCard(groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
       }
 
-      content.add(Padding(
-          padding: EdgeInsets.only(top: 16),
-          child: RoundedButton(
-              label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
-              backgroundColor: Styles().colors!.white,
-              textColor: Styles().colors!.fillColorPrimary,
-              fontFamily: Styles().fontFamilies!.bold,
-              fontSize: 16,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              borderColor: Styles().colors!.fillColorSecondary,
-              borderWidth: 2,
-              contentWeight: 0.5,
-              onTap: () {
-                Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAllEventsPanel(group: _group)));
-              })));
+      content.add(Padding(padding: EdgeInsets.only(top: 16), child:
+        RoundedButton(
+          label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
+          backgroundColor: Styles().colors!.white,
+          textColor: Styles().colors!.fillColorPrimary,
+          fontFamily: Styles().fontFamilies!.bold,
+          fontSize: 16,
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          borderColor: Styles().colors!.fillColorSecondary,
+          borderWidth: 2,
+          contentWeight: 0.5,
+          onTap: () {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAllEventsPanel(group: _group)));
+          })
+        )
+      );
     }
 
     return Stack(children: [
@@ -827,10 +769,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             children: content)
       ]),
       _updatingEvents
-          ? Center(
-              child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 50),
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary))))
+          ? Center(child:
+              Container(padding: EdgeInsets.symmetric(vertical: 50), child:
+                CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)),
+              ),
+            )
           : Container()
     ]);
   }
@@ -975,11 +918,27 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildWebsiteLink() {
     return RibbonButton(
-        label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
-        rightIconAsset: 'images/external-link.png',
-        leftIconAsset: 'images/globe.png',
-        padding: EdgeInsets.symmetric(horizontal: 0),
-        onTap: _onWebsite);
+      label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
+      rightIconAsset: 'images/external-link.png',
+      leftIconAsset: 'images/globe.png',
+      padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+      onTap: _onWebsite
+    );
+  }
+
+  Widget _buildTags(String? tags) {
+    return Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+      Row(children: [
+        Expanded(child:
+          RichText(text:
+            TextSpan(style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.bold, fontSize: 12), children: <TextSpan>[
+              TextSpan(text: Localization().getStringEx("panel.group_detail.label.tags", "Group Tags: ")),
+              TextSpan(text: tags ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.regular)),
+            ],),
+          )
+        )
+      ],),
+    );
   }
 
   Widget _buildAdmins() {

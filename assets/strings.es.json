@@ -2341,6 +2341,7 @@
     "widget.group_card.status.hint": "status: %s ,for: ",
     "widget.group_card.member.label": "member",
     "widget.group_card.members.label": "members",
+    "panel.group_card.privacy_alert.msg": "With your privacy level {{privacy level icon}}, you can only view existing groups.",
 
     "widget.groups.selection.button.select.label": "Seleccione",
     "widget.groups.selection.heading": "Selecciona grupo",
