@@ -658,7 +658,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 }
 
-class _GroupTabButton extends StatelessWidget{
+class _GroupTabButton extends StatefulWidget{
   final String? title;
   final String hint;
   final Image? rightIcon;
@@ -669,31 +669,66 @@ class _GroupTabButton extends StatelessWidget{
   _GroupTabButton({required this.title, required this.hint, this.rightIcon, required this.onTap, this.selected = false, this.progress = false});
 
   @override
+  _GroupTabButtonState createState() => _GroupTabButtonState();
+}
+
+class _GroupTabButtonState extends State<_GroupTabButton> {
+  
+  final GlobalKey _contentKey = GlobalKey();
+  Size? _contentSize;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _evalContentSize();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Semantics(label: title, hint: hint, button: true, selected: selected, excludeSemantics: true, child:
-      GestureDetector(onTap: onTap, child:
+    return Semantics(label: widget.title, hint: widget.hint, button: true, selected: widget.selected, excludeSemantics: true, child:
+      GestureDetector(onTap: widget.onTap, child:
           Row(children: <Widget>[
-            Stack(children: <Widget>[
+            Stack(key: _contentKey, children: <Widget>[
               Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-                Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.white,),),
+                Text(widget.title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.white,),),
               ),
               Positioned(left: 0, right: 0, bottom: 0, child:
-                Visibility(visible: selected, child:
+                Visibility(visible: widget.selected, child:
                   Container(height: 4, color: Styles().colors?.fillColorSecondary,)
                 ),
               ),
-              Visibility(visible: progress, child:
-                Padding(padding: EdgeInsets.only(top: 8, left: 24), child: // TBD: align centered
-                  SizedBox(height: 16, width: 16, child:
-                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+              Visibility(visible: widget.progress, child:
+                (_contentSize != null) ? SizedBox(width: _contentSize!.width, height: _contentSize!.height, child:
+                  Align(alignment: Alignment.center, child: // TBD: align centered
+                    SizedBox(height: 16, width: 16, child:
+                      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                    ),
                   ),
-                ),
+                ) : Container(),
               ),
             ],),
-            (rightIcon != null) ? Padding(padding: const EdgeInsets.only(left: 5), child: rightIcon,) : Container()
+            (widget.rightIcon != null) ? Padding(padding: const EdgeInsets.only(left: 5), child: widget.rightIcon,) : Container()
           ],),
       ),
     );
+  }
+
+  void _evalContentSize() {
+    try {
+      final RenderObject? renderBox = _contentKey.currentContext?.findRenderObject();
+      if (renderBox is RenderBox) {
+        if (mounted) {
+          setState(() {
+            _contentSize = renderBox.size;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }
 
