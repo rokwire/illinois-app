@@ -116,7 +116,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _isMemberOrAdmin {
-    return _isMember || _isAdmin;
+    return _group?.currentUserAsMember?.isMemberOrAdmin ?? false;
   }
 
   bool get _isPending{
@@ -157,12 +157,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _canCreatePost {
-    return _isAdmin || _isMember;
+    return _isAdmin || (_isMember && Auth2().privacyMatch(5));
   }
 
-  bool get _canCreatePoll{
-    return _isAdmin ||
-        ((!(_group?.onlyAdminsCanCreatePolls ?? true)) && _isMember);
+  bool get _canCreatePoll {
+    return _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && Auth2().privacyMatch(5));
   }
 
   @override
@@ -741,21 +740,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         content.add(GroupEventCard(groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
       }
 
-      content.add(Padding(
-          padding: EdgeInsets.only(top: 16),
-          child: RoundedButton(
-              label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
-              backgroundColor: Styles().colors!.white,
-              textColor: Styles().colors!.fillColorPrimary,
-              fontFamily: Styles().fontFamilies!.bold,
-              fontSize: 16,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              borderColor: Styles().colors!.fillColorSecondary,
-              borderWidth: 2,
-              contentWeight: 0.5,
-              onTap: () {
-                Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAllEventsPanel(group: _group)));
-              })));
+      content.add(Padding(padding: EdgeInsets.only(top: 16), child:
+        RoundedButton(
+          label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
+          backgroundColor: Styles().colors!.white,
+          textColor: Styles().colors!.fillColorPrimary,
+          fontFamily: Styles().fontFamilies!.bold,
+          fontSize: 16,
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          borderColor: Styles().colors!.fillColorSecondary,
+          borderWidth: 2,
+          contentWeight: 0.5,
+          onTap: () {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAllEventsPanel(group: _group)));
+          })
+        )
+      );
     }
 
     return Stack(children: [
@@ -769,10 +769,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             children: content)
       ]),
       _updatingEvents
-          ? Center(
-              child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 50),
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary))))
+          ? Center(child:
+              Container(padding: EdgeInsets.symmetric(vertical: 50), child:
+                CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)),
+              ),
+            )
           : Container()
     ]);
   }
