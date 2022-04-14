@@ -100,6 +100,9 @@ extension GroupExt on Group {
     return tagsString;
   }
 
+  bool get canMemberCreatePoll {
+    return !(onlyAdminsCanCreatePolls ?? true);
+  }
 
   String? get currentUserStatusText {
     Member? member = currentUserAsMember;

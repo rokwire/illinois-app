@@ -786,92 +786,101 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
 enum GroupCardDisplayType { myGroup, allGroups, homeGroups }
 
-class GroupCard extends StatelessWidget {
+class GroupCard extends StatefulWidget {
   final Group? group;
   final GroupCardDisplayType displayType;
   final Function? onImageTap;
-  static const double _smallImageSize = 64;
 
   GroupCard({required this.group, this.displayType = GroupCardDisplayType.allGroups, this.onImageTap});
 
   @override
-  Widget build(BuildContext context) {
-    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [StringUtils.ensureNotEmpty(group!.pendingCount.toString())]);
-    return GestureDetector(
-        onTap: () => _onTapCard(context),
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                    color: Styles().colors!.white,
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                    boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  _buildHeading(),
-                  Container(height: 3),
-                  Row(
-                    children:[
-                      Expanded(
-                        child:
-                          Column(
-                            children:[
-                              _buildCategoryLayout(),
-                              Row(children: [
-                                Expanded(
-                                    child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 0),
-                                        child: Text(group?.title ?? "",
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
-                                            style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))))
-                              ]),
-                            ]
-                          ),
-                      ),
-                      _buildImage()
-                  ]),
-                  (displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) :Container(),
-                  Visibility(
-                    visible: (group?.currentUserIsAdmin ?? false) && (group!.pendingCount > 0),
-                    child: Text(pendingCountText,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.regular,
-                          fontSize: 16,
-                          color: Styles().colors!.textBackgroundVariant,
+  _GroupCardState createState() => _GroupCardState();
+}
 
-                      ),
-                    ),
+class _GroupCardState extends State<GroupCard> {
+  static const double _smallImageSize = 64;
+
+  final GlobalKey _contentKey = GlobalKey();
+  Size? _contentSize;
+  bool? _bussy;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _evalContentSize();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [StringUtils.ensureNotEmpty(widget.group?.pendingCount.toString())]);
+    return GestureDetector(onTap: () => _onTapCard(context), child:
+      Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
+        Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
+          Stack(children: [
+            Column(key: _contentKey, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              _buildHeading(),
+              Container(height: 3),
+              Row(children:[
+                Expanded(child:
+                  Column(children:[
+                    _buildCategoryLayout(),
+                    Row(children: [
+                      Expanded(child:
+                        Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
+                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
+                        )
+                      )
+                    ]),
+                  ]),
+                ),
+                _buildImage()
+              ]),
+              (widget.displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) : Container(),
+              Visibility(visible: (widget.group?.currentUserIsAdmin ?? false) && ((widget.group?.pendingCount ?? 0) > 0), child:
+                Text(pendingCountText, overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackgroundVariant,),),
+              ),
+              Container(height: 4),
+              // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Expanded(child:
+                  _buildUpdateTime(),
+                ),
+                Visibility(visible: (widget.group?.authManEnabled ?? false) && (widget.displayType != GroupCardDisplayType.homeGroups), child:
+                  _buildMembersCount()
+                )
+              ])
+              // : Container()
+            ]),
+            Visibility(visible: (_bussy == true), child:
+              (_contentSize != null) ? SizedBox(width: _contentSize!.width, height: _contentSize!.height, child:
+                Align(alignment: Alignment.center, child:
+                  SizedBox(height: 24, width: 24, child:
+                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
                   ),
-                  Container(height: 4),
-                  // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
-                       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                          Expanded(
-                            child: _buildUpdateTime(),
-                          ),
-                          Visibility(visible:
-                              (group?.authManEnabled ?? false)
-                              && displayType != GroupCardDisplayType.homeGroups,
-                                child: _buildMembersCount())
-                        ])
-                      // : Container()
-                ]))));
+                ),
+              ) : Container(),
+            ),
+          ],),
+        )
+      )
+    );
   }
 
   Widget _buildHeading() {
     List<Widget> leftContent = <Widget>[];
 
-    if (group?.currentUserAsMember?.status != null) {
+    if (widget.group?.currentUserAsMember?.status != null) {
       leftContent.add(
         Semantics(
-          label: "status: ${group?.currentUserStatusText?.toLowerCase() ?? ""} ,for: ",
+          label: "status: ${widget.group?.currentUserStatusText?.toLowerCase() ?? ""} ,for: ",
           excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(color: group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2))),
-            child: Text(group!.currentUserStatusText!.toUpperCase(),
+            decoration: BoxDecoration(color: widget.group?.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2))),
+            child: Text(widget.group?.currentUserStatusText?.toUpperCase() ?? '',
               style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white)))),
       );
     }
@@ -908,10 +917,10 @@ class GroupCard extends StatelessWidget {
 
   Widget _buildPrivacyStatysBadge(){
     String privacyStatus = '';
-    if (group?.authManEnabled ?? false) {
+    if (widget.group?.authManEnabled ?? false) {
       privacyStatus = ' ' + Localization().getStringEx('widget.group_card.status.authman', 'Managed');
     }
-    if (group?.privacy == GroupPrivacy.private) {
+    if (widget.group?.privacy == GroupPrivacy.private) {
       privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private') + privacyStatus;
     } else if (StringUtils.isNotEmpty(privacyStatus)) {
       privacyStatus = Localization().getStringEx('widget.group_card.status.public', 'Public') + privacyStatus;
@@ -935,14 +944,14 @@ class GroupCard extends StatelessWidget {
   }
 
   Widget _buildCategoryLayout(){
-    String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
+    String? groupCategory = StringUtils.ensureNotEmpty(widget.group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
     List<Widget> content = [];
     if (StringUtils.isNotEmpty(groupCategory)) {
         content.add(Container(height: 6,));
         content.add(
           Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
             overflow: TextOverflow.ellipsis,
-            maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
+            maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,)
       );
     }
     return Container(
@@ -956,7 +965,7 @@ class GroupCard extends StatelessWidget {
 
   Widget _buildImage() {
     double maxImageWidgth = 150;
-    String? imageUrl = group?.imageURL;
+    String? imageUrl = widget.group?.imageURL;
     return
       StringUtils.isEmpty(imageUrl) ? Container() :
       // Expanded(
@@ -968,8 +977,8 @@ class GroupCard extends StatelessWidget {
           hint: "Double tap to zoom the image",
           child: GestureDetector(
               onTap: () {
-                if (onImageTap != null) {
-                  onImageTap!();
+                if (widget.onImageTap != null) {
+                  widget.onImageTap!();
                 }
               },
               child: Container(
@@ -989,14 +998,14 @@ class GroupCard extends StatelessWidget {
     return Container(
         child: Text(
           _timeUpdatedText,
-          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
+          maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface,),
     ));
   }
 
   Widget _buildMembersCount() {
-    int count = group!.membersCount;
+    int count = widget.group?.membersCount ?? 0;
     String membersLabel = (count == 1)
         ? Localization().getStringEx('widget.group_card.member.label', 'member')
         : Localization().getStringEx('widget.group_card.members.label', 'members');
@@ -1006,9 +1015,23 @@ class GroupCard extends StatelessWidget {
   }
 
   void _onTapCard(BuildContext context) {
-    Analytics().logSelect(target: "Group: ${group!.title}");
-    if (Auth2().privacyMatch(3)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: group)));
+    Analytics().logSelect(target: "Group: ${widget.group?.title}");
+    if (Auth2().privacyMatch(4)) {
+      if (Auth2().isOidcLoggedIn) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: widget.group)));
+      }
+      else {
+        setState(() { _bussy = true; });
+
+        Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+          if (mounted) {
+            setState(() { _bussy = null; });
+            if (result == Auth2OidcAuthenticateResult.succeeded) {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: widget.group)));
+            }
+          }
+        });
+      }
     }
     else {
       AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertWidget(), actions: [
@@ -1046,7 +1069,22 @@ class GroupCard extends StatelessWidget {
   }
 
   String get _timeUpdatedText {
-    return group!.displayUpdateTime ?? '';
+    return widget.group?.displayUpdateTime ?? '';
+  }
+
+  void _evalContentSize() {
+    try {
+      final RenderObject? renderBox = _contentKey.currentContext?.findRenderObject();
+      if (renderBox is RenderBox) {
+        if (mounted) {
+          setState(() {
+            _contentSize = renderBox.size;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }
 

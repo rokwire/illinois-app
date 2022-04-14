@@ -41,7 +41,7 @@ class GroupsHomePanel extends StatefulWidget{
 enum _FilterType { none, category, tags }
 enum _TagFilter { all, my }
 
-class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener{
+class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener {
   final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All Categories");
 
   bool _isFilterLoading = false;
@@ -65,6 +65,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupDeleted,
+      Auth2.notifyLoginSucceeded,
+      Auth2.notifyLogout,
     ]);
     _loadFilters();
     _loadGroupsContent(autoUpdateTabSelection: true);
@@ -585,25 +587,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         
         Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
           if (mounted) {
-            if (result != Auth2OidcAuthenticateResult.succeeded) {
-              setState(() { _myGroupsBussy = false; });
-            }
-            else {
-              Groups().loadGroups().then((List<Group>? groups) {
-                if (mounted) {
-                  if (groups != null) {
-                    setState(() {
-                      _myGroupsBussy = false;
-                      _myGroupsSelected = true;
-                      _allGroups = _sortGroups(groups);
-                    });
-                  }
-                  else {
-                    setState(() { _myGroupsBussy = false; });
-                  }
-                }
-              });
-            }
+            setState(() {
+              _myGroupsBussy = false;
+              if (result == Auth2OidcAuthenticateResult.succeeded) {
+                _myGroupsSelected = true;
+              }
+            });
           }
         });
 
@@ -656,6 +645,15 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         _loadGroupsContent();
       }
     }
+    else if ((name == Auth2.notifyLoginSucceeded) ||  (name == Auth2.notifyLogout)) {
+      // Reload content with some delay, do not unmount immidately GroupsCard that could have updated the login state.
+      Future.delayed(Duration(microseconds: 300), () {
+        if (mounted) {
+          _loadGroupsContent();
+        }
+      });
+    }
+
   }
 }
 
