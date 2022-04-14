@@ -23,7 +23,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeGiesWidget.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -66,7 +65,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   StreamController<void> _refreshController = StreamController.broadcast();
 
   bool? _loggingIn;
-  GlobalKey _saferKey = GlobalKey();
 
   @override
   void initState() {
@@ -77,8 +75,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       Styles.notifyChanged,
       Assets.notifyChanged,
       Auth2.notifyLoginStarted,
-      Auth2.notifyLoginFinished,
-      Auth2UserPrefs.notifyPrivacyLevelChanged
+      Auth2.notifyLoginFinished
     ]);
     _contentListCodes = JsonUtils.listStringsValue(FlexUI()['home'])  ?? [];
     super.initState();
@@ -230,7 +227,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (name == FlexUI.notifyChanged) {
       _updateContentListCodes();
-      _ensureSaferWidgetVisible();
     }
     else if(name == Storage.offsetDateKey){
       setState(() {});
@@ -253,19 +249,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       setState(() {
         _loggingIn = false;
       });
-    }
-    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      _ensureSaferWidgetVisible();
-    }
-  }
-
-  void _ensureSaferWidgetVisible() {
-    if (_loggingIn == true) {
-      BuildContext? saferContext = _saferKey.currentContext;
-      if (saferContext != null) {
-        Scrollable.ensureVisible(saferContext,
-            duration: Duration(milliseconds: 10), alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart);
-      }
     }
   }
 }
