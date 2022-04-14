@@ -1437,6 +1437,7 @@
     "panel.poll_prompt.button.close.title":"Cerrar",
     "panel.poll_prompt.hint.select_option":"Toca dos veces para seleccionar esta opción",
     "panel.poll_prompt.vote.status.announce.success": "Successfully Voted",
+    "panel.polls_prompt.card.text.pin":"Encuesta de 4 dígitos #: %s",
 
     "panel.poll_pin_bouble.label_description": "Ingrese el número de encuesta de cuatro dígitos para ver la encuesta.",
     "panel.poll_pin_bouble.validation_description": "Ingrese el número correcto de encuesta de 4 dígitos",

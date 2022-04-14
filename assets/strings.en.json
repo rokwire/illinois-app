@@ -1439,6 +1439,7 @@
     "panel.poll_prompt.button.close.title":"Close",
     "panel.poll_prompt.hint.select_option":"Double tab to select this option",
     "panel.poll_prompt.vote.status.announce.success": "Successfully Voted",
+    "panel.polls_prompt.card.text.pin":"4 Digit Poll #: %s",
 
     "panel.poll_pin_bouble.label_description": "Enter the four-digit poll number to see the poll.",
     "panel.poll_pin_bouble.validation_description": "Please enter correct 4 Digit Poll #",

@@ -2535,6 +2535,9 @@ class _GroupPollCardState extends State<GroupPollCard>{
     String? creator = widget.poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');//TBD localize
     String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
     String semanticsQuestionText =  "$wantsToKnow,\n ${poll.title!}";
+    String pin = sprintf(Localization().getStringEx('panel.polls_prompt.card.text.pin', 'Pin: %s'), [
+      sprintf('%04i', [poll.pinCode ?? 0])
+    ]);
 
     if(poll.status == PollStatus.created) {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.created","Polls created");
@@ -2567,10 +2570,10 @@ class _GroupPollCardState extends State<GroupPollCard>{
         <Widget>[
           Row(children: <Widget>[Expanded(child: Container(),)],),
           Semantics(label:semanticsQuestionText,excludeSemantics: true,child:
-            Text(wantsToKnow, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w600),)),
+            Text(wantsToKnow, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w600))),
+          Padding(padding: EdgeInsets.only(top: 5), child: Text(pin, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12))),
           Container(height: 12,),
-          Padding(padding: EdgeInsets.symmetric(vertical: 0),child:
-            Text(poll.title!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, height: 1.2 ),),),
+          Text(poll.title!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, height: 1.2)),
           Container(height:12),
           cardBody,
           Container(height:25),
