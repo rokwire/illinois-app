@@ -1354,6 +1354,7 @@
     "panel.create_poll.cancel_dialog.button.no": "No",
     "panel.create_poll_panel.counter.hint": "máximo,% s, caracteres",
     "panel.create_poll.message.error.default": "No se pudo crear la encuesta. Complete todos los campos e intente nuevamente.",
+    "panel.create_poll.description.non_editable.text": "Una vez iniciada, ya no podrá editar la encuesta.",
 
     "panel.create_stadium_poll.header.title": "Crear una encuesta de estadio",
     "panel.create_stadium_poll.text.wants_to_know": "quiere saber…",
@@ -1436,6 +1437,7 @@
     "panel.poll_prompt.button.close.title":"Cerrar",
     "panel.poll_prompt.hint.select_option":"Toca dos veces para seleccionar esta opción",
     "panel.poll_prompt.vote.status.announce.success": "Successfully Voted",
+    "panel.polls_prompt.card.text.pin":"Encuesta de 4 dígitos #: %s",
 
     "panel.poll_pin_bouble.label_description": "Ingrese el número de encuesta de cuatro dígitos para ver la encuesta.",
     "panel.poll_pin_bouble.validation_description": "Ingrese el número correcto de encuesta de 4 dígitos",
@@ -1686,6 +1688,7 @@
     "panel.group_detail.button.about.title": "About",
     "panel.group_detail.button.leave.title": "Leave",
     "panel.group_detail.button.group.delete.title": "Delete group",
+    "panel.group_detail.button.group.edit.title": "Group Settings",
     "panel.group_detail.button.group.add_event.title": "Add existing event",
     "panel.group_detail.button.group.create_event.title": "Create new event",
     "panel.group_detail.button.all_events.title": "See all events",

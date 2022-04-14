@@ -1356,6 +1356,7 @@
     "panel.create_poll.cancel_dialog.button.no": "No",
     "panel.create_poll_panel.counter.hint": "maximum, %s, characters",
     "panel.create_poll.message.error.default": "Failed to create poll. Please fill all fields and try again.",
+    "panel.create_poll.description.non_editable.text": "Once started, you can no longer edit the poll.",
 
     "panel.create_stadium_poll.header.title": "Create a Stadium Poll",
     "panel.create_stadium_poll.text.wants_to_know": "wants to know…",
@@ -1438,6 +1439,7 @@
     "panel.poll_prompt.button.close.title":"Close",
     "panel.poll_prompt.hint.select_option":"Double tab to select this option",
     "panel.poll_prompt.vote.status.announce.success": "Successfully Voted",
+    "panel.polls_prompt.card.text.pin":"4 Digit Poll #: %s",
 
     "panel.poll_pin_bouble.label_description": "Enter the four-digit poll number to see the poll.",
     "panel.poll_pin_bouble.validation_description": "Please enter correct 4 Digit Poll #",
@@ -1690,6 +1692,7 @@
     "panel.group_detail.button.about.title": "About",
     "panel.group_detail.button.leave.title": "Leave",
     "panel.group_detail.button.group.delete.title": "Delete group",
+    "panel.group_detail.button.group.edit.title": "Group Settings",
     "panel.group_detail.button.group.add_event.title": "Add existing event",
     "panel.group_detail.button.group.create_event.title": "Create new event",
     "panel.group_detail.button.all_events.title": "See all events",
