@@ -6,11 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Updated strings in "privacy_new" group in assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+- Updated strings in "privacy_new" section from assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+- Updated privacy descriptions again in "privacy_new" section from assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
 
 ## [3.3.15] - 2022-04-12
 ### Added
-- Added more sections in "privacy_new" group in assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+- Added more sections in "privacy_new" section from assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
 ### Changed
 - Privacy alert content and fixed delay after user's selection [#1536](https://github.com/rokwire/illinois-app/issues/1536).
 - Gies cleanup [#1543](https://github.com/rokwire/illinois-app/issues/1543).
