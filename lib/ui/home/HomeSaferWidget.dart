@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -19,9 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class HomeSaferWidget extends StatefulWidget {
 
-  final StreamController<void>? refreshController;
-
-  HomeSaferWidget({this.refreshController});
+  HomeSaferWidget();
 
   @override
   _HomeSaferWidgetState createState() => _HomeSaferWidgetState();
@@ -40,11 +37,6 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
       FlexUI.notifyChanged,
       _notifyOidcAuthenticated,
     ]);
-
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-      });
-    }
   }
 
   @override
