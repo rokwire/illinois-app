@@ -460,7 +460,7 @@ class PollOptionView extends StatefulWidget {
   final int maxLines;
   final bool enabled;
 
-  const PollOptionView({Key? key, this.title, this.textController, this.maxLength = 25, this.minLines = 1, this.maxLines = 10, this.hint, this.enabled = true}) : super(key: key);
+  const PollOptionView({Key? key, this.title, this.textController, this.maxLength = 45, this.minLines = 1, this.maxLines = 10, this.hint, this.enabled = true}) : super(key: key);
 
   @override
   _PollOptionViewState createState() {
