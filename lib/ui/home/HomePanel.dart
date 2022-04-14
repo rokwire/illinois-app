@@ -20,7 +20,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeGiesWidget.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -64,8 +63,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   List<String>? _contentListCodes;
   StreamController<void> _refreshController = StreamController.broadcast();
 
-  bool? _loggingIn;
-
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -74,8 +71,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       FlexUI.notifyChanged,
       Styles.notifyChanged,
       Assets.notifyChanged,
-      Auth2.notifyLoginStarted,
-      Auth2.notifyLoginFinished
     ]);
     _contentListCodes = JsonUtils.listStringsValue(FlexUI()['home'])  ?? [];
     super.initState();
@@ -185,7 +180,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         widget = HomeMyGroupsWidget(refreshController: _refreshController,);
       }
       else if ((code == 'safer') || code.startsWith('safer.')) {
-        widget = HomeSaferWidget(authLoading: _loggingIn);
+        widget = HomeSaferWidget();
       }
       else {
         widget = FlexContent.fromAssets(code);
@@ -239,16 +234,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (name == Assets.notifyChanged) {
       setState(() {});
-    }
-    else if (name == Auth2.notifyLoginStarted) {
-      setState(() {
-        _loggingIn = true;
-      });
-    }
-    else if (name == Auth2.notifyLoginFinished) {
-      setState(() {
-        _loggingIn = false;
-      });
     }
   }
 }
