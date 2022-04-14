@@ -532,24 +532,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildImageHeader(){
-    return Container(
-      height: 200,
-      color: Styles().colors!.background,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)) : Container(),
-          CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
-            child: Container(
-              height: 53,
-            ),
+    return Container(height: 200, color: Styles().colors?.background, child:
+      Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)) : Container(),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
+            Container(height: 53,),
           ),
-          CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors!.white),
-            child: Container(
-              height: 30,
-            ),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.white), child:
+            Container(height: 30,),
           ),
         ],
       ),
@@ -583,7 +573,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     if (_isMemberOrAdmin) {
-      if(_isAdmin){
+      if(_isAdmin) {
         commands.add(RibbonButton(
           label: Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
           hint: Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
@@ -612,43 +602,18 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
         commands.add(_buildWebsiteLink());
       }
-    } else {
+    }
+    else {
       if (StringUtils.isNotEmpty(_group?.webURL)) {
         commands.add(_buildWebsiteLink());
       }
 
-      String tags = "";
-      if (_group?.tags?.isNotEmpty ?? false) {
-        for (String tag in _group!.tags!) {
-          if (0 < tag.length) {
-            tags+=((tags.isNotEmpty? ", ": "") + tag);
-          }
+      String? tags = _group?.displayTags;
+      if (StringUtils.isNotEmpty(tags)) {
+        if (commands.isNotEmpty) {
+          commands.add(Container(height: 12,));
         }
-      }
-
-      if(tags.isNotEmpty) {
-        commands.add(Container(height: 12,));
-        commands.add(
-          Padding(padding: EdgeInsets.symmetric(vertical: 4),
-            child: Row(children: [
-              Expanded(child:
-              RichText(
-                text: new TextSpan(
-                  style: TextStyle(color: Styles().colors!.textSurface,
-                      fontFamily: Styles().fontFamilies!.bold,
-                      fontSize: 12),
-                  children: <TextSpan>[
-                    new TextSpan(text: Localization().getStringEx("panel.group_detail.label.tags", "Group Tags: ")),
-                    new TextSpan(
-                        text: tags,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.regular)),
-                  ],
-                ),
-              )
-              )
-            ],),
-          ),);
+        commands.add(_buildTags(tags));
       }
     }
 
@@ -975,11 +940,27 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildWebsiteLink() {
     return RibbonButton(
-        label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
-        rightIconAsset: 'images/external-link.png',
-        leftIconAsset: 'images/globe.png',
-        padding: EdgeInsets.symmetric(horizontal: 0),
-        onTap: _onWebsite);
+      label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
+      rightIconAsset: 'images/external-link.png',
+      leftIconAsset: 'images/globe.png',
+      padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+      onTap: _onWebsite
+    );
+  }
+
+  Widget _buildTags(String? tags) {
+    return Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+      Row(children: [
+        Expanded(child:
+          RichText(text:
+            TextSpan(style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.bold, fontSize: 12), children: <TextSpan>[
+              TextSpan(text: Localization().getStringEx("panel.group_detail.label.tags", "Group Tags: ")),
+              TextSpan(text: tags ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.regular)),
+            ],),
+          )
+        )
+      ],),
+    );
   }
 
   Widget _buildAdmins() {
