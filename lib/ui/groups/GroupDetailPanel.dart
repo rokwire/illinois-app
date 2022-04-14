@@ -144,6 +144,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
   }
 
+  bool get _canEditGroup {
+    return _isAdmin;
+  }
+
   bool get _canDeleteGroup {
     return _isAdmin;
   }
@@ -1162,6 +1166,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                                       Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
                                   positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.leave.title", "Leave"),
                                   onPositiveTap: _onTapLeaveDialog)).then((value) => Navigator.pop(context));
+                        })),
+                Visibility(
+                    visible: _canEditGroup,
+                    child: RibbonButton(
+                        leftIconAsset: "images/icon-gear.png",
+                        label: Localization().getStringEx("panel.group_detail.button.group.edit.title", "Group Settings"),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _onTapSettings();
                         })),
                 Visibility(
                     visible: _canDeleteGroup,
