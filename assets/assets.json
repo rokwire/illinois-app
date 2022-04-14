@@ -672,9 +672,9 @@
 						"off_icon_resource": "personalization-blue-off.png",
 						"title" : "Personalizations",
 						"title_key" :"privacy.entry.groups.personalizations.title",
-						"description" : "View and interact with your groups when signed in.",
+						"description" : "View a list of existing groups.",
 						"description_key" :"privacy.entry.groups.personalizations.description",
-						"dataUsage" : "This feature uses your and others information contributed to a group.",
+						"dataUsage" : "This feature does not use any of your data.",
 						"dataUsage_key" :"privacy.entry.groups.personalizations.data_usage"
 					},
 					{
@@ -683,7 +683,7 @@
 						"off_icon_resource": "notifications-blue-off.png",
 						"title" : "Notifications",
 						"title_key" :"privacy.entry.groups.notifications.title",
-						"description" : "Get notifications about group events, posts and polls for groups you belong to.",
+						"description" : "Join, view and interact with groups when signed in. Get notifications on group events, posts and polls for groups you belong to.",
 						"description_key" :"privacy.entry.groups.notifications.description",
 						"dataUsage" : "This feature uses your and others information contributed to a group.",
 						"dataUsage_key" :"privacy.entry.groups.notifications.data_usage"
