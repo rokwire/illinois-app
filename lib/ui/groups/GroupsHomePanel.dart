@@ -294,10 +294,19 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                       _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups'), hint: '', selected: _myGroupsSelected, progress: _myGroupsBussy, onTap: _onTapMyGroups),
                     ),
                   ),
-                  Container(width: 15,),
                   Flexible(child: Container()),
-                  Visibility(visible: Auth2().isLoggedIn, child: _buildUserProfilePicture()),
-                  Visibility(visible: _canCreateGroup, child: _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10, excludeFromSemantics: true), selected: false, onTap: _onTapCreate)),
+                  Visibility(visible: Auth2().isLoggedIn, child:
+                    Padding(padding: EdgeInsets.only(left: 10, bottom: 3), child:
+                      Container(height: 32, width: 32, child:
+                        GroupMemberProfileImage(userId: Auth2().accountId, onTap: _onTapUserProfileImage)
+                      ),
+                    ),
+                  ),
+                  Visibility(visible: _canCreateGroup, child:
+                    Padding(padding: EdgeInsets.only(left: 5), child:
+                      _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10, excludeFromSemantics: true), selected: false, onTap: _onTapCreate),
+                    ),
+                  ),
                 ],),
               )
             )
@@ -536,14 +545,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
-  Widget _buildUserProfilePicture() {
-    return Center(
-        child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            child: Container(
-                height: 34, width: 34, child: GroupMemberProfileImage(userId: Auth2().accountId, onTap: _onTapUserProfileImage))));
-  }
-  
   void _onTapFilterEntry(dynamic entry) {
     String? analyticsTarget;
     switch (_activeFilterType) {
@@ -638,7 +639,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
   
   bool get _canCreateGroup {
-    return Auth2().isOidcLoggedIn;
+    return Auth2().isOidcLoggedIn && Auth2().privacyMatch(5);
   }
 
   ///////////////////////////////////
