@@ -5,14 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Changed
-- Updated strings in "privacy_new" group in assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
 ### Fixed
 - Properly handle UI changes when privacy level is changed [#1546](https://github.com/rokwire/illinois-app/issues/1546).
 
+## [3.3.16] - 2022-04-14
+### Changed
+- Updated strings in "privacy_new" section from assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+- Updated privacy descriptions again in "privacy_new" section from assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+- UI improvements [#1550](https://github.com/rokwire/illinois-app/issues/1550).
+- Acknwoledged user privacy level and authentication status in Groups [#1548](https://github.com/rokwire/illinois-app/issues/1548).
+
 ## [3.3.15] - 2022-04-12
 ### Added
-- Added more sections in "privacy_new" group in assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+- Added more sections in "privacy_new" section from assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
 ### Changed
 - Privacy alert content and fixed delay after user's selection [#1536](https://github.com/rokwire/illinois-app/issues/1536).
 - Gies cleanup [#1543](https://github.com/rokwire/illinois-app/issues/1543).
