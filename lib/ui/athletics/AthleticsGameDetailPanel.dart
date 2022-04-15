@@ -201,7 +201,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                               Container(width: 12,),
                               Expanded(child:
                                 Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-                                  Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                  /*Padding(padding: EdgeInsets.only(bottom: 8), child:
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.tickets.title", "Tickets"),
                                       hint: Localization().getStringEx("panel.athletics_game_detail.button.tickets.hint", ""),
@@ -209,7 +209,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                       contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                       onTap: _onTapTickets,
                                     ),
-                                  ),
+                                  ),*/
                                   Padding(padding: EdgeInsets.only(bottom: 8), child:
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.teams.title", "Teams"),
