@@ -51,38 +51,57 @@ extension GroupExt on Group {
         }
         else if (difference.inMinutes < 60) {
           return sprintf((difference.inMinutes != 1) ?
-            Localization().getStringEx('model.group.updated.minutes', 'Updated about %s minutes ago')! :
-            Localization().getStringEx('model.group.updated.minute', 'Updated about a minute ago')!,
+            Localization().getStringEx('model.group.updated.minutes', 'Updated about %s minutes ago') :
+            Localization().getStringEx('model.group.updated.minute', 'Updated about a minute ago'),
             [difference.inMinutes]);
         }
         else if (difference.inHours < 24) {
           return sprintf((difference.inHours != 1) ?
-            Localization().getStringEx('model.group.updated.hours', 'Updated about %s hours ago')! :
-            Localization().getStringEx('model.group.updated.hour', 'Updated about an hour ago')!,
+            Localization().getStringEx('model.group.updated.hours', 'Updated about %s hours ago') :
+            Localization().getStringEx('model.group.updated.hour', 'Updated about an hour ago'),
             [difference.inHours]);
         }
         else if (difference.inDays < 30) {
           return sprintf((difference.inDays != 1) ?
-            Localization().getStringEx('model.group.updated.days', 'Updated about %s days ago')! :
-            Localization().getStringEx('model.group.updated.day', 'Updated about a day ago')!,
+            Localization().getStringEx('model.group.updated.days', 'Updated about %s days ago') :
+            Localization().getStringEx('model.group.updated.day', 'Updated about a day ago'),
             [difference.inDays]);
         }
         else {
           int differenceInMonths = difference.inDays ~/ 30;
           if (differenceInMonths < 12) {
             return sprintf((differenceInMonths != 1) ?
-              Localization().getStringEx('model.group.updated.months', 'Updated about %s months ago')! :
-              Localization().getStringEx('model.group.updated.month', 'Updated about a month ago')!,
+              Localization().getStringEx('model.group.updated.months', 'Updated about %s months ago') :
+              Localization().getStringEx('model.group.updated.month', 'Updated about a month ago'),
               [differenceInMonths]);
           }
         }
       }
       String value = DateFormat("MMM dd, yyyy").format(deviceDateTime);
       return sprintf(
-        Localization().getStringEx('model.group.updated.date', 'Updated on %s')!,
+        Localization().getStringEx('model.group.updated.date', 'Updated on %s'),
         [value]);
     }
     return null;
+  }
+
+  String get displayTags {
+    String tagsString = "";
+    if (tags != null) {
+      for (String tag in tags!) {
+        if (0 < tag.length) {
+          if (displayTags.isNotEmpty) {
+            tagsString += ", ";
+          }
+          tagsString += tag;
+        }
+      }
+    }
+    return tagsString;
+  }
+
+  bool get canMemberCreatePoll {
+    return !(onlyAdminsCanCreatePolls ?? true);
   }
 
   String? get currentUserStatusText {
@@ -93,6 +112,7 @@ extension GroupExt on Group {
     return "";
   }
 }
+
 
 Color? groupMemberStatusToColor(GroupMemberStatus? value) {
   if (value != null) {

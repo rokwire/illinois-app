@@ -24,7 +24,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -73,7 +73,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                       child: Text(
                           Localization().getStringEx(
                               'panel.onboarding.verify_phone.title',
-                              'Connect to Illinois')!,
+                              'Connect to Illinois'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontFamily: Styles().fontFamilies!.bold,
@@ -87,7 +87,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                       child: Text(
                           Localization().getStringEx(
                               "panel.onboarding.verify_phone.description",
-                              "To verify your phone number, choose your preferred contact channel, and we'll send you a one-time authentication code.")!,
+                              "To verify your phone number, choose your preferred contact channel, and we'll send you a one-time authentication code."),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontFamily: Styles().fontFamilies!.regular,
@@ -98,7 +98,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                     child: Text(
                       Localization().getStringEx(
                           "panel.onboarding.verify_phone.phone_number.label",
-                          "Phone number")!,
+                          "Phone number"),
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           fontSize: 16,
@@ -165,7 +165,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                             Text(
                               Localization().getStringEx(
                                   "panel.onboarding.verify_phone.text_me.label",
-                                  "Text me")!,
+                                  "Text me"),
                               style: TextStyle(
                                   fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
                             ))
@@ -204,7 +204,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                   Analytics().logSelect(target: "Back");
                   Navigator.pop(context);
                 }), Align(alignment: Alignment.bottomCenter, child:
-            Padding(padding: EdgeInsets.only(left: 18, right: 18, bottom: 24),child: ScalableRoundedButton(
+            Padding(padding: EdgeInsets.only(left: 18, right: 18, bottom: 24),child: RoundedButton(
                 label: Localization().getStringEx(
                     "panel.onboarding.verify_phone.button.next.label",
                     "Next"),
@@ -247,10 +247,10 @@ class _OnboardingLoginPhoneVerifyPanelState
 
     setState(() { _isLoading = true; });
     
-    Auth2().authenticateWithPhone(phoneNumber).then((success) {
+    Auth2().authenticateWithPhone(phoneNumber).then((result) {
       if (mounted) {
         setState(() { _isLoading = false; });
-        _onPhoneInitiated(phoneNumber, success);
+        _onPhoneInitiated(phoneNumber, result);
       }
     });
   }
@@ -263,15 +263,22 @@ class _OnboardingLoginPhoneVerifyPanelState
     });
   }
 
-  void _onPhoneInitiated(String? phoneNumber, bool success) {
-    if (!success) {
+  void _onPhoneInitiated(String? phoneNumber, Auth2PhoneRequestCodeResult result) {
+    if (result == Auth2PhoneRequestCodeResult.failed) {
       setState(() {
         _validationErrorMsg = Localization().getStringEx(
-            "panel.onboarding.verify_phone.validation.server_error.text",
-            "Please enter a valid phone number");
+            "panel.onboarding.verify_phone.validation.failed.text",
+            "Failed to send authentication code. An unexpected error occurred.");
       });
     }
-    else if(widget.onboardingContext != null) {
+    else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
+      setState(() {
+        _validationErrorMsg = Localization().getStringEx(
+            "panel.onboarding.verify_phone.validation.exists.text",
+            "Failed to send authentication code. An existing account is already using this phone number.");
+      });
+    }
+    else if (widget.onboardingContext != null) {
       widget.onboardingContext!["phone"] = phoneNumber;
       Onboarding().next(context, widget);
     }

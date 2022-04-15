@@ -16,14 +16,16 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -32,36 +34,54 @@ class GroupsSearchPanel extends StatefulWidget {
   _GroupsSearchPanelState createState() => _GroupsSearchPanelState();
 }
 
-class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
+class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements NotificationsListener {
   List<Group>? _groups;
+  String? _searchValue;
   TextEditingController _searchController = TextEditingController();
-  String? _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching only Groups Titles');
+  String? _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching Only Groups Titles');
   int _resultsCount = 0;
   bool _resultsCountLabelVisible = false;
   bool _loading = false;
 
   @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, [
+      Auth2.notifyLoginSucceeded,
+      Auth2.notifyLogout,
+    ]);
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
+    NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  ///////////////////////////////////
+  // NotificationsListener
+
+  void onNotification(String name, dynamic param){
+    if ((name == Auth2.notifyLoginSucceeded) ||  (name == Auth2.notifyLogout)) {
+      // Reload content with some delay, do not unmount immidately GroupsCard that could have updated the login state.
+      Future.delayed(Duration(microseconds: 300), () {
+        if (mounted) {
+          _refreshSearch();
+        }
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.groups_search.header.title", "Search")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.groups_search.header.title", "Search"),
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -208,9 +228,28 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     } else if (_resultsCount == 1) {
       return Localization().getStringEx('panel.groups_search.label.found_single', '1 result found');
     } else if (_resultsCount > 1) {
-      return sprintf(Localization().getStringEx('panel.groups_search.label.found_multi', '%d results found')!, [_resultsCount]);
+      return sprintf(Localization().getStringEx('panel.groups_search.label.found_multi', '%d results found'), [_resultsCount]);
     } else {
       return "";
+    }
+  }
+
+  void _refreshSearch() {
+    if (StringUtils.isNotEmpty(_searchValue)) {
+      setState(() { _loading = true; });
+      Groups().searchGroups(_searchValue!).then((groups) {
+        if (mounted) {
+          setState(() {
+            if (groups != null) {
+              _groups = groups;
+              _resultsCount = _groups?.length ?? 0;
+              _resultsCountLabelVisible = true;
+              _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ') + _searchController.text;
+            }
+            _loading = false;
+          });
+        }
+      });
     }
   }
 
@@ -228,11 +267,11 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     }
     _setLoading(true);
     Groups().searchGroups(searchValue).then((groups) {
-
       _groups = groups;
+      _searchValue = searchValue;
       _resultsCount = _groups?.length ?? 0;
       _resultsCountLabelVisible = true;
-      _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ')! + _searchController.text;
+      _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ') + _searchController.text;
       _setLoading(false);
     });
   }
@@ -244,23 +283,26 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
       return;
     }
     _groups = null;
+    _searchValue = null;
     _searchController.clear();
     _resultsCountLabelVisible = false;
     setState(() {
-      _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching only Groups Titles');
+      _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching Only Groups Titles');
     });
   }
 
   void _onTextChanged(String text) {
     _resultsCountLabelVisible = false;
     setState(() {
-      _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching only Groups Titles');
+      _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching Only Groups Titles');
     });
   }
 
   void _setLoading(bool loading) {
-    setState(() {
-      _loading = loading;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = loading;
+      });
+    }
   }
 }

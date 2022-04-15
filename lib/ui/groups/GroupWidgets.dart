@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
+import 'dart:typed_data';
+
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
+import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -26,7 +32,7 @@ import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
-import 'package:illinois/service/Content.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -42,11 +48,10 @@ import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
 
@@ -213,6 +218,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
     if (optionsCount == 0) {
       return null;
     }
+
     return widget.items!.map((Object? item) {
       String? name = widget.constructTitle!=null? widget.constructTitle!(item) : item?.toString();
       GroupDropDownDescriptionDataBuilder<T?>? constructDescriptionFn = widget.constructListItemDescription ?? widget.constructDescription;
@@ -313,7 +319,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Expanded(child:
-                        ScalableRoundedButton(
+                        RoundedButton(
                           label: Localization().getStringEx('headerbar.back.title', "Back"),
                           fontFamily: "ProximaNovaRegular",
                           textColor: Styles().colors!.fillColorPrimary,
@@ -327,8 +333,8 @@ class GroupsConfirmationDialog extends StatelessWidget{
                         )),
                       Container(width: 16,),
                       Expanded(child:
-                        ScalableRoundedButton(
-                          label: buttonTitle,
+                        RoundedButton(
+                          label: buttonTitle ?? '',
                           fontFamily: "ProximaNovaBold",
                           textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.fillColorSecondary,
@@ -353,7 +359,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
 //GroupEventCard
 
 class GroupEventCard extends StatefulWidget {
-  final GroupEvent? groupEvent;
+  final Event? groupEvent;
   final Group? group;
   final bool isAdmin;
 
@@ -363,71 +369,9 @@ class GroupEventCard extends StatefulWidget {
   createState()=> _GroupEventCardState();
 }
 class _GroupEventCardState extends State<GroupEventCard>{
-  bool _showAllComments = false;
-
   @override
   Widget build(BuildContext context) {
-    GroupEvent? event = widget.groupEvent;
-    List<Widget> content = [
-      _EventContent(event: event, isAdmin: widget.isAdmin, group: widget.group,),
-    ];
-    List<Widget> content2 = [];
-
-    if(_canPostComment){
-      content2.add(
-          Container(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child:_buildAddPostButton(onTap: (){
-                    Analytics().logSelect(target: "Add post");
-                    //TBD: remove if not used
-                    // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.group?.id,)));
-                  }))
-      );
-    }
-
-    if (0 < (event?.comments?.length ?? 0)) {
-      content.add(Container(color: Styles().colors!.surfaceAccent, height: 1,));
-
-      for (GroupEventComment? comment in event!.comments!) {
-        content2.add(_buildComment(comment!));
-        if(!_showAllComments){
-          break;
-        }
-      }
-      if(!_showAllComments && (1 < (event.comments?.length ?? 0))){
-        content2.add(
-            Container(color: Styles().colors!.fillColorSecondary,height: 1,margin: EdgeInsets.only(top:12, bottom: 10),)
-        );
-        content2.add(
-            Semantics(
-              button: true,
-              child: GestureDetector(
-                onTap: (){
-                  Analytics().logSelect(target: "See previous posts");
-                  setState(() {
-                    _showAllComments = true;
-                  });},
-                child: Center(child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(Localization().getStringEx("panel.group_detail.button.previous_post.title", "See previous posts")!, style: TextStyle(fontSize: 16,
-                        fontFamily: Styles().fontFamilies!.bold,
-                        color: Styles().colors!.fillColorPrimary),),
-                    Padding(
-                      padding: EdgeInsets.only(left: 7), child: Image.asset('images/icon-down-orange.png', color:  Styles().colors!.fillColorPrimary,),),
-                  ],),
-                ),),
-            )
-        );
-        content2.add(Container(height: 7,));
-      }
-
-      content.add(Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children:content2))
-      );
-
-    }
+    Event? event = widget.groupEvent;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -437,85 +381,9 @@ class _GroupEventCardState extends State<GroupEventCard>{
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
             borderRadius: BorderRadius.all(Radius.circular(8))
         ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: content,),
+        child: _EventContent(event: event, isAdmin: widget.isAdmin, group: widget.group),
       ),
     );
-  }
-
-  Widget _buildComment(GroupEventComment comment){
-    String? memberName = comment.member!.displayShortName;
-    String postDate = AppDateTimeUtils.timeAgoSinceDate(comment.dateCreated!);
-    return
-      Semantics(
-          label: "$memberName posted, $postDate: ${comment.text}",
-          excludeSemantics: true,
-          child:Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              child: Container(
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                    color: Styles().colors!.white,
-                    boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-                    borderRadius: BorderRadius.all(Radius.circular(4))
-                ),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    Container(height: 32, width: 32,
-                      decoration: StringUtils.isNotEmpty(comment.member?.photoURL)
-                          ? BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(image:NetworkImage(comment.member!.photoURL!), fit: BoxFit.cover))
-                          : null,
-                    ),
-                    Expanded(
-                      flex: 5,
-                      child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                        Padding(padding: EdgeInsets.only(bottom: 2), child:
-                        Text(comment.member!.displayShortName , style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary),),
-                        ),
-                        Text(postDate, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textBackground),)
-                      ],),),),
-                  ],),
-                  Padding(padding: EdgeInsets.only(top:8), child:
-                  Text(comment.text!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),)
-                  ),
-                ],),
-              )));
-  }
-
-  Widget _buildAddPostButton({String? photoUrl,void onTap()?}){
-    return
-      InkWell(
-          onTap: onTap,
-          child: Container(
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              photoUrl == null ? Container():
-              Container(height: 32, width: 32,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(image:NetworkImage(photoUrl), fit: BoxFit.cover),
-                ),
-              ),
-              Container(width: 6,),
-              Expanded(child:
-              Container(
-                  height: 45,
-                  alignment: Alignment.centerLeft,
-                  padding:EdgeInsets.symmetric(horizontal: 12) ,
-                  decoration: BoxDecoration(
-                      color: Styles().colors!.white,
-                      boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
-                      borderRadius: BorderRadius.all(Radius.circular(8))
-                  ),
-                  child:
-                  Text(Localization().getStringEx("panel.group_detail.button.add_post.title", "Add a public post ...")!,style: TextStyle(fontSize: 16, color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular),)
-              ))
-            ],),
-          ));
-  }
-
-  bool get _canPostComment{
-    return widget.isAdmin && false; //TBD for now hide all comment options. Determine who can add comment
   }
 }
 
@@ -651,9 +519,8 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                 Container(height: 48,),
                 !_canDelete? Container():
                   RibbonButton(
-                    height: null,
-                    leftIcon: "images/icon-leave-group.png",
-                    label:Localization().getStringEx("panel.group_detail.button.delete_event.title", "Remove group event"),
+                    label: Localization().getStringEx("panel.group_detail.button.delete_event.title", "Remove group event"),
+                    leftIconAsset: "images/icon-leave-group.png",
                     onTap: (){
                       Analytics().logSelect(target: "Remove group event");
                       showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
@@ -661,9 +528,8 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                   ),
                 !_canEdit? Container():
                   RibbonButton(
-                    height: null,
-                    leftIcon: "images/icon-edit.png",
-                    label:Localization().getStringEx("panel.group_detail.button.edit_event.title", "Edit Event"),
+                    label: Localization().getStringEx("panel.group_detail.button.edit_event.title", "Edit Event"),
+                    leftIconAsset: "images/icon-edit.png",
                     onTap: (){
                       _onEditEventTap(context);
                     },
@@ -691,14 +557,24 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   void _onEditEventTap(BuildContext context){
     Analytics().logSelect(target: "Update Event");
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event, onEditTap: (BuildContext context, Event event) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event, onEditTap: (BuildContext context, Event event, List<Member>? selection) {
       Groups().updateGroupEvents(event).then((String? id) {
         if (StringUtils.isNotEmpty(id)) {
-          Navigator.pop(context);
+          Groups().updateLinkedEventMembers(groupId: widget.group?.id,eventId: event.id, toMembers: selection).then((success){
+            if(success){
+              Navigator.pop(context);
+            } else {
+              AppAlert.showDialogResult(context, "Unable to update event members");
+            }
+          }).catchError((_){
+            AppAlert.showDialogResult(context, "Error Occurred while updating event members");
+          });
         }
         else {
           AppAlert.showDialogResult(context, "Unable to update event");
         }
+      }).catchError((_){
+        AppAlert.showDialogResult(context, "Error Occurred while updating event");
       });
     })));
   }
@@ -754,7 +630,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                   Padding(
                     padding: EdgeInsets.only(left: 10, top: 10),
                     child: Text(
-                      Localization().getStringEx("widget.add_image.heading", "Select Image")!,
+                      Localization().getStringEx("widget.add_image.heading", "Select Image"),
                       style: TextStyle(
                           color: Colors.white,
                           fontFamily: Styles().fontFamilies!.medium,
@@ -790,8 +666,8 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                               keyboardType: TextInputType.text,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(),
-                                hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image url"),
-                                labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image url"),
+                                hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image Url"),
+                                labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image Url"),
                               ))),
                       Padding(
                           padding: EdgeInsets.all(10),
@@ -801,20 +677,15 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                               backgroundColor: Styles().colors!.background,
                               textColor: Styles().colors!.fillColorPrimary,
                               onTap: _onTapUseUrl)),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Padding(
-                              padding: EdgeInsets.all(10),
-                              child: RoundedButton(
-                                  label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
-                                  borderColor: Styles().colors!.fillColorSecondary,
-                                  backgroundColor: Styles().colors!.background,
-                                  textColor: Styles().colors!.fillColorPrimary,
-                                  onTap: _onTapChooseFromDevice)),
-                          _showProgress ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary)) : Container(),
-                        ],
-                      ),
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: RoundedButton(
+                              label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from Device"),
+                              borderColor: Styles().colors!.fillColorSecondary,
+                              backgroundColor: Styles().colors!.background,
+                              textColor: Styles().colors!.fillColorPrimary,
+                              progress: _showProgress,
+                              onTap: _onTapChooseFromDevice)),
                     ]))
           ],
         ));
@@ -829,14 +700,14 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     Analytics().logSelect(target: "Use Url");
     String url = _imageUrlController.value.text;
     if (url == "") {
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url")!);
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
       return;
     }
 
     bool isReadyUrl = url.endsWith(".webp");
     if (isReadyUrl) {
       //ready
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
       Navigator.pop(context, url);
     } else {
       //we need to process it
@@ -854,15 +725,15 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
         ImagesResultType? resultType = logicResult.resultType;
         switch (resultType) {
-          case ImagesResultType.CANCELLED:
+          case ImagesResultType.cancelled:
           //do nothing
             break;
-          case ImagesResultType.ERROR_OCCURRED:
-            AppToast.show(logicResult.errorMessage!);
+          case ImagesResultType.error:
+            AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
             break;
-          case ImagesResultType.SUCCEEDED:
+          case ImagesResultType.succeeded:
           //ready
-            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
+            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
             Navigator.pop(context, logicResult.data);
             break;
           default:
@@ -879,24 +750,25 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
       _showProgress = true;
     });
 
-    Future<ImagesResult?> result =
-    Content().selectImageFromDevice(storagePath: _groupImageStoragePath, width: _groupImageWidth);
-    result.then((logicResult) {
+    // Future<ImagesResult?> result =
+    // Content().selectImageFromDevice(storagePath: _groupImageStoragePath, width: _groupImageWidth);
+    // result.then((logicResult) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(storagePath: _groupImageStoragePath, width: _groupImageWidth))).then((logicResult){
       setState(() {
         _showProgress = false;
       });
 
-      ImagesResultType? resultType = logicResult!.resultType;
+      ImagesResultType? resultType = logicResult?.resultType;
       switch (resultType) {
-        case ImagesResultType.CANCELLED:
+        case ImagesResultType.cancelled:
         //do nothing
           break;
-        case ImagesResultType.ERROR_OCCURRED:
-          AppToast.show(logicResult.errorMessage!);
+        case ImagesResultType.error:
+          AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
           break;
-        case ImagesResultType.SUCCEEDED:
+        case ImagesResultType.succeeded:
         //ready
-          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
+          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
           Navigator.pop(context, logicResult.data);
           break;
         default:
@@ -904,6 +776,8 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
       }
     });
   }
+
+
 }
 
 /////////////////////////////////////
@@ -912,103 +786,119 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
 enum GroupCardDisplayType { myGroup, allGroups, homeGroups }
 
-class GroupCard extends StatelessWidget {
+class GroupCard extends StatefulWidget {
   final Group? group;
   final GroupCardDisplayType displayType;
+  final Function? onImageTap;
 
-  GroupCard({required this.group, this.displayType = GroupCardDisplayType.allGroups});
+  GroupCard({required this.group, this.displayType = GroupCardDisplayType.allGroups, this.onImageTap});
+
+  @override
+  _GroupCardState createState() => _GroupCardState();
+}
+
+class _GroupCardState extends State<GroupCard> {
+  static const double _smallImageSize = 64;
+
+  final GlobalKey _contentKey = GlobalKey();
+  Size? _contentSize;
+  bool? _bussy;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _evalContentSize();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s")!, [StringUtils.ensureNotEmpty(group!.pendingCount.toString())]);
-    return GestureDetector(
-        onTap: () => _onTapCard(context),
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                    color: Styles().colors!.white,
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                    boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  _buildHeading(),
-                  Container(height: 3),
-                  Row(children: [
-                    Expanded(
-                        child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 0),
-                            child: Text(group?.title ?? "",
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
-                                style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))))
+    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [StringUtils.ensureNotEmpty(widget.group?.pendingCount.toString())]);
+    return GestureDetector(onTap: () => _onTapCard(context), child:
+      Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
+        Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
+          Stack(children: [
+            Column(key: _contentKey, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              _buildHeading(),
+              Container(height: 3),
+              Row(children:[
+                Expanded(child:
+                  Column(children:[
+                    _buildCategoryLayout(),
+                    Row(children: [
+                      Expanded(child:
+                        Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
+                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
+                        )
+                      )
+                    ]),
                   ]),
-                  (displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) :Container(),
-                  Visibility(
-                    visible: (group?.currentUserIsAdmin ?? false) && (group!.pendingCount > 0),
-                    child: Text(pendingCountText,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.regular,
-                          fontSize: 16,
-                          color: Styles().colors!.textBackgroundVariant,
-
-                      ),
-                    ),
+                ),
+                _buildImage()
+              ]),
+              (widget.displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) : Container(),
+              Visibility(visible: (widget.group?.currentUserIsAdmin ?? false) && ((widget.group?.pendingCount ?? 0) > 0), child:
+                Text(pendingCountText, overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackgroundVariant,),),
+              ),
+              Container(height: 4),
+              // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Expanded(child:
+                  _buildUpdateTime(),
+                ),
+                Visibility(visible: (widget.group?.authManEnabled ?? false) && (widget.displayType != GroupCardDisplayType.homeGroups), child:
+                  _buildMembersCount()
+                )
+              ])
+              // : Container()
+            ]),
+            Visibility(visible: (_bussy == true), child:
+              (_contentSize != null) ? SizedBox(width: _contentSize!.width, height: _contentSize!.height, child:
+                Align(alignment: Alignment.center, child:
+                  SizedBox(height: 24, width: 24, child:
+                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
                   ),
-                  Container(height: 4),
-                  (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups ) ? _buildUpdateTime() : Container()
-                ]))));
+                ),
+              ) : Container(),
+            ),
+          ],),
+        )
+      )
+    );
   }
 
   Widget _buildHeading() {
     List<Widget> leftContent = <Widget>[];
 
-    if (group?.currentUserAsMember?.status != null) {
+    if (widget.group?.currentUserAsMember?.status != null) {
       leftContent.add(
         Semantics(
-          label: "status: ${group?.currentUserStatusText?.toLowerCase() ?? ""} ,for: ",
+          label: "status: ${widget.group?.currentUserStatusText?.toLowerCase() ?? ""} ,for: ",
           excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(color: group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2))),
-            child: Text(group!.currentUserStatusText!.toUpperCase(),
+            decoration: BoxDecoration(color: widget.group?.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2))),
+            child: Text(widget.group?.currentUserStatusText?.toUpperCase() ?? '',
               style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white)))),
       );
     }
 
-    String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")!);
-    if (StringUtils.isNotEmpty(groupCategory)) {
-      if (leftContent.isNotEmpty) {
-        leftContent.add(Container(height: 6,));
-      }
-      leftContent.add(
-        Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
-          overflow: TextOverflow.ellipsis,
-          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
-      );
-    }
+    // String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
+    // if (StringUtils.isNotEmpty(groupCategory)) {
+    //   if (leftContent.isNotEmpty) {
+    //     leftContent.add(Container(height: 6,));
+    //   }
+    //   leftContent.add(
+    //     Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+    //       overflow: TextOverflow.ellipsis,
+    //       maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
+    //   );
+    // }
 
     List<Widget> rightContent = <Widget>[];
-
-    String? privacyStatus;
-    if (group?.privacy == GroupPrivacy.private) {
-      privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private') ;
-    }
-
-    if (privacyStatus != null) {
-      rightContent.add(
-        Semantics(
-          label: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: ')!, [privacyStatus]),
-          excludeSemantics: true,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))),
-            child: Text(privacyStatus.toUpperCase(),
-              style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white)))),
-      );
-    }
+    rightContent.add(_buildPrivacyStatysBadge()); //Moved above the image
 
     List<Widget> content = <Widget>[];
     if (leftContent.isNotEmpty) {
@@ -1025,24 +915,176 @@ class GroupCard extends StatelessWidget {
     return content.isNotEmpty ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: content,) : Container(width: 0, height: 0);
   }
 
+  Widget _buildPrivacyStatysBadge(){
+    String privacyStatus = '';
+    if (widget.group?.authManEnabled ?? false) {
+      privacyStatus = ' ' + Localization().getStringEx('widget.group_card.status.authman', 'Managed');
+    }
+    if (widget.group?.privacy == GroupPrivacy.private) {
+      privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private') + privacyStatus;
+    } else if (StringUtils.isNotEmpty(privacyStatus)) {
+      privacyStatus = Localization().getStringEx('widget.group_card.status.public', 'Public') + privacyStatus;
+    }
 
-  Widget _buildUpdateTime() {
+    if (StringUtils.isNotEmpty(privacyStatus)) {
+      return
+        Container(
+          padding: EdgeInsets.only(bottom: 8),
+          child: Semantics(
+              label: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [privacyStatus]),
+              excludeSemantics: true,
+              child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))),
+                  child: Text(privacyStatus.toUpperCase(),
+                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white)))));
+    } else {
+      return Container();
+    }
+  }
+
+  Widget _buildCategoryLayout(){
+    String? groupCategory = StringUtils.ensureNotEmpty(widget.group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
+    List<Widget> content = [];
+    if (StringUtils.isNotEmpty(groupCategory)) {
+        content.add(Container(height: 6,));
+        content.add(
+          Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+            overflow: TextOverflow.ellipsis,
+            maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,)
+      );
+    }
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: content,
+      )
+    );
+  }
+
+  Widget _buildImage() {
+    double maxImageWidgth = 150;
+    String? imageUrl = widget.group?.imageURL;
+    return
+      StringUtils.isEmpty(imageUrl) ? Container() :
+      // Expanded(
+      //     flex: 1,
+      //     child:
+      Semantics(
+          label: "post image",
+          button: true,
+          hint: "Double tap to zoom the image",
+          child: GestureDetector(
+              onTap: () {
+                if (widget.onImageTap != null) {
+                  widget.onImageTap!();
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.only(left: 8),
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: maxImageWidgth),
+                  // width: _smallImageSize,
+                  height: _smallImageSize,
+                  child: Image.network(imageUrl!, excludeFromSemantics: true,
+                    fit: BoxFit.fill,),),))
+        // )
+      );
+  }
+
+
+    Widget _buildUpdateTime() {
     return Container(
         child: Text(
           _timeUpdatedText,
-          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
+          maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface,),
     ));
   }
 
+  Widget _buildMembersCount() {
+    int count = widget.group?.membersCount ?? 0;
+    String membersLabel = (count == 1)
+        ? Localization().getStringEx('widget.group_card.member.label', 'member')
+        : Localization().getStringEx('widget.group_card.members.label', 'members');
+    return Container(
+        child: Text('$count $membersLabel',
+            style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface)));
+  }
+
   void _onTapCard(BuildContext context) {
-    Analytics().logSelect(target: "Group: ${group!.title}");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: group)));
+    Analytics().logSelect(target: "Group: ${widget.group?.title}");
+    if (Auth2().privacyMatch(4)) {
+      if (Auth2().isOidcLoggedIn) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: widget.group)));
+      }
+      else {
+        setState(() { _bussy = true; });
+
+        Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+          if (mounted) {
+            setState(() { _bussy = null; });
+            if (result == Auth2OidcAuthenticateResult.succeeded) {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: widget.group)));
+            }
+          }
+        });
+      }
+    }
+    else {
+      AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertWidget(), actions: [
+        TextButton(child: Text(Localization().getStringEx('dialog.ok.title', 'OK')), onPressed: () => _onDismissPrivacyAlert(context))
+      ]);
+    }
+  }
+
+  Widget _buildPrivacyAlertWidget() {
+    final String iconMacro = '{{privacy_level_icon}}';
+    String privacyMsg = Localization().getStringEx('panel.group_card.privacy_alert.msg', 'With your privacy level at $iconMacro , you can only view existing groups.');
+    int iconMacroPosition = privacyMsg.indexOf(iconMacro);
+    String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
+    String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
+
+    return RichText(text: TextSpan(style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold), children: [
+      TextSpan(text: privacyMsgStart),
+      WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
+      TextSpan(text: privacyMsgEnd)
+    ]));
+  }
+
+  Widget _buildPrivacyLevelWidget() {
+    String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+        Text(privacyLevel, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))
+      ),
+    );
+  }
+
+  void _onDismissPrivacyAlert(BuildContext context) {
+    Analytics().logSelect(target: 'OK');
+    Navigator.of(context).pop();
   }
 
   String get _timeUpdatedText {
-    return group!.displayUpdateTime ?? '';
+    return widget.group?.displayUpdateTime ?? '';
+  }
+
+  void _evalContentSize() {
+    try {
+      final RenderObject? renderBox = _contentKey.currentContext?.findRenderObject();
+      if (renderBox is RenderBox) {
+        if (mounted) {
+          setState(() {
+            _contentSize = renderBox.size;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }
 
@@ -1361,92 +1403,6 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
   }
 }
 
-class ModalImageDialog extends StatelessWidget{
-  final String? imageUrl;
-  final GestureTapCallback? onClose;
-
-  ModalImageDialog({this.imageUrl, this.onClose});
-
-  static  Widget modalDialogContainer({Widget? content, String? imageUrl, GestureTapCallback? onClose}){
-      return Stack(children: [
-        content ?? Container(),
-        buildModalPhotoDialog(imageUrl: imageUrl, onClose: onClose)
-      ]);
-  }
-
-  static Widget buildModalPhotoDialog({String? imageUrl, GestureTapCallback? onClose}){
-    return imageUrl!=null ? ModalImageDialog(
-        imageUrl: imageUrl,
-        onClose: onClose
-    ) : Container();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-        container: true,
-        explicitChildNodes: true,
-        scopesRoute: true,
-        child:Column(children: [
-        Expanded(child: PinchZoom(
-          child: GestureDetector(
-            onTap: onClose, //dismiss
-            child: Container(
-              color: Styles().colors!.blackTransparent06,
-              child:Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                      child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
-                          child: GestureDetector(
-                              onTap: (){}, //Do not dismiss when tap the dialog
-                              child: Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        color: Styles().colors!.fillColorPrimary,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: <Widget>[
-                                            Semantics(
-                                              button: true,
-                                              focusable: true,
-                                              focused: true,
-                                              child:GestureDetector(
-                                                onTap: onClose,
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(right: 10, top: 10),
-                                                  child: Text('\u00D7',
-                                                    semanticsLabel: "Close Button",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontFamily: Styles().fontFamilies!.medium,
-                                                        fontSize: 50
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        child: StringUtils.isNotEmpty(imageUrl) ? Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders): Container(),
-                                      )
-                                    ],
-                                  ))
-                          )
-                      )
-                  ),
-                ],
-              )))
-      ))
-      ],));
-  }
-}
-
 typedef void OnBodyChangedListener(String text);
 
 class PostInputField extends StatefulWidget{
@@ -1522,7 +1478,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                               child: Text(
                                   Localization().getStringEx(
                                       'panel.group.detail.post.create.link.label',
-                                      'Link')!,
+                                      'Link'),
                                   style: TextStyle(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -1585,14 +1541,14 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                 Analytics().logSelect(target: 'Set Link Url');
                 _onTapOkLink(linkStartPosition, linkEndPosition);
               },
-              child: Text(Localization().getStringEx('dialog.ok.title', 'OK')!)),
+              child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
           TextButton(
               onPressed: () {
                 Analytics().logSelect(target: 'Cancel');
                 Navigator.of(context).pop();
               },
               child: Text(
-                  Localization().getStringEx('dialog.cancel.title', 'Cancel')!))
+                  Localization().getStringEx('dialog.cancel.title', 'Cancel')))
         ]);
   }
 
@@ -1641,7 +1597,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
           Text(
               Localization().getStringEx(
                   'panel.group.detail.post.create.dialog.link.edit.header',
-                  'Edit Link')!,
+                  'Edit Link'),
               style: TextStyle(
                   fontSize: 20,
                   color: Styles().colors!.fillColorPrimary,
@@ -1651,7 +1607,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
               child: Text(
                   Localization().getStringEx(
                       'panel.group.detail.post.create.dialog.link.text.label',
-                      'Link Text:')!,
+                      'Link Text:'),
                   style: TextStyle(
                       fontSize: 16,
                       fontFamily: Styles().fontFamilies!.regular,
@@ -1674,7 +1630,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
               child: Text(
                   Localization().getStringEx(
                       'panel.group.detail.post.create.dialog.link.url.label',
-                      'Link URL:')!,
+                      'Link URL:'),
                   style: TextStyle(
                       fontSize: 16,
                       fontFamily: Styles().fontFamilies!.regular,
@@ -1694,6 +1650,276 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                       fontFamily: Styles().fontFamilies!.regular)))
         ]);
   }
+}
+
+class GroupMembersSelectionWidget extends StatefulWidget{
+  final String? groupId;
+  final List<Member>? allMembers;
+  final List<Member>? selectedMembers;
+  final void Function(List<Member>?)? onSelectionChanged;
+  final bool enabled;
+
+  const GroupMembersSelectionWidget({Key? key, this.selectedMembers, this.allMembers,this.onSelectionChanged, this.groupId, this.enabled = true}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _GroupMembersSelectionState();
+
+  //When we work with Update post the member stored in the post came with less populated fields and they do not match the == operator
+  static List<Member>? constructUpdatedMembersList({List<Member>? selection, List<Member>? upToDateMembers}){
+    if(CollectionUtils.isNotEmpty(selection) && CollectionUtils.isNotEmpty(upToDateMembers)){
+      return upToDateMembers!.where((member) => selection!.any((outdatedMember) => outdatedMember.userId == member.userId)).toList();
+    }
+
+    return selection;
+  }
+}
+
+class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
+  List<Member>? _allMembersAllowedToPost;
+
+  @override
+  void initState() {
+    super.initState();
+    _initAllMembersAllowedToPost();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text("To: ", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),),
+              Expanded(
+                child: _buildDropDown(),
+              )
+            ],
+          ),
+          GestureDetector(
+            onTap: _onTapEdit,
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Text(selectedMembersText, style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.bold, decoration: TextDecoration.underline),),
+            )
+          ),
+          Visibility(
+            visible: _showChangeButton,
+            child: RoundedButton(label: "Edit", onTap: _onTapEdit, textColor: Styles().colors!.fillColorSecondary!,conentAlignment: MainAxisAlignment.start, contentWeight: 0.33, padding: EdgeInsets.all(3), maxBorderRadius: 5,)
+          )
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildDropDown(){
+    return Container(
+        height: 48,
+        decoration: BoxDecoration(
+            color:  widget.enabled? Colors.white: Styles().colors!.background!,
+            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+        child: Padding(
+            padding: EdgeInsets.only(left: 10),
+            child:
+              DropdownButtonHideUnderline(
+                // child: ButtonTheme(
+                //   alignedDropdown: true,
+                  child: DropdownButton2<GroupMemberSelectionData>(
+                    isExpanded: true,
+                    dropdownPadding: EdgeInsets.zero,
+                    itemPadding: EdgeInsets.zero,
+                    iconEnabledColor: Styles().colors!.fillColorSecondary!,
+                    icon: widget.enabled? Icon(Icons.arrow_drop_down): Container(),
+                    // buttonDecoration: widget.enabled? null : BoxDecoration(color: Styles().colors!.background),
+                    dropdownDecoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid), borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8))),
+                    // style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
+                    // value: _currentSelection,
+                    items: _buildDropDownItems,
+                    hint: Text(_selectionText,  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),),
+                    onChanged: widget.enabled? (GroupMemberSelectionData? data) {
+                      _onDropDownItemChanged(data);
+                    } : null,
+                )))
+              // )
+    );
+  }
+
+  List<DropdownMenuItem<GroupMemberSelectionData>> get _buildDropDownItems {
+    List<DropdownMenuItem<GroupMemberSelectionData>> items = [];
+
+    items.add(DropdownMenuItem(alignment: AlignmentDirectional.topCenter,enabled: false, value: null,
+        child:
+          Container(
+            color: Styles().colors!.fillColorPrimary,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+              Expanded(child:
+                Container(color: Styles().colors!.fillColorPrimary,
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  child:Text("Select Recipient(s)", style: TextStyle(color: Colors.white),))
+          )
+          ])))
+    );
+    items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: null), child: _buildDropDownItemLayout("All Members")));
+    items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.PerformNewSelection, selection: null) , child: _buildDropDownItemLayout("Select Members")));
+
+    //Stored Selections
+    List<List<Member>>? storedSelections = _storedMembersSelections;
+    if(CollectionUtils.isNotEmpty(storedSelections)){
+      items.add(DropdownMenuItem(enabled: false ,value: null, child: _buildDropDownHeaderLayout("RECENTLY USED")));
+      storedSelections!.reversed.forEach((selection){
+        items.add(DropdownMenuItem(value: GroupMemberSelectionData(type: GroupMemberSelectionDataType.Selection, selection: selection, requiresValidation: true), child: _buildDropDownItemLayout(constructSelectionTitle(selection))));
+      });
+    }
+
+    return items;
+  }
+
+  Widget _buildDropDownHeaderLayout(String title){
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+          Expanded(
+              child:Container(
+                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  child: Text(title, maxLines: 2, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12),)
+              ))
+        ]
+    );
+  }
+
+  Widget _buildDropDownItemLayout(String title){
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+          Expanded(
+            child:Container(
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              child: Text(title, maxLines: 2, style: TextStyle(fontSize: 18,overflow: TextOverflow.ellipsis),)
+          ))
+      ]
+    );
+  }
+
+  void _onDropDownItemChanged(GroupMemberSelectionData? data){
+    if(data != null){
+      switch (data.type){
+        case GroupMemberSelectionDataType.Selection:
+          _onSelectionChanged(data.requiresValidation?
+              /*Trim Members which are no longer present*/
+            GroupMembersSelectionWidget.constructUpdatedMembersList(selection: data.selection, upToDateMembers: _allMembersAllowedToPost) :
+              data.selection);
+          break;
+        case GroupMemberSelectionDataType.PerformNewSelection:
+          _onTapEdit();
+          break;
+      }
+    }
+  }
+
+  // List<Member>? _validateSelection(List<Member>? selection, List<Member>? availableMembers){
+  //   if(CollectionUtils.isNotEmpty(selection) && CollectionUtils.isNotEmpty(availableMembers)){
+  //     return selection!.where((selectedMember) => availableMembers!.contains(selectedMember)).toList();
+  //   }
+  //
+  //   return selection;
+  // }
+
+  void _onTapEdit(){
+    Analytics().logSelect(target: "Edit Members");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSelectionPanel(allMembers: _allMembersAllowedToPost, selectedMembers: widget.selectedMembers, groupId: widget.groupId,))).then((result) {
+      _onSelectionChanged(result);
+    });
+  }
+
+  void _onSelectionChanged(List<Member>? selection){
+    if(widget.onSelectionChanged!=null){
+      widget.onSelectionChanged!(selection);
+    }
+  }
+
+  void _initAllMembersAllowedToPost(){
+    if(widget.allMembers!=null){
+      _allMembersAllowedToPost = widget.allMembers;
+    } else if(widget.groupId!=null) {
+      _loadAllMembersAllowedToPost();
+    }
+  }
+
+  void _loadAllMembersAllowedToPost(){
+    Groups().loadGroup(widget.groupId).then((Group? group) {
+      if (mounted && (group != null)) {
+        setState(() {
+          if((group.members?.length ?? 0) >0) {
+            _allMembersAllowedToPost = group.members!.where((member) => _isMemberAllowedToReceivePost(member)).toList();
+            if((_allMembersAllowedToPost?.isNotEmpty ?? false) && (widget.selectedMembers?.isNotEmpty ?? false)){
+              //If we have successfully loaded the group data -> refresh initial selection
+               _onSelectionChanged(GroupMembersSelectionWidget.constructUpdatedMembersList(upToDateMembers: _allMembersAllowedToPost, selection: widget.selectedMembers)); //Notify Parent widget with the updated values
+            }
+          }
+        });
+      }
+    });
+  }
+
+  bool _isMemberAllowedToReceivePost(Member member){
+    //TMP:
+    // return true;
+    return member.isMemberOrAdmin;
+  }
+
+  List<List<Member>>? get _storedMembersSelections{
+    Map<String, List<List<Member>>>? selectionsTable = Storage().groupMembersSelection;
+    if(selectionsTable!=null && widget.groupId!=null){
+      return selectionsTable[widget.groupId!];
+    }
+
+    return null;
+  }
+
+  static String constructSelectionTitle(List<Member>? selection){
+    String result = "";
+    if(CollectionUtils.isNotEmpty(selection)){
+      selection!.forEach((member) {
+        result += ((result.isNotEmpty) ? ", " : "");
+        result += member.displayShortName;
+      });
+    }
+    return result;
+  }
+  
+  String get _selectionText{
+    if(CollectionUtils.isNotEmpty(widget.selectedMembers)){
+      return "Selected Members (${widget.selectedMembers?.length ?? 0})";
+    } else {
+      return "All Members (${_allMembersAllowedToPost?.length ?? 0})";
+    }
+  }
+
+  String get selectedMembersText{
+    return constructSelectionTitle(widget.selectedMembers);
+  }
+
+  bool get _showChangeButton{
+    return false; //Remove entire button if we are sure that we are not gonna use it anymore.
+    // return CollectionUtils.isNotEmpty(widget.selectedMembers) && widget.enabled;
+  }
+
+}
+enum GroupMemberSelectionDataType {Selection, PerformNewSelection}
+class GroupMemberSelectionData {
+  final GroupMemberSelectionDataType type;
+  final List<Member>? selection;
+  final bool requiresValidation;
+
+  GroupMemberSelectionData({required this.type, required this.selection, this.requiresValidation = false});
 }
 
 class _FontIcon extends StatelessWidget {
@@ -1752,7 +1978,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
               ? Positioned.fill(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover))
               : Container(),
           Visibility( visible: showSlant,
-              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false), child: Container(height: 53))),
+              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background), child: Container(height: 30))),
           StringUtils.isEmpty(imageUrl) || explicitlyShowAddButton
@@ -1763,10 +1989,10 @@ class _ImageChooserState extends State<ImageChooserWidget>{
                       hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
                       button: true,
                       excludeSemantics: true,
-                      child: ScalableSmallRoundedButton(
-                          maxLines: 2,
+                      child: RoundedButton(
                           label:StringUtils.isEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
                           textColor: Styles().colors!.fillColorPrimary,
+                          contentWeight: 0.8,
                           onTap: (){ _onTapAddImage();}
                       )))):
           Container()
@@ -1870,7 +2096,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
 
     bool isClosed = widget.poll.status == PollStatus.closed;
     String? creator = widget.poll.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
-    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
+    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
 
     String? pollStatus;
     if (widget.poll.status == PollStatus.opened) {
@@ -1923,8 +2149,8 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
   }
 
   List<Widget> _buildCheckoutContent() {
-    String thanks = Localization().getStringEx('panel.poll_prompt.text.thanks_for_voting', 'Thanks for voting!')!;
-    String willNotify = Localization().getStringEx('panel.poll_prompt.text.will_notify', 'We will notify you once the poll results are in.')!;
+    String thanks = Localization().getStringEx('panel.poll_prompt.text.thanks_for_voting', 'Thanks for voting!');
+    String willNotify = Localization().getStringEx('panel.poll_prompt.text.will_notify', 'We will notify you once the poll results are in.');
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
       Padding(padding: EdgeInsets.only(top: 32, bottom:20),child:
@@ -1938,8 +2164,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
     int optionsCount = widget.poll.options?.length ?? 0;
     for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
-      Stack(children: <Widget>[
-        ScalableRoundedButton(
+        RoundedButton(
             label: widget.poll.options![optionIndex],
             backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors!.fillColorSecondary : _backgroundColor,
             hint: Localization().getStringEx("panel.poll_prompt.hint.select_option","Double tab to select this option"),
@@ -1947,20 +2172,10 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
             fontSize: 16.0,
             textColor: _textColor,
             borderColor: Styles().colors!.fillColorSecondary,
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            progress: (_votingOptions[optionIndex] != null),
             onTap: () { _onButtonOption(optionIndex); }
         ),
-        Visibility(visible: (_votingOptions[optionIndex] != null),
-          child: Container(
-            height: 42,
-            child: Align(alignment: Alignment.center,
-              child: SizedBox(height: 21, width: 21,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_textColor), )
-              ),
-            ),
-          ),
-        ),
-      ],),
       ));
     }
     return result;
@@ -1988,7 +2203,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
       bool didVote = ((widget.poll.userVote != null) && (0 < (widget.poll.userVote![optionIndex] ?? 0)));
       String checkboxImage = didVote ? 'images/deselected-dark.png' : 'images/checkbox-unselected.png';
 
-      String? votesString;
+      String votesString;
       int? votesCount = (widget.poll.results != null) ? widget.poll.results![optionIndex] : null;
       double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
       if ((votesCount == null) || (votesCount == 0)) {
@@ -2006,7 +2221,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = option +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = option +"\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
       GestureDetector(
@@ -2050,7 +2265,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
       String checkboxImage = (0 < _optionVotes(optionIndex)) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
 
       String optionString = widget.poll.options![optionIndex];
-      String? votesString;
+      String votesString;
       int? votesCount = (widget.poll.results != null) ? widget.poll.results![optionIndex] : null;
       double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
       if ((votesCount == null) || (votesCount <= 0)) {
@@ -2060,13 +2275,13 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
         votesString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
       }
       else {
-        votesString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votesCount']);
+        votesString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$votesCount']);
       }
 
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = optionString +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = optionString +"\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
       Semantics(label: semanticsText, excludeSemantics: true, child:
       Row(children: <Widget>[
@@ -2106,7 +2321,7 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
                   ),
                   child: Center(
                     child: Text(
-                      Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll")!,
+                      Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll"),
                       style: TextStyle(
                         fontFamily: Styles().fontFamilies!.bold,
                         fontSize: 16,
@@ -2131,14 +2346,14 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
   }
 
 //   Widget _buildVoteDoneButton(void Function() handler) {
-//     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
+//     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: RoundedButton(
 //         label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
 //         backgroundColor: _backgroundColor,
 // //        height: 42,
 //         fontSize: 16.0,
 //         textColor: _textColor,
 //         borderColor: _doneButtonColor,
-//         padding: EdgeInsets.symmetric(horizontal: 24),
+//         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
 //         onTap: handler)
 //     );
 //   }
@@ -2275,19 +2490,19 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
       if (details.isNotEmpty) {
         details += '\n';
       }
-      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.multy_choice", "You can choose more that one answer.")!;
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.multy_choice", "You can choose more that one answer.");
     }
     if (_allowRepeatOptions) {
       if (details.isNotEmpty) {
         details += '\n';
       }
-      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.repeat_vote", "You can vote as many times as you want before the poll closes.")!;
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.repeat_vote", "You can vote as many times as you want before the poll closes.");
     }
     if (_hideResultsUntilClosed) {
       if (details.isNotEmpty) {
         details += '\n';
       }
-      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends.")!;
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends.");
     }
     return details;
   }
@@ -2298,15 +2513,15 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
 
     String statusString;
     if (1 < votes) {
-      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votes']);
+      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$votes']);
     } else if (0 < votes) {
-      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote')!;
+      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
     } else {
-      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet')!;
+      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet');
     }
 
     if (hasGroup && (votes > 0)) {
-      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of')!, _groupMembersCount]);
+      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of'), _groupMembersCount]);
     }
 
     return statusString;
@@ -2314,7 +2529,10 @@ class _GroupPollVoteCardState extends State<GroupPollVoteCard> implements Notifi
 
   void _onEndPollTapped(){
     _setEndButtonProgress(true);
-    Polls().close(widget.poll.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
+    Polls().close(widget.poll.pollId).then((result) {
+      AppSemantics.announceMessage(context, Localization().getStringEx('panel.polls_home.card.button.message.end_poll.success', 'Poll ended successfully'));
+      _setEndButtonProgress(false);
+    }).catchError((e){
       _setEndButtonProgress(false);
       AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     });
@@ -2388,8 +2606,11 @@ class _GroupPollCardState extends State<GroupPollCard>{
     String? pollStatus;
 
     String? creator = widget.poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');//TBD localize
-    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
+    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
     String semanticsQuestionText =  "$wantsToKnow,\n ${poll.title!}";
+    String pin = sprintf(Localization().getStringEx('panel.polls_prompt.card.text.pin', 'Pin: %s'), [
+      sprintf('%04i', [poll.pinCode ?? 0])
+    ]);
 
     if(poll.status == PollStatus.created) {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.created","Polls created");
@@ -2403,7 +2624,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
         footerWidgets.add(_createVoteButton());
         footerWidgets.add(Container(height:8));
       }
-      if (poll.isMine) {
+      if (_canEnd) {
         footerWidgets.add(_createEndPollButton());
         footerWidgets.add(Container(height:8));
       }
@@ -2413,7 +2634,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
     }
 
     Widget cardBody = ((poll.status == PollStatus.opened) && (poll.settings?.hideResultsUntilClosed ?? false)) ?
-    Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends.")!, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 15, fontWeight: FontWeight.w500),) :
+    Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 15, fontWeight: FontWeight.w500),) :
     Column(children: _buildCheckboxOptions(),);
     return
       Column(children: <Widget>[ Container(padding: EdgeInsets.symmetric(),
@@ -2422,10 +2643,10 @@ class _GroupPollCardState extends State<GroupPollCard>{
         <Widget>[
           Row(children: <Widget>[Expanded(child: Container(),)],),
           Semantics(label:semanticsQuestionText,excludeSemantics: true,child:
-            Text(wantsToKnow, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w600),)),
+            Text(wantsToKnow, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w600))),
+          Padding(padding: EdgeInsets.only(top: 5), child: Text(pin, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12))),
           Container(height: 12,),
-          Padding(padding: EdgeInsets.symmetric(vertical: 0),child:
-            Text(poll.title!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, height: 1.2 ),),),
+          Text(poll.title!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, height: 1.2)),
           Container(height:12),
           cardBody,
           Container(height:25),
@@ -2466,7 +2687,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
       bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
       String checkboxImage = didVote ? 'images/deselected-dark.png' : 'images/checkbox-unselected.png';
 
-      String? votesString;
+      String votesString;
       int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
       double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
       if ((votesCount == null) || (votesCount == 0)) {
@@ -2484,7 +2705,7 @@ class _GroupPollCardState extends State<GroupPollCard>{
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = option + "," +"\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = option + "," +"\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
       GestureDetector(
@@ -2521,13 +2742,13 @@ class _GroupPollCardState extends State<GroupPollCard>{
   }
 
   Widget _createStartPollButton(){
-    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.start_poll","Start Poll")!, _onStartPollTapped, loading: _showStartPollProgress);
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.start_poll","Start Poll"), _onStartPollTapped, loading: _showStartPollProgress);
   }
   Widget _createEndPollButton(){
-    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll")!, _onEndPollTapped, loading: _showEndPollProgress);
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.end_poll","End Poll"), _onEndPollTapped, loading: _showEndPollProgress);
   }
   Widget _createVoteButton(){
-    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.vote","Vote")!, _onVoteTapped);
+    return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.vote","Vote"), _onVoteTapped);
   }
 
   Widget _createButton(String title, void Function()? onTap, {bool enabled=true, bool loading = false}){
@@ -2581,7 +2802,10 @@ class _GroupPollCardState extends State<GroupPollCard>{
 
   void _onEndPollTapped(){
     _setEndButtonProgress(true);
-    Polls().close(widget.poll!.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
+    Polls().close(widget.poll!.pollId).then((result) {
+      AppSemantics.announceMessage(context, Localization().getStringEx('panel.polls_home.card.button.message.end_poll.success', 'Poll ended successfully'));
+      _setEndButtonProgress(false);
+    }).catchError((e){
       _setEndButtonProgress(false);
       AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     });
@@ -2632,21 +2856,26 @@ class _GroupPollCardState extends State<GroupPollCard>{
     );
   }
 
+  bool get _canEnd {
+    return (widget.poll?.isMine ?? false) ||
+        (widget.group?.currentUserIsAdmin ?? false);
+  }
+
   String get _pollVotesStatus {
     bool hasGroup = (widget.group != null);
     int votes = hasGroup ? _uniqueVotersCount : (widget.poll!.results?.totalVotes ?? 0);
 
     String statusString;
     if (1 < votes) {
-      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votes']);
+      statusString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$votes']);
     } else if (0 < votes) {
-      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote')!;
+      statusString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
     } else {
-      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet')!;
+      statusString = Localization().getStringEx('panel.poll_prompt.text.no_votes_yet', 'No votes yet');
     }
 
     if (hasGroup && (votes > 0)) {
-      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of')!, _groupMembersCount]);
+      statusString += sprintf(' %s %d', [Localization().getStringEx('panel.polls_home.card.of.label', 'of'), _groupMembersCount]);
     }
 
     return statusString;
@@ -2658,5 +2887,100 @@ class _GroupPollCardState extends State<GroupPollCard>{
 
   int get _groupMembersCount {
     return widget.group?.membersCount ?? 0;
+  }
+}
+
+/////////////////////////////////////
+// GroupMemberProfileImage
+
+class GroupMemberProfileImage extends StatefulWidget {
+  final String? userId;
+  final GestureTapCallback? onTap;
+
+  GroupMemberProfileImage({this.userId, this.onTap});
+
+  @override
+  State<GroupMemberProfileImage> createState() => _GroupMemberProfileImageState();
+}
+
+class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> implements NotificationsListener {
+  Uint8List? _imageBytes;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, Content.notifyUserProfilePictureChanged);
+    _loadImage();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    NotificationService().unsubscribe(this);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Image profileImage = (_imageBytes != null)
+        ? Image.memory(_imageBytes!)
+        : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true);
+
+    return GestureDetector(
+        onTap: widget.onTap ?? _onImageTap,
+        child: Stack(alignment: Alignment.center, children: [
+          Container(
+              decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: profileImage.image))),
+          Visibility(
+              visible: _loading,
+              child: SizedBox(
+                  width: 20, height: 20, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2)))
+        ]));
+  }
+
+  void _loadImage() {
+    if (StringUtils.isNotEmpty(widget.userId)) {
+      _setImageLoading(true);
+      Content().loadSmallUserProfileImage(accountId: widget.userId).then((imageBytes) {
+        _imageBytes = imageBytes;
+        _setImageLoading(false);
+      });
+    }
+  }
+
+  void _onImageTap() {
+    Analytics().logSelect(target: "Group Member Image");
+    if (_imageBytes != null) {
+      String? imageUrl = Content().getUserProfileImage(accountId: widget.userId, type: UserProfileImageType.defaultType);
+      if (StringUtils.isNotEmpty(imageUrl)) {
+        Navigator.push(
+            context,
+            PageRouteBuilder(
+                opaque: false,
+                pageBuilder: (context, _, __) =>
+                    ModalImagePanel(imageUrl: imageUrl!, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
+      }
+    }
+  }
+
+  void _setImageLoading(bool loading) {
+    if (_loading != loading) {
+      _loading = loading;
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  // Notifications
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Content.notifyUserProfilePictureChanged) {
+      // If it's current user - reload profile picture
+      if (widget.userId == Auth2().accountId) {
+        _loadImage();
+      }
+    }
   }
 }

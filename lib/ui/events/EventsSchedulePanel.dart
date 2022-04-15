@@ -35,10 +35,10 @@ import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -125,15 +125,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule'),
       ),
       body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,7 +186,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
             )
           ]),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -281,7 +274,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   Widget _buildEmpty() {
-    String message =  Localization().getStringEx('panel.events_schedule.empty.events', 'No events.')!;
+    String message =  Localization().getStringEx('panel.events_schedule.empty.events', 'No events.');
     return Container(child: Align(alignment: Alignment.center,
       child: Text(message, textAlign: TextAlign.center,),
     ));
@@ -345,8 +338,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   itemBuilder: (context, index) {
                     var filterIndex = index - 1;// 1 for Search field
                     return index == 0 ? constructSearchField(selectedFilter!) :
-                    FilterListItemWidget(
-                      label: filterValues[filterIndex],
+                     FilterListItem(
+                      title: filterValues[filterIndex],
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(filterIndex)),
                       onTap: () {
                         Analytics().logSelect(target: "FilterItem: ${filterValues[filterIndex]}");
@@ -486,7 +479,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       return null;
     }
     List<String> categoriesValues = [];
-    categoriesValues.add(Localization().getStringEx('panel.events_schedule.filter.tracks.all', 'All Tracks')!);
+    categoriesValues.add(Localization().getStringEx('panel.events_schedule.filter.tracks.all', 'All Tracks'));
     for (var category in _eventCategories!) {
       categoriesValues.add(category);
     }
@@ -495,7 +488,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   List<String>? _getFilterTagsValues() {
     List<String> tagsValues = [];
-    tagsValues.add(Localization().getStringEx('panel.events_schedule.filter.tags.all', 'All Tags')!);
+    tagsValues.add(Localization().getStringEx('panel.events_schedule.filter.tags.all', 'All Tags'));
 
     if (_visibleTags != null) {
       for (var tag in _visibleTags!) {
@@ -528,11 +521,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       }
       int filterValueIndex = selectedFilter.firstSelectedIndex;
       String? filterHeaderLabel = filterValues![filterValueIndex];
-      filterTypeWidgets.add(FilterSelectorWidget(
-        label: filterHeaderLabel,
+      filterTypeWidgets.add(FilterSelector(
+        title: filterHeaderLabel,
         hint: _getFilterHintByType(selectedFilter.type),
         active: selectedFilter.active,
-        visible: true,
         onTap: (){
           Analytics().logSelect(target: "Filter: $filterHeaderLabel");
           return _onFilterTypeClicked(selectedFilter);},
@@ -612,7 +604,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
     else if  (_selectedMapExplore is List<Event>) {
       String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
-      title = sprintf(Localization().getStringEx('panel.events_schedule.map.popup.title.format', '%d %s')!, [_selectedMapExplore?.length, exploreName]);
+      title = sprintf(Localization().getStringEx('panel.events_schedule.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
       description = _selectedMapExplore?.first?.exploreLocation?.description;
       exploreColor = _selectedMapExplore.first?.uiColor;
     }
@@ -663,11 +655,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                                     label: Localization().getStringEx('panel.events_schedule.button.directions.title', 'Directions'),
                                     hint: Localization().getStringEx('panel.events_schedule.button.directions.hint', ''),
                                     backgroundColor: Colors.white,
-                                    height: 32,
+                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                     fontSize: 16.0,
                                     textColor: Styles().colors!.fillColorPrimary,
                                     borderColor: Styles().colors!.fillColorSecondary,
-                                    padding: EdgeInsets.symmetric(horizontal: 24),
                                     onTap: () {
                                       Analytics().logSelect(target: 'Directions');
                                       _presentMapExploreDirections(context);
@@ -681,11 +672,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                               label: Localization().getStringEx('panel.events_schedule.button.details.title', 'Details'),
                               hint: Localization().getStringEx('panel.events_schedule.button.details.hint', ''),
                               backgroundColor: Colors.white,
-                              height: 32,
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               fontSize: 16.0,
                               textColor: Styles().colors!.fillColorPrimary,
                               borderColor: Styles().colors!.fillColorSecondary,
-                              padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
                                 Analytics().logSelect(target: 'Details');
                                 _presentMapExploreDetail(context);

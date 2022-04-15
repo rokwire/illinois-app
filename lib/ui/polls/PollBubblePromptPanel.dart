@@ -21,7 +21,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
@@ -155,12 +155,12 @@ class _PollContentState extends State<PollContentWidget> implements Notification
   List<Widget> _buildStandardContent() {
 
     String? creator = _poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
-    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
+    String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know'), [creator]);
 
     String? votesNum;
     int totalVotes = _poll?.results?.totalVotes ?? 0;
     if (1 < totalVotes) {
-      votesNum = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$totalVotes']);
+      votesNum = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$totalVotes']);
     }
     else if (0 < totalVotes) {
       votesNum = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
@@ -204,7 +204,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
 
       Semantics(label: semanticsStatusText, excludeSemantics: true,child:
       Padding(padding: EdgeInsets.only(top: 20), child: Wrap(children: <Widget>[
-        Text(votesNum ?? '', style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w500),),
+        Text(votesNum, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w500),),
         Text('  ', style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w900),),
         Text(pollStatus ?? '', style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w200),),
       ],),)),
@@ -214,8 +214,8 @@ class _PollContentState extends State<PollContentWidget> implements Notification
   }
 
   List<Widget> _buildCheckoutContent() {
-    String thanks = Localization().getStringEx('panel.poll_prompt.text.thanks_for_voting', 'Thanks for voting!')!;
-    String willNotify = Localization().getStringEx('panel.poll_prompt.text.will_notify', 'We will notify you once the poll results are in.')!;
+    String thanks = Localization().getStringEx('panel.poll_prompt.text.thanks_for_voting', 'Thanks for voting!');
+    String willNotify = Localization().getStringEx('panel.poll_prompt.text.will_notify', 'We will notify you once the poll results are in.');
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
       Padding(padding: EdgeInsets.only(top: 32, bottom:20),child:
@@ -230,7 +230,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
     for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
       Stack(children: <Widget>[
-        ScalableRoundedButton(
+        RoundedButton(
             label: _poll!.options![optionIndex],
             backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors!.fillColorSecondary : _backgroundColor,
             hint: Localization().getStringEx("panel.poll_prompt.hint.select_option","Double tab to select this option"),
@@ -238,7 +238,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
             fontSize: 16.0,
             textColor: _textColor,
             borderColor: Styles().colors!.fillColorSecondary,
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             onTap: () { _onButtonOption(optionIndex); }
         ),
         Visibility(visible: (_votingOptions[optionIndex] != null),
@@ -266,7 +266,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
       String checkboxImage = (0 < _optionVotes(optionIndex)) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
 
       String optionString = _poll!.options![optionIndex];
-      String? votesString;
+      String votesString;
       int votesCount = _optionVotes(optionIndex);
       double votesPercent = (0 < totalVotes) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
       if (votesCount <= 0) {
@@ -276,13 +276,13 @@ class _PollContentState extends State<PollContentWidget> implements Notification
         votesString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
       }
       else {
-        votesString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votesCount']);
+        votesString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$votesCount']);
       }
 
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = optionString +",\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = optionString +",\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
       GestureDetector(
@@ -323,7 +323,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
       String checkboxImage = (0 < _optionVotes(optionIndex)) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
 
       String optionString = _poll!.options![optionIndex];
-      String? votesString;
+      String votesString;
       int? votesCount = (_poll!.results != null) ? _poll!.results![optionIndex] : null;
       double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
       if ((votesCount == null) || (votesCount <= 0)) {
@@ -333,13 +333,13 @@ class _PollContentState extends State<PollContentWidget> implements Notification
         votesString = Localization().getStringEx('panel.poll_prompt.text.single_vote', '1 vote');
       }
       else {
-        votesString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$votesCount']);
+        votesString = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes'), ['$votesCount']);
       }
 
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
 
-      String semanticsText = optionString +",\n "+  votesString! +"," + votesPercent.toStringAsFixed(0) +"%";
+      String semanticsText = optionString +",\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
       Semantics(label: semanticsText, excludeSemantics: true, child:
       Row(children: <Widget>[
@@ -363,15 +363,18 @@ class _PollContentState extends State<PollContentWidget> implements Notification
   }
 
   Widget _buildVoteDoneButton(void Function() handler) {
-    return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
+    return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: RoundedButton(
         label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
         backgroundColor: _backgroundColor,
 //        height: 42,
         fontSize: 16.0,
         textColor: _textColor,
         borderColor: _doneButtonColor,
-        padding: EdgeInsets.symmetric(horizontal: 24),
-        onTap: handler)
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        onTap: (){
+          AppSemantics.announceMessage(context, Localization().getStringEx('panel.poll_prompt.button.done_voting.status.success', 'Poll voting ended successfully'));
+          handler();
+        })
     );
   }
 
@@ -469,6 +472,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
     }).catchError((e){
       AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     }).whenComplete((){
+      AppSemantics.announceMessage(context,  Localization().getStringEx("panel.poll_prompt.vote.status.announce.success", "Successfully Voted"));
       setState(() {
         int? value = _votingOptions[optionIndex];
         if (value != null) {
@@ -504,19 +508,19 @@ class _PollContentState extends State<PollContentWidget> implements Notification
       if (details.isNotEmpty) {
         details += '\n';
       }
-      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.multy_choice", "You can choose more that one answer.")!;
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.multy_choice", "You can choose more that one answer.");
     }
     if (_allowRepeatOptions) {
       if (details.isNotEmpty) {
         details += '\n';
       }
-      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.repeat_vote", "You can vote as many times as you want before the poll closes.")!;
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.repeat_vote", "You can vote as many times as you want before the poll closes.");
     }
     if (_hideResultsUntilClosed) {
       if (details.isNotEmpty) {
         details += '\n';
       }
-      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends.")!;
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends.");
     }
     return details;
   }

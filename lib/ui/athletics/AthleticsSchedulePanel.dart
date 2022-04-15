@@ -23,7 +23,7 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsScheduleCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -53,13 +53,12 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
 
   @override
   Widget build(BuildContext context) {
-    String headerLabel = widget.sport?.name ?? Localization().getStringEx('panel.athletics_schedule.header.title', 'SCHEDULE')!;
+    String headerLabel = widget.sport?.name ?? Localization().getStringEx('panel.athletics_schedule.header.title', 'SCHEDULE');
     String scheduleYear = StringUtils.ensureNotEmpty(_scheduleYear);
-    String scheduleLabel = scheduleYear + " " + Localization().getStringEx("panel.athletics_schedule.label.schedule.title", "Schedule")!;
+    String scheduleLabel = scheduleYear + " " + Localization().getStringEx("panel.athletics_schedule.label.schedule.title", "Schedule");
     int itemsCount = _displayList?.length ?? 0;
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context, titleWidget: Text(headerLabel, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),),
+      appBar: HeaderBar(title: headerLabel,),
       body: _loading ? Center(child: CircularProgressIndicator()) : Column(children: <Widget>[
         Container(color:Styles().colors!.fillColorPrimaryVariant, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(children: <Widget>[
           Row(children: <Widget>[
@@ -103,7 +102,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
         Visibility(visible: (itemsCount > 1), child: Container(height: 48))
       ]),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

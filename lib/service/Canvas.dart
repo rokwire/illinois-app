@@ -15,19 +15,21 @@
  */
 
 import 'dart:core';
-import 'dart:io';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 
-class Canvas with Service {
-
+class Canvas with Service implements NotificationsListener{
+  static const String notifyCanvasEventDetail = "edu.illinois.rokwire.canvas.event.detail";
+  List<Map<String, dynamic>>? _canvasEventDetailCache;
   // Singleton Factory
 
   Canvas._internal();
@@ -48,14 +50,39 @@ class Canvas with Service {
     return Set.from([Config(), Auth2()]);
   }
 
+
+  @override
+  void createService() {
+    super.createService();
+    NotificationService().subscribe(this,[
+      DeepLink.notifyUri,
+    ]);
+    _canvasEventDetailCache = [];
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+    super.destroyService();
+  }
+
+  @override
+  void initServiceUI() {
+    _processCachedDeepLinkDetails();
+  }
+
   // Courses
 
   Future<List<CanvasCourse>?> loadCourses() async {
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/courses';
-    http.Response? response = await Network().get(url, headers: _authHeaders);
+    String? url = _masquerade('${Config().lmsUrl}/v1/courses');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -75,12 +102,17 @@ class Canvas with Service {
       Log.d('Failed to load canvas course - missing course id.');
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId';
+    String? url = '${Config().lmsUrl}/v1/courses/$courseId';
     String? includeValue = _includeInfoToString(includeInfo);
     if (includeValue != null) {
       url += '?include[]=$includeValue';
     }
-    http.Response? response = await Network().get(url, headers: _authHeaders);
+    url = _masquerade(url);
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -98,8 +130,12 @@ class Canvas with Service {
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/discussion_topics?only_announcements=true';
-    http.Response? response = await Network().get(url, headers: _authHeaders);
+    String? url = _masquerade('${Config().lmsUrl}/v1/courses/$courseId/discussion_topics?only_announcements=true');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -163,8 +199,12 @@ class Canvas with Service {
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/folders/by_path';
-    http.Response? response = await Network().get(url, headers: _authHeaders);
+    String? url = _masquerade('${Config().lmsUrl}/v1/courses/$courseId/folders/by_path');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -180,8 +220,12 @@ class Canvas with Service {
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/folders/$folderId/folders';
-    http.Response? response = await Network().get(url, headers: _authHeaders);
+    String? url = _masquerade('${Config().lmsUrl}/v1/folders/$folderId/folders');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -197,8 +241,12 @@ class Canvas with Service {
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/folders/$folderId/files';
-    http.Response? response = await Network().get(url, headers: _authHeaders);
+    String? url = _masquerade('${Config().lmsUrl}/v1/folders/$folderId/files');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -216,8 +264,12 @@ class Canvas with Service {
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/courses/$courseId/collaborations';
-    http.Response? response = await Network().get(url, headers: _authHeaders);
+    String? url = _masquerade('${Config().lmsUrl}/v1/courses/$courseId/collaborations');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -231,11 +283,11 @@ class Canvas with Service {
 
   // Calendar
 
-  Future<List<CanvasCalendarEvent>?> loadCalendarEvents(int courseId, {DateTime? startDate, DateTime? endDate}) async {
+  Future<List<CanvasCalendarEvent>?> loadCalendarEvents({required int courseId, CanvasCalendarEventType? type, DateTime? startDate, DateTime? endDate}) async {
     if (!_available) {
       return null;
     }
-    String url = '${Config().canvasUrl}/api/v1/calendar_events?context_codes[]=course_$courseId';
+    String? url = '${Config().lmsUrl}/v1/calendar_events?context_codes[]=course_$courseId&per_page=50';
     if (startDate != null) {
       DateTime startDateUtc = startDate.toUtc();
       String? formattedDate = DateTimeUtils.utcDateTimeToString(startDateUtc);
@@ -250,29 +302,289 @@ class Canvas with Service {
         url += '&end_date=$formattedDate';
       }
     }
-    http.Response? response = await Network().get(url, headers: _authHeaders);
+    String? typeKeyString = CanvasCalendarEvent.typeToKeyString(type);
+    if (StringUtils.isNotEmpty(typeKeyString)) {
+      url += '&type=$typeKeyString';
+    }
+    url = _masquerade(url);
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
       List<CanvasCalendarEvent>? calendarEvents = CanvasCalendarEvent.listFromJson(JsonUtils.decodeList(responseString));
-      return calendarEvents;
+      return calendarEvents?.where((element) => ((element.hidden == false) || (element.hidden == null))).toList();
     } else {
       Log.w('Failed to load canvas calendar events for course {$courseId}. Response:\n$responseCode: $responseString');
       return null;
     }
   }
 
-  // Helpers
-
-  Map<String, String>? get _authHeaders {
+  Future<CanvasCalendarEvent?> loadCalendarEvent(int eventId) async {
     if (!_available) {
       return null;
     }
-    return {HttpHeaders.authorizationHeader: "${Config().canvasTokenType} ${Config().canvasToken}"};
+    String? url = _masquerade('${Config().lmsUrl}/v1/calendar_events/$eventId');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      CanvasCalendarEvent? event = CanvasCalendarEvent.fromJson(JsonUtils.decode(responseString));
+      return event;
+    } else {
+      Log.w('Failed to load canvas calendar event with id {$eventId}. Response:\n$responseCode: $responseString');
+      return null;
+    }
   }
 
+  // Account Notifications
+
+  Future<List<CanvasAccountNotification>?> loadAccountNotifications() async {
+    if (!_available) {
+      return null;
+    }
+    String? url = _masquerade('${Config().lmsUrl}/v1/accounts/2/users/self/account_notifications');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasAccountNotification>? notifications = CanvasAccountNotification.listFromJson(JsonUtils.decodeList(responseString));
+      return notifications;
+    } else {
+      Log.w('Failed to load canvas user notifications. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  // Modules
+
+  Future<List<CanvasModule>?> loadModules(int courseId) async {
+    if (!_available) {
+      return null;
+    }
+    String? url = _masquerade('${Config().lmsUrl}/v1/courses/$courseId/modules');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasModule>? modules = CanvasModule.listFromJson(JsonUtils.decodeList(responseString));
+
+      // Sort by position
+      if (CollectionUtils.isNotEmpty(modules)) {
+        modules!.sort((CanvasModule first, CanvasModule second) {
+          int firstPosition = first.position ?? 0;
+          int secondPosition = second.position ?? 0;
+          return firstPosition.compareTo(secondPosition);
+        });
+      }
+
+      return modules;
+    } else {
+      Log.w('Failed to load canvas modules for course {$courseId}. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  Future<List<CanvasModuleItem>?> loadModuleItems({required int courseId, required int moduleId}) async {
+    if (!_available) {
+      return null;
+    }
+    String? url = _masquerade('${Config().lmsUrl}/v1/courses/$courseId/modules/$moduleId/items');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasModuleItem>? moduleItems = CanvasModuleItem.listFromJson(JsonUtils.decodeList(responseString));
+
+      // Sort by position
+      if (CollectionUtils.isNotEmpty(moduleItems)) {
+        moduleItems!.sort((CanvasModuleItem first, CanvasModuleItem second) {
+          int firstPosition = first.position ?? 0;
+          int secondPosition = second.position ?? 0;
+          return firstPosition.compareTo(secondPosition);
+        });
+      }
+
+      return moduleItems;
+    } else {
+      Log.w('Failed to load canvas module items for course {$courseId} and module {$moduleId}. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  // Error Reports
+
+  Future<bool> reportError({required String subject, String? description}) async {
+    if (!_available) {
+      return false;
+    }
+    if (StringUtils.isEmpty(subject)) {
+      Log.w('Please, provide error subject');
+      return false;
+    }
+    CanvasErrorReport report = CanvasErrorReport(subject: subject);
+    if (StringUtils.isNotEmpty(description)) {
+      report.comments = description;
+    }
+    report.email = Auth2().email;
+    String? errorBody = JsonUtils.encode(report.toJson());
+    String? url = _masquerade('${Config().lmsUrl}/v1/error_reports');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return false;
+    }
+    http.Response? response = await Network().post(url, body: errorBody, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      Log.d('Canvas: Successfully reported error.');
+      return true;
+    } else {
+      Log.w('Failed to report error. Response:\n$responseCode: $responseString');
+      return false;
+    }
+  }
+
+  // Assignments
+
+  Future<List<CanvasAssignmentGroup>?> loadAssignmentGroups(int courseId) async {
+    if (!_available) {
+      return null;
+    }
+    String? url = _masquerade('${Config().lmsUrl}/v1/courses/$courseId/assignment_groups?include[]=assignments');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasAssignmentGroup>? assignmentGroups = CanvasAssignmentGroup.listFromJson(JsonUtils.decodeList(responseString));
+      return assignmentGroups;
+    } else {
+      Log.w('Failed to load canvas assignment groups. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  // Canvas Self User
+
+  Future<Map<String, dynamic>?> loadSelfUser() async {
+    if (!_available) {
+      return null;
+    }
+    String? url = _masquerade('${Config().lmsUrl}/v1/users/self');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return JsonUtils.decodeMap(responseString);
+    } else {
+      Log.w('Failed to load canvas self user. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  // Deep Links
+
+  String get canvasEventDetailUrl => '${DeepLink().appUrl}/canvas_event_detail';
+
+  void _onDeepLinkUri(Uri? uri) {
+    if (uri != null) {
+      Uri? eventUri = Uri.tryParse(canvasEventDetailUrl);
+      if ((eventUri != null) && (eventUri.scheme == uri.scheme) && (eventUri.authority == uri.authority) && (eventUri.path == uri.path)) {
+        try {
+          _handleDetail(uri.queryParameters.cast<String, dynamic>());
+        } catch (e) {
+          print(e.toString());
+        }
+      }
+    }
+  }
+
+  void _handleDetail(Map<String, dynamic>? params) {
+    if ((params != null) && params.isNotEmpty) {
+      if (_canvasEventDetailCache != null) {
+        _cacheCanvasEventDetail(params);
+      } else {
+        _processDetail(params);
+      }
+    }
+  }
+
+  void _processDetail(Map<String, dynamic> params) {
+    NotificationService().notify(notifyCanvasEventDetail, params);
+  }
+
+  void _cacheCanvasEventDetail(Map<String, dynamic> params) {
+    _canvasEventDetailCache?.add(params);
+  }
+
+  void _processCachedDeepLinkDetails() {
+    if (_canvasEventDetailCache != null) {
+      List<Map<String, dynamic>> gameDetailsCache = _canvasEventDetailCache!;
+      _canvasEventDetailCache = null;
+
+      for (Map<String, dynamic> gameDetail in gameDetailsCache) {
+        _processDetail(gameDetail);
+      }
+    }
+  }
+
+  // Notifications
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == DeepLink.notifyUri) {
+      _onDeepLinkUri(param);
+    }
+  }
+
+  // Helpers
+
   bool get _available {
-    return StringUtils.isNotEmpty(Config().canvasTokenType) && StringUtils.isNotEmpty(Config().canvasToken) && StringUtils.isNotEmpty(Auth2().netId);
+    return StringUtils.isNotEmpty(Config().lmsUrl) &&
+        StringUtils.isNotEmpty(Auth2().netId);
+  }
+
+  ///
+  /// Do not return a value if the user is not able to masquerade with Net id
+  /// returns masqueraded url if succeeded, null - otherwise
+  ///
+  String? _masquerade(String url) {
+    if (StringUtils.isEmpty(url)) {
+      return null;
+    }
+    String? userNetId = Auth2().netId;
+    if (StringUtils.isEmpty(userNetId)) {
+      return null;
+    }
+    String querySymbol = url.contains('?') ? '&' : '?';
+    return '$url${querySymbol}as_user_id=sis_user_id:$userNetId';
   }
 
   static String? _includeInfoToString(CanvasIncludeInfo? include) {

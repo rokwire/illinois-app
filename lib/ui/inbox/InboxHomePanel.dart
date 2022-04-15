@@ -15,9 +15,9 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class InboxHomePanel extends StatefulWidget {
@@ -106,7 +106,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
           Expanded(child:
             _buildContent(),
           ),
-          TabBarWidget(),
+          uiuc.TabBar(),
         ],)),
       backgroundColor: Styles().colors!.background,
     );
@@ -147,7 +147,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     else {
       return Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx('panel.inbox.label.content.empty', 'No messages')!, textAlign: TextAlign.center,),
+        Text(Localization().getStringEx('panel.inbox.label.content.empty', 'No messages'), textAlign: TextAlign.center,),
         Expanded(child: Container(), flex: 3),
       ]);
     }
@@ -264,16 +264,14 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12), child:
         Row(children: <Widget>[
           // Hide the "Categories" drop down in Inbox panel (#721)
-          /*FilterSelectorWidget(
-            label: _FilterEntry.entryInList(_categories, _selectedCategory)?.name ?? '',
+          /*FilterSelector(
+            title: _FilterEntry.entryInList(_categories, _selectedCategory)?.name ?? '',
             active: _selectedFilter == _FilterType.Category,
-            visible: true,
             onTap: () { _onFilter(_FilterType.Category); }
           ),*/
-          FilterSelectorWidget(
-            label: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
+          FilterSelector(
+            title: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
             active: _selectedFilter == _FilterType.Time,
-            visible: true,
             onTap: () { _onFilter(_FilterType.Time); }
           ),
         ],
@@ -318,9 +316,9 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
               separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
               itemCount: filterValues.length,
               itemBuilder: (context, index) {
-                return FilterListItemWidget(
-                  label: filterValues[index].name,
-                  subLabel: (subLabels != null) ? subLabels[index] : null,
+                return  FilterListItem(
+                  title: filterValues[index].name,
+                  description: (subLabels != null) ? subLabels[index] : null,
                   selected: selectedFilterValue == filterValues[index].value,
                   onTap: () { _onFilterValue(_selectedFilter, filterValues[index]); },
                 );
@@ -414,7 +412,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   Widget _buildTitle() {
-    return Text(Localization().getStringEx('panel.inbox.label.heading', 'Inbox')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),);
+    return Text(Localization().getStringEx('panel.inbox.label.heading', 'Notifications'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),);
   }
 
   Widget _buildBackButton() {
@@ -440,35 +438,35 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   Widget _buildEditButton() {
     return Semantics(label: Localization().getStringEx('headerbar.edit.title', 'Edit'), hint: Localization().getStringEx('headerbar.edit.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onEdit, child:
-        Text(Localization().getStringEx('headerbar.edit.title', 'Edit')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildDoneButton() {
     return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDone, child:
-        Text(Localization().getStringEx('headerbar.done.title', 'Done')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildSelectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.select.all.title', 'Select All'), hint: Localization().getStringEx('headerbar.select.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onSelectAll, child:
-        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildDeselectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), hint: Localization().getStringEx('headerbar.deselect.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDeselectAll, child:
-        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildOptions(BuildContext context) {
     String headingText = (_selectedMessageIds.length == 1) ?
-      '1 message selected' :
-      '${_selectedMessageIds.length} messages selected';
+      '1 Message Selected' :
+      '${_selectedMessageIds.length} Messages Selected';
 
     return Container(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), child:
       Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -548,11 +546,11 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
                 Container(height: 32),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                   Expanded(child:
-                    RoundedButton(label: negativeButtonTitle, onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), backgroundColor: Colors.transparent, borderColor: Styles().colors!.fillColorPrimary, textColor: Styles().colors!.fillColorPrimary,),
+                    RoundedButton(label: negativeButtonTitle ?? '', onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), backgroundColor: Colors.transparent, borderColor: Styles().colors!.fillColorPrimary, textColor: Styles().colors!.fillColorPrimary,),
                   ),
                   Container(width: 8, ),
                   Expanded(child:
-                    RoundedButton(label: positiveButtonTitle, onTap: onPositive, backgroundColor: Styles().colors!.fillColorSecondaryVariant, borderColor: Styles().colors!.fillColorSecondaryVariant, textColor: Styles().colors!.surface, ),
+                    RoundedButton(label: positiveButtonTitle ?? '', onTap: onPositive ?? (){}, backgroundColor: Styles().colors!.fillColorSecondaryVariant, borderColor: Styles().colors!.fillColorSecondaryVariant, textColor: Styles().colors!.surface, ),
                   ),
                 ],)
               ],)

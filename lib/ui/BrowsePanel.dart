@@ -17,6 +17,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -67,14 +68,13 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   final EdgeInsets _ribbonButtonPadding = EdgeInsets.symmetric(horizontal: 16);
 
-  bool _groupsLogin = false;
-
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
       Localization.notifyStringsUpdated,
       FlexUI.notifyChanged,
+      Config.notifyConfigChanged,
       Styles.notifyChanged,
       Storage.notifySettingChanged,
     ]);
@@ -110,7 +110,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
                   slivers: <Widget>[
                     SliverAppBar(pinned: true, floating: true, primary: true, forceElevated: true, centerTitle: true,
                       title: Text(
-                        Localization().getStringEx('panel.browse.label.title','Browse')!,
+                        Localization().getStringEx('panel.browse.label.title','Browse'),
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -248,7 +248,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (code == 'quick_polls') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.quick_polls.title', 'Quick polls'),
+        title: Localization().getStringEx('panel.browse.button.quick_polls.title', 'Quick Polls'),
         hint: Localization().getStringEx('panel.browse.button.quick_polls.hint', ''),
         icon: 'images/icon-browse-quick-polls.png',
         textColor: Styles().colors!.fillColorPrimary,
@@ -256,24 +256,12 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       );
     }
     else if (code == 'groups') {
-      return Stack(
-        alignment: Alignment.center,
-        children: [
-          _GridSquareButton(
-            title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
-            hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
-            icon: 'images/icon-browse-gropus.png',
-            textColor: Styles().colors!.fillColorPrimary,
-            onTap: () => _navigateGroups(),
-          ),
-          Visibility(
-            visible: _groupsLogin,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white)
-            ),
-          )
-        ],
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
+        hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
+        icon: 'images/icon-browse-gropus.png',
+        textColor: Styles().colors!.fillColorPrimary,
+        onTap: () => _navigateGroups(),
       );
     }
     else if (code == 'safer') {
@@ -287,7 +275,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (code == 'building_status') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Entry'),
+        title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Access'),
         hint: Localization().getStringEx('panel.browse.button.building_status.hint', ''),
         icon: 'images/icon-browse-building-status.png',
         textColor: Styles().colors!.fillColorPrimary,
@@ -305,7 +293,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (code == 'inbox') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.inbox.title', 'Inbox'),
+        title: Localization().getStringEx('panel.browse.button.inbox.title', 'Notifications'),
         hint: Localization().getStringEx('panel.browse.button.inbox.hint', ''),
         icon: 'images/icon-browse-inbox.png',
         textColor: Styles().colors!.fillColorPrimary,
@@ -321,7 +309,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _navigatePrivacyCenter(),
       );
     }
-    else if (code == 'crisis_help') {
+    else if ((code == 'crisis_help') && _canCrisisHelp) {
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.crisis_help.title', 'Crisis Help'),
         hint: Localization().getStringEx('panel.browse.button.crisis_help.hint', ''),
@@ -471,7 +459,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _onFeedbackTap(),
       );
     }
-    else if (code == 'faqs') {
+    else if ((code == 'faqs') && _canFAQs) {
       return _RibbonButton(
         icon: Image.asset('images/icon-faqs.png'),
         accessoryIcon: Image.asset('images/link-out.png'),
@@ -479,6 +467,25 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         hint: Localization().getStringEx('panel.browse.button.faqs.hint', ''),
         padding: _ribbonButtonPadding,
         onTap: () => _onFAQsTap(),
+      );
+    }
+    else if ((code == 'date_cat') && _canDateCat) {
+      return _RibbonButton(
+        icon: Image.asset('images/icon-settings.png'),
+        accessoryIcon: Image.asset('images/link-out.png'),
+        title: Localization().getStringEx('panel.browse.button.date_cat.title', 'Due Date Catalog'),
+        hint: Localization().getStringEx('panel.browse.button.date_cat.hint', ''),
+        padding: _ribbonButtonPadding,
+        onTap: () => _onDateCatTap(),
+      );
+    }
+    else if ((code == 'video_tutorial') && _canVideoTutorial) {
+      return _RibbonButton(
+        icon: Image.asset('images/icon-settings.png'),
+        title: Localization().getStringEx('panel.browse.button.video_tutorial.title', 'Video Tutorial'),
+        hint: Localization().getStringEx('panel.browse.button.video_tutorial.hint', ''),
+        padding: _ribbonButtonPadding,
+        onTap: () => _onVideoTutorialTap(),
       );
     }
 
@@ -592,21 +599,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateGroups() {
     Analytics().logSelect(target: "Groups");
-    if(Auth2().isOidcLoggedIn) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
-    } else if (_groupsLogin != true) {
-      setState(() { _groupsLogin = true; });
-      Auth2().authenticateWithOidc().then((bool? success) {
-        if (mounted) {
-          setState(() { _groupsLogin = false; });
-          if (success == true) {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
-          } else if (success == false) {
-            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
-          }
-        }
-      });
-    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
   void _navigateCampusGuide() {
@@ -622,17 +615,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   void _navigatePrivacyCenter() {
     Analytics().logSelect(target: "Privacy Center");
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
-  }
-
-  void _navigateCrisisHelp() {
-    Analytics().logSelect(target: "Crisis Help");
-
-    if (Connectivity().isNotOffline && Config().crisisHelpUrl != null) {
-      url_launcher.launch(Config().crisisHelpUrl!);
-    }
-    else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
-    }
   }
 
   void _onFeedbackTap() {
@@ -655,18 +637,58 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
 
+  bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
+
+  void _navigateCrisisHelp() {
+    Analytics().logSelect(target: "Crisis Help");
+
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().crisisHelpUrl)) {
+      url_launcher.launch(Config().crisisHelpUrl!);
+    }
+  }
+
+  bool get _canFAQs => StringUtils.isNotEmpty(Config().faqsUrl);
+
   void _onFAQsTap() {
     Analytics().logSelect(target: "FAQs");
 
-    if (Connectivity().isNotOffline ) {
-      String faqsUrl = "http://mhcwellness.illinois.edu/faq"; // TBD from Config after confirmation Config().faqsUrl
-
-      String? panelTitle = Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs');
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WebPanel(url: faqsUrl, title: panelTitle,)));
-    }
-    else {
+    if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.faqs', 'FAQs is not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().faqsUrl)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+        url: Config().faqsUrl,
+        title: Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs'),
+      )));
+    }
+  }
+
+  bool get _canDateCat => StringUtils.isNotEmpty(Config().dateCatalogUrl);
+
+  void _onDateCatTap() {
+    Analytics().logSelect(target: "Due Date Catalog");
+    
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.date_cat', 'Due Date Catalog not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().dateCatalogUrl)) {
+      url_launcher.launch(Config().dateCatalogUrl!);
+    }
+  }
+
+  bool get _canVideoTutorial => StringUtils.isNotEmpty(Config().videoTutorialUrl);
+
+  void _onVideoTutorialTap() {
+    Analytics().logSelect(target: "Video Tutorial");
+    
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.video_tutorial', 'Video Tutorial not available while offline.'));
+    }
+    else if (_canVideoTutorial) {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel()));
     }
   }
 
@@ -740,6 +762,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     if ((name == Connectivity.notifyStatusChanged) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == FlexUI.notifyChanged) ||
+        (name == Config.notifyConfigChanged) ||
         (name == Styles.notifyChanged))
     {
       setState(() { });

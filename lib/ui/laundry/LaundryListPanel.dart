@@ -22,7 +22,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class LaundryListPanel extends StatefulWidget {
   final List<LaundryRoom>? rooms;
@@ -48,19 +48,12 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.laundry_detail.header.title", "Laundry")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.laundry_detail.header.title", "Laundry"),
       ),
       body: _buildContentWidget(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

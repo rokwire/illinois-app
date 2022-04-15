@@ -24,14 +24,14 @@ import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -40,9 +40,9 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ui/dining/FoodDetailPanel.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedTab.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
@@ -107,7 +107,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if(!dining!.hasDiningSchedules){
       _isDiningLoading = true;
 
-      DiningService().loadBackendDinings(false, null, _locationData).then((List<Dining>? dinings){
+      Dinings().loadBackendDinings(false, null, _locationData).then((List<Dining>? dinings){
         if(dinings != null){
           Dining? foundDining = Dining.entryInList(dinings, id: dining!.id);
           if(foundDining != null){
@@ -141,9 +141,9 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                 child: CustomScrollView(
                   scrollDirection: Axis.vertical,
                   slivers: <Widget>[
+                    
                     SliverToutHeaderBar(
-                      context: context,
-                      imageUrl: dining?.exploreImageUrl,
+                      flexImageUrl: dining?.exploreImageUrl,
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate(
@@ -192,7 +192,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
           ],
         ),
         backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: TabBarWidget(),
+        bottomNavigationBar: uiuc.TabBar(),
       );
   }
 
@@ -285,7 +285,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     return ((details != null) && (0 < details.length)) ?
         Semantics(
           excludeSemantics: true,
-            label: Localization().getStringEx("panel.explore_detail.label.accepted_payments", "Accepted payments: ")! + paymentsToString(paymentTypes),
+            label: Localization().getStringEx("panel.explore_detail.label.accepted_payments", "Accepted payments: ") + paymentsToString(paymentTypes),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -294,18 +294,15 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                 Row(
                   children: <Widget>[
                     Expanded(
-                      child: Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted payment")!,
+                      child: Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted Payment"),
                         style: TextStyle(
                           color: Styles().colors!.textBackground
                         ),
                       ),
                     ),
-                    FilterSelectorWidget(
-                      label: Localization().getStringEx("panel.explore_detail.label.accepted_payment_details","Details"),
-                      labelFontSize: 16,
-                      labelFontFamily: Styles().fontFamilies!.bold,
+                    FilterSelector(
+                      title: Localization().getStringEx("panel.explore_detail.label.accepted_payment_details","Details"),
                       padding: EdgeInsets.symmetric(vertical: 5),
-                      visible: true,
                       active: _diningPaymentTypesExpanded,
                       onTap: _onDiningPaymentTypeTapped,
                     )
@@ -444,12 +441,10 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                         padding: EdgeInsets.only(right: 10),
                         child:Image.asset('images/icon-time.png', excludeFromSemantics: true),),
                       Expanded(child:
-                        ScalableFilterSelectorWidget(
-                          label: displayTime,
-                          labelFontSize: 16,
-                          labelFontFamily: Styles().fontFamilies!.bold,
+                        FilterSelector(
+                          title: displayTime,
                           padding: EdgeInsets.symmetric(vertical: 5),
-                          visible: true,
+                          expanded: true,
                           active: _diningWorktimeExpanded,
                           onTap: _onDiningWorktimeTapped,
                         )
@@ -599,7 +594,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if (StringUtils.isEmpty(deepLink)) {
       return;
     }
-    bool? appLaunched = await NativeCommunicator().launchApp({"deep_link": deepLink});
+    bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": deepLink});
     if (appLaunched != true) {
       String storeUrl = orderOnlineDetails!['store_url'];
       url_launcher.launch(storeUrl);
@@ -641,7 +636,7 @@ class _DiningDetail extends StatefulWidget {
   _DiningDetailState createState() => _DiningDetailState();
 }
 
-class _DiningDetailState extends State<_DiningDetail> implements NotificationsListener, RoundedTabListener{
+class _DiningDetailState extends State<_DiningDetail> implements NotificationsListener {
 
   List<DiningSpecial>? _specials;
 
@@ -724,7 +719,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
   void _loadOffers(){
-    DiningService().loadDiningSpecials().then((List<DiningSpecial>? offers){
+    Dinings().loadDiningSpecials().then((List<DiningSpecial>? offers){
       if(offers != null && offers.isNotEmpty){
         _specials = offers.where((entry)=>entry.locationIds!.contains(widget.dining!.id)).toList();
         setState((){});
@@ -736,7 +731,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
     if(hasMenuData) {
       _isLoading = true;
       DateTime? filterDate = _filterDates![_selectedDateFilterIndex];
-      DiningService().loadMenuItemsForDate(widget.dining!.id, filterDate).then((
+      Dinings().loadMenuItemsForDate(widget.dining!.id, filterDate).then((
           List<DiningProductItem>? items) {
         _productItems = items;
         _productItemsMapping = Map<String, DiningProductItem>();
@@ -754,9 +749,9 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
     }
   }
 
-  void onTabClicked(int tabIndex, RoundedTab caller){
-    Analytics().logSelect(target: "Tab: ${caller.title}");
-    _selectedScheduleIndex = tabIndex;
+  void _onTapTab(RoundedTab tab){
+    Analytics().logSelect(target: "Tab: ${tab.title}");
+    _selectedScheduleIndex = tab.tabIndex;
     if(mounted) {
       setState(() {});
     }
@@ -830,7 +825,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                 children: <Widget>[
                   Expanded(
                     flex: 2,
-                    child: Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu")!,
+                    child: Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu"),
                       style: TextStyle(
                         fontFamily: Styles().fontFamilies!.bold,
                         fontSize: 16,
@@ -856,8 +851,8 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                             children: <Widget>[
                               Expanded(child:
                               Text(hasFoodFilterApplied
-                                  ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")!
-                                  : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters")!,
+                                  ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")
+                                  : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters"),
                                 textAlign: TextAlign.right,
                                 style: TextStyle(
                                     color: Styles().colors!.fillColorPrimary,
@@ -914,13 +909,10 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                 ],
               ),
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Row(
-                    children: _buildScheduleTabs(),
-                  )),
+            Padding(padding: EdgeInsets.all(16), child: 
+              SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+                Row(children: _buildScheduleTabs(),),
+              ),
             ),
             _buildScheduleWorkTime(),
             _isLoading
@@ -933,7 +925,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                   CircularProgressIndicator(),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Text(Localization().getStringEx("widget.food_detail.label.loading.title", "Loading menu data")!),
+                    child: Text(Localization().getStringEx("widget.food_detail.label.loading.title", "Loading menu data")),
                   )
                 ],
               ),
@@ -964,15 +956,11 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
 
-  List<RoundedTab> _buildScheduleTabs() {
-    List<RoundedTab> tabs = [];
+  List<Widget> _buildScheduleTabs() {
+    List<Widget> tabs = [];
     for (int i = 0; i < _schedules!.length; i++) {
       DiningSchedule schedule = _schedules![i];
-
-      tabs.add(RoundedTab(title: schedule.meal,
-          tabIndex: i,
-          listener: this,
-          selected: (i == _selectedScheduleIndex)));
+      tabs.add(Padding(padding: EdgeInsets.only(right: 8), child: RoundedTab(title: schedule.meal, tabIndex: i, onTap: _onTapTab, selected: (i == _selectedScheduleIndex))));
     }
 
     return tabs;
@@ -1020,7 +1008,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
         hint: Localization().getStringEx("widget.food_detail.label.no_entries_for_desired_filter.hint", ""),
         button: false,
         child: Padding(padding: EdgeInsets.symmetric(vertical: 20,),
-          child: Text(Localization().getStringEx("widget.food_detail.button.no_entries_for_desired_filter.title", "There are no entries according to the current filter")!,),
+          child: Text(Localization().getStringEx("widget.food_detail.button.no_entries_for_desired_filter.title", "There are no entries according to the current filter"),),
         ),
       ));
     }

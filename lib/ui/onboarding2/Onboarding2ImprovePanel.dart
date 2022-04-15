@@ -20,10 +20,10 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2PrivacyPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/SwipeDetector.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 import 'Onboarding2Widgets.dart';
 
@@ -129,7 +129,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                               )),
                           Container(height: 10,),
                           Onboarding2UnderlinedButton(
-                            title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn more'),
+                            title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
                             fontSize: 14,
                             onTap: _onTapLearnMore,
                           ),
@@ -145,7 +145,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                                       child:Column(
                                           children:[
                                             CustomPaint(
-                                              painter: TrianglePainter(painterColor: Styles().colors!.background, left: false),
+                                              painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.leftToRight),
                                               child: Container(
                                                 height: 100,
                                               ),
@@ -182,11 +182,11 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                         context: context,
                       ),
                     ),
-                    ScalableRoundedButton(
+                    RoundedButton(
                       label: Localization().getStringEx('panel.onboarding2.improve.button.continue.title', 'Continue'),
                       hint: Localization().getStringEx('panel.onboarding2.improve.button.continue.hint', ''),
                       fontSize: 16,
-                      padding: EdgeInsets.symmetric(vertical: 12),
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       backgroundColor: Styles().colors!.white,
                       borderColor: Styles().colors!.fillColorSecondaryVariant,
                       textColor: Styles().colors!.fillColorPrimary,
@@ -221,18 +221,18 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              Localization().getStringEx('panel.onboarding2.improve.learn_more.title1',"Sharing activity")!,
+              Localization().getStringEx('panel.onboarding2.improve.learn_more.title1',"Sharing activity"),
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
-            Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content1',"Sharing your activity history sends your information to processing services. These services generate recommendations based on your interests.")!,
+            Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content1',"Sharing your activity history sends your information to processing services. These services generate recommendations based on your interests."),
               style: Onboarding2InfoDialog.contentStyle,
             ),
             Container(height: 24,),
             Text(
-              Localization().getStringEx('panel.onboarding2.improve.learn_more.title2',"Opting out")!,
+              Localization().getStringEx('panel.onboarding2.improve.learn_more.title2',"Opting out"),
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
-            Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content2',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data. ")!,
+            Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content2',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data. "),
               style: Onboarding2InfoDialog.contentStyle,
             ),
           ]

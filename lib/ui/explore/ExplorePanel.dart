@@ -22,16 +22,16 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -47,9 +47,9 @@ import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:illinois/ui/widgets/RoundedTab.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -126,7 +126,7 @@ class ExplorePanelState extends State<ExplorePanel>
     with
         SingleTickerProviderStateMixin,
         AutomaticKeepAliveClientMixin<ExplorePanel>
-    implements NotificationsListener, RoundedTabListener {
+    implements NotificationsListener {
   
   List<ExploreTab> _exploreTabs = [];
   ExploreTab?    _selectedTab;
@@ -141,8 +141,8 @@ class ExplorePanelState extends State<ExplorePanel>
   LocationServicesStatus? _locationServicesStatus;
 
   ExploreFilter? _initialSelectedFilter;
-  bool?          _showHeaderBack = true;
-  bool?          _showTabBar = true;
+  bool           _showHeaderBack = true;
+  bool           _showTabBar = true;
   Map<ExploreTab, List<ExploreFilter>>? _tabToFilterMap;
   bool _filterOptionsVisible = false;
 
@@ -151,6 +151,7 @@ class ExplorePanelState extends State<ExplorePanel>
   ScrollController _scrollController = ScrollController();
 
   Future<List<Explore>?>? _loadingTask;
+  bool? _loadingProgress;
   
 
   // When we click item[index == 2] -the TabBar creates and immediately dispose item[index == 1] (But _state.mounted = true)
@@ -183,8 +184,8 @@ class ExplorePanelState extends State<ExplorePanel>
 
     _selectedTab = widget._data._selectedTab;
     _initialSelectedFilter = widget._data._selectedFilter;
-    _showHeaderBack = widget._data._showHeaderBack;
-    _showTabBar = widget._data._showTabBar;
+    _showHeaderBack = widget._data._showHeaderBack ?? true;
+    _showTabBar = widget._data._showTabBar ?? true;
 
     _initTabs();
     _initFilters();
@@ -229,50 +230,46 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        backVisible: _showHeaderBack,
-        onBackPressed: _onTapHeaderBackButton,
-        semanticsSortKey: _ExploreSortKey.headerBar,
-        titleWidget: Text(
-          Localization().getStringEx("panel.explore.label.title", "Explore")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title:  Localization().getStringEx("panel.explore.label.title", "Explore"),
+        sortKey: _ExploreSortKey.headerBar,
+        leadingAsset: _showHeaderBack  ? HeaderBar.defaultLeadingAsset : null,
+        onLeading: _onTapHeaderBackButton,
       ),
-      body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        ExploreDisplayTypeHeader(
-          displayType: _displayType,
-          searchVisible: (_selectedTab != ExploreTab.Dining),
-          additionalData: {"group_id": widget.browseGroupId},
-          onTapList: () => _selectDisplayType(ListMapDisplayType.List),
-          onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
-          Padding(padding: EdgeInsets.all(12), child:
-            Wrap(children: _buildTabWidgets(),
-            )),
-        Expanded(child:
-          Stack(children: <Widget>[
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
-                  Wrap(children: _buildFilterWidgets(),
-              ),),
-              Expanded(child:
-                Container(color: Styles().colors!.background, child:
-                  Stack(children: <Widget>[
-                    _buildMapView(),
-                    _buildListView(),
-                  ]),
-              ),),
+      body: RefreshIndicator(onRefresh: () => _loadExplores(progress: false), child: 
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          ExploreDisplayTypeHeader(
+            displayType: _displayType,
+            searchVisible: (_selectedTab != ExploreTab.Dining),
+            additionalData: {"group_id": widget.browseGroupId},
+            onTapList: () => _selectDisplayType(ListMapDisplayType.List),
+            onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
+          
+          Padding(padding: EdgeInsets.all(16), child:
+            Wrap(spacing: 8, runSpacing: 8, children: _buildTabWidgets(),
+          )),
+          
+          Expanded(child:
+            Stack(children: <Widget>[
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
+                    Wrap(children: _buildFilterWidgets(),
+                ),),
+                Expanded(child:
+                  Container(color: Styles().colors!.background, child:
+                    Stack(children: <Widget>[
+                      _buildMapView(),
+                      _buildListView(),
+                    ]),
+                ),),
+              ],),
+              _buildFilterValuesContainer()
             ],),
-            _buildFilterValuesContainer()
-          ],),
-        ),
-      ]),
+          ),
+        ]),
+      ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: _showTabBar! ? TabBarWidget() : null,
+      bottomNavigationBar: _showTabBar ? uiuc.TabBar() : null,
     );
   }
 
@@ -352,23 +349,23 @@ class ExplorePanelState extends State<ExplorePanel>
     };
 
     _filterEventTimeValues = [
-      Localization().getStringEx('panel.explore.filter.time.upcoming', 'Upcoming')!,
-      Localization().getStringEx('panel.explore.filter.time.today', 'Today')!,
-      Localization().getStringEx('panel.explore.filter.time.next_7_days', 'Next 7 days')!,
-      Localization().getStringEx('panel.explore.filter.time.this_weekend', 'This Weekend')!,
-      Localization().getStringEx('panel.explore.filter.time.this_month', 'Next 30 days')!,
+      Localization().getStringEx('panel.explore.filter.time.upcoming', 'Upcoming'),
+      Localization().getStringEx('panel.explore.filter.time.today', 'Today'),
+      Localization().getStringEx('panel.explore.filter.time.next_7_days', 'Next 7 Days'),
+      Localization().getStringEx('panel.explore.filter.time.this_weekend', 'This Weekend'),
+      Localization().getStringEx('panel.explore.filter.time.this_month', 'Next 30 days'),
     ];
 
     _filterPaymentTypeValues = [
-      Localization().getStringEx('panel.explore.filter.payment_types.all', 'All Payment Types')!  
+      Localization().getStringEx('panel.explore.filter.payment_types.all', 'All Payment Types')  
     ];
     for (PaymentType paymentType in PaymentType.values) {
       _filterPaymentTypeValues!.add(PaymentTypeHelper.paymentTypeToDisplayString(paymentType) ?? '');
     }
 
     _filterWorkTimeValues = [
-      Localization().getStringEx('panel.explore.filter.worktimes.all', 'All Locations')!,
-      Localization().getStringEx('panel.explore.filter.worktimes.open_now', 'Open Now')!,
+      Localization().getStringEx('panel.explore.filter.worktimes.all', 'All Locations'),
+      Localization().getStringEx('panel.explore.filter.worktimes.open_now', 'Open Now'),
     ];
   }
 
@@ -427,8 +424,8 @@ class ExplorePanelState extends State<ExplorePanel>
 
   List<String> _getFilterCategoriesValues() {
     List<String> categoriesValues = [];
-    categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.all', 'All Categories')!);
-    categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.my', 'My Categories')!);
+    categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.all', 'All Categories'));
+    categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.my', 'My Categories'));
     if (_eventCategories != null) {
       for (var category in _eventCategories!) {
         categoriesValues.add(category['category']);
@@ -439,12 +436,12 @@ class ExplorePanelState extends State<ExplorePanel>
 
   List<String> _getFilterTagsValues() {
     List<String> tagsValues = [];
-    tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.all', 'All Tags')!);
-    tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.my', 'My Tags')!);
+    tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.all', 'All Tags'));
+    tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.my', 'My Tags'));
     return tagsValues;
   }
 
-  void _loadExplores() {
+  Future<void> _loadExplores({bool progress = true}) async {
 
     _diningSpecials = null;
 
@@ -467,13 +464,12 @@ class ExplorePanelState extends State<ExplorePanel>
         case ExploreTab.Events: 
           {
             if (_initialSelectedFilter != null) {
-              ExploreFilter? filter = (CollectionUtils.isNotEmpty(selectedFilterList)) ? (selectedFilterList as List<ExploreFilter?>).firstWhereOrNull((selectedFilter) =>
-              selectedFilter?.type == _initialSelectedFilter?.type) : null;
+              ExploreFilter? filter = (CollectionUtils.isNotEmpty(selectedFilterList)) ?
+                (selectedFilterList as List<ExploreFilter?>).firstWhereOrNull((selectedFilter) => selectedFilter?.type == _initialSelectedFilter?.type) : null;
               if (filter != null) {
                 int filterIndex = selectedFilterList!.indexOf(filter);
                 selectedFilterList.remove(filter);
-                selectedFilterList.insert(filterIndex, ExploreFilter(
-                    type: _initialSelectedFilter!.type, selectedIndexes: _initialSelectedFilter!.selectedIndexes, active: _initialSelectedFilter!.active));
+                selectedFilterList.insert(filterIndex, ExploreFilter(type: _initialSelectedFilter!.type, selectedIndexes: _initialSelectedFilter!.selectedIndexes, active: _initialSelectedFilter!.active));
               }
             }
             task = _loadEvents(selectedFilterList);
@@ -490,14 +486,17 @@ class ExplorePanelState extends State<ExplorePanel>
     }
 
     if (task != null) {
+
       _refresh(() {
         _loadingTask = task;
-        _loadingTask!.then((List<Explore>? explores) {
-          if (_loadingTask == task) {
-            _applyExplores(explores);
-          }
-        });
+        _loadingProgress = (progress == true);
       });
+      
+      List<Explore>? explores = await task;
+
+      if (_loadingTask == task) {
+        _applyExplores(explores);
+      }
     }
     else {
       _applyExplores(null);
@@ -505,8 +504,9 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _applyExplores(List<Explore>? explores) {
-    _refresh(() {
+      _refresh(() {
         _loadingTask = null;
+        _loadingProgress = null;
         _displayExplores = explores;
         _placeExploresOnMap();
       });
@@ -565,9 +565,9 @@ class ExplorePanelState extends State<ExplorePanel>
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
 
     _locationData = _userLocationEnabled() ? await LocationServices().location : null;
-    _diningSpecials = await DiningService().loadDiningSpecials();
+    _diningSpecials = await Dinings().loadDiningSpecials();
 
-    return DiningService().loadBackendDinings(onlyOpened, paymentType, _locationData);
+    return Dinings().loadBackendDinings(onlyOpened, paymentType, _locationData);
   }
 
   ///
@@ -791,7 +791,7 @@ class ExplorePanelState extends State<ExplorePanel>
   // Build UI
 
   Widget _buildListView() {
-    if (_loadingTask != null) {
+    if (_loadingProgress == true) {
       return _buildLoading();
     }
     
@@ -853,14 +853,15 @@ class ExplorePanelState extends State<ExplorePanel>
     if (_selectedMapExplore is Explore) {
       title = _selectedMapExplore?.exploreTitle;
       description = _selectedMapExplore.exploreLocation?.description;
-      exploreColor = _selectedMapExplore.uiColor;
+      exploreColor = _exploreColor(_selectedMapExplore) ?? Colors.white;
     }
     else if  (_selectedMapExplore is List<Explore>) {
       String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
-      title = sprintf(Localization().getStringEx('panel.explore.map.popup.title.format', '%d %s')!, [_selectedMapExplore?.length, exploreName]);
+      title = sprintf(Localization().getStringEx('panel.explore.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
       exploreColor = explore?.uiColor ?? Styles().colors!.fillColorSecondary!;
+      exploreColor = _exploreColor(explore) ?? Styles().colors?.fillColorSecondary;
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
@@ -909,11 +910,10 @@ class ExplorePanelState extends State<ExplorePanel>
                                     label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions'),
                                     hint: Localization().getStringEx('panel.explore.button.directions.hint', ''),
                                     backgroundColor: Colors.white,
-                                    height: 32,
+                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                     fontSize: 16.0,
                                     textColor: Styles().colors!.fillColorPrimary,
                                     borderColor: Styles().colors!.fillColorSecondary,
-                                    padding: EdgeInsets.symmetric(horizontal: 24),
                                     onTap: () {
                                       Analytics().logSelect(target: 'Directions');
                                       _presentMapExploreDirections(context);
@@ -927,11 +927,10 @@ class ExplorePanelState extends State<ExplorePanel>
                               label: Localization().getStringEx('panel.explore.button.details.title', 'Details'),
                               hint: Localization().getStringEx('panel.explore.button.details.hint', ''),
                               backgroundColor: Colors.white,
-                              height: 32,
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               fontSize: 16.0,
                               textColor: Styles().colors!.fillColorPrimary,
                               borderColor: Styles().colors!.fillColorSecondary,
-                              padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
                                 Analytics().logSelect(target: 'Details');
                                 _presentMapExploreDetail(context);
@@ -943,6 +942,18 @@ class ExplorePanelState extends State<ExplorePanel>
                     ])),
           ))
     ]);
+  }
+
+  static Color? _exploreColor(Explore? explore) {
+    if (explore is Event) {
+      return explore.uiColor;
+    }
+    else if (explore is Dining) {
+      return explore.uiColor;
+    }
+    else {
+      return null;
+    }
   }
 
   void _selectMapExplore(dynamic explore) {
@@ -1008,7 +1019,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   Widget _buildEmpty() {
-    String? message;
+    String message;
     switch (_selectedTab) {
       case ExploreTab.All:    message = Localization().getStringEx('panel.explore.state.online.empty.all', 'No events.'); break;
       case ExploreTab.NearMe: message = Localization().getStringEx('panel.explore.state.online.empty.near_me', 'No events near me.'); break;
@@ -1016,17 +1027,19 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreTab.Dining: message = Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.'); break;
       default:                message =  ''; break;
     }
-    return Center(child:
-      Column(children: <Widget>[
-        Expanded(child: Container(), flex: 1),
-        Text(message!, textAlign: TextAlign.center,),
-        Expanded(child: Container(), flex: 3),
-      ]),
+    return SingleChildScrollView(child:
+      Center(child:
+        Column(children: <Widget>[
+          Container(height: MediaQuery.of(context).size.height / 5),
+          Text(message, textAlign: TextAlign.center,),
+          Container(height: MediaQuery.of(context).size.height / 5 * 3),
+        ]),
+      ),
     );
   }
 
   Widget _buildOffline() {
-    String? message;
+    String message;
     switch (_selectedTab) {
       case ExploreTab.All:    message = Localization().getStringEx('panel.explore.state.offline.empty.all', 'No events available while offline.'); break;
       case ExploreTab.NearMe: message = Localization().getStringEx('panel.explore.state.offline.empty.near_me', 'No events near me available while offline.'); break;
@@ -1034,14 +1047,16 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreTab.Dining: message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
       default:                message =  ''; break;
     }
-    return Center(child:
-      Column(children: <Widget>[
-        Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline")!, style: TextStyle(fontSize: 16),),
-        Container(height:8),
-        Text(message!),
-        Expanded(child: Container(), flex: 3),
-      ],),);
+    return SingleChildScrollView(child:
+      Center(child:
+        Column(children: <Widget>[
+          Container(height: MediaQuery.of(context).size.height / 5),
+          Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 16),),
+          Container(height: 8),
+          Text(message),
+          Container(height: MediaQuery.of(context).size.height / 5 * 3),
+        ],),),
+    );
   }
 
   Widget _buildDimmedContainer() {
@@ -1103,9 +1118,9 @@ class ExplorePanelState extends State<ExplorePanel>
                       ),
                   itemCount: filterValues.length,
                   itemBuilder: (context, index) {
-                    return FilterListItemWidget(
-                      label: filterValues[index],
-                      subLabel: hasSubLabels ? filterSubLabels![index] : null,
+                    return  FilterListItem(
+                      title: filterValues[index],
+                      description: hasSubLabels ? filterSubLabels![index] : null,
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(index)),
                       onTap: () {
                         Analytics().logSelect(target: "FilterItem: ${filterValues[index]}");
@@ -1144,11 +1159,10 @@ class ExplorePanelState extends State<ExplorePanel>
       List<String> filterValues = _getFilterValuesByType(selectedFilter.type)!;
       int filterValueIndex = selectedFilter.firstSelectedIndex;
       String? filterHeaderLabel = filterValues[filterValueIndex];
-      filterTypeWidgets.add(FilterSelectorWidget(
-        label: filterHeaderLabel,
+      filterTypeWidgets.add(FilterSelector(
+        title: filterHeaderLabel,
         hint: _getFilterHintByType(selectedFilter.type),
         active: selectedFilter.active,
-        visible: true,
         onTap: (){
           Analytics().logSelect(target: "Filter: $filterHeaderLabel");
           return _onFilterTypeClicked(selectedFilter);},
@@ -1161,7 +1175,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
     List<RoundedTab> tabs = [];
     for (ExploreTab exploreTab in _exploreTabs) {
-      tabs.add(RoundedTab(title: exploreTabName(exploreTab), hint: exploreTabHint(exploreTab), tabIndex: ExploreTab.values.indexOf(exploreTab), listener: this, selected: (_selectedTab == exploreTab)));
+      tabs.add(RoundedTab(title: exploreTabName(exploreTab), hint: exploreTabHint(exploreTab), tabIndex: ExploreTab.values.indexOf(exploreTab), onTap: _onTapTab, selected: (_selectedTab == exploreTab)));
     }
     return tabs;
   }
@@ -1245,11 +1259,10 @@ class ExplorePanelState extends State<ExplorePanel>
     Navigator.pop(context);
   }
 
-  @override
-  void onTabClicked(int? tabIndex, RoundedTab tab) {
-    if ((0 <= tabIndex!) && (tabIndex < ExploreTab.values.length)) {
+  void _onTapTab(RoundedTab tab) {
+    if ((0 <= tab.tabIndex) && (tab.tabIndex < ExploreTab.values.length)) {
       Analytics().logSelect(target: tab.title) ;
-      selectTab(ExploreTab.values[tabIndex]);
+      selectTab(ExploreTab.values[tab.tabIndex]);
     }
   }
 

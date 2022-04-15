@@ -1,15 +1,14 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeLoginWidget extends StatefulWidget {
@@ -30,7 +29,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
   Widget _buildConnectPrimarySection() {
     List<Widget> contentList = [];
 
-    List<dynamic> codes = FlexUI()['home.content.connect'] ?? [];
+    List<dynamic> codes = FlexUI()['home.connect'] ?? [];
     for (String code in codes) {
       if (code == 'netid') {
         contentList.add(HomeLoginNetIdWidget());
@@ -52,9 +51,9 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
         content.add(Container(height: 20,),);
       }
 
-      return SectionTitlePrimary(
+      return SectionSlantHeader(
         title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
-        iconPath: 'images/icon-member.png',
+        titleIconAsset: 'images/icon-member.png',
         children: content,);
     }
     else {
@@ -96,25 +95,15 @@ class _HomeLoginNetIdWidgetState extends State<HomeLoginNetIdWidget> {
           )),
           Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-          Stack(children: <Widget>[
-            Semantics(explicitChildNodes: true, child: ScalableRoundedButton(
-              label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Connect your NetID"),
-              hint: '',
-              borderColor: Styles().colors!.fillColorSecondary,
-              backgroundColor: Styles().colors!.surface,
-              textColor: Styles().colors!.fillColorPrimary,
-              onTap: ()=> _onTapConnectNetIdClicked(context),
-            )),
-            Visibility(visible: _authLoading == true, child:
-              Container(height: 42, child:
-                Align(alignment: Alignment.center, child:
-                  SizedBox(height: 24, width: 24, child:
-                    CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
-                  ),
-                ),
-              ),
-            ),
-          ]),
+          Semantics(explicitChildNodes: true, child: RoundedButton(
+            label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Sign In with your NetID"),
+            hint: '',
+            borderColor: Styles().colors!.fillColorSecondary,
+            backgroundColor: Styles().colors!.surface,
+            textColor: Styles().colors!.fillColorPrimary,
+            progress: (_authLoading == true),
+            onTap: ()=> _onTapConnectNetIdClicked(context),
+          )),
           ),
         ]),
         ),
@@ -130,10 +119,10 @@ class _HomeLoginNetIdWidgetState extends State<HomeLoginNetIdWidget> {
     }
     else if (_authLoading != true) {
       setState(() { _authLoading = true; });
-      Auth2().authenticateWithOidc().then((bool? result) {
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _authLoading = false; });
-          if (result == false) {
+          if (result != Auth2OidcAuthenticateResult.succeeded) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }
@@ -162,8 +151,8 @@ class HomeLoginPhoneOrEmailWidget extends StatelessWidget{
             Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),
 
             Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
-            Semantics(explicitChildNodes: true, child: ScalableRoundedButton(
-              label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Proceed"),
+            Semantics(explicitChildNodes: true, child: RoundedButton(
+              label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Continue"),
               hint: '',
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.surface,
@@ -183,12 +172,10 @@ class HomeLoginPhoneOrEmailWidget extends StatelessWidget{
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(
         settings: RouteSettings(),
-        builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
-          onboardingContext: {
-            "onContinueAction": () {
-              _didLogin(context);
-            }
-          },
+        builder: (context) => SettingsLoginPhoneOrEmailPanel(
+          onFinish: () {
+            _didLogin(context);
+          }
         ),
       ),);
     } else {

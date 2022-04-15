@@ -31,9 +31,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 
 class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final GroupPost? post;
@@ -57,14 +58,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   //Main Post - Edit/Show
   GroupPost? _post; //Main post {Data Presentation}
   PostDataModel? _mainPostUpdateData;//Main Post Edit
-
+  List<Member>? _allMembersAllowedToPost;
   //Reply - Edit/Create/Show
   GroupPost? _focusedReply; //Focused on Reply {Replies Thread Presentation} // User when Refresh post thread
   String? _selectedReplyId; // Thread Id target for New Reply {Data Create}
   GroupPost? _editingReply; //Edit Mode for Reply {Data Edit}
   PostDataModel? _replyEditData = PostDataModel(); //used for Reply Create / Edit; Empty data for new Reply
 
-  String? _modalImageUrl; // ModalImageDial presentation
   bool _loading = false;
 
   //Scroll and focus utils
@@ -85,6 +85,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _focusedReply = widget.focusedReply;
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
+    _initAllMembersAllowedToPost();
 
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
@@ -107,7 +108,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             leading: HeaderBackButton(),
             title: Text(
               Localization()
-                  .getStringEx('panel.group.detail.post.header.title', 'Post')!,
+                  .getStringEx('panel.group.detail.post.header.title', 'Post'),
               style: TextStyle(
                   fontSize: 16,
                   color: Colors.white,
@@ -116,16 +117,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             ),
             centerTitle: true),
         backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: TabBarWidget(),
-        body: ModalImageDialog.modalDialogContainer(
-          content: _buildContent(),
-          imageUrl: _modalImageUrl,
-          onClose: () {
-            Analytics().logSelect(target: "Close");
-            _modalImageUrl = null;
-            setState(() {});
-          }
-        ));
+        bottomNavigationBar: uiuc.TabBar(),
+        body: _buildContent(),
+      );
   }
 
   Widget _buildContent(){
@@ -372,12 +366,33 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                       color: Styles()
                                           .colors!
                                           .fillColorPrimary)))),
-
+                      Container(height: 6,),
+                      GroupMembersSelectionWidget(
+                        selectedMembers: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:(_isEditMainPost ? _mainPostUpdateData?.members : _post?.members), upToDateMembers: _allMembersAllowedToPost),
+                        allMembers: _allMembersAllowedToPost,
+                        enabled: _isEditMainPost,
+                        groupId: widget.group?.id,
+                        onSelectionChanged: (members){
+                          setState(() {
+                            _mainPostUpdateData?.members = members;
+                          });
+                        },)
                     ],
                   )),
 
             ]));
   }
+
+  void _initAllMembersAllowedToPost(){
+    if((widget.group?.members?.length ?? 0) >0) {
+      _allMembersAllowedToPost = widget.group!.members!.where((member) => _isMemberAllowedToReceivePost(member)).toList();
+    }
+  }
+
+  bool _isMemberAllowedToReceivePost(Member member){
+    return member.isMemberOrAdmin;
+  }
+
 
   _buildRepliesSection(){
     List<GroupPost>? replies;
@@ -593,17 +608,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         context: context,
         contentWidget: Text(Localization().getStringEx(
             'panel.group.detail.post.delete.confirm.msg',
-            'Are you sure that you want to delete this post?')!),
+            'Are you sure that you want to delete this post?')),
         actions: <Widget>[
           TextButton(
               child:
-                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
+                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Navigator.of(context).pop();
                 _deletePost();
               }),
           TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')!),
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
               onPressed: () => Navigator.of(context).pop())
         ]);
   }
@@ -641,8 +656,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Visibility(visible: _isReplyVisible, child: RibbonButton(
-                  height: null,
-                  leftIcon: "images/icon-group-post-reply.png",
+                  leftIconAsset: "images/icon-group-post-reply.png",
                   label: Localization().getStringEx(
                       "panel.group.detail.post.reply.reply.label", "Reply"),
                   onTap: () {
@@ -651,8 +665,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   },
                 )),
                 Visibility(visible: _isEditVisible(reply), child: RibbonButton(
-                  height: null,
-                  leftIcon: "images/icon-edit.png",
+                  leftIconAsset: "images/icon-edit.png",
                   label: Localization().getStringEx(
                       "panel.group.detail.post.reply.edit.label", "Edit"),
                   onTap: () {
@@ -661,8 +674,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   },
                 )),
                 Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
-                  height: null,
-                  leftIcon: "images/trash.png",
+                  leftIconAsset: "images/trash.png",
                   label: Localization().getStringEx(
                       "panel.group.detail.post.reply.delete.label", "Delete"),
                   onTap: () {
@@ -682,18 +694,18 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         context: context,
         contentWidget: Text(Localization().getStringEx(
             'panel.group.detail.post.reply.delete.confirm.msg',
-            'Are you sure that you want to delete this reply?')!),
+            'Are you sure that you want to delete this reply?')),
         actions: <Widget>[
           TextButton(
               child:
-                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
+                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'Yes');
                 Navigator.of(context).pop();
                 _deleteReply(reply);
               }),
           TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')!),
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
               onPressed: () {
                 Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'No');
                 Navigator.of(context).pop();
@@ -735,7 +747,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapEditMainPost(){
-    _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl);
+    _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl, members: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:_post?.members, upToDateMembers: _allMembersAllowedToPost));
     if(mounted){
       setState(() {
       });
@@ -745,6 +757,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _onTapUpdateMainPost(){
     String? body = _mainPostUpdateData?.body;
     String? imageUrl = _mainPostUpdateData?.imageUrl ?? _post?.imageUrl;
+    List<Member>? toMembers = _mainPostUpdateData?.members;
     if (StringUtils.isEmpty(body)) {
       String? validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required");
       AppAlert.showDialogResult(context, validationMsg);
@@ -753,7 +766,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
 
     _setLoading(true);
-    GroupPost postToUpdate = GroupPost(id: _post?.id, subject: _post?.subject, body: htmlModifiedBody, imageUrl: imageUrl, private: true);
+    GroupPost postToUpdate = GroupPost(id: _post?.id, subject: _post?.subject, body: htmlModifiedBody, imageUrl: imageUrl, members: toMembers, private: true);
     Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
       _mainPostUpdateData = null;
       _setLoading(false);
@@ -787,8 +800,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _setLoading(true);
     Groups().loadGroupPosts(widget.group?.id).then((posts) {
       if (CollectionUtils.isNotEmpty(posts)) {
-        try { _post = (posts as List<GroupPost?>).firstWhere((post) => (post?.id == _post?.id), orElse: () => null); }
-        catch (e) {}
+        try {
+          // GroupPost? post = (posts as List<GroupPost?>).firstWhere((post) => (post?.id == _post?.id), orElse: ()=> null); //Remove to fix reload Error: type '() => Null' is not a subtype of type '(() => GroupPost)?' of 'orElse'
+          List<GroupPost?> nullablePosts = List.of(posts!);
+          _post = nullablePosts.firstWhere((post) => (post?.id == _post?.id), orElse: ()=> null);
+        } catch (e) {
+          print(e);
+        }
         _sortReplies(_post?.replies);
         GroupPost? updatedReply = deepFindPost(posts, _focusedReply?.id);
         if(updatedReply!=null){
@@ -796,6 +814,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             _focusedReply = updatedReply;
             _sortReplies(_focusedReply?.replies);
           });
+        } else {
+          setState(() {}); // Refresh MainPost
         }
       } else {
         _post = null;
@@ -835,8 +855,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
     if (StringUtils.isEmpty(body)) {
       String validationMsg = ((_editingReply != null))
-          ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")!
-          : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required")!;
+          ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")
+          : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required");
       AppAlert.showDialogResult(context, validationMsg);
       return;
     }
@@ -900,11 +920,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   //Modal Image Dialog
   void _showModalImage(String? url){
-    if(url != null) {
-      setState(() {
-        _modalImageUrl = url;
-      });
-    }
+    Analytics().logSelect(target: "Image");
+    if (url != null) {
+Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));    }
   }
 
   //Scroll

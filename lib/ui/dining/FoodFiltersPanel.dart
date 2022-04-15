@@ -16,11 +16,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -54,17 +54,10 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   @override
   Widget build(BuildContext context) {
-    String onlyShow = Localization().getStringEx("panel.food_filters.label.only_show_food_that_are.title", "ONLY SHOW FOODS THAT ARE")!;
+    String onlyShow = Localization().getStringEx("panel.food_filters.label.only_show_food_that_are.title", "ONLY SHOW FOODS THAT ARE");
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.food_filters.header.title", "Food Filters")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.food_filters.header.title", "Food Filters"),
       ),
       body: Column(
         children: <Widget>[
@@ -126,7 +119,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
                             children: <Widget>[
                             Expanded(
                             child: Text(
-                              Localization().getStringEx("panel.food_filters.label.exclude_ingredients.title", "EXCLUDE FOODS WITH INGREDIENTS")!,
+                              Localization().getStringEx("panel.food_filters.label.exclude_ingredients.title", "EXCLUDE FOODS WITH INGREDIENTS"),
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                   fontFamily: Styles().fontFamilies!.bold,
@@ -151,24 +144,22 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
         ],
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
   Widget _buildFoodTypes(){
     List<Widget> list = [];
-    List<String>? foodTypes = DiningService().foodTypes;
+    List<String>? foodTypes = Dinings().foodTypes;
     if (foodTypes != null) {
       for(String foodType in foodTypes){
         bool selected = _selectedTypesPrefs?.contains(foodType) ?? false;
-        String? foodLabel = DiningService().getLocalizedString(foodType);
+        String? foodLabel = Dinings().getLocalizedString(foodType);
         list.add(
             ToggleRibbonButton(
-              height: null,
               label: foodLabel,
               onTap: (){_onFoodTypePrefTapped(foodType);},
               toggled: selected,
-              context: context,
             ));
       }
     }
@@ -180,18 +171,16 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   Widget _buildFoodIngredients(){
     List<Widget> list = [];
-    List<String>? foodIngredients = DiningService().foodIngredients;
+    List<String>? foodIngredients = Dinings().foodIngredients;
     if (foodIngredients != null) {
       for(String foodIngredient in foodIngredients){
         bool selected = _selectedIngredientsPrefs?.contains(foodIngredient) ?? false;
-        String? ingredientLabel = DiningService().getLocalizedString(foodIngredient);
+        String? ingredientLabel = Dinings().getLocalizedString(foodIngredient);
         list.add(
             ToggleRibbonButton(
-              height: null,
               label: ingredientLabel,
               onTap: (){_onFoodIngredientPrefTapped(foodIngredient);},
               toggled: selected,
-              context: context,
             ));
       }
     }
@@ -257,8 +246,8 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   _onSaveChangesClicked(){
     //Store when save clicked
-    DiningService().setIncludedFoodTypesPrefs(_selectedTypesPrefs.toList());
-    DiningService().setExcludedFoodIngredientsPrefs(_selectedIngredientsPrefs.toList());
+    Dinings().setIncludedFoodTypesPrefs(_selectedTypesPrefs.toList());
+    Dinings().setExcludedFoodIngredientsPrefs(_selectedIngredientsPrefs.toList());
     Navigator.pop(context);
   }
 

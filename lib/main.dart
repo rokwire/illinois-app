@@ -24,7 +24,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
-import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Gies.dart';
@@ -37,6 +37,7 @@ import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
+import 'package:illinois/service/Rewards.dart';
 import 'package:illinois/service/Services.dart' as illinois;
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Voter.dart';
@@ -49,7 +50,7 @@ import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/widgets/FlexContentWidget.dart';
+import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -111,7 +112,7 @@ void main() async {
     Sports(),
     LiveStats(),
     RecentItems(),
-    DiningService(),
+    Dinings(),
     IlliniCash(),
     FlexUI(),
     Onboarding(),
@@ -125,9 +126,10 @@ void main() async {
     Groups(),
     Gies(),
     Canvas(),
+    Rewards(),
 
     // These do not rely on Service initialization API so they are not registered as services.
-    // LaundryService(),
+    // Laundries(),
     // Content(),
   ]);
   
@@ -276,7 +278,7 @@ class _AppState extends State<App> implements NotificationsListener {
       supportedLocales: Localization().supportedLocales(),
       navigatorObservers:[AppNavigation()],
       //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-      title: Localization().getStringEx('app.title', 'Illinois')!,
+      title: Localization().getStringEx('app.title', 'Illinois'),
       theme: ThemeData(
           appBarTheme: AppBarTheme(backgroundColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040)),
           primaryColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040),
@@ -364,7 +366,7 @@ class _AppState extends State<App> implements NotificationsListener {
       List<dynamic>? launchList = (launch is List) ? launch : null;
       if (launchList != null) {
         for (dynamic launchEntry in launchList) {
-          Widget? launchPopup = FlexContentWidget.fromAssets(launchEntry, onClose: (BuildContext context) {
+          Widget? launchPopup = FlexContent.fromAssets(launchEntry, onClose: (BuildContext context) {
             _launchPopup = null;
             Navigator.of(context).pop();
           },);

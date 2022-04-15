@@ -20,8 +20,8 @@ import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/SwipeDetector.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'dart:io' show Platform;
 
 import 'package:notification_permissions/notification_permissions.dart';
@@ -37,10 +37,10 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding.notifications.label.title', 'Event info when you need it')!;
+    String titleText = Localization().getStringEx('panel.onboarding.notifications.label.title', 'Event info when you need it');
     String notRightNow = Localization().getStringEx(
         'panel.onboarding.notifications.button.dont_allow.title',
-        'Not right now')!;
+        'Not right now');
     return Scaffold(
         backgroundColor: Styles().colors!.background,
         body: SwipeDetector(
@@ -90,7 +90,7 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                         child: Align(
                         alignment: Alignment.topCenter,
                         child: Text(
-                          Localization().getStringEx('panel.onboarding.notifications.label.description', 'Get notified about your “starred” events.')!,
+                          Localization().getStringEx('panel.onboarding.notifications.label.description', 'Get notified about your “starred” events.'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontFamily: Styles().fontFamilies!.regular,
@@ -104,11 +104,11 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      ScalableRoundedButton(
+                      RoundedButton(
                         label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
                         hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
                         fontSize: 16,
-                        padding: EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         borderColor: Styles().colors!.fillColorSecondary,
                         backgroundColor: Styles().colors!.white,
                         textColor: Styles().colors!.fillColorPrimary,
@@ -184,7 +184,7 @@ void _requestAuthorization(BuildContext context) async {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx('app.title', 'Illinois')!,
+              Localization().getStringEx('app.title', 'Illinois'),
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(
@@ -209,7 +209,7 @@ void _requestAuthorization(BuildContext context) async {
                         _goNext(context);
                       }
                     },
-                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')!))
+                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')))
               ],
             )
           ],

@@ -63,7 +63,7 @@ class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
                     width: 10,
                   ),
                   Text(
-                    Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!')!,
+                    Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
                     style: TextStyle(
                         color: Colors.white,
                         fontFamily: Styles().fontFamilies!.extraBold,

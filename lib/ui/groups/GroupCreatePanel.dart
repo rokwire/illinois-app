@@ -28,8 +28,8 @@ import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -60,7 +60,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   @override
   void initState() {
-    _group = Group();
+    _initGroup();
     _initPrivacyData();
     _initCategories();
     super.initState();
@@ -86,6 +86,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _groupCategoeriesLoading = false;
       });
     });
+  }
+
+  void _initGroup(){
+    _group = Group();
+    //default values
+    _group!.onlyAdminsCanCreatePolls = true;
   }
   //
 
@@ -113,12 +119,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   scrollDirection: Axis.vertical,
                   slivers: <Widget>[
                     SliverHeaderBar(
-                      context: context,
-                      backIconRes: "images/close-white.png",
-                      titleWidget: Text(
-                        Localization().getStringEx("panel.groups_create.label.heading", "Create a group")!,
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-                      ),
+                      title: Localization().getStringEx("panel.groups_create.label.heading", "Create a Group"),
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate([
@@ -131,24 +132,26 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             Container(height: 24,),
                             Container(height: 1, color: Styles().colors!.surfaceAccent,),
                             Container(height: 24,),
-                            _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability")!, "images/icon-search.png"),
+                            _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "images/icon-search.png"),
                             _buildCategoryDropDown(),
                             _buildTagsLayout(),
                             Container(height: 24,),
                             Container(height: 1, color: Styles().colors!.surfaceAccent,),
                             Container(height: 24,),
-                            _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy")!, "images/icon-privacy.png"),
+                            _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
                             Container(height: 8),
                             _buildPrivacyDropDown(),
-                            _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership")!, "images/icon-member.png"),
+                            _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "images/icon-member.png"),
                             _buildAuthManLayout(),
                             Visibility(
                               visible: !_isAuthManGroup,
                               child: Column(children: [
                                 Container(height: 16),
-                                _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership")!, "images/icon-member.png"),
+                                _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
                                 _buildMembershipLayout(),
                               ],)),
+                            Container(height: 8),
+                            _buildPollsLayout(),
                             Container(height: 40),
                         ],),)
 
@@ -175,21 +178,23 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           StringUtils.isNotEmpty(_group?.imageURL)
               ? Positioned.fill(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))
               : Container(),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background), child: Container(height: 30)),
           Container(
               height: _imageHeight,
               child: Center(
                   child: Semantics(
-                      label: Localization().getStringEx("panel.groups_settings.add_image", "Add cover image"),
+                      label: Localization().getStringEx("panel.groups_settings.add_image", "Add Cover Image"),
                       hint: Localization().getStringEx("panel.groups_settings.add_image.hint", ""),
                       button: true,
                       excludeSemantics: true,
-                      child: ScalableSmallRoundedButton(
-                          maxLines: 2,
-                          label: Localization().getStringEx("panel.groups_settings.add_image", "Add cover image"),
+                      child: RoundedButton(
+                          label: Localization().getStringEx("panel.groups_settings.add_image", "Add Cover Image"),
                           textColor: Styles().colors!.fillColorPrimary,
-                          onTap: _onTapAddImage,))))
+                          onTap: _onTapAddImage,
+                          backgroundColor: Colors.transparent,
+                          contentWeight: 0.8,
+                    ))))
         ]));
   }
 
@@ -322,7 +327,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             Container(width: 8),
             Expanded(
                 flex: 2,
-                child: ScalableRoundedButton(
+                child: RoundedButton(
                     label: Localization().getStringEx("panel.groups_create.button.tags.title", "Tags"),
                     hint: Localization().getStringEx("panel.groups_create.button.tags.hint", ""),
                     backgroundColor: Styles().colors!.white,
@@ -475,8 +480,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Widget _buildMembershipLayout() {
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount)
-        ? (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_create.questions.existing.label", "Question(s)")!)
-        : Localization().getStringEx("panel.groups_create..questions.missing.label", "No question")!;
+        ? (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_create.questions.existing.label", "Question(s)"))
+        : Localization().getStringEx("panel.groups_create..questions.missing.label", "No question");
 
     return Container(
       color: Styles().colors!.background,
@@ -486,7 +491,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Semantics(
             explicitChildNodes: true,
             child: _buildMembershipButton(
-                title: Localization().getStringEx("panel.groups_create.membership.questions.title", "Membership Questions")!,
+                title: Localization().getStringEx("panel.groups_create.membership.questions.title", "Membership Questions"),
                 description: questionsDescription,
                 onTap: _onTapQuestions)),
         Container(height: 20),
@@ -539,28 +544,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   // AuthMan Group
   Widget _buildAuthManLayout() {
-    bool isAuthManGroup = _isAuthManGroup;
     return Padding(
         padding: EdgeInsets.only(left: 16, top: 12, right: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(
-              decoration: BoxDecoration(
-                  color: Styles().colors!.white,
-                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(4))),
-              padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Expanded(
-                    child: Text(Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this a managed membership group?")!,
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
-                  GestureDetector(
-                      onTap: _onTapAuthMan,
-                      child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset(isAuthManGroup ? 'images/switch-on.png' : 'images/switch-off.png')))
-                ])
-              ])),
+          _buildSwitch(title: Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this a managed membership group?"),
+              value: _isAuthManGroup,
+              onTap: _onTapAuthMan
+          ),
           Visibility(
-              visible: isAuthManGroup,
+              visible: _isAuthManGroup,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 _buildSectionTitle(Localization().getStringEx("panel.groups_create.authman.group.name.label", "Membership name"), null, true),
                 Container(
@@ -595,33 +587,44 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     }
   }
 
+  //Polls
+  Widget _buildPollsLayout(){
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.only_admins_create_polls.enabled.label", "Only admins can create Polls"), //TBD localization
+          value: _group?.onlyAdminsCanCreatePolls,
+          onTap: _onTapOnlyAdminCreatePolls
+      ),
+    );
+  }
+
+  void _onTapOnlyAdminCreatePolls(){
+    if(_group?.onlyAdminsCanCreatePolls != null) {
+      if(mounted){
+        setState(() {
+          _group!.onlyAdminsCanCreatePolls = !(_group!.onlyAdminsCanCreatePolls ?? false);
+        });
+      }
+    }
+  }
+
   //Buttons
   Widget _buildButtonsLayout() {
     return
-      Stack(alignment: Alignment.center, children: <Widget>[
         Container( color: Styles().colors!.white,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
-            child: ScalableRoundedButton(
+            child: RoundedButton(
               label: Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
               backgroundColor: Styles().colors!.white,
               borderColor: _canSave ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
               textColor: _canSave ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
               enabled: _canSave,
+              progress:  _creating,
               onTap: _onCreateTap,
             ),
-          )
-          ,),
-        Visibility(visible: _creating,
-          child: Container(
-            child: Align(alignment: Alignment.center,
-              child: SizedBox(height: 24, width: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-              ),
-            ),
           ),
-        ),
-      ],);
+        );
   }
 
   void _onCreateTap() {
@@ -646,7 +649,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             switch (error.code) {
               case 1: message = Localization().getStringEx("panel.groups_create.permission.error.message", "You do not have permission to perform this operation."); break;
               case 5: message = Localization().getStringEx("panel.groups_create.name.error.message", "A group with this name already exists. Please try a different name."); break;
-              default: message = sprintf(Localization().getStringEx("panel.groups_create.failed.msg", "Failed to create group: %s.")!, [error.text ?? Localization().getStringEx('panel.groups_create.unknown.error.message', 'Unknown error occurred')]); break;
+              default: message = sprintf(Localization().getStringEx("panel.groups_create.failed.msg", "Failed to create group: %s."), [error.text ?? Localization().getStringEx('panel.groups_create.unknown.error.message', 'Unknown error occurred')]); break;
             }
             AppAlert.showDialogResult(context, message);
           }
@@ -719,6 +722,27 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   )
               ))
       ],)));
+  }
+
+  Widget _buildSwitch({String? title, bool? value, void Function()? onTap}){
+    return Container(
+      child: Container(
+          decoration: BoxDecoration(
+              color: Styles().colors!.white,
+              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(4))),
+          padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Expanded(
+                  child: Text(title ?? "",
+                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
+              GestureDetector(
+                  onTap: onTap ?? (){},
+                  child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset((value ?? false) ? 'images/switch-on.png' : 'images/switch-off.png')))
+            ])
+          ])),
+    );
   }
 
   void onNameChanged(String name){

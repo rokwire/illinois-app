@@ -16,26 +16,37 @@ The official mobile app of the University of Illinois. Powered by the [Rokwire P
 
 
 ### Clone this repo
+```
+git clone --recurse-submodules https://github.com/rokwire/illinois-app.git
+```
+
+### Make sure app flutter plugin persists
+Rokwire app flutter plugin is used by the Illinois app. It should be located in the `plugin` subdirectory of the application's root project directory. If it does not exist you need to clone it manually.
+```
+cd illinois-app.git
+git clone https://github.com/rokwire/app-flutter-plugin.git plugin
+```
 
 ### Supply the following private configuration files:
 
-#### • /.travis.yml
-[No description available]
+#### • .travis.yml
+Obsolete, not used after version 2.0 inclusive.
 
 
-#### • /secrets.tar.enc
-[No description available]
+#### • secrets.tar.enc
+Obsolete, not used after version 2.0 inclusive.
 
-#### • /assets/config.keys.json (for versions after 3.0 inclusive)
+#### • assets/config.keys.json (for versions after 3.0 inclusive)
 JSON data with the following format:
+```
 {
-	"key":"",
-	"iv":""
+	"key":"...",
+	"iv":"..."
 }
+```
+`key` and `iv` fields contain strings that are base64 encoded randomly generated 16-bytes AES128 key and IV. These keys are used for decryption of `assets/configs.json.enc` from the application assets as well as for the decryption of `secretKeys` enctypted string in app config.
 
-"key" and "iv" fields contain base64 strings of randomly generated 16-bytes AES128 key and IV. These keys are used for decryption of "/assets/configs.json.enc" from application assets as well as for the decryption of "secretKeys" string in application config.
-
-#### • /assets/configs.json.enc
+#### • assets/configs.json.enc
 1. JSON data with the following format:
 ```
 {
@@ -54,32 +65,32 @@ JSON data with the following format:
 }
 ```
 2. For versions prior to 3.0:
-2.1. Generate random 16-bytes AES128 key.
-2.2. AES encrypt the JSON string, CBC mode, PKCS7 padding, using the AES.
-2.3. Create a data blob contains the AES key at the beginning followed by the encrypted data.
-2.4. Get a base64 encoded string of the data blob and save it as "/assets/configs.json.enc".
+   - Generate random 16-bytes AES128 key.
+   - AES encrypt the JSON string, CBC mode, PKCS7 padding, using the AES.
+   - Create a data blob that contains the AES key at the beginning followed by the encrypted data.
+   - Get a base64 encoded string of the data blob and save it as `assets/configs.json.enc`.
 
-Alternatively, you can use AESCrypt.encode from /lib/utils/Crypt.dart to generate content of /assets/configs.json.enc.
+Alternatively, you can use AESCrypt.encode from /lib/utils/Crypt.dart to generate content of `assets/configs.json.enc`.
 
 3. For versions after 3.0 inclusive:
-3.1. AES encrypt the JSON string, CBC mode, PKCS7 padding, using the key and IV from "/assets/config.keys.json".
-2.4. Get a base64 encoded string of the encryption result and save it as "/assets/configs.json.enc".
+   - AES encrypt the JSON string, CBC mode, PKCS7 padding, using the key and IV from `assets/config.keys.json`.
+   - Get a base64 encoded string of the encryption result and save it as `assets/configs.json.enc`.
 
-#### • /ios/Runner/GoogleService-Info-Debug.plist
-#### • /ios/Runner/GoogleService-Info-Release.plist
+#### • ios/Runner/GoogleService-Info-Debug.plist
+#### • ios/Runner/GoogleService-Info-Release.plist
 
 The Firebase configuration file for iOS generated from Google Firebase console.
 
-#### • /android/keys.properties
+#### • android/keys.properties
 Contains a GoogleMaps and Android Backup API keys.
 ```
 googleMapsApiKey=XXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
 androidBackupApiKey=XXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
-#### • /android/app/src/debug/google-services.json
-#### • /android/app/src/release/google-services.json
-#### • /android/app/src/profile/google-services.json
+#### • android/app/src/debug/google-services.json
+#### • android/app/src/release/google-services.json
+#### • android/app/src/profile/google-services.json
 The Firebase configuration file for Android generated from Google Firebase console.
 
 ### Build the project
@@ -88,5 +99,5 @@ The Firebase configuration file for Android generated from Google Firebase conso
 $ flutter build apk
 $ flutter build ios
 ```
-NB: You may need to update singing & capabilities content for Runner project by opening /ios/Runner.xcworkspace from xCode
+NB: You may need to update singing & capabilities content for Runner project by opening `ios/Runner.xcworkspace` from xCode
 

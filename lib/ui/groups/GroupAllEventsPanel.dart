@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -6,7 +7,7 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -23,11 +24,11 @@ class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttribu
 }
 
 class _GroupAllEventsState extends State<GroupAllEventsPanel>{
-  List<GroupEvent>?   _groupEvents;
+  List<Event>?   _groupEvents;
 
   @override
   void initState() {
-    Groups().loadEvents(widget.group).then((Map<int, List<GroupEvent>>? eventsMap) {
+    Groups().loadEvents(widget.group).then((Map<int, List<Event>>? eventsMap) {
       if (mounted) {
         setState(() {
           _groupEvents = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
@@ -40,15 +41,8 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.groups_all_events.label.heading","Upcoming Events")! + "(${_groupEvents?.length ?? ""})",
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.groups_all_events.label.heading","Upcoming Events") + "(${_groupEvents?.length ?? ""})",
       ),
       body:SingleChildScrollView(child:
          Column(
@@ -61,7 +55,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
         ),
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -70,7 +64,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
     bool isCurrentUserAdmin = widget.group?.currentUserIsAdmin ?? false;
 
     if (_groupEvents != null) {
-      for (GroupEvent? groupEvent in _groupEvents!) {
+      for (Event? groupEvent in _groupEvents!) {
         content.add(GroupEventCard(groupEvent: groupEvent, group: widget.group, isAdmin: isCurrentUserAdmin));
       }
     }

@@ -44,8 +44,8 @@ class AthleticsSportItemWidget extends StatelessWidget {
         child: Semantics(
           label: label,
           value: (selected?Localization().getStringEx("toggle_button.status.checked", "checked",) :
-                Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
-                ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
+                Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
+                ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
           button:true,
           excludeSemantics: true,
           child: Container(

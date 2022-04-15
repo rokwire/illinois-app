@@ -24,23 +24,19 @@ import 'package:illinois/ui/settings/SettingsLocationPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class SettingsNotificationsPreferencesPanel extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx("panel.settings.notification_prefferences.label.title", "Notifications Preferences")!,
-          style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.settings.notification_prefferences.label.title", "Notifications Preferences"),
       ),
       body: SingleChildScrollView(child: _buildContent(context)),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

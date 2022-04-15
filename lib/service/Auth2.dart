@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -48,6 +49,22 @@ class Auth2 extends rokwire.Auth2 {
   // Service
 
   @override
+  void createService() {
+    super.createService();
+    NotificationService().subscribe(this, [
+      FlexUI.notifyChanged,
+    ]);
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this, [
+      FlexUI.notifyChanged,
+    ]);
+    super.destroyService();
+  }
+
+  @override
   Future<void> initService() async {
     _uiucToken = Storage().auth2UiucToken;
 
@@ -55,6 +72,22 @@ class Auth2 extends rokwire.Auth2 {
     _authCard = await _loadAuthCardFromCache();
 
     await super.initService();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    super.onNotification(name, param);
+    if (name == FlexUI.notifyChanged) {
+      _checkEnabled();
+    }
+  }
+
+  void _checkEnabled() {
+    if (isLoggedIn && !FlexUI().hasFeature('authentication')) {
+      logout();
+    }
   }
 
   // Getters

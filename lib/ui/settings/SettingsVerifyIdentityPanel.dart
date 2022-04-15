@@ -16,14 +16,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 
 class SettingsVerifyIdentityPanel extends StatefulWidget{
@@ -44,16 +44,12 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx("panel.settings.verify_identity.label.title", "Verify your Identity")!,
-          style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.settings.verify_identity.label.title", "Verify your Identity"),
       ),
       body: SingleChildScrollView(child: _buildContent()),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -66,7 +62,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           Container(height: 41),
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
             child: Text(
-              Localization().getStringEx("panel.settings.verify_identity.label.description", "Connect to Illinois")!,
+              Localization().getStringEx("panel.settings.verify_identity.label.description", "Connect to Illinois"),
               style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 24, fontFamily: Styles().fontFamilies!.extraBold),
             ),
           ),
@@ -123,13 +119,13 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
   void _onTapConnectNetId() {
     if (_loading != true) {
       _setLoading(true);
-      Auth2().authenticateWithOidc().then((bool? success) {
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? success) {
         if (mounted) {
           _setLoading(false);
-          if (success == true) {
+          if (success == Auth2OidcAuthenticateResult.succeeded) {
             _didLogin(context);
           }
-          else if (success == false) {
+          else if (success == Auth2OidcAuthenticateResult.failed) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
           }
         }
@@ -142,12 +138,12 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
     Navigator.push(
         context,
         CupertinoPageRoute(
-            builder: (context) => Onboarding2LoginPhoneOrEmailPanel(onboardingContext: {
-                  "onContinueAction": () {
+            builder: (context) => SettingsLoginPhoneOrEmailPanel(
+                  onFinish: () {
                     _setLoading(false);
                     _didLogin(context);
                   }
-                })));
+                )));
   }
 
   void _didLogin(_) {

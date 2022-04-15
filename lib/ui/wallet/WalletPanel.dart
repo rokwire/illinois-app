@@ -19,23 +19,24 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as plugin_auth;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/VerticalTitleContentSection.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/section.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class WalletPanel extends StatefulWidget{
@@ -89,21 +90,11 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       body: CustomScrollView(
         slivers: <Widget>[
           SliverHeaderBar(
-            context: context,
-            backVisible: false,
-            onBackPressed: () {
-              Analytics().logSelect(target: 'Close');
-              Navigator.pop(context);
-            } ,
-            backgroundColor: Styles().colors!.surface,
-            titleWidget: Text(
-              Localization().getStringEx( "panel.wallet.label.title", "Wallet")!,
-              style: TextStyle(
-                  fontFamily: Styles().fontFamilies!.extraBold,
-                  color: Styles().colors!.fillColorPrimary,
-                  fontSize: 20,
-                  letterSpacing: 1.0),
-            ),
+            leadingAsset: null,
+            backgroundColor: Styles().colors?.surface,
+            title: Localization().getStringEx( "panel.wallet.label.title", "Wallet"),
+            textColor: Styles().colors!.fillColorPrimary,
+            fontSize: 20,
             actions: <Widget>[
               Visibility(
                 visible: widget.scrollController != null,
@@ -207,10 +198,10 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
         Analytics().logSelect(target: "Log in");
         if (_authLoading != true) {
           setState(() { _authLoading = true; });
-          Auth2().authenticateWithOidc().then((bool? result) {
+          Auth2().authenticateWithOidc().then((plugin_auth.Auth2OidcAuthenticateResult? result) {
             if (mounted) {
               setState(() { _authLoading = false; });
-              if (result == false) {
+              if (result != plugin_auth.Auth2OidcAuthenticateResult.succeeded) {
                 AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
               }
             }
@@ -222,7 +213,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
 
   Widget _buildLoginPhoneOrEmailButton() {
     return RoundedButton(
-        label: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.title', 'Login By Email or Phone'),
+        label: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.title', 'Sign In by Email or Phone'),
         hint: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.hint', ''),
         backgroundColor: Styles().colors!.surface,
         fontSize: 16.0,
@@ -233,12 +224,10 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           Analytics().logSelect(target: "Log in");
           Navigator.push(context, CupertinoPageRoute(
             settings: RouteSettings(),
-            builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
-              onboardingContext: {
-                "onContinueAction": () {
-                  _didLogin(context);
-                }
-              },
+            builder: (context) => SettingsLoginPhoneOrEmailPanel(
+              onFinish: () {
+                _didLogin(context);
+              }
             ),
           ),);
         },
@@ -291,31 +280,25 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
         child: Row(
           children: <Widget>[
             Expanded(
-              child: VerticalTitleContentSection(
+              child: VerticalTitleValueSection(
                 title: Localization().getStringEx('panel.settings.illini_cash.label.current_balance','Current Illini Cash Balance'),
-                content: IlliniCash().ballance?.balanceDisplayText ?? "\$0.00",
+                value: IlliniCash().ballance?.balanceDisplayText ?? "\$0.00",
               ),
             ),
-            Semantics(
-              explicitChildNodes: true,
-              child: Container(child:
-              Semantics(
+            Semantics(button: true, excludeSemantics: true,
               label: Localization().getStringEx("panel.wallet.button.add_illini_cash.title","Add Illini Cash"),
               hint: Localization().getStringEx("panel.wallet.button.add_illini_cash.hint",""),
-              button: true,
-              excludeSemantics: true,
-              child:
-              IconButton(
-                color: Styles().colors!.fillColorPrimary,
-                icon: Image.asset('images/button-plus-orange.png', excludeFromSemantics: true,),
+              child: IconButton(
+              color: Styles().colors!.fillColorPrimary,
+              icon: Image.asset('images/button-plus-orange.png', excludeFromSemantics: true,),
                 onPressed: (){
                   Analytics().logSelect(target: "Add Illini Cash");
                   Navigator.push(context, CupertinoPageRoute(
                     builder: (context) => SettingsAddIlliniCashPanel()
                   ));
                 },
-              ))),
-            )
+              ),
+            ),
           ],
         ),
       ),
@@ -338,17 +321,17 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
         child: Row(
           children: <Widget>[
             Expanded(
-              child: VerticalTitleContentSection(
+              child: VerticalTitleValueSection(
                 title: Localization().getStringEx(
                     "panel.settings.meal_plan.label.meals_remaining.text", "Meals Remaining"),
-                content: IlliniCash().ballance?.mealBalanceDisplayText ?? "0",
+                value: IlliniCash().ballance?.mealBalanceDisplayText ?? "0",
               ),
             ),
             Expanded(
-              child: VerticalTitleContentSection(
+              child: VerticalTitleValueSection(
                 title: Localization().getStringEx(
                     "panel.settings.meal_plan.label.dining_dollars.text", "Dining Dollars"),
-                content: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
+                value: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
               ),
             )
           ],
@@ -427,7 +410,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               ),
             ),
             Text(
-              Localization().getStringEx("panel.wallet.label.expires.title", "Card expires")! + " $expires",
+              Localization().getStringEx("panel.wallet.label.expires.title", "Card expires") + " $expires",
               style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.medium,
@@ -437,7 +420,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
             Container(height: 5,),
             Semantics(explicitChildNodes: true,child:
               RoundedButton(
-                label: Localization().getStringEx("panel.wallet.button.use_bus_pass.title", "Use bus pass"),
+                label: Localization().getStringEx("panel.wallet.button.use_bus_pass.title", "Use Bus Pass"),
                 hint: Localization().getStringEx("panel.wallet.button.use_bus_pass.hint", ""),
                 textColor: Styles().colors!.fillColorPrimary,
                 backgroundColor: Styles().colors!.white,
@@ -467,7 +450,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              Localization().getStringEx("panel.wallet.label.uin.title", "UIN",)!,
+              Localization().getStringEx("panel.wallet.label.uin.title", "UIN",),
               style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.medium,
@@ -625,6 +608,7 @@ class _RoundedWidget extends StatelessWidget{
                     Semantics(explicitChildNodes: true, child:
                       _ViewButton(
                         label: Localization().getStringEx( "panel.wallet.button.view.title", "View"),
+                        hint: title,
                         onTap: onView,
                       )
                     ),
@@ -650,30 +634,37 @@ class _RoundedWidget extends StatelessWidget{
 class _ViewButton extends StatelessWidget{
 
   final String? label;
+  final String? hint;
   final void Function() onTap;
 
-  _ViewButton({required this.label, required this.onTap});
+  _ViewButton({required this.label, required this.onTap, this.hint});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: <Widget>[
-            Text(label!,
-              style: TextStyle(
-                color: Styles().colors!.fillColorPrimary,
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 16,
+    return
+      Semantics(
+        label: label,
+        hint: hint ?? "",
+        child: GestureDetector(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            children: <Widget>[
+              Text(label!,
+                semanticsLabel: "",
+                style: TextStyle(
+                  color: Styles().colors!.fillColorPrimary,
+                  fontFamily: Styles().fontFamilies!.bold,
+                  fontSize: 16,
+                ),
               ),
-            ),
-            Container(width: 10,),
-            Image.asset('images/chevron-right.png', excludeFromSemantics: true),
-          ],
+              Container(width: 10,),
+              Image.asset('images/chevron-right.png', excludeFromSemantics: true),
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 }

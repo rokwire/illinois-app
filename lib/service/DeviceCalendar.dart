@@ -1,5 +1,7 @@
 
 import 'package:flutter/foundation.dart';
+import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/service/Canvas.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -65,12 +67,12 @@ class DeviceCalendar extends rokwire.DeviceCalendar implements NotificationsList
 
   @override
   void onCreateOrUpdateEventFailed(Result<String>? createEventResult) {
-    AppToast.show(createEventResult?.data ?? createEventResult?.errors.toString() ?? Localization().getStringEx('logic.calendar.create_event_failed', 'Failed to create event.')!);
+    AppToast.show(createEventResult?.data ?? createEventResult?.errors.toString() ?? Localization().getStringEx('logic.calendar.create_event_failed', 'Failed to create event.'));
   }
 
   @override
-  void onRequestPermisionFailed() {
-    AppToast.show(Localization().getStringEx('logic.calendar.permission_denied', 'Unable to save event to calendar. Permissions not granted.')!);
+  void onRequestPermissionFailed() {
+    AppToast.show(Localization().getStringEx('logic.calendar.permission_denied', 'Unable to save event to calendar. Permissions not granted.'));
   }
 }
 
@@ -93,6 +95,9 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
     }
     else if (data is GuideFavorite){
       return _DeviceCalendarEvent.fromGuide(data);
+    }
+    else if (data is CanvasCalendarEvent){
+      return _DeviceCalendarEvent.fromCanvasCalendarEvent(data);
     }
 
     return null;
@@ -127,5 +132,15 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
         startDate: Guide().reminderDate(guideEntryData),
         deepLinkUrl: "${Guide().guideDetailUrl}?guide_id=${guide.id}"
       ) : null;
+  }
+
+  static _DeviceCalendarEvent? fromCanvasCalendarEvent(CanvasCalendarEvent? event){
+    return (event != null) ? _DeviceCalendarEvent(
+        title: event.title,
+        internalEventId: event.id?.toString(),
+        startDate: event.startAtLocal,
+        endDate: event.endAtLocal,
+        deepLinkUrl: "${Canvas().canvasEventDetailUrl}?event_id=${event.id}"
+    ) : null;
   }
 }

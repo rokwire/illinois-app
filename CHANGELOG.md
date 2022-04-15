@@ -6,7 +6,307 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [3.2.11] - 2022-02-01
+## [3.3.17] - 2022-04-15
+### Fixed
+- Properly handle UI changes when privacy level is changed [#1546](https://github.com/rokwire/illinois-app/issues/1546).
+- Remove 3 broken external links [#1555](https://github.com/rokwire/illinois-app/issues/1555).
+### Changed
+- Update strings related to privacy level [#1553](https://github.com/rokwire/illinois-app/issues/1553).
+
+## [3.3.16] - 2022-04-14
+### Changed
+- Updated strings in "privacy_new" section from assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+- Updated privacy descriptions again in "privacy_new" section from assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+- UI improvements [#1550](https://github.com/rokwire/illinois-app/issues/1550).
+- Acknwoledged user privacy level and authentication status in Groups [#1548](https://github.com/rokwire/illinois-app/issues/1548).
+
+## [3.3.15] - 2022-04-12
+### Added
+- Added more sections in "privacy_new" section from assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+### Changed
+- Privacy alert content and fixed delay after user's selection [#1536](https://github.com/rokwire/illinois-app/issues/1536).
+- Gies cleanup [#1543](https://github.com/rokwire/illinois-app/issues/1543).
+### Fixed
+- Show "Game Day Guide" button only for men's basketball and football [#1531](https://github.com/rokwire/illinois-app/issues/1531).
+
+## [3.3.14] - 2022-04-11
+### Added
+- User's profile picture in group listing panel [#1534](https://github.com/rokwire/illinois-app/issues/1534).
+### Changed
+- Show Edit Image panel for editing user's profile picture [#1538](https://github.com/rokwire/illinois-app/issues/1538).
+- Buttons for editing user's profile picture [#1532](https://github.com/rokwire/illinois-app/issues/1532).
+- App behavior when "Building Access" is tapped [#1536](https://github.com/rokwire/illinois-app/issues/1536).
+
+## [3.3.13] - 2022-04-07
+### Fixed
+- User profile picture rotation before upload [#1528](https://github.com/rokwire/illinois-app/issues/1528).
+
+## [3.3.12] - 2022-04-06
+### Fixed
+- User profile picture improvements [#1526](https://github.com/rokwire/illinois-app/issues/1526).
+
+## [3.3.11] - 2022-04-05
+### Fixed
+- Fixed missing Group Input box for Search field of select member [#1513](https://github.com/rokwire/illinois-app/issues/1513).
+
+## [3.3.10] - 2022-04-04
+### Fixed
+- Change "log in" to "sign in" [#1514](https://github.com/rokwire/illinois-app/issues/1514).
+- Fixed Group event update members selection [#1519](https://github.com/rokwire/illinois-app/issues/1519).
+
+## [3.3.9] - 2022-04-01
+### Changed
+- Semantics improvements: WalletPanel added hint for "View" buttons [#503](https://github.com/rokwire/illinois-app/issues/503).
+- Semantics improvements: HomeSaferWidget try fixing semantics id by replacing InkWell with GestureDetector [#1281](https://github.com/rokwire/illinois-app/issues/1281).
+### Fixed
+- Trim user's fullname retrieved from auth card [#1504](https://github.com/rokwire/illinois-app/issues/1504).
+- Change button title from "Skip" to "Continue" when the video has ended [#1511](https://github.com/rokwire/illinois-app/issues/1511).
+
+## [3.3.8] - 2022-03-30
+### Added
+- User Profile Picture [#1500](https://github.com/rokwire/illinois-app/issues/1500).
+### Changed
+- Semantics improvements: PollBubblePromptPanel - Announce when voting was successful [#1496](https://github.com/rokwire/illinois-app/issues/1496).
+- Semantics improvements: Announce when poll was closed successfully [#1494](https://github.com/rokwire/illinois-app/issues/1494).
+- Semantics improvements: add semantics for Athletics images (game/roster/coach/etc.) [#510](https://github.com/rokwire/illinois-app/issues/510).
+
+## [3.3.7] - 2022-03-28
+### Changed
+- Place "video_tutorial_url" in "otherUniversityServices" config section [#1498](https://github.com/rokwire/illinois-app/issues/1498).
+
+## [3.3.6] - 2022-03-25
+### Changed
+- Added "Health Illini Podcast" interactive activity to all Interactive Activities across the wellness panels [#1485](https://github.com/rokwire/illinois-app/issues/1485).
+- Updated GroupsMembersSelectionWidget [#1487](https://github.com/rokwire/illinois-app/issues/1487).
+
+## [3.3.5] - 2022-03-24
+### Added
+- Added "Health Illini Podcast" interactive activity in Wellness home panel [#1485](https://github.com/rokwire/illinois-app/issues/1485).
+- Added Member selection widget into the Group Event Add/Create panels [#1487](https://github.com/rokwire/illinois-app/issues/1487). 
+### Changed
+- The way group member goes to member list [#1484](https://github.com/rokwire/illinois-app/issues/1484).
+- Reordered buttons in DebugHomePanel.
+
+## [3.3.4] - 2022-03-23
+### Added
+- Allow group members to see members list [#1482](https://github.com/rokwire/illinois-app/issues/1482).
+### Fixed
+- Make the "Skip" button in Onboarding2VideoTutorialPanel smaller [#1479](https://github.com/rokwire/illinois-app/issues/1479).
+
+## [3.3.3] - 2022-03-22
+### Changed
+- Android: rotate device screen to desired orientation if it's supported and accelerometer rotation is allowed [#1470](https://github.com/rokwire/illinois-app/issues/1470).
+
+## [3.3.2] - 2022-03-21
+### Added
+- SettingsideoTutorialPanel with playing video [#1470](https://github.com/rokwire/illinois-app/issues/1470).
+### Changed
+- Update Group post for selected members [#1450](https://github.com/rokwire/illinois-app/issues/1450).
+
+## [3.3.1] - 2022-03-17
+### Added
+- Onboarding2VideoTutorialPanel with playing video [#1470](https://github.com/rokwire/illinois-app/issues/1470).
+- Implement Group post for selected members [#1450](https://github.com/rokwire/illinois-app/issues/1450).
+### Changed
+- Link to plugin 1.0.0.
+- Various controls moved to plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+
+## [3.2.37] - 2022-03-17
+### Fixed
+- Await complete initialization after OIDC login before displaying IDCardPanel from Building Access home widget [#1467](https://github.com/rokwire/illinois-app/issues/1467).
+### Changed
+- Link to rokwire plugin version 0.0.3.
+
+## [3.2.36] - 2022-03-16
+### Fixed
+- PollBubblePinPanel: improve Accessibility [#1446](https://github.com/rokwire/illinois-app/issues/1446).
+- Wrong game dates [#1451](https://github.com/rokwire/illinois-app/issues/1451).
+- Always show "Building Access" widgets on the home screen [#1460](https://github.com/rokwire/illinois-app/issues/1460).
+- Handle tap action on "Building Access" widget [#1462](https://github.com/rokwire/illinois-app/issues/1462).
+- Saving Privacy level [#1463](https://github.com/rokwire/illinois-app/issues/1463).
+- Fix crash in onboarding [#1448](https://github.com/rokwire/illinois-app/issues/1448).
+
+
+## [3.2.35] - 2022-03-10
+### Fixed
+- GroupEditImagePanel: fix cancel button functionality [#1441](https://github.com/rokwire/illinois-app/issues/1441).
+
+## [3.2.34] - 2022-03-09
+### Changed
+- Label in SettingsPersonalInfoPanel from 'NetID' to 'UIN' [#1334](https://github.com/rokwire/illinois-app/issues/1334).
+- Updated display of campus reminder card [#1401](https://github.com/rokwire/illinois-app/issues/1401).
+### Fixed
+- Groups - App is hanging when user selects an option in Image source [#1431](https://github.com/rokwire/illinois-app/issues/1431).
+- Groups - App results in a black screen when the user selects an image in the gallery [#1432](https://github.com/rokwire/illinois-app/issues/1432).
+
+## [3.2.33] - 2022-03-07
+### Fixed
+- Wrap confirmation buttons in Expanded widget when building a prompt in Group detail panel [#1426](https://github.com/rokwire/illinois-app/issues/1426).
+
+## [3.2.32] - 2022-03-04
+### Fixed
+- Center header bar in Wellness panels [#1417](https://github.com/rokwire/illinois-app/issues/1417).
+- Require relogin when linking NetID account [#1420](https://github.com/rokwire/illinois-app/issues/1420).
+
+## [3.2.31] - 2022-03-02
+### Changed
+- Alternate Login Changes [#1407](https://github.com/rokwire/illinois-app/issues/1407).
+
+## [3.2.30] - 2022-03-02
+### Changed
+- Alternate Login Changes [#1407](https://github.com/rokwire/illinois-app/issues/1407).
+
+## [3.2.29] - 2022-03-01
+### Changed
+- Gies group name updated to "Gies Online Programs" to match production name [#1408](https://github.com/rokwire/illinois-app/issues/1408).
+- Alternate Login Changes (not finished) - Settings and Add panels [#1407](https://github.com/rokwire/illinois-app/issues/1407).
+
+## [3.2.28] - 2022-02-28
+### Changed
+- Reorder Home panel widgets [#1402](https://github.com/rokwire/illinois-app/issues/1402).
+### Fixed
+- Android: plugin initialization [#1405](https://github.com/rokwire/illinois-app/issues/1405).
+### Added
+- Added pull to refresh in Explore panel [#1404](https://github.com/rokwire/illinois-app/issues/1404).
+
+## [3.2.27] - 2022-02-25
+### Added
+- Account linking verbiage updates [#1393](https://github.com/rokwire/illinois-app/issues/1393)
+### Changed
+- Text capitalization in various screens [#1386](https://github.com/rokwire/illinois-app/issues/1386).
+- Reorder home panel widgets [#1397](https://github.com/rokwire/illinois-app/issues/1397).
+### Fixed
+- Crash on "Forget My Information" [#1392](https://github.com/rokwire/illinois-app/issues/1392).
+- Fixed privacy acknowledgement in diffent (but not all) places [#1357](https://github.com/rokwire/illinois-app/issues/1357).
+
+## [3.2.26] - 2022-02-24
+### Fixed
+- Account linking UI improvements [#1378](https://github.com/rokwire/illinois-app/issues/1378)
+- Fix issues with account linking [#1356](https://github.com/rokwire/illinois-app/issues/1356)
+### Changed
+- Modify Wellness Answer Center button [#1364](https://github.com/rokwire/illinois-app/issues/1364).
+### Removed
+- Retrieve group by canvas course [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Added
+- Added account switch dropdown in Home Twitter widget [#1389](https://github.com/rokwire/illinois-app/issues/1389).
+
+## [3.2.25] - 2022-02-23
+### Added
+- Display Gies, Twitter and Canvas home widgets based on user group membership [#1377](https://github.com/rokwire/illinois-app/issues/1377).
+- Use LMS BB for Canvas requests [#1381](https://github.com/rokwire/illinois-app/issues/1381).
+- Added "Due Date Catalog" button in Browse panel [#1371](https://github.com/rokwire/illinois-app/issues/1371).
+### Changed
+- Update GIES wizard [#1379](https://github.com/rokwire/illinois-app/issues/1379).
+
+## [3.2.24] - 2022-02-21
+### Added
+- Time in Rewards history debug panel [#1372](https://github.com/rokwire/illinois-app/issues/1372).
+- Implement crop/rotate when adding image [#1375](https://github.com/rokwire/illinois-app/issues/1375)
+
+## [3.2.23] - 2022-02-18
+### Added
+- SectionTitlePrimary and LinkTileButtons moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- FlexContentWidget moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- Redirect user to external web page when Canvas "Zoom Meeting" is tapped [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Possibility for loading collaborations, modules and assignments for all Canvas courses [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Canvas user info in the Debug panel [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+
+## [3.2.22] - 2022-02-17
+### Added
+- Rewards model and service. Show balance and history in the debug panel [#1363](https://github.com/rokwire/illinois-app/issues/1363).
+
+## [3.2.21] - 2022-02-16
+### Added
+- TweeterPage widget: add next/previous buttons [#1353](https://github.com/rokwire/illinois-app/issues/1353).
+- TabBar widget moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- WebPanel moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- Possibility for loading both events and assignments in Canvas calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Possibility for loading announcements for all Canvas courses [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Fixed
+- Messages for events and assignments in Canvas Calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Removed
+- Canvas Feedback [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+
+## [3.2.20] - 2022-02-15
+### Added
+- Header bars moved to Rokwire plugin UI section [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- Ribbon buttons moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- Masquerade a user when requesting Canvas API [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Canvas Assignments in the calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Removed
+- Canvas Course completion / result percentage [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Canvas 'Grades' [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Changed
+- Remove Scroll from twitter page and workaround setState exception [#1353](https://github.com/rokwire/illinois-app/issues/1353).
+
+## [3.2.19] - 2022-02-14
+### Added
+- Canvas Assignments [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+
+## [3.2.18] - 2022-02-11
+### Added
+- Added analytics packets timestamps [#1340](https://github.com/rokwire/illinois-app/issues/1340).
+- Gies wizard support navigation buttons [#1343](https://github.com/rokwire/illinois-app/issues/1343).
+- implement "Only admins can create Polls" for group [#1346](https://github.com/rokwire/illinois-app/issues/1346).
+### Changed
+- Values for the courses dropdown in Canvas calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Fixed
+- Fixed some display tweaks of Twitter entries [#1322](https://github.com/rokwire/illinois-app/issues/1322).
+
+## [3.2.17] - 2022-02-10
+### Added
+- Dropdown with courses in Canvas calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Changed
+- RoundedButton moved to Rokwire plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+- IDCardPanel show QRCodewith card number if magTrack2 is missing [#1338](https://github.com/rokwire/illinois-app/issues/1338).
+
+## [3.2.16] - 2022-02-09
+### Added
+- Authman Groups UI improvements [#1323](https://github.com/rokwire/illinois-app/issues/1323).
+- Canvas Calendar - arrows for changing week, marker for each day which has events, possibility for saving events [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Show image in group card [#1331](https://github.com/rokwire/illinois-app/issues/1331).
+### Changed
+- Inbox renamed to Notifications [#1326](https://github.com/rokwire/illinois-app/issues/1326).
+- In Groups allow an Admin to End/Close a Poll even if they did not create it. [#1328](https://github.com/rokwire/illinois-app/issues/1328).
+### Removed
+- Canvas Course code from the card [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+
+## [3.2.15] - 2022-02-08
+### Added
+- HomeSaferWidget: add semantics label (id) for each button [#1281](https://github.com/rokwire/illinois-app/issues/1281).
+- Canvas "Group" button that redirects to GroupsHomePanel [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Canvas "Feedback" button that reports an error [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Changed
+- IDCardPanel: add more detailed semantics label (id) for building access image [#881](https://github.com/rokwire/illinois-app/issues/881).
+- Canvas "Inbox" to "Notification history" [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Moved all items from CanvasCourseSyllabusPanel to CanvasCourseHomePanel [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- HomeGies widget content update [#1316](https://github.com/rokwire/illinois-app/issues/1316).
+### Fixed
+- Canvas Course header is cut off [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Canvas Calendar overflowing [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+- Fixed missing Twitter Home widget for gies user [#1320](https://github.com/rokwire/illinois-app/issues/1320).
+
+## [3.2.14] - 2022-02-07
+### Added
+- Canvas Modules data model and UI [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Changed
+- Rokwire plugin moved to a separate repository [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+
+## [3.2.13] - 2022-02-04
+### Added
+- Canvas Notifications data model and UI [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Changed
+- Improved Semantics for Gies Widgets [#1307](https://github.com/rokwire/illinois-app/issues/1307).
+
+## [3.2.12] - 2022-02-03
+### Added
+- Canvas Calendar [#1274](https://github.com/rokwire/illinois-app/issues/1274).
+### Changed
+- Content service moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- Tracking authorization support moved to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+- launchApp and launchAppSettings APIs to Rokwire plugin [#1203](https://github.com/rokwire/illinois-app/issues/1203).
+
+## [3.2.11] - 2022-02-02
 ### Added
 - Link multiple authentication types to one account [#1233](https://github.com/rokwire/illinois-app/issues/1233).
 - Canvas Calendar sample UI (in progress) [#1274](https://github.com/rokwire/illinois-app/issues/1274).

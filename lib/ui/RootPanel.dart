@@ -15,12 +15,14 @@
  */
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/main.dart';
+import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -50,11 +52,12 @@ import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/PopupDialog.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/ui/popups/popup_message.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/service/Canvas.dart';
 
 enum RootTab { Home, Athletics, Explore, Wallet, Browse }
 
@@ -116,6 +119,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
       Guide.notifyGuideDetail,
+      Canvas.notifyCanvasEventDetail,
       Localization.notifyStringsUpdated,
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
@@ -125,6 +129,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyPromptPopup,
       DeviceCalendar.notifyCalendarSelectionPopup,
       DeviceCalendar.notifyShowConsoleMessage,
+      uiuc.TabBar.notifySelectionChanged,
     ]);
 
     _tabs = _getTabs();
@@ -195,6 +200,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == Guide.notifyGuideDetail) {
       _onGuideDetail(param);
     }
+    else if (name == Canvas.notifyCanvasEventDetail) {
+      _onCanvasEventDetail(param);
+    }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
         setState(() { });
@@ -229,6 +237,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
     }
+    else if (name == uiuc.TabBar.notifySelectionChanged) {
+      _onTabSelectionChanged(param);
+    }
+  }
+
+  void _onTabSelectionChanged(int tabIndex) {
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      RootTab? tab = getRootTabByIndex(tabIndex);
+      selectTab(rootTab: tab);
+    }
   }
 
   @override
@@ -250,9 +269,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                 physics: NeverScrollableScrollPhysics(), //disable scrolling
                 children: panels,
               ),
-              bottomNavigationBar: TabBarWidget(tabController: _tabBarController),
-              backgroundColor: Styles().colors!.background,
-            ),
+            bottomNavigationBar: uiuc.TabBar(tabController: _tabBarController),
+            backgroundColor: Styles().colors!.background,
+          ),
         ),
         onWillPop: _onWillPop);
   }
@@ -267,8 +286,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _initTabBarController() {
-    _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: _tabBarController?.index ?? 0);
+  void _initTabBarController({RootTab? rootTab}) {
+    int initialIndex = (rootTab != null) ? max(_getIndexByRootTab(rootTab), 0)  : 0;
+    _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: initialIndex);
   }
 
   void _selectTabAtIndex(int index) {
@@ -341,7 +361,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                       padding: EdgeInsets.all(8),
                       child: Center(
                         child: Text(
-                          Localization().getStringEx("app.title", "Illinois")!,
+                          Localization().getStringEx("app.title", "Illinois"),
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                       ),
@@ -353,7 +373,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
             Container(height: 26,),
             Text(
               Localization().getStringEx(
-                  "app.exit_dialog.message", "Are you sure you want to exit?")!,
+                  "app.exit_dialog.message", "Are you sure you want to exit?"),
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontFamily: Styles().fontFamilies!.bold,
@@ -416,17 +436,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         context: context,
         contentWidget: Text(Localization().getStringEx(
             'prompt.device_calendar.msg.add_event',
-            'Do you want to save this event to your calendar?')!),
+            'Do you want to save this event to your calendar?')),
         actions: <Widget>[
           TextButton(
               child:
-              Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
+              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Navigator.of(context).pop();
                 DeviceCalendar().placeEvent(data);
               }),
           TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')!),
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
               onPressed: () => Navigator.of(context).pop())
         ]);
   }
@@ -442,14 +462,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebasePopupMessage(Map<String, dynamic> content) {
-    String? displayText = content["display_text"];
-    String? positiveButtonText = content["positive_button_text"];
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return PopupDialog(displayText: displayText, positiveButtonText: positiveButtonText);
-      },
+    PopupMessage.show(context: context,
+      title: Localization().getStringEx("app.title", "Illinois"),
+      message: JsonUtils.stringValue(content["display_text"]),
+      buttonTitle: JsonUtils.stringValue(content["positive_button_text"]) ?? Localization().getStringEx("dialog.ok.title", "OK")
     );
   }
 
@@ -483,6 +499,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       });
       if (mounted) {
         setState(() {}); // Force the postFrameCallback invokation.
+      }
+    }
+  }
+
+  Future<void> _onCanvasEventDetail(Map<String, dynamic>? content) async {
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) : null;
+    if (StringUtils.isNotEmpty(eventId)) {
+      int? eventIdValue = int.tryParse(eventId!);
+      if (eventIdValue != null) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: eventIdValue)));
       }
     }
   }
@@ -554,16 +580,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _updateContent() {
     List<RootTab> tabs = _getTabs();
     if (!DeepCollectionEquality().equals(_tabs, tabs)) {
+      RootTab? currentRootTab = getRootTabByIndex(_currentTabIndex);
       _updatePanels(tabs);
       if (mounted) {
         setState(() {
           _tabs = tabs;
-          _initTabBarController();
+          _initTabBarController(rootTab: currentRootTab);
         });
       }
       else {
         _tabs = tabs;
-        _initTabBarController();
+        _initTabBarController(rootTab: currentRootTab);
       }
     }
   }
@@ -712,8 +739,8 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                       Expanded(
                           flex: 5,
                           child: Text(
-                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')!
-                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title", " and if it is an event, also your calendar")! :"") + ".",
+                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')
+                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title", " and if it is an event, also your calendar") :"") + ".",
                             style: TextStyle(
                               color: Styles().colors!.white,
                               fontSize: 16,
@@ -730,7 +757,7 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                       child: GestureDetector(
                         onTap: _onViewAll,
                         child: Text(
-                          Localization().getStringEx("widget.favorites_saved_dialog.button.view", "View")!,
+                          Localization().getStringEx("widget.favorites_saved_dialog.button.view", "View"),
                           style: TextStyle(
                               color: Styles().colors!.white,
                               fontSize: 14,

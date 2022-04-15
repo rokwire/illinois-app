@@ -10,7 +10,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class GuideCategoriesPanel extends StatefulWidget {
@@ -100,15 +100,14 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx('panel.guide_categories.label.heading', 'Campus Guide')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.guide_categories.label.heading', 'Campus Guide'), 
       ),
       body: Column(children: <Widget>[
           Expanded(child:
             _buildContent(),
           ),
-          TabBarWidget(),
+          uiuc.TabBar(),
         ],),
       backgroundColor: Styles().colors!.background,
     );
@@ -135,7 +134,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
     else {
       return Padding(padding: EdgeInsets.all(32), child:
         Center(child:
-          Text(Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+          Text(Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
         ,)
       );
     }
@@ -182,6 +181,6 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
 
   void _onTapSection(GuideSection section, {String? category}) {
     Analytics().logSelect(target: "$category / ${section.name}");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(category: category, section: section,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(guide: widget.guide, category: category, section: section,)));
   }
 }

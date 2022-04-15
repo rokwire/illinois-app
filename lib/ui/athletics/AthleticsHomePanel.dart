@@ -34,17 +34,15 @@ import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/HomeHeader.dart';
-import 'package:illinois/ui/widgets/OptionSelectionCell.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 
 import 'AthleticsTeamsPanel.dart';
 
@@ -86,34 +84,28 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(
-          context: context,
-          titleWidget: Semantics(label: Localization().getStringEx('panel.athletics.header.title', 'Athletics'),
-              excludeSemantics:true,
-              child:
-              Text(
-                Localization().getStringEx('panel.athletics.header.title', 'Athletics')!,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.0),
-              )
+      appBar: AppBar(
+        backgroundColor: Styles().colors!.fillColorPrimaryVariant,
+        leading: Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
+          IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),),
+        title: Semantics(label: Localization().getStringEx('panel.athletics.header.title', 'Athletics'), excludeSemantics: true, child:
+          Text(Localization().getStringEx('panel.athletics.header.title', 'Athletics'), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),),
+        actions: <Widget>[
+          Semantics(label: Localization().getStringEx('headerbar.teams.title', 'Teams'), button: true, excludeSemantics: true, child: 
+            InkWell(onTap: _onTapTeams, child:
+              Container(child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 19), child:
+                Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.semiBold, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid))
+              ),
+              ),
+            ),
           ),
-          rightButtonVisible: true,
-          rightButtonText: Localization().getStringEx('headerbar.teams.title', 'Teams')!,
-          onRightButtonTap: () {
-            Analytics().logSelect(target: "Teams");
-            Navigator.push(
-                context,
-                CupertinoPageRoute(
-                    builder: (context) =>
-                        AthleticsTeamsPanel()));
-          },
+        ],
+
       ),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: _buildContentWidget()),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: widget.showTabBar ? TabBarWidget() : null,
+      bottomNavigationBar: widget.showTabBar ? uiuc.TabBar() : null,
       );
   }
 
@@ -144,9 +136,10 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                           hint: Localization().getStringEx("panel.athletics.label.upcoming_events.hint", ""),
                           header: true,
                           excludeSemantics: true,
-                          child: HomeHeader(
-                              title: Localization().getStringEx("panel.athletics.label.upcoming_events.title", "Upcoming Events"),
-                              imageRes: 'images/icon-calendar.png'),
+                          child: SectionRibbonHeader(
+                            title: Localization().getStringEx("panel.athletics.label.upcoming_events.title", "Upcoming Events"),
+                            titleIconAsset: 'images/icon-calendar.png',
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 0, right: 0),
@@ -176,8 +169,8 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                               Expanded(flex: 1, child: Container()),
                               Expanded(
                                 flex: 5,
-                                child: ScalableRoundedButton(
-                                  label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See more events'),
+                                child: RoundedButton(
+                                  label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See More Events'),
                                   hint: Localization().getStringEx("panel.athletics.button.see_more_events.hint", ''),
                                   onTap: _onTapMoreUpcomingEvents,
                                   backgroundColor: Styles().colors!.background,
@@ -203,7 +196,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                       child: Text(
-                                        Localization().getStringEx("panel.athletics.label.all_illinois_sports.title",'All Illinois Sports')!,
+                                        Localization().getStringEx("panel.athletics.label.all_illinois_sports.title",'All Illinois Sports'),
                                         style: TextStyle(
                                             color: Styles().colors!.fillColorPrimary,
                                             fontSize: 20,
@@ -219,7 +212,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                             MainAxisAlignment.start,
                                         children: <Widget>[
                                           Text(
-                                            Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the ")!,
+                                            Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the "),
                                             style: TextStyle(
                                                 fontFamily: Styles().fontFamilies!.medium,
                                                 color: Styles().colors!.textBackground,
@@ -229,7 +222,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                               'images/icon-check-example.png', excludeFromSemantics: true),
                                           Expanded(
                                             child:Text(
-                                              Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams")!,
+                                              Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                   fontFamily: Styles().fontFamilies!.medium,
@@ -291,7 +284,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 ),
                                                 Expanded(child:
                                                   Text(
-                                                    Localization().getStringEx("panel.athletics.label.explore_athletics.title", 'Explore Athletics')!,
+                                                    Localization().getStringEx("panel.athletics.label.explore_athletics.title", 'Explore Athletics'),
                                                     style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 20),
@@ -300,106 +293,54 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                               ],
                                             )),
                                           ),
-                                          Padding(
-                                            padding: EdgeInsets.all(16),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: <Widget>[
-                                                Column(
-                                                  children: <Widget>[
-                                                    GestureDetector(
-                                                      onTap:
-                                                          _onTapMoreUpcomingEvents,
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 8),
-                                                        child:
-                                                            OptionSelectionCell(
-                                                              label:
-                                                                Localization().getStringEx("panel.athletics.button.upcoming_events.title", 'Upcoming Events'),
-                                                              hint:
-                                                                Localization().getStringEx("panel.athletics.button.upcoming_events.hint", ''),
-                                                              iconPath:
-                                                                  'images/2.0x/upcoming_events_orange.png',
-                                                              selectedIconPath:
-                                                                  'images/2.0x/upcoming_events_orange.png',
-                                                        ),
-                                                      ),
+                                          Padding(padding: EdgeInsets.all(16), child:
+                                            Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
+                                              Expanded(child:
+                                                Column(children: <Widget>[
+                                                  Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                                    TileButton(
+                                                      title: Localization().getStringEx("panel.athletics.button.upcoming_events.title", 'Upcoming Events'),
+                                                      hint: Localization().getStringEx("panel.athletics.button.upcoming_events.hint", ''),
+                                                      iconAsset: 'images/2.0x/upcoming_events_orange.png',
+                                                      contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
+                                                      onTap: _onTapMoreUpcomingEvents,
                                                     ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        _onTapNews();
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 8),
-                                                        child:
-                                                            OptionSelectionCell(
-                                                              label:
-                                                                Localization().getStringEx("panel.athletics.button.news.title", 'News'),
-                                                              hint:
-                                                                Localization().getStringEx("panel.athletics.button.news.hint", ''),
-                                                              iconPath:
-                                                                  'images/2.0x/teal.png',
-                                                              selectedIconPath:
-                                                                  'images/2.0x/teal.png',
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                Column(
-                                                  children: <Widget>[
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        _onTapTickets();
-                                                          },
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 8),
-                                                        child:
-                                                            OptionSelectionCell(
-                                                              label:
-                                                                Localization().getStringEx("panel.athletics.button.tickets.title", 'Tickets'),
-                                                              hint:
-                                                                Localization().getStringEx("panel.athletics.button.tickets.hint", ''),
-                                                              iconPath:
-                                                                'images/2.0x/tickets_yellow.png',
-                                                              selectedIconPath:
-                                                                'images/2.0x/tickets_yellow.png',
-                                                        ),
-                                                      ),
+                                                  ),
+                                                  Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                                    TileButton(
+                                                      title: Localization().getStringEx("panel.athletics.button.news.title", 'News'),
+                                                      hint: Localization().getStringEx("panel.athletics.button.news.hint", ''),
+                                                      iconAsset: 'images/2.0x/teal.png',
+                                                      contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
+                                                      onTap: _onTapNews,
                                                     ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        _onTapGameDayGuide();
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 8),
-                                                        child:
-                                                            OptionSelectionCell(
-                                                              label:
-                                                                Localization().getStringEx("panel.athletics.button.game_day_guide.title", 'Game Day Guide'),
-                                                              hint:
-                                                                Localization().getStringEx("panel.athletics.button.game_day_guide.hint", ''),
-                                                              iconPath:
-                                                                  'images/2.0x/game_day_blue.png',
-                                                              selectedIconPath:
-                                                                  'images/2.0x/game_day_blue.png',
-                                                        ),
+                                                  ),
+                                                ],),
+                                              ),
+                                              Container(width: 12,),
+                                              Expanded(child:
+                                                Column(children: <Widget>[
+                                                  /*Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                                    TileButton(
+                                                      title: Localization().getStringEx("panel.athletics.button.tickets.title", 'Tickets'),
+                                                      hint: Localization().getStringEx("panel.athletics.button.tickets.hint", ''),
+                                                      iconAsset: 'images/2.0x/tickets_yellow.png',
+                                                      contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
+                                                      onTap: _onTapTickets,
                                                       ),
-                                                    )
-                                                  ],
-                                                )
-                                              ],
-                                            ),
+                                                    ),*/
+                                                  Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                                    TileButton(
+                                                      title: Localization().getStringEx("panel.athletics.button.game_day_guide.title", 'Game Day Guide'),
+                                                      hint: Localization().getStringEx("panel.athletics.button.game_day_guide.hint", ''),
+                                                      iconAsset: 'images/2.0x/game_day_blue.png',
+                                                      contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
+                                                      onTap: _onTapGameDayGuide,
+                                                    ),
+                                                  ),
+                                                ],)
+                                              ),
+                                            ],),
                                           )
                                         ],
                                       )
@@ -452,6 +393,15 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     _setLoading(false);
   }
 
+  void _onTapHome() {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  void _onTapTeams() {
+    Analytics().logSelect(target: "Teams");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamsPanel()));
+  }
+
   void _onTapMoreUpcomingEvents() {
     Analytics().logSelect(target: "More Events");
     if (Connectivity().isNotOffline) {
@@ -478,7 +428,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     }
   }
 
-  void _onTapTickets() {
+  /*void _onTapTickets() {
     Analytics().logSelect(target:"Tickets");
     if (Connectivity().isNotOffline && (Config().ticketsUrl != null)) {
       Navigator.push(
@@ -492,7 +442,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.tickets', 'Tickets are not available while offline.'));
     }
-  }
+  }*/
 
   void _onTapGameDayGuide() {
     Analytics().logSelect(target:"Game Day Guide");
@@ -753,7 +703,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                                     children: <Widget>[
                                       Text(Localization().getStringEx(
                                           'widget.card.label.interests',
-                                          'Because of your interest in:')!,
+                                          'Because of your interest in:'),
                                         style: TextStyle(
                                             color: Styles().colors!.textBackground,
                                             fontSize: 12,

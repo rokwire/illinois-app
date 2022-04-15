@@ -15,9 +15,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -116,21 +116,18 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     else {
       contentWidget = Padding(padding: EdgeInsets.all(32), child:
         Center(child:
-          Text(Localization().getStringEx('panel.guide_detail.label.content.empty', 'Empty guide content')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+          Text(Localization().getStringEx('panel.guide_detail.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
         ,)
       );
     }
 
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(headerTitle ?? '', style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
-      ),
+      appBar: HeaderBar(title: headerTitle),
       body: Column(children: <Widget>[
           Expanded(child:
             contentWidget
           ),
-          TabBarWidget(),
+          uiuc.TabBar(),
         ],),
       backgroundColor: Styles().colors!.background,
     );
@@ -335,7 +332,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                         Padding(padding: EdgeInsets.only(top: numberTopPadding, bottom: numberBottomPadding), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Padding(padding: EdgeInsets.only(left: numberLeftPadding, right: numberRightPadding), child:
-                              Text(sprintf(numberTextFormat, numberIndex + 1), style: TextStyle(color: numberColor, fontSize: numberFontSize, fontFamily: numberFontFamily),),),
+                              Text(sprintf(numberTextFormat, [numberIndex + 1]), style: TextStyle(color: numberColor, fontSize: numberFontSize, fontFamily: numberFontFamily),),),
                             Expanded(child:
                               Html(data: numberHtml,
                               onLinkTap: (url, context, attributes, element) => _onTapLink(url),
@@ -403,15 +400,14 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
           if (StringUtils.isNotEmpty(text) && StringUtils.isNotEmpty(uri?.scheme)) {
             buttonWidgets.add(
               Padding(padding: EdgeInsets.only(top: 16), child:
-                RoundedButton(label: text,
+                RoundedButton(label: text ?? '',
                   backgroundColor: Styles().colors!.white,
                   textColor: Styles().colors!.fillColorPrimary,
                   fontFamily: Styles().fontFamilies!.bold,
                   fontSize: 16,
-                  padding: EdgeInsets.symmetric(horizontal: 32, ),
                   borderColor: Styles().colors!.fillColorSecondary,
                   borderWidth: 2,
-                  height: 48,
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   onTap:() { _onTapLink(url);  }
                 )              
               ),
@@ -462,8 +458,8 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
 
     return ((contentList != null) && (0 < contentList.length)) ?
       Container(padding: EdgeInsets.symmetric(vertical: 16), child:
-        SectionTitlePrimary(title: "Related",
-          iconPath: 'images/icon-related.png',
+        SectionSlantHeader(title: "Related",
+          titleIconAsset: 'images/icon-related.png',
           children: contentList,
       )) :
       Container();

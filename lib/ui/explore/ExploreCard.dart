@@ -89,7 +89,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     int? eventConvergeScore = (explore is Event) ? explore.convergeScore : null;
     String convergeScore = ((eventConvergeScore != null) ? (eventConvergeScore.toString() + '%') : null) ?? "";
     String interests = ((explore is Event) ? _getInterestsLabelValue() : null) ?? "";
-    interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')!) : "";
+    interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')) : "";
     String eventType = explore?.typeDisplayString??"";
 
     return "$category, $title, $time, $locationText, $workTime, $convergeScore, $interests, $eventType";
@@ -168,7 +168,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                                               children: <Widget>[
                                                 Text(Localization().getStringEx(
                                                     'widget.card.label.interests',
-                                                    'Because of your interest in:')!,
+                                                    'Because of your interest in:'),
                                                   style: TextStyle(
                                                       color: Styles().colors!.textBackground,
                                                       fontSize: 12,
@@ -367,7 +367,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     String? eventType;
     if(widget.explore!=null && widget.explore is Event) {
       bool isVirtual = (widget.explore as Event).isVirtual ?? false;
-      eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+      eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
       iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
     }
     String? locationText = eventType ?? widget.explore?.getShortDisplayLocation(widget.locationData);

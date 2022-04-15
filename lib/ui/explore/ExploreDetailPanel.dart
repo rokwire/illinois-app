@@ -53,7 +53,7 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
     }
     else{ // Default for unexpected type
       return Scaffold(
-        appBar: SimpleHeaderBarWithBack(context: context,),
+        appBar: HeaderBar(),
       );
     }
   }

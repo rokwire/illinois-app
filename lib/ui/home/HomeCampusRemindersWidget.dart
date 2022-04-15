@@ -29,8 +29,8 @@ import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCampusRemindersWidget extends StatefulWidget {
@@ -97,9 +97,9 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(_reminderItems), child:
       Column(children: [
-          SectionTitlePrimary(
+          SectionSlantHeader(
             title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
-            iconPath: 'images/campus-tools.png',
+            titleIconAsset: 'images/campus-tools.png',
             children: _buildRemindersList()
           ),
         ]),
@@ -128,7 +128,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
       }
       if (_maxItems < _reminderItems!.length) {
         contentList.add(Container(height: 16,));
-        contentList.add(ScalableRoundedButton(
+        contentList.add(RoundedButton(
           label: Localization().getStringEx('widget.home_campus_reminders.button.more.title', 'View All'),
           hint: Localization().getStringEx('widget.home_campus_reminders.button.more.hint', 'Tap to view all reminders'),
           borderColor: Styles().colors!.fillColorSecondary,

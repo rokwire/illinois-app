@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsTeamsPanel extends StatefulWidget {
@@ -30,16 +30,8 @@ class _AthleticsTeamsPanelState extends State<AthleticsTeamsPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SimpleHeaderBarWithBack(
-          context: context,
-          titleWidget: Text(
-            Localization().getStringEx('panel.athletics_teams.header.title', 'Teams')!,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.0),
-          ),
+        appBar: HeaderBar(
+          title: Localization().getStringEx('panel.athletics_teams.header.title', 'Teams'),
         ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -57,7 +49,7 @@ class _AthleticsTeamsPanelState extends State<AthleticsTeamsPanel> {
           ]),
         ),
         backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: TabBarWidget(),
+        bottomNavigationBar: uiuc.TabBar(),
         );
   }
 }

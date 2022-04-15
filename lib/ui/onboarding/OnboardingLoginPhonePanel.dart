@@ -23,7 +23,7 @@ import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class OnboardingLoginPhonePanel extends StatefulWidget with OnboardingPanel {
 
@@ -50,7 +50,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
 
   @override
   Widget build(BuildContext context) {
-    String titleString = Localization().getStringEx('panel.onboarding.login.phone.label.title', 'Verify your phone number')!;
+    String titleString = Localization().getStringEx('panel.onboarding.login.phone.label.title', 'Verify your phone number');
     String? skipTitle = Localization().getStringEx('panel.onboarding.login.phone.button.dont_continue.title', 'Not right now');
     return Scaffold(
         backgroundColor: Styles().colors!.background,
@@ -97,7 +97,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                       ),
                       Padding(
                           padding: EdgeInsets.symmetric(horizontal: 32),
-                          child: Text(Localization().getStringEx('panel.onboarding.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.')!,
+                          child: Text(Localization().getStringEx('panel.onboarding.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.'),
                               textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
                       Container(
                         height: 32,
@@ -109,11 +109,11 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    ScalableRoundedButton(
+                    RoundedButton(
                       label: Localization().getStringEx('panel.onboarding.login.phone.button.continue.title', 'Verify My Phone Number'),
                       hint: Localization().getStringEx('panel.onboarding.login.phone.button.continue.hint', ''),
                       fontSize: 16,
-                      padding: EdgeInsets.symmetric(vertical: 12),
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       borderColor: Styles().colors!.fillColorSecondary,
                       backgroundColor: Styles().colors!.white,
                       textColor: Styles().colors!.fillColorPrimary,

@@ -24,7 +24,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -93,7 +93,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
               child: IconButton(
                   icon: Image.asset('images/chevron-left-white.png'),
                   onPressed: () => _onTapBack(),)),
-          flexibleSpace: SingleChildScrollView(child:Column(
+          flexibleSpace: Align(alignment: Alignment.bottomCenter, child: SingleChildScrollView(child:Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               _buildImage(_jsonContent, 'header.image'),
@@ -106,7 +106,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
                 )),
               )
             ],
-          )),
+          ))),
           centerTitle: true,
         ),
       ),
@@ -160,7 +160,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
           ],
         ),
       ),
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -480,12 +480,11 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
             hint != null ? StringUtils.ensureNotEmpty(hint, defaultValue: "panel.wellness.common.resources.poor_accessibility.hint") : null;
         String? hintValue = StringUtils.isNotEmpty(hintKey) ? Localization().getStringFromKeyMapping(hintKey, _stringsContent) : "";
         RibbonButton button = RibbonButton(
-          height: null,
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),
           borderRadius: BorderRadius.all(Radius.circular(5)),
           label: title,
           hint: hintValue,
-          icon: 'images/$iconValue',
+          rightIconAsset: 'images/$iconValue',
           onTap: () => _onTapRibbonButton(ribbonButtonSource),
         );
         buttonWidgets.add(button);

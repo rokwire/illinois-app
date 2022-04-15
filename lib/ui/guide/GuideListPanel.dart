@@ -26,7 +26,7 @@ import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -134,10 +134,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     }
     
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
-      ),
+      appBar: HeaderBar(title: title),
       body: Column(children: _buildContent()),
       backgroundColor: Styles().colors!.background,
     );
@@ -189,13 +186,13 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         Expanded(child:
           Padding(padding: EdgeInsets.all(32), child:
             Center(child:
-              Text(Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+              Text(Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
             ,)
           ),
         ),
       );
     }
-    contentList.add(TabBarWidget());
+    contentList.add(uiuc.TabBar());
 
     return contentList;
   }

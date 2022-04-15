@@ -16,103 +16,45 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/expandable_text.dart' as rokwire;
 
-class ExpandableText extends StatefulWidget {
-  const ExpandableText(
-      this.text, {
-        Key? key,
-        this.trimLines = 3,
-        this.style,
-        this.iconColor,
-      })  : super(key: key);
+class ExpandableText extends rokwire.ExpandableText {
+  const ExpandableText(String text, {
+    Key? key,
+    TextStyle? textStyle,
 
-  final String text;
-  final int trimLines;
-  final TextStyle? style;
-  final Color? iconColor;
+    int trimLinesCount = 3,
+
+    Color? splitterColor,
+    double splitterHeight = 1.0,
+    EdgeInsetsGeometry splitterMargin = const EdgeInsets.symmetric(vertical: 5),
+
+    TextStyle? readMoreStyle,
+
+    Widget? readMoreIcon,
+    String? readMoreIconAsset = 'images/icon-down-orange.png',
+    EdgeInsetsGeometry readMoreIconPadding = const EdgeInsets.only(left: 7),
+  }) : super(text,
+    key: key,
+    textStyle: textStyle,
+
+    trimLinesCount: trimLinesCount,
+
+    splitterColor: splitterColor,
+    splitterHeight: splitterHeight,
+    splitterMargin: splitterMargin,
+
+    readMoreStyle: readMoreStyle,
+    
+    readMoreIcon: readMoreIcon,
+    readMoreIconAsset: readMoreIconAsset,
+    readMoreIconPadding: readMoreIconPadding,
+  );
 
   @override
-  ExpandableTextState createState() => ExpandableTextState();
-}
-
-class ExpandableTextState extends State<ExpandableText> {
-
-  bool _collapsed = true;
+  String get trimSuffix => '...';
 
   @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        TextPainter textPainter = TextPainter(
-          textScaleFactor: MediaQuery.of(context).textScaleFactor,
-          text: TextSpan(
-            text: "...",
-            style: widget.style,
-          ),
-          textDirection: TextDirection.rtl,
-          maxLines: widget.trimLines,
-        );
-        textPainter.layout(minWidth: constraints.minWidth, maxWidth: constraints.maxWidth);
-        final elipsisSize = textPainter.size;
-        textPainter.text = TextSpan(
-            text: widget.text,
-            style: widget.style
-        );
-        textPainter.layout(minWidth: constraints.minWidth, maxWidth: constraints.maxWidth);
-        final textSize = textPainter.size;
-        int? endIndex;
-        final pos = textPainter.getPositionForOffset(Offset(
-          textSize.width - elipsisSize.width,
-          textSize.height,
-        ));
-        endIndex = textPainter.getOffsetBefore(pos.offset);
-        if (textPainter.didExceedMaxLines) {
-          return Column(
-            children: <Widget>[
-              RichText(
-                textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                softWrap: true,
-                overflow: TextOverflow.clip,
-                text: TextSpan(
-                  text: _collapsed
-                      ? widget.text.substring(0, endIndex) + "..."
-                      : widget.text,
-                  style: widget.style,
-                ),
-              ),
-              _collapsed ? Container(color: Styles().colors!.fillColorSecondary,height: 1,margin: EdgeInsets.only(top:5, bottom: 5),) : Container(),
-              _collapsed ? Semantics(
-                button: true,
-                label: Localization().getStringEx( "app.common.label.read_more", "Read more"),
-                child: GestureDetector(
-                  onTap: _onTapLink,
-                  child: Center(child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(Localization().getStringEx( "app.common.label.read_more", "Read more")!, style: TextStyle(fontSize: 16,
-                          fontFamily: Styles().fontFamilies!.bold,
-                          color: Styles().colors!.fillColorPrimary),),
-                      Padding(
-                        padding: EdgeInsets.only(left: 7), child: Image.asset('images/icon-down-orange.png', color: widget.iconColor, excludeFromSemantics: true),),
-                    ],),
-                  ),
-                ),
-              ) : Container(),
-            ],
-          );
-        } else {
-          return Text(
-            widget.text,
-            style: widget.style,
-          );
-        }
-      },
-    );
-  }
-
-  void _onTapLink() {
-    setState(() => _collapsed = !_collapsed);
-  }
+  String get readMoreText => Localization().getStringEx('app.common.label.read_more', 'Read more');
 }
+

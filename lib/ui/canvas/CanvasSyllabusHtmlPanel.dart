@@ -20,7 +20,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -47,19 +47,12 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-          context: context,
-          titleWidget: Text(Localization().getStringEx('panel.syllabus_html.header.title', 'Syllabus')!,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.0)
-          )
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.syllabus_html.header.title', 'Syllabus'),
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -80,7 +73,7 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
 
   Widget _buildErrorContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.syllabus_html.load.failed.error.msg', 'Failed to load syllabus content. Please, try again later.')!,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.syllabus_html.load.failed.error.msg', 'Failed to load syllabus content. Please, try again later.'),
             textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 

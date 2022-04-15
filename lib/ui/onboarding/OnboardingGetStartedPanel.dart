@@ -19,8 +19,8 @@ import 'package:illinois/main.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/SwipeDetector.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
@@ -39,10 +39,10 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
         'Welcome to Illinois');
     String strPersonalizedRecommendations = Localization().getStringEx(
         'panel.onboarding.get_started.label.personalized_recommendations',
-        'Get personalized recommendations for the')!;
+        'Get personalized recommendations for the');
     String strUniversityofIllinois = Localization().getStringEx(
         'panel.onboarding.get_started.label.university_of_illinois',
-        'University of Illinois')!;
+        'University of Illinois');
 
     return Scaffold(body: SwipeDetector(
         onSwipeLeft: () => _goNext(context),
@@ -86,7 +86,7 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: 20),
-                              child: ScalableRoundedButton(
+                              child: RoundedButton(
                                 label: Localization().getStringEx(
                                     'panel.onboarding.get_started.button.get_started.title',
                                     'Get Started'),

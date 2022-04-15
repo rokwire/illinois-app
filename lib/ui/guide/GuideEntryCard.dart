@@ -58,9 +58,29 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
     String? descriptionHtml = Guide().entryListDescription(widget.guideEntry);
     bool isReminder = Guide().isEntryReminder(widget.guideEntry);
     String? reminderDate = isReminder ? AppDateTime().formatDateTime(Guide().reminderDate(widget.guideEntry), format: 'MMM dd', ignoreTimeZone: true) : null;
+
+    List<Widget> contentList = Guide().isEntryReminder(widget.guideEntry) ? <Widget>[
+      Padding(padding: EdgeInsets.only(right: 17), child:
+        Text(reminderDate ?? '',
+          style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 18, color: Styles().colors?.fillColorPrimary, ),),),
+      Container(height: 4),
+      Html(data: titleHtml ?? '',
+        onLinkTap: (url, context, attributes, element) => _onTapLink(url),
+        style: { "body": Style(fontFamily: Styles().fontFamilies?.medium, fontSize: FontSize(16), color: Styles().colors?.fillColorPrimary, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+    ] : <Widget>[
+      Padding(padding: EdgeInsets.only(right: 17), child:
+        Html(data: titleHtml ?? '',
+          onLinkTap: (url, context, attributes, element) => _onTapLink(url),
+          style: { "body": Style(fontFamily: Styles().fontFamilies?.extraBold, fontSize: FontSize(20), color: Styles().colors?.fillColorPrimary, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),),
+      Container(height: 8),
+      Html(data: descriptionHtml ?? '',
+        onLinkTap: (url, context, attributes, element) => _onTapLink(url),
+        style: { "body": Style(fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), color: Styles().colors?.textBackground, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+    ];
+
     return Container(
       decoration: BoxDecoration(
-          color: Styles().colors!.white,
+          color: Styles().colors?.white,
           boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
       ),
@@ -69,21 +89,9 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
         GestureDetector(onTap: _onTapEntry, child:
           Semantics(button: true, child:
             Padding(padding: EdgeInsets.all(16), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Padding(padding: EdgeInsets.only(right: 17), child:
-                Html(data: titleHtml ?? '',
-                  onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                  style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),),
-                Container(height: isReminder ? 4 : 8,),
-                isReminder ?
-                  Text(reminderDate ?? '',
-                    style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),) :
-                  Html(data: descriptionHtml ?? '',
-                    onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                    style: { "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
-              ],),
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
           ),)),
-        Container(color: Styles().colors!.accentColor3, height: 4),
+        Container(color: Styles().colors?.accentColor3, height: 4),
         Visibility(visible: Auth2().canFavorite, child:
           Align(alignment: Alignment.topRight, child:
           Semantics(

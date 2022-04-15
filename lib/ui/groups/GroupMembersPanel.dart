@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -26,11 +27,9 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupMemberPanel.dart';
 import 'package:illinois/ui/groups/GroupPendingMemberPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/HomeHeader.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -127,9 +126,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   void _refreshAllMembersFilterText(){
     if(_selectedMembersFilter == _allMembersFilter){
-      _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members?.length.toString() ?? "0");
+      _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All Members (#)").replaceAll("#", _members?.length.toString() ?? "0");
     } else {
-      _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members?.length.toString() ?? "0");
+      _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All Members (#)").replaceAll("#", _members?.length.toString() ?? "0");
     }
   }
   void _applyMembersFilter(){
@@ -160,29 +159,23 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   @override
   Widget build(BuildContext context) {
+    String headerTitle = _isAdmin
+        ? Localization().getStringEx("panel.manage_members.header.admin.title", "Manage Members")
+        : Localization().getStringEx("panel.manage_members.header.member.title", "Members");
     return Scaffold(
         backgroundColor: Styles().colors!.background,
-        appBar: SimpleHeaderBarWithBack(
-          context: context,
-          titleWidget: Text(Localization().getStringEx("panel.manage_members.header.title", "Manage Members",)!,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontFamily: Styles().fontFamilies!.extraBold,
-                letterSpacing: 1.0),
-          ),
-        ),
+        appBar: HeaderBar(title: headerTitle),
         body: _isLoading
             ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ))
             : SingleChildScrollView(
           child:Column(
             children: <Widget>[
-              _buildRequests(),
+              Visibility(visible: _isAdmin, child: _buildRequests()),
               _buildMembers()
             ],
           ),
         ),
-        bottomNavigationBar: TabBarWidget(),
+        bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -200,7 +193,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         requests.add(Container(
           padding: EdgeInsets.only(top: 20, bottom: 10),
           child: SmallRoundedButton(
-            label: Localization().getStringEx("panel.manage_members.button.see_all_requests.title", "See all # requests")!.replaceAll("#", _pendingMembers!.length.toString()),
+            label: Localization().getStringEx("panel.manage_members.button.see_all_requests.title", "See all # requests").replaceAll("#", _pendingMembers!.length.toString()),
             hint: Localization().getStringEx("panel.manage_members.button.see_all_requests.hint", ""),
             onTap: () {
               Analytics().logSelect(target: 'See all requests');
@@ -212,8 +205,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         ));
       }
 
-      return SectionTitlePrimary(title: Localization().getStringEx("panel.manage_members.label.requests", "Requests"),
-        iconPath: 'images/icon-reminder.png',
+      return SectionSlantHeader(title: Localization().getStringEx("panel.manage_members.label.requests", "Requests"),
+        titleIconAsset: 'images/icon-reminder.png',
         children: <Widget>[
           Column(
             children: requests,
@@ -245,9 +238,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         child: Column(
           children: <Widget>[
             Container(
-              child: HomeHeader(
+              child: SectionRibbonHeader(
                 title: Localization().getStringEx("panel.manage_members.label.members", "Members"),
-                imageRes: 'images/icon-member.png',
+                titleIconAsset: 'images/icon-member.png',
               ),
             ),
             _buildMembersFilter(),
@@ -399,6 +392,10 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     return _selectedMembersFilter == _allMembersFilter ||
         _selectedMembersFilter == member!.officerTitle;
   }
+
+  bool get _isAdmin {
+    return _group?.currentUserAsMember?.isAdmin ?? false;
+  }
 }
 
 class _PendingMemberCard extends StatelessWidget {
@@ -418,9 +415,8 @@ class _PendingMemberCard extends StatelessWidget {
       child: Row(
         children: <Widget>[
           ClipRRect(
-            borderRadius: BorderRadius.circular(65),
-            child: Container(width: 65, height: 65 ,child: StringUtils.isNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
-          ),
+              borderRadius: BorderRadius.circular(65),
+              child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId))),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(left: 11),
@@ -436,8 +432,8 @@ class _PendingMemberCard extends StatelessWidget {
                     ),
                   ),
                   Container(height: 4,),
-                      ScalableRoundedButton(
-                        label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review request"),
+                      RoundedButton(
+                        label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review Request"),
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
                         borderColor: Styles().colors!.fillColorSecondary,
                         textColor: Styles().colors!.fillColorPrimary,
@@ -461,7 +457,7 @@ class _PendingMemberCard extends StatelessWidget {
   }
 }
 
-class _GroupMemberCard extends StatelessWidget{
+class _GroupMemberCard extends StatelessWidget {
   final Member? member;
   final Group? group;
   _GroupMemberCard({required this.member, required this.group});
@@ -480,9 +476,8 @@ class _GroupMemberCard extends StatelessWidget{
         child: Row(
           children: <Widget>[
             ClipRRect(
-              borderRadius: BorderRadius.circular(65),
-              child: Container(width: 65, height: 65 ,child: StringUtils.isNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
-            ),
+                borderRadius: BorderRadius.circular(65),
+                child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId))),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 11),
@@ -492,7 +487,7 @@ class _GroupMemberCard extends StatelessWidget{
                     Row(
                       children: <Widget>[
                         Expanded(child:
-                          Text(StringUtils.ensureNotEmpty(member?.displayName),
+                          Text(StringUtils.ensureNotEmpty(_memberDisplayName),
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies!.bold,
                                 fontSize: 20,
@@ -534,8 +529,22 @@ class _GroupMemberCard extends StatelessWidget{
     );
   }
 
-  void _onTapMemberCard(BuildContext context)async{
-    Analytics().logSelect(target: "Member Detail");
-    await Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupMemberPanel(group: group, member: member,)));
+  void _onTapMemberCard(BuildContext context) async {
+    if (_isAdmin) {
+      Analytics().logSelect(target: "Member Detail");
+      await Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberPanel(group: group, member: member)));
+    }
+  }
+
+  String? get _memberDisplayName {
+    if (_isAdmin) {
+      return member?.displayName;
+    } else {
+      return member?.name;
+    }
+  }
+
+  bool get _isAdmin {
+    return group?.currentUserAsMember?.isAdmin ?? false;
   }
 }

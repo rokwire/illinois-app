@@ -21,8 +21,8 @@ import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/SwipeDetector.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 
 class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
@@ -30,10 +30,10 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding.location.label.title', "Know what's nearby")!;
+    String titleText = Localization().getStringEx('panel.onboarding.location.label.title', "Know what's nearby");
     String notRightNow = Localization().getStringEx(
         'panel.onboarding.location.button.dont_allow.title',
-        'Not right now')!;
+        'Not right now');
     return Scaffold(
         backgroundColor: Styles().colors!.background,
         body: SwipeDetector(
@@ -85,7 +85,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                         child: Text(
                           Localization().getStringEx(
                               'panel.onboarding.location.label.description',
-                              "Share your location to know what's nearest to you while on campus.")!,
+                              "Share your location to know what's nearest to you while on campus."),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontFamily: Styles().fontFamilies!.regular,
@@ -100,7 +100,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    ScalableRoundedButton(
+                    RoundedButton(
                       label: Localization().getStringEx(
                           'panel.onboarding.location.button.allow.title',
                           'Share my Location'),
@@ -158,18 +158,18 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
         });
       }
       else if (status == LocationServicesStatus.permissionDenied) {
-        String? message = Localization().getStringEx('panel.onboarding.location.label.access_denied', 'You have already denied access to this app.');
-        showDialog(context: context, builder: (context) => _buildDialogWidget(context, message:message!, pushNext : false ));
+        String message = Localization().getStringEx('panel.onboarding.location.label.access_denied', 'You have already denied access to this app.');
+        showDialog(context: context, builder: (context) => _buildDialogWidget(context, message:message, pushNext : false ));
       }
       else if (status == LocationServicesStatus.permissionAllowed) {
-        String? message = Localization().getStringEx('panel.onboarding.location.label.access_granted', 'You have already granted access to this app.');
-        showDialog(context: context, builder: (context) => _buildDialogWidget(context, message:message!, pushNext : true ));
+        String message = Localization().getStringEx('panel.onboarding.location.label.access_granted', 'You have already granted access to this app.');
+        showDialog(context: context, builder: (context) => _buildDialogWidget(context, message:message, pushNext : true ));
       }
     });
   }
 
   Widget _buildDialogWidget(BuildContext context, {required String message, bool? pushNext}) {
-    String okTitle = Localization().getStringEx('dialog.ok.title', 'OK')!;
+    String okTitle = Localization().getStringEx('dialog.ok.title', 'OK');
     return Dialog(
       child: Padding(
         padding: EdgeInsets.all(18),
@@ -177,7 +177,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx('app.title', 'Illinois')!,
+              Localization().getStringEx('app.title', 'Illinois'),
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(

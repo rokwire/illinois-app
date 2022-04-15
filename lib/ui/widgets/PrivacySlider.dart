@@ -6,8 +6,9 @@ class PrivacyLevelSlider extends StatefulWidget {
   final double? initialValue;
   final Function? onValueChanged;
   final Color? color;
+  final bool readOnly;
 
-  const PrivacyLevelSlider({Key? key, this.onValueChanged, this.initialValue, this.color}) : super(key: key);
+  const PrivacyLevelSlider({Key? key, this.onValueChanged, this.initialValue, this.color, this.readOnly = false}) : super(key: key);
 
   @override
   _PrivacyLevelSliderState createState() => _PrivacyLevelSliderState();
@@ -66,9 +67,9 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                             child: Semantics(
                                 label: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.hint", "Privacy Level"),
                                 enabled: true,
-                                increasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.increase", "increased to")! +
+                                increasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.increase", "increased to") +
                                     (roundedValue + 1).toString(),
-                                decreasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.decrease", "decreased to")! +
+                                decreasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.decrease", "decreased to") +
                                     (roundedValue - 1).toString(),
                                 child:
                                 Padding(
@@ -82,13 +83,18 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                                       semanticFormatterCallback: (double value) => value.round().toString(),
                                       label: "$roundedValue",
                                       onChanged: (double value) {
-                                        setState(() {
+                                        if (!widget.readOnly) {
+                                          setState(() {
                                           _discreteValue = value;
-                                          if(value>3.3 && value<4) { // remove the second 3rd division caused by {max == division}
+                                          if (value > 3.3 && value < 4) {
+                                            // remove the second 3rd division caused by {max == division}
                                             _discreteValue = value = 4;
                                           }
-                                          widget.onValueChanged!(value);
-                                        });
+                                          if (widget.onValueChanged != null) {
+                                            widget.onValueChanged!(value);
+                                          }
+                                          });
+                                        }
                                       },
                                     )
                                 ))))

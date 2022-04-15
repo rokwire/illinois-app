@@ -24,7 +24,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -58,19 +58,12 @@ class _SearchPanelState extends State<SearchPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx("panel.search.header.title", "Search")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.search.header.title", "Search"),
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -190,7 +183,7 @@ class _SearchPanelState extends State<SearchPanel> {
     else if (_resultsCount == 1)
       return Localization().getStringEx('panel.search.label.found_single', '1 result found');
     else if (_resultsCount > 1)
-      return sprintf(Localization().getStringEx('panel.search.label.found_multi', '%d results found')!, [_resultsCount]);
+      return sprintf(Localization().getStringEx('panel.search.label.found_multi', '%d results found'), [_resultsCount]);
     else
       return "";
   }
@@ -269,7 +262,7 @@ class _SearchPanelState extends State<SearchPanel> {
     _events = events;
     _resultsCount = _events?.length ?? 0;
     _resultsCountLabelVisible = true;
-    _searchLabel = Localization().getStringEx('panel.search.label.results_for', 'Results for ')! + _textEditingController.text;
+    _searchLabel = Localization().getStringEx('panel.search.label.results_for', 'Results for ') + _textEditingController.text;
     _setLoading(false);
   }
 

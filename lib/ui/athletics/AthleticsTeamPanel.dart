@@ -31,8 +31,8 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/athletics/AthleticsSchedulePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
@@ -43,8 +43,8 @@ import 'package:illinois/ui/athletics/AthleticsCoachListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsScheduleCard.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -93,20 +93,12 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(
-          Localization().getStringEx('panel.athletics_team.header.title', 'Team')!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx('panel.athletics_team.header.title', 'Team'),
       ),
       body: _buildContentWidget(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -120,15 +112,15 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
     String? instagramUrl;
     String? instagramName = sportSocialMedia?.instagramName;
     if (StringUtils.isNotEmpty(Config().instagramHostUrl) && StringUtils.isNotEmpty(instagramName)) {
-      instagramUrl = '${Config().instagramHostUrl}$instagramName';
+      instagramUrl = '${Config().instagramHostUrl}/$instagramName';
     }
     String? twitterUrl;
     String? twitterName = sportSocialMedia?.twitterName;
     if (StringUtils.isNotEmpty(Config().twitterHostUrl) && StringUtils.isNotEmpty(twitterName)) {
-      twitterUrl = '${Config().twitterHostUrl}$twitterName';
+      twitterUrl = '${Config().twitterHostUrl}/$twitterName';
     }
 
-    String followLabel = Localization().getStringEx("panel.athletics_team.label.follow.title", "Follow")! + " ${widget.sport?.name}";
+    String followLabel = Localization().getStringEx("panel.athletics_team.label.follow.title", "Follow") + " ${widget.sport?.name}";
     String randomImageURL = Assets().randomStringFromListWithKey('images.random.sports.$sportShortName') ?? '';
     return SingleChildScrollView(
       child: Container(
@@ -139,7 +131,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
               alignment: Alignment.bottomCenter,
               children: <Widget>[
                 Positioned(
-                    child: Image.network(randomImageURL, excludeFromSemantics: true)),
+                    child: Image.network(randomImageURL, semanticLabel: widget.sport?.name ?? "sport",)),
                 CustomPaint(
                   painter: TrianglePainter(painterColor: Colors.white),
                   child: Container(
@@ -197,7 +189,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                   children: <Widget>[
                     Expanded(child:
                     Text(
-                      Localization().getStringEx("panel.athletics_team.label.record.title", "Record")!,
+                      Localization().getStringEx("panel.athletics_team.label.record.title", "Record"),
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           color: Styles().colors!.fillColorPrimary,
@@ -301,7 +293,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                               child: Image.asset('images/icon-schedule.png', excludeFromSemantics: true),
                             ),
                             Text(
-                              Localization().getStringEx("panel.athletics_team.label.schedule.title", 'Schedule')!,
+                              Localization().getStringEx("panel.athletics_team.label.schedule.title", 'Schedule'),
                               style:
                               TextStyle(color: Colors.white, fontSize: 20),
                             )
@@ -335,7 +327,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     ),
                     Padding(
                       padding: EdgeInsets.only(bottom: 48, left: 10, right: 10),
-                      child: ScalableRoundedButton(
+                      child: RoundedButton(
                         label: Localization().getStringEx("panel.athletics_team.button.full_schedule.title", 'Full Schedule'),
                         hint: Localization().getStringEx("panel.athletics_team.button.full_schedule.hint", ''),
                         onTap: _showScheduleListPanel(),
@@ -385,7 +377,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                                 child: Image.asset('images/icon-news.png', excludeFromSemantics: true),
                               ),
                               Text(
-                                Localization().getStringEx("panel.athletics_team.button.news.title", 'News')!,
+                                Localization().getStringEx("panel.athletics_team.button.news.title", 'News'),
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 20),
                               )
@@ -409,7 +401,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       ),
                       Expanded(
                         flex: 5,
-                        child: ScalableRoundedButton(
+                        child: RoundedButton(
                           label: Localization().getStringEx("panel.athletics_team.button.all_news.title", 'All News'),
                           hint: Localization().getStringEx("panel.athletics_team.button.all_news.hint", ''),
                           onTap: () {
@@ -445,7 +437,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     child: Padding(
                       padding: EdgeInsets.only(left: 16, top: 16),
                       child: Text(
-                        Localization().getStringEx("panel.athletics_team.label.team_roster.title", 'Team Roster')!,
+                        Localization().getStringEx("panel.athletics_team.label.team_roster.title", 'Team Roster'),
                         style: TextStyle(
                             color: Styles().colors!.fillColorPrimary, fontSize: 20),
                       ),
@@ -475,7 +467,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     child: Container(),),
                   Expanded(
                     flex: 5,
-                    child: ScalableRoundedButton(
+                    child: RoundedButton(
                       label: Localization().getStringEx("panel.athletics_team.button.full_roster.title", 'Full Roster'),
                       hint: Localization().getStringEx("panel.athletics_team.button.full_roster.hint", ''),
                       onTap: _showRosterListPanel(),
@@ -503,7 +495,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     child: Padding(
                       padding: EdgeInsets.only(left: 16, top: 16),
                       child: Text(
-                        Localization().getStringEx("panel.athletics_team.label.coaching_staff.title", 'Coaching Staff')!,
+                        Localization().getStringEx("panel.athletics_team.label.coaching_staff.title", 'Coaching Staff'),
                         style: TextStyle(
                             color: Styles().colors!.fillColorPrimary,
                             fontSize: 20,
@@ -536,7 +528,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     ),
                     Expanded(
                       flex: 5,
-                      child: ScalableRoundedButton(
+                      child: RoundedButton(
                         label: Localization().getStringEx("panel.athletics_team.button.all_staff.title", 'All Staff'),
                         hint: Localization().getStringEx("panel.athletics_team.button.all_staff.hint", ''),
                         onTap:_showCoachListPanel(),
@@ -629,33 +621,29 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   Widget _buildNewsList() {
     return CollectionUtils.isNotEmpty(_teamNews) ? ListView.separated(
       shrinkWrap: true,
-      separatorBuilder: (context, index) => Divider(
-        color: Colors.transparent,
-        height: 30,
-      ),
+      separatorBuilder: (context, index) => Divider(color: Colors.transparent, height: 30,),
       itemCount: _teamNews!.length,
       itemBuilder: (context, index) {
         News news = _teamNews![index];
-        return ImageHolderListItem(
-            //Only the first item got image
-            imageUrl: index == 0? news.imageUrl : null,
-            placeHolderDividerResource: Styles().colors!.fillColorPrimaryTransparent03,
-            placeHolderSlantResource: 'images/slant-down-right-blue.png',
-            child: AthleticsNewsCard(
-              news: news,
-              onTap: () {
-                Analytics().logSelect(target:"NewsCard: "+news.title!);
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                        builder: (context) =>
-                            AthleticsNewsArticlePanel(
-                                article: news)));
-              },
-            ));
+        return ((index == 0) && StringUtils.isNotEmpty(news.imageUrl)) ? ImageSlantHeader(
+          //Only the first item got image
+          imageUrl: news.imageUrl,
+          slantImageColor: Styles().colors!.fillColorPrimaryTransparent03,
+          slantImageAsset: 'images/slant-down-right-blue.png',
+          child: _buildAthleticsNewsCard(news)
+        ) : _buildAthleticsNewsCard(news);
       },
       controller: ScrollController(),
     ) : Container();
+  }
+
+  Widget _buildAthleticsNewsCard(News news ) {
+    return Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child:
+      AthleticsNewsCard(news: news, onTap: () {
+        Analytics().logSelect(target:"NewsCard: "+news.title!);
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: news)));
+      }),
+    );
   }
 
   void _loadSportPreferences() {

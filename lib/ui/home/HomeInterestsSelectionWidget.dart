@@ -27,7 +27,7 @@ import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -81,22 +81,22 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
                     padding: EdgeInsets.only(left: 16, top: 16, right: 16, bottom: 19),
                     child: Column(children: [
                       Semantics(
-                          label: Localization().getStringEx("widget.home.interest_selection.title", "What are you interested in?")! +
-                              Localization().getStringEx("widget.home.interest_selection.description", "See events based on topics you chose")!,
+                          label: Localization().getStringEx("widget.home.interest_selection.title", "What are you interested in?") +
+                              Localization().getStringEx("widget.home.interest_selection.description", "See events based on topics you chose"),
                           header: true,
                           excludeSemantics: true,
                           child: Column(children: [
                             Container(
                               width: double.infinity,
                               child: Text(
-                                Localization().getStringEx("widget.home.interest_selection.title", "What are you interested in?")!,
+                                Localization().getStringEx("widget.home.interest_selection.title", "What are you interested in?"),
                                 style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold),
                               ),
                             ),
                             Container(
                               width: double.infinity,
                               child: Text(
-                                Localization().getStringEx("widget.home.interest_selection.description", "See events based on topics you chose")!,
+                                Localization().getStringEx("widget.home.interest_selection.description", "See events based on topics you chose"),
                                 style: TextStyle(fontSize: 14, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular),
                               ),
                             ),
@@ -218,7 +218,7 @@ class _HomeInterestButton extends RoundedButton {
       backgroundColor: Colors.white,
       borderColor: borderColor ?? Styles().colors!.surfaceAccent,
       textColor: Styles().colors!.fillColorPrimary,
-      padding: EdgeInsets.symmetric(horizontal: 5),
+      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
       onTap: onTap);
 }
 

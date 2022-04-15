@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -32,8 +33,8 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -42,8 +43,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:sprintf/sprintf.dart';
@@ -117,8 +117,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                 scrollDirection: Axis.vertical,
                 slivers: <Widget>[
                   SliverToutHeaderBar(
-                    context: context,
-                    imageUrl: widget.parentEvent?.eventImageUrl,
+                    flexImageUrl: widget.parentEvent?.eventImageUrl,
                   ),
                   SliverList(
                     delegate: SliverChildListDelegate(
@@ -172,7 +171,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
         ],
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -406,7 +405,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(Localization().getStringEx('panel.explore_detail.label.related_tags', 'Related Tags:')!),
+                Text(Localization().getStringEx('panel.explore_detail.label.related_tags', 'Related Tags:')),
                 Container(width: 5,),
                 Expanded(
                   child: Text(capitalizedTags.join(', '),
@@ -464,14 +463,13 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     String? ticketsUrl = widget.parentEvent?.registrationUrl;
     bool getTicketsVisible = StringUtils.isNotEmpty(ticketsUrl);
 
-    String? websiteLabel = Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website');
+    String websiteLabel = Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website');
     String? websiteHint = Localization().getStringEx('panel.explore_detail.button.visit_website.hint', '');
 
     Widget visitWebsiteButton = (widget.parentEvent?.isSuperEvent ?? false) ?
     Visibility(visible: visitWebsiteVisible, child: SmallRoundedButton(
       label: websiteLabel,
       hint: websiteHint,
-      showChevron: true,
       borderColor: Styles().colors!.fillColorPrimary,
       onTap: () => _onTapVisitWebsite(titleUrl),),) :
     Visibility(visible: visitWebsiteVisible, child: RoundedButton(
@@ -570,28 +568,15 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     Container(
         padding: EdgeInsets.symmetric(vertical: 10),
         child:
-        Stack(
-          children: [
-            ScalableRoundedButton(
-              label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group') ,
-              hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
-              backgroundColor: Colors.white,
-              borderColor: Styles().colors!.fillColorPrimary,
-              textColor: Styles().colors!.fillColorPrimary,
-              onTap: _onTapAddToGroup,
-            ),
-            Visibility(visible: _addToGroupInProgress,
-              child: Container(
-                height: 48,
-                child: Align(alignment: Alignment.center,
-                  child: SizedBox(height: 24, width: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                  ),
-                ),
-              ),
-            ),
-          ],
-        )
+          RoundedButton(
+            label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
+            hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
+            backgroundColor: Colors.white,
+            borderColor: Styles().colors!.fillColorPrimary,
+            textColor: Styles().colors!.fillColorPrimary,
+            progress: _addToGroupInProgress,
+            onTap: _onTapAddToGroup,
+          ),
     );
   }
 
@@ -653,12 +638,11 @@ class _EventsListState extends State<_EventsList>{
     String titleKey = (widget.parentEvent?.isSuperEvent == true)
         ? "panel.explore_detail.super_event.schedule.heading.title"
         : "panel.explore_detail.recurring_event.schedule.heading.title";
-    return SectionTitlePrimary(
+    return SectionSlantHeader(
         title: Localization().getStringEx(titleKey, "Event Schedule"),
-        subTitle: "",
-        slantImageRes: "images/slant-down-right-grey.png",
+        slantImageAsset: "images/slant-down-right-grey.png",
         slantColor: Styles().colors!.backgroundVariant,
-        textColor: Styles().colors!.fillColorPrimary,
+        titleTextColor: Styles().colors!.fillColorPrimary,
         children: _buildListItems()
     );
   }
@@ -681,8 +665,8 @@ class _EventsListState extends State<_EventsList>{
   }
 
   Widget _buildFullScheduleButton() {
-    String? titleFormat = Localization().getStringEx("panel.explore_detail.button.see_super_events.title", "All %s");
-    String title = sprintf(titleFormat!, [widget.parentEvent!.title]);
+    String titleFormat = Localization().getStringEx("panel.explore_detail.button.see_super_events.title", "All %s");
+    String title = sprintf(titleFormat, [widget.parentEvent!.title]);
     return Column(
       children: <Widget>[
         Semantics(

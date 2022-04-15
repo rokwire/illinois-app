@@ -16,29 +16,21 @@
 
 package edu.illinois.rokwire;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.location.LocationManager;
-import android.net.Uri;
-import android.os.Build;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
+import android.view.OrientationEventListener;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.arubanetworks.meridian.Meridian;
-import com.google.firebase.FirebaseApp;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -47,15 +39,12 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.mapsindoors.mapssdk.MapsIndoors;
 
 import java.io.ByteArrayOutputStream;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import edu.illinois.rokwire.maps.MapActivity;
 import edu.illinois.rokwire.maps.MapDirectionsActivity;
@@ -80,6 +69,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private int preferredScreenOrientation;
     private Set<Integer> supportedScreenOrientations;
+    private OrientationEventListener orientationListener;
 
     private Toast statusToast;
 
@@ -94,6 +84,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        if (orientationListener != null) {
+            orientationListener.disable();
+        }
     }
 
     public static MainActivity getInstance() {
@@ -130,6 +124,41 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     private void initScreenOrientation() {
         preferredScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         supportedScreenOrientations = new HashSet<>(Collections.singletonList(preferredScreenOrientation));
+        setRequestedOrientation(preferredScreenOrientation);
+        initOrientationListener();
+    }
+
+    private void initOrientationListener() {
+        orientationListener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
+            @Override
+            public void onOrientationChanged(int orientation) {
+                if (isAutoRotateEnabled()) {
+                    checkOrientationChange(orientation);
+                }
+            }
+        };
+
+        if (orientationListener.canDetectOrientation()) {
+            orientationListener.enable();
+        } else {
+            orientationListener.disable();
+        }
+    }
+
+    private void checkOrientationChange(int orientationDegrees) {
+        int desiredOrientation = getScreenOrientationFromDegrees(orientationDegrees);
+        int currentOrientation = getRequestedOrientation();
+
+        // Prevent changing screen orientation if it's not supported
+        if (desiredOrientation != currentOrientation) {
+            if (supportedScreenOrientations.contains(desiredOrientation)) {
+                setRequestedOrientation(desiredOrientation);
+            }
+        }
+    }
+
+    private boolean isAutoRotateEnabled() {
+        return (Settings.System.getInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0) == 1);
     }
 
     private void initWithParams(Object keys) {
@@ -288,6 +317,18 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         }
     }
 
+    private int getScreenOrientationFromDegrees(int orientationDegrees) {
+        if ((orientationDegrees > 315) || (orientationDegrees <= 45)) {
+            return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        } else if (orientationDegrees <= 135) {
+            return ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+        } else if (orientationDegrees <= 225) {
+            return ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+        } else { // (orientationDegrees > 225) && (orientationDegrees <= 315)
+            return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        }
+    }
+
     private String handleBarcode(Object params) {
         String barcodeImageData = null;
         String content = Utils.Map.getValueFromPath(params, "content", null);
@@ -376,36 +417,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         return barcodeImageData;
     }
 
-    private boolean handleLaunchApp(Object params) {
-        String deepLink = Utils.Map.getValueFromPath(params, "deep_link", null);
-        Uri deepLinkUri = !Utils.Str.isEmpty(deepLink) ? Uri.parse(deepLink) : null;
-        if (deepLinkUri == null) {
-            Log.d(TAG, "Invalid deep link: " + deepLink);
-            return false;
-        }
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, deepLinkUri);
-        boolean activityExists = appIntent.resolveActivityInfo(getPackageManager(), 0) != null;
-        if (activityExists) {
-            startActivity(appIntent);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean handleLaunchAppSettings(Object params) {
-        Uri settingsUri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
-        Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, settingsUri);
-        settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        boolean activityExists = settingsIntent.resolveActivityInfo(getPackageManager(), 0) != null;
-        if (activityExists) {
-            startActivity(settingsIntent);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     private void handleSetLaunchScreenStatus(Object params) {
         String statusText = Utils.Map.getValueFromPath(params, "status", null);
 
@@ -464,6 +475,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     result.success(true);
                     break;
                 case Constants.APP_DISMISS_LAUNCH_SCREEN_KEY:
+                    result.success(false);
+                    break;
                 case Constants.APP_SET_LAUNCH_SCREEN_STATUS_KEY:
                     handleSetLaunchScreenStatus(methodCall.arguments);
                     result.success(true);
@@ -476,20 +489,12 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     List<String> orientationsList = handleEnabledOrientations(orientations);
                     result.success(orientationsList);
                     break;
-                case Constants.APP_TRACKING_AUTHORIZATION:
-                    result.success("allowed"); // tracking is allowed in Android by default
-                    break;
                 case Constants.BARCODE_KEY:
                     String barcodeImageData = handleBarcode(methodCall.arguments);
                     result.success(barcodeImageData);
                     break;
-                case Constants.LAUNCH_APP:
-                    boolean appLaunched = handleLaunchApp(methodCall.arguments);
-                    result.success(appLaunched);
-                    break;
-                case Constants.LAUNCH_APP_SETTINGS:
-                    boolean settingsLaunched = handleLaunchAppSettings(methodCall.arguments);
-                    result.success(settingsLaunched);
+                case Constants.TEST_KEY:
+                    result.success(false);
                     break;
                 default:
                     result.notImplemented();
@@ -501,11 +506,5 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             Log.e(TAG, errorMsg);
             exception.printStackTrace();
         }
-    }
-
-    // RequestLocationCallback
-
-    public static class RequestLocationCallback {
-        public void onResult(boolean granted) {}
     }
 }

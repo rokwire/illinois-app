@@ -26,9 +26,9 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -71,22 +71,22 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   bool get _isLoading => _isCategoryLoading || _isEventLoading;
 
   // Categories Filter
-  final String _allCategoriesConst = Localization().getStringEx("panel.find_event.label.all_categories", "All categories")!;
+  final String _allCategoriesConst = Localization().getStringEx("panel.find_event.label.all_categories", "All categories");
   late List<String> _eventCategories;
   String? _selectedEventCategory;
 
   // Tags Filter
-  final String _tagFilterAllTags = Localization().getStringEx('panel.find_event.filter.tags.all', 'All Tags')!;
-  final String _tagFilterMyTags = Localization().getStringEx('panel.find_event.filter.tags.my', 'My Tags')!;
+  final String _tagFilterAllTags = Localization().getStringEx('panel.find_event.filter.tags.all', 'All Tags');
+  final String _tagFilterMyTags = Localization().getStringEx('panel.find_event.filter.tags.my', 'My Tags');
   late List<String> _tags;
   String? _selectedTag;
 
   // Time Filter
-  final String _timeFilterUpcoming = Localization().getStringEx("panel.find_event.filter.time.upcoming","Upcoming")!;
-  final String _timeFilterToday = Localization().getStringEx("panel.find_event.filter.time.today","Today")!;
-  final String _timeFilterNextSevenDays = Localization().getStringEx("find_event.find_event.filter.time.next_7_days","Next 7 days")!;
-  final String _timeFilterThisWeekend = Localization().getStringEx("panel.find_event.filter.time.this_weekend","This Weekend")!;
-  final String _timeFilterNextMonth = Localization().getStringEx("panel.find_event.filter.time.next_30_days","Next 30 days")!;
+  final String _timeFilterUpcoming = Localization().getStringEx("panel.find_event.filter.time.upcoming","Upcoming");
+  final String _timeFilterToday = Localization().getStringEx("panel.find_event.filter.time.today","Today");
+  final String _timeFilterNextSevenDays = Localization().getStringEx("find_event.find_event.filter.time.next_7_days","Next 7 Days");
+  final String _timeFilterThisWeekend = Localization().getStringEx("panel.find_event.filter.time.this_weekend","This Weekend");
+  final String _timeFilterNextMonth = Localization().getStringEx("panel.find_event.filter.time.next_30_days","Next 30 days");
   late List<String> _time;
   String? __selectedTime;
   String? get _selectedTime => __selectedTime;
@@ -190,16 +190,9 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.find_event.header.title", "Find event")!,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1.0),
-        ),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.find_event.header.title", "Find event"),
+        leadingAsset: 'images/icon-circle-close.png',
       ),
       body: Column(
         children: <Widget>[
@@ -230,7 +223,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
             padding: EdgeInsets.all(16),
             color: Styles().colors!.white,
             child: RoundedButton(
-              label: Localization().getStringEx("panel.find_event.button.add_selected_events.title", "Add (#) event to group")!.replaceAll("#", _selectedEvents.length.toString()),
+              label: Localization().getStringEx("panel.find_event.button.add_selected_events.title", "Add (#) event to group").replaceAll("#", _selectedEvents.length.toString()),
               hint: Localization().getStringEx("panel.find_event.button.add_selected_events.hint", ""),
               backgroundColor: Styles().colors!.white,
               textColor: Styles().colors!.fillColorPrimary,
@@ -341,11 +334,9 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   }
 
   Widget _buildFilterButton(FilterType filterType, String? selectedValue, String analyticsEvent){
-    return FilterSelectorWidget(
-      label: selectedValue,
-      hint: "",
+    return FilterSelector(
+      title: selectedValue,
       active: (_activeFilterType == filterType),
-      visible: true,
       onTap: (){
         Analytics().logSelect(target: analyticsEvent);
         setState(() {
@@ -368,8 +359,8 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     return _buildFilterContentEx(
         itemCount: _time.length,
         itemBuilder: (context, index) {
-          return FilterListItemWidget(
-            label: _time[index],
+          return  FilterListItem(
+            title: _time[index],
             selected: (_selectedTime == _time[index]),
             onTap: (){
               Analytics().logSelect(target: 'Time: ${_time[index]}');
@@ -388,8 +379,8 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     return _buildFilterContentEx(
         itemCount: _tags.length,
         itemBuilder: (context, index) {
-          return FilterListItemWidget(
-            label: _tags[index],
+          return  FilterListItem(
+            title: _tags[index],
             selected: (_selectedTag == _tags[index]),
             onTap: (){
               Analytics().logSelect(target: 'Tag: ${_tags[index]}');
@@ -408,8 +399,8 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     return _buildFilterContentEx(
         itemCount: _eventCategories.length,
         itemBuilder: (context, index) {
-          return FilterListItemWidget(
-            label: _eventCategories[index],
+          return  FilterListItem(
+            title: _eventCategories[index],
             selected: (_selectedEventCategory == _eventCategories[index]),
             onTap: (){
               Analytics().logSelect(target: 'Category: ${_eventCategories[index]}');
@@ -478,7 +469,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
             ),
             itemCount: _filteredEvents! .length)
         :  Container(
-            child: Center(child: Text(Localization().getStringEx('panel.find_event.label.search.empty',  "Unable to find events")!),),
+            child: Center(child: Text(Localization().getStringEx('panel.find_event.label.search.empty',  "Unable to find events")),),
         );
     }
     else{
