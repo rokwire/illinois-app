@@ -428,7 +428,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     }
   }
 
-  void _onTapTickets() {
+  /*void _onTapTickets() {
     Analytics().logSelect(target:"Tickets");
     if (Connectivity().isNotOffline && (Config().ticketsUrl != null)) {
       Navigator.push(
@@ -442,7 +442,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.tickets', 'Tickets are not available while offline.'));
     }
-  }
+  }*/
 
   void _onTapGameDayGuide() {
     Analytics().logSelect(target:"Game Day Guide");
