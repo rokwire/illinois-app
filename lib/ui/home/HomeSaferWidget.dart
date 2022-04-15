@@ -161,7 +161,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   void _onBuildingAccessPrivacyDoNotMatch() {
-    AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertContentWidget(), actions: [
+    AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertWidget(), actions: [
       TextButton(
           child: Text(Localization().getStringEx('widget.home.safer.alert.building_access.privacy_level.4.button.label', 'Set to 4')),
           onPressed: () => _buildingAccessIncreasePrivacyLevelAndAuthentiate(4)),
@@ -172,20 +172,21 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
     ]);
   }
 
-  Widget _buildPrivacyAlertContentWidget() {
-    int userPrivacyLevel = Auth2().prefs?.privacyLevel ?? 0;
-    String privacyMsg1 =
-        Localization().getStringEx('widget.home.safer.alert.building_access.privacy_update.msg1', 'With your privacy level ');
-    String privacyMsg2 = Localization().getStringEx('widget.home.safer.alert.building_access.privacy_update.msg2',
-        ' , you will have to sign in everytime to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?');
+  Widget _buildPrivacyAlertWidget() {
+    final String iconMacro = '{{privacy_level_icon}}';
+    String privacyMsg = Localization().getStringEx('widget.home.safer.alert.building_access.privacy_update.msg', 'With your privacy level $iconMacro , you will have to sign in everytime to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?');
+    int iconMacroPosition = privacyMsg.indexOf(iconMacro);
+    String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
+    String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
     return RichText(text: TextSpan(style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold), children: [
-          TextSpan(text: privacyMsg1),
-          WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget(userPrivacyLevel)),
-          TextSpan(text: privacyMsg2)
-        ]));
+      TextSpan(text: privacyMsgStart),
+      WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
+      TextSpan(text: privacyMsgEnd)
+    ]));
   }
 
-  Widget _buildPrivacyLevelWidget(int privacyLevel) {
+  Widget _buildPrivacyLevelWidget() {
+    String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
     return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
       Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)), ), child:
         Text(privacyLevel.toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))));

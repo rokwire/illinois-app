@@ -2207,8 +2207,7 @@
     "widget.home.safer.button.my_mckinley.description": "MyMcKinley Patient Health Portal",
     "widget.home.safer.button.wellness_answer_center.title": "Answer Center",
     "widget.home.safer.button.wellness_answer_center.description": "Get answers to your questions.",
-    "widget.home.safer.alert.building_access.privacy_update.msg1": "With your privacy level ",
-    "widget.home.safer.alert.building_access.privacy_update.msg2": " , you will have to sign in everytime to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
+    "widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level {{privacy_level_icon}} , you will have to sign in everytime to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
 
     "widget.athletics_card.button.get_tickets.title":"Get Tickets",
     "widget.athletics_card.button.get_tickets.hint":"",
@@ -2344,7 +2343,7 @@
     "widget.group_card.status.hint": "status: %s ,for: ",
     "widget.group_card.member.label": "member",
     "widget.group_card.members.label": "members",
-    "panel.group_card.privacy_alert.msg": "With your privacy level {{privacy level icon}}, you can only view existing groups.",
+    "panel.group_card.privacy_alert.msg": "With your privacy level {{privacy_level_icon}} , you can only view existing groups.",
 
     "widget.groups.selection.button.select.label": "Select",
     "widget.groups.selection.heading": "Select Group",
