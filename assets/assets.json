@@ -1257,14 +1257,12 @@
 				"resources": [
 					{
 						"ribbon_buttons": [
-							{ "title": "panel.wellness.spiritual.resources.reflection_rooms", "url": "https://www.library.illinois.edu/ugl/about/reflection-rooms/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.spiritual.resources.open_prayer", "url": "https://union.illinois.edu/get-involved/office-of-registered-organizations/student-organization-complex", "icon": "link-out.png", "hint": "" }
+							{ "title": "panel.wellness.spiritual.resources.reflection_rooms", "url": "https://www.library.illinois.edu/ugl/about/reflection-rooms/", "icon": "link-out.png", "hint": "" }
 						]
 					},
 					{ "title": "panel.wellness.common.resources.office_inclusion.title",
 						"ribbon_buttons": [
 							{ "title":"panel.wellness.common.resources.programs", "url":"https://oiir.illinois.edu/programs", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.spiritual.resources.interfaith", "url":"https://oiir.illinois.edu/diversityed/interfaith", "icon": "link-out.png", "hint": "" },
 							{ "title":"panel.wellness.common.resources.bnaacc", "url":"https://oiir.illinois.edu/bnaacc", "icon": "link-out.png", "hint": "" },
 							{ "title":"panel.wellness.common.resources.aacc", "url":"https://oiir.illinois.edu/aacc", "icon": "link-out.png", "hint": "" },
 							{ "title":"panel.wellness.common.resources.la_casa", "url":"https://oiir.illinois.edu/la-casa-cultural-latina", "icon": "link-out.png", "hint": "" },
