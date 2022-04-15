@@ -1439,8 +1439,8 @@
     "panel.poll_prompt.button.close.title":"Close",
     "panel.poll_prompt.hint.select_option":"Double tab to select this option",
     "panel.poll_prompt.vote.status.announce.success": "Successfully Voted",
-    "panel.polls_prompt.card.text.pin":"4 Digit Poll #: %s",
 
+    "panel.polls_prompt.card.text.pin":"4 Digit Poll #: %s",
     "panel.poll_pin_bouble.label_description": "Enter the four-digit poll number to see the poll.",
     "panel.poll_pin_bouble.validation_description": "Please enter correct 4 Digit Poll #",
     "panel.poll_pin_bouble.error_load_poll_description": "Unable to load poll",
@@ -2207,6 +2207,7 @@
     "widget.home.safer.button.my_mckinley.description": "MyMcKinley Patient Health Portal",
     "widget.home.safer.button.wellness_answer_center.title": "Answer Center",
     "widget.home.safer.button.wellness_answer_center.description": "Get answers to your questions.",
+
     "widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
 
     "widget.athletics_card.button.get_tickets.title":"Get Tickets",
@@ -2343,8 +2344,8 @@
     "widget.group_card.status.hint": "status: %s ,for: ",
     "widget.group_card.member.label": "member",
     "widget.group_card.members.label": "members",
-    "panel.group_card.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can only view existing groups.",
 
+    "panel.group_card.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can only view existing groups.",
     "widget.groups.selection.button.select.label": "Select",
     "widget.groups.selection.heading": "Select Group",
 
