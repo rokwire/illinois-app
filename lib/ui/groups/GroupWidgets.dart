@@ -443,34 +443,33 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 
     return Stack(children: <Widget>[
       GestureDetector(onTap: () {
-        Analytics().logSelect(target: "Group Event");
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
-      },
-          child: Padding(padding: EdgeInsets.only(left:16, right: 80, top: 16, bottom: 16), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
-          )
+          Analytics().logSelect(target: "Group Event");
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
+        },
+        child: Padding(padding: EdgeInsets.only(left:16, right: 80, top: 16, bottom: 16), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
+        )
       ),
       Align(alignment: Alignment.topRight, child:
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
+        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
             Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              Semantics(
-                label: isFavorite ? Localization().getStringEx(
-                    'widget.card.button.favorite.off.title',
-                    'Remove From Favorites') : Localization().getStringEx(
-                    'widget.card.button.favorite.on.title',
-                    'Add To Favorites'),
-                hint: isFavorite ? Localization().getStringEx(
-                    'widget.card.button.favorite.off.hint', '') : Localization()
-                    .getStringEx('widget.card.button.favorite.on.hint', ''),
-                button: true,
-                excludeSemantics: true,
-                child: GestureDetector(onTap: _onFavoriteTap, child:
-                  Container(width: 42, height: 42, alignment: Alignment.center, child:
-                    Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png'),
-                  ),
-                )),
+              Visibility(visible: Auth2().canFavorite,
+                child: Semantics(
+                  label: isFavorite ? Localization().getStringEx(
+                      'widget.card.button.favorite.off.title',
+                      'Remove From Favorites') : Localization().getStringEx(
+                      'widget.card.button.favorite.on.title',
+                      'Add To Favorites'),
+                  hint: isFavorite ? Localization().getStringEx(
+                      'widget.card.button.favorite.off.hint', '') : Localization()
+                      .getStringEx('widget.card.button.favorite.on.hint', ''),
+                  button: true,
+                  excludeSemantics: true,
+                  child: GestureDetector(onTap: _onFavoriteTap, child:
+                    Container(width: 42, height: 42, alignment: Alignment.center, child:
+                      Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png'),
+                    ),
+                ))),
 
               !widget.isAdmin? Container(width: 0, height: 0) :
               Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
