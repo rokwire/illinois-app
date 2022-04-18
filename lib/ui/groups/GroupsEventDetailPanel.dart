@@ -466,7 +466,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   Widget _buildFavoritesButton(){
     return
-      GestureDetector(
+      Visibility(visible: Auth2().canFavorite,
+        child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
             Analytics().logSelect(target: "Favorite: ${_event?.title}");
@@ -480,7 +481,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                   'widget.card.button.favorite.on.hint', ''),
               button: true,
               child: Image.asset(isFavorite ? 'images/icon-star-solid.png' : 'images/icon-favorites-white.png') //TBD selected image res
-          ));
+          )));
   }
 
   Widget _buildPreviewButtons(){

@@ -68,8 +68,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   final EdgeInsets _ribbonButtonPadding = EdgeInsets.symmetric(horizontal: 16);
 
-  bool _groupsLogin = false;
-
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -258,24 +256,12 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       );
     }
     else if (code == 'groups') {
-      return Stack(
-        alignment: Alignment.center,
-        children: [
-          _GridSquareButton(
-            title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
-            hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
-            icon: 'images/icon-browse-gropus.png',
-            textColor: Styles().colors!.fillColorPrimary,
-            onTap: () => _navigateGroups(),
-          ),
-          Visibility(
-            visible: _groupsLogin,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white)
-            ),
-          )
-        ],
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
+        hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
+        icon: 'images/icon-browse-gropus.png',
+        textColor: Styles().colors!.fillColorPrimary,
+        onTap: () => _navigateGroups(),
       );
     }
     else if (code == 'safer') {
@@ -613,21 +599,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateGroups() {
     Analytics().logSelect(target: "Groups");
-    if(Auth2().isOidcLoggedIn) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
-    } else if (_groupsLogin != true) {
-      setState(() { _groupsLogin = true; });
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? success) {
-        if (mounted) {
-          setState(() { _groupsLogin = false; });
-          if (success == Auth2OidcAuthenticateResult.succeeded) {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
-          } else if (success == Auth2OidcAuthenticateResult.failed) {
-            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
-          }
-        }
-      });
-    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
   void _navigateCampusGuide() {

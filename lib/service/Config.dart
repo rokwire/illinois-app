@@ -110,16 +110,6 @@ class Config extends rokwire.Config {
   String? get youtubeUrl             => JsonUtils.stringValue(thirdPartyServices['youtube_url']);
   String? get gameDayFootballUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_football_url']);
   String? get gameDayBasketballUrl   => JsonUtils.stringValue(thirdPartyServices['gameday_basketball_url']);
-  String? get gameDayTennisUrl       => JsonUtils.stringValue(thirdPartyServices['gameday_tennis_url']);
-  String? get gameDayVolleyballUrl   => JsonUtils.stringValue(thirdPartyServices['gameday_volleyball_url']);
-  String? get gameDaySoftballUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_softball_url']);
-  String? get gameDaySwimDiveUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_swim_dive_url']);
-  String? get gameDayCrossCountryUrl => JsonUtils.stringValue(thirdPartyServices['gameday_cross_country_url']);
-  String? get gameDayBaseballUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_baseball_url']);
-  String? get gameDayGymnasticsUrl   => JsonUtils.stringValue(thirdPartyServices['gameday_gymnastics_url']);
-  String? get gameDayWrestlingUrl    => JsonUtils.stringValue(thirdPartyServices['gameday_wrestling_url']);
-  String? get gameDaySoccerUrl       => JsonUtils.stringValue(thirdPartyServices['gameday_soccer_url']);
-  String? get gameDayTrackFieldUrl   => JsonUtils.stringValue(thirdPartyServices['gameday_track_field_url']);
   String? get gameDayAllUrl          => JsonUtils.stringValue(thirdPartyServices['gameday_all_url']);
   String? get convergeUrl            => JsonUtils.stringValue(thirdPartyServices['converge_url']);
 

@@ -294,7 +294,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                             )),
                                           ),
                                           Padding(padding: EdgeInsets.all(16), child:
-                                            Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
+                                            Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
                                               Expanded(child:
                                                 Column(children: <Widget>[
                                                   Padding(padding: EdgeInsets.only(bottom: 8), child:
@@ -320,7 +320,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                               Container(width: 12,),
                                               Expanded(child:
                                                 Column(children: <Widget>[
-                                                  Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                                  /*Padding(padding: EdgeInsets.only(bottom: 8), child:
                                                     TileButton(
                                                       title: Localization().getStringEx("panel.athletics.button.tickets.title", 'Tickets'),
                                                       hint: Localization().getStringEx("panel.athletics.button.tickets.hint", ''),
@@ -328,7 +328,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                       contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                                       onTap: _onTapTickets,
                                                       ),
-                                                    ),
+                                                    ),*/
                                                   Padding(padding: EdgeInsets.only(bottom: 8), child:
                                                     TileButton(
                                                       title: Localization().getStringEx("panel.athletics.button.game_day_guide.title", 'Game Day Guide'),
@@ -428,7 +428,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     }
   }
 
-  void _onTapTickets() {
+  /*void _onTapTickets() {
     Analytics().logSelect(target:"Tickets");
     if (Connectivity().isNotOffline && (Config().ticketsUrl != null)) {
       Navigator.push(
@@ -442,7 +442,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.tickets', 'Tickets are not available while offline.'));
     }
-  }
+  }*/
 
   void _onTapGameDayGuide() {
     Analytics().logSelect(target:"Game Day Guide");

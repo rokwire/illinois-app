@@ -322,44 +322,40 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   Widget _buildButtonsTab() {
     return Container(
         child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16),
-      child: Container(
-          child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(child:
-            RoundedButton(
-              label: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save"),
-              backgroundColor: Colors.white,
-              borderColor: Styles().colors!.fillColorPrimary,
-              textColor: Styles().colors!.fillColorPrimary,
-              progress: (_progressPollStatus == PollStatus.created),
-              onTap: () {
-                _onCreatePoll(status: PollStatus.created);
-              },
-//                  height: 48,
-            ),
-          ),
-          Container(
-            width: 6,
-          ),
-          Expanded(child:
-            RoundedButton(
-              label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start Poll"),
-              backgroundColor: Colors.white,
-              borderColor: Styles().colors!.fillColorSecondary,
-              textColor: Styles().colors!.fillColorPrimary,
-              progress: (_progressPollStatus == PollStatus.opened),
-              onTap: () {
-                _onCreatePoll(status: PollStatus.opened);
-              },
-//                height: 48,
-            ),
-          ),
-        ],
-      )),
-    ));
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16),
+            child: Container(
+                child: Column(children: [
+              Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Expanded(
+                    child: RoundedButton(
+                        label: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save"),
+                        backgroundColor: Colors.white,
+                        borderColor: Styles().colors!.fillColorPrimary,
+                        textColor: Styles().colors!.fillColorPrimary,
+                        progress: (_progressPollStatus == PollStatus.created),
+                        onTap: () {
+                          _onCreatePoll(status: PollStatus.created);
+                        })),
+                Container(width: 6),
+                Expanded(
+                    child: RoundedButton(
+                        label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start Poll"),
+                        backgroundColor: Colors.white,
+                        borderColor: Styles().colors!.fillColorSecondary,
+                        textColor: Styles().colors!.fillColorPrimary,
+                        progress: (_progressPollStatus == PollStatus.opened),
+                        onTap: () {
+                          _onCreatePoll(status: PollStatus.opened);
+                        }))
+              ]),
+              Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Text(
+                    Localization()
+                        .getStringEx("panel.create_poll.description.non_editable.text", "Once started, you can no longer edit the poll."),
+                    style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
+                  ))
+            ]))));
   }
 
   void _onTapCancel() {
@@ -464,7 +460,7 @@ class PollOptionView extends StatefulWidget {
   final int maxLines;
   final bool enabled;
 
-  const PollOptionView({Key? key, this.title, this.textController, this.maxLength = 25, this.minLines = 1, this.maxLines = 10, this.hint, this.enabled = true}) : super(key: key);
+  const PollOptionView({Key? key, this.title, this.textController, this.maxLength = 45, this.minLines = 1, this.maxLines = 10, this.hint, this.enabled = true}) : super(key: key);
 
   @override
   _PollOptionViewState createState() {

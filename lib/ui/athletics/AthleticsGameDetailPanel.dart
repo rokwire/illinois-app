@@ -18,23 +18,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/ext/Game.dart';
-import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
 import 'package:illinois/ui/athletics/AthleticsSchedulePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -201,7 +196,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                               Container(width: 12,),
                               Expanded(child:
                                 Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-                                  Padding(padding: EdgeInsets.only(bottom: 8), child:
+                                  /*Padding(padding: EdgeInsets.only(bottom: 8), child:
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.tickets.title", "Tickets"),
                                       hint: Localization().getStringEx("panel.athletics_game_detail.button.tickets.hint", ""),
@@ -209,7 +204,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                       contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                       onTap: _onTapTickets,
                                     ),
-                                  ),
+                                  ),*/
                                   Padding(padding: EdgeInsets.only(bottom: 8), child:
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.teams.title", "Teams"),
@@ -341,7 +336,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
     Navigator.push(context, CupertinoPageRoute( builder: (context) => AthleticsTeamPanel(sportDefinition)));
   }
 
-  void _onTapTickets() {
+  /*void _onTapTickets() {
     Analytics().logSelect(target: "Tickets");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
@@ -350,9 +345,9 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
     } else {
       _showTicketsPanel();
     }
-  }
+  }*/
 
-  void _showTicketsPanel() {
+  /*void _showTicketsPanel() {
     if (Connectivity().isNotOffline && (Config().ticketsUrl != null)) {
       Navigator.push(context, CupertinoPageRoute(
         builder: (context) => WebPanel(url: Config().ticketsUrl)));
@@ -360,7 +355,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.tickets', 'Tickets are not available while offline.'));
     }
-  }
+  }*/
 
   Future<void>_onPullToRefresh() async{
     _loadGame();

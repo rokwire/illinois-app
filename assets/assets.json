@@ -424,7 +424,7 @@
 						"title_key" :"privacy.entry.event_and_dining.view.only.title",
 						"description" : "View events and dining locations around campus.",
 						"description_key" :"privacy.entry.event_and_dining.view.only.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This does not use or store your location.",
 						"dataUsage_key" :"privacy.entry.event_and_dining.view.only.data_usage"
 					},
 					{
@@ -435,7 +435,7 @@
 						"title_key" :"privacy.entry.event_and_dining.location.sharing.title",
 						"description" : "View events and dining locations near you.",
 						"description_key" :"privacy.entry.event_and_dining.location.sharing.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This feature uses location services but does not store your location.",
 						"dataUsage_key" :"privacy.entry.event_and_dining.location.sharing.data_usage"
 					},
 					{
@@ -446,7 +446,7 @@
 						"title_key" :"privacy.entry.event_and_dining.personalizations.title",
 						"description" : "View events and dining locations near you.",
 						"description_key" :"privacy.entry.event_and_dining.personalizations.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This feature uses location services, personal information and places you have starred in the app.",
 						"dataUsage_key" :"privacy.entry.event_and_dining.personalizations.data_usage"
 					},
 					{
@@ -457,19 +457,8 @@
 						"title_key" :"privacy.entry.event_and_dining.notifications.title",
 						"description" : "Get various notifications & receive reminders of items you have starred in the app.",
 						"description_key" :"privacy.entry.event_and_dining.notifications.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This feature sends notifications utilizing location services, personal information and places you have starred in the app.",
 						"dataUsage_key" :"privacy.entry.event_and_dining.notifications.data_usage"
-					},
-					{
-						"min_level": 5,
-						"icon_resource": "share-blue.png",
-						"off_icon_resource": "share-blue-off.png",
-						"title" : "Sharing",
-						"title_key" :"privacy.entry.event_and_dining.sharing.title",
-						"description" : "Use the SMARTS of the CONVERGE service to help yourself or a group pick events.",
-						"description_key" :"privacy.entry.event_and_dining.sharing.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
-						"dataUsage_key" :"privacy.entry.event_and_dining.sharing.data_usage"
 					}
 				]
 			},
@@ -485,7 +474,7 @@
 						"title_key" :"privacy.entry.athletics.view.only.title",
 						"description" : "See all upcoming schedules for athletic events, real-time scoring, rosters and athletic news.",
 						"description_key" :"privacy.entry.athletics.view.only.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This does not use or store your location.",
 						"dataUsage_key" :"privacy.entry.athletics.view.only.data_usage"
 					},
 					{
@@ -496,7 +485,7 @@
 						"title_key" :"privacy.entry.athletics.location.sharing.title",
 						"description" : "Find seats, nearby restrooms & concession stands. See real-time parking availability and directions.",
 						"description_key" :"privacy.entry.athletics.location.sharing.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This feature uses location services but does not store your location.",
 						"dataUsage_key" :"privacy.entry.athletics.location.sharing.data_usage"
 					},
 					{
@@ -507,7 +496,7 @@
 						"title_key" :"privacy.entry.athletics.personalizations.title",
 						"description" : "Customize your experience to see schedules, rosters, scores and news for your favorite Illini teams.",
 						"description_key" :"privacy.entry.athletics.personalizations.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This feature uses location services, personal preferences and events you have starred in the app.",
 						"dataUsage_key" :"privacy.entry.athletics.personalizations.data_usage"
 					},
 					{
@@ -518,7 +507,7 @@
 						"title_key" :"privacy.entry.athletics.notifications.title",
 						"description" : "Receive notifications of event start and final scores for your favorite teams.",
 						"description_key" :"privacy.entry.athletics.notifications.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This feature uses location services, personal preferences and events you have starred in the app.",
 						"dataUsage_key" :"privacy.entry.athletics.notifications.data_usage"
 					},
 					{
@@ -529,7 +518,7 @@
 						"title_key" :"privacy.entry.athletics.sharing.title",
 						"description" : "Store credit card information to buy tickets for athletic events.",
 						"description_key" :"privacy.entry.athletics.sharing.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This feature uses location services, personal preferences, credit card information and starred items.",
 						"dataUsage_key" :"privacy.entry.athletics.sharing.data_usage"
 					}
 				]
@@ -539,30 +528,25 @@
 				"title_key": "privacy.category.wallet.title",
 				"entries2": [
 					{
-						"min_level": 3,
+						"min_level": 4,
 						"icon_resource": "personalization-blue.png",
 						"off_icon_resource": "personalization-blue-off.png",
 						"title" : "Personalizations",
 						"title_key" :"privacy.entry.wallet.personalizations.title",
-						"description" : "Customize your experience to see schedules, rosters, scores and news for your favorite Illini teams.",
+						"description" : "Check your Building access/Illini ID, MTD bus pass, Illini Cash, Meal Plan balances and see past transactions.",
 						"description_key" :"privacy.entry.wallet.personalizations.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
-						"dataUsage_key" :"privacy.entry.wallet.personalizations.data_usage",
-						"additional_min_level": 4,
-						"additional_description" : "Check your Illini Cash & Meal Plan balances and see past transactions.",
-						"additional_description_key" :"privacy.entry.wallet.personalizations.additional_description",
-						"additional_dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
-						"additional_dataUsage_key" :"privacy.entry.wallet.personalizations.additional_data_usage"
+						"dataUsage" : "This features uses your personal University information.",
+						"dataUsage_key" :"privacy.entry.wallet.personalizations.data_usage"
 					},
 					{
-						"min_level": 4,
+						"min_level": 5,
 						"icon_resource": "identiy-blue.png",
 						"off_icon_resource": "identiy-blue-off.png",
 						"title" : "Identity",
 						"title_key" :"privacy.entry.wallet.sharing.title",
-						"description" : "Store credit card information to buy tickets for athletic events.",
+						"description" : "Check your Building access/Illini ID, MTD bus pass, Illini Cash, Meal Plan balances and see past transactions.",
 						"description_key" :"privacy.entry.wallet.sharing.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This features uses your personal University information.",
 						"dataUsage_key" :"privacy.entry.wallet.sharing.data_usage"
 					}
 				]
@@ -579,7 +563,7 @@
 						"title_key" :"privacy.entry.health.view.only.title",
 						"description" : "Locate and connect to resources to assist you with your EIGHT DIMENSIONS of health and wellness.",
 						"description_key" :"privacy.entry.health.view.only.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This does not use or store your location.",
 						"dataUsage_key" :"privacy.entry.health.view.only.data_usage"
 					},
 					{
@@ -590,69 +574,8 @@
 						"title_key" :"privacy.entry.health.location.sharing.title",
 						"description" : "Provide you wayfinding assistance to locating health and wellness resources on campus.",
 						"description_key" :"privacy.entry.health.location.sharing.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This feature uses location services but does not store your location.",
 						"dataUsage_key" :"privacy.entry.health.location.sharing.data_usage"
-					}
-				]
-			},
-			{
-				"title":"Student and Community Involvement",
-				"title_key": "privacy.category.involvement.title",
-				"entries2": [
-					{
-						"min_level": 1,
-						"icon_resource": "view-only-blue.png",
-						"off_icon_resource": "view-only-blue.png",
-						"title" : "View Only",
-						"title_key" :"privacy.entry.involvement.view.only.title",
-						"description" : "Show campus dining locations and see menus for up to 2 weeks in the future..",
-						"description_key" :"privacy.entry.involvement.view.only.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
-						"dataUsage_key" :"privacy.entry.involvement.view.only.data_usage"
-					},
-					{
-						"min_level": 2,
-						"icon_resource": "location-sharing-blue.png",
-						"off_icon_resource": "location-sharing-blue-off.png",
-						"title" : "Location Sharing",
-						"title_key" :"privacy.entry.involvement.location.sharing.title",
-						"description" : "Show event and dining locations near you. Allow you to create a quick poll and receive results from people nearby or far away.",
-						"description_key" :"privacy.entry.involvement.location.sharing.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
-						"dataUsage_key" :"privacy.entry.involvement.location.sharing.data_usage"
-					},
-					{
-						"min_level": 3,
-						"icon_resource": "personalization-blue.png",
-						"off_icon_resource": "personalization-blue-off.png",
-						"title" : "Personalizations",
-						"title_key" :"privacy.entry.involvement.personalizations.title",
-						"description" : "Store your dining location preferences, including food allergies, and see current and future menus. See events, dining locations and news articles that interest you.",
-						"description_key" :"privacy.entry.involvement.personalizations.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
-						"dataUsage_key" :"privacy.entry.involvement.personalizations.data_usage"
-					},
-					{
-						"min_level": 4,
-						"icon_resource": "notifications-blue.png",
-						"off_icon_resource": "notifications-blue-off.png",
-						"title" : "Notifications",
-						"title_key" :"privacy.entry.involvement.notifications.title",
-						"description" : "Receive notifications that might interest you based on your preferences or location.",
-						"description_key" :"privacy.entry.involvement.notifications.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
-						"dataUsage_key" :"privacy.entry.involvement.notifications.data_usage"
-					},
-					{
-						"min_level": 4,
-						"icon_resource": "identiy-blue.png",
-						"off_icon_resource": "identiy-blue-off.png",
-						"title" : "Identity",
-						"title_key" :"privacy.entry.involvement.sharing.title",
-						"description" : "Provide assistance in registering to vote, voting by mail and finding voting locations on election day.",
-						"description_key" :"privacy.entry.involvement.sharing.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
-						"dataUsage_key" :"privacy.entry.involvement.sharing.data_usage"
 					}
 				]
 			},
@@ -688,7 +611,7 @@
 						"off_icon_resource": "personalization-blue-off.png",
 						"title" : "Personalizations",
 						"title_key" :"privacy.entry.wayfinding.personalizations.title",
-						"description" : "View a map of campus with personalized places of interest.",
+						"description" : "Navigate campus with places of interest to you.",
 						"description_key" :"privacy.entry.wayfinding.personalizations.description",
 						"dataUsage" : "This feature uses location services, personal information and places you have starred in the app.",
 						"dataUsage_key" :"privacy.entry.wayfinding.personalizations.data_usage"
@@ -699,7 +622,7 @@
 						"off_icon_resource": "notifications-blue-off.png",
 						"title" : "Notifications",
 						"title_key" :"privacy.entry.wayfinding.notifications.title",
-						"description" : "Get various personalized notifications based on your location.",
+						"description" : "Recieve personalized notifications based on your location.",
 						"description_key" :"privacy.entry.wayfinding.notifications.description",
 						"dataUsage" : "This feature sends notifications utilizing location services, personal information and places you have starred in the app.",
 						"dataUsage_key" :"privacy.entry.wayfinding.notifications.data_usage"
@@ -712,7 +635,7 @@
 						"title_key" :"privacy.entry.wayfinding.sharing.title",
 						"description" : "Potentially share your location with others.",
 						"description_key" :"privacy.entry.wayfinding.sharing.description",
-						"dataUsage" : "This feature shares your location with others and uses location services.",
+						"dataUsage" : "This feature uses location services and may share your location with others.",
 						"dataUsage_key" :"privacy.entry.wayfinding.sharing.data_usage"
 					}
 				]
@@ -727,9 +650,9 @@
 						"off_icon_resource": "view-only-blue.png",
 						"title" : "View Only",
 						"title_key" :"privacy.entry.groups.view.only.title",
-						"description" : "View events and dining locations around campus.",
+						"description" : "View a list of existing groups.",
 						"description_key" :"privacy.entry.groups.view.only.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This feature does not use any of your data.",
 						"dataUsage_key" :"privacy.entry.groups.view.only.data_usage"
 					},
 					{
@@ -738,9 +661,9 @@
 						"off_icon_resource": "location-sharing-blue-off.png",
 						"title" : "Location Sharing",
 						"title_key" :"privacy.entry.groups.location.sharing.title",
-						"description" : "View events and dining locations near you.",
+						"description" : "View a list of existing groups.",
 						"description_key" :"privacy.entry.groups.location.sharing.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This feature does not use any of your data.",
 						"dataUsage_key" :"privacy.entry.groups.location.sharing.data_usage"
 					},
 					{
@@ -749,9 +672,9 @@
 						"off_icon_resource": "personalization-blue-off.png",
 						"title" : "Personalizations",
 						"title_key" :"privacy.entry.groups.personalizations.title",
-						"description" : "View events and dining locations near you.",
+						"description" : "View a list of existing groups.",
 						"description_key" :"privacy.entry.groups.personalizations.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This feature does not use any of your data.",
 						"dataUsage_key" :"privacy.entry.groups.personalizations.data_usage"
 					},
 					{
@@ -760,9 +683,9 @@
 						"off_icon_resource": "notifications-blue-off.png",
 						"title" : "Notifications",
 						"title_key" :"privacy.entry.groups.notifications.title",
-						"description" : "Get various notifications & receive reminders of items you have starred in the app.",
+						"description" : "Join, view and interact with groups when signed in. Get notifications on group events, posts and polls for groups you belong to.",
 						"description_key" :"privacy.entry.groups.notifications.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This feature uses your and others information contributed to a group.",
 						"dataUsage_key" :"privacy.entry.groups.notifications.data_usage"
 					},
 					{
@@ -771,9 +694,9 @@
 						"off_icon_resource": "share-blue-off.png",
 						"title" : "Sharing",
 						"title_key" :"privacy.entry.groups.sharing.title",
-						"description" : "Use the SMARTS of the CONVERGE service to help yourself or a group pick events.",
+						"description" : "Create group events, posts and polls for groups you belong to.",
 						"description_key" :"privacy.entry.groups.sharing.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "This feature shared information that you contribute to a group.",
 						"dataUsage_key" :"privacy.entry.groups.sharing.data_usage"
 					}
 				]
@@ -788,9 +711,9 @@
 						"off_icon_resource": "view-only-blue.png",
 						"title" : "View Only",
 						"title_key" :"privacy.entry.miscellaneous.view.only.title",
-						"description" : "View events and dining locations around campus.",
+						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
 						"description_key" :"privacy.entry.miscellaneous.view.only.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "Building access and due date catalog require a University sign in.",
 						"dataUsage_key" :"privacy.entry.miscellaneous.view.only.data_usage"
 					},
 					{
@@ -799,9 +722,9 @@
 						"off_icon_resource": "location-sharing-blue-off.png",
 						"title" : "Location Sharing",
 						"title_key" :"privacy.entry.miscellaneous.location.sharing.title",
-						"description" : "View events and dining locations near you.",
+						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
 						"description_key" :"privacy.entry.miscellaneous.location.sharing.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "Building access and due date catalog require a University sign in.",
 						"dataUsage_key" :"privacy.entry.miscellaneous.location.sharing.data_usage"
 					},
 					{
@@ -810,9 +733,9 @@
 						"off_icon_resource": "personalization-blue-off.png",
 						"title" : "Personalizations",
 						"title_key" :"privacy.entry.miscellaneous.personalizations.title",
-						"description" : "View events and dining locations near you.",
+						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
 						"description_key" :"privacy.entry.miscellaneous.personalizations.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "Building access and due date catalog require a University sign in.",
 						"dataUsage_key" :"privacy.entry.miscellaneous.personalizations.data_usage"
 					},
 					{
@@ -821,9 +744,9 @@
 						"off_icon_resource": "notifications-blue-off.png",
 						"title" : "Notifications",
 						"title_key" :"privacy.entry.miscellaneous.notifications.title",
-						"description" : "Get various notifications & receive reminders of items you have starred in the app.",
+						"description" : "You may recieve notifications when content is updated and you can star various content.",
 						"description_key" :"privacy.entry.miscellaneous.notifications.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "Building access and due date catalog require a University sign in.",
 						"dataUsage_key" :"privacy.entry.miscellaneous.notifications.data_usage"
 					},
 					{
@@ -832,9 +755,9 @@
 						"off_icon_resource": "share-blue-off.png",
 						"title" : "Sharing",
 						"title_key" :"privacy.entry.miscellaneous.sharing.title",
-						"description" : "Use the SMARTS of the CONVERGE service to help yourself or a group pick events.",
+						"description" : "You may recieve notifications when content is updated and you can star various content.",
 						"description_key" :"privacy.entry.miscellaneous.sharing.description",
-						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage" : "Building access and due date catalog require a University sign in.",
 						"dataUsage_key" :"privacy.entry.miscellaneous.sharing.data_usage"
 					}
 				]
@@ -1334,14 +1257,12 @@
 				"resources": [
 					{
 						"ribbon_buttons": [
-							{ "title": "panel.wellness.spiritual.resources.reflection_rooms", "url": "https://www.library.illinois.edu/ugl/about/reflection-rooms/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.spiritual.resources.open_prayer", "url": "https://union.illinois.edu/get-involved/office-of-registered-organizations/student-organization-complex", "icon": "link-out.png", "hint": "" }
+							{ "title": "panel.wellness.spiritual.resources.reflection_rooms", "url": "https://www.library.illinois.edu/ugl/about/reflection-rooms/", "icon": "link-out.png", "hint": "" }
 						]
 					},
 					{ "title": "panel.wellness.common.resources.office_inclusion.title",
 						"ribbon_buttons": [
 							{ "title":"panel.wellness.common.resources.programs", "url":"https://oiir.illinois.edu/programs", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.spiritual.resources.interfaith", "url":"https://oiir.illinois.edu/diversityed/interfaith", "icon": "link-out.png", "hint": "" },
 							{ "title":"panel.wellness.common.resources.bnaacc", "url":"https://oiir.illinois.edu/bnaacc", "icon": "link-out.png", "hint": "" },
 							{ "title":"panel.wellness.common.resources.aacc", "url":"https://oiir.illinois.edu/aacc", "icon": "link-out.png", "hint": "" },
 							{ "title":"panel.wellness.common.resources.la_casa", "url":"https://oiir.illinois.edu/la-casa-cultural-latina", "icon": "link-out.png", "hint": "" },
