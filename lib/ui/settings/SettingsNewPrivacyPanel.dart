@@ -825,7 +825,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
     return
       Semantics( container: true,
         child: Container(
-        padding: EdgeInsets.only(top: 14, bottom: 19, left: 14, right: 44),
+        padding: EdgeInsets.only(top: 14, bottom: 19, left: 14, right: 24),
         color: Styles().colors!.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -840,9 +840,9 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                mainAxisAlignment: MainAxisAlignment.start,
                crossAxisAlignment: CrossAxisAlignment.start,
                children: <Widget>[
-                 Text(title,
+                 Padding(padding: EdgeInsets.only(right: 20), child: Text(title,
                   style:  TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, color: isEnabled? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorPrimaryTransparent015),
-                 ),
+                 )),
                  Container(height: 2,),
                  Semantics( explicitChildNodes: false,
                   child: _buildInfo(description, dataUsageInfo, minLevel, false)),
@@ -872,28 +872,15 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(description!,
+        Padding(padding: EdgeInsets.only(right: 20), child: Text(description!,
           style:  TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: isEnabled? Styles().colors!.textSurface: Styles().colors!.textSurfaceTransparent15),
-        ),
+        )),
         Semantics( explicitChildNodes: true,
           child: GestureDetector(
-            onTap: (){
-              setState(() {
-                if(additionalInfo)
-                  _additionalDataUsageExpanded = !_additionalDataUsageExpanded;
-                else
-                _dataUsageExpanded = !_dataUsageExpanded;
-              });
-              bool expanded = additionalInfo? _additionalDataUsageExpanded : _dataUsageExpanded;
-              AnimationController? controller = additionalInfo? _additionalInfoController : _infoController;
-              if (expanded) {
-                controller!.forward();
-              } else {
-                controller!.reverse();
-              }
-            },
+            behavior: HitTestBehavior.translucent,
+            onTap: () => _onTapInfo(additionalInfo),
             child: Container(
-                padding: EdgeInsets.only(top: 8),
+                padding: EdgeInsets.only(top: 8, bottom: 6),
                 child: Row(
                   children: <Widget>[
                     Expanded(child:
@@ -902,16 +889,16 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                       )
                     ),
                     Container(width: 9,),
-                    RotationTransition(
+                    Container(padding: EdgeInsets.only(right: 20), child: RotationTransition(
                         turns: _iconTurns,
-                        child: Image.asset(isEnabled? "images/down-arrow-orange.png": "images/down-arrow-orange-off.png", excludeFromSemantics: true,)),
+                        child: Image.asset(isEnabled? "images/down-arrow-orange.png": "images/down-arrow-orange-off.png", excludeFromSemantics: true))),
                   ],
                 )))),
         !infoExpanded? Container():
         Semantics( explicitChildNodes: true,
           child:
             Container(
-              padding: EdgeInsets.only(top: 6, bottom: 8),
+              padding: EdgeInsets.only(bottom: 8, right: 20),
               child: Container(
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.only(left: 8),
@@ -925,6 +912,22 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
         )
       ],
     );
+  }
+
+  void _onTapInfo(bool additionalInfo) {
+    setState(() {
+      if (additionalInfo)
+        _additionalDataUsageExpanded = !_additionalDataUsageExpanded;
+      else
+        _dataUsageExpanded = !_dataUsageExpanded;
+    });
+    bool expanded = additionalInfo ? _additionalDataUsageExpanded : _dataUsageExpanded;
+    AnimationController? controller = additionalInfo ? _additionalInfoController : _infoController;
+    if (expanded) {
+      controller!.forward();
+    } else {
+      controller!.reverse();
+    }
   }
 }
 
