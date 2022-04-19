@@ -5,8 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.3.18] - 2022-04-18
 ### Changed
 - Update favorite icon availability for privacy level 4+ [#1548](https://github.com/rokwire/illinois-app/issues/1548).
+### Fixed
+- Extent the tap area in privacy panel for data usage [#1563](https://github.com/rokwire/illinois-app/issues/1563).
 
 ## [3.3.17] - 2022-04-15
 ### Fixed
