@@ -541,7 +541,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       });
 
       _loadMyGroupsIfNeeded().then((_) {
-        Polls().getMyPolls(cursor: _myPollsCursor)!.then((PollsChunk? result) {
+        Polls().getMyPolls(_myPollsCursor)!.then((PollsChunk? result) {
           setState(() {
             if (result != null) {
               if (_myPolls == null) {
@@ -597,7 +597,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     if (((_groupPolls == null) || (_groupPollsCursor != null)) && !_groupPollsLoading) {
       _setGroupPollsLoading(true);
       _loadMyGroupsIfNeeded().then((_) {
-        List<String>? groupIds = _myGroupIds;
+        Set<String>? groupIds = _myGroupIds;
         if (CollectionUtils.isNotEmpty(groupIds)) {
           Polls().getGroupPolls(groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
             if (result != null) {
@@ -631,10 +631,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     _myGroups = await Groups().loadGroups(myGroups: true);
   }
 
-  List<String>? get _myGroupIds {
-    List<String>? groupIds;
+  Set<String>? get _myGroupIds {
+    Set<String>? groupIds;
     if (CollectionUtils.isNotEmpty(_myGroups)) {
-      groupIds = [];
+      groupIds = <String>{};
       _myGroups!.forEach((group) {
         groupIds!.add(group.id!);
       });
