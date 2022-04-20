@@ -397,7 +397,6 @@ class Storage extends rokwire.Storage {
   }
 
   static const String _giesCompletedPagesKey  = 'gies_completed_pages';
-
   
   Set<String>? get giesCompletedPages {
     List<String>? pagesList = getStringListWithName(_giesCompletedPagesKey);
@@ -469,4 +468,15 @@ class Storage extends rokwire.Storage {
 
     return result;
   }
+
+  // On Campus
+
+  String get campusRegionMonitorEnabledKey => 'edu.illinois.rokwire.campus.region_monitor.enabled';
+  bool? get campusRegionMonitorEnabled => getBoolWithName(campusRegionMonitorEnabledKey);
+  set campusRegionMonitorEnabled(bool? value) => setBoolWithName(campusRegionMonitorEnabledKey, value);
+
+  String get campusRegionManualInsideKey => 'edu.illinois.rokwire.campus.region_manual.inside';
+  bool? get campusRegionManualInside => getBoolWithName(campusRegionManualInsideKey);
+  set campusRegionManualInside(bool? value) => setBoolWithName(campusRegionManualInsideKey, value);
+
 }
