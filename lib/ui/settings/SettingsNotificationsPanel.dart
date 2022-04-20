@@ -52,6 +52,12 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     super.initState();
   }
 
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
   void _checkNotificationsEnabled(){
     NotificationPermissions.getNotificationPermissionStatus().then((PermissionStatus status){
       setState(() {
