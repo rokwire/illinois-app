@@ -50,18 +50,18 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   _PollType? _selectedPollType;
 
   List<Poll>? _myPolls;
-  String? _myPollsCursor;
+  PollsCursor? _myPollsCursor;
   String? _myPollsError;
   bool _myPollsLoading = false;
   
   List<Poll>? _recentPolls;
   List<Poll>? _recentLocalPolls;
-  String? _recentPollsCursor;
+  PollsCursor? _recentPollsCursor;
   String? _recentPollsError;
   bool _recentPollsLoading = false;
 
   List<Poll>? _groupPolls;
-  String? _groupPollsCursor;
+  PollsCursor? _groupPollsCursor;
   String? _groupPollsError;
   bool _groupPollsLoading = false;
   List<Group>? _myGroups;
@@ -541,8 +541,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       });
 
       _loadMyGroupsIfNeeded().then((_) {
-        //TBD: paging and loading partially
-        Polls().getMyPolls()!.then((PollsChunk? result) {
+        Polls().getMyPolls(cursor: _myPollsCursor)!.then((PollsChunk? result) {
           setState(() {
             if (result != null) {
               if (_myPolls == null) {
@@ -571,8 +570,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       });
 
       _loadMyGroupsIfNeeded().then((_) {
-        //TBD paging
-        Polls().getRecentPolls()!.then((PollsChunk? result){
+        Polls().getRecentPolls(cursor: _recentPollsCursor)!.then((PollsChunk? result){
           setState((){
             if (result != null) {
               if (_recentPolls == null) {
@@ -601,8 +599,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       _loadMyGroupsIfNeeded().then((_) {
         Set<String>? groupIds = _myGroupIds;
         if (CollectionUtils.isNotEmpty(groupIds)) {
-          //TBD paging and loading on portions
-          Polls().getGroupPolls(groupIds)!.then((PollsChunk? result) {
+          Polls().getGroupPolls(groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
             if (result != null) {
               if (_groupPolls == null) {
                 _groupPolls = [];
