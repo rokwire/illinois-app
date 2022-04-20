@@ -570,7 +570,8 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       });
 
       _loadMyGroupsIfNeeded().then((_) {
-        Polls().getRecentPolls(cursor: _recentPollsCursor)!.then((PollsChunk? result){
+        //TBD paging
+        Polls().getRecentPolls()!.then((PollsChunk? result){
           setState((){
             if (result != null) {
               if (_recentPolls == null) {
