@@ -541,7 +541,8 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       });
 
       _loadMyGroupsIfNeeded().then((_) {
-        Polls().getMyPolls(_myPollsCursor)!.then((PollsChunk? result) {
+        //TBD: paging and loading partially
+        Polls().getMyPolls()!.then((PollsChunk? result) {
           setState(() {
             if (result != null) {
               if (_myPolls == null) {
@@ -600,7 +601,8 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       _loadMyGroupsIfNeeded().then((_) {
         Set<String>? groupIds = _myGroupIds;
         if (CollectionUtils.isNotEmpty(groupIds)) {
-          Polls().getGroupPolls(groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
+          //TBD paging and loading on portions
+          Polls().getGroupPolls(groupIds)!.then((PollsChunk? result) {
             if (result != null) {
               if (_groupPolls == null) {
                 _groupPolls = [];

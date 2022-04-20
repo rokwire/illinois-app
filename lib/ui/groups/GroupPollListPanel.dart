@@ -153,7 +153,8 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
       String? groupId = widget.group.id;
       if (StringUtils.isNotEmpty(groupId)) {
         _setGroupPollsLoading(true);
-        Polls().getGroupPolls({groupId!}, cursor: _pollsCursor)?.then((PollsChunk? result) {
+        //TBD paging and loading on portions
+        Polls().getGroupPolls({groupId!})?.then((PollsChunk? result) {
           if (result != null) {
             if (_polls == null) {
               _polls = [];
