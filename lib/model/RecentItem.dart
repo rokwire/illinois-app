@@ -202,7 +202,7 @@ class RecentItem{
   }
 
   static List<RecentItem> createFromList(List? items ){
-    List<RecentItem> result = [];
+    List<RecentItem> result = <RecentItem>[];
     if(items!=null && items.isNotEmpty){
       items.forEach((dynamic each){
         RecentItem? item = RecentItem.fromOriginalType(each);

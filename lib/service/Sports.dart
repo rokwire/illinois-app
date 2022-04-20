@@ -77,7 +77,7 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
       DeepLink.notifyUri,
       AppLivecycle.notifyStateChanged,
     ]);
-    _gameDetailsCache = [];
+    _gameDetailsCache = <Map<String, dynamic>>[];
   }
 
   @override
@@ -415,7 +415,7 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
       if (responseCode == 200) {
         List<dynamic>? jsonData = JsonUtils.decode(responseBody);
         if (CollectionUtils.isNotEmpty(jsonData)) {
-          List<Roster> rosters = [];
+          List<Roster> rosters = <Roster>[];
           for (dynamic jsonEntry in jsonData!) {
             Roster? roster = Roster.fromJson(JsonUtils.mapValue(jsonEntry));
             if (roster != null) {
@@ -441,7 +441,7 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
       if (responseCode == 200) {
         List<dynamic>? jsonList = JsonUtils.decode(responseBody);
         if (CollectionUtils.isNotEmpty(jsonList)) {
-          List<Coach> coaches = [];
+          List<Coach> coaches = <Coach>[];
           for (dynamic jsonEntry in jsonList!) {
             Coach? coach = Coach.fromJson(JsonUtils.mapValue(jsonEntry));
             if (coach != null) {
@@ -508,11 +508,11 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
 
     // Step 1: Group games by sport
     Map<String, List<Game>> gamesMap = Map<String, List<Game>>();
-    List<Game> preferredGames = [];
+    List<Game> preferredGames = <Game>[];
     for (Game game in gamesList!) {
       if (game.sport?.shortName != null) {
         if (!gamesMap.containsKey(game.sport!.shortName)) {
-          gamesMap[game.sport!.shortName!] = [];
+          gamesMap[game.sport!.shortName!] = <Game>[];
         }
         gamesMap[game.sport!.shortName]?.add(game);
       }
@@ -532,7 +532,7 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
     Set<String> limitedSports = Set<String>();
     if (preferredGames.isNotEmpty) {
       preferredGames.sort((game1, game2) => game1.dateTimeUtc!.compareTo(game2.dateTimeUtc!));
-      List<Game> limitedGames = [];
+      List<Game> limitedGames = <Game>[];
       for (Game game in preferredGames) {
         if (!limitedSports.contains(game.sport?.shortName)) {
           limitedGames.add(game);
@@ -624,7 +624,7 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
     if (responseCode == 200) {
       List<dynamic>? jsonData = JsonUtils.decode(responseBody);
       if (CollectionUtils.isNotEmpty(jsonData)) {
-        List<Game> gamesList = [];
+        List<Game> gamesList = <Game>[];
         for (dynamic entry in jsonData!) {
           Game? game = Game.fromJson(entry);
           if (game != null) {
@@ -678,7 +678,7 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
       if ((response != null) && (response.statusCode == 200)) {
         List<dynamic>? jsonData = JsonUtils.decode(responseBody);
         if (CollectionUtils.isNotEmpty(jsonData)) {
-          List<News> newsList = [];
+          List<News> newsList = <News>[];
           for (dynamic jsonEntry in jsonData!) {
             News? news = News.fromJson(JsonUtils.mapValue(jsonEntry));
             if (news != null) {
@@ -709,7 +709,7 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
     if (CollectionUtils.isEmpty(games)) {
       return null;
     }
-    List<Game> todayGames = [];
+    List<Game> todayGames = <Game>[];
     for (Game game in games!) {
       if (game.isGameDay) {
         todayGames.add(game);

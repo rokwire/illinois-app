@@ -228,7 +228,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String responseBody = response.body;
       List<dynamic>? jsonListData = JsonUtils.decode(responseBody);
       if (jsonListData != null) {
-        List<IlliniCashTransaction> transactions = [];
+        List<IlliniCashTransaction> transactions = <IlliniCashTransaction>[];
         for (var jsonData in jsonListData) {
           IlliniCashTransaction? transaction = IlliniCashTransaction.fromJson(
               jsonData);
@@ -260,7 +260,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String responseBody = response.body;
       List<dynamic>? jsonListData = JsonUtils.decode(responseBody);
       if (jsonListData != null) {
-        List<MealPlanTransaction> transactions = [];
+        List<MealPlanTransaction> transactions = <MealPlanTransaction>[];
         for (var jsonData in jsonListData) {
           MealPlanTransaction? transaction = MealPlanTransaction.fromJson(
               jsonData);
@@ -294,7 +294,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String responseBody = response.body;
       List<dynamic>? jsonListData = JsonUtils.decode(responseBody);
       if (jsonListData != null) {
-        List<CafeCreditTransaction> transactions = [];
+        List<CafeCreditTransaction> transactions = <CafeCreditTransaction>[];
         for (var jsonData in jsonListData) {
           CafeCreditTransaction? transaction = CafeCreditTransaction.fromJson(jsonData);
           if (transaction != null) {

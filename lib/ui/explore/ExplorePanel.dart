@@ -870,77 +870,52 @@ class ExplorePanelState extends State<ExplorePanel>
         onMapCreated: _onNativeMapCreated,
         creationParams: { "myLocationEnabled" : _userLocationEnabled()},
       ) : Container(),
-      Positioned(
-          bottom: _mapExploreBarAnimationController.value,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: MapBarHeight,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid),
-                  bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid)),
-            ),
-            child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text((title != null) ? title : "",
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Styles().colors!.fillColorPrimary,
-                              fontFamily: Styles().fontFamilies!.extraBold,
-                              fontSize: 20)),
-                      Text((description != null) ? description : "",
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.black38,
-                              fontFamily: Styles().fontFamilies!.medium,
-                              fontSize: 16)),
-                      Container(
-                        height: 8,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          _userLocationEnabled() ?
-                          Row(
-                              children: <Widget>[
-                                SizedBox(width: buttonWidth, child: RoundedButton(
-                                    label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions'),
-                                    hint: Localization().getStringEx('panel.explore.button.directions.hint', ''),
-                                    backgroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                    fontSize: 16.0,
-                                    textColor: Styles().colors!.fillColorPrimary,
-                                    borderColor: Styles().colors!.fillColorSecondary,
-                                    onTap: () {
-                                      Analytics().logSelect(target: 'Directions');
-                                      _presentMapExploreDirections(context);
-                                    }),),
-                                Container(
-                                  width: 12,
-                                ),
-                              ]) :
-                          Container(),
-                          SizedBox(width: buttonWidth, child: RoundedButton(
-                              label: Localization().getStringEx('panel.explore.button.details.title', 'Details'),
-                              hint: Localization().getStringEx('panel.explore.button.details.hint', ''),
-                              backgroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              fontSize: 16.0,
-                              textColor: Styles().colors!.fillColorPrimary,
-                              borderColor: Styles().colors!.fillColorSecondary,
-                              onTap: () {
-                                Analytics().logSelect(target: 'Details');
-                                _presentMapExploreDetail(context);
-                              }),),
-
-
-                        ],
-                      )
-                    ])),
-          ))
+      Positioned(bottom: _mapExploreBarAnimationController.value, left: 0, right: 0, child:
+        Container(height: MapBarHeight, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid),),), child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Text(title ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary, )),
+              Text((description != null) ? description : "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+              Container(height: 8,),
+              Row(children: <Widget>[
+                _userLocationEnabled() ? Row(children: <Widget>[
+                  SizedBox(width: buttonWidth, child:
+                    RoundedButton(
+                      label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions'),
+                      hint: Localization().getStringEx('panel.explore.button.directions.hint', ''),
+                      backgroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorSecondary,
+                      onTap: () {
+                        Analytics().logSelect(target: 'Directions');
+                        _presentMapExploreDirections(context);
+                      }
+                    ),
+                  ),
+                  Container(width: 12,),
+                ]) : Container(),
+                SizedBox(width: buttonWidth, child:
+                  RoundedButton(
+                    label: Localization().getStringEx('panel.explore.button.details.title', 'Details'),
+                    hint: Localization().getStringEx('panel.explore.button.details.hint', ''),
+                    backgroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorSecondary,
+                    onTap: () {
+                      Analytics().logSelect(target: 'Details');
+                      _presentMapExploreDetail(context);
+                    }
+                  ),
+                ),
+              ],),
+            ]),
+          ),
+        ),
+      )
     ]);
   }
 
