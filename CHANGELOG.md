@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Next build on `develop` should refer to version 4.0.0 -->
 ### Changed
 - Cleaned up laundry handling [#1530](https://github.com/rokwire/illinois-app/issues/1530).
+### Added
+- Added toggle switches for "On Campus" monitor to Settings/Personal Info [#1567](https://github.com/rokwire/illinois-app/issues/1567).
 
 ## [3.3.18] - 2022-04-18
 ### Changed
