@@ -479,7 +479,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   GeoFenceBeacon? get _currentBeacon {
     // Just return the first beacon that we have for now.
     for (String regionId in _rangingRegionIds) {
-      List<GeoFenceBeacon>? regionBacons = GeoFence().currentBeaconsInRegion(regionId);
+      Set<GeoFenceBeacon>? regionBacons = GeoFence().currentBeaconsInRegion(regionId);
       if ((regionBacons != null) && regionBacons.isNotEmpty) {
         return regionBacons.first;
       }
