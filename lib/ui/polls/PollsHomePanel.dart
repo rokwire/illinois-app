@@ -50,18 +50,18 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   _PollType? _selectedPollType;
 
   List<Poll>? _myPolls;
-  String? _myPollsCursor;
+  PollsCursor? _myPollsCursor;
   String? _myPollsError;
   bool _myPollsLoading = false;
   
   List<Poll>? _recentPolls;
   List<Poll>? _recentLocalPolls;
-  String? _recentPollsCursor;
+  PollsCursor? _recentPollsCursor;
   String? _recentPollsError;
   bool _recentPollsLoading = false;
 
   List<Poll>? _groupPolls;
-  String? _groupPollsCursor;
+  PollsCursor? _groupPollsCursor;
   String? _groupPollsError;
   bool _groupPollsLoading = false;
   List<Group>? _myGroups;
@@ -597,7 +597,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     if (((_groupPolls == null) || (_groupPollsCursor != null)) && !_groupPollsLoading) {
       _setGroupPollsLoading(true);
       _loadMyGroupsIfNeeded().then((_) {
-        List<String>? groupIds = _myGroupIds;
+        Set<String>? groupIds = _myGroupIds;
         if (CollectionUtils.isNotEmpty(groupIds)) {
           Polls().getGroupPolls(groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
             if (result != null) {
@@ -631,10 +631,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     _myGroups = await Groups().loadGroups(myGroups: true);
   }
 
-  List<String>? get _myGroupIds {
-    List<String>? groupIds;
+  Set<String>? get _myGroupIds {
+    Set<String>? groupIds;
     if (CollectionUtils.isNotEmpty(_myGroups)) {
-      groupIds = [];
+      groupIds = <String>{};
       _myGroups!.forEach((group) {
         groupIds!.add(group.id!);
       });
