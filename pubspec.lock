@@ -874,7 +874,7 @@ packages:
       path: plugin
       relative: true
     source: path
-    version: "1.0.0"
+    version: "1.0.1"
   roundcheckbox:
     dependency: "direct main"
     description:
