@@ -32,6 +32,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Config.dart';
@@ -127,6 +128,7 @@ void main() async {
     Gies(),
     Canvas(),
     Rewards(),
+    OnCampus(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // Laundries(),
