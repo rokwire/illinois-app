@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added toggle switches for "On Campus" monitor to Settings/Personal Info [#1567](https://github.com/rokwire/illinois-app/issues/1567).
 
+## [3.3.19] - 2022-04-21
+### Added
+- Integrate new Polls BB [#1565](https://github.com/rokwire/illinois-app/issues/1565).
+
 ## [3.3.18] - 2022-04-18
 ### Changed
 - Update favorite icon availability for privacy level 4+ [#1548](https://github.com/rokwire/illinois-app/issues/1548).
