@@ -471,12 +471,16 @@ class Storage extends rokwire.Storage {
 
   // On Campus
 
-  String get campusRegionMonitorEnabledKey => 'edu.illinois.rokwire.campus.region_monitor.enabled';
-  bool? get campusRegionMonitorEnabled => getBoolWithName(campusRegionMonitorEnabledKey);
-  set campusRegionMonitorEnabled(bool? value) => setBoolWithName(campusRegionMonitorEnabledKey, value);
+  String get onCampusRegionIdKey => 'edu.illinois.rokwire.on_campus.region_id';
+  String? get onCampusRegionId => getStringWithName(onCampusRegionIdKey);
+  set onCampusRegionId(String? value) => setStringWithName(onCampusRegionIdKey, value);
 
-  String get campusRegionManualInsideKey => 'edu.illinois.rokwire.campus.region_manual.inside';
-  bool? get campusRegionManualInside => getBoolWithName(campusRegionManualInsideKey);
-  set campusRegionManualInside(bool? value) => setBoolWithName(campusRegionManualInsideKey, value);
+  String get onCampusRegionMonitorEnabledKey => 'edu.illinois.rokwire.on_campus.region_monitor.enabled';
+  bool? get onCampusRegionMonitorEnabled => getBoolWithName(onCampusRegionMonitorEnabledKey);
+  set onCampusRegionMonitorEnabled(bool? value) => setBoolWithName(onCampusRegionMonitorEnabledKey, value);
+
+  String get onCampusRegionManualInsideKey => 'edu.illinois.rokwire.on_campus.region_manual.inside';
+  bool? get onCampusRegionManualInside => getBoolWithName(onCampusRegionManualInsideKey);
+  set onCampusRegionManualInside(bool? value) => setBoolWithName(onCampusRegionManualInsideKey, value);
 
 }

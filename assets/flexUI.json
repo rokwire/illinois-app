@@ -79,6 +79,10 @@
 			"canvas"                                 : ["Canvas Beta"],
 			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", "Gies Online Programs"]]
 		},
+		"locations": {
+			"safer"                                  : ["campus"],
+			"safer.gies"                             : ["campus"]
+		},
 		"privacy" : {
 			"illini_cash"                     : 3,
 			"laundry"                         : 4,

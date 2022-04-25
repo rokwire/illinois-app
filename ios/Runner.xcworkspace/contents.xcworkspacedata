@@ -11,6 +11,9 @@
       location = "container:Locations"
       name = "Locations">
       <FileRef
+         location = "group:Campus.gpx">
+      </FileRef>
+      <FileRef
          location = "group:Grainger Engineering Library.gpx">
       </FileRef>
       <FileRef

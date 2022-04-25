@@ -17,12 +17,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/OnCampus.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
@@ -45,12 +44,12 @@ class SettingsPersonalInformationPanel extends StatefulWidget{
 
 class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInformationPanel> implements NotificationsListener {
 
-  LocationServicesStatus? _locationServicesStatus;
-
   @override
   void initState() {
-    NotificationService().subscribe(this, [AppLivecycle.notifyStateChanged]);
-    _initLocationServicesStatus();
+    NotificationService().subscribe(this, [
+      AppLivecycle.notifyStateChanged,
+      OnCampus.notifyChanged
+    ]);
     super.initState();
   }
 
@@ -64,18 +63,9 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
-      _initLocationServicesStatus();
-    }
-  }
-
-  void _initLocationServicesStatus() {
-    if (Auth2().privacyMatch(2)) {
-      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
-        setState(() {
-          _locationServicesStatus = locationServicesStatus;
-        });
-      });
+    if ((name == OnCampus.notifyChanged) ||
+        ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed))) {
+      setState(() {});
     }
   }
 
@@ -119,35 +109,13 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
   }
 
   Widget _buildContent() {
-    bool campusRegionMonitorSelected, campusRegionMonitorEnabled;
-    String? campusRegionMonitorInfo;
-    if (!Auth2().privacyMatch(2)) {
-      campusRegionMonitorSelected = campusRegionMonitorEnabled = false;
-      campusRegionMonitorInfo = '(privacy restriction).';
-    }
-    else if (_locationServicesStatus == null) {
-      campusRegionMonitorSelected = campusRegionMonitorEnabled = false;
-      campusRegionMonitorInfo = '(checking location services status)';
-    }
-    else if (_locationServicesStatus == LocationServicesStatus.serviceDisabled) {
-      campusRegionMonitorSelected = campusRegionMonitorEnabled = false;
-      campusRegionMonitorInfo = '(location services not available)';
-    }
-    else {
-      campusRegionMonitorEnabled = true;
-      campusRegionMonitorSelected = Storage().campusRegionMonitorEnabled ?? (FlexUI().hasFeature('gies') ? false : true); // by default, false for GIES, true for the rest
-      campusRegionMonitorInfo = '(requires location services)';
-    }
+    bool onCampusRegionMonitorEnabled = OnCampus().enabled;
+    bool onCampusRegionMonitorSelected = OnCampus().monitorEnabled;
+    String onCampusRegionMonitorInfo = onCampusRegionMonitorEnabled ? '(requires location services)' : '(not avalable)';
 
-    bool campusRegionManualInsideEnabled, campusRegionManualInsideSelected;
-    if (campusRegionMonitorSelected == true) {
-      campusRegionManualInsideSelected = campusRegionManualInsideEnabled = false;
-    }
-    else {
-      campusRegionManualInsideEnabled = true;
-      campusRegionManualInsideSelected = (Storage().campusRegionManualInside != false); // by default, true
-    }
-    
+    bool campusRegionManualInsideEnabled = !onCampusRegionMonitorSelected;
+    bool campusRegionManualInsideSelected = OnCampus().monitorManualInside;
+
     return
       Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
@@ -207,12 +175,12 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
           Row(children: [Expanded(child: Text('On Campus', style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies?.bold, color: Styles().colors!.fillColorPrimary,)), )],),
           Container(height: 4,),
           ToggleRibbonButton(
-              label: StringUtils.isNotEmpty(campusRegionMonitorInfo) ? 'Automatically detect I am on campus\n$campusRegionMonitorInfo' : 'Automatically detect I am on campus',
-              textColor: campusRegionMonitorEnabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-              toggled: campusRegionMonitorSelected,
+              label: StringUtils.isNotEmpty(onCampusRegionMonitorInfo) ? 'Automatically detect I am on campus\n$onCampusRegionMonitorInfo' : 'Automatically detect I am on campus',
+              textColor: onCampusRegionMonitorEnabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+              toggled: onCampusRegionMonitorSelected,
               border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(4)),
-              onTap: campusRegionMonitorEnabled ? (){ setState(() { Storage().campusRegionMonitorEnabled = !campusRegionMonitorSelected; });} : (){}),
+              onTap: onCampusRegionMonitorEnabled ? (){ setState(() { OnCampus().monitorEnabled = !onCampusRegionMonitorSelected; });} : (){}),
           Container(height: 4,),
           ToggleRibbonButton(
               label: 'The App behaves as if I am on campus',
@@ -220,7 +188,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
               toggled: campusRegionManualInsideSelected,
               border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(4)),
-              onTap: campusRegionManualInsideEnabled ? (){ setState(() { Storage().campusRegionManualInside = !campusRegionManualInsideSelected; });} : (){}),
+              onTap: campusRegionManualInsideEnabled ? (){ setState(() { OnCampus().monitorManualInside = !campusRegionManualInsideSelected; });} : (){}),
 
           //Container(height: 8,),
 
