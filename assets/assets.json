@@ -372,7 +372,7 @@
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_store_location",
-				"text":"Don't store your location.",
+				"text":"Not store your location.",
 				"max_level":2
 			},
 			{
@@ -397,7 +397,7 @@
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_share_location",
-				"text":"Don’t share your data with other users.",
+				"text":"Not share your data with others.",
 				"max_level":4
 			}
 		]
@@ -405,11 +405,11 @@
 
 	"privacy_new":{
 		"description":[
-			{"level":1, "key": "privacy.category.description.1", "text": "You may not be able to use all features, but you are anonymous and we don't ask for anything or store any data. Anonymous data will be collected and used to optimize app performance."},
-			{"level":2, "key": "privacy.category.description.2", "text": "See what's happening around you. We use Wifi and Bluetooth location services to improve your experience, but we never store that data."},
-			{"level":3, "key": "privacy.category.description.3", "text": "You can personalize and customize the app. Wifi and Bluetooth location data is stored over time to make recommendations and improve your overall app experience."},
-			{"level":4, "key": "privacy.category.description.4", "text": "Let the app work for you. \nYou can access your iCard, save credit cards to make future purchases easier, access health information, and get notifications based on your specific interests."},
-			{"level":5, "key": "privacy.category.description.5", "text": "Access all features, get connected to campus, and let the app suggest tailored experiences that you and your friends all enjoy."}
+			{"level":1, "key": "privacy.category.description.1", "text": "You may not be able to use all features, but you are anonymous, and we don't ask you for any identifying information or store any data. Anonymous data will be collected and used to optimize app performance."},
+			{"level":2, "key": "privacy.category.description.2", "text": "See what's happening around you. We use Wi-Fi and Bluetooth location services to improve your experience, but we never store that data."},
+			{"level":3, "key": "privacy.category.description.3", "text": "You can personalize and customize the app. Wi-Fi and Bluetooth location data is stored over time to make recommendations and improve your overall app experience."},
+			{"level":4, "key": "privacy.category.description.4", "text": "Let the app work for you.\nYou can access your i-card, save credit cards to make future purchases easier, use Building access/Illini ID, and get notifications based on your specific interests."},
+			{"level":5, "key": "privacy.category.description.5", "text": "Access all features, get connected to campus, and let the app suggest tailored experiences that you and your friends can all enjoy."}
 		],
 		"categories":[
 			{
@@ -424,7 +424,7 @@
 						"title_key" :"privacy.entry.event_and_dining.view.only.title",
 						"description" : "View events and dining locations around campus.",
 						"description_key" :"privacy.entry.event_and_dining.view.only.description",
-						"dataUsage" : "This does not use or store your location.",
+						"dataUsage" : "These features do not use or store your location.",
 						"dataUsage_key" :"privacy.entry.event_and_dining.view.only.data_usage"
 					},
 					{
@@ -446,7 +446,7 @@
 						"title_key" :"privacy.entry.event_and_dining.personalizations.title",
 						"description" : "View events and dining locations near you.",
 						"description_key" :"privacy.entry.event_and_dining.personalizations.description",
-						"dataUsage" : "This feature uses location services, personal information and places you have starred in the app.",
+						"dataUsage" : "This feature uses location services, personal information and items you have starred in the app.",
 						"dataUsage_key" :"privacy.entry.event_and_dining.personalizations.data_usage"
 					},
 					{
@@ -455,7 +455,7 @@
 						"off_icon_resource": "notifications-blue-off.png",
 						"title" : "Notifications",
 						"title_key" :"privacy.entry.event_and_dining.notifications.title",
-						"description" : "Get various notifications & receive reminders of items you have starred in the app.",
+						"description" : "Get notifications including reminders about events you have starred in the app.",
 						"description_key" :"privacy.entry.event_and_dining.notifications.description",
 						"dataUsage" : "This feature sends notifications utilizing location services, personal information and places you have starred in the app.",
 						"dataUsage_key" :"privacy.entry.event_and_dining.notifications.data_usage"
@@ -474,7 +474,7 @@
 						"title_key" :"privacy.entry.athletics.view.only.title",
 						"description" : "See all upcoming schedules for athletic events, real-time scoring, rosters and athletic news.",
 						"description_key" :"privacy.entry.athletics.view.only.description",
-						"dataUsage" : "This does not use or store your location.",
+						"dataUsage" : "This feature does not use or store your location.",
 						"dataUsage_key" :"privacy.entry.athletics.view.only.data_usage"
 					},
 					{
@@ -535,7 +535,7 @@
 						"title_key" :"privacy.entry.wallet.personalizations.title",
 						"description" : "Check your Building access/Illini ID, MTD bus pass, Illini Cash, Meal Plan balances and see past transactions.",
 						"description_key" :"privacy.entry.wallet.personalizations.description",
-						"dataUsage" : "This features uses your personal University information.",
+						"dataUsage" : "These features use your personal university credentials.",
 						"dataUsage_key" :"privacy.entry.wallet.personalizations.data_usage"
 					},
 					{
@@ -546,7 +546,7 @@
 						"title_key" :"privacy.entry.wallet.sharing.title",
 						"description" : "Check your Building access/Illini ID, MTD bus pass, Illini Cash, Meal Plan balances and see past transactions.",
 						"description_key" :"privacy.entry.wallet.sharing.description",
-						"dataUsage" : "This features uses your personal University information.",
+						"dataUsage" : "These features use your personal university credentials.",
 						"dataUsage_key" :"privacy.entry.wallet.sharing.data_usage"
 					}
 				]
@@ -563,7 +563,7 @@
 						"title_key" :"privacy.entry.health.view.only.title",
 						"description" : "Locate and connect to resources to assist you with your EIGHT DIMENSIONS of health and wellness.",
 						"description_key" :"privacy.entry.health.view.only.description",
-						"dataUsage" : "This does not use or store your location.",
+						"dataUsage" : "This feature does not use or store your location.",
 						"dataUsage_key" :"privacy.entry.health.view.only.data_usage"
 					},
 					{
@@ -572,7 +572,7 @@
 						"off_icon_resource": "location-sharing-blue-off.png",
 						"title" : "Location Sharing",
 						"title_key" :"privacy.entry.health.location.sharing.title",
-						"description" : "Provide you wayfinding assistance to locating health and wellness resources on campus.",
+						"description" : "Get wayfinding assistance to health and wellness resources on campus.",
 						"description_key" :"privacy.entry.health.location.sharing.description",
 						"dataUsage" : "This feature uses location services but does not store your location.",
 						"dataUsage_key" :"privacy.entry.health.location.sharing.data_usage"
@@ -591,7 +591,7 @@
 						"title_key" :"privacy.entry.wayfinding.view.only.title",
 						"description" : "View a map of campus with places of interest.",
 						"description_key" :"privacy.entry.wayfinding.view.only.description",
-						"dataUsage" : "This does not use or store your location.",
+						"dataUsage" : "This feature does not use or store your location.",
 						"dataUsage_key" :"privacy.entry.wayfinding.view.only.data_usage"
 					},
 					{
@@ -622,7 +622,7 @@
 						"off_icon_resource": "notifications-blue-off.png",
 						"title" : "Notifications",
 						"title_key" :"privacy.entry.wayfinding.notifications.title",
-						"description" : "Recieve personalized notifications based on your location.",
+						"description" : "Receive personalized notifications based on your location.",
 						"description_key" :"privacy.entry.wayfinding.notifications.description",
 						"dataUsage" : "This feature sends notifications utilizing location services, personal information and places you have starred in the app.",
 						"dataUsage_key" :"privacy.entry.wayfinding.notifications.data_usage"
@@ -685,7 +685,7 @@
 						"title_key" :"privacy.entry.groups.notifications.title",
 						"description" : "Join, view and interact with groups when signed in. Get notifications on group events, posts and polls for groups you belong to.",
 						"description_key" :"privacy.entry.groups.notifications.description",
-						"dataUsage" : "This feature uses your and others information contributed to a group.",
+						"dataUsage" : "These features use information that you and others contribute to a group.",
 						"dataUsage_key" :"privacy.entry.groups.notifications.data_usage"
 					},
 					{
@@ -696,7 +696,7 @@
 						"title_key" :"privacy.entry.groups.sharing.title",
 						"description" : "Create group events, posts and polls for groups you belong to.",
 						"description_key" :"privacy.entry.groups.sharing.description",
-						"dataUsage" : "This feature shared information that you contribute to a group.",
+						"dataUsage" : "These features share information that you contribute to a group.",
 						"dataUsage_key" :"privacy.entry.groups.sharing.data_usage"
 					}
 				]
@@ -713,7 +713,7 @@
 						"title_key" :"privacy.entry.miscellaneous.view.only.title",
 						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
 						"description_key" :"privacy.entry.miscellaneous.view.only.description",
-						"dataUsage" : "Building access and due date catalog require a University sign in.",
+						"dataUsage" : "Building access and due date catalog require a university sign in.",
 						"dataUsage_key" :"privacy.entry.miscellaneous.view.only.data_usage"
 					},
 					{
@@ -724,7 +724,7 @@
 						"title_key" :"privacy.entry.miscellaneous.location.sharing.title",
 						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
 						"description_key" :"privacy.entry.miscellaneous.location.sharing.description",
-						"dataUsage" : "Building access and due date catalog require a University sign in.",
+						"dataUsage" : "Building access and due date catalog require a university sign in.",
 						"dataUsage_key" :"privacy.entry.miscellaneous.location.sharing.data_usage"
 					},
 					{
@@ -735,7 +735,7 @@
 						"title_key" :"privacy.entry.miscellaneous.personalizations.title",
 						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
 						"description_key" :"privacy.entry.miscellaneous.personalizations.description",
-						"dataUsage" : "Building access and due date catalog require a University sign in.",
+						"dataUsage" : "Building access and due date catalog require a university sign in.",
 						"dataUsage_key" :"privacy.entry.miscellaneous.personalizations.data_usage"
 					},
 					{
@@ -744,9 +744,9 @@
 						"off_icon_resource": "notifications-blue-off.png",
 						"title" : "Notifications",
 						"title_key" :"privacy.entry.miscellaneous.notifications.title",
-						"description" : "You may recieve notifications when content is updated and you can star various content.",
+						"description" : "You may receive notifications when content is updated, and you can star various content.",
 						"description_key" :"privacy.entry.miscellaneous.notifications.description",
-						"dataUsage" : "Building access and due date catalog require a University sign in.",
+						"dataUsage" : "Building access and due date catalog require a university sign in.",
 						"dataUsage_key" :"privacy.entry.miscellaneous.notifications.data_usage"
 					},
 					{
@@ -755,7 +755,7 @@
 						"off_icon_resource": "share-blue-off.png",
 						"title" : "Sharing",
 						"title_key" :"privacy.entry.miscellaneous.sharing.title",
-						"description" : "You may recieve notifications when content is updated and you can star various content.",
+						"description" : "You may receive notifications when content is updated, and you can star various content.",
 						"description_key" :"privacy.entry.miscellaneous.sharing.description",
 						"dataUsage" : "Building access and due date catalog require a University sign in.",
 						"dataUsage_key" :"privacy.entry.miscellaneous.sharing.data_usage"
@@ -771,7 +771,7 @@
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_store_location",
-				"text":"Don't store your location.",
+				"text":"Not store your location.",
 				"max_level":2
 			},
 			{
@@ -796,7 +796,7 @@
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_share_location",
-				"text":"Don’t share your data with other users.",
+				"text":"Not share your data with others.",
 				"max_level":4
 			}
 		]
