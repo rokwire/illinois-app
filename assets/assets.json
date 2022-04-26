@@ -372,7 +372,7 @@
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_store_location",
-				"text":"Don't store your location.",
+				"text":"Not store your location.",
 				"max_level":2
 			},
 			{
@@ -397,7 +397,7 @@
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_share_location",
-				"text":"Don’t share your data with other users.",
+				"text":"Not share your data with others.",
 				"max_level":4
 			}
 		]
@@ -408,7 +408,7 @@
 			{"level":1, "key": "privacy.category.description.1", "text": "You may not be able to use all features, but you are anonymous, and we don't ask you for any identifying information or store any data. Anonymous data will be collected and used to optimize app performance."},
 			{"level":2, "key": "privacy.category.description.2", "text": "See what's happening around you. We use Wi-Fi and Bluetooth location services to improve your experience, but we never store that data."},
 			{"level":3, "key": "privacy.category.description.3", "text": "You can personalize and customize the app. Wi-Fi and Bluetooth location data is stored over time to make recommendations and improve your overall app experience."},
-			{"level":4, "key": "privacy.category.description.4", "text": "Let the app work for you.\nYou can access your i-card, save credit cards to make future purchases easier, access health information, and get notifications based on your specific interests."},
+			{"level":4, "key": "privacy.category.description.4", "text": "Let the app work for you.\nYou can access your i-card, save credit cards to make future purchases easier, use Building access/Illini ID, and get notifications based on your specific interests."},
 			{"level":5, "key": "privacy.category.description.5", "text": "Access all features, get connected to campus, and let the app suggest tailored experiences that you and your friends can all enjoy."}
 		],
 		"categories":[
@@ -771,7 +771,7 @@
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_store_location",
-				"text":"Don't store your location.",
+				"text":"Not store your location.",
 				"max_level":2
 			},
 			{
@@ -796,7 +796,7 @@
 			},
 			{
 				"key":"com.illinois.features2.entry.dont_share_location",
-				"text":"Don’t share your data with other users.",
+				"text":"Not share your data with others.",
 				"max_level":4
 			}
 		]
