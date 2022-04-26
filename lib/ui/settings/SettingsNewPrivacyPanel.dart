@@ -339,7 +339,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 26),
               child: Text(
-                Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.label2", "This change requires us to make the following changes:"),
+                Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.label2", "This change requires us to make the following changes where applicable:"),
                 textAlign: TextAlign.center,
                 style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimaryVariant),
               ),
