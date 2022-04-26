@@ -1256,6 +1256,8 @@
 
     "panel.settings.video_tutorial.header.title": "Videotutorial",
     "panel.settings.video_tutorial.video.missing.msg": "Vídeo faltante",
+    "panel.settings.video_tutorial.button.play.title": "Jugar",
+    "panel.settings.video_tutorial.button.pause.title": "Pausa",
 
     "panel.create_event.header.title":"Crea Un Evento",
     "panel.create_event.title":"Crear un evento",

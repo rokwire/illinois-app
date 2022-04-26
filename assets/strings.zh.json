@@ -1258,6 +1258,8 @@
 
     "panel.settings.video_tutorial.header.title": "視頻教程",
     "panel.settings.video_tutorial.video.missing.msg": "缺少視頻",
+    "panel.settings.video_tutorial.button.play.title": "玩",
+    "panel.settings.video_tutorial.button.pause.title": "暫停",
 
 	"panel.create_event.header.title":"创建活动",
 	"panel.create_event.title":"创建活动",
