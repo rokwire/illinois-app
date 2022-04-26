@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Privacy description strings [#1578](https://github.com/rokwire/illinois-app/issues/1578).
 - Bring back the old Polls BB [#1579](https://github.com/rokwire/illinois-app/issues/1579).
 - Show privacy sign in message for Meal Plan, Quick Polls and Illini Cash panels [#1508](https://github.com/rokwire/illinois-app/issues/1508).
+- Add Play/Pause button in video panels. Do not autoplay video [#1569](https://github.com/rokwire/illinois-app/issues/1569).
 
 ## [3.3.19] - 2022-04-21
 ### Added
