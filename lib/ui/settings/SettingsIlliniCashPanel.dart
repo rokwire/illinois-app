@@ -139,6 +139,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
+                  _buildPrivacyAlertSection(),
                   _buildBalanceSection(),
                   _buildAddIlliniCashSection(),
                   Auth2().isOidcLoggedIn ? _buildHistorySection() : Container(),
@@ -178,7 +179,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                       ) : Container(),
                     ],
                   )),
-                   !Auth2().isOidcLoggedIn ? Expanded(
+                  ((!Auth2().isOidcLoggedIn) && _canSignIn) ? Expanded(
                     child: Padding(
                       padding: EdgeInsets.only(left: 20, right: 20, bottom: 16),
                       child: RoundedButton(
@@ -509,6 +510,47 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             fontSize: 14));
   }
 
+  Widget _buildPrivacyAlertSection(){
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: _buildPrivacyAlertMessage(),
+    );
+  }
+
+  Widget _buildPrivacyAlertMessage() {
+    if(_canSignIn){
+      return Container();
+    }
+
+    final String iconMacro = '{{privacy_level_icon}}';
+    String privacyMsg = Localization().getStringEx('panel.settings.illini_cash.label.privacy_alert.msg', "With your privacy level at $iconMacro , you can't sign in. To view your balance, you must set your privacy level to 4 and sign in.");
+    int iconMacroPosition = privacyMsg.indexOf(iconMacro);
+    String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
+    String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
+
+    return RichText(text: TextSpan(
+        style: TextStyle(
+          color: Styles().colors!.fillColorPrimary,
+          fontFamily: Styles().fontFamilies!.semiBold,
+          fontSize: 24,
+        ),
+        children: [
+          TextSpan(text: privacyMsgStart),
+          WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelIcon()),
+          TextSpan(text: privacyMsgEnd)
+        ]));
+  }
+
+  Widget _buildPrivacyLevelIcon() {
+    String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+        Text(privacyLevel, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))
+      ),
+    );
+  }
+
   void _onTransactionsLoaded(List<IlliniCashTransaction>? transactions) {
     _showTransactionsProgress(false, changeState: false);
     if (mounted) {
@@ -624,6 +666,10 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   String? _getFormattedDate(DateTime? date) {
     return AppDateTime().formatDateTime(
         date, format: 'MM/dd/yyyy');
+  }
+
+  bool get _canSignIn{
+    return Auth2().privacyMatch(4);
   }
 
   // NotificationsListener

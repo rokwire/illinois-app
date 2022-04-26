@@ -868,6 +868,7 @@
     "panel.settings.illini_cash.transactions.message.start_end_validation.hint": "",
     "panel.settings.illini_cash.transactions.message.no_transactions.text": "There are no transactions for the selected period",
     "panel.settings.illini_cash.transactions.message.no_transactions.hint": "",
+    "panel.settings.illini_cash.label.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can't sign in. To view your balance, you must set your privacy level to 4 and sign in.",
 
     "panel.settings.add_illini_cash.header.title": "Add Illini Cash",
     "panel.settings.add_illini_cash.label.recipient_uin.text": "RECIPIENT'S UIN",
@@ -932,6 +933,7 @@
     "panel.settings.meal_plan.button.start_date.hint": "Tap to select start date",
     "panel.settings.meal_plan.button.end_date.title": "End Date",
     "panel.settings.meal_plan.button.end_date.hint": "Tap to select end date",
+    "panel.settings.meal_plan.label.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can't sign in. To view your mean plan, you must set your privacy level to 4 and sign in.",
 
     "panel.settings.sports.heading":"Settings",
     "panel.settings.categories.header.title":"YOUR CATEGORIES",
