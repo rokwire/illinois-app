@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated Privacy description strings [#1578](https://github.com/rokwire/illinois-app/issues/1578).
+- Bring back the old Polls BB [#1579](https://github.com/rokwire/illinois-app/issues/1579).
 
 ## [3.3.19] - 2022-04-21
 ### Added
