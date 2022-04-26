@@ -510,15 +510,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             fontSize: 14));
   }
 
-  Widget _buildPrivacyAlertSection(){
-    return Container(
-      color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: _buildPrivacyAlertMessage(),
-    );
-  }
-
-  Widget _buildPrivacyAlertMessage() {
+  Widget _buildPrivacyAlertSection() {
     if(_canSignIn){
       return Container();
     }
@@ -529,7 +521,10 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
     String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
 
-    return RichText(text: TextSpan(
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: RichText(text: TextSpan(
         style: TextStyle(
           color: Styles().colors!.fillColorPrimary,
           fontFamily: Styles().fontFamilies!.semiBold,
@@ -539,7 +534,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
           TextSpan(text: privacyMsgStart),
           WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelIcon()),
           TextSpan(text: privacyMsgEnd)
-        ]));
+        ])));
   }
 
   Widget _buildPrivacyLevelIcon() {
