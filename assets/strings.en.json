@@ -514,6 +514,8 @@
 
     "panel.onboarding2.video.button.skip.title": "Skip",
     "panel.onboarding2.video.button.continue.title": "Continue",
+    "panel.onboarding2.video.button.play.title": "Play",
+    "panel.onboarding2.video.button.pause.title": "Pause",
     "panel.onboarding2.video.missing.msg": "Missing video",
     
     "panel.onboarding2.roles.label.title": "Who Are You?",

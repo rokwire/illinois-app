@@ -515,6 +515,8 @@
 
     "panel.onboarding2.video.button.skip.title": "跳過",
     "panel.onboarding2.video.button.continue.title": "繼續",
+    "panel.onboarding2.video.button.play.title": "玩",
+    "panel.onboarding2.video.button.pause.title": "暫停",
     "panel.onboarding2.video.missing.msg": "缺少視頻",
 
 	"panel.onboarding2.roles.label.title": "Who Are You?",
