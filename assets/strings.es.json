@@ -869,6 +869,7 @@
     "panel.settings.illini_cash.transactions.message.start_end_validation.hint": "",
     "panel.settings.illini_cash.transactions.message.no_transactions.text": "No hay transacciones para el período seleccionado",
     "panel.settings.illini_cash.transactions.message.no_transactions.hint": "",
+    "panel.settings.illini_cash.label.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can't sign in. To view your balance, you must set your privacy level to 4 and sign in.",
 
     "panel.settings.add_illini_cash.header.title": "Agregar Illini Cash",
     "panel.settings.add_illini_cash.label.recipient_uin.text": "UIN DEL RECIPIENTE",
@@ -933,6 +934,7 @@
     "panel.settings.meal_plan.button.start_date.hint": "Toque para seleccionar la fecha de inicio",
     "panel.settings.meal_plan.button.end_date.title": "Fecha de finalización",
     "panel.settings.meal_plan.button.end_date.hint": "Toque para seleccionar la fecha de finalización",
+    "panel.settings.meal_plan.label.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can't sign in. To view your mean plan, you must set your privacy level to 4 and sign in.",
 
     "panel.settings.sports.heading":"Configuraciónes",
     "panel.settings.categories.header.title":"SUS CATEGORíAS",
@@ -1414,6 +1416,7 @@
     "panel.polls_home.button.log_in.hint": "",
     "panel.polls_home.text.unable_to_present": "No se puede presentar la encuesta en este momento",
     "panel.polls_home.card.button.message.end_poll.success": "Poll ended successfully",
+    "panel.polls_home.text.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can't sign in. To create and share polls with people near you, you must set your privacy level to 4 and sign in.",
 
     "panel.poll_prompt.text.someone": "Alguien",
     "panel.poll_prompt.text.wants_to_know": "% s quiere saber",
