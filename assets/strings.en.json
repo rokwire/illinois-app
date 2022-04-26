@@ -1232,7 +1232,7 @@
     "panel.settings.new_privacy.privacy.dialog.update_privacy.title": "Your New \nPrivacy Level",
     "panel.settings.new_privacy.privacy.dialog.update_privacy.button.back.title": "Back",
     "panel.settings.new_privacy.privacy.dialog.label.new_privacy": "Privacy Level: ",
-    "panel.settings.new_privacy.privacy.dialog.update_privacy.label2": "This change requires us to make the following changes:",
+    "panel.settings.new_privacy.privacy.dialog.update_privacy.label2": "This change requires us to make the following changes where applicable:",
     "panel.settings.new_privacy.privacy.dialog.update_privacy.confirm": "Are you sure?",
     "panel.settings.new_privacy.privacy.dialog.update_privacy.yes": "Yes",
     "panel.settings.new_privacy.privacy.dialog.update_privacy.no": "No",

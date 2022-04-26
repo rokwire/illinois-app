@@ -1232,7 +1232,7 @@
 	"panel.settings.new_privacy.privacy.dialog.update_privacy.title": "你最新的 \n隐私级别",
 	"panel.settings.new_privacy.privacy.dialog.update_privacy.button.back.title": "后退",
 	"panel.settings.new_privacy.privacy.dialog.label.new_privacy": "隐私级别: ",
-	"panel.settings.new_privacy.privacy.dialog.update_privacy.label2": "这一变化要求我们做出以下改变:",
+	"panel.settings.new_privacy.privacy.dialog.update_privacy.label2": "此更改要求我們在適用的情況下進行以下更改：",
 	"panel.settings.new_privacy.privacy.dialog.update_privacy.confirm": "你确定吗?",
 	"panel.settings.new_privacy.privacy.dialog.update_privacy.yes": "是",
 	"panel.settings.new_privacy.privacy.dialog.update_privacy.no": "否",
