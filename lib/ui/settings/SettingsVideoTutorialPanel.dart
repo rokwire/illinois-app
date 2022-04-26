@@ -21,6 +21,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
@@ -52,8 +53,10 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
     String? tutorialUrl = Config().videoTutorialUrl;
     if (StringUtils.isNotEmpty(tutorialUrl)) {
       _controller = VideoPlayerController.network(tutorialUrl!);
-      _initializeVideoPlayerFuture =
-          _controller!.initialize().then((_) => _controller!.play()); // Automatically play video after initialization
+      _controller!.addListener(_checkVideoEnded);
+      _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
+        setState(() {});
+      });
     }
   }
 
@@ -76,12 +79,64 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
     }
   }
 
+  void _onTapPlayPause() {
+    if (!_isPlayerInitialized) {
+      return;
+    }
+    if (_isPlaying) {
+      _controller?.pause();
+    } else {
+      _controller?.play();
+    }
+    setState(() {});
+  }
+
+  void _checkVideoEnded() {
+    if (_controller != null) {
+      bool videoEnded = (_controller!.value.position == _controller!.value.duration);
+      if (videoEnded && mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  bool get _isPlaying {
+    return (_controller?.value.isPlaying ?? false);
+  }
+
+  bool get _isPlayerInitialized {
+    return (_controller?.value.isInitialized ?? false);
+  }
+
+  String get _playButtonLabel {
+    return _isPlaying
+        ? Localization().getStringEx('panel.settings.video_tutorial.button.pause.title', 'Pause')
+        : Localization().getStringEx('panel.settings.video_tutorial.button.play.title', 'Play');
+  }
+
   @override
   Widget build(BuildContext context) {
+    double playButtonWidth = MediaQuery.of(context).textScaleFactor * 120;
     return Scaffold(
         backgroundColor: Styles().colors!.blackTransparent06,
         appBar: HeaderBar(title: Localization().getStringEx("panel.settings.video_tutorial.header.title", "Video Tutorial")),
-        body: Center(child: _buildVideoContent()));
+        body: Center(
+            child: Stack(children: [
+          _buildVideoContent(),
+          Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  child: SizedBox(
+                      width: playButtonWidth,
+                      child: RoundedButton(
+                          enabled: _isPlayerInitialized,
+                          label: _playButtonLabel,
+                          fontSize: 16,
+                          textColor: (_isPlayerInitialized ? Styles().colors!.fillColorPrimary : Styles().colors!.disabledTextColor),
+                          borderColor: (_isPlayerInitialized ? Styles().colors!.fillColorSecondary : Styles().colors!.mediumGray),
+                          onTap: _onTapPlayPause))))
+        ])));
   }
 
   Widget _buildVideoContent() {
