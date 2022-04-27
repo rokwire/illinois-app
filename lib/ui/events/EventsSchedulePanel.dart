@@ -35,10 +35,10 @@ import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -186,7 +186,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
             )
           ]),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -338,8 +338,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   itemBuilder: (context, index) {
                     var filterIndex = index - 1;// 1 for Search field
                     return index == 0 ? constructSearchField(selectedFilter!) :
-                    FilterListItemWidget(
-                      label: filterValues[filterIndex],
+                     FilterListItem(
+                      title: filterValues[filterIndex],
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(filterIndex)),
                       onTap: () {
                         Analytics().logSelect(target: "FilterItem: ${filterValues[filterIndex]}");
@@ -521,11 +521,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       }
       int filterValueIndex = selectedFilter.firstSelectedIndex;
       String? filterHeaderLabel = filterValues![filterValueIndex];
-      filterTypeWidgets.add(FilterSelectorWidget(
-        label: filterHeaderLabel,
+      filterTypeWidgets.add(FilterSelector(
+        title: filterHeaderLabel,
         hint: _getFilterHintByType(selectedFilter.type),
         active: selectedFilter.active,
-        visible: true,
         onTap: (){
           Analytics().logSelect(target: "Filter: $filterHeaderLabel");
           return _onFilterTypeClicked(selectedFilter);},

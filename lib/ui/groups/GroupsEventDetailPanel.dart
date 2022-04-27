@@ -25,7 +25,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -98,7 +98,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         ],
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
       body: Column(children: <Widget>[
         Expanded(
           child: SingleChildScrollView(
@@ -466,7 +466,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   Widget _buildFavoritesButton(){
     return
-      GestureDetector(
+      Visibility(visible: Auth2().canFavorite,
+        child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
             Analytics().logSelect(target: "Favorite: ${_event?.title}");
@@ -480,7 +481,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                   'widget.card.button.favorite.on.hint', ''),
               button: true,
               child: Image.asset(isFavorite ? 'images/icon-star-solid.png' : 'images/icon-favorites-white.png') //TBD selected image res
-          ));
+          )));
   }
 
   Widget _buildPreviewButtons(){
@@ -516,14 +517,24 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onTapEdit(){
     Analytics().logSelect(target: 'Edit Event');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: _event, onEditTap: (BuildContext context, Event event) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: _event, onEditTap: (BuildContext context, Event event, List<Member>? selection) {
       Groups().updateGroupEvents(event).then((String? id) {
         if (StringUtils.isNotEmpty(id)) {
-          Navigator.pop(context);
+          Groups().updateLinkedEventMembers(groupId: widget.groupId,eventId: event.id, toMembers: selection).then((success){
+              if(success){
+                Navigator.pop(context);
+              } else {
+                AppAlert.showDialogResult(context, "Unable to update event members");
+              }
+          }).catchError((_){
+            AppAlert.showDialogResult(context, "Error Occurred while updating event members");
+          });
         }
         else {
           AppAlert.showDialogResult(context, "Unable to update event");
         }
+      }).catchError((_){
+        AppAlert.showDialogResult(context, "Error Occurred while updating event");
       });
     },)));
   }

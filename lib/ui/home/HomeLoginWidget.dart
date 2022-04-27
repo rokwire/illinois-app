@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeLoginWidget extends StatefulWidget {
@@ -51,7 +51,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
         content.add(Container(height: 20,),);
       }
 
-      return SectionHeading(
+      return SectionSlantHeader(
         title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
         titleIconAsset: 'images/icon-member.png',
         children: content,);
@@ -96,7 +96,7 @@ class _HomeLoginNetIdWidgetState extends State<HomeLoginNetIdWidget> {
           Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
           Semantics(explicitChildNodes: true, child: RoundedButton(
-            label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Connect your NetID"),
+            label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Sign In with your NetID"),
             hint: '',
             borderColor: Styles().colors!.fillColorSecondary,
             backgroundColor: Styles().colors!.surface,
@@ -152,7 +152,7 @@ class HomeLoginPhoneOrEmailWidget extends StatelessWidget{
 
             Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
             Semantics(explicitChildNodes: true, child: RoundedButton(
-              label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Proceed"),
+              label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Continue"),
               hint: '',
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.surface,
@@ -172,12 +172,10 @@ class HomeLoginPhoneOrEmailWidget extends StatelessWidget{
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(
         settings: RouteSettings(),
-        builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
-          onboardingContext: {
-            "onContinueAction": () {
-              _didLogin(context);
-            }
-          },
+        builder: (context) => SettingsLoginPhoneOrEmailPanel(
+          onFinish: () {
+            _didLogin(context);
+          }
         ),
       ),);
     } else {

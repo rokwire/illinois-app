@@ -18,6 +18,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/storage.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -396,7 +397,6 @@ class Storage extends rokwire.Storage {
   }
 
   static const String _giesCompletedPagesKey  = 'gies_completed_pages';
-
   
   Set<String>? get giesCompletedPages {
     List<String>? pagesList = getStringListWithName(_giesCompletedPagesKey);
@@ -417,4 +417,70 @@ class Storage extends rokwire.Storage {
   set giesNotes(String? value) {
     setStringWithName(_giesNotesKey, value);
   }
+
+  //Groups
+  static const String _groupMemberSelectionTableKey = 'group_members_selection';
+
+  set groupMembersSelection(Map<String, List<List<Member>>>? selection){
+    setStringWithName(_groupMemberSelectionTableKey, JsonUtils.encode(selection));
+  }
+
+  Map<String, List<List<Member>>>? get groupMembersSelection{
+    Map<String, List<List<Member>>> result = Map();
+    Map<String, dynamic>? table = JsonUtils.decodeMap(getStringWithName(_groupMemberSelectionTableKey));
+    // try { return table?.cast<String, List<List<Member>>>(); }
+    // catch(e) { debugPrint(e.toString()); return null; }
+    if(table != null){
+      table.forEach((key, selections) {
+        List<List<Member>> groupSelections = <List<Member>>[];
+        if(selections is List && CollectionUtils.isNotEmpty(selections)){
+          selections.forEach((selection) {
+            List<Member>? groupSelection;
+            if(CollectionUtils.isNotEmpty(selection)){
+              groupSelection = Member.listFromJson(selection);
+            }
+            if(groupSelection != null) {
+              groupSelections.add(groupSelection);
+              result[key] = groupSelections;
+            }
+          });
+        }
+      });
+    // if(table != null){
+    //   table.forEach((key, value) {
+    //     List<List<Member>> groupSelections = <List<Member>>[];
+    //     List<dynamic>? selections = JsonUtils.decodeList(value);
+    //     if(CollectionUtils.isNotEmpty(selections)){
+    //       selections!.forEach((element) {
+    //         List<Member>? groupSelection;
+    //         List<dynamic>? selection = JsonUtils.decodeList(value);
+    //         if(CollectionUtils.isNotEmpty(selection)){
+    //           groupSelection = Member.listFromJson(selection);
+    //         }
+    //
+    //         if(groupSelection != null) {
+    //           groupSelections.add(groupSelection);
+    //         }
+    //       });
+    //     }
+    //   });
+    }
+
+    return result;
+  }
+
+  // On Campus
+
+  String get onCampusRegionIdKey => 'edu.illinois.rokwire.on_campus.region_id';
+  String? get onCampusRegionId => getStringWithName(onCampusRegionIdKey);
+  set onCampusRegionId(String? value) => setStringWithName(onCampusRegionIdKey, value);
+
+  String get onCampusRegionMonitorEnabledKey => 'edu.illinois.rokwire.on_campus.region_monitor.enabled';
+  bool? get onCampusRegionMonitorEnabled => getBoolWithName(onCampusRegionMonitorEnabledKey);
+  set onCampusRegionMonitorEnabled(bool? value) => setBoolWithName(onCampusRegionMonitorEnabledKey, value);
+
+  String get onCampusRegionManualInsideKey => 'edu.illinois.rokwire.on_campus.region_manual.inside';
+  bool? get onCampusRegionManualInside => getBoolWithName(onCampusRegionManualInsideKey);
+  set onCampusRegionManualInside(bool? value) => setBoolWithName(onCampusRegionManualInsideKey, value);
+
 }

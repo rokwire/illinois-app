@@ -19,6 +19,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -35,7 +36,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -84,6 +85,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   bool _loading = false;
   bool _modified = false;
 
+  //Groups
+  List<Member>? _groupMembersSelection;
+
   final _eventTitleController = TextEditingController();
   final _eventDescriptionController = TextEditingController();
   final _eventPurchaseUrlController = TextEditingController();
@@ -99,6 +103,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     _populateDefaultValues();
     _loadEventCategories();
     _prepopulateWithUpdateEvent();
+    _initGroupValues();
     super.initState();
   }
 
@@ -124,7 +129,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         ),
         body: _buildContent(),
         backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: TabBarWidget(),
+        bottomNavigationBar: uiuc.TabBar(),
     );
 }
 
@@ -541,7 +546,35 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                           fontFamily: Styles().fontFamilies!.regular,
                                       ),
                                     ),
-                                  )
+                                  ),
+                                Container(height: 8,),
+                                Visibility(
+                                  visible: widget.group!=null,
+                                  child: Container(height: 10,)),
+                                Visibility(
+                                  visible: widget.group!=null,
+                                  child: Text(
+                                    "Please select the group members who can also see this event",
+                                    style: TextStyle(
+                                      color: Styles().colors!.textSurface,
+                                      fontSize: 16,
+                                      fontFamily: Styles().fontFamilies!.regular,
+                                    ),),
+                                ),
+                                Visibility(
+                                    visible: widget.group!=null,
+                                    child: Container(height: 6,)),
+                                Visibility(
+                                  visible: widget.group!=null,
+                                  child: GroupMembersSelectionWidget(
+                                    selectedMembers: _groupMembersSelection,
+                                    groupId: widget.group?.id,
+                                    onSelectionChanged: (members){
+                                      setState(() {
+                                        _groupMembersSelection = members;
+                                      });
+                                    },),)
+
                               ],
                             ),
                           ),
@@ -1502,7 +1535,19 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _populateDefaultValues(){
     if(widget.group?.privacy!=null){
-      _selectedPrivacy = (widget.group!.privacy == GroupPrivacy.private) ? eventPrivacyPrivate : eventPrivacyPublic;
+      _selectedPrivacy = (widget.group?.privacy == GroupPrivacy.private) ? eventPrivacyPrivate : eventPrivacyPublic;
+    }
+  }
+
+  void _initGroupValues(){
+    if(widget.group!=null && widget.editEvent!=null) {
+      Groups().loadGroupEventMemberSelection(widget.group?.id, widget.editEvent?.id).then((memberSelection) {
+        if (mounted) {
+          setState(() {
+            _groupMembersSelection = memberSelection;
+          });
+        }
+      });
     }
   }
 
@@ -1787,7 +1832,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       if (StringUtils.isNotEmpty(mainEventId)) {
         // Succeeded to create the main event
         if (hasGroup) {
-          bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: mainEvent.createdByGroupId, eventId: mainEventId);
+          bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: mainEvent.createdByGroupId, eventId: mainEventId, toMembers: _groupMembersSelection);
           if (eventLinkedToGroup) {
             // Succeeded to link event to group
             eventToDisplay = mainEvent;
@@ -1811,7 +1856,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           groupEvent?.createdByGroupId = group.id;
           String? groupEventId = await Events().postNewEvent(groupEvent);
           if (StringUtils.isNotEmpty(groupEventId)) {
-            bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent?.createdByGroupId, eventId: groupEventId);
+            bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent?.createdByGroupId, eventId: groupEventId, toMembers: _groupMembersSelection);
             if (eventLinkedToGroup) {
               // Succeeded to link event to group
               if (eventToDisplay == null) {
@@ -1871,7 +1916,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _onTapUpdate() {
-    widget.onEditTap!(context, _populateEventWithData(widget.editEvent!));
+    widget.onEditTap!(context, _populateEventWithData(widget.editEvent!), _groupMembersSelection);
   }
   
   Event _populateEventWithData(Event event){
@@ -1911,8 +1956,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.cost = _eventPriceController.text.toString();//decide do we need it
     event.isGroupPrivate = _isPrivateEvent;
     event.isEventFree = _isFree;
-    if(widget.group!=null) {
-      event.createdByGroupId = widget.group!.id;
+    if(widget.group?.id!=null) {
+      event.createdByGroupId = widget.group?.id;
     }
     //TBD populate Attendance required value
 

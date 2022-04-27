@@ -10,7 +10,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class GuideCategoriesPanel extends StatefulWidget {
@@ -107,7 +107,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
           Expanded(child:
             _buildContent(),
           ),
-          TabBarWidget(),
+          uiuc.TabBar(),
         ],),
       backgroundColor: Styles().colors!.background,
     );
@@ -181,6 +181,6 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
 
   void _onTapSection(GuideSection section, {String? category}) {
     Analytics().logSelect(target: "$category / ${section.name}");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(category: category, section: section,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(guide: widget.guide, category: category, section: section,)));
   }
 }

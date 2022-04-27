@@ -32,6 +32,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Config.dart';
@@ -50,7 +51,7 @@ import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/widgets/FlexContentWidget.dart';
+import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -127,6 +128,7 @@ void main() async {
     Gies(),
     Canvas(),
     Rewards(),
+    OnCampus(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // Laundries(),
@@ -366,7 +368,7 @@ class _AppState extends State<App> implements NotificationsListener {
       List<dynamic>? launchList = (launch is List) ? launch : null;
       if (launchList != null) {
         for (dynamic launchEntry in launchList) {
-          Widget? launchPopup = FlexContentWidget.fromAssets(launchEntry, onClose: (BuildContext context) {
+          Widget? launchPopup = FlexContent.fromAssets(launchEntry, onClose: (BuildContext context) {
             _launchPopup = null;
             Navigator.of(context).pop();
           },);

@@ -22,11 +22,11 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/ModalImageDialog.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/model/sport/Coach.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 
 import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -44,12 +44,11 @@ class AthleticsCoachDetailPanel extends StatefulWidget {
 
 class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
 
-  bool _modalPhotoVisibility = false;
-
   void _onTapPhoto(){
     Analytics().logSelect(target: "Photo");
-    _modalPhotoVisibility = true;
-    setState(() {});
+    if (widget.coach.fullSizePhotoUrl != null) {
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: widget.coach.fullSizePhotoUrl!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Photo"),)));
+    }
   }
 
   @override
@@ -66,53 +65,37 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Expanded(
-            child: Stack(
+            child: ListView(
               children: <Widget>[
-                ListView(
-                  children: <Widget>[
-                    _CoachDetailHeading(sport:widget.sport, coach:widget.coach, onTapPhoto: _onTapPhoto,),
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text(widget.coach.title!,
-                        style: TextStyle(
-                            fontSize: 24
-                        ),
-                      ),
+                _CoachDetailHeading(sport:widget.sport, coach:widget.coach, onTapPhoto: _onTapPhoto,),
+                Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text(widget.coach.title!,
+                    style: TextStyle(
+                        fontSize: 24
                     ),
-
-                    Container(
-                        padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
-                        color: Styles().colors!.background,
-                        child: Visibility(visible: StringUtils.isNotEmpty(widget.coach.htmlBio), child: Container(
-                          child: Html(
-                            data: StringUtils.ensureNotEmpty(widget.coach.htmlBio),
-                            onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-                            style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-                          ),
-                        ))
-                    )
-                  ],
+                  ),
                 ),
-                _createModalPhotoDialog(),
+
+                Container(
+                    padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
+                    color: Styles().colors!.background,
+                    child: Visibility(visible: StringUtils.isNotEmpty(widget.coach.htmlBio), child: Container(
+                      child: Html(
+                        data: StringUtils.ensureNotEmpty(widget.coach.htmlBio),
+                        onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
+                        style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                      ),
+                    ))
+                )
               ],
             ),
           ),
         ],
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
-  }
-
-  Widget _createModalPhotoDialog(){
-    return _modalPhotoVisibility ? ModalImageDialog(
-      imageUrl: widget.coach.fullSizePhotoUrl,
-      onClose: () {
-        Analytics().logSelect(target: "Close");
-        _modalPhotoVisibility = false;
-        setState(() {});
-      }
-    ) : Container();
   }
 
   void _launchUrl(String? url, {BuildContext? context}) {
@@ -211,7 +194,7 @@ class _CoachDetailHeading extends StatelessWidget{
                       margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                       decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
                       child: (StringUtils.isNotEmpty(coach?.thumbPhotoUrl) ?
-                      Image.network(coach!.thumbPhotoUrl!, excludeFromSemantics: true, width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
+                      Image.network(coach!.thumbPhotoUrl!, semanticLabel: "coach", width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: _photoWidth, color: Colors.white,)
                       ),
                     ),

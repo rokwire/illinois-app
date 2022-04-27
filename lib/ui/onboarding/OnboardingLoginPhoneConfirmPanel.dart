@@ -58,6 +58,12 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
   }
 
   @override
+  void dispose() {
+    _codeController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     String? phoneNumber = (widget.onboardingContext != null) ? widget.onboardingContext!["phone"] : widget.phoneNumber;
     String maskedPhoneNumber = StringUtils.getMaskedPhoneNumber(phoneNumber);
@@ -109,9 +115,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                 Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 6),
                   child: Text(
-                    Localization().getStringEx(
-                        "panel.onboarding.confirm_phone.code.label",
-                        "One-time code"),
+                    Localization().getStringEx("panel.onboarding.confirm_phone.code.label", "One-time code"),
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontSize: 16,
@@ -230,12 +234,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
 
     if (!_link) {
       Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text).then((result) {
-        if(mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-          _onPhoneVerified(result);
-        }
+        _onPhoneVerified(result);
       });
     } else {
       Map<String, dynamic> creds = {
@@ -244,19 +243,43 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
       };
       Map<String, dynamic> params = {};
       Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
-        if(mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-          if (result == Auth2LinkResult.succeeded) {
-            _onPhoneVerified(Auth2PhoneSendCodeResult.succeeded);
-          } else if (result == Auth2LinkResult.failedInvalid) {
-            _onPhoneVerified(Auth2PhoneSendCodeResult.failedInvalid);
-          } else {
-            _onPhoneVerified(Auth2PhoneSendCodeResult.failed);
-          }
-        }
+        _onPhoneVerified(auth2PhoneSendCodeResultFromAuth2LinkResult(result));
       });
+    }
+  }
+
+  void _onPhoneVerified(Auth2PhoneSendCodeResult result) {
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (result == Auth2PhoneSendCodeResult.failed) {
+        setState(() {
+          _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.server_error.text", "Failed to verify code. An unexpected error occurred.");
+        });
+      } else if (result == Auth2PhoneSendCodeResult.failedInvalid) {
+        setState(() {
+          _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.invalid.text", "Incorrect code.");
+        });
+      } else {
+        _finishedPhoneVerification();
+      }
+    }
+  }
+
+  void _finishedPhoneVerification() {
+    if (widget.onboardingContext != null) {
+      Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
+      if(onSuccess!=null){
+        onSuccess();
+      } else {
+        Onboarding().next(context, widget);
+      }
+
+    }
+    else if (widget.onFinish != null) {
+      widget.onFinish!(widget);
     }
   }
 
@@ -281,35 +304,6 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
         }
       }
     });
-  }
-
-  void _onPhoneVerified(Auth2PhoneSendCodeResult result) {
-    if (result == Auth2PhoneSendCodeResult.failed) {
-      setState(() {
-        _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.server_error.text", "Failed to verify code. An unexpected error occurred.");
-      });
-    } else if (result == Auth2PhoneSendCodeResult.failedInvalid) {
-      setState(() {
-        _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.validation.invalid.text", "Incorrect code.");
-      });
-    } else {
-      _finishedPhoneVerification();
-    }
-  }
-
-  void _finishedPhoneVerification() {
-    if (widget.onboardingContext != null) {
-      Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
-      if(onSuccess!=null){
-        onSuccess();
-      } else {
-        Onboarding().next(context, widget);
-      }
-
-    }
-    else if (widget.onFinish != null) {
-      widget.onFinish!(widget);
-    }
   }
 
   void _validateCode() {

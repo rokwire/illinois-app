@@ -318,24 +318,25 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       setState(() { _isLoading = true; });
 
       Auth2().resetEmailPassword(widget.email).then((result) {
-        
-        setState(() { _isLoading = false; });
-        
-        if (result == Auth2EmailForgotPasswordResult.succeeded) {
-          _emailFocusNode.unfocus();
-          _passwordFocusNode.unfocus();
-          _confirmPasswordFocusNode.unfocus();
-          _passwordController.text = '';
-          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.succeeded.text", "A password reset link had been sent to your email address. Please reset your password and then try to login."), color: _successColor);
-          setState(() {
-            _showingPassword = false;
-          });
-        } else if (result == Auth2EmailForgotPasswordResult.failedActivationExpired) {
-          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.failed.activation_expired.text", "Your activation link has already expired. A verification email has been resent to your email address. Please confirm it in order to activate your account."));
-        } else if (result == Auth2EmailForgotPasswordResult.failedNotActivated) {
-          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.failed.not_activated.text", "Your account is not activated yet. Please confirm the email sent to your email address."));
-        } else {
-          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.failed.text", "Failed to send password reset email. An unexpected error occurred."));
+        if (mounted) {
+          setState(() { _isLoading = false; });
+          
+          if (result == Auth2EmailForgotPasswordResult.succeeded) {
+            _emailFocusNode.unfocus();
+            _passwordFocusNode.unfocus();
+            _confirmPasswordFocusNode.unfocus();
+            _passwordController.text = '';
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.succeeded.text", "A password reset link had been sent to your email address. Please reset your password and then try to login."), color: _successColor);
+            setState(() {
+              _showingPassword = false;
+            });
+          } else if (result == Auth2EmailForgotPasswordResult.failedActivationExpired) {
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.failed.activation_expired.text", "Your activation link has already expired. A verification email has been resent to your email address. Please confirm it in order to activate your account."));
+          } else if (result == Auth2EmailForgotPasswordResult.failedNotActivated) {
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.failed.not_activated.text", "Your account is not activated yet. Please confirm the email sent to your email address."));
+          } else {
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.failed.text", "Failed to send password reset email. An unexpected error occurred."));
+          }
         }
       });
     }
@@ -350,20 +351,22 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       setState(() { _isLoading = true; });
 
       Auth2().resentActivationEmail(widget.email).then((bool result) {
-        
-        setState(() { _isLoading = false; });
-        
-        if (result == true) {
-          _emailFocusNode.unfocus();
-          _passwordFocusNode.unfocus();
-          _confirmPasswordFocusNode.unfocus();
-          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.resend_email.succeeded.text", "Verification email has been resent."), color: _successColor);
-          setState(() {
-            _showingPassword = false;
-          });
-        }
-        else {
-          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.resend_email.failed.text", "Failed to resend verification email."));
+
+        if (mounted) {
+          setState(() { _isLoading = false; });
+          
+          if (result == true) {
+            _emailFocusNode.unfocus();
+            _passwordFocusNode.unfocus();
+            _confirmPasswordFocusNode.unfocus();
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.resend_email.succeeded.text", "Verification email has been resent."), color: _successColor);
+            setState(() {
+              _showingPassword = false;
+            });
+          }
+          else {
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.resend_email.failed.text", "Failed to resend verification email."));
+          }
         }
       });
     }
@@ -401,7 +404,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
         setState(() { _isLoading = true; });
 
         if (!_link) {
-          Auth2().signUpWithEmail(widget.email, password).then((Auth2EmailSignUpResult result) => _trySignUpCallback(result));
+          Auth2().signUpWithEmail(widget.email, password).then((Auth2EmailSignUpResult result) {
+            _trySignUpCallback(result);
+          } );
         } else {
           Map<String, dynamic> creds = {
             "email": widget.email,
@@ -411,14 +416,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
             "sign_up": true,
             "confirm_password": confirmPassword
           };
-          Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((result) {
-            if (result == Auth2LinkResult.succeeded) {
-              _trySignUpCallback(Auth2EmailSignUpResult.succeeded);
-            } else if (result == Auth2LinkResult.failedAccountExist) {
-              _trySignUpCallback(Auth2EmailSignUpResult.failedAccountExist);
-            } else {
-              _trySignUpCallback(Auth2EmailSignUpResult.failed);
-            }
+          Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((Auth2LinkResult result) {
+            _trySignUpCallback(auth2EmailSignUpResultFromAuth2LinkResult(result));
           });
         }
       }
@@ -426,28 +425,29 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   }
 
   void _trySignUpCallback(Auth2EmailSignUpResult result) {
+    if (mounted) {
+      setState(() { _isLoading = false; });
 
-    setState(() { _isLoading = false; });
-
-    if (result == Auth2EmailSignUpResult.succeeded) {
-      _emailFocusNode.unfocus();
-      _passwordFocusNode.unfocus();
-      _confirmPasswordFocusNode.unfocus();
-      setState(() {
-        _state = Auth2EmailAccountState.unverified;
-        _showingPassword = false;
-      });
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential."), color: _successColor);
-    }
-    else if (result == Auth2EmailSignUpResult.failedAccountExist) {
-      setState(() {
-        _state = Auth2EmailAccountState.unverified;
-        _showingPassword = false;
-      });
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.account_exists.text", "Sign up failed. An existing account is already using this email address."));
-    }
-    else /*if (result == Auth2EmailSignUpResult.failed)*/ {
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.text", "Sign up failed. An unexpected error occurred."));
+      if (result == Auth2EmailSignUpResult.succeeded) {
+        _emailFocusNode.unfocus();
+        _passwordFocusNode.unfocus();
+        _confirmPasswordFocusNode.unfocus();
+        setState(() {
+          _state = Auth2EmailAccountState.unverified;
+          _showingPassword = false;
+        });
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential."), color: _successColor);
+      }
+      else if (result == Auth2EmailSignUpResult.failedAccountExist) {
+        setState(() {
+          _state = Auth2EmailAccountState.unverified;
+          _showingPassword = false;
+        });
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.account_exists.text", "Sign up failed. An existing account is already using this email address."));
+      }
+      else /*if (result == Auth2EmailSignUpResult.failed)*/ {
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.text", "Sign up failed. An unexpected error occurred."));
+      }
     }
   }
 
@@ -467,7 +467,6 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
         if (!_link) {
           Auth2().authenticateWithEmail(widget.email, password).then((Auth2EmailSignInResult result) {
-            setState(() { _isLoading = false; });
             _trySignInCallback(result);
           });
         } else {
@@ -477,14 +476,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
           };
           Map<String, dynamic> params = {};
           Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((Auth2LinkResult result) {
-            setState(() { _isLoading = false; });
-            switch (result) {
-              case Auth2LinkResult.succeeded: _trySignInCallback(Auth2EmailSignInResult.succeeded); break;
-              case Auth2LinkResult.failedNotActivated: _trySignInCallback(Auth2EmailSignInResult.failedNotActivated); break;
-              case Auth2LinkResult.failedActivationExpired: _trySignInCallback(Auth2EmailSignInResult.failedActivationExpired); break;
-              case Auth2LinkResult.failedInvalid: _trySignInCallback(Auth2EmailSignInResult.failedInvalid); break;
-              default: _trySignInCallback(Auth2EmailSignInResult.failed);
-            }
+            _trySignInCallback(auth2EmailSignInResultFromAuth2LinkResult(result));
           });
         }
       }
@@ -492,41 +484,43 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
   }
   
   void _trySignInCallback(Auth2EmailSignInResult result) {
-    if (result == Auth2EmailSignInResult.failed) {
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.text", "Sign in failed. An unexpected error occurred."));
-    }
-    else if (result == Auth2EmailSignInResult.failedNotActivated) {
-      setState(() {
-        _state = Auth2EmailAccountState.unverified;
-      });
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.not_activated.text", "Your account is not activated yet. Please confirm the email sent to your email address."));
-    }
-    else if (result == Auth2EmailSignInResult.failedActivationExpired) {
-      setState(() {
-        _state = Auth2EmailAccountState.unverified;
-      });
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.activation_expired.text", "Your activation link has already expired. Please resend verification email again and confirm it in order to activate your account."));
-    }
-    else if (result == Auth2EmailSignInResult.failedInvalid) {
-      setState(() {
-        _state = Auth2EmailAccountState.verified;
-      });
-      setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.invalid.text", "Incorrect password."));
-    }
-    else if (widget.onboardingContext != null) {
-      Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
-      if(onSuccess!=null){
-        onSuccess();
-      } else {
-        Onboarding().next(context, widget);
+    if (mounted) {
+      setState(() { _isLoading = false; });
+      
+      if (result == Auth2EmailSignInResult.failed) {
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.text", "Sign in failed. An unexpected error occurred."));
+      }
+      else if (result == Auth2EmailSignInResult.failedNotActivated) {
+        setState(() {
+          _state = Auth2EmailAccountState.unverified;
+        });
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.not_activated.text", "Your account is not activated yet. Please confirm the email sent to your email address."));
+      }
+      else if (result == Auth2EmailSignInResult.failedActivationExpired) {
+        setState(() {
+          _state = Auth2EmailAccountState.unverified;
+        });
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.activation_expired.text", "Your activation link has already expired. Please resend verification email again and confirm it in order to activate your account."));
+      }
+      else if (result == Auth2EmailSignInResult.failedInvalid) {
+        setState(() {
+          _state = Auth2EmailAccountState.verified;
+        });
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.invalid.text", "Incorrect password."));
+      }
+      else if (widget.onboardingContext != null) {
+        Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
+        if(onSuccess!=null){
+          onSuccess();
+        } else {
+          Onboarding().next(context, widget);
+        }
       }
     }
   }
 
   void _onTapCancel() {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() { _isLoading = true; });
 
     for (Auth2Type authType in Auth2().linkedEmail) {
       if (authType.identifier == widget.email) {

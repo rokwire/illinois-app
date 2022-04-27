@@ -2,12 +2,12 @@
 	"content": {
 		"tabbar": ["home", "athletics", "explore", "wallet", "browse"],
 
-		"home": ["emergency", "upgrade_version_message", "connect", "safer", "gies2", "canvas_courses", "twitter", "highlighted_features", "my_groups", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_guide_highlights"],
+		"home": ["emergency", "upgrade_version_message", "voter_registration", "connect", "safer", "twitter", "gies", "canvas", "my_groups", "safer.gies", "highlighted_features", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_guide_highlights"],
 		"home.connect": ["netid", "phone_or_email"],
 		"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 		"home.campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help"],
 
-		"home.twitter.account": ["gies", ""],
+		"home.twitter.account": ["gies", "", "canvas"],
 
 		"wallet": ["connect", "content", "cards"],
 		"wallet.connect":["netid", "phone_or_email"],
@@ -16,7 +16,7 @@
 
 		"browse": ["all", "content"],
 		"browse.all": ["athletics",  "building_status", "campus_guide", "crisis_help", "dining", "events", "groups", "inbox", "privacy_center", "quick_polls", "saved", "wellness"],
-		"browse.content": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "date_cat", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding", "faqs"],
+		"browse.content": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "video_tutorial", "date_cat", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding", "faqs"],
 
 		"settings": ["user_info", "privacy_center", "privacy", "connect", "connected", "link", "linked", "feedback", "delete"],
 		"settings.connect": ["netid", "phone_or_email"],
@@ -37,11 +37,11 @@
 
 		"roles": ["student", "visitor", "fan", "employee", "alumni", "parent", "resident"],
 		
-		"onboarding":["get_started", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
+		"onboarding":["get_started", "video_tutorial", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
 
 		"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 		
-		"features": ["authentication", "converge", "create_poll", "mtd_bus_number", "parking_lot_directions"],
+		"features": ["authentication", "converge", "create_poll", "mtd_bus_number", "parking_lot_directions", "gies"],
 		
 		"launch":["emergency"]
 		
@@ -73,9 +73,15 @@
 			"bus_pass"                               : ["student", "OR", "employee", "OR", "resident"]
 		},
 		"groups": {
-			"home.twitter.account.gies"              : ["Authman test group"],
-			"gies2"                                  : ["Authman test group"],
-			"canvas_courses"                         : ["Canvas Beta"]
+			"safer"                                  : ["NOT", "Gies Online Programs"],
+			"safer.gies"                             : ["Gies Online Programs"],
+			"gies"                                   : ["Gies Online Programs"],
+			"canvas"                                 : ["Canvas Beta"],
+			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", "Gies Online Programs"]]
+		},
+		"locations": {
+			"safer"                                  : ["campus"],
+			"safer.gies"                             : ["campus"]
 		},
 		"privacy" : {
 			"illini_cash"                     : 3,
@@ -114,10 +120,8 @@
 		},
 		"auth": {
 			"home.connect"                        : { "loggedIn": false },
-			"home.safer.building_access"          : { "shibbolethLoggedIn": true },
-			"home.safer.my_mckinley"              : { "shibbolethLoggedIn": true },
-			"gies2"                               : { "shibbolethLoggedIn": true },
-			"canvas_courses"                      : { "shibbolethLoggedIn": true },
+			"gies"                                : { "shibbolethLoggedIn": true },
+			"canvas"                              : { "shibbolethLoggedIn": true },
 			"browse.all.building_status"          : { "shibbolethLoggedIn": true },
 			"laundry"                             : { "shibbolethLoggedIn": true },
 			"create_event"                        : { "accountRole": "event approvers" },

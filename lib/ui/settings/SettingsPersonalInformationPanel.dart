@@ -17,9 +17,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/OnCampus.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
@@ -30,7 +33,8 @@ import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsPersonalInformationPanel extends StatefulWidget{
   @override
@@ -38,11 +42,31 @@ class SettingsPersonalInformationPanel extends StatefulWidget{
 
 }
 
-class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInformationPanel> {
+class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInformationPanel> implements NotificationsListener {
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      AppLivecycle.notifyStateChanged,
+      OnCampus.notifyChanged
+    ]);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if ((name == OnCampus.notifyChanged) ||
+        ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed))) {
+      setState(() {});
+    }
   }
 
   @override
@@ -80,11 +104,18 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
           ),
         ]),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
   Widget _buildContent() {
+    bool onCampusRegionMonitorEnabled = OnCampus().enabled;
+    bool onCampusRegionMonitorSelected = OnCampus().monitorEnabled;
+    String onCampusRegionMonitorInfo = onCampusRegionMonitorEnabled ? '(requires location services)' : '(not avalable)';
+
+    bool campusRegionManualInsideEnabled = !onCampusRegionMonitorSelected;
+    bool campusRegionManualInsideSelected = OnCampus().monitorManualInside;
+
     return
       Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
@@ -119,22 +150,48 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
             iconRes: "images/u-blue.png",
             onTap: _onTapFoodFilters,
           ),
-          Container(height: 8,),
+          Container(height: 16,),
+          Row(children: [Expanded(child: Text('Calendar', style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies?.bold, color: Styles().colors!.fillColorPrimary,)), )],),
+          Container(height: 4,),
           ToggleRibbonButton(
               label: 'Add saved events to calendar',
               toggled: Storage().calendarEnabledToSave ?? false,
+              border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(4)),
               onTap: (){ setState(() {Storage().calendarEnabledToSave = !Storage().calendarEnabledToSave!;});}),
-          Container(height: 8,),
+          Container(height: 4,),
           ToggleRibbonButton(
               label: 'Prompt when saving events to calendar',
               textStyle: TextStyle(fontSize: 16,fontFamily: Styles().fontFamilies!.bold, color: Storage().calendarEnabledToSave! ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,) ,
+              border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(4)),
               toggled: Storage().calendarCanPrompt ?? false,
               onTap: (){
-                if(!Storage().calendarEnabledToSave!) {
-                  return;
+                if(Storage().calendarEnabledToSave == false) {
+                  setState(() { Storage().calendarCanPrompt = (Storage().calendarCanPrompt != true);});
                 }
-                setState(() { Storage().calendarCanPrompt = (Storage().calendarCanPrompt != true);});
               }),
+          Container(height: 16,),
+          Row(children: [Expanded(child: Text('On Campus', style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies?.bold, color: Styles().colors!.fillColorPrimary,)), )],),
+          Container(height: 4,),
+          ToggleRibbonButton(
+              label: StringUtils.isNotEmpty(onCampusRegionMonitorInfo) ? 'Automatically detect I am on campus\n$onCampusRegionMonitorInfo' : 'Automatically detect I am on campus',
+              textColor: onCampusRegionMonitorEnabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+              toggled: onCampusRegionMonitorSelected,
+              border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(4)),
+              onTap: onCampusRegionMonitorEnabled ? (){ setState(() { OnCampus().monitorEnabled = !onCampusRegionMonitorSelected; });} : (){}),
+          Container(height: 4,),
+          ToggleRibbonButton(
+              label: 'The App behaves as if I am on campus',
+              textColor: campusRegionManualInsideEnabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+              toggled: campusRegionManualInsideSelected,
+              border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(4)),
+              onTap: campusRegionManualInsideEnabled ? (){ setState(() { OnCampus().monitorManualInside = !campusRegionManualInsideSelected; });} : (){}),
+
+          //Container(height: 8,),
+
           Container(height: 29,),
         ],));
   }

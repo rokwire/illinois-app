@@ -36,12 +36,10 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
 
   Future<void> _lodUserInfo() async{
       try {
-        Response? response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user",
-            auth: Auth2()) : null;
-        Map<String, dynamic>? jsonData = JsonUtils.decode(response?.body);
-        if(jsonData != null){
+        Response? response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user", auth: Auth2()) : null;
+        if (mounted) {
           setState(() {
-            _info = InboxUserInfo.fromJson(jsonData);
+            _info = InboxUserInfo.fromJson(JsonUtils.decodeMap(response?.body));
           });
         }
       } catch (e) {
@@ -132,9 +130,9 @@ class InboxUserInfo{
 
   static InboxUserInfo? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? InboxUserInfo(
-      userId: json['user_id'],
-      firebaseTokens: json['firebase_tokens']?.map((e) => FirebaseToken.fromJson(e))?.toList(),
-      topics:  json['topics']?.map((e) => e.toString())?.toList(),
+      userId: JsonUtils.stringValue(json['user_id']),
+      firebaseTokens: FirebaseToken.listFromJson(JsonUtils.listValue(json['firebase_tokens'])),
+      topics: JsonUtils.listStringsValue(json['topics']),
       dateCreated: DateTimeUtils.dateTimeFromString(json['date_created']),
       dateUpdated: DateTimeUtils.dateTimeFromString(json['date_updated']),
     ) : null;
@@ -155,5 +153,16 @@ class FirebaseToken{
       appVersion: json['app_version'] ?? "",
       dateCreated: DateTimeUtils.dateTimeFromString(json['date_created'] ?? "", format: "yyyy-MM-ddTHH:mm:ssZ", isUtc: true),
     ) : null;
+  }
+
+  static List<FirebaseToken>? listFromJson(List<dynamic>? jsonList) {
+    List<FirebaseToken>? result;
+    if (jsonList is List) {
+      result = <FirebaseToken>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, FirebaseToken.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
   }
 }

@@ -45,6 +45,14 @@ class RibbonButton extends rokwire.RibbonButton {
   BorderRadius? borderRadius,
   List<BoxShadow>? borderShadow,
 
+  bool? progress,
+  Color? progressColor,
+  double? progressSize,
+  double? progressStrokeWidth,
+  EdgeInsetsGeometry progressPadding  = const EdgeInsets.symmetric(horizontal: 12),
+  AlignmentGeometry progressAlignment = Alignment.centerRight,
+  bool progressHidesIcon              = true,
+
   String? hint,
   String? semanticsValue,
   }): super(
@@ -72,6 +80,14 @@ class RibbonButton extends rokwire.RibbonButton {
     border: border,
     borderRadius: borderRadius,
     borderShadow: borderShadow,
+
+    progress: progress,
+    progressColor: progressColor,
+    progressSize: progressSize,
+    progressStrokeWidth: progressStrokeWidth,
+    progressPadding: progressPadding,
+    progressAlignment: progressAlignment,
+    progressHidesIcon: progressHidesIcon,
 
     hint: hint,
     semanticsValue: semanticsValue,

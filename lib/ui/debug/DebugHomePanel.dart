@@ -38,7 +38,7 @@ import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
@@ -134,6 +134,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    Container(height: 16,),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Text(StringUtils.isNotEmpty(userUuid) ? 'Uuid: $userUuid' : "unknown uuid"),
@@ -154,18 +155,17 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                       child: Text('Beacon: $_beaconsStatus'),
                     ),
-                    
-                    Container(height: 1, color: Styles().colors!.surfaceAccent),
+
+                    Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent),),
+
                     ToggleRibbonButton(label: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck ?? false, onTap: _onDisableLiveGameCheckToggled),
                     ToggleRibbonButton(label: 'Display all times in Central Time', toggled: !Storage().useDeviceLocalTimeZone!, onTap: _onUseDeviceLocalTimeZoneToggled),
                     ToggleRibbonButton(label: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
                     ToggleRibbonButton(label: 'Show map levels', toggled: !Storage().debugMapHideLevels!, onTap: _onMapShowLevels),
-                    Container(height: 1, color: Styles().colors!.surfaceAccent),
-                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 5), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
-                    Container(
-                        color: Colors.white,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    //Container(height: 1, color: Styles().colors!.surfaceAccent),
+                    
+                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
+                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
                           child: TextFormField(
                               controller: _mapThresholdDistanceController,
                               keyboardType: TextInputType.number,
@@ -173,11 +173,9 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(), hintText: "Enter map threshold distance in meters", labelText: 'Threshold Distance (meters)')),
                         )),
-                    Container(color: Colors.white,child: Padding(padding: EdgeInsets.symmetric(vertical: 5), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
-                    Container(
-                        color: Colors.white,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    
+                    Container(color: Colors.white,child: Padding(padding: EdgeInsets.only(bottom: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
+                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                           child: TextFormField(
                               controller: _geoFenceRegionRadiusController,
                               keyboardType: TextInputType.number,
@@ -185,9 +183,9 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(), hintText: "Enter geo fence region radius in meters", labelText: 'Geo Fence Region Radius (meters)')),
                         )),
-                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 5), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[Padding(
-                      padding: EdgeInsets.only(left: 16), child: Text('Config Environment: '),), ListView.separated(
+                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
+                    Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[Padding(
+                      padding: EdgeInsets.only(left: 16, bottom: 16), child: Text('Config Environment: ', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20 )),), ListView.separated(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       separatorBuilder: (context, index) => Divider(color: Colors.transparent),
@@ -195,11 +193,13 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       itemBuilder: (context, index) {
                         rokwire.ConfigEnvironment environment = rokwire.ConfigEnvironment.values[index];
                         RadioListTile widget = RadioListTile(
-                            title: Text(rokwire.configEnvToString(environment)!), value: environment, groupValue: _selectedEnv, onChanged: _onConfigChanged);
+                            title: Text(rokwire.configEnvToString(environment) ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16 )), value: environment, groupValue: _selectedEnv, onChanged: _onConfigChanged);
                         return widget;
                       },
                     )
                     ],),),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -224,8 +224,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                         ))
                       ],
                     ),
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                         child: RoundedButton(
                           label: "Sports Offset",
                           backgroundColor: Styles().colors!.background,
@@ -236,10 +235,28 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             _changeDate();
                           },
                         )),
-                    Visibility(
-                      visible: true,
-                      child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: "Clear Voting",
+                            backgroundColor: Styles().colors!.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors!.fillColorPrimary,
+                            borderColor: Styles().colors!.fillColorPrimary,
+                            onTap: _onTapClearVoting)),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: _refreshTokenTitle,
+                            backgroundColor: Styles().colors!.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors!.fillColorPrimary,
+                            borderColor: Styles().colors!.fillColorPrimary,
+                            onTap: _onTapRefreshToken)),
+
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
+
+                    Visibility(visible: true,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
                               label: "Create Event",
                               backgroundColor: Styles().colors!.background,
@@ -248,22 +265,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               borderColor: Styles().colors!.fillColorPrimary,
                               onTap: _onCreateEventClicked),),
                     ),
-                    Visibility(
-                      visible: true,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: "Inbox User Info",
-                            backgroundColor: Styles().colors!.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors!.fillColorPrimary,
-                            borderColor: Styles().colors!.fillColorPrimary,
-                            onTap: _onInboxUserInfoClicked),),
-                    ),
-                    Visibility(
-                      visible: true,
-                      child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    Visibility(visible: true,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
                               label: "Create Message",
                               backgroundColor: Styles().colors!.background,
@@ -272,10 +275,22 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               borderColor: Styles().colors!.fillColorPrimary,
                               onTap: _onCreateInboxMessageClicked),),
                     ),
-                    Visibility(
-                      visible: true,
-                      child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
+
+                    Visibility(visible: true,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: "Inbox User Info",
+                            backgroundColor: Styles().colors!.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors!.fillColorPrimary,
+                            borderColor: Styles().colors!.fillColorPrimary,
+                            onTap: _onInboxUserInfoClicked),),
+                    ),
+                    Visibility(visible: true,
+                      child: Padding( padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
                               label: "User Profile Info",
                               backgroundColor: Styles().colors!.background,
@@ -285,10 +300,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               onTap: _onUserProfileInfoClicked
                               )),
                     ),
-                    Visibility(
-                      visible: true,
-                      child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    Visibility(visible: true,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
                               label: "User Card Info",
                               backgroundColor: Styles().colors!.background,
@@ -298,19 +311,21 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               onTap: () { _onUserCardInfoClicked(); }
                               )),
                     ),
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                         child: RoundedButton(
-                            label: "Clear voting",
+                            label: 'Canvas User Info',
                             backgroundColor: Styles().colors!.background,
                             fontSize: 16.0,
                             textColor: Styles().colors!.fillColorPrimary,
                             borderColor: Styles().colors!.fillColorPrimary,
-                            onTap: _onTapClearVoting)),
-                    Visibility(
-                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
-                      child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                            onTap: _onTapCanvasUser)),
+
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
+
+
+                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
                               label: "Campus Guide",
                               backgroundColor: Styles().colors!.background,
@@ -319,10 +334,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               borderColor: Styles().colors!.fillColorPrimary,
                               onTap: _onTapGuide))
                     ),
-                    Visibility(
-                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
-                      child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
                               label: "Styles",
                               backgroundColor: Styles().colors!.background,
@@ -331,28 +344,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               borderColor: Styles().colors!.fillColorPrimary,
                               onTap: _onTapStyles)),
                     ),
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: _refreshTokenTitle,
-                            backgroundColor: Styles().colors!.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors!.fillColorPrimary,
-                            borderColor: Styles().colors!.fillColorPrimary,
-                            onTap: _onTapRefreshToken)),
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: 'Canvas User',
-                            backgroundColor: Styles().colors!.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors!.fillColorPrimary,
-                            borderColor: Styles().colors!.fillColorPrimary,
-                            onTap: _onTapCanvasUser)),
-                    Visibility(
-                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                         child: RoundedButton(
                             label: 'Rewards',
                             backgroundColor: Styles().colors!.background,
@@ -360,10 +353,14 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             textColor: Styles().colors!.fillColorPrimary,
                             borderColor: Styles().colors!.fillColorPrimary,
                             onTap: _onTapRewards))),
-                    Visibility(
-                      visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
-                      child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+
+
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
+
+
+                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
                               label: "Http Proxy",
                               backgroundColor: Styles().colors!.background,
@@ -372,8 +369,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               borderColor: Styles().colors!.fillColorPrimary,
                               onTap: _onTapHttpProxy)),
                     ),
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                         child: RoundedButton(
                             label: "Test Crash",
                             backgroundColor: Styles().colors!.background,
@@ -381,7 +377,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             textColor: Styles().colors!.fillColorPrimary,
                             borderColor: Styles().colors!.fillColorPrimary,
                             onTap: _onTapCrash)),
-                    Padding(padding: EdgeInsets.only(top: 5), child: Container()),
+                    Container(height: 16),
                   ],
                 ),
               ),
@@ -390,7 +386,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
         ],
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -483,7 +479,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   GeoFenceBeacon? get _currentBeacon {
     // Just return the first beacon that we have for now.
     for (String regionId in _rangingRegionIds) {
-      List<GeoFenceBeacon>? regionBacons = GeoFence().currentBeaconsInRegion(regionId);
+      Set<GeoFenceBeacon>? regionBacons = GeoFence().currentBeaconsInRegion(regionId);
       if ((regionBacons != null) && regionBacons.isNotEmpty) {
         return regionBacons.first;
       }
@@ -551,18 +547,35 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     });
   }
 
-  void _onCreateEventClicked() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
+  void _onTapClearVoting() {
+    Storage().voterHiddenForPeriod = false;
+    Auth2().prefs?.voter?.clear();
+    AppAlert.showDialogResult(context, 'Successfully cleared user voting.');
   }
 
-  void _onInboxUserInfoClicked(){
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugInboxUserInfoPanel()));
+  void _onTapRefreshToken() {
+    Auth2Token? token = Auth2().token;
+    if (token != null) {
+      Auth2().refreshToken(token).then((token) {
+        AppAlert.showDialogResult(context, (token != null) ? "Token refreshed successfully" : "Failed to refresh token");
+      });
+    }
+    else {
+      AppAlert.showDialogResult(context, "No token to refresh");
+    }
+  }
+
+  void _onCreateEventClicked() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
   }
 
   void _onCreateInboxMessageClicked() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugCreateInboxMessagePanel()));
   }
-  
+
+  void _onInboxUserInfoClicked(){
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugInboxUserInfoPanel()));
+  }
   
   void _onUserProfileInfoClicked() {
     showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(_userDebugData) );
@@ -577,6 +590,31 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
       AppAlert.showDialogResult(context, 'No card available.');
     }
   }
+  
+  void _onTapCanvasUser() {
+    Canvas().loadSelfUser().then((userJson) {
+      if (userJson != null) {
+        showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(JsonUtils.encode(userJson, prettify: true)));
+      } else {
+        AppAlert.showDialogResult(context, 'Failed to retrieve canvas user.');
+      }
+    });
+  }
+
+  
+  void _onTapGuide() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugGuidePanel()));
+  }
+
+  void _onTapStyles() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStylesPanel()));
+  }
+
+  void _onTapRewards() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugRewardsPanel()));
+  }
+
+
   //
 
   Widget _buildTextContentInfoDialog(String? textContent) {
@@ -619,22 +657,35 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     });
   }
 
-  void _onTapClearVoting() {
-    Storage().voterHiddenForPeriod = false;
-    Auth2().prefs?.voter?.clear();
-    AppAlert.showDialogResult(context, 'Successfully cleared user voting.');
-  }
-
-  void _onTapGuide() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugGuidePanel()));
-  }
-
   void _onConfigChanged(dynamic env) {
     if (env is rokwire.ConfigEnvironment) {
-      setState(() {
-        Config().configEnvironment = env;
-        _selectedEnv = Config().configEnvironment;
-      });
+      _confirmConfigChange(env);
+    }
+  }
+
+  void _confirmConfigChange(rokwire.ConfigEnvironment env) {
+      AppAlert.showCustomDialog(context: context,
+        contentWidget: Text('Switch to ${rokwire.configEnvToString(env)}?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _changeConfig(env);
+            },
+            child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')))
+        ]);
+  }
+
+  void _changeConfig(rokwire.ConfigEnvironment env) {
+    if (mounted) {
+        setState(() {
+          _selectedEnv = Config().configEnvironment = env;
+        });
     }
   }
 
@@ -642,10 +693,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     if(Config().configEnvironment == rokwire.ConfigEnvironment.dev) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHttpProxyPanel()));
     }
-  }
-
-  void _onTapStyles() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStylesPanel()));
   }
 
   void _onTapCrash(){
@@ -663,32 +710,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     else {
       return (token != null) ? "Refresh Token" : "Refresh Token NA";
     }
-  }
-
-  void _onTapRefreshToken() {
-    Auth2Token? token = Auth2().token;
-    if (token != null) {
-      Auth2().refreshToken(token).then((token) {
-        AppAlert.showDialogResult(context, (token != null) ? "Token refreshed successfully" : "Failed to refresh token");
-      });
-    }
-    else {
-      AppAlert.showDialogResult(context, "No token to refresh");
-    }
-  }
-
-  void _onTapCanvasUser() {
-    Canvas().loadSelfUser().then((userJson) {
-      if (userJson != null) {
-        showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(JsonUtils.encode(userJson, prettify: true)));
-      } else {
-        AppAlert.showDialogResult(context, 'Failed to retrieve canvas user.');
-      }
-    });
-  }
-
-  void _onTapRewards() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugRewardsPanel()));
   }
 
   // SettingsListenerMixin

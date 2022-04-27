@@ -24,7 +24,7 @@ import 'package:illinois/ui/settings/SettingsLocationPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class SettingsNotificationsPreferencesPanel extends StatelessWidget{
 
@@ -36,7 +36,7 @@ class SettingsNotificationsPreferencesPanel extends StatelessWidget{
       ),
       body: SingleChildScrollView(child: _buildContent(context)),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

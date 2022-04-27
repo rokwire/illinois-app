@@ -131,7 +131,7 @@ class CanvasCourse {
     }
     List<CanvasCourse>? courses;
     if (jsonList != null) {
-      courses = [];
+      courses = <CanvasCourse>[];
       for (dynamic jsonEntry in jsonList) {
         ListUtils.add(courses, CanvasCourse.fromJson(jsonEntry));
       }
@@ -316,7 +316,7 @@ class CanvasEnrollment {
 
   static CanvasEnrollment? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? CanvasEnrollment(
-      id: JsonUtils.intValue(json['is']),
+      id: JsonUtils.intValue(json['id']),
       userId: JsonUtils.intValue(json['user_id']),
       type: JsonUtils.stringValue(json['type']),
       role: JsonUtils.stringValue(json['role']),

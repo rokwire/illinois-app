@@ -180,7 +180,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
             hint: Localization().getStringEx("panel.create_stadium_poll.hint.question", "Ask people near you…"),
             textController: _questionController,
             maxLength: 120,
-            height: 120,
+            minLines: 3,
             enabled: (_progressPollStatus == null),
           )),
     );

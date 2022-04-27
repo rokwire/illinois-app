@@ -17,6 +17,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -66,8 +67,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   static const _saferIllonoisAppStoreAndroid  = "market://details?id=edu.illinois.covid";
 
   final EdgeInsets _ribbonButtonPadding = EdgeInsets.symmetric(horizontal: 16);
-
-  bool _groupsLogin = false;
 
   @override
   void initState() {
@@ -257,24 +256,12 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       );
     }
     else if (code == 'groups') {
-      return Stack(
-        alignment: Alignment.center,
-        children: [
-          _GridSquareButton(
-            title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
-            hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
-            icon: 'images/icon-browse-gropus.png',
-            textColor: Styles().colors!.fillColorPrimary,
-            onTap: () => _navigateGroups(),
-          ),
-          Visibility(
-            visible: _groupsLogin,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white)
-            ),
-          )
-        ],
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
+        hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
+        icon: 'images/icon-browse-gropus.png',
+        textColor: Styles().colors!.fillColorPrimary,
+        onTap: () => _navigateGroups(),
       );
     }
     else if (code == 'safer') {
@@ -492,6 +479,15 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _onDateCatTap(),
       );
     }
+    else if ((code == 'video_tutorial') && _canVideoTutorial) {
+      return _RibbonButton(
+        icon: Image.asset('images/icon-settings.png'),
+        title: Localization().getStringEx('panel.browse.button.video_tutorial.title', 'Video Tutorial'),
+        hint: Localization().getStringEx('panel.browse.button.video_tutorial.hint', ''),
+        padding: _ribbonButtonPadding,
+        onTap: () => _onVideoTutorialTap(),
+      );
+    }
 
     else {
       return null;
@@ -603,21 +599,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateGroups() {
     Analytics().logSelect(target: "Groups");
-    if(Auth2().isOidcLoggedIn) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
-    } else if (_groupsLogin != true) {
-      setState(() { _groupsLogin = true; });
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? success) {
-        if (mounted) {
-          setState(() { _groupsLogin = false; });
-          if (success == Auth2OidcAuthenticateResult.succeeded) {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
-          } else if (success == Auth2OidcAuthenticateResult.failed) {
-            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
-          }
-        }
-      });
-    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
   void _navigateCampusGuide() {
@@ -694,6 +676,19 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (StringUtils.isNotEmpty(Config().dateCatalogUrl)) {
       url_launcher.launch(Config().dateCatalogUrl!);
+    }
+  }
+
+  bool get _canVideoTutorial => StringUtils.isNotEmpty(Config().videoTutorialUrl);
+
+  void _onVideoTutorialTap() {
+    Analytics().logSelect(target: "Video Tutorial");
+    
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.video_tutorial', 'Video Tutorial not available while offline.'));
+    }
+    else if (_canVideoTutorial) {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel()));
     }
   }
 

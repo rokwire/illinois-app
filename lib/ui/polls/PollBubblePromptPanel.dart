@@ -371,7 +371,10 @@ class _PollContentState extends State<PollContentWidget> implements Notification
         textColor: _textColor,
         borderColor: _doneButtonColor,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        onTap: handler)
+        onTap: (){
+          AppSemantics.announceMessage(context, Localization().getStringEx('panel.poll_prompt.button.done_voting.status.success', 'Poll voting ended successfully'));
+          handler();
+        })
     );
   }
 
@@ -469,6 +472,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
     }).catchError((e){
       AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
     }).whenComplete((){
+      AppSemantics.announceMessage(context,  Localization().getStringEx("panel.poll_prompt.vote.status.announce.success", "Successfully Voted"));
       setState(() {
         int? value = _votingOptions[optionIndex];
         if (value != null) {

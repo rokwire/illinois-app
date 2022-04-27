@@ -16,14 +16,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 
 class SettingsVerifyIdentityPanel extends StatefulWidget{
@@ -49,7 +49,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
       ),
       body: SingleChildScrollView(child: _buildContent()),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -138,12 +138,12 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
     Navigator.push(
         context,
         CupertinoPageRoute(
-            builder: (context) => Onboarding2LoginPhoneOrEmailPanel(onboardingContext: {
-                  "onContinueAction": () {
+            builder: (context) => SettingsLoginPhoneOrEmailPanel(
+                  onFinish: () {
                     _setLoading(false);
                     _didLogin(context);
                   }
-                })));
+                )));
   }
 
   void _didLogin(_) {

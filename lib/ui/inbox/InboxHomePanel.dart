@@ -15,9 +15,9 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class InboxHomePanel extends StatefulWidget {
@@ -106,7 +106,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
           Expanded(child:
             _buildContent(),
           ),
-          TabBarWidget(),
+          uiuc.TabBar(),
         ],)),
       backgroundColor: Styles().colors!.background,
     );
@@ -264,16 +264,14 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12), child:
         Row(children: <Widget>[
           // Hide the "Categories" drop down in Inbox panel (#721)
-          /*FilterSelectorWidget(
-            label: _FilterEntry.entryInList(_categories, _selectedCategory)?.name ?? '',
+          /*FilterSelector(
+            title: _FilterEntry.entryInList(_categories, _selectedCategory)?.name ?? '',
             active: _selectedFilter == _FilterType.Category,
-            visible: true,
             onTap: () { _onFilter(_FilterType.Category); }
           ),*/
-          FilterSelectorWidget(
-            label: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
+          FilterSelector(
+            title: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
             active: _selectedFilter == _FilterType.Time,
-            visible: true,
             onTap: () { _onFilter(_FilterType.Time); }
           ),
         ],
@@ -318,9 +316,9 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
               separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
               itemCount: filterValues.length,
               itemBuilder: (context, index) {
-                return FilterListItemWidget(
-                  label: filterValues[index].name,
-                  subLabel: (subLabels != null) ? subLabels[index] : null,
+                return  FilterListItem(
+                  title: filterValues[index].name,
+                  description: (subLabels != null) ? subLabels[index] : null,
                   selected: selectedFilterValue == filterValues[index].value,
                   onTap: () { _onFilterValue(_selectedFilter, filterValues[index]); },
                 );

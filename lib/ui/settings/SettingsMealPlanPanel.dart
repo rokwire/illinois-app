@@ -25,8 +25,8 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/VerticalTitleContentSection.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:rokwire_plugin/ui/widgets/section.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -111,7 +111,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       body: _buildScaffoldBody(),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: widget.scrollController == null
-          ? TabBarWidget()
+          ? uiuc.TabBar()
           : Container(height: 0,),
     );
   }
@@ -217,43 +217,49 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     List<Widget> widgets = [];
     widgets.add(Padding(padding: EdgeInsets.only(top: 16)));
     if (!isSignedIn) {
-      widgets.add(Padding(
-        padding: EdgeInsets.only(left: 20, right: 20, bottom: 16),
-        child: RoundedButton(
-          label: Localization().getStringEx(
-              "panel.settings.meal_plan.button.login_to_view_meal_plan.text", "Log in to view your Meal Plan"),
-          hint: Localization().getStringEx(
-              'panel.settings.meal_plan.button.login_to_view_meal_plan.hint', ''),
-          backgroundColor: Styles().colors!.white,
-          fontSize: 16.0,
-          textColor: Styles().colors!.fillColorPrimary,
-          borderColor: Styles().colors!.fillColorSecondary,
-          onTap: _onTapLogIn,
-        ),
-      ));
+      if(_canSignIn) {
+        widgets.add(Padding(
+          padding: EdgeInsets.only(left: 20, right: 20, bottom: 16),
+          child: RoundedButton(
+            label: Localization().getStringEx(
+                "panel.settings.meal_plan.button.login_to_view_meal_plan.text",
+                "Sign in to View Your Meal Plan"),
+            hint: Localization().getStringEx(
+                'panel.settings.meal_plan.button.login_to_view_meal_plan.hint',
+                ''),
+            backgroundColor: Styles().colors!.white,
+            fontSize: 16.0,
+            textColor: Styles().colors!.fillColorPrimary,
+            borderColor: Styles().colors!.fillColorSecondary,
+            onTap: _onTapLogIn,
+          ),
+        ));
+      } else {
+        widgets.add(_buildPrivacyAlertMessage());
+      }
     }
     if (isSignedIn) {
-      widgets.add(VerticalTitleContentSection(
+      widgets.add(VerticalTitleValueSection(
         title: Localization().getStringEx(
             "panel.settings.meal_plan.label.meal_plan_type.text", "Meal Plan Type"),
-        content: StringUtils.isNotEmpty(IlliniCash().ballance?.mealPlanName) ? IlliniCash().ballance?.mealPlanName : Localization().getStringEx(
+        value: StringUtils.isNotEmpty(IlliniCash().ballance?.mealPlanName) ? IlliniCash().ballance?.mealPlanName : Localization().getStringEx(
             "panel.settings.meal_plan.label.meal_plan_unknown.text", "Unknown"),
       ));
       widgets.add(
         Row(
           children: <Widget>[
             Expanded(
-              child: VerticalTitleContentSection(
+              child: VerticalTitleValueSection(
                 title: Localization().getStringEx(
                     "panel.settings.meal_plan.label.meals_remaining.text", "Meals Remaining"),
-                content: IlliniCash().ballance?.mealBalanceDisplayText ?? "0",
+                value: IlliniCash().ballance?.mealBalanceDisplayText ?? "0",
               ),
             ),
             Expanded(
-              child: VerticalTitleContentSection(
+              child: VerticalTitleValueSection(
                 title: Localization().getStringEx(
                     "panel.settings.meal_plan.label.dining_dollars.text", "Dining Dollars"),
-                content: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
+                value: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
               ),
             )
           ],
@@ -513,6 +519,37 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             fontSize: 14));
   }
 
+  Widget _buildPrivacyAlertMessage() {
+    final String iconMacro = '{{privacy_level_icon}}';
+    String privacyMsg = Localization().getStringEx('panel.settings.meal_plan.label.privacy_alert.msg', "With your privacy level at $iconMacro , you can't sign in. To view your mean plan, you must set your privacy level to 4 and sign in.");
+    int iconMacroPosition = privacyMsg.indexOf(iconMacro);
+    String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
+    String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
+
+    return Container(
+      padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+      child: RichText(text: TextSpan(
+        style: TextStyle(
+          color: Styles().colors!.fillColorPrimary,
+          fontFamily: Styles().fontFamilies!.semiBold,
+          fontSize: 24,
+        ),
+        children: [
+          TextSpan(text: privacyMsgStart),
+          WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelIcon()),
+          TextSpan(text: privacyMsgEnd)
+        ])));
+  }
+
+  Widget _buildPrivacyLevelIcon() {
+    String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+        Text(privacyLevel, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))
+      ),
+    );
+  }
+
   void _onMealPlanTransactionsLoaded(List<MealPlanTransaction>? transactions) {
     _showMealPlanTransactionsProgress(false, changeState: false);
     if (mounted) {
@@ -641,6 +678,10 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   String? _getFormattedDate(DateTime? date) {
     return AppDateTime().formatDateTime(
         date, format: 'MM/dd/yyyy');
+  }
+
+  bool get _canSignIn{
+    return Auth2().privacyMatch(4);
   }
 
   // NotificationsListener

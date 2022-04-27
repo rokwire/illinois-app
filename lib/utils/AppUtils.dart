@@ -23,18 +23,18 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class AppAlert {
   
-  static Future<bool?> showDialogResult(
-    BuildContext builderContext, String? message) async {
-    bool? alertDismissed = await showDialog(
-      context: builderContext,
-      builder: (context) {
+  static Future<bool?> showDialogResult(BuildContext context, String? message, { String? buttonTitle }) async {
+    return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String displayButtonTitle = buttonTitle ?? Localization().getStringEx("dialog.ok.title", "OK");
         return AlertDialog(
-          content: Text(message!),
+          content: Text(message ?? ''),
           actions: <Widget>[
             TextButton(
-                child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
+                child: Text(displayButtonTitle),
                 onPressed: () {
-                  Analytics().logAlert(text: message, selection: "Ok");
+                  Analytics().logAlert(text: message, selection: displayButtonTitle);
                   Navigator.pop(context, true);
                 }
             ) //return dismissed 'true'
@@ -42,7 +42,6 @@ class AppAlert {
         );
       },
     );
-    return alertDismissed;
   }
 
   static Future<bool?> showCustomDialog(
