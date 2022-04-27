@@ -465,19 +465,25 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   }
 
   Widget _buildContentHeadingWidget() {
-    return (widget.mode == SettingsPrivacyPanelMode.onboarding)
-        ? Semantics(explicitChildNodes: true, child:
-    Container(color: Styles().colors!.surface, child:
-    Stack(children: <Widget>[
-      _titleLayout(),
-      OnboardingBackButton(
-          padding: const EdgeInsets.only(left: 10, top: 10, right: 20, bottom: 5),
-          onTap: () {
-            Analytics().logSelect(target: "Back");
-            Navigator.pop(context);
-          }),
-    ])))
-        : Container();
+    if (widget.mode == SettingsPrivacyPanelMode.onboarding) {
+      return Semantics(explicitChildNodes: true, child:
+        Container(color: Styles().colors!.surface, child:
+          Stack(children: <Widget>[
+            _titleLayout(),
+            OnboardingBackButton(
+                padding: const EdgeInsets.only(left: 10, top: 10, right: 20, bottom: 5),
+                onTap: () {
+                  Analytics().logSelect(target: "Back");
+                  Navigator.pop(context);
+                }),
+        ])));
+    }
+    else if (widget.mode == SettingsPrivacyPanelMode.update) {
+      return _titleLayout();
+    }
+    else {
+      return Container(); // Do not show title layout as it matches pretty much the header bar title.
+    }
   }
 
   Widget _titleLayout() {
