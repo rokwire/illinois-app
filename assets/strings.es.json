@@ -2468,7 +2468,7 @@
     "privacy.entry.athletics.notifications.description": "Reciba notificaciones del inicio del evento y las puntuaciones finales de sus equipos favoritos.",
     "privacy.entry.athletics.notifications.data_usage": "Esta función utiliza servicios de ubicación, preferencias personales y eventos que hayas destacado en la aplicación.",
     "privacy.entry.athletics.sharing.title": "Identidad",
-    "privacy.entry.athletics.sharing.description": "Almacene la información de la tarjeta de crédito para comprar boletos para eventos deportivos.",
+    "privacy.entry.athletics.sharing.description": "Puede almacenar información de tarjetas de crédito para comprar boletos para eventos deportivos.",
     "privacy.entry.athletics.sharing.data_usage": "Esta función utiliza servicios de ubicación, preferencias personales, información de tarjetas de crédito y elementos destacados.",
 
     "privacy.category.wallet.title": "Billetera",

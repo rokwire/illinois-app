@@ -516,7 +516,7 @@
 						"off_icon_resource": "identiy-blue-off.png",
 						"title" : "Identity",
 						"title_key" :"privacy.entry.athletics.sharing.title",
-						"description" : "Store credit card information to buy tickets for athletic events.",
+						"description" : "May store credit card information to buy tickets for athletic events.",
 						"description_key" :"privacy.entry.athletics.sharing.description",
 						"dataUsage" : "This feature uses location services, personal preferences, credit card information and starred items.",
 						"dataUsage_key" :"privacy.entry.athletics.sharing.data_usage"

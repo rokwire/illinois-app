@@ -2473,7 +2473,7 @@
     "privacy.entry.athletics.notifications.description": "Receive notifications of event start and final scores for your favorite teams.",
     "privacy.entry.athletics.notifications.data_usage": "This feature uses location services, personal preferences and events you have starred in the app.",
     "privacy.entry.athletics.sharing.title": "Identity",
-    "privacy.entry.athletics.sharing.description": "Store credit card information to buy tickets for athletic events.",
+    "privacy.entry.athletics.sharing.description": "May store credit card information to buy tickets for athletic events.",
     "privacy.entry.athletics.sharing.data_usage": "This feature uses location services, personal preferences, credit card information and starred items.",
 
     "privacy.category.wallet.title": "Wallet",
