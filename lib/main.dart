@@ -49,7 +49,7 @@ import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
-import 'package:illinois/ui/settings/SettingsNewPrivacyPanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
@@ -301,10 +301,10 @@ class _AppState extends State<App> implements NotificationsListener {
       return Onboarding2GetStartedPanel();
     }
     else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
-      return SettingsNewPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);
+      return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);
     }
     else if (Auth2().prefs?.privacyLevel == null) {
-      return SettingsNewPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
+      return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
     }
     else {
       return rootPanel;

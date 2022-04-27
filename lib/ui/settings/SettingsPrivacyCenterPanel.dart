@@ -25,7 +25,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/settings/SettingsNewPrivacyPanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
@@ -501,7 +501,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
 
   void _onTapManagePrivacy(){
     Analytics().logSelect(target: "Manage Privacy");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNewPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
   }
 
   void _onTapDeleteData() async{

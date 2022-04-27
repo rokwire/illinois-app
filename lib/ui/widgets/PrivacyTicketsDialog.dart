@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/settings/SettingsNewPrivacyPanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
@@ -209,7 +209,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
   _onTapChangePrivacySettings() {
     Analytics().logAlert(text: "Buy Tickets Privacy Alert", selection: "Edit my privacy");
     _closeModal();
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNewPrivacyPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel()));
   }
 
   _onTapClose() {
