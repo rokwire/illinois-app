@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated Privacy description strings [#1578](https://github.com/rokwire/illinois-app/issues/1578).
+- Always use the new privacy setting panel [#1588](https://github.com/rokwire/illinois-app/issues/1588).
 
 ## [3.3.20] - 2022-04-26
 ### Changed
