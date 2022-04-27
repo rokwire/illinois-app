@@ -516,7 +516,7 @@
 						"off_icon_resource": "identiy-blue-off.png",
 						"title" : "Identity",
 						"title_key" :"privacy.entry.athletics.sharing.title",
-						"description" : "Store credit card information to buy tickets for athletic events.",
+						"description" : "May store credit card information to buy tickets for athletic events.",
 						"description_key" :"privacy.entry.athletics.sharing.description",
 						"dataUsage" : "This feature uses location services, personal preferences, credit card information and starred items.",
 						"dataUsage_key" :"privacy.entry.athletics.sharing.data_usage"
@@ -702,63 +702,63 @@
 				]
 			},
 			{
-				"title":"Miscellaneous",
-				"title_key": "privacy.category.miscellaneous.title",
+				"title":"General",
+				"title_key": "privacy.category.general.title",
 				"entries2": [
 					{
 						"min_level": 1,
 						"icon_resource": "view-only-blue.png",
 						"off_icon_resource": "view-only-blue.png",
 						"title" : "View Only",
-						"title_key" :"privacy.entry.miscellaneous.view.only.title",
+						"title_key" :"privacy.entry.general.view.only.title",
 						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
-						"description_key" :"privacy.entry.miscellaneous.view.only.description",
+						"description_key" :"privacy.entry.general.view.only.description",
 						"dataUsage" : "Building access and due date catalog require a university sign in.",
-						"dataUsage_key" :"privacy.entry.miscellaneous.view.only.data_usage"
+						"dataUsage_key" :"privacy.entry.general.view.only.data_usage"
 					},
 					{
 						"min_level": 2,
 						"icon_resource": "location-sharing-blue.png",
 						"off_icon_resource": "location-sharing-blue-off.png",
 						"title" : "Location Sharing",
-						"title_key" :"privacy.entry.miscellaneous.location.sharing.title",
+						"title_key" :"privacy.entry.general.location.sharing.title",
 						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
-						"description_key" :"privacy.entry.miscellaneous.location.sharing.description",
+						"description_key" :"privacy.entry.general.location.sharing.description",
 						"dataUsage" : "Building access and due date catalog require a university sign in.",
-						"dataUsage_key" :"privacy.entry.miscellaneous.location.sharing.data_usage"
+						"dataUsage_key" :"privacy.entry.general.location.sharing.data_usage"
 					},
 					{
 						"min_level": 3,
 						"icon_resource": "personalization-blue.png",
 						"off_icon_resource": "personalization-blue-off.png",
 						"title" : "Personalizations",
-						"title_key" :"privacy.entry.miscellaneous.personalizations.title",
+						"title_key" :"privacy.entry.general.personalizations.title",
 						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
-						"description_key" :"privacy.entry.miscellaneous.personalizations.description",
+						"description_key" :"privacy.entry.general.personalizations.description",
 						"dataUsage" : "Building access and due date catalog require a university sign in.",
-						"dataUsage_key" :"privacy.entry.miscellaneous.personalizations.data_usage"
+						"dataUsage_key" :"privacy.entry.general.personalizations.data_usage"
 					},
 					{
 						"min_level": 4,
 						"icon_resource": "notifications-blue.png",
 						"off_icon_resource": "notifications-blue-off.png",
 						"title" : "Notifications",
-						"title_key" :"privacy.entry.miscellaneous.notifications.title",
+						"title_key" :"privacy.entry.general.notifications.title",
 						"description" : "You may receive notifications when content is updated, and you can star various content.",
-						"description_key" :"privacy.entry.miscellaneous.notifications.description",
+						"description_key" :"privacy.entry.general.notifications.description",
 						"dataUsage" : "Building access and due date catalog require a university sign in.",
-						"dataUsage_key" :"privacy.entry.miscellaneous.notifications.data_usage"
+						"dataUsage_key" :"privacy.entry.general.notifications.data_usage"
 					},
 					{
 						"min_level": 5,
 						"icon_resource": "share-blue.png",
 						"off_icon_resource": "share-blue-off.png",
 						"title" : "Sharing",
-						"title_key" :"privacy.entry.miscellaneous.sharing.title",
+						"title_key" :"privacy.entry.general.sharing.title",
 						"description" : "You may receive notifications when content is updated, and you can star various content.",
-						"description_key" :"privacy.entry.miscellaneous.sharing.description",
+						"description_key" :"privacy.entry.general.sharing.description",
 						"dataUsage" : "Building access and due date catalog require a University sign in.",
-						"dataUsage_key" :"privacy.entry.miscellaneous.sharing.data_usage"
+						"dataUsage_key" :"privacy.entry.general.sharing.data_usage"
 					}
 				]
 			}
