@@ -1651,6 +1651,7 @@
     "panel.groups.common.privacy.description.short.public":  "Only members can see group events and posts, unless an event is marked public.",
     "panel.groups.common.privacy.description.long.private": "Anyone who uses the app can find this group if they search and match the full name. Only admins can see who is in the group.",
     "panel.groups.common.privacy.description.long.public":  "Anyone who uses the app will see this group. Only admins can see who is in the group.",
+    "panel.groups.common.private.search.hidden.label": "Hidden For Search",
 
     "panel.group_detail.label.options": "Options",
     "panel.group_detail.label.error_message": "Failed to load group data.",
