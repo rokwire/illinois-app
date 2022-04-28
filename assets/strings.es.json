@@ -515,8 +515,6 @@
 
     "panel.onboarding2.video.button.skip.title": "Saltar",
     "panel.onboarding2.video.button.continue.title": "Continuar",
-    "panel.onboarding2.video.button.play.title": "Jugar",
-    "panel.onboarding2.video.button.pause.title": "Pausa",
     "panel.onboarding2.video.missing.msg": "Vídeo faltante",
 
     "panel.onboarding2.roles.label.title": "Who Are You?",
@@ -1232,8 +1230,6 @@
 
     "panel.settings.video_tutorial.header.title": "Videotutorial",
     "panel.settings.video_tutorial.video.missing.msg": "Vídeo faltante",
-    "panel.settings.video_tutorial.button.play.title": "Jugar",
-    "panel.settings.video_tutorial.button.pause.title": "Pausa",
 
     "panel.create_event.header.title":"Crea Un Evento",
     "panel.create_event.title":"Crear un evento",
