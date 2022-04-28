@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added OnCampus service for campus location control [#1567](https://github.com/rokwire/illinois-app/issues/1567).
 - Integrate new Polls BB [#1565](https://github.com/rokwire/illinois-app/issues/1565).
+- Allow private groups to be hidden from search [#1592](https://github.com/rokwire/illinois-app/issues/1592).
 
 ## [3.3.21] - 2022-04-27
 ### Changed

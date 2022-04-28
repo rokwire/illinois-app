@@ -141,6 +141,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
                             Container(height: 8),
                             _buildPrivacyDropDown(),
+                            _buildHiddenForSearch(),
                             _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "images/icon-member.png"),
                             _buildAuthManLayout(),
                             Visibility(
@@ -465,12 +466,34 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             child:Text(longDescription ?? '',
               style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular, letterSpacing: 1),
             ),)),
-        Container(height: 40,)
+        Container(height: _isPrivateGroup ? 5 : 40)
       ],);
   }
 
   void _onPrivacyChanged(dynamic value) {
     _group?.privacy = value;
+    if (_isPublicGroup) {
+      // Do not hide group from search if it is public
+      _group!.hiddenForSearch = false;
+    }
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Widget _buildHiddenForSearch() {
+    return Visibility(
+        visible: _isPrivateGroup,
+        child: Container(
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 40),
+            child: _buildSwitch(
+                title: Localization().getStringEx("panel.groups.common.private.search.hidden.label", "Hidden For Search"),
+                value: _group?.hiddenForSearch,
+                onTap: _onTapHiddenForSearch)));
+  }
+
+  void _onTapHiddenForSearch() {
+    _group!.hiddenForSearch = !(_group!.hiddenForSearch ?? false);
     if (mounted) {
       setState(() {});
     }
@@ -751,5 +774,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   bool get _isAuthManGroup{
     return _group?.authManEnabled ?? false;
+  }
+
+  bool get _isPrivateGroup {
+    return _group?.privacy == GroupPrivacy.private;
+  }
+
+  bool get _isPublicGroup {
+    return _group?.privacy == GroupPrivacy.public;
   }
 }

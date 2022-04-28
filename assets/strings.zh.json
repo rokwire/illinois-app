@@ -1647,6 +1647,7 @@
 	"panel.groups.common.privacy.title.public":  "Public",
 	"panel.groups.common.privacy.description.short.private": "Only members can see group events and posts, unless an event is marked public.",
 	"panel.groups.common.privacy.description.short.public":  "Only members can see group events and posts, unless an event is marked public.",
+    "panel.groups.common.private.search.hidden.label": "Hidden For Search",
 
 	"panel.group_detail.label.options": "Options",
 	"panel.group_detail.label.error_message": "Failed to load group data.",
