@@ -484,12 +484,27 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Widget _buildHiddenForSearch() {
     return Visibility(
         visible: _isPrivateGroup,
-        child: Container(
+        child: Padding(
             padding: EdgeInsets.only(left: 16, right: 16, bottom: 40),
-            child: _buildSwitch(
-                title: Localization().getStringEx("panel.groups.common.private.search.hidden.label", "Hidden For Search"),
-                value: _group?.hiddenForSearch,
-                onTap: _onTapHiddenForSearch)));
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(
+                  child: _buildSwitch(
+                      title: Localization().getStringEx("panel.groups.common.private.search.hidden.label", "Make Group Hidden"),
+                      value: _group?.hiddenForSearch,
+                      onTap: _onTapHiddenForSearch)),
+              Semantics(
+                  container: true,
+                  child: Container(
+                      padding: EdgeInsets.only(left: 8, right: 8, top: 12),
+                      child: Text(
+                          Localization()
+                              .getStringEx("panel.groups.common.private.search.hidden.description", "A hidden group is unsearchable."),
+                          style: TextStyle(
+                              color: Styles().colors!.textBackground,
+                              fontSize: 14,
+                              fontFamily: Styles().fontFamilies!.regular,
+                              letterSpacing: 1))))
+            ])));
   }
 
   void _onTapHiddenForSearch() {

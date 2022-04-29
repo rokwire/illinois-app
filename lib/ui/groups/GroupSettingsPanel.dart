@@ -615,10 +615,25 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         child: Container(
             color: Styles().colors!.background,
             padding: EdgeInsets.only(left: 16, right: 16, bottom: 20),
-            child: _buildSwitch(
-                title: Localization().getStringEx("panel.groups.common.private.search.hidden.label", "Hidden For Search"),
-                value: _group?.hiddenForSearch,
-                onTap: _onTapHiddenForSearch)));
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(
+                  child: _buildSwitch(
+                      title: Localization().getStringEx("panel.groups.common.private.search.hidden.label", "Make Group Hidden"),
+                      value: _group?.hiddenForSearch,
+                      onTap: _onTapHiddenForSearch)),
+              Semantics(
+                  container: true,
+                  child: Container(
+                      padding: EdgeInsets.only(left: 8, right: 8, top: 12),
+                      child: Text(
+                          Localization()
+                              .getStringEx("panel.groups.common.private.search.hidden.description", "A hidden group is unsearchable."),
+                          style: TextStyle(
+                              color: Styles().colors!.textBackground,
+                              fontSize: 14,
+                              fontFamily: Styles().fontFamilies!.regular,
+                              letterSpacing: 1))))
+            ])));
   }
 
   void _onTapHiddenForSearch() {
