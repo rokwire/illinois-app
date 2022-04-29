@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added links to app and plugin Wiki documentation in README [#1597](https://github.com/rokwire/illinois-app/issues/1597).
+### Changed
+- Wording for hidden group [#1598](https://github.com/rokwire/illinois-app/issues/1598).
 
 ## [4.0.0] - 2022-04-28
 ### Changed
