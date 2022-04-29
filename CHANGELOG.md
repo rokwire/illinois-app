@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Integrate new Polls BB [#1565](https://github.com/rokwire/illinois-app/issues/1565).
 - Allow private groups to be hidden from search [#1592](https://github.com/rokwire/illinois-app/issues/1592).
 
+## [3.3.22] - 2022-04-28
+### Changed
+- Remove "play/pause" button from video panels. Bring back auto play [#1594](https://github.com/rokwire/illinois-app/issues/1594).
+
 ## [3.3.21] - 2022-04-27
 ### Changed
 - Updated Privacy description strings [#1578](https://github.com/rokwire/illinois-app/issues/1578).

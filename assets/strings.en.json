@@ -514,8 +514,6 @@
 
     "panel.onboarding2.video.button.skip.title": "Skip",
     "panel.onboarding2.video.button.continue.title": "Continue",
-    "panel.onboarding2.video.button.play.title": "Play",
-    "panel.onboarding2.video.button.pause.title": "Pause",
     "panel.onboarding2.video.missing.msg": "Missing video",
     
     "panel.onboarding2.roles.label.title": "Who Are You?",
@@ -1235,8 +1233,6 @@
 
     "panel.settings.video_tutorial.header.title": "Video Tutorial",
     "panel.settings.video_tutorial.video.missing.msg": "Missing video",
-    "panel.settings.video_tutorial.button.play.title": "Play",
-    "panel.settings.video_tutorial.button.pause.title": "Pause",
 
     "panel.create_event.header.title":"Create An Event",
     "panel.create_event.title":"Create an Event",

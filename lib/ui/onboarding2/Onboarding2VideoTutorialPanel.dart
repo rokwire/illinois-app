@@ -62,9 +62,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     if (StringUtils.isNotEmpty(tutorialUrl)) {
       _controller = VideoPlayerController.network(tutorialUrl!);
       _controller!.addListener(_checkVideoEnded);
-      _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
-        setState(() {});
-      });
+      _initializeVideoPlayerFuture = _controller!.initialize().then((_) => _controller!.play()); // Automatically play video after initialization
     }
   }
 
@@ -89,8 +87,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
 
   @override
   Widget build(BuildContext context) {
-    double skipButtonWidth = MediaQuery.of(context).textScaleFactor * 120;
-    double playButtonWidth = MediaQuery.of(context).textScaleFactor * 120;
+    double buttonWidth = MediaQuery.of(context).textScaleFactor * 120;
     return Scaffold(
         backgroundColor: Styles().colors!.blackTransparent06,
         body: SafeArea(
@@ -102,18 +99,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
             ]),
             Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                  SizedBox(width: skipButtonWidth, child: RoundedButton(label: _skipButtonLabel, fontSize: 16, onTap: _onTapSkip)),
-                  SizedBox(
-                      width: playButtonWidth,
-                      child: RoundedButton(
-                          enabled: _isPlayerInitialized,
-                          label: _playButtonLabel,
-                          fontSize: 16,
-                          textColor: (_isPlayerInitialized ? Styles().colors!.fillColorPrimary : Styles().colors!.disabledTextColor),
-                          borderColor: (_isPlayerInitialized ? Styles().colors!.fillColorSecondary : Styles().colors!.mediumGray),
-                          onTap: _onTapPlayPause))
-                ]))
+                child: SizedBox(width: buttonWidth, child: RoundedButton(label: _buttonLabel, fontSize: 16, onTap: _onTapSkip)))
           ])
         ])));
   }
@@ -145,18 +131,6 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel()));
   }
 
-  void _onTapPlayPause() {
-    if (!_isPlayerInitialized) {
-      return;
-    }
-    if (_isPlaying) {
-      _controller?.pause();
-    } else {
-      _controller?.play();
-    }
-    setState(() {});
-  }
-
   void _checkVideoEnded() {
     if (_controller != null) {
       bool videoEnded = (_controller!.value.position == _controller!.value.duration);
@@ -169,24 +143,10 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     }
   }
 
-  bool get _isPlaying {
-    return (_controller?.value.isPlaying ?? false);
-  }
-
-  bool get _isPlayerInitialized {
-    return (_controller?.value.isInitialized ?? false);
-  }
-
-  String get _skipButtonLabel {
+  String get _buttonLabel {
     return _isVideoEnded
         ? Localization().getStringEx('panel.onboarding2.video.button.continue.title', 'Continue')
         : Localization().getStringEx('panel.onboarding2.video.button.skip.title', 'Skip');
-  }
-
-  String get _playButtonLabel {
-    return _isPlaying
-        ? Localization().getStringEx('panel.onboarding2.video.button.pause.title', 'Pause')
-        : Localization().getStringEx('panel.onboarding2.video.button.play.title', 'Play');
   }
 
   // NotificationsListener
@@ -225,7 +185,10 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
         if (isCurrent) {
           // Enable landscape orientations when the panel is visible
           _enableLandscapeOrientations();
-          setState(() {});
+          // Play again video when the panel is visible if it has not already ended
+          if (!_controller!.value.isPlaying && !_isVideoEnded) {
+            _controller!.play();
+          }
         }
       }
     }
