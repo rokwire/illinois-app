@@ -22,7 +22,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class LaundryListPanel extends StatefulWidget {
   final List<LaundryRoom>? rooms;
@@ -53,7 +53,7 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
       ),
       body: _buildContentWidget(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

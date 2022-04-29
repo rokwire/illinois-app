@@ -19,7 +19,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
-import 'package:illinois/ui/settings/SettingsNewPrivacyPanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -100,7 +100,7 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
 
   void _onTapManagePrivacy() {
     Analytics().logSelect(target: "HomeHighlightedFeatures: Manage Privacy");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNewPrivacyPanel(mode: SettingsPrivacyPanelMode.regular)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular)));
   }
 
   void _onTapCampusGuide() {

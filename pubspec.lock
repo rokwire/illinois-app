@@ -232,6 +232,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  dropdown_button2:
+    dependency: "direct main"
+    description:
+      name: dropdown_button2
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.2"
   encrypt:
     dependency: transitive
     description:
@@ -342,6 +349,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.3.0"
+  flutter_exif_rotation:
+    dependency: transitive
+    description:
+      name: flutter_exif_rotation
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.1"
   flutter_html:
     dependency: "direct main"
     description:
@@ -811,7 +825,7 @@ packages:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.2"
+    version: "2.1.2"
   pointycastle:
     dependency: transitive
     description:
@@ -860,7 +874,7 @@ packages:
       path: plugin
       relative: true
     source: path
-    version: "0.0.3"
+    version: "1.0.2"
   roundcheckbox:
     dependency: "direct main"
     description:
@@ -1126,19 +1140,33 @@ packages:
     source: hosted
     version: "2.1.1"
   video_player:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: video_player
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.10"
+    version: "2.3.0"
+  video_player_android:
+    dependency: transitive
+    description:
+      name: video_player_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.3.1"
+  video_player_avfoundation:
+    dependency: transitive
+    description:
+      name: video_player_avfoundation
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.3.1"
   video_player_platform_interface:
     dependency: transitive
     description:
       name: video_player_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.0"
+    version: "5.1.0"
   video_player_web:
     dependency: transitive
     description:

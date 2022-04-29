@@ -33,7 +33,7 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollBubblePinPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
@@ -112,7 +112,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       ),
       body: _buildScaffoldBody(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -410,13 +410,16 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           crossAxisAlignment: CrossAxisAlignment.center,
           children:[
           Container(height: 100,),
-          Text(Localization().getStringEx("panel.polls_home.text.login_description", 'You need to be logged in to create and share polls with people near you.'),
+          _canSignIn?
+          Text(Localization().getStringEx("panel.polls_home.text.login_description", 'You need to be signed in to create and share polls with people near you.'),
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.semiBold,
                 fontSize: 24,
-            ),),
+            ),) :
+            _buildPrivacyAlertMessageWidget(),
+
       ]),
     );
   }
@@ -431,9 +434,9 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           onTap:_onCreatePollTapped
       ));
     }
-    else if (_couldCreatePoll) {
+    else if (_couldCreatePoll && _canSignIn) {
       return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
-          RoundedButton(label:Localization().getStringEx("panel.polls_home.text.login","Login"),
+          RoundedButton(label:Localization().getStringEx("panel.polls_home.text.login","Sign in"),
             textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
             backgroundColor: Styles().colors!.white,
@@ -446,6 +449,35 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     else {
       return Container();
     }
+  }
+
+  Widget _buildPrivacyAlertMessageWidget() {
+    final String iconMacro = '{{privacy_level_icon}}';
+    String privacyMsg = Localization().getStringEx('panel.polls_home.text.privacy_alert.msg', "With your privacy level at $iconMacro , you can't sign in. To create and share polls with people near you, you must set your privacy level to 4 and sign in.");
+    int iconMacroPosition = privacyMsg.indexOf(iconMacro);
+    String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
+    String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
+
+    return RichText(text: TextSpan(
+        style: TextStyle(
+          color: Styles().colors!.fillColorPrimary,
+          fontFamily: Styles().fontFamilies!.semiBold,
+          fontSize: 24,
+        ),
+        children: [
+          TextSpan(text: privacyMsgStart),
+          WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelIcon()),
+          TextSpan(text: privacyMsgEnd)
+    ]));
+  }
+
+  Widget _buildPrivacyLevelIcon() {
+    String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+        Text(privacyLevel, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))
+      ),
+    );
   }
 
   void _evalBleDescriptionHeight() {
@@ -753,6 +785,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       });
     }
   }
+
+  bool get _canSignIn{
+    return Auth2().privacyMatch(4);
+  }
 }
 
 class _PollsHomePanelFilterTab extends StatelessWidget {
@@ -1039,7 +1075,10 @@ class _PollCardState extends State<_PollCard>{
 
   void _onEndPollTapped(){
     _setEndButtonProgress(true);
-      Polls().close(widget.poll!.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
+      Polls().close(widget.poll!.pollId).then((result) {
+          AppSemantics.announceMessage(context, Localization().getStringEx('panel.polls_home.card.button.message.end_poll.success', 'Poll ended successfully'));
+          _setEndButtonProgress(false);
+      }).catchError((e){
         _setEndButtonProgress(false);
         AppAlert.showDialogResult(context, illinois.Polls.localizedErrorString(e));
       });

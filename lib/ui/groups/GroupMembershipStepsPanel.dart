@@ -28,7 +28,7 @@ import 'package:illinois/ui/groups/GroupFindEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -80,8 +80,8 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
           }
         }
       });
-      Groups().loadEvents(null).then((Map<int, List<GroupEvent>>? eventsMap) {
-        List<GroupEvent>? events = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
+      Groups().loadEvents(null).then((Map<int, List<Event>>? eventsMap) {
+        List<Event>? events = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
         if (CollectionUtils.isNotEmpty(events)) {
           for (Event event in events!) {
             if (event.id != null) {
@@ -138,7 +138,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
         ],
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

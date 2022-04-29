@@ -23,12 +23,10 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
-import 'package:illinois/ui/widgets/HomeHeader.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -67,20 +65,20 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
             Expanded(child: Stack( children: <Widget>[Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  HomeHeader(
+                  SectionRibbonHeader(
                       title: Localization().getStringEx("panel.athletics_news_list.title", 'Athletics News'),
-                      imageRes: 'images/icon-news.png'),
+                      titleIconAsset: 'images/icon-news.png'),
                   Container(
-                    height: 28 + 20*(MediaQuery.of(context).textScaleFactor),
+                    //height: 28 + 20*(MediaQuery.of(context).textScaleFactor),
                     child:Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
                       child: Row( mainAxisSize: MainAxisSize.max, crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget> [
                           _buildFilterLabel(),
                           Expanded(
-                            child: Padding(padding: EdgeInsets.only(top: 2),child:_wrapWithBottomBorder(Styles().colors!.fillColorSecondaryVariant!, ScalableFilterSelectorWidget(
-                              label: _filters[_selectedFilterIndex],
+                            child: Padding(padding: EdgeInsets.only(top: 2),child:_wrapWithBottomBorder(Styles().colors!.fillColorSecondaryVariant!, FilterSelector(
+                              title: _filters[_selectedFilterIndex],
                               active: _filterOptionsVisible,
-                              visible: true,
+                              expanded: true,
                               onTap: () => _onFilterTypeClicked(),)),
                           ))
                         ]
@@ -104,7 +102,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
               ],),),
             ]),
             backgroundColor: Styles().colors!.background,
-            bottomNavigationBar: TabBarWidget(),
+            bottomNavigationBar: uiuc.TabBar(),
           );
   }
 
@@ -150,24 +148,18 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
     int newsCount = (_displayNews != null) ? _displayNews!.length : 0;
     if (newsCount > 0) {
       return ListView.separated(
-        separatorBuilder: (context, index) =>
-            Divider(
-              color: Colors.transparent,
-            ),
+        separatorBuilder: (context, index) => Divider(color: Colors.transparent,),
         itemCount: newsCount,
         itemBuilder: (context, index) {
 
           News news = _displayNews![index];
 
-          Widget newsView = ImageHolderListItem(
-              imageUrl: news.imageUrl,
-              placeHolderDividerResource: Styles().colors!.fillColorPrimaryTransparent03,
-              placeHolderSlantResource:  'images/slant-down-right-blue.png',
-          child:AthleticsNewsCard(
-                news: news,
-                onTap: () => _onNewsTap(news),
-          ));
-          return newsView;
+          return StringUtils.isNotEmpty(news.imageUrl) ? ImageSlantHeader(
+            imageUrl: news.imageUrl,
+            slantImageColor: Styles().colors!.fillColorPrimaryTransparent03,
+            slantImageAsset:  'images/slant-down-right-blue.png',
+            child: _buildAthleticsNewsCard(news)
+          ) : _buildAthleticsNewsCard(news);
         },
         controller: _scrollController,
       );
@@ -180,6 +172,12 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
               textAlign: TextAlign.center,
             )]);
     }
+  }
+
+  Widget _buildAthleticsNewsCard(News news ) {
+    return Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child:
+      AthleticsNewsCard(news: news, onTap: () => _onNewsTap(news)),
+    );
   }
 
   Widget _buildDimmedContainer() {
@@ -204,7 +202,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
                 ),
               itemCount: filterValues.length,
               itemBuilder: (context, index) {
-                return FilterListItemWidget(label: filterValues[index],
+                return FilterListItem(title: filterValues[index],
                   selected: (index == _selectedFilterIndex),
 
 

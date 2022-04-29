@@ -5,7 +5,7 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -27,6 +27,14 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   bool _loading = false;
   //Refresh
   GlobalKey _postImageHolderKey = GlobalKey();
+  List<Member>? _selectedMembers;
+  List<Member>? _allMembersAllowedToPost;
+
+  @override
+  void initState() {
+    super.initState();
+    _initAllMembersAllowedToPost();
+  }
 
   @override
   void dispose() {
@@ -48,7 +56,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
           ),
           centerTitle: true),
         backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: TabBarWidget(),
+        bottomNavigationBar: uiuc.TabBar(),
         body: Stack(alignment: Alignment.topCenter, children: [
           SingleChildScrollView(child:
           Column(children: [
@@ -63,6 +71,9 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Container(height: 12,),
+                  GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group?.id, onSelectionChanged: _onMembersSelectionChanged),
+                  Container(height: 12,),
                   Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
                     style: TextStyle(
                         fontSize: 18,
@@ -118,6 +129,14 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     );
   }
 
+  void _onMembersSelectionChanged(List<Member>? selectedMembers){
+    if(mounted) {
+      setState(() {
+        _selectedMembers = selectedMembers;
+      });
+    }
+  }
+
   //Tap actions
   void _onTapCancel() {
     Analytics().logSelect(target: 'Cancel');
@@ -144,7 +163,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _setLoading(true);
 
-    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl); // if no parentId then this is a new post for the group.
+    GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers); // if no parentId then this is a new post for the group.
     Groups().createPost(widget.group?.id, post).then((succeeded) {
       _onCreateFinished(succeeded);
     });
@@ -165,5 +184,17 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
         _loading = loading;
       });
     }
+  }
+
+  void _initAllMembersAllowedToPost(){
+    if((widget.group?.members?.length ?? 0) >0) {
+      _allMembersAllowedToPost = widget.group!.members!.where((member) => _isMemberAllowedToReceivePost(member)).toList();
+    }
+  }
+
+  bool _isMemberAllowedToReceivePost(Member member){
+    //TMP:
+    // return true;
+    return member.isMemberOrAdmin;
   }
 }

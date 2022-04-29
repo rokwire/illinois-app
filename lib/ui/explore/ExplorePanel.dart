@@ -29,9 +29,9 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,7 +49,7 @@ import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:illinois/ui/widgets/RoundedTab.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -126,7 +126,7 @@ class ExplorePanelState extends State<ExplorePanel>
     with
         SingleTickerProviderStateMixin,
         AutomaticKeepAliveClientMixin<ExplorePanel>
-    implements NotificationsListener, RoundedTabListener {
+    implements NotificationsListener {
   
   List<ExploreTab> _exploreTabs = [];
   ExploreTab?    _selectedTab;
@@ -245,8 +245,8 @@ class ExplorePanelState extends State<ExplorePanel>
             onTapList: () => _selectDisplayType(ListMapDisplayType.List),
             onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
           
-          Padding(padding: EdgeInsets.all(12), child:
-            Wrap(children: _buildTabWidgets(),
+          Padding(padding: EdgeInsets.all(16), child:
+            Wrap(spacing: 8, runSpacing: 8, children: _buildTabWidgets(),
           )),
           
           Expanded(child:
@@ -269,7 +269,7 @@ class ExplorePanelState extends State<ExplorePanel>
         ]),
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: _showTabBar ? TabBarWidget() : null,
+      bottomNavigationBar: _showTabBar ? uiuc.TabBar() : null,
     );
   }
 
@@ -853,7 +853,7 @@ class ExplorePanelState extends State<ExplorePanel>
     if (_selectedMapExplore is Explore) {
       title = _selectedMapExplore?.exploreTitle;
       description = _selectedMapExplore.exploreLocation?.description;
-      exploreColor = _selectedMapExplore.uiColor;
+      exploreColor = _exploreColor(_selectedMapExplore) ?? Colors.white;
     }
     else if  (_selectedMapExplore is List<Explore>) {
       String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
@@ -861,6 +861,7 @@ class ExplorePanelState extends State<ExplorePanel>
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
       exploreColor = explore?.uiColor ?? Styles().colors!.fillColorSecondary!;
+      exploreColor = _exploreColor(explore) ?? Styles().colors?.fillColorSecondary;
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
@@ -941,6 +942,18 @@ class ExplorePanelState extends State<ExplorePanel>
                     ])),
           ))
     ]);
+  }
+
+  static Color? _exploreColor(Explore? explore) {
+    if (explore is Event) {
+      return explore.uiColor;
+    }
+    else if (explore is Dining) {
+      return explore.uiColor;
+    }
+    else {
+      return null;
+    }
   }
 
   void _selectMapExplore(dynamic explore) {
@@ -1105,9 +1118,9 @@ class ExplorePanelState extends State<ExplorePanel>
                       ),
                   itemCount: filterValues.length,
                   itemBuilder: (context, index) {
-                    return FilterListItemWidget(
-                      label: filterValues[index],
-                      subLabel: hasSubLabels ? filterSubLabels![index] : null,
+                    return  FilterListItem(
+                      title: filterValues[index],
+                      description: hasSubLabels ? filterSubLabels![index] : null,
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(index)),
                       onTap: () {
                         Analytics().logSelect(target: "FilterItem: ${filterValues[index]}");
@@ -1146,11 +1159,10 @@ class ExplorePanelState extends State<ExplorePanel>
       List<String> filterValues = _getFilterValuesByType(selectedFilter.type)!;
       int filterValueIndex = selectedFilter.firstSelectedIndex;
       String? filterHeaderLabel = filterValues[filterValueIndex];
-      filterTypeWidgets.add(FilterSelectorWidget(
-        label: filterHeaderLabel,
+      filterTypeWidgets.add(FilterSelector(
+        title: filterHeaderLabel,
         hint: _getFilterHintByType(selectedFilter.type),
         active: selectedFilter.active,
-        visible: true,
         onTap: (){
           Analytics().logSelect(target: "Filter: $filterHeaderLabel");
           return _onFilterTypeClicked(selectedFilter);},
@@ -1163,7 +1175,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
     List<RoundedTab> tabs = [];
     for (ExploreTab exploreTab in _exploreTabs) {
-      tabs.add(RoundedTab(title: exploreTabName(exploreTab), hint: exploreTabHint(exploreTab), tabIndex: ExploreTab.values.indexOf(exploreTab), listener: this, selected: (_selectedTab == exploreTab)));
+      tabs.add(RoundedTab(title: exploreTabName(exploreTab), hint: exploreTabHint(exploreTab), tabIndex: ExploreTab.values.indexOf(exploreTab), onTap: _onTapTab, selected: (_selectedTab == exploreTab)));
     }
     return tabs;
   }
@@ -1247,11 +1259,10 @@ class ExplorePanelState extends State<ExplorePanel>
     Navigator.pop(context);
   }
 
-  @override
-  void onTabClicked(int? tabIndex, RoundedTab tab) {
-    if ((0 <= tabIndex!) && (tabIndex < ExploreTab.values.length)) {
+  void _onTapTab(RoundedTab tab) {
+    if ((0 <= tab.tabIndex) && (tab.tabIndex < ExploreTab.values.length)) {
       Analytics().logSelect(target: tab.title) ;
-      selectTab(ExploreTab.values[tabIndex]);
+      selectTab(ExploreTab.values[tab.tabIndex]);
     }
   }
 

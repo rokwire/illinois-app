@@ -71,7 +71,7 @@ class DeviceCalendar extends rokwire.DeviceCalendar implements NotificationsList
   }
 
   @override
-  void onRequestPermisionFailed() {
+  void onRequestPermissionFailed() {
     AppToast.show(Localization().getStringEx('logic.calendar.permission_denied', 'Unable to save event to calendar. Permissions not granted.'));
   }
 }

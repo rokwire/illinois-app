@@ -27,7 +27,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:notification_permissions/notification_permissions.dart';
 
 import 'SettingsWidgets.dart';
@@ -68,7 +68,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
       ),
       body: SingleChildScrollView(child: _buildContent()),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

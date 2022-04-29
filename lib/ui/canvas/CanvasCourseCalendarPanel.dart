@@ -24,7 +24,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -77,7 +77,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

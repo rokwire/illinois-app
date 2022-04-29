@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -24,7 +25,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -155,13 +156,13 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
               ),
             ],
           ),
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
   Widget _buildHeading(){
     String? memberDateAdded = (_member?.dateCreatedUtc != null) ? AppDateTime().formatDateTime(_member?.dateCreatedUtc?.toLocal(), format: "MMMM dd") : null;
-    String memberSince = (memberDateAdded != null) ? (Localization().getStringEx("panel.member_detail.label.member_since", "Member since") + memberDateAdded) : '';
+    String memberSince = (memberDateAdded != null) ? sprintf(Localization().getStringEx("panel.member_detail.label.member_since", "Member since %s"), [memberDateAdded]) : '';
 
     return Row(
       children: <Widget>[
@@ -169,10 +170,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(65),
-            child: Container(
-                width: 65, height: 65 ,
-                child: StringUtils.isNotEmpty(_member?.photoURL) ? Image.network(_member!.photoURL!, excludeFromSemantics: true,) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true,)
-            ),
+            child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: _member?.userId)),
           ),
         ),
         Container(width: 16,),

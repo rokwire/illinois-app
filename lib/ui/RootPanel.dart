@@ -52,8 +52,8 @@ import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/PopupDialog.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -129,7 +129,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyPromptPopup,
       DeviceCalendar.notifyCalendarSelectionPopup,
       DeviceCalendar.notifyShowConsoleMessage,
-      TabBarWidget.notifySelectionChanged,
+      uiuc.TabBar.notifySelectionChanged,
     ]);
 
     _tabs = _getTabs();
@@ -237,7 +237,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
     }
-    else if (name == TabBarWidget.notifySelectionChanged) {
+    else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
     }
   }
@@ -269,7 +269,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                 physics: NeverScrollableScrollPhysics(), //disable scrolling
                 children: panels,
               ),
-            bottomNavigationBar: TabBarWidget(tabController: _tabBarController),
+            bottomNavigationBar: uiuc.TabBar(tabController: _tabBarController),
             backgroundColor: Styles().colors!.background,
           ),
         ),
@@ -462,14 +462,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebasePopupMessage(Map<String, dynamic> content) {
-    String? displayText = content["display_text"];
-    String? positiveButtonText = content["positive_button_text"];
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return PopupDialog(displayText: displayText, positiveButtonText: positiveButtonText);
-      },
+    PopupMessage.show(context: context,
+      title: Localization().getStringEx("app.title", "Illinois"),
+      message: JsonUtils.stringValue(content["display_text"]),
+      buttonTitle: JsonUtils.stringValue(content["positive_button_text"]) ?? Localization().getStringEx("dialog.ok.title", "OK")
     );
   }
 

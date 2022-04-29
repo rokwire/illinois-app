@@ -34,7 +34,7 @@ import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -43,7 +43,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:sprintf/sprintf.dart';
@@ -171,7 +171,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
         ],
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -638,7 +638,7 @@ class _EventsListState extends State<_EventsList>{
     String titleKey = (widget.parentEvent?.isSuperEvent == true)
         ? "panel.explore_detail.super_event.schedule.heading.title"
         : "panel.explore_detail.recurring_event.schedule.heading.title";
-    return SectionHeading(
+    return SectionSlantHeader(
         title: Localization().getStringEx(titleKey, "Event Schedule"),
         slantImageAsset: "images/slant-down-right-grey.png",
         slantColor: Styles().colors!.backgroundVariant,

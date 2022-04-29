@@ -48,7 +48,7 @@ import 'package:illinois/ui/home/HomeUpgradeVersionWidget.dart';
 import 'package:illinois/ui/home/HomeVoterRegistrationWidget.dart';
 import 'package:illinois/ui/home/HomeUpcomingEventsWidget.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
-import 'package:illinois/ui/widgets/FlexContentWidget.dart';
+import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -62,6 +62,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   
   List<String>? _contentListCodes;
   StreamController<void> _refreshController = StreamController.broadcast();
+  HomeSaferWidget? _saferWidget;
+  GlobalKey _saferKey = GlobalKey();
+
 
   @override
   void initState() {
@@ -71,6 +74,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       FlexUI.notifyChanged,
       Styles.notifyChanged,
       Assets.notifyChanged,
+      HomeSaferWidget.notifyNeedsVisiblity,
     ]);
     _contentListCodes = JsonUtils.listStringsValue(FlexUI()['home'])  ?? [];
     super.initState();
@@ -118,6 +122,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   List<Widget> _buildContentList() {
 
     List<Widget> widgets = [];
+    HomeSaferWidget? saferWidget;
 
     for (String code in _contentListCodes!) {
       Widget? widget;
@@ -180,17 +185,21 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         widget = HomeMyGroupsWidget(refreshController: _refreshController,);
       }
       else if ((code == 'safer') || code.startsWith('safer.')) {
-        widget = HomeSaferWidget();
+        widget = saferWidget = _saferWidget ??= HomeSaferWidget(key: _saferKey);
       }
       else {
-        widget = FlexContentWidget.fromAssets(code);
+        widget = FlexContent.fromAssets(code);
       }
-
 
       if (widget != null) {
         widgets.add(widget);
       }
     }
+
+    if ((saferWidget == null) && (_saferWidget != null)) {
+      _saferWidget = null; // Clear the cached HomeSaferWidget if not Safer indget in Home content.
+    }
+
     return widgets;
   }
 
@@ -206,6 +215,13 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   Future<void> _onPullToRefresh() async {
     LiveStats().refresh();
     _refreshController.add(null);
+  }
+
+  void _ensureSaferWidgetVisibiity() {
+      BuildContext? saferContext = _saferKey.currentContext;
+      if (saferContext != null) {
+        Scrollable.ensureVisible(saferContext, duration: Duration(milliseconds: 300));
+      }
   }
 
   // NotificationsListener
@@ -234,6 +250,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (name == Assets.notifyChanged) {
       setState(() {});
+    }
+    else if (name == HomeSaferWidget.notifyNeedsVisiblity) {
+      _ensureSaferWidgetVisibiity();
     }
   }
 }

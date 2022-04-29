@@ -281,7 +281,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       ),
       Container(height: 10,),
       
-      Text(Auth2().authCard?.fullName ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24)),
+      Text(Auth2().authCard?.fullName?.trim() ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24)),
       Text(roleDisplayString, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 20)),
       
       Container(height: 15,),

@@ -16,7 +16,7 @@
 
 		"browse": ["all", "content"],
 		"browse.all": ["athletics",  "building_status", "campus_guide", "crisis_help", "dining", "events", "groups", "inbox", "privacy_center", "quick_polls", "saved", "wellness"],
-		"browse.content": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "date_cat", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding", "faqs"],
+		"browse.content": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "video_tutorial", "date_cat", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding", "faqs"],
 
 		"settings": ["user_info", "privacy_center", "privacy", "connect", "connected", "link", "linked", "feedback", "delete"],
 		"settings.connect": ["netid", "phone_or_email"],
@@ -37,7 +37,7 @@
 
 		"roles": ["student", "visitor", "fan", "employee", "alumni", "parent", "resident"],
 		
-		"onboarding":["get_started", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
+		"onboarding":["get_started", "video_tutorial", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
 
 		"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 		

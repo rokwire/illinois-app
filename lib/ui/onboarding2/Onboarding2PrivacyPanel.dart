@@ -56,11 +56,12 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
         'YOUR PRIVACY LEVEL IS');*/
 
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors!.fillColorPrimary,
         body: SafeArea(child: SwipeDetector(
-            onSwipeLeft: () => _goNext(context),
-            onSwipeRight: () => _goBack(context),
-            child:
+          onSwipeLeft: () => _goNext(context),
+          onSwipeRight: () => _goBack(context),
+          child:
+          Container(color: Styles().colors!.background, child:
             Column(children: [
               Expanded(child:
                 SingleChildScrollView(child:
@@ -232,7 +233,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                   ],
                 ),
               ),
-            ]))));
+            ])))));
   }
 
   /*Widget _buildPrivacySlider(){

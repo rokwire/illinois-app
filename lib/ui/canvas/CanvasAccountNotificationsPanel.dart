@@ -21,7 +21,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/canvas/CanvasAccountNotificationDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -50,7 +50,7 @@ class _CanvasAccountNotificationsPanelState extends State<CanvasAccountNotificat
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

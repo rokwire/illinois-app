@@ -6,6 +6,137 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.3.22] - 2022-04-28
+### Changed
+- Remove "play/pause" button from video panels. Bring back auto play [#1594](https://github.com/rokwire/illinois-app/issues/1594).
+
+## [3.3.21] - 2022-04-27
+### Changed
+- Updated Privacy description strings [#1578](https://github.com/rokwire/illinois-app/issues/1578).
+- Always use the new privacy setting panel [#1588](https://github.com/rokwire/illinois-app/issues/1588).
+
+## [3.3.20] - 2022-04-26
+### Changed
+- Updated Privacy description strings [#1578](https://github.com/rokwire/illinois-app/issues/1578).
+- Bring back the old Polls BB [#1579](https://github.com/rokwire/illinois-app/issues/1579).
+- Show privacy sign in message for Meal Plan, Quick Polls and Illini Cash panels [#1508](https://github.com/rokwire/illinois-app/issues/1508).
+- Add Play/Pause button in video panels. Do not autoplay video [#1569](https://github.com/rokwire/illinois-app/issues/1569).
+
+## [3.3.19] - 2022-04-21
+### Added
+- Integrate new Polls BB [#1565](https://github.com/rokwire/illinois-app/issues/1565).
+
+## [3.3.18] - 2022-04-18
+### Changed
+- Update favorite icon availability for privacy level 4+ [#1548](https://github.com/rokwire/illinois-app/issues/1548).
+### Fixed
+- Extent the tap area in privacy panel for data usage [#1563](https://github.com/rokwire/illinois-app/issues/1563).
+
+## [3.3.17] - 2022-04-15
+### Fixed
+- Properly handle UI changes when privacy level is changed [#1546](https://github.com/rokwire/illinois-app/issues/1546).
+- Remove 3 broken external links [#1555](https://github.com/rokwire/illinois-app/issues/1555).
+### Changed
+- Update strings related to privacy level [#1553](https://github.com/rokwire/illinois-app/issues/1553).
+
+## [3.3.16] - 2022-04-14
+### Changed
+- Updated strings in "privacy_new" section from assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+- Updated privacy descriptions again in "privacy_new" section from assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+- UI improvements [#1550](https://github.com/rokwire/illinois-app/issues/1550).
+- Acknwoledged user privacy level and authentication status in Groups [#1548](https://github.com/rokwire/illinois-app/issues/1548).
+
+## [3.3.15] - 2022-04-12
+### Added
+- Added more sections in "privacy_new" section from assets.json [#1540](https://github.com/rokwire/illinois-app/issues/1540).
+### Changed
+- Privacy alert content and fixed delay after user's selection [#1536](https://github.com/rokwire/illinois-app/issues/1536).
+- Gies cleanup [#1543](https://github.com/rokwire/illinois-app/issues/1543).
+### Fixed
+- Show "Game Day Guide" button only for men's basketball and football [#1531](https://github.com/rokwire/illinois-app/issues/1531).
+
+## [3.3.14] - 2022-04-11
+### Added
+- User's profile picture in group listing panel [#1534](https://github.com/rokwire/illinois-app/issues/1534).
+### Changed
+- Show Edit Image panel for editing user's profile picture [#1538](https://github.com/rokwire/illinois-app/issues/1538).
+- Buttons for editing user's profile picture [#1532](https://github.com/rokwire/illinois-app/issues/1532).
+- App behavior when "Building Access" is tapped [#1536](https://github.com/rokwire/illinois-app/issues/1536).
+
+## [3.3.13] - 2022-04-07
+### Fixed
+- User profile picture rotation before upload [#1528](https://github.com/rokwire/illinois-app/issues/1528).
+
+## [3.3.12] - 2022-04-06
+### Fixed
+- User profile picture improvements [#1526](https://github.com/rokwire/illinois-app/issues/1526).
+
+## [3.3.11] - 2022-04-05
+### Fixed
+- Fixed missing Group Input box for Search field of select member [#1513](https://github.com/rokwire/illinois-app/issues/1513).
+
+## [3.3.10] - 2022-04-04
+### Fixed
+- Change "log in" to "sign in" [#1514](https://github.com/rokwire/illinois-app/issues/1514).
+- Fixed Group event update members selection [#1519](https://github.com/rokwire/illinois-app/issues/1519).
+
+## [3.3.9] - 2022-04-01
+### Changed
+- Semantics improvements: WalletPanel added hint for "View" buttons [#503](https://github.com/rokwire/illinois-app/issues/503).
+- Semantics improvements: HomeSaferWidget try fixing semantics id by replacing InkWell with GestureDetector [#1281](https://github.com/rokwire/illinois-app/issues/1281).
+### Fixed
+- Trim user's fullname retrieved from auth card [#1504](https://github.com/rokwire/illinois-app/issues/1504).
+- Change button title from "Skip" to "Continue" when the video has ended [#1511](https://github.com/rokwire/illinois-app/issues/1511).
+
+## [3.3.8] - 2022-03-30
+### Added
+- User Profile Picture [#1500](https://github.com/rokwire/illinois-app/issues/1500).
+### Changed
+- Semantics improvements: PollBubblePromptPanel - Announce when voting was successful [#1496](https://github.com/rokwire/illinois-app/issues/1496).
+- Semantics improvements: Announce when poll was closed successfully [#1494](https://github.com/rokwire/illinois-app/issues/1494).
+- Semantics improvements: add semantics for Athletics images (game/roster/coach/etc.) [#510](https://github.com/rokwire/illinois-app/issues/510).
+
+## [3.3.7] - 2022-03-28
+### Changed
+- Place "video_tutorial_url" in "otherUniversityServices" config section [#1498](https://github.com/rokwire/illinois-app/issues/1498).
+
+## [3.3.6] - 2022-03-25
+### Changed
+- Added "Health Illini Podcast" interactive activity to all Interactive Activities across the wellness panels [#1485](https://github.com/rokwire/illinois-app/issues/1485).
+- Updated GroupsMembersSelectionWidget [#1487](https://github.com/rokwire/illinois-app/issues/1487).
+
+## [3.3.5] - 2022-03-24
+### Added
+- Added "Health Illini Podcast" interactive activity in Wellness home panel [#1485](https://github.com/rokwire/illinois-app/issues/1485).
+- Added Member selection widget into the Group Event Add/Create panels [#1487](https://github.com/rokwire/illinois-app/issues/1487). 
+### Changed
+- The way group member goes to member list [#1484](https://github.com/rokwire/illinois-app/issues/1484).
+- Reordered buttons in DebugHomePanel.
+
+## [3.3.4] - 2022-03-23
+### Added
+- Allow group members to see members list [#1482](https://github.com/rokwire/illinois-app/issues/1482).
+### Fixed
+- Make the "Skip" button in Onboarding2VideoTutorialPanel smaller [#1479](https://github.com/rokwire/illinois-app/issues/1479).
+
+## [3.3.3] - 2022-03-22
+### Changed
+- Android: rotate device screen to desired orientation if it's supported and accelerometer rotation is allowed [#1470](https://github.com/rokwire/illinois-app/issues/1470).
+
+## [3.3.2] - 2022-03-21
+### Added
+- SettingsideoTutorialPanel with playing video [#1470](https://github.com/rokwire/illinois-app/issues/1470).
+### Changed
+- Update Group post for selected members [#1450](https://github.com/rokwire/illinois-app/issues/1450).
+
+## [3.3.1] - 2022-03-17
+### Added
+- Onboarding2VideoTutorialPanel with playing video [#1470](https://github.com/rokwire/illinois-app/issues/1470).
+- Implement Group post for selected members [#1450](https://github.com/rokwire/illinois-app/issues/1450).
+### Changed
+- Link to plugin 1.0.0.
+- Various controls moved to plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+
 ## [3.2.38] - 2022-04-25
 ### Changed
 - Increased version number to generate a Zenodo citation.
@@ -24,6 +155,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Handle tap action on "Building Access" widget [#1462](https://github.com/rokwire/illinois-app/issues/1462).
 - Saving Privacy level [#1463](https://github.com/rokwire/illinois-app/issues/1463).
 - Fix crash in onboarding [#1448](https://github.com/rokwire/illinois-app/issues/1448).
+
 
 ## [3.2.35] - 2022-03-10
 ### Fixed

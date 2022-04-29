@@ -25,13 +25,13 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/settings/SettingsNewPrivacyPanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:package_info/package_info.dart';
 
 import 'SettingsNotificationsPanel.dart';
@@ -120,7 +120,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
           )
       ],),),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -181,7 +181,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
             ),
           ),
           Container(height: 4,),
-          Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Log in with your NetID or Telephone number to get the full Illinois experience."),
+          Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Sign in with your NetID or Telephone number to get the full Illinois experience."),
             style: TextStyle(
                 fontFamily: Styles().fontFamilies!.regular,
                 fontSize: 16,
@@ -501,7 +501,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
 
   void _onTapManagePrivacy(){
     Analytics().logSelect(target: "Manage Privacy");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNewPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
   }
 
   void _onTapDeleteData() async{

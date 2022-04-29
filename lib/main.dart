@@ -50,7 +50,7 @@ import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/widgets/FlexContentWidget.dart';
+import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -366,7 +366,7 @@ class _AppState extends State<App> implements NotificationsListener {
       List<dynamic>? launchList = (launch is List) ? launch : null;
       if (launchList != null) {
         for (dynamic launchEntry in launchList) {
-          Widget? launchPopup = FlexContentWidget.fromAssets(launchEntry, onClose: (BuildContext context) {
+          Widget? launchPopup = FlexContent.fromAssets(launchEntry, onClose: (BuildContext context) {
             _launchPopup = null;
             Navigator.of(context).pop();
           },);

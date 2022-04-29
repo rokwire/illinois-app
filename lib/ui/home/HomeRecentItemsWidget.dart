@@ -38,7 +38,7 @@ import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -139,7 +139,7 @@ class _RecentItemsList extends StatelessWidget{
     String? moreLabel = StringUtils.isEmpty(moreButtonLabel)? Localization().getStringEx('widget.home_recent_items.button.more.title', 'View All'): moreButtonLabel;
     return items!=null && items!.isNotEmpty? Column(
       children: <Widget>[
-        SectionHeading(
+        SectionSlantHeader(
             title:heading,
             subTitle: subTitle,
             titleIconAsset: headingIconRes,

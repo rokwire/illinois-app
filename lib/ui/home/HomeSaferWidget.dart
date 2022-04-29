@@ -13,15 +13,17 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
-import 'package:rokwire_plugin/ui/widgets/section_heading.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeSaferWidget extends StatefulWidget {
 
+  static const String notifyNeedsVisiblity = "edu.illinois.rokwire.home.safer.needs.visibility";
+  
   final StreamController<void>? refreshController;
 
-  HomeSaferWidget({this.refreshController});
+  HomeSaferWidget({Key? key, this.refreshController}) : super(key: key);
 
   @override
   _HomeSaferWidgetState createState() => _HomeSaferWidgetState();
@@ -29,8 +31,7 @@ class HomeSaferWidget extends StatefulWidget {
 
 class _HomeSaferWidgetState extends State<HomeSaferWidget> implements NotificationsListener {
 
-  static const String _notifyOidcAuthenticated     = "edu.illinois.rokwire.home.safer.authenticated";
-  bool _authLoading = false;
+  bool _buildingAccessAuthLoading = false;
 
   @override
   void initState() {
@@ -38,7 +39,6 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
-      _notifyOidcAuthenticated,
     ]);
 
     if (widget.refreshController != null) {
@@ -62,16 +62,11 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
         setState(() {});
       }
     }
-    else if (name == _notifyOidcAuthenticated) {
-      if (mounted) {
-        _processOidcAuthResult(param);
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SectionHeading(
+    return SectionSlantHeader(
       title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
       titleIconAsset: 'images/campus-tools.png',
       children: _buildCommandsList(),);
@@ -87,7 +82,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
           contentEntry = _buildCommandEntry(
             title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access'),
             description: Localization().getStringEx('widget.home.safer.button.building_access.description', 'Check your current building access.'),
-            loading: _authLoading,
+            loading: _buildingAccessAuthLoading,
             onTap: _onBuildingAccess,
           );
         }
@@ -126,9 +121,10 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   Widget _buildCommandEntry({required String title, String? description, bool? loading, void Function()? onTap}) {
-    return Semantics(label: title, container: true, button: true, child:
-      InkWell(onTap: onTap, child:
-        Container(
+    return Semantics(label: title, hint: description, button: true, child:
+      GestureDetector(
+        onTap: onTap,
+        child: Container(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -144,7 +140,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
             ],),
             StringUtils.isNotEmpty(description)
               ? Padding(padding: EdgeInsets.only(top: 5), child:
-                  Text(description!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface),),
+                  Text(description!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), semanticsLabel: "",),
                 )
               : Container(),
         ],),),),
@@ -152,41 +148,107 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   void _onBuildingAccess() {
-    if (!_authLoading) {
+    if (!_buildingAccessAuthLoading) {
       Analytics().logSelect(target: 'Building Access');
       if (Connectivity().isOffline) {
         AppAlert.showOfflineMessage(context, "");
-      }
-      else if (Auth2().privacyMatch(4)) {
-        if (Auth2().isOidcLoggedIn) {
-          _showModalIdCardPanel();
-        }
-        else {
-          setState(() { _authLoading = true; });
-          Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
-            if (mounted) {
-              setState(() { _authLoading = false; });
-              _processOidcAuthResult(result);
-            }
-            else {
-              NotificationService().notify(_notifyOidcAuthenticated, result);
-            }
-          });
-        }
-      }
-      else if (StringUtils.isNotEmpty(Config().iCardBoardingPassUrl)) {
-        launch(Config().iCardBoardingPassUrl!);
+      } else if (!Auth2().privacyMatch(4)) {
+        _onBuildingAccessPrivacyDoNotMatch();
+      } else {
+        _onBuildingAccessPrivacyMatch();
       }
     }
   }
 
-  void _processOidcAuthResult(Auth2OidcAuthenticateResult? result) {
-    if (result == Auth2OidcAuthenticateResult.succeeded) {
-      _showModalIdCardPanel();
+  void _onBuildingAccessPrivacyDoNotMatch() {
+    AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertWidget(), actions: [
+      TextButton(
+          child: Text(Localization().getStringEx('widget.home.safer.alert.building_access.privacy_level.4.button.label', 'Set to 4')),
+          onPressed: () => _buildingAccessIncreasePrivacyLevelAndAuthentiate(4)),
+      TextButton(
+          child: Text(Localization().getStringEx('widget.home.safer.alert.building_access.privacy_level.5.button.label', 'Set to 5')),
+          onPressed: () => _buildingAccessIncreasePrivacyLevelAndAuthentiate(5)),
+      TextButton(child: Text(Localization().getStringEx('dialog.no.title', 'No')), onPressed: _buildingAccessNotIncreasePrivacyLevel)
+    ]);
+  }
+
+  Widget _buildPrivacyAlertWidget() {
+    final String iconMacro = '{{privacy_level_icon}}';
+    String privacyMsg = Localization().getStringEx('widget.home.safer.alert.building_access.privacy_update.msg', 'With your privacy level at $iconMacro , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?');
+    int iconMacroPosition = privacyMsg.indexOf(iconMacro);
+    String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
+    String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
+    return RichText(text: TextSpan(style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold), children: [
+      TextSpan(text: privacyMsgStart),
+      WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
+      TextSpan(text: privacyMsgEnd)
+    ]));
+  }
+
+  Widget _buildPrivacyLevelWidget() {
+    String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)), ), child:
+        Text(privacyLevel.toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))));
+  }
+
+  void _buildingAccessNotIncreasePrivacyLevel() {
+    Analytics().logSelect(target: 'No');
+    Navigator.of(context).pop();
+    if (StringUtils.isNotEmpty(Config().iCardBoardingPassUrl)) {
+      launch(Config().iCardBoardingPassUrl!);
     }
-    else if (result != null) {
+  }
+
+  void _buildingAccessIncreasePrivacyLevelAndAuthentiate(int privacyLevel) {
+    Analytics().logSelect(target: 'Yes');
+    Navigator.of(context).pop();
+    Auth2().prefs?.privacyLevel = privacyLevel;
+    Future.delayed(Duration(milliseconds: 300), () {
+      NotificationService().notify(HomeSaferWidget.notifyNeedsVisiblity);
+      _onBuildingAccessPrivacyMatch();
+    });
+  }
+
+  void _onBuildingAccessPrivacyMatch() {
+    if (Auth2().isOidcLoggedIn) {
+      _showBuildingAccessPanel();
+    } else {
+      _buildingAccessOidcAuthenticate();
+    }
+  }
+
+  void _buildingAccessOidcAuthenticate() {
+    if (mounted) {
+      setState(() { _buildingAccessAuthLoading = true; });
+    }
+    Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+//    Future.delayed(Duration(milliseconds: 300), () {
+        if (mounted) {
+          NotificationService().notify(HomeSaferWidget.notifyNeedsVisiblity);
+          setState(() { _buildingAccessAuthLoading = false; });
+          _buildingAccessOidcDidAuthenticate(result);
+        }
+//    });
+    });
+  }
+
+  void _buildingAccessOidcDidAuthenticate(Auth2OidcAuthenticateResult? result) {
+    if (result == Auth2OidcAuthenticateResult.succeeded) {
+      _showBuildingAccessPanel();
+    } else if (result != null) {
       AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
     }
+  }
+
+  void _showBuildingAccessPanel() {
+    showModalBottomSheet(context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+        builder: (context) {
+          return IDCardPanel();
+        });
   }
 
   void _onTestLocations() {
@@ -208,16 +270,5 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
     Navigator.push(context, CupertinoPageRoute(
       builder: (context) => HomeSaferWellnessAnswerCenterPanel()
     ));
-  }
-
-  void _showModalIdCardPanel() {
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-        builder: (context) {
-          return IDCardPanel();
-        });
   }
 }

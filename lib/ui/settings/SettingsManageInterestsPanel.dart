@@ -24,8 +24,8 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedTab.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -39,7 +39,7 @@ class SettingsManageInterestsPanel extends StatefulWidget {
   _SettingsManageInterestsState createState() => _SettingsManageInterestsState();
 }
 
-class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> implements NotificationsListener, RoundedTabListener {
+class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> implements NotificationsListener {
   //Tabs
   List<_InterestTab> _tabs = [];
   _InterestTab? _selectedTab;
@@ -106,7 +106,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: TabBarWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -150,13 +150,11 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
                                       )))
                                 ],
                               )))),
-                  Padding(
-                      padding: EdgeInsets.all(12),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child:Row(
-                        children: _buildTabWidgets(),
-                      ))),
+                  Padding(padding: EdgeInsets.all(16), child:
+                    SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+                      Row(children: _buildTabWidgets(),),
+                    ),
+                  ),
                   _buildTabContent(),
                 ])),
           )),
@@ -460,10 +458,10 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   /////
 
   //Tabs
-  List<RoundedTab> _buildTabWidgets() {
-    List<RoundedTab> tabs = [];
+  List<Widget> _buildTabWidgets() {
+    List<Widget> tabs = [];
     for (_InterestTab tab in _tabs) {
-      tabs.add(RoundedTab(title: _interestTabName(tab), tabIndex: _tabs.indexOf(tab), listener: this, selected: (_selectedTab == tab)));
+      tabs.add(Padding(padding: EdgeInsets.only(right: 8), child: RoundedTab(title: _interestTabName(tab), tabIndex: _tabs.indexOf(tab), onTap: _onTapTab, selected: (_selectedTab == tab))));
     }
     return tabs;
   }
@@ -479,11 +477,10 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
     });
   }
 
-  @override
-  void onTabClicked(int? tabIndex, RoundedTab caller) {
-    if ((0 <= tabIndex!) && (tabIndex < _tabs.length)) {
-      Analytics().logSelect(target: caller.title);
-      _selectTab(_tabs[tabIndex]);
+  void _onTapTab(RoundedTab tab) {
+    if ((0 <= tab.tabIndex) && (tab.tabIndex < _tabs.length)) {
+      Analytics().logSelect(target: tab.title);
+      _selectTab(_tabs[tab.tabIndex]);
     }
   }
 

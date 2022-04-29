@@ -26,7 +26,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
-import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -334,11 +334,9 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   }
 
   Widget _buildFilterButton(FilterType filterType, String? selectedValue, String analyticsEvent){
-    return FilterSelectorWidget(
-      label: selectedValue,
-      hint: "",
+    return FilterSelector(
+      title: selectedValue,
       active: (_activeFilterType == filterType),
-      visible: true,
       onTap: (){
         Analytics().logSelect(target: analyticsEvent);
         setState(() {
@@ -361,8 +359,8 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     return _buildFilterContentEx(
         itemCount: _time.length,
         itemBuilder: (context, index) {
-          return FilterListItemWidget(
-            label: _time[index],
+          return  FilterListItem(
+            title: _time[index],
             selected: (_selectedTime == _time[index]),
             onTap: (){
               Analytics().logSelect(target: 'Time: ${_time[index]}');
@@ -381,8 +379,8 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     return _buildFilterContentEx(
         itemCount: _tags.length,
         itemBuilder: (context, index) {
-          return FilterListItemWidget(
-            label: _tags[index],
+          return  FilterListItem(
+            title: _tags[index],
             selected: (_selectedTag == _tags[index]),
             onTap: (){
               Analytics().logSelect(target: 'Tag: ${_tags[index]}');
@@ -401,8 +399,8 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     return _buildFilterContentEx(
         itemCount: _eventCategories.length,
         itemBuilder: (context, index) {
-          return FilterListItemWidget(
-            label: _eventCategories[index],
+          return  FilterListItem(
+            title: _eventCategories[index],
             selected: (_selectedEventCategory == _eventCategories[index]),
             onTap: (){
               Analytics().logSelect(target: 'Category: ${_eventCategories[index]}');
