@@ -14,7 +14,6 @@ The official mobile app of the University of Illinois. Powered by the [Rokwire P
 
 ## Build
 
-
 ### Clone this repo
 ```
 git clone --recurse-submodules https://github.com/rokwire/illinois-app.git
@@ -31,7 +30,6 @@ git clone https://github.com/rokwire/app-flutter-plugin.git plugin
 
 #### • .travis.yml
 Obsolete, not used after version 2.0 inclusive.
-
 
 #### • secrets.tar.enc
 Obsolete, not used after version 2.0 inclusive.
@@ -101,3 +99,8 @@ $ flutter build ios
 ```
 NB: You may need to update singing & capabilities content for Runner project by opening `ios/Runner.xcworkspace` from xCode
 
+## Documentation
+
+### [Illinois Application](https://github.com/rokwire/illinois-app/wiki) v3.2
+
+### [Application Flutter Pluging](https://github.com/rokwire/app-flutter-plugin/wiki) v1.0.0
