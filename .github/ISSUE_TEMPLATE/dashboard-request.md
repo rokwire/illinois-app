@@ -2,8 +2,8 @@
 name: Dashboard request
 about: Request a new dashboard for the Illinois App from the analytics/metrics team.
 title: ''
-labels: ''
-assignees: ''
+labels: 'Type: Dashboard Request'
+assignees: ahetrick, julianchin
 
 ---
 
