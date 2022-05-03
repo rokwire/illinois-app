@@ -27,6 +27,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
@@ -110,7 +111,13 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
           future: _initializeVideoPlayerFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return Center(child: AspectRatio(aspectRatio: _controller!.value.aspectRatio, child: VideoPlayer(_controller!)));
+              return GestureDetector(
+                  onTap: _onTapPlayPause,
+                  child: Center(
+                      child: Stack(alignment: Alignment.center, children: [
+                    AspectRatio(aspectRatio: _controller!.value.aspectRatio, child: VideoPlayer(_controller!)),
+                    _buildPlayButton()
+                  ])));
             } else {
               return const Center(child: CircularProgressIndicator());
             }
@@ -122,6 +129,37 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     }
   }
 
+  Widget _buildPlayButton() {
+    final double buttonWidth = 80;
+    final double buttonHeight = 50;
+    bool buttonVisible = _isPlayerInitialized && !_isPlaying;
+    return Visibility(
+        visible: buttonVisible,
+        child: Container(
+            decoration: BoxDecoration(color: Styles().colors!.iconColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+            width: buttonWidth,
+            height: buttonHeight,
+            child: Center(
+                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Container(
+                  width: (buttonHeight / 2),
+                  child: CustomPaint(
+                      painter: TrianglePainter(
+                          painterColor: Styles().colors!.white,
+                          horzDir: TriangleHorzDirection.rightToLeft,
+                          vertDir: TriangleVertDirection.topToBottom),
+                      child: Container(height: (buttonHeight / 4)))),
+              Container(
+                  width: (buttonHeight / 2),
+                  child: CustomPaint(
+                      painter: TrianglePainter(
+                          painterColor: Styles().colors!.white,
+                          horzDir: TriangleHorzDirection.rightToLeft,
+                          vertDir: TriangleVertDirection.bottomToTop),
+                      child: Container(height: (buttonHeight / 4))))
+            ]))));
+  }
+
   void _onTapBack() {
     Analytics().logSelect(target: "Back");
     Navigator.pop(context);
@@ -129,6 +167,18 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
 
   void _onTapSkip() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel()));
+  }
+
+  void _onTapPlayPause() {
+    if (!_isPlayerInitialized) {
+      return;
+    }
+    if (_isPlaying) {
+      _controller?.pause();
+    } else {
+      _controller?.play();
+    }
+    setState(() {});
   }
 
   void _checkVideoEnded() {
@@ -141,6 +191,14 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
         }
       }
     }
+  }
+
+  bool get _isPlaying {
+    return (_controller?.value.isPlaying ?? false);
+  }
+
+  bool get _isPlayerInitialized {
+    return (_controller?.value.isInitialized ?? false);
   }
 
   String get _buttonLabel {
