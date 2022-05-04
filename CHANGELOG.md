@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "Health Illini Podcast" renamed to "Healthy Illini Podcast" [#1485](https://github.com/rokwire/illinois-app/issues/1485).
 ### Added
 - "Play" button in video panels [#1602](https://github.com/rokwire/illinois-app/issues/1602).
+- Gies onboarding updates [#1605](https://github.com/rokwire/illinois-app/issues/1605).
 
 ## [4.0.1] - 2022-04-29
 ### Added
