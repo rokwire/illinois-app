@@ -94,6 +94,7 @@ class Config extends rokwire.Config {
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
   String? get videoTutorialUrl       => JsonUtils.stringValue(otherUniversityServices['video_tutorial_url']);
+  String? get videoTutorialCcUrl     => JsonUtils.stringValue(otherUniversityServices['video_tutorial_cc_url']);
 
   // Getters: Platform Building Blocks
   String? get lmsUrl                 => JsonUtils.stringValue(platformBuildingBlocks['lms_url']);
