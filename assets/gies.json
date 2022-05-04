@@ -13,6 +13,7 @@
 },{
   "id":"setup.email.account",
   "progress": 1,
+  "group_name" : "GIES Onboarding Step 1A",
   "step_title": "Step 1A",
   "title":"Setup Your University Email Account",
   "text":"Most correspondence is sent to your Illinois email address, so it is imperative you set up your email and check it regularly. Microsoft Office 365 is a service used for email, calendaring, and contact and task management at the University of Illinois and is vital for receiving emails and information from the University. Approximately one hour after claiming your Net ID and setting your password, you will be able to login to and start using your <a href='https://outlook.office365.com/'>Office 365 Email Account</a>. If you have questions about your email or your Exchange account, please visit the <a href='http://techservices.illinois.edu/services/email'>Technology Services Website</a>, or email <a href='mailto:consult@illinois.edu'>consult@illinois.edu</a>.",
@@ -22,6 +23,7 @@
 },{
   "id":"verify.personal.information",
   "progress": 1,
+  "group_name" : "GIES Onboarding Step 1B",
   "step_title": "Step 1B",
   "title":"Verify Your Personal Information in Student Self-Service",
   "text":"Once you have established your NetID, use it to log into the online <a href='https://apps.uillinois.edu/selfservice/'>Student Self-Service</a> and verify your personal information, such as your contact information. Keeping this information up to date is extremely important and ensures proper delivery of important documents.",
@@ -32,6 +34,7 @@
 },{
   "id":"setup.zoom.account",
   "progress": 1,
+  "group_name" : "GIES Onboarding Step 1C",
   "step_title": "Step 1C",
   "title":"Set Up Your Illinois Zoom Pro Account",
   "text":"Zoom Pro is the way you will participate in your live sessions (lectures) for each course, office hours and more. Follow these <a href='https://uofi.box.com/s/j168hch5ro8188wkyhykunff84wwenps'>step-by-step instructions</a> to get setup with Zoom.",
@@ -53,6 +56,7 @@
 },{
   "id":"claim.coursera.account",
   "progress": 2,
+  "group_name" : "GIES Onboarding Step 2",
   "step_title": "Step 2A",
   "title":"Set up your Coursera Account",
   "content":[{
@@ -76,6 +80,7 @@
 },{
   "id":"join.workspace",
   "progress": 3,
+  "group_name" : "GIES Onboarding Step 3A",
   "step_title": "Step 3A",
   "title":"Join Workplace",
   "content":[{
@@ -91,6 +96,7 @@
   ]
 },{
   "id":"connect.student.guide",
+  "group_name" : "GIES Onboarding Step 3B",
   "progress": 3,
   "step_title": "Step 3B",
   "title":"Connect with your New Student Guide",
@@ -103,6 +109,7 @@
   ]
 },{
   "id":"complete.onboarding.course",
+  "group_name" : "GIES Onboarding Step 4",
   "step_title": "Step 4",
   "progress": 4,
   "title":"Complete Your Onboarding Course",
@@ -124,6 +131,7 @@
   ]
 },{
   "id":"review.course.recommendations.and.register.for.courses",
+  "group_name" : "GIES Onboarding Step 5",
   "step_title": "Step 5",
   "progress": 5,
   "title":"Review Course Recommendations and Register for Courses",
@@ -153,6 +161,7 @@
   ]
 },{
   "id":"sumbit.official.credentials",
+  "group_name" : "GIES Onboarding Step 6",
   "progress": 6,
   "step_title": "Step 6",
   "title":"Submit Your Official Credentials",
