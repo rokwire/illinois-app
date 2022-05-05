@@ -1184,6 +1184,7 @@
 	"panel.settings.notifications.group_updates.posts.label": "Posts",
 	"panel.settings.notifications.group_updates.event.label": "Event",
 	"panel.settings.notifications.group_updates.invitations.label": "Invitations",
+	"panel.settings.notifications.group_updates.polls.label": "Polls",
 	"panel.settings.notifications.pause_notifications": "Pause all notifications",
 
 	"panel.settings.personal_information.label.title":"个人信息",
