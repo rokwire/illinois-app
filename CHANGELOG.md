@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added Settings Notifications button for Group polls [#1608](https://github.com/rokwire/illinois-app/issues/1608).
+
 ## [4.0.3] - 2022-05-03
 ### Added
 - "CC" button in video panels [#1602](https://github.com/rokwire/illinois-app/issues/1602).
