@@ -20,7 +20,6 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -115,40 +114,27 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   Widget _buildLocationWidget() {
-    ExploreLocation? laundryLocationDetails = widget.room.location;
-    if (laundryLocationDetails == null) {
-      return Container();
-    }
-    String? locationText = laundryLocationDetails.getDisplayAddress();
-    String? semanticText =sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location: %s "'), [locationText]);
-    if (StringUtils.isEmpty(locationText)) {
-      double? latitude = laundryLocationDetails.latitude?.toDouble();
-      double? longitude = laundryLocationDetails.longitude?.toDouble();
-      locationText = '$latitude, $longitude';
-
-      semanticText = sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location coordinates, Latitude:%s , Longitude:%s "'), [latitude,longitude]);
-    }
-
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Visibility(visible: StringUtils.isNotEmpty(locationText), child:
-        Semantics(label:semanticText, excludeSemantics: true, child:
-          Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-            Image.asset('images/icon-location.png', excludeFromSemantics: true),
-            Padding(padding: EdgeInsets.only(right: 5),),
-            Flexible(child:
-              Text(locationText, overflow: TextOverflow.ellipsis, maxLines: 2, style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground)),
-            )
-          ],),
-        )
-      ),
-      GestureDetector(onTap: _onTapViewMap, child:
-        Semantics(label: Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map'), hint: Localization().getStringEx('panel.laundry_detail.button.view_on_map.hint', ''), excludeSemantics: true, button:true, child:
-          Padding(padding: EdgeInsets.symmetric(vertical: 5, horizontal: 24), child:
-            Text(Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map'), style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationThickness: 1.17, decorationColor: Styles().colors?.fillColorSecondary),),
-          ),
-        ),
-      ),
-    ],);
+    return Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+      Image.asset('images/icon-location.png', excludeFromSemantics: true),
+      Expanded(
+          child: GestureDetector(
+              onTap: _onTapViewMap,
+              child: Semantics(
+                  label: Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map'),
+                  hint: Localization().getStringEx('panel.laundry_detail.button.view_on_map.hint', ''),
+                  excludeSemantics: true,
+                  button: true,
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 10, right: 24),
+                      child: Text(Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map'),
+                          style: TextStyle(
+                              fontFamily: Styles().fontFamilies?.medium,
+                              fontSize: 16,
+                              color: Styles().colors?.fillColorPrimary,
+                              decoration: TextDecoration.underline,
+                              decorationThickness: 1.17,
+                              decorationColor: Styles().colors?.fillColorSecondary))))))
+    ]);
   }
 
   Widget _buildLaundryRoomCaptionSection() {
@@ -175,7 +161,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
             Visibility(visible: Auth2().canFavorite, child:
               GestureDetector(onTap: _onTapFavorite, child:
                 Semantics(label: favoriteLabel, hint: favoriteHint, button: true, excludeSemantics: true, child:
-                  Padding(padding: EdgeInsets.all(10), child:
+                  Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
                     Image.asset(favoriteIcon, excludeFromSemantics: true)
                   ),
                 ),
