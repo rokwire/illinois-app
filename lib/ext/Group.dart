@@ -90,7 +90,7 @@ extension GroupExt on Group {
     if (tags != null) {
       for (String tag in tags!) {
         if (0 < tag.length) {
-          if (displayTags.isNotEmpty) {
+          if (tagsString.isNotEmpty) {
             tagsString += ", ";
           }
           tagsString += tag;
@@ -112,7 +112,6 @@ extension GroupExt on Group {
     return "";
   }
 }
-
 
 Color? groupMemberStatusToColor(GroupMemberStatus? value) {
   if (value != null) {
