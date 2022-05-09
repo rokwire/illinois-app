@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Crash in GroupDetailPanel [#1611](https://github.com/rokwire/illinois-app/issues/1611).
+### Changed
+- Laundry - remove location info and update icons [#1530](https://github.com/rokwire/illinois-app/issues/1530).
 
 ## [4.0.4] - 2022-05-05
 ### Added
