@@ -321,7 +321,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     String? groupId = _group?.id;
     if (StringUtils.isNotEmpty(groupId) && _group!.currentUserIsMemberOrAdmin) {
       _setPollsLoading(true);
-      Polls().getGroupPolls({groupId!})!.then((result) {
+      Groups().loadGroupPolls(groupId!)!.then((result) {
         _groupPolls = (result != null) ? result.polls : null;
         _setPollsLoading(false);
       });
