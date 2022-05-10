@@ -991,6 +991,10 @@
     "panel.laundry_detail.label.dryer":"SECADORA",
     "panel.laundry_detail.available.format":"%s disponible",
     "panel.laundry_detail.available.undefined":"desconocida",
+    "panel.laundry_detail.available.label": "Disponible",
+    "panel.laundry_detail.out_of_service.label": "FUERA DE SERVICIO",
+    "panel.laundry_detail.in_use.label": "En uso",
+    "panel.laundry_detail.in_use.with_minutes.label": "En uso con %d minutos restantes",
 
     "panel.settings.home.settings.header":"Configuración",
     "panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",

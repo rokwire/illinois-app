@@ -991,6 +991,10 @@
     "panel.laundry_detail.label.dryer":"DRYER",
     "panel.laundry_detail.available.format":"%s available",
     "panel.laundry_detail.available.undefined":"unknown",
+    "panel.laundry_detail.available.label": "Available",
+    "panel.laundry_detail.out_of_service.label": "OUT OF SERVICE",
+    "panel.laundry_detail.in_use.label": "In Use",
+    "panel.laundry_detail.in_use.with_minutes.label": "In Use with %d minutes remaining",
 
     "panel.settings.home.settings.header":"Settings",
     "panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",

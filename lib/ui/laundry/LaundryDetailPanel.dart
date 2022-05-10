@@ -44,17 +44,13 @@ class LaundryDetailPanel extends StatefulWidget implements AnalyticsPageAttribut
 }
 
 class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements NotificationsListener {
-  LaundryRoomAvailability? _laundryRoomAvailability;
-  List<LaundryRoomAppliance>? _laundryRoomAppliances;
-  bool _availabilityLoaded = false;
-  bool _appliancesLoaded = false;
+  LaundryRoomDetails? _laundryRoomDetails;
+  bool _isLoading = false;
 
   //Maps
   late MapController _nativeMapController;
   bool _detailVisible = true;
   bool _mapAllowed = false;
-
-  bool get _isLoading => (_availabilityLoaded != true) ||  (_appliancesLoaded != true);
 
   @override
   void initState() {
@@ -169,7 +165,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
             ),
           ],),
           Padding(padding:EdgeInsets.only(top: 2, bottom: 14), child:
-            Text(widget.room.title ?? '', style: TextStyle( fontFamily: Styles().fontFamilies?.extraBold, fontSize: 24, color: Styles().colors?.fillColorPrimary,),),
+            Text(widget.room.name ?? '', style: TextStyle( fontFamily: Styles().fontFamilies?.extraBold, fontSize: 24, color: Styles().colors?.fillColorPrimary,),),
           ),
           _buildLocationWidget()
         ],),
@@ -178,11 +174,13 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   Widget _buildLaundryRoomAvailabilitySection() {
-    String? availableWashers = StringUtils.isNotEmpty(_laundryRoomAvailability?.availableWashers) ?
-      sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [_laundryRoomAvailability?.availableWashers]) : Localization().getStringEx("panel.laundry_detail.available.undefined", "unknown");
+    int? availableWashersCount = _laundryRoomDetails?.availableWashersCount;
+    String? availableWashersLabel = (availableWashersCount != null) ?
+      sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [availableWashersCount]) : Localization().getStringEx("panel.laundry_detail.available.undefined", "unknown");
     
-    String? availableDryers = StringUtils.isNotEmpty(_laundryRoomAvailability?.availableDryers) ?
-      sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [_laundryRoomAvailability?.availableDryers]) : Localization().getStringEx("panel.laundry_detail.available.undefined", "unknown");
+    int? availableDryersCount = _laundryRoomDetails?.availableDryersCount;
+    String? availableDryersLabel = (availableDryersCount != null) ?
+      sprintf(Localization().getStringEx('panel.laundry_detail.available.format', '"%s available"'), [availableDryersCount]) : Localization().getStringEx("panel.laundry_detail.available.undefined", "unknown");
 
     return Padding(padding: EdgeInsets.all(24), child:
       SingleChildScrollView(scrollDirection: Axis.horizontal, child:
@@ -192,7 +190,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
             Padding(padding: EdgeInsets.only(right: 12),),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Text(Localization().getStringEx('panel.laundry_detail.label.washers', 'WASHERS'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 14, letterSpacing: 1, color: Styles().colors?.fillColorPrimary,),),
-              Text(availableWashers, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground, ),),
+              Text(availableWashersLabel, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground, ),),
             ],)
           ],),
           Padding(padding: EdgeInsets.only(right: 16)),
@@ -201,7 +199,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
             Padding(padding: EdgeInsets.only(right: 12),),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Text(Localization().getStringEx('panel.laundry_detail.label.dryers', 'DRYERS'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 14, letterSpacing: 1, color: Styles().colors?.fillColorPrimary,),),
-              Text( availableDryers, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),),
+              Text( availableDryersLabel, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),),
             ],),
           ],)
         ],),
@@ -211,7 +209,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   Widget _buildLaundryRoomAppliancesListSection() {
-    int appliancesCount = _laundryRoomAppliances?.length ?? 0;
+    int appliancesCount = _laundryRoomDetails?.appliances?.length ?? 0;
     if (appliancesCount == 0) {
       return Container();
     }
@@ -225,7 +223,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   Widget _buildApplianceItem(BuildContext context, int index) {
-    LaundryRoomAppliance? appliance = (_laundryRoomAppliances != null) ? _laundryRoomAppliances![index] : null;
+    LaundryRoomAppliance? appliance = (_laundryRoomDetails?.appliances != null) ? _laundryRoomDetails?.appliances![index] : null;
     return (appliance != null) ? _LaundryRoomApplianceItem(appliance) : Container();
   }
 
@@ -234,26 +232,11 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   void _load() {
-    Laundries().loadRoomAvailability(widget.room.id).then((roomAvailability) => _onAvailabilityLoaded(roomAvailability));
-    Laundries().loadRoomAppliances(widget.room.id).then((roomAppliances) => _onAppliancesLoaded(roomAppliances));
-  }
-
-  void _onAvailabilityLoaded(LaundryRoomAvailability? availability) {
-    if (mounted) {
-      setState(() {
-        _laundryRoomAvailability = availability;
-        _availabilityLoaded = true;
-      });
-    }
-  }
-
-  void _onAppliancesLoaded(List<LaundryRoomAppliance>? appliances) {
-    if (mounted) {
-      setState(() {
-        _laundryRoomAppliances = appliances;
-        _appliancesLoaded = true;
-      });
-    }
+    _setLoading(true);
+    Laundries().loadRoomDetails(widget.room.id).then((roomDetails) {
+      _laundryRoomDetails = roomDetails;
+      _setLoading(false);
+    });
   }
 
   void _onTapViewMap() {
@@ -267,13 +250,22 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   void _onTapFavorite() {
-    Analytics().logSelect(target: "Favorite: ${widget.room.title}");
+    Analytics().logSelect(target: "Favorite: ${widget.room.name}");
     Auth2().prefs?.toggleFavorite(widget.room);
   }
 
   void _onNativeMapCreated(mapController) {
     this._nativeMapController = mapController;
     _nativeMapController.placePOIs([widget.room]);
+  }
+
+  void _setLoading(bool loading) {
+    if (_isLoading != loading) {
+      _isLoading = loading;
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   // NotificationsListener
@@ -295,8 +287,8 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String imageAssetPath = _getImageAssetPath(appliance.applianceType);
-    String? deviceName = _getDeviceName(appliance.applianceType);
+    String imageAssetPath = _getImageAssetPath(appliance.type);
+    String? deviceName = _getDeviceName(appliance.type);
     return Container(color: Colors.white, child:
       Padding(padding: EdgeInsets.all(12), child:
         Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
@@ -305,26 +297,43 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
             Text(appliance.label ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),),
           ),
           Expanded(child:
-            Text(appliance.status ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),),
+            Text(StringUtils.ensureNotEmpty(_applianceStatusLabel), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),),
           )
         ],),
       ),
     );
   }
 
-  String _getImageAssetPath(String? applianceType) {
+  String _getImageAssetPath(LaundryApplianceType? applianceType) {
     switch (applianceType) {
-      case 'WASHER': return 'images/icon-washer-small.png';
-      case 'DRYER': return 'images/icon-dryer-small.png';
+      case LaundryApplianceType.washer: return 'images/icon-washer-small.png';
+      case LaundryApplianceType.dryer: return 'images/icon-dryer-small.png';
       default: return 'images/icon-washer-small.png';
     }
   }
 
-  String? _getDeviceName(String? applianceType) {
+  String? _getDeviceName(LaundryApplianceType? applianceType) {
     switch (applianceType) {
-      case 'WASHER': return Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER');
-      case 'DRYER': return Localization().getStringEx('panel.laundry_detail.label.dryer', 'DRYER');
+      case LaundryApplianceType.washer: return Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER');
+      case LaundryApplianceType.dryer: return Localization().getStringEx('panel.laundry_detail.label.dryer', 'DRYER');
       default: return Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER');
+    }
+  }
+
+  String? get _applianceStatusLabel {
+    switch (appliance.status) {
+      case LaundryApplianceStatus.available:
+        return Localization().getStringEx('panel.laundry_detail.available.label', 'Available');
+      case LaundryApplianceStatus.out_of_service:
+        return Localization().getStringEx('panel.laundry_detail.out_of_service.label', 'OUT OF SERVICE');
+      case LaundryApplianceStatus.in_use:
+        int? timeRemaining = appliance.timeRemainingInMins;
+        return (timeRemaining != null)
+            ? sprintf(Localization().getStringEx('panel.laundry_detail.in_use.with_minutes.label', 'In Use with %d minutes remaining'),
+                [timeRemaining])
+            : Localization().getStringEx('panel.laundry_detail.in_use.label', 'In Use');
+      default:
+        return null;
     }
   }
 }

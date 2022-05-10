@@ -991,6 +991,10 @@
 	"panel.laundry_detail.label.dryer":"烘干机",
 	"panel.laundry_detail.available.format":"%s 可用",
 	"panel.laundry_detail.available.undefined":"未知",
+    "panel.laundry_detail.available.label": "可用的",
+    "panel.laundry_detail.out_of_service.label": "中止服務",
+    "panel.laundry_detail.in_use.label": "正在使用",
+    "panel.laundry_detail.in_use.with_minutes.label": "正在使用中, 剩餘 %d 分鐘",
 
 	"panel.settings.home.settings.header":"设置",
 	"panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",
