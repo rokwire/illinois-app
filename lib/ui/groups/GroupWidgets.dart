@@ -1671,6 +1671,18 @@ class GroupMembersSelectionWidget extends StatefulWidget{
 
     return selection;
   }
+
+  static List<Member>? constructAllMembersAllowedToPost(Group? group){
+    if((group?.members?.length ?? 0) >0) {
+     return group!.members!.where((member) => _isMemberAllowedToReceivePost(member)).toList();
+    }
+
+    return null;
+  }
+
+  static bool _isMemberAllowedToReceivePost(Member member){
+    return member.isMemberOrAdmin;
+  }
 }
 
 class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{

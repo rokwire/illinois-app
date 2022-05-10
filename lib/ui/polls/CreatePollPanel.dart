@@ -16,9 +16,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -50,6 +52,8 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   bool _selectedRepeatVotes = false;
   bool _selectedHideResult = false;
   PollStatus? _progressPollStatus;
+  //Groups
+  List<Member>? _groupMembersSelection;
 
   @override
   void initState() {
@@ -82,6 +86,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                 _buildOptionsList(),
                 _buildSettingsHeader(),
                 _buildSettingsList(),
+                _buildGroupMembersSelection(),
                 _buildButtonsTab()
               ])))));
   }
@@ -266,6 +271,21 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         ));
   }
 
+  Widget _buildGroupMembersSelection(){
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        color: Colors.white,
+        child: GroupMembersSelectionWidget(
+        selectedMembers: _groupMembersSelection,
+        allMembers: GroupMembersSelectionWidget.constructAllMembersAllowedToPost(widget.group),
+        groupId: widget.group?.id,
+        onSelectionChanged: (members){
+          setState(() {
+            _groupMembersSelection = members;
+          });
+        },));
+  }
+
   List<Widget> _buildSettingsButtons() {
     TextStyle _textStyle = TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium);
     BorderRadius rounding = BorderRadius.all(Radius.circular(5));
@@ -431,8 +451,14 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
       setState(() {
         _progressPollStatus = status;
       });
-      Polls().create(poll).then((_){
-        Navigator.pop(context);
+      Polls().create(poll).then((Poll poll){
+        if(widget.group?.id != null && poll.pollId != null) {
+          Groups().linkPollToGroup(groupId: widget.group!.id!, pollId: poll.pollId!, toMembers: _groupMembersSelection).then((success) {
+            Navigator.pop(context);
+          });
+        } else {
+          Navigator.pop(context);
+        }
       }).catchError((e){
         Log.d(e);
         String? errorMessage = Localization().getStringEx("panel.create_poll.message.error.default", "Failed to create poll. Please fill all fields and try again.");
