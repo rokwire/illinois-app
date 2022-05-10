@@ -384,15 +384,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _initAllMembersAllowedToPost(){
-    if((widget.group?.members?.length ?? 0) >0) {
-      _allMembersAllowedToPost = widget.group!.members!.where((member) => _isMemberAllowedToReceivePost(member)).toList();
-    }
+    _allMembersAllowedToPost = GroupMembersSelectionWidget.constructAllMembersAllowedToPost(widget.group);
   }
-
-  bool _isMemberAllowedToReceivePost(Member member){
-    return member.isMemberOrAdmin;
-  }
-
 
   _buildRepliesSection(){
     List<GroupPost>? replies;
