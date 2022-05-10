@@ -84,7 +84,7 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
   Widget _buildListItem(BuildContext context, int index) {
     LaundryRoom? laundryRoom = (widget.rooms != null) ? widget.rooms![index] : null;
     return (laundryRoom != null) ? LaundryRoomRibbonButton(
-      label: laundryRoom.title,
+      label: laundryRoom.name,
       onTap: () => _onRoomTap(laundryRoom),
     ) : Container();
   }
@@ -94,7 +94,7 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
   }
 
   void _onRoomTap(LaundryRoom room) {
-    Analytics().logSelect(target: "Room" + room.title!);
+    Analytics().logSelect(target: "Room" + room.name!);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryDetailPanel(room: room,)));
   }
 }

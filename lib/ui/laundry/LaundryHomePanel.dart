@@ -284,7 +284,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   Widget _buildListItem(BuildContext context, int index) {
     LaundryRoom? laundryRoom = (_rooms != null) ? _rooms![index] : null;
     return (laundryRoom != null) ? LaundryRoomRibbonButton(
-      label: laundryRoom.title,
+      label: laundryRoom.name,
       onTap: () => _onRoomTap(laundryRoom),
     ) : Container();
   }
@@ -296,7 +296,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   Widget _buildMapView(BuildContext context) {
     String? title, description;
     if (_selectedMapLaundry is LaundryRoom) {
-      title = _selectedMapLaundry.title ?? '';
+      title = _selectedMapLaundry.name ?? '';
       description = _selectedMapLaundry.campusName ?? '';
     }
     else if (_selectedMapLaundry is List<LaundryRoom>) {

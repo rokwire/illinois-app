@@ -14,90 +14,51 @@
  * limitations under the License.
  */
 
-import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:xml/xml.dart';
-
-
-enum LaundryRoomStatus { online, offline }
 
 class LaundryRoom implements Favorite {
   String? id;
-  String? title;
-  String? campusName;
+  String? name;
   LaundryRoomStatus? status;
   ExploreLocation? location;
 
-  LaundryRoom({this.id, this.title, this.campusName, this.status, this.location});
+  LaundryRoom({this.id, this.name, this.status, this.location});
 
   static LaundryRoom? fromJson(Map<String, dynamic>? json) {
-    return (json != null) ? LaundryRoom(
-        id: JsonUtils.stringValue(json['id']) ,
-        title: JsonUtils.stringValue(json['title']),
-        campusName: JsonUtils.stringValue(json['campus_name']),
-        status: roomStatusFromString(JsonUtils.stringValue(json['status'])),
-        location: ExploreLocation.fromJSON(JsonUtils.mapValue(json['location']))
-      ) : null;
+    return (json != null)
+        ? LaundryRoom(
+            id: JsonUtils.stringValue(json['ID']),
+            name: JsonUtils.stringValue(json['Name']),
+            status: roomStatusFromString(JsonUtils.stringValue(json['Status'])),
+            location: ExploreLocation.fromJSON(JsonUtils.mapValue(json['Location'])))
+        : null;
   }
 
-  toJson() {
-    return {
-      "id": id,
-      "title": title,
-      "campus_name": campusName,
-      "status": roomStatusToString(status),
-      "location": location?.toJson(),
-    };
-  }
-
-  static LaundryRoom? fromXml(XmlElement? xml, { Map<String, ExploreLocation>? locations }) {
-    if (xml != null) {
-      String? roomId = XmlUtils.childText(xml, "location");
-      return LaundryRoom(
-        id: roomId,
-        title: XmlUtils.childText(xml, "laundry_room_name"),
-        campusName: XmlUtils.childText(xml, "campus_name"),
-        status: roomStatusFromString(XmlUtils.childText(xml, "status")),
-        location: (locations != null) ? locations[roomId] : null,
-      );
-    }
-    return null;
-  }
-
-  static List<LaundryRoom>? listFromXml(Iterable<XmlElement>? xmlList, { Map<String, ExploreLocation>? locations }) {
-    List<LaundryRoom>? resultList;
-    if (xmlList != null) {
-      resultList = <LaundryRoom>[];
-      for (XmlElement xml in xmlList) {
-        ListUtils.add(resultList, LaundryRoom.fromXml(xml, locations: locations));
+  static List<LaundryRoom>? fromJsonList(List<dynamic>? jsonList) {
+    List<LaundryRoom>? items;
+    if (jsonList != null) {
+      items = <LaundryRoom>[];
+      for (dynamic json in jsonList) {
+        ListUtils.add(items, LaundryRoom.fromJson(json));
       }
     }
-    return resultList;
+    return items;
   }
 
   @override
-  bool operator ==(other) => (other is LaundryRoom) &&
-    (other.id == id) &&
-    (other.title == title) &&
-    (other.campusName == campusName) &&
-    (other.status == status) &&
-    (other.location == location);
+  bool operator ==(other) =>
+      (other is LaundryRoom) && (other.id == id) && (other.name == name) && (other.status == status) && (other.location == location);
 
   @override
-  int get hashCode =>
-    (id?.hashCode ?? 0) ^
-    (title?.hashCode ?? 0) ^
-    (campusName?.hashCode ?? 0) ^
-    (status?.hashCode ?? 0) ^
-    (location?.hashCode ?? 0);
+  int get hashCode => (id?.hashCode ?? 0) ^ (name?.hashCode ?? 0) ^ (status?.hashCode ?? 0) ^ (location?.hashCode ?? 0);
 
   Map<String, dynamic> get analyticsAttributes {
     return {
       Analytics.LogAttributeLaundryId: id,
-      Analytics.LogAttributeLaundryName: title,
+      Analytics.LogAttributeLaundryName: name,
     };
   }
 
@@ -107,95 +68,74 @@ class LaundryRoom implements Favorite {
   String? get favoriteId => id;
 
   @override
-  String? get favoriteTitle => title;
+  String? get favoriteTitle => name;
 
   @override
-  String get favoriteKey =>  favoriteKeyName;
+  String get favoriteKey => favoriteKeyName;
 
   static String favoriteKeyName = "laundryPlaceIds";
 }
 
 class LaundryRoomAppliance {
-  String? applianceDescKey;
-  String? lrmStatus;
-  String? applianceType;
-  String? status;
-  String? outOfService;
+  String? id;
   String? label;
-  String? avgCycleTime;
-  String? timeRemaining;
+  LaundryApplianceStatus? status;
+  LaundryApplianceType? type;
+  int? avgCycleTimeinMins;
+  int? timeRemainingInMins;
+  ExploreLocation? location;
 
-  LaundryRoomAppliance({
-    this.applianceDescKey,
-    this.lrmStatus,
-    this.applianceType,
-    this.status,
-    this.outOfService,
-    this.label,
-    this.avgCycleTime,
-    this.timeRemaining});
+  LaundryRoomAppliance({this.id, this.label, this.status, this.type, this.avgCycleTimeinMins, this.timeRemainingInMins, this.location});
 
-  static LaundryRoomAppliance? fromXml(XmlElement? xml) {
-    return (xml != null) ? LaundryRoomAppliance(
-      applianceDescKey: XmlUtils.childText(xml, "appliance_desc_key"),
-      lrmStatus: XmlUtils.childText(xml, "lrm_status"),
-      applianceType: XmlUtils.childText(xml, "appliance_type"),
-      status: XmlUtils.childText(xml, "status"),
-      outOfService: XmlUtils.childText(xml, "out_of_service"),
-      label: XmlUtils.childText(xml, "label"),
-      avgCycleTime: XmlUtils.childText(xml, "avg_cycle_time"),
-      timeRemaining: XmlUtils.childText(xml, "time_remaining"),
-    ) : null;
+  static LaundryRoomAppliance? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? LaundryRoomAppliance(
+            id: JsonUtils.stringValue(json['ID']),
+            label: JsonUtils.stringValue(json['Label']),
+            status: applianceStatusFromString(JsonUtils.stringValue(json['Status'])),
+            type: applianceTypeFromString(JsonUtils.stringValue(json['ApplianceType'])),
+            avgCycleTimeinMins: JsonUtils.intValue(json['AverageCycleTime']),
+            timeRemainingInMins: JsonUtils.intValue(json['TimeRemaining']),
+            location: ExploreLocation.fromJSON(JsonUtils.mapValue(json['Location'])))
+        : null;
   }
 
-  static List<LaundryRoomAppliance>? listFromXml(Iterable<XmlElement>? xmlList) {
+  static List<LaundryRoomAppliance>? listFromJson(List<dynamic>? jsonList) {
     List<LaundryRoomAppliance>? resultList;
-    if (xmlList != null) {
+    if (jsonList != null) {
       resultList = <LaundryRoomAppliance>[];
-      for (XmlElement xml in xmlList) {
-        ListUtils.add(resultList, LaundryRoomAppliance.fromXml(xml));
+      for (dynamic json in jsonList) {
+        ListUtils.add(resultList, LaundryRoomAppliance.fromJson(json));
       }
     }
     return resultList;
   }
 }
 
-class LaundryRoomAvailability {
-  String? roomId;
-  String? _availableWashers;
-  String? _availableDryers;
+class LaundryRoomDetails {
+  String? roomName;
+  String? campusName;
+  int? availableWashersCount;
+  int? availableDryersCount;
+  List<LaundryRoomAppliance>? appliances;
 
-  static const String _undefined = "undefined";
+  LaundryRoomDetails({this.roomName, this.campusName, this.availableWashersCount, this.availableDryersCount, this.appliances});
 
-  LaundryRoomAvailability({this.roomId, String? availableWashers, String? availableDryers}) :
-    _availableWashers = availableWashers,
-    _availableDryers = availableDryers;
-
-  static LaundryRoomAvailability? fromXml(XmlElement? xml) {
-    return (xml != null) ? LaundryRoomAvailability(
-      roomId: XmlUtils.childText(xml, "location"),
-      availableWashers: XmlUtils.childText(xml, "available_washers"),
-      availableDryers: XmlUtils.childText(xml, "available_dryers"),
-    ) : null;
+  static LaundryRoomDetails? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? LaundryRoomDetails(
+            roomName: JsonUtils.stringValue(json['RoomName']),
+            campusName: JsonUtils.stringValue(json['CampusName']),
+            availableWashersCount: JsonUtils.intValue(json['NumWashers']),
+            availableDryersCount: JsonUtils.intValue(json['NumDryers']),
+            appliances: LaundryRoomAppliance.listFromJson(JsonUtils.listValue(json['Appliances'])))
+        : null;
   }
-
-  static LaundryRoomAvailability? fromXmlList(Iterable<XmlElement>? xmlList, { String? roomId } ) {
-    if (xmlList != null) {
-      for (XmlElement xml in xmlList) {
-        String? xmlRoomId = XmlUtils.childText(xml, "location");
-        if ((xmlRoomId != null) && (xmlRoomId == roomId)) {
-          return LaundryRoomAvailability.fromXml(xml);
-        }
-      }
-    }
-    return null;
-  }
-
-  String? get availableWashers => (_availableWashers != _undefined) ? _availableWashers : null;
-  String? get availableDryers => (_availableDryers != _undefined) ? _availableDryers : null;
 }
 
 // LaundryRoomStatus
+
+enum LaundryRoomStatus { online, offline }
 
 LaundryRoomStatus? roomStatusFromString(String? roomStatusString) {
   if (StringUtils.isEmpty(roomStatusString)) {
@@ -211,14 +151,40 @@ LaundryRoomStatus? roomStatusFromString(String? roomStatusString) {
   }
 }
 
-String? roomStatusToString(LaundryRoomStatus? roomStatus) {
-  if (roomStatus != null) {
-    switch (roomStatus) {
-      case LaundryRoomStatus.online:
-        return 'online';
-      case LaundryRoomStatus.offline:
-        return 'offline';
-    }
+// LaundryApplianceStatus
+
+enum LaundryApplianceStatus { available, in_use, out_of_service }
+
+LaundryApplianceStatus? applianceStatusFromString(String? applianceStatusString) {
+  if (StringUtils.isEmpty(applianceStatusString)) {
+    return null;
   }
-  return null;
+  switch (applianceStatusString) {
+    case 'available':
+      return LaundryApplianceStatus.available;
+    case 'in_use':
+      return LaundryApplianceStatus.in_use;
+    case 'out_of_service':
+      return LaundryApplianceStatus.out_of_service;
+    default:
+      return null;
+  }
+}
+
+// LaundryApplianceType
+
+enum LaundryApplianceType { washer, dryer }
+
+LaundryApplianceType? applianceTypeFromString(String? applianceTypeString) {
+  if (StringUtils.isEmpty(applianceTypeString)) {
+    return null;
+  }
+  switch (applianceTypeString) {
+    case 'WASHER':
+      return LaundryApplianceType.washer;
+    case 'DRYER':
+      return LaundryApplianceType.dryer;
+    default:
+      return null;
+  }
 }

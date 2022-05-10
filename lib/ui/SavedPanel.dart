@@ -763,7 +763,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     } else if (item is News) {
       return item.title;
     } else if (item is LaundryRoom) {
-      return item.title;
+      return item.name;
     } else if (item is GuideFavorite) {
       return Guide().entryListTitle(Guide().entryById(item.id), stripHtmlTags: true);
     } else if (item is InboxMessage) {
