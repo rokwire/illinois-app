@@ -631,7 +631,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       _loadMyGroupsIfNeeded().then((_) {
         Set<String>? groupIds = _myGroupIds;
         if (CollectionUtils.isNotEmpty(groupIds)) {
-          Polls().getGroupPolls(groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
+          Groups().loadGroupPolls(groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
             if (result != null) {
               if (_groupPolls == null) {
                 _groupPolls = [];
