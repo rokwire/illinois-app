@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- UI for loading possible issue codes for laundry machines [#1530](https://github.com/rokwire/illinois-app/issues/1530).
+
 ## [4.0.6] - 2022-05-10
 ### Added
 - Update Group API to hook polls  [#1617](https://github.com/rokwire/illinois-app/issues/1617).
