@@ -1001,6 +1001,8 @@
     "panel.laundry.request_issue.machine_id.enter.label": "Please enter the Machine ID",
     "panel.laundry.request_issue.button.submit.label": "Submit",
     "panel.laundry.request_issue.machine_id.example.label": "Machine ID Example",
+    "panel.laundry.request_issue.validation.empty_field": "Please, fill all fields.",
+    "panel.laundry.request_issue.submit.failed": "Failed to load machine details. Please, type correct machine id.",
 
     "panel.settings.home.settings.header":"Settings",
     "panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",

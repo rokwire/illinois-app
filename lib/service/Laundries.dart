@@ -69,4 +69,22 @@ class Laundries /* with Service */ {
       return null;
     }
   }
+
+  Future<LaundryMachineServiceIssues?> loadMachineServiceIssues({required String machineId}) async {
+    if (StringUtils.isEmpty(Config().gatewayUrl)) {
+      Log.e('Missing gateway url.');
+      return null;
+    }
+    String? roomUrl = "${Config().gatewayUrl}/laundry/initrequest?machineid=$machineId";
+    Response? response = await Network().get(roomUrl, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      Map<String, dynamic>? jsonResponse = JsonUtils.decodeMap(responseString);
+      return LaundryMachineServiceIssues.fromJson(jsonResponse);
+    } else {
+      Log.e('Failed to load machine service issues with "$machineId". Response code: $responseCode, Response:\n$responseString');
+      return null;
+    }
+  }
 }
