@@ -46,7 +46,7 @@ import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
+import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -724,7 +724,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     } else if (item is News) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: item,)));
     } else if (item is LaundryRoom) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryDetailPanel(room: item,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: item,)));
     } else if (item is GuideFavorite) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: item.id,)));
     } else if (item is InboxMessage) {

@@ -29,7 +29,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/explore/ExploreViewTypeTab.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
+import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryListPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/MapWidget.dart';
@@ -381,7 +381,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
 
   void _onRoomTap(LaundryRoom room) {
     Analytics().logSelect(target: "Room Tap: " + room.id!);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryDetailPanel(room: room,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: room,)));
   }
 
   void _selectMapLaundry(dynamic laundry) {
@@ -423,7 +423,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     });
 
     if (laundry is LaundryRoom) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryDetailPanel(room: laundry,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: laundry,)));
     }
     else if (laundry is List) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryListPanel(rooms: laundry as List<LaundryRoom>?,)));

@@ -21,7 +21,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
+import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class LaundryListPanel extends StatefulWidget {
@@ -95,7 +95,7 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
 
   void _onRoomTap(LaundryRoom room) {
     Analytics().logSelect(target: "Room" + room.name!);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryDetailPanel(room: room,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: room,)));
   }
 }
 

@@ -984,6 +984,7 @@
     "panel.laundry_detail.header.title":"Lavandería",
     "panel.laundry_detail.heading.laundry":"Servicio de lavandería",
     "panel.laundry_detail.button.view_on_map.title":"Ver en el mapa",
+    "panel.laundry_detail.button.report_issue.title":"Reportar un problema",
     "panel.laundry_detail.button.view_on_map.hint":"",
     "panel.laundry_detail.label.washers":"LAVADORAS",
     "panel.laundry_detail.label.washer":"LAVADORA",
@@ -995,6 +996,18 @@
     "panel.laundry_detail.out_of_service.label": "FUERA DE SERVICIO",
     "panel.laundry_detail.in_use.label": "En uso",
     "panel.laundry_detail.in_use.with_minutes.label": "En uso con %d minutos restantes",
+
+    "panel.laundry.request_issue.header.title": "Lavadero",
+    "panel.laundry.request_issue.machine_id.enter.label": "Ingrese la ID de la máquina",
+    "panel.laundry.request_issue.button.submit.label": "Entregar",
+    "panel.laundry.request_issue.machine_id.example.label": "Ejemplo de ID de máquina",
+    "panel.laundry.request_issue.validation.empty_field": "Por favor llena todos los espacios.",
+    "panel.laundry.request_issue.submit.failed": "Error al cargar los detalles de la máquina. Por favor, escriba la identificación de la máquina correcta.",
+    
+    "panel.laundry.issues_detail.header.title": "Lavadero",
+    "panel.laundry.issues_detail.machine_id.label": "Identificador de máquina:",
+    "panel.laundry.issues_detail.machine_type.label": "Tipo de máquina:",
+    "panel.laundry.issues_detail.select_issue.label": "Selecciona el problema que deseas reportar:",
 
     "panel.settings.home.settings.header":"Configuración",
     "panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",

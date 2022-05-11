@@ -133,6 +133,31 @@ class LaundryRoomDetails {
   }
 }
 
+class LaundryMachineServiceIssues {
+  final String? machineId;
+  final String? message;
+  final bool? hasOpenIssue;
+  final String? typeString;
+  final List<String>? problemCodes;
+
+  LaundryMachineServiceIssues({this.machineId, this.message, this.hasOpenIssue, this.typeString, this.problemCodes});
+
+  static LaundryMachineServiceIssues? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? LaundryMachineServiceIssues(
+            machineId: JsonUtils.stringValue(json['MachineID']),
+            message: JsonUtils.stringValue(json['Message']),
+            hasOpenIssue: JsonUtils.boolValue(json['OpenIssue']),
+            typeString: JsonUtils.stringValue(json['MachineType']),
+            problemCodes: JsonUtils.listStringsValue(json['ProblemCodes']))
+        : null;
+  }
+
+  LaundryApplianceType? get type {
+    return applianceTypeFromString(this.typeString);
+  }
+}
+
 // LaundryRoomStatus
 
 enum LaundryRoomStatus { online, offline }
@@ -173,17 +198,19 @@ LaundryApplianceStatus? applianceStatusFromString(String? applianceStatusString)
 
 // LaundryApplianceType
 
-enum LaundryApplianceType { washer, dryer }
+enum LaundryApplianceType { washer, dryer, air_machine }
 
 LaundryApplianceType? applianceTypeFromString(String? applianceTypeString) {
   if (StringUtils.isEmpty(applianceTypeString)) {
     return null;
   }
-  switch (applianceTypeString) {
+  switch (applianceTypeString!.toUpperCase()) { // Explicitly compare with uppercase because not all items come with upper case from Gateway BB
     case 'WASHER':
       return LaundryApplianceType.washer;
     case 'DRYER':
       return LaundryApplianceType.dryer;
+    case 'AIR MACHINE':
+      return LaundryApplianceType.air_machine;
     default:
       return null;
   }

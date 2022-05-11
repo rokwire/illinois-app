@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/laundry/LaundryRequestIssuePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Laundries.dart';
@@ -29,13 +31,13 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
-class LaundryDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class LaundryRoomDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final LaundryRoom room;
 
-  LaundryDetailPanel({required this.room});
+  LaundryRoomDetailPanel({required this.room});
 
   @override
-  _LaundryDetailPanelState createState() => _LaundryDetailPanelState();
+  _LaundryRoomDetailPanelState createState() => _LaundryRoomDetailPanelState();
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes {
@@ -43,7 +45,7 @@ class LaundryDetailPanel extends StatefulWidget implements AnalyticsPageAttribut
   }
 }
 
-class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements NotificationsListener {
+class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> implements NotificationsListener {
   LaundryRoomDetails? _laundryRoomDetails;
   bool _isLoading = false;
 
@@ -133,6 +135,30 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
     ]);
   }
 
+  Widget _buildReportIssueWidget() {
+    return Padding(padding: EdgeInsets.only(top: 10), child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+      Image.asset('images/icon-report-issue.png', excludeFromSemantics: true),
+      Expanded(
+          child: GestureDetector(
+              onTap: _onTapReportIssue,
+              child: Semantics(
+                  label: Localization().getStringEx('panel.laundry_detail.button.report_issue.title', 'Report an Issue'),
+                  hint: Localization().getStringEx('panel.laundry_detail.button.report_issue.hint', ''),
+                  excludeSemantics: true,
+                  button: true,
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 10, right: 24),
+                      child: Text(Localization().getStringEx('panel.laundry_detail.button.report_issue.title', 'Report an Issue'),
+                          style: TextStyle(
+                              fontFamily: Styles().fontFamilies?.medium,
+                              fontSize: 16,
+                              color: Styles().colors?.fillColorPrimary,
+                              decoration: TextDecoration.underline,
+                              decorationThickness: 1.17,
+                              decorationColor: Styles().colors?.fillColorSecondary))))))
+    ]));
+  }
+
   Widget _buildLaundryRoomCaptionSection() {
     return Container(color: Styles().colors?.accentColor2, height: 4,);
   }
@@ -167,7 +193,8 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
           Padding(padding:EdgeInsets.only(top: 2, bottom: 14), child:
             Text(widget.room.name ?? '', style: TextStyle( fontFamily: Styles().fontFamilies?.extraBold, fontSize: 24, color: Styles().colors?.fillColorPrimary,),),
           ),
-          _buildLocationWidget()
+          _buildLocationWidget(),
+          _buildReportIssueWidget()
         ],),
       ),
     );
@@ -247,6 +274,11 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
         _mapAllowed = true;
       });
     }
+  }
+
+  void _onTapReportIssue() {
+    Analytics().logSelect(target: "Laundry: Report an Issue");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRequestIssuePanel()));
   }
 
   void _onTapFavorite() {
