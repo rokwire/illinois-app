@@ -31,13 +31,13 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
-class LaundryDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class LaundryRoomDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final LaundryRoom room;
 
-  LaundryDetailPanel({required this.room});
+  LaundryRoomDetailPanel({required this.room});
 
   @override
-  _LaundryDetailPanelState createState() => _LaundryDetailPanelState();
+  _LaundryRoomDetailPanelState createState() => _LaundryRoomDetailPanelState();
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes {
@@ -45,7 +45,7 @@ class LaundryDetailPanel extends StatefulWidget implements AnalyticsPageAttribut
   }
 }
 
-class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements NotificationsListener {
+class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> implements NotificationsListener {
   LaundryRoomDetails? _laundryRoomDetails;
   bool _isLoading = false;
 
