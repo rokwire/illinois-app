@@ -984,6 +984,7 @@
     "panel.laundry_detail.header.title":"Laundry",
     "panel.laundry_detail.heading.laundry":"Laundry",
     "panel.laundry_detail.button.view_on_map.title":"View on map",
+    "panel.laundry_detail.button.report_issue.title":"Report an Issue",
     "panel.laundry_detail.button.view_on_map.hint":"",
     "panel.laundry_detail.label.washers":"WASHERS",
     "panel.laundry_detail.label.washer":"WASHER",
@@ -995,6 +996,11 @@
     "panel.laundry_detail.out_of_service.label": "OUT OF SERVICE",
     "panel.laundry_detail.in_use.label": "In Use",
     "panel.laundry_detail.in_use.with_minutes.label": "In Use with %d minutes remaining",
+
+    "panel.laundry.request_issue.header.title": "Laundry",
+    "panel.laundry.request_issue.machine_id.enter.label": "Please enter the Machine ID",
+    "panel.laundry.request_issue.button.submit.label": "Submit",
+    "panel.laundry.request_issue.machine_id.example.label": "Machine ID Example",
 
     "panel.settings.home.settings.header":"Settings",
     "panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",

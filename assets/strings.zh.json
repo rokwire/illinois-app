@@ -984,6 +984,7 @@
 	"panel.laundry_detail.header.title":"洗衣",
 	"panel.laundry_detail.heading.laundry":"洗衣",
 	"panel.laundry_detail.button.view_on_map.title":"在地图上查看",
+    "panel.laundry_detail.button.report_issue.title":"報告問題",
 	"panel.laundry_detail.button.view_on_map.hint":"",
 	"panel.laundry_detail.label.washers":"洗衣机",
 	"panel.laundry_detail.label.washer":"洗衣机",
@@ -995,6 +996,11 @@
     "panel.laundry_detail.out_of_service.label": "中止服務",
     "panel.laundry_detail.in_use.label": "正在使用",
     "panel.laundry_detail.in_use.with_minutes.label": "正在使用中, 剩餘 %d 分鐘",
+
+    "panel.laundry.request_issue.header.title": "洗衣店",
+    "panel.laundry.request_issue.machine_id.enter.label": "請輸入機器ID",
+    "panel.laundry.request_issue.button.submit.label": "提交",
+    "panel.laundry.request_issue.machine_id.example.label": "機器 ID 示例",
 
 	"panel.settings.home.settings.header":"设置",
 	"panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",
