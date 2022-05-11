@@ -13,7 +13,6 @@ class Gies with Service implements NotificationsListener{
   List<String>?  _navigationPages;
 
   late Map<int, Set<String>> _progressPages;
-  Set<String>? _completedPages;
   Set<String>? _verifiedPages;
   List<int>? _progressSteps;
 
@@ -44,7 +43,6 @@ class Gies with Service implements NotificationsListener{
   Future<void> initService() async{
     await super.initService();
     _navigationPages = Storage().giesNavPages ?? [];
-    _completedPages = Storage().giesCompletedPages ?? Set<String>();
     AppBundle.loadString('assets/gies.json').then((String? assetsContentString) {
         _pages = JsonUtils.decodeList(assetsContentString);
         _buildProgressSteps();
@@ -137,9 +135,7 @@ class Gies with Service implements NotificationsListener{
   void processButtonPage(Map<String, dynamic> button, {String? callerPageId}) {
     String? pageId = callerPageId ?? Gies().currentPageId;
     if (Gies().pageButtonCompletes(button)) {
-      if ((pageId != null) && pageId.isNotEmpty && !Gies().completedPages!.contains(pageId)) {
-          _completedPages!.add(pageId);
-        Storage().giesCompletedPages = _completedPages;
+      if ((pageId != null) && pageId.isNotEmpty) {
         _verifyPage(pageId);
         NotificationService().notify(notifyPageCompleted, pageId);
       }
@@ -180,7 +176,7 @@ class Gies with Service implements NotificationsListener{
   bool isProgressStepCompleted(int? progressStep) {
     Set<String>? progressPages = _progressPages[progressStep];
     return (progressPages == null) ||
-        (_completedPages!.containsAll(progressPages) && (_verifiedPages?.containsAll(progressPages) ?? false));
+        (_verifiedPages?.containsAll(progressPages) ?? false);
   }
 
   String? setCurrentNotes(List<dynamic>? notes, String? pageId) {
@@ -213,12 +209,18 @@ class Gies with Service implements NotificationsListener{
   }
 
   void _loadPageVerification({bool notify = false}){
-    completedPages?.forEach((pageId) {
-        _verifyPage(pageId, notify: notify);
-    });
+    if(_progressPages.isNotEmpty){
+      for(Set<String> steps in _progressPages.values){
+        if(steps.isNotEmpty){
+          for(String pageId in steps){
+            _verifyPage(pageId);
+          }
+        }
+      }
+    }
   }
 
-  void _verifyPage(String? page, {bool notify = false}){
+  void _verifyPage(String? page, {bool notify = true}){
     if(page == null || _verifiedPages == null) {
       return;
     }
@@ -257,10 +259,6 @@ class Gies with Service implements NotificationsListener{
 
   List<dynamic>? get pages{
     return _pages;
-  }
-
-  Set<String>? get completedPages{
-    return _completedPages;
   }
 
   Set<String>? get verifiedPages{
