@@ -1003,6 +1003,11 @@
     "panel.laundry.request_issue.machine_id.example.label": "Ejemplo de ID de máquina",
     "panel.laundry.request_issue.validation.empty_field": "Por favor llena todos los espacios.",
     "panel.laundry.request_issue.submit.failed": "Error al cargar los detalles de la máquina. Por favor, escriba la identificación de la máquina correcta.",
+    
+    "panel.laundry.issues_detail.header.title": "Lavadero",
+    "panel.laundry.issues_detail.machine_id.label": "Identificador de máquina:",
+    "panel.laundry.issues_detail.machine_type.label": "Tipo de máquina:",
+    "panel.laundry.issues_detail.select_issue.label": "Selecciona el problema que deseas reportar:",
 
     "panel.settings.home.settings.header":"Configuración",
     "panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",

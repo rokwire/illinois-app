@@ -1003,6 +1003,11 @@
     "panel.laundry.request_issue.machine_id.example.label": "機器 ID 示例",
     "panel.laundry.request_issue.validation.empty_field": "請填寫所有字段.",
     "panel.laundry.request_issue.submit.failed": "無法加載機器詳細信息. 請輸入正確的機器 ID.",
+    
+    "panel.laundry.issues_detail.header.title": "洗衣店",
+    "panel.laundry.issues_detail.machine_id.label": "機器編號:",
+    "panel.laundry.issues_detail.machine_type.label": "機器類型:",
+    "panel.laundry.issues_detail.select_issue.label": "選擇您要報告的問題:",
 
 	"panel.settings.home.settings.header":"设置",
 	"panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",

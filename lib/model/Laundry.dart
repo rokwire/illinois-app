@@ -137,10 +137,10 @@ class LaundryMachineServiceIssues {
   final String? machineId;
   final String? message;
   final bool? hasOpenIssue;
-  final LaundryApplianceType? type;
+  final String? typeString;
   final List<String>? problemCodes;
 
-  LaundryMachineServiceIssues({this.machineId, this.message, this.hasOpenIssue, this.type, this.problemCodes});
+  LaundryMachineServiceIssues({this.machineId, this.message, this.hasOpenIssue, this.typeString, this.problemCodes});
 
   static LaundryMachineServiceIssues? fromJson(Map<String, dynamic>? json) {
     return (json != null)
@@ -148,9 +148,13 @@ class LaundryMachineServiceIssues {
             machineId: JsonUtils.stringValue(json['MachineID']),
             message: JsonUtils.stringValue(json['Message']),
             hasOpenIssue: JsonUtils.boolValue(json['OpenIssue']),
-            type: applianceTypeFromString(JsonUtils.stringValue(json['MachineType'])),
+            typeString: JsonUtils.stringValue(json['MachineType']),
             problemCodes: JsonUtils.listStringsValue(json['ProblemCodes']))
         : null;
+  }
+
+  LaundryApplianceType? get type {
+    return applianceTypeFromString(this.typeString);
   }
 }
 

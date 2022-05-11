@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Laundries.dart';
+import 'package:illinois/ui/laundry/LaundryIssuesDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -216,7 +219,8 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
 
     Laundries().loadMachineServiceIssues(machineId: machineId).then((machineIssues) {
       if (machineIssues != null) {
-        //TBD navigate to next panel
+        Analytics().logSelect(target: "Laundry: Issues");
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryIssuesDetailPanel(issues: machineIssues)));
       } else {
         AppAlert.showDialogResult(
             context,
