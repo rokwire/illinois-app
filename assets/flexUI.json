@@ -35,6 +35,12 @@
 		"privacy_center": ["connect", "heading", "manage", "buttons", "policy", "delete", "version"],
 		"privacy_center.buttons": ["personal_information", "notifications"],
 
+		"personal_information": ["buttons", "calendar", "on_campus"],
+		"personal_information.buttons": ["personal_info", "roles", "interests", "food_filters"],
+		"personal_information.calendar": ["add", "prompt"],
+		"personal_information.on_campus": ["enabled", "manual_inside"],
+		"personal_information.footer": ["delete"],
+
 		"roles": ["student", "visitor", "fan", "employee", "alumni", "parent", "resident"],
 		
 		"onboarding":["get_started", "video_tutorial", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
