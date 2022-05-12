@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/laundry/LaundryIssueContactInfoPanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -184,6 +188,13 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
   }
 
   void _onTapContinue() {
-    //TBD implement
+    if(_selectedIssue == null) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.laundry.issues_detail.missing_issue.err.msg', 'Please, select an issue.'));
+      return;
+    }
+    String? additionalComments = StringUtils.isNotEmpty(_commentsController.text) ? _commentsController.text : null;
+    LaundryIssueRequest request = LaundryIssueRequest(machineId: widget.issues.machineId!, issueCode: _selectedIssue!, comments: additionalComments);
+    Analytics().logSelect(target: "Laundry: Issue Contact Information");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryIssueContactInfoPanel(issueRequest: request)));
   }
 }
