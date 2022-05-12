@@ -34,7 +34,7 @@ class LaundryIssuesDetailPanel extends StatefulWidget {
 
 class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
   String? _selectedIssue;
-  TextEditingController _commentsController = TextEditingController();
+  //TextEditingController _commentsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
