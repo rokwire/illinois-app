@@ -158,6 +158,52 @@ class LaundryMachineServiceIssues {
   }
 }
 
+class LaundryIssueRequest {
+  final String machineId;
+  final String issueCode;
+  final String? comments;
+  String? firstName;
+  String? lastName;
+  String? email;
+  String? phone;
+
+  LaundryIssueRequest(
+      {required this.machineId, required this.issueCode, this.comments, this.firstName, this.lastName, this.email, this.phone});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'machineid': machineId,
+      'problemcode': issueCode,
+      'comments': comments,
+      'firstname': firstName,
+      'lastname': lastName,
+      'email': email,
+      'phone': phone
+    };
+  }
+}
+
+class LaundryIssueResponse {
+  final String? message;
+  final String? requestNumber;
+  final LaundryIssueResponseStatus? status;
+
+  LaundryIssueResponse({this.message, this.requestNumber, this.status});
+
+  static LaundryIssueResponse? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? LaundryIssueResponse(
+            message: JsonUtils.stringValue(json['Message']),
+            requestNumber: JsonUtils.stringValue(json['RequestNumber']),
+            status: issueResponseStatusFromString(JsonUtils.stringValue(json['Status'])))
+        : null;
+  }
+
+  bool get isSucceeded {
+    return status == LaundryIssueResponseStatus.success;
+  }
+}
+
 // LaundryRoomStatus
 
 enum LaundryRoomStatus { online, offline }
@@ -211,6 +257,24 @@ LaundryApplianceType? applianceTypeFromString(String? applianceTypeString) {
       return LaundryApplianceType.dryer;
     case 'AIR MACHINE':
       return LaundryApplianceType.air_machine;
+    default:
+      return null;
+  }
+}
+
+// LaundryIssueResponseStatus
+
+enum LaundryIssueResponseStatus { success, fail }
+
+LaundryIssueResponseStatus? issueResponseStatusFromString(String? statusString) {
+  if (StringUtils.isEmpty(statusString)) {
+    return null;
+  }
+  switch (statusString) {
+    case 'Success':
+      return LaundryIssueResponseStatus.success;
+    case 'Failed':
+      return LaundryIssueResponseStatus.fail;
     default:
       return null;
   }

@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/laundry/LaundryIssueContactInfoPanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-//TBD: implement additional comments and "Continue"
 class LaundryIssuesDetailPanel extends StatefulWidget {
   final LaundryMachineServiceIssues issues;
 
@@ -34,7 +38,7 @@ class LaundryIssuesDetailPanel extends StatefulWidget {
 
 class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
   String? _selectedIssue;
-  //TextEditingController _commentsController = TextEditingController();
+  TextEditingController _commentsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -107,11 +111,13 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(Localization().getStringEx('panel.laundry.issues_detail.select_issue.label', 'Select the issue you wish to report:'),
                   style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
-              Padding(padding: EdgeInsets.only(top: 20, left: 10), child: Column(children: _buildIssuesWidgetList()))
+              Padding(
+                  padding: EdgeInsets.only(top: 20, left: 10),
+                  child: Column(children: [_buildIssuesWidget(), _buildCommentsSection(), _buildSubmitSection()]))
             ])));
   }
 
-  List<Widget> _buildIssuesWidgetList() {
+  Widget _buildIssuesWidget() {
     List<Widget> widgetList = <Widget>[];
     if (CollectionUtils.isNotEmpty(widget.issues.problemCodes)) {
       for (String issueCode in widget.issues.problemCodes!) {
@@ -130,7 +136,44 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
                 ]))));
       }
     }
-    return widgetList;
+    return Column(children: widgetList);
+  }
+
+  Widget _buildCommentsSection() {
+    return Padding(
+        padding: EdgeInsets.only(top: 20),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(
+              padding: EdgeInsets.only(bottom: 10),
+              child: Text(Localization().getStringEx('panel.laundry.issues_detail.comments.label', 'Additional Comments'),
+                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.medium))),
+          Container(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                  color: Styles().colors!.white,
+                  boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
+              child: TextField(
+                  maxLines: 8,
+                  style: TextStyle(fontFamily: Styles().fontFamilies!.medium),
+                  controller: _commentsController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: Localization().getStringEx('panel.laundry.issues_detail.comments.hint', 'Let us know what the issue is.'),
+                      hintStyle: TextStyle(color: Styles().colors!.mediumGray2, fontFamily: Styles().fontFamilies!.regular))))
+        ]));
+  }
+
+  Widget _buildSubmitSection() {
+    return Padding(
+        padding: EdgeInsets.only(top: 40),
+        child: RoundedButton(
+            backgroundColor: Styles().colors!.fillColorPrimary,
+            textColor: Styles().colors!.white,
+            contentWeight: 0.6,
+            borderColor: Styles().colors!.fillColorPrimary,
+            label: Localization().getStringEx('panel.laundry.issues_detail.continue.button', 'Continue'),
+            onTap: _onTapContinue,
+            rightIcon: Image.asset('images/chevron-right-white.png')));
   }
 
   void _onTapIssueCode(String? issueCode) {
@@ -142,5 +185,16 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  void _onTapContinue() {
+    if(_selectedIssue == null) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.laundry.issues_detail.missing_issue.err.msg', 'Please, select an issue.'));
+      return;
+    }
+    String? additionalComments = StringUtils.isNotEmpty(_commentsController.text) ? _commentsController.text : null;
+    LaundryIssueRequest request = LaundryIssueRequest(machineId: widget.issues.machineId!, issueCode: _selectedIssue!, comments: additionalComments);
+    Analytics().logSelect(target: "Laundry: Issue Contact Information");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryIssueContactInfoPanel(issueRequest: request)));
   }
 }

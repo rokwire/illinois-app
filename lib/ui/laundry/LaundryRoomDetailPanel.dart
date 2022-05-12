@@ -278,7 +278,10 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
 
   void _onTapReportIssue() {
     Analytics().logSelect(target: "Laundry: Report an Issue");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRequestIssuePanel()));
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => LaundryRequestIssuePanel(), settings: RouteSettings(name: LaundryRequestIssuePanel.routeSettingsName)));
   }
 
   void _onTapFavorite() {

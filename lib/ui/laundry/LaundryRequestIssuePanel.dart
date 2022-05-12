@@ -29,6 +29,8 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class LaundryRequestIssuePanel extends StatefulWidget {
+  static final String routeSettingsName = 'LaundryRequestIssuePanel';
+  
   @override
   _LaundryRequestIssuePanelState createState() => _LaundryRequestIssuePanelState();
 }
