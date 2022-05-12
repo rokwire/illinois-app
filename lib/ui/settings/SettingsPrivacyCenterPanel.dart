@@ -275,7 +275,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['privacy_center.buttons'] ?? [];
     for (String code in codes) {
-      if (code == 'personal_info') {
+      if (code == 'personal_information') {
         contentList.add(_buildSquareButton(
           label: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.title", "Personal Information"),
           hint: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.hint", ""),
