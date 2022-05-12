@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Submit issue request for laundry machines [#1530](https://github.com/rokwire/illinois-app/issues/1530).
+###Changed
+- Gies Panel navigation with navigation_buttons for all pages [#1605](https://github.com/rokwire/illinois-app/issues/1605).
 
 ## [4.0.7] - 2022-05-11
 ### Fixed
