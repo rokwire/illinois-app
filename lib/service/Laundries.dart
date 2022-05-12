@@ -75,8 +75,8 @@ class Laundries /* with Service */ {
       Log.e('Missing gateway url.');
       return null;
     }
-    String? roomUrl = "${Config().gatewayUrl}/laundry/initrequest?machineid=$machineId";
-    Response? response = await Network().get(roomUrl, auth: Auth2());
+    String? requestUrl = "${Config().gatewayUrl}/laundry/initrequest?machineid=$machineId";
+    Response? response = await Network().get(requestUrl, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -84,6 +84,25 @@ class Laundries /* with Service */ {
       return LaundryMachineServiceIssues.fromJson(jsonResponse);
     } else {
       Log.e('Failed to load machine service issues with "$machineId". Response code: $responseCode, Response:\n$responseString');
+      return null;
+    }
+  }
+
+  Future<LaundryIssueResponse?> submitIssueRequest({required LaundryIssueRequest issueRequest}) async {
+    if (StringUtils.isEmpty(Config().gatewayUrl)) {
+      Log.e('Missing gateway url.');
+      return null;
+    }
+    String? requestUrl = "${Config().gatewayUrl}/laundry/requestservice";
+    String? body = JsonUtils.encode(issueRequest.toJson());
+    Response? response = await Network().post(requestUrl, body: body, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return LaundryIssueResponse.fromJson(JsonUtils.decode(responseString));
+    } else {
+      Log.e(
+          'Failed to submit issue request for machine with id "${issueRequest.machineId}". Response code: $responseCode, Response:\n$responseString');
       return null;
     }
   }
