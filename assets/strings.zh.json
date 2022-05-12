@@ -1008,6 +1008,9 @@
     "panel.laundry.issues_detail.machine_id.label": "機器編號:",
     "panel.laundry.issues_detail.machine_type.label": "機器類型:",
     "panel.laundry.issues_detail.select_issue.label": "選擇您要報告的問題:",
+    "panel.laundry.issues_detail.comments.label": "補充評論",
+    "panel.laundry.issues_detail.comments.hint": "讓我們知道問題是什麼.",
+    "panel.laundry.issues_detail.continue.button": "繼續",
 
 	"panel.settings.home.settings.header":"设置",
 	"panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",

@@ -1008,6 +1008,9 @@
     "panel.laundry.issues_detail.machine_id.label": "Machine ID:",
     "panel.laundry.issues_detail.machine_type.label": "Machine Type:",
     "panel.laundry.issues_detail.select_issue.label": "Select the issue you wish to report:",
+    "panel.laundry.issues_detail.comments.label": "Additional Comments",
+    "panel.laundry.issues_detail.comments.hint": "Let us know what the issue is.",
+    "panel.laundry.issues_detail.continue.button": "Continue",
 
     "panel.settings.home.settings.header":"Settings",
     "panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",
