@@ -184,7 +184,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       else if (code == 'my_groups') {
         widget = HomeMyGroupsWidget(refreshController: _refreshController,);
       }
-      else if ((code == 'safer') || code.startsWith('safer.')) {
+      else if (code == 'safer') {
         widget = saferWidget = _saferWidget ??= HomeSaferWidget(key: _saferKey);
       }
       else {

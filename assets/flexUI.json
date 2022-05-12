@@ -2,7 +2,7 @@
 	"content": {
 		"tabbar": ["home", "athletics", "explore", "wallet", "browse"],
 
-		"home": ["gies","emergency", "upgrade_version_message", "voter_registration", "connect", "safer", "twitter", "canvas", "my_groups", "safer.gies", "highlighted_features", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_guide_highlights"],
+		"home": ["gies", "emergency", "upgrade_version_message", "voter_registration", "connect", "safer", "twitter", "canvas", "my_groups", "highlighted_features", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_guide_highlights"],
 		"home.connect": ["netid", "phone_or_email"],
 		"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 		"home.campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help"],
@@ -74,14 +74,12 @@
 		},
 		"groups": {
 			"safer"                                  : ["NOT", "Gies Online Programs"],
-			"safer.gies"                             : ["Gies Online Programs"],
 			"gies"                                   : ["Gies Online Programs"],
 			"canvas"                                 : ["Canvas Beta"],
 			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", "Gies Online Programs"]]
 		},
 		"locations": {
-			"safer"                                  : ["campus"],
-			"safer.gies"                             : ["campus"]
+			"safer"                                  : ["campus"]
 		},
 		"privacy" : {
 			"illini_cash"                     : 3,
