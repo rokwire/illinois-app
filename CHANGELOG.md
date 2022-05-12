@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Submit issue request for laundry machines [#1530](https://github.com/rokwire/illinois-app/issues/1530).
+
 ## [4.0.7] - 2022-05-11
-###Fixed
+### Fixed
 - Gies updates: Gies step completion depends only on page verification[#1605](https://github.com/rokwire/illinois-app/issues/1605).
 ### Added
 - UI for loading possible issue codes for laundry machines [#1530](https://github.com/rokwire/illinois-app/issues/1530).
