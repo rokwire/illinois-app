@@ -2,7 +2,7 @@
 	"content": {
 		"tabbar": ["home", "athletics", "explore", "wallet", "browse"],
 
-		"home": ["gies","emergency", "upgrade_version_message", "voter_registration", "connect", "safer", "twitter", "canvas", "my_groups", "safer.gies", "highlighted_features", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_guide_highlights"],
+		"home": ["gies", "emergency", "upgrade_version_message", "voter_registration", "connect", "safer", "twitter", "canvas", "my_groups", "highlighted_features", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_guide_highlights"],
 		"home.connect": ["netid", "phone_or_email"],
 		"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 		"home.campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help"],
@@ -18,7 +18,7 @@
 		"browse.all": ["athletics",  "building_status", "campus_guide", "crisis_help", "dining", "events", "groups", "inbox", "privacy_center", "quick_polls", "saved", "wellness"],
 		"browse.content": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "video_tutorial", "date_cat", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding", "faqs"],
 
-		"settings": ["user_info", "privacy_center", "privacy", "connect", "connected", "link", "linked", "feedback", "delete"],
+		"settings": ["user_info", "privacy_center", "preferences", "connect", "connected", "link", "linked", "feedback", "delete"],
 		"settings.connect": ["netid", "phone_or_email"],
 		"settings.connected": ["netid", "phone", "email"],
 		"settings.link": ["netid", "phone", "email"],
@@ -29,11 +29,17 @@
 		"settings.linked.netid": ["info", "remove"],
 		"settings.linked.phone": ["info", "remove", "verify"],
 		"settings.linked.email": ["info", "remove", "verify"],
-		"settings.privacy": ["buttons"],
-		"settings.privacy.buttons": ["personal_info", "notifications"],
+		"settings.preferences": ["buttons"],
+		"settings.preferences.buttons": ["personal_information", "notifications"],
 
 		"privacy_center": ["connect", "heading", "manage", "buttons", "policy", "delete", "version"],
-		"privacy_center.buttons": ["personal_info", "notifications"],
+		"privacy_center.buttons": ["personal_information", "notifications"],
+
+		"personal_information": ["buttons", "calendar", "on_campus"],
+		"personal_information.buttons": ["personal_info", "roles", "interests", "food_filters"],
+		"personal_information.calendar": ["add", "prompt"],
+		"personal_information.on_campus": ["enabled", "manual_inside"],
+		"personal_information.footer": ["delete"],
 
 		"roles": ["student", "visitor", "fan", "employee", "alumni", "parent", "resident"],
 		
@@ -74,14 +80,13 @@
 		},
 		"groups": {
 			"safer"                                  : ["NOT", "Gies Online Programs"],
-			"safer.gies"                             : ["Gies Online Programs"],
+			"personal_information.on_campus"         : ["NOT", "Gies Online Programs"],
 			"gies"                                   : ["Gies Online Programs"],
 			"canvas"                                 : ["Canvas Beta"],
 			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", "Gies Online Programs"]]
 		},
 		"locations": {
-			"safer"                                  : ["campus"],
-			"safer.gies"                             : ["campus"]
+			"safer"                                  : ["campus"]
 		},
 		"privacy" : {
 			"illini_cash"                     : 3,
@@ -99,7 +104,7 @@
 			"settings.connected"              : 4,
 			"settings.link"                   : 4,
 			"settings.linked"                 : 4,
-			"settings.privacy"                : 4,
+			"settings.preferences"            : 4,
 
 			"tabbar.wallet"                   : 4,
 			"wallet.connect"                  : 4,

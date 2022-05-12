@@ -123,8 +123,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       else if (code == 'privacy_center') {
         contentList.add(_buildPrivacyCenterButton(),);
       }
-      else if (code == 'privacy') {
-        contentList.add(_buildPrivacy(),);
+      else if (code == 'preferences') {
+        contentList.add(_buildPreferences(),);
       }
       else if (code == 'connect') {
         contentList.add(_buildConnect());
@@ -900,28 +900,28 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   // Privacy
 
-  Widget _buildPrivacy() {
+  Widget _buildPreferences() {
     List<Widget> contentList =  [];
 
-    List<dynamic> codes = FlexUI()['settings.privacy'] ?? [];
+    List<dynamic> codes = FlexUI()['settings.preferences'] ?? [];
     for (int index = 0; index < codes.length; index++) {
       String code = codes[index];
       if (code == 'buttons') {
-        contentList.add(_buildPrivacyButtons());
+        contentList.add(_buildPreferenceButtons());
       }
     }
 
     return Padding(padding: EdgeInsets.only(left: 16, right: 16), child: Column(children: contentList,));
   }
 
-  Widget _buildPrivacyButtons() {
+  Widget _buildPreferenceButtons() {
 
     List<Widget> rowWidgets = <Widget>[];
     List<Widget> colWidgets = <Widget>[];
 
-    List<dynamic> codes = FlexUI()['settings.privacy.buttons'] ?? [];
+    List<dynamic> codes = FlexUI()['settings.preferences.buttons'] ?? [];
     for (int index = 0; index < codes.length; index++) {
-      Widget? privacyButton = _buildPrivacyButton(codes[index]);
+      Widget? privacyButton = _buildPreferenceButton(codes[index]);
       if (privacyButton != null) {
           if (rowWidgets.isNotEmpty) {
             rowWidgets.add(Container(width: 12),);
@@ -969,8 +969,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     ]));*/
   }
 
-  Widget? _buildPrivacyButton(String code) {
-    if (code == 'personal_info') {
+  Widget? _buildPreferenceButton(String code) {
+    if (code == 'personal_information') {
       return _PrivacyGridButton(
         title: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.title", "Personal Information"),
         hint: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.hint", ""),
