@@ -316,23 +316,24 @@ class Gies with Service implements NotificationsListener{
 
   //Utils
   bool _pageCanComplete(Map? page) {
-    List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
-    List<dynamic>? bnavigationButtons = (page != null) ? JsonUtils.listValue(page['navigation_buttons']) : null;
-    if (buttons != null) {
-      for (dynamic button in buttons) {
-        if ((button is Map) && pageButtonCompletes(button)) {
-          return true;
-        }
-      }
-    } else if (bnavigationButtons!=null){
-      for (dynamic button in bnavigationButtons) {
-        if ((button is Map) && pageButtonCompletes(button)) {
-          return true;
-        }
-      }
-    }
-
-    return false;
+    // List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
+    // List<dynamic>? bnavigationButtons = (page != null) ? JsonUtils.listValue(page['navigation_buttons']) : null;
+    //
+    // if (buttons != null) {
+    //   for (dynamic button in buttons) {
+    //     if ((button is Map) && pageButtonCompletes(button)) {
+    //       return true;
+    //     }
+    //   }
+    // } else if (bnavigationButtons!=null){
+    //   for (dynamic button in bnavigationButtons) {
+    //     if ((button is Map) && pageButtonCompletes(button)) {
+    //       return true;
+    //     }
+    //   }
+    // }
+    // return false
+    return StringUtils.isNotEmpty(JsonUtils.stringValue(page?["group_name"]));
   }
 
   bool pageButtonCompletes(Map button) {
