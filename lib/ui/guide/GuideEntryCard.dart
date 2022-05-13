@@ -125,7 +125,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
   void _onTapFavorite() {
     String? title = Guide().entryTitle(widget.guideEntry, stripHtmlTags: true);
     Analytics().logSelect(target: "Favorite: $title");
-    Auth2().prefs?.toggleFavorite(GuideFavorite(id: guideEntryId, title: title,));
+    Auth2().prefs?.toggleFavorite(GuideFavorite(id: guideEntryId));
   }
 
   void _onTapEntry() {

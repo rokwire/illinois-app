@@ -246,49 +246,25 @@ class Game with Explore implements Favorite {
   }
 
   ////////////////////////////
-  // Favorite implementation
-
-  @override
-  String? get favoriteId => id;
-
-  @override
-  String get favoriteTitle => title;
-
-  @override
-  String get favoriteKey => favoriteKeyName;
-
-  static String favoriteKeyName = "athleticEventIds";
-
-  ////////////////////////////
   // Explore implementation
 
-  @override
-  String? get exploreId => id;
+  @override String? get exploreId => id;
+  @override String get exploreTitle => title;
+  @override String? get exploreSubTitle => null;
+  @override String? get exploreShortDescription => shortDescription;
+  @override String? get exploreLongDescription => longDescription;
+  @override DateTime? get exploreStartDateUtc => dateTimeUtc;
+  @override String? get exploreImageURL => imageUrl;
+  @override String? get explorePlaceId => null;
+  @override ExploreLocation? get exploreLocation => _exploreLocation;
 
-  @override
-  String? get exploreImageURL => imageUrl;
+  ////////////////////////////
+  // Favorite implementation
 
-  @override
-  ExploreLocation? get exploreLocation => _exploreLocation;
-
-  @override
-  String? get exploreLongDescription => longDescription;
-
-  @override
-  DateTime? get exploreStartDateUtc => dateTimeUtc;
-
-  @override
-  String? get explorePlaceId => null;
-
-  @override
-  String? get exploreShortDescription => shortDescription;
-
-  @override
-  String? get exploreSubTitle => null;
-
-  @override
-  String get exploreTitle => title;
-
+  static const String favoriteKeyName = "athleticEventIds";
+  @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => id;
+  
   @override
   Map<String, dynamic> toJson() {
     return {
