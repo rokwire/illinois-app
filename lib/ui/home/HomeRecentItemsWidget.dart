@@ -374,7 +374,6 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     else if ((widget.item!.recentItemType == RecentItemType.guide) && (originalItem is Map)) {
       Auth2().prefs?.toggleFavorite(GuideFavorite(
         id: Guide().entryId(JsonUtils.mapValue(originalItem)),
-        title: Guide().entryTitle(JsonUtils.mapValue(originalItem))
       ));
     }
   }

@@ -55,6 +55,8 @@ class LaundryRoom implements Favorite {
   @override
   int get hashCode => (id?.hashCode ?? 0) ^ (name?.hashCode ?? 0) ^ (status?.hashCode ?? 0) ^ (location?.hashCode ?? 0);
 
+  String? get displayStatus => null;
+
   Map<String, dynamic> get analyticsAttributes {
     return {
       Analytics.LogAttributeLaundryId: id,
@@ -63,17 +65,9 @@ class LaundryRoom implements Favorite {
   }
 
   // Favorite
-
-  @override
-  String? get favoriteId => id;
-
-  @override
-  String? get favoriteTitle => name;
-
-  @override
-  String get favoriteKey => favoriteKeyName;
-
-  static String favoriteKeyName = "laundryPlaceIds";
+  static const String favoriteKeyName = "laundryPlaceIds";
+  @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => id;
 }
 
 class LaundryRoomAppliance {

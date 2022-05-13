@@ -127,10 +127,10 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
     Map<String, dynamic>? guideEntryData = (guide != null) ? Guide().entryById(guide.id) : null;
     //Only reminders are allowed to save
     return (Guide().isEntryReminder(guideEntryData)) ? _DeviceCalendarEvent(
-        title: guide!.title,
-        internalEventId: guide.id,
+        title: Guide().entryListTitle(guideEntryData, stripHtmlTags: true),
+        internalEventId: guide?.id,
         startDate: Guide().reminderDate(guideEntryData),
-        deepLinkUrl: "${Guide().guideDetailUrl}?guide_id=${guide.id}"
+        deepLinkUrl: "${Guide().guideDetailUrl}?guide_id=${guide?.id}"
       ) : null;
   }
 

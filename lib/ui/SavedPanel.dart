@@ -19,11 +19,9 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/Event.dart';
-import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
@@ -42,24 +40,17 @@ import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
-import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:notification_permissions/notification_permissions.dart';
-
-import 'athletics/AthleticsNewsArticlePanel.dart';
-import 'events/CompositeEventsDetailPanel.dart';
-import 'explore/ExploreDetailPanel.dart';
 
 class SavedPanel extends StatefulWidget {
 
@@ -328,10 +319,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
         String? guideEntryId = Guide().entryId(JsonUtils.mapValue(contentEntry));
         
         if ((guideEntryId != null) && favoriteGuideIds.contains(guideEntryId)) {
-          guideItems.add(GuideFavorite(
-            id: guideEntryId,
-            title: Guide().entryTitle(JsonUtils.mapValue(contentEntry), stripHtmlTags: true),
-          ));
+          guideItems.add(GuideFavorite(id: guideEntryId,));
         }
       }
     }
@@ -638,74 +626,56 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     }
 
     bool favorite = Auth2().isFavorite(item);
-    Color? headerColor = _cardHeaderColor(item);
-    String title = StringUtils.ensureNotEmpty(_cardTitle(item));
-    String? cardDetailLabel = StringUtils.ensureNotEmpty(_cardDetailLabel(item));
-    String? cardDetailImgRes = _cardDetailImageResource(item);
-    bool detailVisible = StringUtils.isNotEmpty(cardDetailLabel);
-    return GestureDetector(onTap: () => _onTapItem(item), child: Semantics(
-        label: title,
-        child: Column(
-          children: <Widget>[
-            Container(height: 7, color: headerColor,),
-            Container(
-              decoration: BoxDecoration(color: Colors.white,
-                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Flex(
-                    direction: Axis.vertical,
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              title,
-                              semanticsLabel: "",
-                              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
-                            ),
-                          ),
-                          Visibility(
-                            visible: Auth2().canFavorite,
-                            child: GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () {
-                                  Analytics().logSelect(target: "Favorite: $title");
-                                  Auth2().prefs?.toggleFavorite(item);
-                                },
-                                child: Semantics(
-                                    container: true,
-                                    label: favorite
-                                        ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
-                                        : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-                                    hint: favorite
-                                        ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
-                                        : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-                                    button: true,
-                                    excludeSemantics: true,
-                                    child: Container(
-                                            padding: EdgeInsets.only(left: 24, bottom: 24),
-                                            child: Image.asset(favorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true)))),
+    Color? headerColor = item?.favoriteHeaderColor;
+    String? title = item?.favoriteTitle;
+    String? cardDetailText = item?.favoriteDetailText;
+    Image? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? item?.favoriteDetailIcon : null;
+    bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
+    return GestureDetector(onTap: () => _onTapItem(item), child:
+      Semantics(label: title, child:
+        Column(children: <Widget>[
+          Container(height: 7, color: headerColor,),
+          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
+            Padding(padding: EdgeInsets.all(16), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Flex(direction: Axis.vertical, children: <Widget>[
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                      Expanded(child:
+                        Text(title ?? '', semanticsLabel: "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20), ),
+                      ),
+                      Visibility(visible: Auth2().canFavorite, child:
+                        GestureDetector(behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            Analytics().logSelect(target: "Favorite: $title");
+                            Auth2().prefs?.toggleFavorite(item);
+                          }, child:
+                          Semantics(container: true,
+                            label: favorite
+                                ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+                                : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+                            hint: favorite
+                                ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+                                : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+                            button: true,
+                            excludeSemantics: true,
+                            child:
+                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Image.asset(favorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true)))),
                           )
                         ],
                       )
                     ],
                   ),
                   Visibility(visible: detailVisible, child:
-                    Semantics(label: cardDetailLabel, excludeSemantics: true, child:
+                    Semantics(label: cardDetailText, excludeSemantics: true, child:
                       Padding(padding: EdgeInsets.only(top: 12), child:
-                        (cardDetailImgRes != null) ? 
+                        (cardDetailImage != null) ? 
                         Row(children: <Widget>[
-                          Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(cardDetailImgRes, excludeFromSemantics: true),),
+                          Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
                           Expanded(child:
-                            Text(cardDetailLabel, semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+                            Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
                           )
                         ],) :
-                        Text(cardDetailLabel, semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+                        Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
                   )),)
                 ]),
               ),
@@ -715,89 +685,14 @@ class _SavedItemsListState extends State<_SavedItemsList>{
   }
 
   void _onTapItem(Favorite? item) {
-    if (item is Event) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: item,)));
-    } else if (item is Dining) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: item,)));
-    } else if (item is Game) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: item,)));
-    } else if (item is News) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: item,)));
-    } else if (item is LaundryRoom) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: item,)));
-    } else if (item is GuideFavorite) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: item.id,)));
-    } else if (item is InboxMessage) {
-    }
+    Analytics().logSelect(target: item?.favoriteTitle);
+    item?.favoriteLaunchDetail(context);
   }
 
   void _onViewAllTapped() {
     setState(() {
       _showAll = !_showAll;
     });
-  }
-
-  Color? _cardHeaderColor(Favorite? item) {
-    if (item is Explore) {
-      return (item as Explore).uiColor;
-    } else if (item is Game) {
-      return Styles().colors!.fillColorPrimary;
-    } else if (item is News) {
-      return Styles().colors!.fillColorPrimary;
-    } else if (item is LaundryRoom) {
-      return Styles().colors!.accentColor2;
-    } else if (item is GuideFavorite) {
-      return Styles().colors!.accentColor3;
-    } else if (item is InboxMessage) {
-      return Styles().colors!.fillColorSecondary;
-    } else {
-      return Styles().colors!.fillColorSecondary;
-    }
-  }
-
-  String? _cardTitle(Favorite? item) {
-    if (item is Explore) {
-      return (item as Explore).exploreTitle;
-    } else if (item is Game) {
-      return item.title;
-    } else if (item is News) {
-      return item.title;
-    } else if (item is LaundryRoom) {
-      return item.name;
-    } else if (item is GuideFavorite) {
-      return Guide().entryListTitle(Guide().entryById(item.id), stripHtmlTags: true);
-    } else if (item is InboxMessage) {
-      return item.subject;
-    } else {
-      return null;
-    }
-  }
-
-  String? _cardDetailLabel(Favorite? item) {
-    if (item is Event) {
-      return item.displayDateTime;
-    } else if (item is Dining) {
-      return item.displayWorkTime;
-    } else if (item is Game) {
-      return item.displayTime;
-    } else if (item is News) {
-      return item.displayTime;
-    } else if (item is GuideFavorite) {
-      return Guide().entryListDescription(Guide().entryById(item.id), stripHtmlTags: true);
-    } else if (item is InboxMessage) {
-      return item.body;
-    } else
-      return null;
-  }
-
-  String? _cardDetailImageResource(Favorite? item) {
-    if (item is GuideFavorite || item is InboxMessage) {
-      return null;
-    } else if (item is Event || item is Game || item is News) {
-      return 'images/icon-calendar.png';
-    } else {
-      return 'images/icon-time.png';
-    }
   }
 
   Widget _buildCompositEventCard(Event? item){
