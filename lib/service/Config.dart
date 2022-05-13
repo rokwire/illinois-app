@@ -42,7 +42,6 @@ class Config extends rokwire.Config {
 
   Map<String, dynamic> get secretShibboleth => JsonUtils.mapValue(secretKeys['shibboleth']) ?? {};
   Map<String, dynamic> get secretIlliniCash => JsonUtils.mapValue(secretKeys['illini_cash']) ?? {};
-  Map<String, dynamic> get secretLaundry => JsonUtils.mapValue(secretKeys['laundry']) ?? {};
   Map<String, dynamic> get secretParkhub => JsonUtils.mapValue(secretKeys['parkhub']) ?? {};
   Map<String, dynamic> get secretPadaapi => JsonUtils.mapValue(secretKeys['padaapi']) ?? {};
   Map<String, dynamic> get secretTwitter => JsonUtils.mapValue(secretKeys['twitter']) ?? {};
@@ -62,8 +61,6 @@ class Config extends rokwire.Config {
   String? get illiniCashAppKey       => JsonUtils.stringValue(secretIlliniCash['app_key']);
   String? get illiniCashHmacKey      => JsonUtils.stringValue(secretIlliniCash['hmac_key']);
   String? get illiniCashSecretKey    => JsonUtils.stringValue(secretIlliniCash['secret_key']);
-
-  String? get laundryApiKey          => JsonUtils.stringValue(secretLaundry['api_key']);
 
   String? get padaapiApiKey          => JsonUtils.stringValue(secretPadaapi['api_key']);
 
@@ -94,8 +91,10 @@ class Config extends rokwire.Config {
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
   String? get videoTutorialUrl       => JsonUtils.stringValue(otherUniversityServices['video_tutorial_url']);
+  String? get videoTutorialCcUrl     => JsonUtils.stringValue(otherUniversityServices['video_tutorial_cc_url']);
 
   // Getters: Platform Building Blocks
+  String? get gatewayUrl             => JsonUtils.stringValue(platformBuildingBlocks['gateway_url']);
   String? get lmsUrl                 => JsonUtils.stringValue(platformBuildingBlocks['lms_url']);
   String? get rewardsUrl             => JsonUtils.stringValue(platformBuildingBlocks['rewards_url']);
   String? get rokwireAuthUrl         => JsonUtils.stringValue(platformBuildingBlocks['rokwire_auth_url']);
@@ -105,7 +104,6 @@ class Config extends rokwire.Config {
   // Getters: Third Party Services
   String? get instagramHostUrl       => JsonUtils.stringValue(thirdPartyServices['instagram_host_url']);
   String? get twitterHostUrl         => JsonUtils.stringValue(thirdPartyServices['twitter_host_url']);
-  String? get laundryHostUrl         => JsonUtils.stringValue(thirdPartyServices['laundry_host_url']);
   String? get ticketsUrl             => JsonUtils.stringValue(thirdPartyServices['tickets_url']);
   String? get youtubeUrl             => JsonUtils.stringValue(thirdPartyServices['youtube_url']);
   String? get gameDayFootballUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_football_url']);

@@ -16,15 +16,12 @@
 
 import 'dart:async';
 import 'package:http/http.dart';
-import 'package:illinois/utils/Utils.dart';
-import 'package:rokwire_plugin/model/explore.dart';
-import 'package:rokwire_plugin/service/assets.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:xml/xml.dart';
 
 // Laundries does rely on Service initialization API so it does not override service interfaces and is not registered in Services..
 class Laundries /* with Service */ {
@@ -36,71 +33,76 @@ class Laundries /* with Service */ {
 
   Laundries._internal();
 
-  Future<List<LaundryRoom>?> loadRooms() async {
-    String? roomDataUrl = (Config().laundryHostUrl != null) ? "${Config().laundryHostUrl}/school?api_key=${Config().laundryApiKey}&method=getRoomData" : null;
-    if (roomDataUrl != null) {
-      Response? response = await Network().get(roomDataUrl);
-      if (response?.statusCode == 200) {
-        XmlDocument? responseXml = await XmlUtils.parseAsync(response?.body);
-        Iterable<XmlElement>? xmlList = XmlUtils.children(XmlUtils.child(XmlUtils.child(responseXml, "school"), "laundry_rooms"), "laundryroom");
-        return LaundryRoom.listFromXml(xmlList, locations: _laundryLocationMapping);
+  Future<LaundrySchool?> loadSchoolRooms() async {
+    String? roomsUrl = (Config().gatewayUrl != null) ? "${Config().gatewayUrl}/laundry/rooms" : null;
+    if (StringUtils.isNotEmpty(roomsUrl)) {
+      Response? response = await Network().get(roomsUrl, auth: Auth2());
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        Map<String, dynamic>? jsonResponse = JsonUtils.decodeMap(responseString);
+        return LaundrySchool.fromJson(jsonResponse);
+      } else {
+        Log.e('Failed to load school laundry rooms. Response code: $responseCode, Response:\n$responseString');
       }
-      else {
-        Log.e('Failed to load laundry rooms:\n${response?.body}');
-      }
+    } else {
+      Log.e('Missing gateway url.');
     }
     return null;
   }
 
-  Future<LaundryRoomAvailability?> loadRoomAvailability(String? laundryRoomId) async {
-    String? availabilityUrl = (Config().laundryHostUrl != null) ?  "${Config().laundryHostUrl}/school?api_key=${Config().laundryApiKey}&method=getNumAvailable" : null;
-    if (availabilityUrl != null) {
-      Response? response = await Network().get(availabilityUrl);
-      if (response?.statusCode == 200) {
-        XmlDocument? responseXml = await XmlUtils.parseAsync(response?.body);
-        Iterable<XmlElement>? xmlList = XmlUtils.children(XmlUtils.child(responseXml, "laundry_rooms"), "laundryroom");
-        return ((xmlList != null) && xmlList.isNotEmpty) ? LaundryRoomAvailability.fromXmlList(xmlList, roomId: laundryRoomId) : null;
-      }
-      else {
-        Log.e('Failed to load laundry room data:\n${response?.body}');
-      }
+  Future<LaundryRoomDetails?> loadRoomDetails(String? laundryRoomId) async {
+    if (StringUtils.isEmpty(laundryRoomId) || StringUtils.isEmpty(Config().gatewayUrl)) {
+      Log.e('Missing laundry room id or gateway url.');
+      return null;
     }
-    return null;
+    String? roomUrl = "${Config().gatewayUrl}/laundry/room?id=$laundryRoomId";
+    Response? response = await Network().get(roomUrl, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      Map<String, dynamic>? jsonResponse = JsonUtils.decodeMap(responseString);
+      return LaundryRoomDetails.fromJson(jsonResponse);
+    } else {
+      Log.e('Failed to load laundry room details with id "$laundryRoomId". Response code: $responseCode, Response:\n$responseString');
+      return null;
+    }
   }
 
-  Future<List<LaundryRoomAppliance>?> loadRoomAppliances(String? laundryRoomId) async {
-    String? appliancesUrl = ((Config().laundryHostUrl != null) && (laundryRoomId != null)) ? "${Config().laundryHostUrl}/room?api_key=${Config().laundryApiKey}&location=$laundryRoomId&method=getAppliances" : null;
-    if (appliancesUrl != null) {
-      Response? response = await Network().get(appliancesUrl);
-      if (response?.statusCode == 200) {
-        XmlDocument? responseXml = await XmlUtils.parseAsync(response?.body);
-        Iterable<XmlElement>? xmlList = XmlUtils.children(XmlUtils.child(XmlUtils.child(responseXml, "laundry_room"), "appliances"), "appliance");
-        return LaundryRoomAppliance.listFromXml(xmlList);
-      }
-      else {
-        Log.e('Failed to load laundry room appliances:\n${response?.body}');
-      }
+  Future<LaundryMachineServiceIssues?> loadMachineServiceIssues({required String machineId}) async {
+    if (StringUtils.isEmpty(Config().gatewayUrl)) {
+      Log.e('Missing gateway url.');
+      return null;
     }
-    return null;
+    String? requestUrl = "${Config().gatewayUrl}/laundry/initrequest?machineid=$machineId";
+    Response? response = await Network().get(requestUrl, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      Map<String, dynamic>? jsonResponse = JsonUtils.decodeMap(responseString);
+      return LaundryMachineServiceIssues.fromJson(jsonResponse);
+    } else {
+      Log.e('Failed to load machine service issues with "$machineId". Response code: $responseCode, Response:\n$responseString');
+      return null;
+    }
   }
 
-  Map<String, ExploreLocation>? get _laundryLocationMapping {
-    Map<String, ExploreLocation>? locationMapping;
-    List<dynamic>? jsonList = JsonUtils.listValue(Assets()['laundry.locations']);
-    if (jsonList != null) {
-      locationMapping = {};
-      for (dynamic jsonEntry in jsonList) {
-        if (jsonEntry is Map) {
-          String? locationIdentifier = JsonUtils.stringValue(jsonEntry['laundry_location']);
-          if ((locationIdentifier != null) && (locationMapping[locationIdentifier] == null)) {
-            ExploreLocation? locationDetails = ExploreLocation.fromJSON(JsonUtils.mapValue(jsonEntry['location_details']));
-            if (locationDetails != null) {
-              locationMapping[locationIdentifier] = locationDetails;
-            }
-          }
-        }
-      }
+  Future<LaundryIssueResponse?> submitIssueRequest({required LaundryIssueRequest issueRequest}) async {
+    if (StringUtils.isEmpty(Config().gatewayUrl)) {
+      Log.e('Missing gateway url.');
+      return null;
     }
-    return locationMapping;
+    String? requestUrl = "${Config().gatewayUrl}/laundry/requestservice";
+    String? body = JsonUtils.encode(issueRequest.toJson());
+    Response? response = await Network().post(requestUrl, body: body, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return LaundryIssueResponse.fromJson(JsonUtils.decode(responseString));
+    } else {
+      Log.e(
+          'Failed to submit issue request for machine with id "${issueRequest.machineId}". Response code: $responseCode, Response:\n$responseString');
+      return null;
+    }
   }
 }

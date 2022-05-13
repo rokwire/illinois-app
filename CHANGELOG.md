@@ -5,12 +5,70 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-<!-- Next build on `develop` should refer to version 4.0.0 -->
+
+## [4.0.9] - 2022-05-13
+### Changed
+- Cleaned up Favorites, prepare for UIUC 4 features [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+### Fixed
+- Display Laundry rooms on the native map [#1530](https://github.com/rokwire/illinois-app/issues/1530).
+
+## [4.0.8] - 2022-05-12
+### Added
+- Submit issue request for laundry machines [#1530](https://github.com/rokwire/illinois-app/issues/1530).
+### Changed
+- Gies Panel navigation with navigation_buttons for all pages [#1605](https://github.com/rokwire/illinois-app/issues/1605).
+- Hide "On Campus" related stuff for GIES students [#1623](https://github.com/rokwire/illinois-app/issues/1623).
+
+## [4.0.7] - 2022-05-11
+### Fixed
+- Gies updates: Gies step completion depends only on page verification[#1605](https://github.com/rokwire/illinois-app/issues/1605).
+### Added
+- UI for loading possible issue codes for laundry machines [#1530](https://github.com/rokwire/illinois-app/issues/1530).
+
+## [4.0.6] - 2022-05-10
+### Added
+- Update Group API to hook polls  [#1617](https://github.com/rokwire/illinois-app/issues/1617).
+### Changed
+- Use Gateway BB for loading laundries [#1530](https://github.com/rokwire/illinois-app/issues/1530).
+
+## [4.0.5] - 2022-05-09
+### Fixed
+- Crash in GroupDetailPanel [#1611](https://github.com/rokwire/illinois-app/issues/1611).
+### Changed
+- Laundry - remove location info and update icons [#1530](https://github.com/rokwire/illinois-app/issues/1530).
+
+## [4.0.4] - 2022-05-05
+### Added
+- Added Settings Notifications button for Group polls [#1608](https://github.com/rokwire/illinois-app/issues/1608).
+
+## [4.0.3] - 2022-05-04
+### Added
+- "CC" button in video panels [#1602](https://github.com/rokwire/illinois-app/issues/1602).
+- Gies onboarding updates [#1605](https://github.com/rokwire/illinois-app/issues/1605).
+
+## [4.0.2] - 2022-05-03
+### Changed
+- "Health Illini Podcast" renamed to "Healthy Illini Podcast" [#1485](https://github.com/rokwire/illinois-app/issues/1485).
+### Added
+- "Play" button in video panels [#1602](https://github.com/rokwire/illinois-app/issues/1602).
+
+## [4.0.1] - 2022-04-29
+### Added
+- Added links to app and plugin Wiki documentation in README [#1597](https://github.com/rokwire/illinois-app/issues/1597).
+### Changed
+- Wording for hidden group [#1598](https://github.com/rokwire/illinois-app/issues/1598).
+
+## [4.0.0] - 2022-04-28
 ### Changed
 - Cleaned up laundry handling [#1530](https://github.com/rokwire/illinois-app/issues/1530).
 ### Added
 - Added OnCampus service for campus location control [#1567](https://github.com/rokwire/illinois-app/issues/1567).
 - Integrate new Polls BB [#1565](https://github.com/rokwire/illinois-app/issues/1565).
+- Allow private groups to be hidden from search [#1592](https://github.com/rokwire/illinois-app/issues/1592).
+
+## [3.3.22] - 2022-04-28
+### Changed
+- Remove "play/pause" button from video panels. Bring back auto play [#1594](https://github.com/rokwire/illinois-app/issues/1594).
 
 ## [3.3.21] - 2022-04-27
 ### Changed

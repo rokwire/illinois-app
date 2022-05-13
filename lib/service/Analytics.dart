@@ -737,7 +737,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
   }
 
-  void logFavorite(Favorite? favorite, [bool? on]) {
+  void logFavorite(Favorite? favorite, [bool? on, String? title]) {
     if (on == null) {
       on = Auth2().isFavorite(favorite);
     }
@@ -746,7 +746,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       LogFavoriteActionName : on ? LogFavoriteOnActionName : LogFavoriteOffActionName,
       LogFavoriteTypeName   : favorite?.favoriteKey,
       LogFavoriteIdName     : favorite?.favoriteId,
-      LogFavoriteTitleName  : favorite?.favoriteTitle,
+      LogFavoriteTitleName  : title,
     });
   }
 

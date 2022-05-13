@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
@@ -34,6 +38,9 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
   VideoPlayerController? _controller;
   Future<void>? _initializeVideoPlayerFuture;
   List<DeviceOrientation>? _allowedOrientations;
+  String? _currentCaptionText;
+  bool _ccEnabled = false;
+  bool _ccVisible = false;
 
   @override
   void initState() {
@@ -52,16 +59,33 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
   void _initVideoPlayer() {
     String? tutorialUrl = Config().videoTutorialUrl;
     if (StringUtils.isNotEmpty(tutorialUrl)) {
-      _controller = VideoPlayerController.network(tutorialUrl!);
-      _controller!.addListener(_checkVideoEnded);
+      _controller = VideoPlayerController.network(tutorialUrl!, closedCaptionFile: _loadClosedCaptions());
+      _controller!.addListener(_checkVideoStateChanged);
       _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
-        setState(() {});
+        _currentCaptionText = _controller!.value.caption.text;
+        _ccEnabled = true;
+        _showCc(true);
+        _startCcHidingTimer();
+        _controller!.play(); // Automatically play video after initialization
       });
     }
   }
 
   void _disposeVideoPlayer() {
     _controller?.dispose();
+  }
+
+  Future<ClosedCaptionFile> _loadClosedCaptions() async {
+    String? fileContents;
+    String? closedCaptionsUrl = Config().videoTutorialCcUrl;
+    if (StringUtils.isNotEmpty(closedCaptionsUrl)) {
+      Response? response = await Network().get(closedCaptionsUrl);
+      int? responseCode = response?.statusCode;
+      if (responseCode == 200) {
+        fileContents = response?.body;
+      }
+    }
+    return SubRipCaptionFile(StringUtils.ensureNotEmpty(fileContents));
   }
 
   void _enableLandscapeOrientations() {
@@ -79,23 +103,152 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
     }
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Styles().colors!.blackTransparent06,
+        appBar: HeaderBar(title: Localization().getStringEx("panel.settings.video_tutorial.header.title", "Video Tutorial")),
+        body: Center(child: _buildVideoContent()));
+  }
+
+  Widget _buildVideoContent() {
+    if (_controller != null) {
+      return FutureBuilder(
+          future: _initializeVideoPlayerFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              double playerAspectRatio = _controller!.value.aspectRatio;
+              Orientation deviceOrientataion = MediaQuery.of(context).orientation;
+              double deviceWidth = MediaQuery.of(context).size.width;
+              double deviceHeight = MediaQuery.of(context).size.height;
+              double playerWidth = (deviceOrientataion == Orientation.portrait) ? deviceWidth : (deviceHeight * playerAspectRatio);
+              double playerHeight = (deviceOrientataion == Orientation.landscape) ? deviceHeight : (deviceWidth / playerAspectRatio);
+              return GestureDetector(
+                  onTap: _onTapPlayPause,
+                  child: Stack(children: [
+                    Center(child: SizedBox(
+                      width: playerWidth,
+                      height: playerHeight,
+                      child: Stack(alignment: Alignment.center, children: [
+                        Stack(children: [
+                          Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: VideoPlayer(_controller!))),
+                          ClosedCaption(
+                              text: _currentCaptionText, textStyle: TextStyle(fontSize: 16, color: Styles().colors!.white))
+                        ]),
+                        _buildPlayButton()
+                      ]))),
+                      _buildCcButton()
+                  ]));
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          });
+    } else {
+      return Center(
+          child: Text(Localization().getStringEx('panel.settings.video_tutorial.video.missing.msg', 'Missing video'),
+              style: TextStyle(color: Styles().colors!.white, fontSize: 20, fontFamily: Styles().fontFamilies!.bold)));
+    }
+  }
+
+  Widget _buildPlayButton() {
+    final double buttonWidth = 80;
+    final double buttonHeight = 50;
+    bool buttonVisible = _isPlayerInitialized && !_isPlaying;
+    return Visibility(
+        visible: buttonVisible,
+        child: Container(
+            decoration: BoxDecoration(color: Styles().colors!.iconColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+            width: buttonWidth,
+            height: buttonHeight,
+            child: Center(
+                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Container(
+                  width: (buttonHeight / 2),
+                  child: CustomPaint(
+                      painter: TrianglePainter(
+                          painterColor: Styles().colors!.white,
+                          horzDir: TriangleHorzDirection.rightToLeft,
+                          vertDir: TriangleVertDirection.topToBottom),
+                      child: Container(height: (buttonHeight / 4)))),
+              Container(
+                  width: (buttonHeight / 2),
+                  child: CustomPaint(
+                      painter: TrianglePainter(
+                          painterColor: Styles().colors!.white,
+                          horzDir: TriangleHorzDirection.rightToLeft,
+                          vertDir: TriangleVertDirection.bottomToTop),
+                      child: Container(height: (buttonHeight / 4))))
+            ]))));
+  }
+
+  Widget _buildCcButton() {
+    return Visibility(
+        visible: _ccVisible,
+        child: Align(
+            alignment: Alignment.bottomRight,
+            child: GestureDetector(
+                onTap: _onTapCc,
+                child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    child: Container(
+                        width: 40,
+                        height: 30,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: (_ccEnabled ? Styles().colors!.white! : Styles().colors!.disabledTextColorTwo!), width: 2),
+                            borderRadius: BorderRadius.all(Radius.circular(6))),
+                        child: Center(
+                            child: Text('CC',
+                                style: TextStyle(
+                                    color: (_ccEnabled ? Styles().colors!.white! : Styles().colors!.disabledTextColorTwo!),
+                                    fontSize: 18,
+                                    fontFamily: Styles().fontFamilies!.bold))))))));
+  }
+
   void _onTapPlayPause() {
     if (!_isPlayerInitialized) {
       return;
     }
     if (_isPlaying) {
       _controller?.pause();
+      _showCc(true);
     } else {
       _controller?.play();
+      _startCcHidingTimer();
     }
     setState(() {});
   }
 
-  void _checkVideoEnded() {
+  void _showCc(bool ccVisible) {
+    _ccVisible = ccVisible;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _startCcHidingTimer() {
+    Timer(Duration(seconds: 5), () => _showCc(false));
+  }
+
+  void _onTapCc() {
+    _ccEnabled = !_ccEnabled;
+    _currentCaptionText = _ccEnabled ? _controller?.value.caption.text : null;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _checkVideoStateChanged() {
     if (_controller != null) {
-      bool videoEnded = (_controller!.value.position == _controller!.value.duration);
-      if (videoEnded && mounted) {
-        setState(() {});
+      if ((_currentCaptionText != _controller?.value.caption.text) && _ccEnabled) {
+        setState(() {
+          _currentCaptionText = _controller?.value.caption.text;
+        });
+      } else {
+        bool videoEnded = (_controller!.value.position == _controller!.value.duration);
+        if (videoEnded) {
+          _showCc(true);
+        }
       }
     }
   }
@@ -106,54 +259,5 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
 
   bool get _isPlayerInitialized {
     return (_controller?.value.isInitialized ?? false);
-  }
-
-  String get _playButtonLabel {
-    return _isPlaying
-        ? Localization().getStringEx('panel.settings.video_tutorial.button.pause.title', 'Pause')
-        : Localization().getStringEx('panel.settings.video_tutorial.button.play.title', 'Play');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    double playButtonWidth = MediaQuery.of(context).textScaleFactor * 120;
-    return Scaffold(
-        backgroundColor: Styles().colors!.blackTransparent06,
-        appBar: HeaderBar(title: Localization().getStringEx("panel.settings.video_tutorial.header.title", "Video Tutorial")),
-        body: Center(
-            child: Stack(children: [
-          _buildVideoContent(),
-          Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  child: SizedBox(
-                      width: playButtonWidth,
-                      child: RoundedButton(
-                          enabled: _isPlayerInitialized,
-                          label: _playButtonLabel,
-                          fontSize: 16,
-                          textColor: (_isPlayerInitialized ? Styles().colors!.fillColorPrimary : Styles().colors!.disabledTextColor),
-                          borderColor: (_isPlayerInitialized ? Styles().colors!.fillColorSecondary : Styles().colors!.mediumGray),
-                          onTap: _onTapPlayPause))))
-        ])));
-  }
-
-  Widget _buildVideoContent() {
-    if (_controller != null) {
-      return FutureBuilder(
-          future: _initializeVideoPlayerFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return Center(child: AspectRatio(aspectRatio: _controller!.value.aspectRatio, child: VideoPlayer(_controller!)));
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          });
-    } else {
-      return Center(
-          child: Text(Localization().getStringEx('panel.settings.video_tutorial.video.missing.msg', 'Missing video'),
-              style: TextStyle(color: Styles().colors!.white, fontSize: 20, fontFamily: Styles().fontFamilies!.bold)));
-    }
   }
 }

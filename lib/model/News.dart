@@ -66,14 +66,8 @@ class News implements Favorite {
     return AppDateTime().formatDateTime(pubDateTime, format: "MMM dd ", ignoreTimeZone: useDeviceLocalTimeZone);
   }
 
-  @override
-  String? get favoriteId => id;
-
-  @override
-  String? get favoriteTitle => title;
-
-  @override
-  String get favoriteKey => favoriteKeyName;
-
-  static String favoriteKeyName = "athleticNewsIds";
+  // Favorite
+  static const String favoriteKeyName = "athleticNewsIds";
+  @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => id;
 }

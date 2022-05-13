@@ -469,7 +469,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   void _onTapFavorite() {
     String? title = Guide().entryTitle(_guideEntry, stripHtmlTags: true);
     Analytics().logSelect(target: "Favorite: $title");
-    Auth2().prefs?.toggleFavorite(GuideFavorite(id: Guide().entryId(_guideEntry), title: title, ));
+    Auth2().prefs?.toggleFavorite(GuideFavorite(id: Guide().entryId(_guideEntry)));
   }
 
   void _onTapLink(String? url) {

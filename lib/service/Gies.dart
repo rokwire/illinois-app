@@ -1,9 +1,10 @@
 import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Gies with Service{
+class Gies with Service implements NotificationsListener{
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
   static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
@@ -12,7 +13,7 @@ class Gies with Service{
   List<String>?  _navigationPages;
 
   late Map<int, Set<String>> _progressPages;
-  Set<String>? _completedPages;
+  Set<String>? _verifiedPages;
   List<int>? _progressSteps;
 
   // Singletone instance
@@ -26,15 +27,27 @@ class Gies with Service{
 
   // Service
   @override
+  void createService() {
+    super.createService();
+    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupUpdated, Groups.notifyGroupCreated, Groups.notifyUserGroupsUpdated]);
+    super.createService();
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+    super.destroyService();
+  }
+
+  @override
   Future<void> initService() async{
     await super.initService();
     _navigationPages = Storage().giesNavPages ?? [];
-    _completedPages = Storage().giesCompletedPages ?? Set<String>();
-
     AppBundle.loadString('assets/gies.json').then((String? assetsContentString) {
         _pages = JsonUtils.decodeList(assetsContentString);
         _buildProgressSteps();
         _ensureNavigationPages();
+        _initialPageVerification();
     });
   }
 
@@ -122,9 +135,8 @@ class Gies with Service{
   void processButtonPage(Map<String, dynamic> button, {String? callerPageId}) {
     String? pageId = callerPageId ?? Gies().currentPageId;
     if (Gies().pageButtonCompletes(button)) {
-      if ((pageId != null) && pageId.isNotEmpty && !Gies().completedPages!.contains(pageId)) {
-          _completedPages!.add(pageId);
-        Storage().giesCompletedPages = _completedPages;
+      if ((pageId != null) && pageId.isNotEmpty) {
+        _verifyPage(pageId);
         NotificationService().notify(notifyPageCompleted, pageId);
       }
     }
@@ -163,7 +175,8 @@ class Gies with Service{
 
   bool isProgressStepCompleted(int? progressStep) {
     Set<String>? progressPages = _progressPages[progressStep];
-    return (progressPages == null) || _completedPages!.containsAll(progressPages);
+    return (progressPages == null) ||
+        (_verifiedPages?.containsAll(progressPages) ?? false);
   }
 
   String? setCurrentNotes(List<dynamic>? notes, String? pageId) {
@@ -190,12 +203,66 @@ class Gies with Service{
     return currentPageId;
   }
 
+  void _initialPageVerification(){
+    _verifiedPages = new Set();
+    _loadPageVerification();
+  }
+
+  void _loadPageVerification({bool notify = false}){
+    if(_progressPages.isNotEmpty){
+      for(Set<String> steps in _progressPages.values){
+        if(steps.isNotEmpty){
+          for(String pageId in steps){
+            _verifyPage(pageId);
+          }
+        }
+      }
+    }
+  }
+
+  void _verifyPage(String? page, {bool notify = true}){
+    if(page == null || _verifiedPages == null) {
+      return;
+    }
+
+    if(_isPageGroupMembershipApproved(page)){
+      if(!_verifiedPages!.contains(page)) {
+        _verifiedPages?.add(page);
+        if(notify){
+          NotificationService().notify(notifyPageCompleted);
+        }
+      }
+    } else {
+      if(_verifiedPages!.contains(page)){
+        _verifiedPages!.remove(page);
+        if(notify){
+          NotificationService().notify(notifyPageCompleted);
+        }
+      }
+    }
+  }
+
+  bool _isPageGroupMembershipApproved(String? pageId){
+    if(StringUtils.isEmpty(pageId))
+      return false;
+
+    dynamic pageData = getPage(id: pageId);
+    String? groupName = pageData is Map ?  JsonUtils.stringValue(pageData["group_name"]) : null;
+    Set<String>? groupsNames = Groups().userGroupNames;
+    return groupName != null &&
+        (groupsNames?.contains(groupName) ?? false);
+  }
+
+  bool isPageVerified(String? pageId){
+    return pageId!= null && (_verifiedPages?.contains(pageId) ?? false);
+  }
+
   List<dynamic>? get pages{
     return _pages;
   }
 
-  Set<String>? get completedPages{
-    return _completedPages;
+  Set<String>? get verifiedPages{
+    return _verifiedPages;
   }
 
   List<dynamic>? get navigationPages{
@@ -249,15 +316,24 @@ class Gies with Service{
 
   //Utils
   bool _pageCanComplete(Map? page) {
-    List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
-    if (buttons != null) {
-      for (dynamic button in buttons) {
-        if ((button is Map) && pageButtonCompletes(button)) {
-          return true;
-        }
-      }
-    }
-    return false;
+    // List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
+    // List<dynamic>? bnavigationButtons = (page != null) ? JsonUtils.listValue(page['navigation_buttons']) : null;
+    //
+    // if (buttons != null) {
+    //   for (dynamic button in buttons) {
+    //     if ((button is Map) && pageButtonCompletes(button)) {
+    //       return true;
+    //     }
+    //   }
+    // } else if (bnavigationButtons!=null){
+    //   for (dynamic button in bnavigationButtons) {
+    //     if ((button is Map) && pageButtonCompletes(button)) {
+    //       return true;
+    //     }
+    //   }
+    // }
+    // return false
+    return StringUtils.isNotEmpty(JsonUtils.stringValue(page?["group_name"]));
   }
 
   bool pageButtonCompletes(Map button) {
@@ -266,5 +342,15 @@ class Gies with Service{
 
   int? getPageProgress(Map<String, dynamic>? page) {
     return (page != null) ? (JsonUtils.intValue(page['progress']) ?? JsonUtils.intValue(page['progress-possition'])) : null;
+  }
+
+  @override
+  void onNotification(String name, param) {
+     if (name == Groups.notifyUserMembershipUpdated ||
+         name == Groups.notifyGroupUpdated ||
+         // name == Groups.notifyGroupCreated ||
+         name == Groups.notifyUserGroupsUpdated) {
+       _loadPageVerification(notify: true);
+     }
   }
 }

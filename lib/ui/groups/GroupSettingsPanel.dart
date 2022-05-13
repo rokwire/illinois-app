@@ -108,6 +108,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             ]))),
                             Container(height: 12, color: Styles().colors!.background),
                             _buildPrivacyDropDown(),
+                            _buildHiddenForSearch(),
                             _buildAuthManLayout(),
                             Visibility(
                               visible: !_isAuthManGroup,
@@ -599,6 +600,44 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   void _onPrivacyChanged(dynamic value) {
     _group?.privacy = value;
+    if (_isPublicGroup) {
+      // Do not hide group from search if it is public
+      _group!.hiddenForSearch = false;
+    }
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Widget _buildHiddenForSearch() {
+    return Visibility(
+        visible: _isPrivateGroup,
+        child: Container(
+            color: Styles().colors!.background,
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 20),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(
+                  child: _buildSwitch(
+                      title: Localization().getStringEx("panel.groups.common.private.search.hidden.label", "Make Group Hidden"),
+                      value: _group?.hiddenForSearch,
+                      onTap: _onTapHiddenForSearch)),
+              Semantics(
+                  container: true,
+                  child: Container(
+                      padding: EdgeInsets.only(left: 8, right: 8, top: 12),
+                      child: Text(
+                          Localization()
+                              .getStringEx("panel.groups.common.private.search.hidden.description", "A hidden group is unsearchable."),
+                          style: TextStyle(
+                              color: Styles().colors!.textBackground,
+                              fontSize: 14,
+                              fontFamily: Styles().fontFamilies!.regular,
+                              letterSpacing: 1))))
+            ])));
+  }
+
+  void _onTapHiddenForSearch() {
+    _group!.hiddenForSearch = !(_group!.hiddenForSearch ?? false);
     if (mounted) {
       setState(() {});
     }
@@ -928,6 +967,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   bool get _isAuthManGroup{
     return _group?.authManEnabled ?? false;
+  }
+
+  bool get _isPrivateGroup {
+    return _group?.privacy == GroupPrivacy.private;
+  }
+
+  bool get _isPublicGroup {
+    return _group?.privacy == GroupPrivacy.public;
   }
 }
 

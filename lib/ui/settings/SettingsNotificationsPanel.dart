@@ -193,6 +193,14 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
           toggled: FirebaseMessaging().notifyGroupInvitationsUpdates,
           onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesInvitationsToggled: (){},
           textStyle: _groupsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
+          TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies!.bold)),
+      _CustomToggleButton(
+          enabled: _groupsSubNotificationsEnabled,
+          borderRadius: BorderRadius.zero,
+          label: Localization().getStringEx("panel.settings.notifications.group_updates.polls.label", "Polls"),
+          toggled: FirebaseMessaging().notifyGroupPollsUpdates,
+          onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesPollsToggled: (){},
+          textStyle: _groupsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
           TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies!.bold))
     ]))))]));
     widgets.add(Container(color: Styles().colors!.white, height: 20));
@@ -313,6 +321,13 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
       return ;
     Analytics().logSelect(target: "Invitations updates");
     FirebaseMessaging().notifyGroupInvitationsUpdates = !FirebaseMessaging().notifyGroupInvitationsUpdates!;
+  }
+
+  void _onGroupsUpdatesPollsToggled() {
+    if(!_notificationsEnabled)
+      return ;
+    Analytics().logSelect(target: "Invitations updates");
+    FirebaseMessaging().notifyGroupPollsUpdates = !FirebaseMessaging().notifyGroupPollsUpdates!;
   }
 
   void _onGroupsUpdatesEventsToggled() {

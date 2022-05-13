@@ -24,6 +24,17 @@ class InboxHomePanel extends StatefulWidget {
   InboxHomePanel();
 
   _InboxHomePanelState createState() => _InboxHomePanelState();
+
+  static void launchMessageDetail(InboxMessage message) {
+    FirebaseMessaging().processDataMessageEx(message.data, allowedPayloadTypes: {
+      FirebaseMessaging.payloadTypeEventDetail,
+      FirebaseMessaging.payloadTypeGameDetail,
+      FirebaseMessaging.payloadTypeAthleticsGameStarted,
+      FirebaseMessaging.payloadTypeAthleticsNewDetail,
+      FirebaseMessaging.payloadTypeGroup
+    });
+  }
+
 }
 
 class _InboxHomePanelState extends State<InboxHomePanel> implements NotificationsListener {
@@ -193,6 +204,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _handleSelectionTap(InboxMessage message) {
+    Analytics().logSelect(target: message.subject);
     setState(() {
       if (message.messageId != null) {
         if (_selectedMessageIds.contains(message.messageId)) {
@@ -207,15 +219,8 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _handleRedirectTap(InboxMessage message) {
-    String? messageType = FirebaseMessaging.getMessageType(message.data);
-    if ((messageType == FirebaseMessaging.payloadTypeEventDetail) ||
-        (messageType == FirebaseMessaging.payloadTypeGameDetail) ||
-        (messageType == FirebaseMessaging.payloadTypeAthleticsGameStarted) ||
-        (messageType == FirebaseMessaging.payloadTypeAthleticsNewDetail) ||
-        (messageType == FirebaseMessaging.payloadTypeGroup))
-    {
-      FirebaseMessaging().processDataMessage(message.data);
-    }
+    Analytics().logSelect(target: message.subject);
+    InboxHomePanel.launchMessageDetail(message);
   }
   
   // Banner
