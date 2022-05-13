@@ -296,10 +296,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       setState(() {
         _progress++;
       });
-      Laundries().loadRooms().then((List<LaundryRoom>? laundries) {
+      Laundries().loadSchoolRooms().then((LaundrySchool? laundrySchool) {
         setState(() {
           _progress--;
-          _laundries = _buildFilteredItems(laundries, favoriteLaundryIds);
+          _laundries = _buildFilteredItems(laundrySchool?.rooms, favoriteLaundryIds);
         });
       });
     }
