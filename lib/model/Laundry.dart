@@ -64,6 +64,10 @@ class LaundryRoom implements Favorite {
     };
   }
 
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'title': name, 'status': roomStatusToString(status), 'location': location?.toJson()};
+  }
+
   // Favorite
   static const String favoriteKeyName = "laundryPlaceIds";
   @override String get favoriteKey => favoriteKeyName;
@@ -211,6 +215,17 @@ LaundryRoomStatus? roomStatusFromString(String? roomStatusString) {
       return LaundryRoomStatus.online;
     case 'offline':
       return LaundryRoomStatus.offline;
+    default:
+      return null;
+  }
+}
+
+String? roomStatusToString(LaundryRoomStatus? status) {
+  switch (status) {
+    case LaundryRoomStatus.online:
+      return 'online';
+    case LaundryRoomStatus.offline:
+      return 'offline';
     default:
       return null;
   }
