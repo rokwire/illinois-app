@@ -9,44 +9,6 @@
 		}
 	},
 
-	"laundry": {
-		"locations": [
-			{"laundry_location": "589877048", "laundry_room_name": "ALLEN, ROOM 49",                "location_details":{"longitude":-88.22088,  "latitude":40.104416, "floor":0}},
-			{"laundry_location": "589877054", "laundry_room_name": "BOUSFIELD-RM 101 DRYERS",       "location_details":{"longitude":-88.237941, "latitude":40.102036, "floor":0}},
-			{"laundry_location": "589877017", "laundry_room_name": "BOUSFIELD-RM 103 WASHERS",      "location_details":{"longitude":-88.237941, "latitude":40.102036, "floor":0}},
-			{"laundry_location": "589877019", "laundry_room_name": "BUSEY EVANS ROOM 8",            "location_details":{"longitude":-88.222941, "latitude":40.105977, "floor":0}},
-			{"laundry_location": "589877004", "laundry_room_name": "CLARK HALL, ROOM 30",           "location_details":{"longitude":-88.234041, "latitude":40.103841, "floor":0}},
-			{"laundry_location": "589877022", "laundry_room_name": "DANIELS, NORTH ROOM 119",       "location_details":{"longitude":-88.221658, "latitude":40.111014, "floor":0}},
-			{"laundry_location": "589877043", "laundry_room_name": "DANIELS, SOUTH ROOM 40",        "location_details":{"longitude":-88.221658, "latitude":40.111014, "floor":0}},
-			{"laundry_location": "589877003", "laundry_room_name": "FAR, OGLESBY ROOM 1",           "location_details":{"longitude":-88.221665, "latitude":40.099275, "floor":0}},
-			{"laundry_location": "589877021", "laundry_room_name": "FAR, TRELEASE ROOM 13",         "location_details":{"longitude":-88.220323, "latitude":40.099124, "floor":0}},
-			{"laundry_location": "589877044", "laundry_room_name": "GOODWIN GREEN, GREEN ROOM 31",  "location_details":{"longitude":-88.223707, "latitude":40.109995, "floor":0}},
-			{"laundry_location": "589877027", "laundry_room_name": "GOODWIN-GREEN, GOODWIN ROOM 8", "location_details":{"longitude":-88.223707, "latitude":40.109995, "floor":0}},
-			{"laundry_location": "589877026", "laundry_room_name": "HOPKINS, ROOM 150",             "location_details":{"longitude":-88.237834, "latitude":40.102821, "floor":0}},
-			{"laundry_location": "589877032", "laundry_room_name": "ISR, TOWNSEND ROOM 80",         "location_details":{"longitude":-88.220951, "latitude":40.110287, "floor":0}},
-			{"laundry_location": "589877030", "laundry_room_name": "ISR, WARDALL ROOM 12",          "location_details":{"longitude":-88.22174,  "latitude":40.109602, "floor":0}},
-			{"laundry_location": "589877031", "laundry_room_name": "LAR, NORTH ROOM 45",            "location_details":{"longitude":-88.220382, "latitude":40.104371, "floor":0}},
-			{"laundry_location": "589877038", "laundry_room_name": "LAR, SOUTH ROOM 29",            "location_details":{"longitude":-88.220382, "latitude":40.104371, "floor":0}},
-			{"laundry_location": "589877057", "laundry_room_name": "NUGENT, ROOM 126",              "location_details":{"longitude":-88.237296, "latitude":40.104108, "floor":0}},
-			{"laundry_location": "589877036", "laundry_room_name": "NUGENT, ROOM 31",               "location_details":{"longitude":-88.237296, "latitude":40.104108, "floor":0}},
-			{"laundry_location": "589877037", "laundry_room_name": "NUGENT, ROOM 35",               "location_details":{"longitude":-88.237296, "latitude":40.104108, "floor":0}},
-			{"laundry_location": "589877040", "laundry_room_name": "ORCHARD DOWNS, NORTH LAUNDRY",  "location_details":{"longitude":-88.214132, "latitude":40.096854, "floor":0}},
-			{"laundry_location": "589877041", "laundry_room_name": "ORCHARD DOWNS, SOUTH LAUNDRY",  "location_details":{"longitude":-88.214132, "latitude":40.096854, "floor":0}},
-			{"laundry_location": "589877023", "laundry_room_name": "PAR, BABCOCK ROOM 23",          "location_details":{"longitude":-88.221113, "latitude":40.099810, "floor":0}},
-			{"laundry_location": "589877046", "laundry_room_name": "PAR, BLAISDELL ROOM 21B",       "location_details":{"longitude":-88.219809, "latitude":40.100422, "floor":0}},
-			{"laundry_location": "589877024", "laundry_room_name": "PAR, CARR ROOM 22",             "location_details":{"longitude":-88.220893, "latitude":40.100385, "floor":0}},
-			{"laundry_location": "589877008", "laundry_room_name": "PAR, SAUNDERS ROOM 23",         "location_details":{"longitude":-88.219788, "latitude":40.099835, "floor":0}},
-			{"laundry_location": "589877009", "laundry_room_name": "SCOTT, ROOM 170",               "location_details":{"longitude":-88.236672, "latitude":40.102274, "floor":0}},
-			{"laundry_location": "589877052", "laundry_room_name": "SHERMAN, 13 STORY ROOM 52",     "location_details":{"longitude":-88.232349, "latitude":40.107331, "floor":0}},
-			{"laundry_location": "589877051", "laundry_room_name": "SHERMAN, 5 STORY ROOM 29",      "location_details":{"longitude":-88.232349, "latitude":40.107331, "floor":0}},
-			{"laundry_location": "589877015", "laundry_room_name": "SNYDER, ROOM 182",              "location_details":{"longitude":-88.235126, "latitude":40.102377, "floor":0}},
-			{"laundry_location": "589877002", "laundry_room_name": "TVD, TAFT ROOM 13",             "location_details":{"longitude":-88.233621, "latitude":40.102012, "floor":0}},
-			{"laundry_location": "589877058", "laundry_room_name": "TVD, VAN DOREN ROOM 13",        "location_details":{"longitude":-88.233655, "latitude":40.102035, "floor":0}},
-			{"laundry_location": "589877061", "laundry_room_name": "WASSAJA, ROOM 1109",            "location_details":{"longitude":-88.23819,  "latitude":40.103971, "floor":0}},
-			{"laundry_location": "589877028", "laundry_room_name": "WESTON, ROOM 100",              "location_details":{"longitude":-88.235365, "latitude":40.103287, "floor":0}}
-		]
-	},
-
 	"sports": {
 		"types":[
 			{"shortName": "baseball",  "name":"Baseball",                  "custom_name":"Baseball",          "hasPosition":true,  "hasHeight":true,  "hasWeight":true,  "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"men",   "ticketed":false, "icon":"images/athletics-baseball-orange.png"},
