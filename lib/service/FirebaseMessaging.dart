@@ -134,7 +134,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeHome = 'home';
   static const String payloadTypeInbox = 'inbox';
 
-
   DateTime? _pausedDateTime;
   
   // Singletone Factory
@@ -237,8 +236,14 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   // Message Processing
 
   @override
-  void processDataMessage(Map<String, dynamic>? data) {
-    String? type = getMessageType(data);
+  void processDataMessage(Map<String, dynamic>? data) => _processDataMessage(data);
+
+  void _processDataMessage(Map<String, dynamic>? data, {String? type} ) {
+    
+    if (type == null) {
+      type = _getMessageType(data);
+    }
+    
     if (type == payloadTypeConfigUpdate) {
       _onConfigUpdate(data);
     }
@@ -277,7 +282,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
   }
 
-  static String? getMessageType(Map<String, dynamic>? data) {
+  static String? _getMessageType(Map<String, dynamic>? data) {
     if (data == null)
       return null;
 
@@ -330,6 +335,13 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
       Log.d("FCM: Perform config update");
       NotificationService().notify(notifyConfigUpdate, data);
     });
+  }
+
+  void processDataMessageEx(Map<String, dynamic>? data, { Set<String>? allowedPayloadTypes }) {
+    String? messageType;
+    if ((allowedPayloadTypes == null) || (allowedPayloadTypes.contains(messageType = _getMessageType(data)))) {
+      _processDataMessage(data, type: messageType);
+    }
   }
 
   // Settings topics

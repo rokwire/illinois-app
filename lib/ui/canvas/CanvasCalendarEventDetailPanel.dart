@@ -123,7 +123,7 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
                         child: GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: () {
-                              Analytics().logSelect(target: "Favorite: ${_event?.favoriteTitle}");
+                              Analytics().logSelect(target: "Favorite: ${_event?.title}");
                               Auth2().prefs?.toggleFavorite(_event);
                             },
                             child: Semantics(

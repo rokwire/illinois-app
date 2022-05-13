@@ -1283,16 +1283,9 @@ class CanvasCalendarEvent implements Favorite {
   ////////////////////////////
   // Favorite implementation
 
-  @override
-  String? get favoriteId => id?.toString();
-
-  @override
-  String get favoriteTitle => StringUtils.ensureNotEmpty(title);
-
-  @override
-  String get favoriteKey => _favoriteKeyName;
-
   static String _favoriteKeyName = "canvasCalendarEventIds";
+  @override String get favoriteKey => _favoriteKeyName;
+  @override String? get favoriteId => id?.toString();
 }
 
 ////////////////////////////////
