@@ -33,7 +33,7 @@ class Laundries /* with Service */ {
 
   Laundries._internal();
 
-  Future<List<LaundryRoom>?> loadRooms() async {
+  Future<LaundrySchool?> loadSchoolRooms() async {
     String? roomsUrl = (Config().gatewayUrl != null) ? "${Config().gatewayUrl}/laundry/rooms" : null;
     if (StringUtils.isNotEmpty(roomsUrl)) {
       Response? response = await Network().get(roomsUrl, auth: Auth2());
@@ -41,10 +41,9 @@ class Laundries /* with Service */ {
       String? responseString = response?.body;
       if (responseCode == 200) {
         Map<String, dynamic>? jsonResponse = JsonUtils.decodeMap(responseString);
-        List<dynamic>? roomsJson = (jsonResponse != null) ? JsonUtils.listValue(jsonResponse['LaundryRooms']) : null;
-        return LaundryRoom.fromJsonList(roomsJson);
+        return LaundrySchool.fromJson(jsonResponse);
       } else {
-        Log.e('Failed to load laundry rooms. Response code: $responseCode, Response:\n$responseString');
+        Log.e('Failed to load school laundry rooms. Response code: $responseCode, Response:\n$responseString');
       }
     } else {
       Log.e('Missing gateway url.');

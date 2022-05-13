@@ -19,6 +19,21 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+class LaundrySchool {
+  final String? schoolName;
+  final List<LaundryRoom>? rooms;
+
+  LaundrySchool({this.schoolName, this.rooms});
+
+  static LaundrySchool? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? LaundrySchool(
+            schoolName: JsonUtils.stringValue(json['SchoolName']),
+            rooms: LaundryRoom.fromJsonList(JsonUtils.listValue(json['LaundryRooms'])))
+        : null;
+  }
+}
+
 class LaundryRoom implements Favorite {
   String? id;
   String? name;
@@ -30,10 +45,20 @@ class LaundryRoom implements Favorite {
   static LaundryRoom? fromJson(Map<String, dynamic>? json) {
     return (json != null)
         ? LaundryRoom(
-            id: JsonUtils.stringValue(json['ID']),
-            name: JsonUtils.stringValue(json['Name']),
-            status: roomStatusFromString(JsonUtils.stringValue(json['Status'])),
-            location: ExploreLocation.fromJSON(JsonUtils.mapValue(json['Location'])))
+            id: JsonUtils.stringValue(json['ID'] ?? json['id']),
+            name: JsonUtils.stringValue(json['Name'] ?? json['title']),
+            status: roomStatusFromString(JsonUtils.stringValue(json['Status'] ?? json['status'])),
+            location: ExploreLocation.fromJSON(JsonUtils.mapValue(json['Location'] ?? json['location'])))
+        : null;
+  }
+
+  static LaundryRoom? fromNativeMapJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? LaundryRoom(
+            id: JsonUtils.stringValue(json['id']),
+            name: JsonUtils.stringValue(json['title']),
+            status: roomStatusFromString(JsonUtils.stringValue(json['status'])),
+            location: ExploreLocation.fromJSON(JsonUtils.mapValue(json['location'])))
         : null;
   }
 
@@ -62,6 +87,10 @@ class LaundryRoom implements Favorite {
       Analytics.LogAttributeLaundryId: id,
       Analytics.LogAttributeLaundryName: name,
     };
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'title': name, 'status': roomStatusToString(status), 'location': location?.toJson()};
   }
 
   // Favorite
@@ -211,6 +240,17 @@ LaundryRoomStatus? roomStatusFromString(String? roomStatusString) {
       return LaundryRoomStatus.online;
     case 'offline':
       return LaundryRoomStatus.offline;
+    default:
+      return null;
+  }
+}
+
+String? roomStatusToString(LaundryRoomStatus? status) {
+  switch (status) {
+    case LaundryRoomStatus.online:
+      return 'online';
+    case LaundryRoomStatus.offline:
+      return 'offline';
     default:
       return null;
   }
