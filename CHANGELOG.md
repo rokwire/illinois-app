@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ## [4.0.9] - 2022-05-13
+### Changed
+- Cleaned up Favorites, prepare for UIUC 4 features [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 ### Fixed
 - Display Laundry rooms on the native map [#1530](https://github.com/rokwire/illinois-app/issues/1530).
 
@@ -16,7 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Gies Panel navigation with navigation_buttons for all pages [#1605](https://github.com/rokwire/illinois-app/issues/1605).
 - Hide "On Campus" related stuff for GIES students [#1623](https://github.com/rokwire/illinois-app/issues/1623).
-- Cleaned up Favorites, prepare for UIUC 4 features [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 
 ## [4.0.7] - 2022-05-11
 ### Fixed
