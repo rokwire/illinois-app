@@ -40,24 +40,17 @@ import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
-import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:notification_permissions/notification_permissions.dart';
-
-import 'athletics/AthleticsNewsArticlePanel.dart';
-import 'events/CompositeEventsDetailPanel.dart';
-import 'explore/ExploreDetailPanel.dart';
 
 class SavedPanel extends StatefulWidget {
 
@@ -692,20 +685,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
   }
 
   void _onTapItem(Favorite? item) {
-    if (item is Event) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: item,)));
-    } else if (item is Dining) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: item,)));
-    } else if (item is Game) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: item,)));
-    } else if (item is News) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: item,)));
-    } else if (item is LaundryRoom) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: item,)));
-    } else if (item is GuideFavorite) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: item.id,)));
-    } else if (item is InboxMessage) {
-    }
+    Analytics().logSelect(target: item?.favoriteTitle);
+    item?.favoriteLaunchDetail(context);
   }
 
   void _onViewAllTapped() {

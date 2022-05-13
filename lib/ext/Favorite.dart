@@ -12,6 +12,7 @@ import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
+import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -114,9 +115,9 @@ extension FavoriteExt on Favorite {
     }
   }
 
-  Route? favoriteDetailRoute(BuildContext context) {
+  void favoriteLaunchDetail(BuildContext context) {
     if (this is Event) {
-      return CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event,));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event,)));
     }
     else if (this is Dining) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining,)));
@@ -134,7 +135,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id,)));
     }
     else if (this is InboxMessage) {
-      //TBD
+      InboxHomePanel.launchMessageDetail(this as InboxMessage);
     }
   }
   
