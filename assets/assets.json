@@ -9,30 +9,6 @@
 		}
 	},
 
-	"sports": {
-		"types":[
-			{"shortName": "baseball",  "name":"Baseball",                  "custom_name":"Baseball",          "hasPosition":true,  "hasHeight":true,  "hasWeight":true,  "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"men",   "ticketed":false, "icon":"images/athletics-baseball-orange.png"},
-			{"shortName": "mbball",    "name":"Men's Basketball",          "custom_name":"Basketball",        "hasPosition":true,  "hasHeight":true,  "hasWeight":true,  "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"men",   "ticketed":true,  "icon":"images/athletics-basketball-orange.png"},
-			{"shortName": "mcross",    "name":"Men's Cross Country",       "custom_name":"Cross Country",     "hasPosition":false, "hasHeight":false, "hasWeight":false, "hasSortByPosition":false, "hasSortByNumber":false,                    "gender":"men",   "ticketed":false, "icon":"images/athletics-cross-orange.png"},
-			{"shortName": "football",  "name":"Football",                  "custom_name":"Football",          "hasPosition":true,  "hasHeight":true,  "hasWeight":true,  "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"men",   "ticketed":true,  "icon":"images/athletics-football-orange.png"},
-			{"shortName": "mgolf",     "name":"Men's Golf",                "custom_name":"Golf",              "hasPosition":false, "hasHeight":false, "hasWeight":false, "hasSortByPosition":false, "hasSortByNumber":false,                    "gender":"men",   "ticketed":false, "icon":"images/athletics-golf-orange.png"},
-			{"shortName": "mgym",      "name":"Men's Gymnastics",          "custom_name":"Gymnastics",        "hasPosition":true,  "hasHeight":false, "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":true,                     "gender":"men",   "ticketed":false, "icon":"images/athletics-gymnastics-orange.png"},
-			{"shortName": "mten",      "name":"Men's Tennis",              "custom_name":"Tennis",            "hasPosition":false, "hasHeight":true,  "hasWeight":false, "hasSortByPosition":false, "hasSortByNumber":false, "hasScores":true,  "gender":"men",   "ticketed":false, "icon":"images/athletics-tennis-orange.png"},
-			{"shortName": "mtrack",    "name":"Men's Track & Field",       "custom_name":"Track & Field",     "hasPosition":true,  "hasHeight":false, "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":false,                    "gender":"men",   "ticketed":false, "icon":"images/athletics-track-orange.png"},
-			{"shortName": "wrestling", "name":"Men's Wrestling",           "custom_name":"Wrestling",         "hasPosition":false, "hasHeight":true,  "hasWeight":true,  "hasSortByPosition":false, "hasSortByNumber":false,                    "gender":"men",   "ticketed":false, "icon":"images/athletics-wrestling-orange.png"},
-			{"shortName": "wbball",    "name":"Women's Basketball",        "custom_name":"Basketball",        "hasPosition":true,  "hasHeight":true,  "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"women", "ticketed":true,  "icon":"images/athletics-basketball-orange.png"},
-			{"shortName": "wcross",    "name":"Women's Cross Country",     "custom_name":"Cross Country",     "hasPosition":false, "hasHeight":false, "hasWeight":false, "hasSortByPosition":false, "hasSortByNumber":false,                    "gender":"women", "ticketed":false, "icon":"images/athletics-cross-orange.png"},
-			{"shortName": "wgolf",     "name":"Women's Golf",              "custom_name":"Golf",              "hasPosition":false, "hasHeight":false, "hasWeight":false, "hasSortByPosition":false, "hasSortByNumber":false,                    "gender":"women", "ticketed":false, "icon":"images/athletics-golf-orange.png"},
-			{"shortName": "wgym",      "name":"Women's Gymnastics",        "custom_name":"Gymnastics",        "hasPosition":true,  "hasHeight":true,  "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":false,                    "gender":"women", "ticketed":false, "icon":"images/athletics-gymnastics-orange.png"},
-			{"shortName": "wsoc",      "name":"Women's Soccer",            "custom_name":"Soccer",            "hasPosition":true,  "hasHeight":true,  "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"women", "ticketed":false, "icon":"images/athletics-soccer-orange.png"},
-			{"shortName": "softball",  "name":"Softball",                  "custom_name":"Softball",          "hasPosition":true,  "hasHeight":true,  "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"women", "ticketed":false, "icon":"images/athletics-softball-orange.png"},
-			{"shortName": "wswim",     "name":"Women's Swimming & Diving", "custom_name":"Swimming & Diving", "hasPosition":true,  "hasHeight":false, "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":false,                    "gender":"women", "ticketed":false, "icon":"images/athletics-swim-orange.png"},
-			{"shortName": "wten",      "name":"Women's Tennis",            "custom_name":"Tennis",            "hasPosition":false, "hasHeight":false, "hasWeight":false, "hasSortByPosition":false, "hasSortByNumber":false, "hasScores":true,  "gender":"women", "ticketed":false, "icon":"images/athletics-tennis-orange.png"},
-			{"shortName": "wtrack",    "name":"Women's Track & Field",     "custom_name":"Track & Field",     "hasPosition":true,  "hasHeight":false, "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":false,                    "gender":"women", "ticketed":false, "icon":"images/athletics-track-orange.png"},
-			{"shortName": "wvball",    "name":"Women's Volleyball",        "custom_name":"Volleyball",        "hasPosition":true,  "hasHeight":true,  "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"women", "ticketed":true,  "icon":"images/athletics-volleyball-orange.png"}
-		]
-	},
-
 	"images": {
 		"random": {
 			"events":{
