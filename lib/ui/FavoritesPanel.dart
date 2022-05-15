@@ -39,7 +39,7 @@ class FavoritesPanel extends StatefulWidget {
   _FavoritesPanelState createState() => _FavoritesPanelState();
 }
 
-class _FavoritesPanelState extends State<FavoritesPanel> implements NotificationsListener {
+class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAliveClientMixin<FavoritesPanel> implements NotificationsListener {
   
   Map<String, List<Favorite>?> _favorites = <String, List<Favorite>>{};
   bool _loadingFavorites = false;
@@ -77,9 +77,16 @@ class _FavoritesPanelState extends State<FavoritesPanel> implements Notification
       setState(() { _loadFavorites(); });
     }
   }
+
+  // AutomaticKeepAliveClientMixin
   
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Styles().colors!.fillColorPrimaryVariant,
