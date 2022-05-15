@@ -478,7 +478,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       if (panel != null) {
         
         if (panel is RootPanel) {
-          Widget? tabPanel = App.instance?.panelState?.rootPanel?.panelState?.currentTabPanel;
+          Widget? tabPanel = RootPanel.stateKey.currentState?.currentTabPanel;
           if (tabPanel != null) {
             panel = tabPanel;
           }

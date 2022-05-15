@@ -62,7 +62,9 @@ import 'package:illinois/service/Canvas.dart';
 enum RootTab { Home, Athletics, Explore, Wallet, Browse }
 
 class RootPanel extends StatefulWidget {
-  RootPanel();
+  static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
+
+  RootPanel() : super(key: stateKey);
 
   @override
   _RootPanelState createState()  => _RootPanelState();

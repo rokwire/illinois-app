@@ -164,13 +164,8 @@ class AppExitListener implements NotificationsListener {
   }
 }
 
-class _AppData {
-  _AppState? _panelState;
-}
-
 class App extends StatefulWidget {
 
-  final _AppData _data = _AppData();
   final ServiceError? initializeError;
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   static App? _instance;
@@ -181,15 +176,10 @@ class App extends StatefulWidget {
 
   static App? get instance => _instance;
 
-  get panelState => _data._panelState;
-
   BuildContext? get currentContext => navigatorKey.currentContext;
 
   @override
-  _AppState createState() {
-    _AppState appState = _AppState();
-    return _data._panelState = appState;
-  }
+  _AppState createState() => _AppState();
 }
 
 class _AppState extends State<App> implements NotificationsListener {
