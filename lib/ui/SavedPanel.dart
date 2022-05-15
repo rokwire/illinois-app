@@ -54,9 +54,7 @@ import 'package:notification_permissions/notification_permissions.dart';
 
 class SavedPanel extends StatefulWidget {
 
-  final ScrollController? scrollController;
-
-  SavedPanel({this.scrollController});
+  SavedPanel();
 
   @override
   _SavedPanelState createState() => _SavedPanelState();
@@ -139,13 +137,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                 CustomScrollView(
                   slivers: <Widget>[
                     SliverHeaderBar(
-                      leadingAsset: widget.scrollController == null
-                          ? 'images/chevron-left-white.png'
-                          : 'images/chevron-left-blue.png',
+                      leadingAsset: 'images/chevron-left-white.png',
                       title: Localization().getStringEx('panel.saved.header.label', 'Saved'),
-                      textColor: widget.scrollController == null
-                        ? Styles().colors!.white
-                        : Styles().colors!.fillColorPrimary,
+                      textColor: Styles().colors!.white,
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate([
@@ -191,9 +185,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
         ),
       ],),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: widget.scrollController == null
-          ? uiuc.TabBar()
-          : Container(height: 0,),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
