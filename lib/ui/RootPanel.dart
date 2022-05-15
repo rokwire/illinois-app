@@ -238,8 +238,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   @override
   Widget build(BuildContext context) {
-    Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
-
     List<Widget> panels = [];
     for (RootTab? rootTab in _tabs) {
       panels.add(_panels[rootTab] ?? Container());

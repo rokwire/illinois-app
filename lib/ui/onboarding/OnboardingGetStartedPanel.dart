@@ -29,8 +29,6 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
 
   @override
   Widget build(BuildContext context) {
-    
-    Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
 
     String? strWelcome = Localization().getStringEx(
         'panel.onboarding.get_started.image.welcome.title',

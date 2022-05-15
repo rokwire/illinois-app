@@ -237,7 +237,6 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   String?               _locationServices;
   String?               _notificationServices;
   String?               _sessionUuid;
-  String?               _accessibilityState;
   List<dynamic>?        _userRoles;
   
 
@@ -551,12 +550,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 
   // Accessibility
 
-  bool? get accessibilityState {
-    return (_accessibilityState != null) ? (true.toString() == _accessibilityState) : null;
-  }
-
-  set accessibilityState(bool? value) {
-    _accessibilityState = (value != null) ? value.toString() : null;
+  bool? get _accessibilityState {
+    BuildContext? context = App.instance?.currentContext;
+    return (context != null) ? MediaQuery.of(context).accessibleNavigation : null;
   }
 
   // User Roles Service
