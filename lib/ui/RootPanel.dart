@@ -21,7 +21,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -239,7 +238,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   @override
   Widget build(BuildContext context) {
-    App.instance.homeContext = context;
     Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
 
     List<Widget> panels = [];

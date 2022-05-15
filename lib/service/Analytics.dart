@@ -475,7 +475,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
 
     if (builder != null) {
-      Widget? panel = (App.instance?.homeContext != null) ? builder(App.instance?.homeContext) : null;
+      Widget? panel = (App.instance?.currentContext != null) ? builder(App.instance!.currentContext!) : null;
       if (panel != null) {
         
         if (panel is RootPanel) {

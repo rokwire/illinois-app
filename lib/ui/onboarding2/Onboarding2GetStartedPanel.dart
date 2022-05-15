@@ -16,7 +16,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -30,8 +29,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-    App.instance.homeContext = context;
+
     Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
 
     return Scaffold(body:

@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/main.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -44,8 +43,6 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
 
   @override
   Widget build(BuildContext context) {
-
-    App.instance.homeContext = context;
 
     String buttonTitle = Localization().getStringEx('panel.onboarding.error.button.try_again.title', 'Try Again');
     String? buttonHint = Localization().getStringEx('panel.onboarding.error.button.try_again.hint', '');
