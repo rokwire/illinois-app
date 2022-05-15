@@ -21,6 +21,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/ui/FavoritesPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -59,7 +60,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/service/Canvas.dart';
 
-enum RootTab { Home, Athletics, Explore, Wallet, Browse }
+enum RootTab { Home, Athletics, Explore, Wallet, Browse, Favorites }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -216,8 +217,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _onTabSelectionChanged(int tabIndex) {
     if (mounted) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      RootTab? tab = getRootTabByIndex(tabIndex);
-      selectTab(rootTab: tab);
+      _selectTab(tabIndex);
     }
   }
 
@@ -261,36 +261,29 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         onWillPop: _onWillPop);
   }
 
-  ///Public interface
-  void selectTab({RootTab? rootTab, ExploreTab? exploreTab, ExploreFilter? exploreInitialFilter}) {
-
-    int newTabIndex = _getIndexByRootTab(rootTab);
-    if ((newTabIndex >= 0) && (newTabIndex != _currentTabIndex)) {
-      _tabBarController!.animateTo(newTabIndex);
-      _selectTabAtIndex(newTabIndex);
-    }
-  }
-
+  
   void _initTabBarController({RootTab? rootTab}) {
     int initialIndex = (rootTab != null) ? max(_getIndexByRootTab(rootTab), 0)  : 0;
     _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: initialIndex);
   }
 
-  void _selectTabAtIndex(int index) {
-    if (_currentTabIndex != index) {
+  void _selectTab(int tabIndex) {
 
-      Widget? tabPanel = _getTabPanelAtIndex(index);
+    if ((tabIndex >= 0) && (tabIndex != _currentTabIndex)) {
+      _tabBarController!.animateTo(tabIndex);
+
+      Widget? tabPanel = _getTabPanelAtIndex(tabIndex);
       if (tabPanel != null) {
         Analytics().logPage(name:tabPanel.runtimeType.toString());
       }
 
       if (mounted) {
         setState(() {
-          _currentTabIndex = index;
+          _currentTabIndex = tabIndex;
         });
       }
       else {
-        _currentTabIndex = index;
+        _currentTabIndex = tabIndex;
       }
     }
   }
@@ -314,7 +307,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   Future<bool> _onWillPop() async {
     if (_currentTabIndex != 0) {
-      selectTab(rootTab: RootTab.Home);
+      _selectTab(0);
       return Future.value(false);
     }
     bool? result = await showDialog(
@@ -618,6 +611,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (rootTab == RootTab.Browse) {
       return BrowsePanel();
     }
+    else if (rootTab == RootTab.Favorites) {
+      return FavoritesPanel();
+    }
     else {
       return null;
     }
@@ -650,7 +646,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _onFirebaseHomeNotification() {
     // Pop to Home Panel and select the first tab
     Navigator.of(context).popUntil((route) => route.isFirst);
-    selectTab(rootTab: RootTab.Home);
+    _selectTab(0);
   }
 
   void _onFirebaseInboxNotification() {
@@ -674,6 +670,9 @@ RootTab? rootTabFromString(String? value) {
     }
     else if (value == 'browse') {
       return RootTab.Browse;
+    }
+    else if (value == 'favorites') {
+      return RootTab.Favorites;
     }
   }
   return null;
