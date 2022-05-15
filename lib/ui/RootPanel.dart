@@ -21,8 +21,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
+import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -61,36 +61,13 @@ import 'package:illinois/service/Canvas.dart';
 
 enum RootTab { Home, Athletics, Explore, Wallet, Browse }
 
-class _PanelData {
-  _RootPanelState? _panelState;
-
-  RootTab?         _rootTab;
-  ExploreTab?      _exploreTab;
-  ExploreFilter?   _exploreInitialFilter;
-}
-
 class RootPanel extends StatefulWidget {
-  final _PanelData _data = _PanelData();
+  static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
 
-  void selectTab({RootTab? rootTab, ExploreTab? exploreTab, ExploreFilter? exploreInitialFilter, bool? showHeaderBack = false}) {
-    if ((_data._panelState != null) && _data._panelState!.mounted && (rootTab != null)) {
-      _data._panelState!.selectTab(rootTab: rootTab, exploreTab: exploreTab, exploreInitialFilter: exploreInitialFilter);
-    }
-    else {
-      _data._rootTab = rootTab;
-      _data._exploreTab = exploreTab;
-      _data._exploreInitialFilter = exploreInitialFilter;
-    }
-  }
+  RootPanel() : super(key: stateKey);
 
   @override
-  _RootPanelState createState() {
-    return _data._panelState = _RootPanelState();
-  }
-
-  _RootPanelState? get panelState {
-    return _data._panelState;
-  }
+  _RootPanelState createState()  => _RootPanelState();
 }
 
 class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin implements NotificationsListener {
@@ -130,25 +107,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyCalendarSelectionPopup,
       DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
+      uiuc.TabBar.notifyWalletShow,
+      uiuc.TabBar.notifyWalletClose,
     ]);
 
     _tabs = _getTabs();
     _initTabBarController();
     _updatePanels(_tabs);
-
-    if (widget._data._rootTab != null) {
-      int tabIndex = _getIndexByRootTab(widget._data._rootTab);
-      if ((0 <= tabIndex) && (tabIndex < _tabs.length)) {
-        _currentTabIndex = tabIndex;
-      }
-
-      if (widget._data._rootTab == RootTab.Explore) {
-        ExplorePanel? explorePanel = _panels[RootTab.Explore] as ExplorePanel?;
-        explorePanel?.selectTab(widget._data._exploreTab, initialFilter: widget._data._exploreInitialFilter);
-      }
-
-      widget.selectTab(rootTab: null, exploreTab: null, exploreInitialFilter: null, showHeaderBack: null);
-    }
 
     Services().initUI();
     _showPresentPoll();
@@ -240,6 +205,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
     }
+    else if (name == uiuc.TabBar.notifyWalletShow) {
+      _onShowWallet();
+    }
+    else if (name == uiuc.TabBar.notifyWalletClose) {
+      _onCloseWallet();
+    }
   }
 
   void _onTabSelectionChanged(int tabIndex) {
@@ -250,11 +221,25 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  void _onShowWallet() {
+    showModalBottomSheet(context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24.0),
+      ),
+      builder: (context){
+        return WalletSheet();
+      }
+    );
+  }
+  
+  void _onCloseWallet() {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    App.instance.homeContext = context;
-    Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
-
     List<Widget> panels = [];
     for (RootTab? rootTab in _tabs) {
       panels.add(_panels[rootTab] ?? Container());
@@ -622,10 +607,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       return HomePanel();
     }
     else if (rootTab == RootTab.Athletics) {
-      return AthleticsHomePanel(showTabBar: false,);
+      return AthleticsHomePanel(rootTabDisplay: true,);
     }
     else if (rootTab == RootTab.Explore) {
-      return ExplorePanel(showHeaderBack: false, showTabBar: false,);
+      return ExplorePanel(rootTabDisplay: true);
     }
     else if (rootTab == RootTab.Wallet) {
       return null;

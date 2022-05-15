@@ -348,6 +348,6 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
 
   void _navigateToExploreEvents() {
     Analytics().logSelect(target: "HomeUpcomingEvents View all events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events, showHeaderBack: true,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events)));
   }
 }

@@ -18,12 +18,13 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:rokwire_plugin/ui/widgets/tab_bar.dart' as rokwire;
 
 class TabBar extends rokwire.TabBar {
 
   static const String notifySelectionChanged = "edu.illinois.rokwire.tabbar_widget.selection.changed";
+  static const String notifyWalletShow = "edu.illinois.rokwire.tabbar_widget.wallet.show";
+  static const String notifyWalletClose = "edu.illinois.rokwire.tabbar_widget.wallet.close";
 
   final bool? walletExpanded;
 
@@ -89,20 +90,11 @@ class TabBar extends rokwire.TabBar {
 
   void _onShowWalletSheet(BuildContext context, rokwire.TabWidget tabWidget) {
     Analytics().logSelect(target: tabWidget.label);
-    showModalBottomSheet(context: context,
-      isScrollControlled: true,
-      isDismissible: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24.0),
-      ),
-      builder: (context){
-        return WalletSheet();
-      }
-    );
+    NotificationService().notify(TabBar.notifyWalletShow);
   }
 
   void _onCloseWalletSheet(BuildContext context, rokwire.TabCloseWidget tabCloseWidget) {
     Analytics().logSelect(target: tabCloseWidget.label);
-    Navigator.pop(context);
+    NotificationService().notify(TabBar.notifyWalletClose);
   }
 }
