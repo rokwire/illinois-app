@@ -58,14 +58,6 @@ enum ExploreTab { All, NearMe, Events, Dining }
 
 enum ExploreFilterType { categories, event_time, event_tags, payment_type, work_time }
 
-class _PanelData {
-  ExplorePanelState?         _panelState;
-  ExploreTab?                _selectedTab;
-  ExploreFilter?             _selectedFilter;
-  bool?                      _showHeaderBack;
-  bool?                      _showTabBar;
-}
-
 class _ExploreSortKey extends OrdinalSortKey {
   const _ExploreSortKey(double order) : super(order);
 
@@ -75,26 +67,13 @@ class _ExploreSortKey extends OrdinalSortKey {
 
 class ExplorePanel extends StatefulWidget {
 
-  final _PanelData _data = _PanelData();
+  final ExploreTab initialTab;
+  final ExploreFilter? initialFilter;
+  final bool showHeaderBack;
+  final bool showTabBar;
   final String? browseGroupId;
 
-  ExplorePanel({ExploreTab initialTab = ExploreTab.Events, ExploreFilter? initialFilter, bool showHeaderBack = true, bool showTabBar = true,  this.browseGroupId }){
-    _data._selectedTab = initialTab;
-    _data._showHeaderBack = showHeaderBack;
-    _data._selectedFilter = initialFilter;
-    _data._showTabBar = showTabBar;
-  }
-
-  void selectTab(ExploreTab? tab, {ExploreFilter? initialFilter, bool showHeaderBack = false, bool showTabBar = true}) {
-    if ((_data._panelState != null) && _data._panelState!.mounted  && (tab != null)) {
-      _data._panelState!.selectTab(tab, initialFilter: initialFilter);
-    } else {
-      _data._selectedTab = tab;
-      _data._selectedFilter = initialFilter;
-      _data._showHeaderBack = showHeaderBack;
-      _data._showTabBar = showTabBar;
-    }
-  }
+  ExplorePanel({this.initialTab = ExploreTab.Events, this.initialFilter, this.showHeaderBack = true, this.showTabBar = true, this.browseGroupId });
 
   static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
     List<Event>? events = (eventId != null) ? await Events().loadEventsByIds(Set.from([eventId])) : null;
@@ -117,9 +96,7 @@ class ExplorePanel extends StatefulWidget {
   }
 
   @override
-  ExplorePanelState createState() {
-    return _data._panelState = ExplorePanelState();
-  }
+  ExplorePanelState createState() => ExplorePanelState();
 }
 
 class ExplorePanelState extends State<ExplorePanel>
@@ -141,8 +118,6 @@ class ExplorePanelState extends State<ExplorePanel>
   LocationServicesStatus? _locationServicesStatus;
 
   ExploreFilter? _initialSelectedFilter;
-  bool           _showHeaderBack = true;
-  bool           _showTabBar = true;
   Map<ExploreTab, List<ExploreFilter>>? _tabToFilterMap;
   bool _filterOptionsVisible = false;
 
@@ -182,10 +157,8 @@ class ExplorePanelState extends State<ExplorePanel>
       Styles.notifyChanged,
     ]);
 
-    _selectedTab = widget._data._selectedTab;
-    _initialSelectedFilter = widget._data._selectedFilter;
-    _showHeaderBack = widget._data._showHeaderBack ?? true;
-    _showTabBar = widget._data._showTabBar ?? true;
+    _selectedTab = widget.initialTab;
+    _initialSelectedFilter = widget.initialFilter;
 
     _initTabs();
     _initFilters();
@@ -233,7 +206,7 @@ class ExplorePanelState extends State<ExplorePanel>
       appBar: HeaderBar(
         title:  Localization().getStringEx("panel.explore.label.title", "Explore"),
         sortKey: _ExploreSortKey.headerBar,
-        leadingAsset: _showHeaderBack  ? HeaderBar.defaultLeadingAsset : null,
+        leadingAsset: widget.showHeaderBack  ? HeaderBar.defaultLeadingAsset : null,
         onLeading: _onTapHeaderBackButton,
       ),
       body: RefreshIndicator(onRefresh: () => _loadExplores(progress: false), child: 
@@ -269,7 +242,7 @@ class ExplorePanelState extends State<ExplorePanel>
         ]),
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: _showTabBar ? uiuc.TabBar() : null,
+      bottomNavigationBar: widget.showTabBar ? uiuc.TabBar() : null,
     );
   }
 
