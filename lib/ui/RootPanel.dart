@@ -62,36 +62,11 @@ import 'package:illinois/service/Canvas.dart';
 
 enum RootTab { Home, Athletics, Explore, Wallet, Browse }
 
-class _PanelData {
-  _RootPanelState? _panelState;
-
-  RootTab?         _rootTab;
-  ExploreTab?      _exploreTab;
-  ExploreFilter?   _exploreInitialFilter;
-}
-
 class RootPanel extends StatefulWidget {
-  final _PanelData _data = _PanelData();
-
-  void selectTab({RootTab? rootTab, ExploreTab? exploreTab, ExploreFilter? exploreInitialFilter, bool? showHeaderBack = false}) {
-    if ((_data._panelState != null) && _data._panelState!.mounted && (rootTab != null)) {
-      _data._panelState!.selectTab(rootTab: rootTab, exploreTab: exploreTab, exploreInitialFilter: exploreInitialFilter);
-    }
-    else {
-      _data._rootTab = rootTab;
-      _data._exploreTab = exploreTab;
-      _data._exploreInitialFilter = exploreInitialFilter;
-    }
-  }
-
+  RootPanel();
+  
   @override
-  _RootPanelState createState() {
-    return _data._panelState = _RootPanelState();
-  }
-
-  _RootPanelState? get panelState {
-    return _data._panelState;
-  }
+  _RootPanelState createState()  => _RootPanelState();
 }
 
 class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin implements NotificationsListener {
@@ -138,20 +113,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _tabs = _getTabs();
     _initTabBarController();
     _updatePanels(_tabs);
-
-    if (widget._data._rootTab != null) {
-      int tabIndex = _getIndexByRootTab(widget._data._rootTab);
-      if ((0 <= tabIndex) && (tabIndex < _tabs.length)) {
-        _currentTabIndex = tabIndex;
-      }
-
-      if (widget._data._rootTab == RootTab.Explore) {
-        ExplorePanel? explorePanel = _panels[RootTab.Explore] as ExplorePanel?;
-        explorePanel?.selectTab(widget._data._exploreTab, initialFilter: widget._data._exploreInitialFilter);
-      }
-
-      widget.selectTab(rootTab: null, exploreTab: null, exploreInitialFilter: null, showHeaderBack: null);
-    }
 
     Services().initUI();
     _showPresentPoll();
