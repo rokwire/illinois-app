@@ -78,6 +78,16 @@ class TabBar extends rokwire.TabBar {
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
     }
+    else if (code == 'favorites') {
+      return rokwire.TabWidget(
+        label: Localization().getStringEx('tabbar.favorites.title', 'Favorites'),
+        hint: Localization().getStringEx('tabbar.favorites.hint', ''),
+        iconAsset: 'images/tab-saved.png',
+        selectedIconAsset: 'images/tab-saved-selected.png',
+        selected: (tabController?.index == index),
+        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
+      );
+    }
     else {
       return null;
     }
