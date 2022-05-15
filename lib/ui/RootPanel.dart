@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
+import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -130,6 +131,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyCalendarSelectionPopup,
       DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
+      uiuc.TabBar.notifyWalletShow,
+      uiuc.TabBar.notifyWalletClose,
     ]);
 
     _tabs = _getTabs();
@@ -240,6 +243,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
     }
+    else if (name == uiuc.TabBar.notifyWalletShow) {
+      _onShowWallet();
+    }
+    else if (name == uiuc.TabBar.notifyWalletClose) {
+      _onCloseWallet();
+    }
   }
 
   void _onTabSelectionChanged(int tabIndex) {
@@ -248,6 +257,23 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       RootTab? tab = getRootTabByIndex(tabIndex);
       selectTab(rootTab: tab);
     }
+  }
+
+  void _onShowWallet() {
+    showModalBottomSheet(context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24.0),
+      ),
+      builder: (context){
+        return WalletSheet();
+      }
+    );
+  }
+  
+  void _onCloseWallet() {
+    Navigator.pop(context);
   }
 
   @override
