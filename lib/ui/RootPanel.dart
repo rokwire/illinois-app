@@ -64,7 +64,7 @@ enum RootTab { Home, Athletics, Explore, Wallet, Browse }
 
 class RootPanel extends StatefulWidget {
   RootPanel();
-  
+
   @override
   _RootPanelState createState()  => _RootPanelState();
 }
@@ -612,7 +612,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       return AthleticsHomePanel(showTabBar: false,);
     }
     else if (rootTab == RootTab.Explore) {
-      return ExplorePanel(showHeaderBack: false, showTabBar: false,);
+      return ExplorePanel(rootTabDisplay: true);
     }
     else if (rootTab == RootTab.Wallet) {
       return null;

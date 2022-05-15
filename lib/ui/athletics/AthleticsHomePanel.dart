@@ -406,7 +406,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     Analytics().logSelect(target: "More Events");
     if (Connectivity().isNotOffline) {
       ExploreFilter initialFilter = ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3});
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events, initialFilter: initialFilter, showHeaderBack: true,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events, initialFilter: initialFilter)));
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.see_more_events', 'See more events is not available while offline.'));

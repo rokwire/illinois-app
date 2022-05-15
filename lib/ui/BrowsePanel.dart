@@ -496,12 +496,12 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateToExploreEvents() {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events, showHeaderBack: true,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events)));
   }
 
   void _navigateToExploreDining() {
     Analytics().logSelect(target: "Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining, showHeaderBack: true,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining)));
   }
 
   void _navigateToAthletics() {

@@ -17,6 +17,7 @@
 import 'package:flutter/semantics.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -69,11 +70,10 @@ class ExplorePanel extends StatefulWidget {
 
   final ExploreTab initialTab;
   final ExploreFilter? initialFilter;
-  final bool showHeaderBack;
-  final bool showTabBar;
+  final bool rootTabDisplay;
   final String? browseGroupId;
 
-  ExplorePanel({this.initialTab = ExploreTab.Events, this.initialFilter, this.showHeaderBack = true, this.showTabBar = true, this.browseGroupId });
+  ExplorePanel({this.initialTab = ExploreTab.Events, this.initialFilter, this.rootTabDisplay = false, this.browseGroupId });
 
   static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
     List<Event>? events = (eventId != null) ? await Events().loadEventsByIds(Set.from([eventId])) : null;
@@ -206,8 +206,9 @@ class ExplorePanelState extends State<ExplorePanel>
       appBar: HeaderBar(
         title:  Localization().getStringEx("panel.explore.label.title", "Explore"),
         sortKey: _ExploreSortKey.headerBar,
-        leadingAsset: widget.showHeaderBack  ? HeaderBar.defaultLeadingAsset : null,
+        leadingAsset: widget.rootTabDisplay ? null : HeaderBar.defaultLeadingAsset,
         onLeading: _onTapHeaderBackButton,
+        actions: widget.rootTabDisplay ? [ _buildSettingsButton() ] : null,
       ),
       body: RefreshIndicator(onRefresh: () => _loadExplores(progress: false), child: 
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -242,7 +243,7 @@ class ExplorePanelState extends State<ExplorePanel>
         ]),
       ),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: widget.showTabBar ? uiuc.TabBar() : null,
+      bottomNavigationBar: widget.rootTabDisplay ? null : uiuc.TabBar(),
     );
   }
 
@@ -1201,6 +1202,22 @@ class ExplorePanelState extends State<ExplorePanel>
     selectedFilter.selectedIndexes = selectedIndexes;
     selectedFilter.active = _filterOptionsVisible = false;
     _loadExplores();
+  }
+
+  Widget _buildSettingsButton() {
+    return Semantics(
+      label: Localization().getStringEx('headerbar.settings.title', 'Settings'),
+      hint: Localization().getStringEx('headerbar.settings.hint', ''),
+      button: true,
+      excludeSemantics: true,
+      child: IconButton(
+        icon: Image.asset('images/settings-white.png'),
+        onPressed: _onTapSettings));
+  }
+
+  void _onTapSettings() {
+    Analytics().logSelect(target: "Settings");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
   }
 
   void _onTapHeaderBackButton() {
