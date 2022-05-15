@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -47,9 +48,9 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'AthleticsTeamsPanel.dart';
 
 class AthleticsHomePanel extends StatefulWidget {
-  final bool showTabBar;
+  final bool rootTabDisplay;
 
-  AthleticsHomePanel({this.showTabBar = true});
+  AthleticsHomePanel({this.rootTabDisplay = false});
 
   @override
   _AthleticsHomePanelState createState() => _AthleticsHomePanelState();
@@ -86,26 +87,14 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-        leading: Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-          IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),),
-        title: Semantics(label: Localization().getStringEx('panel.athletics.header.title', 'Athletics'), excludeSemantics: true, child:
-          Text(Localization().getStringEx('panel.athletics.header.title', 'Athletics'), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),),
-        actions: <Widget>[
-          Semantics(label: Localization().getStringEx('headerbar.teams.title', 'Teams'), button: true, excludeSemantics: true, child: 
-            InkWell(onTap: _onTapTeams, child:
-              Container(child:
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 19), child:
-                Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.semiBold, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid))
-              ),
-              ),
-            ),
-          ),
-        ],
+        leading: widget.rootTabDisplay ? _buildHeaderHomeButton() : _buildHeaderBackButton(),
+        title: _buildHeaderTitle(),
+        actions: [_buildHeaderActions()],
 
       ),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: _buildContentWidget()),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: widget.showTabBar ? uiuc.TabBar() : null,
+      bottomNavigationBar: widget.rootTabDisplay ? null : uiuc.TabBar(),
       );
   }
 
@@ -371,6 +360,44 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     return Column(children: gameDayWidgets);
   }
 
+  Widget _buildHeaderHomeButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
+          IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),);
+  }
+
+  Widget _buildHeaderBackButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true), onPressed: _onTapBack,));
+  }
+
+  Widget _buildHeaderTitle() {
+    return Semantics(label: Localization().getStringEx('panel.athletics.header.title', 'Athletics'), excludeSemantics: true, child:
+          Text(Localization().getStringEx('panel.athletics.header.title', 'Athletics'), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+  }
+
+  Widget _buildHeaderTeamsButton({double horizontalPadding = 16}) {
+    return Semantics(label: Localization().getStringEx('headerbar.teams.title', 'Teams'), button: true, excludeSemantics: true, child: 
+        InkWell(onTap: _onTapTeams, child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 19), child:
+            Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.semiBold, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid))
+          ),
+        ),
+      );
+  }
+
+  Widget _buildHeaderSettingsButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: _onTapSettings));
+  }
+
+  Widget _buildHeaderActions() {
+    List<Widget> actions = <Widget>[ _buildHeaderTeamsButton(horizontalPadding: widget.rootTabDisplay ? 0 : 16) ];
+    if (widget.rootTabDisplay) {
+      actions.add(_buildHeaderSettingsButton());
+    }
+    return Row(mainAxisSize: MainAxisSize.min, children: actions,);
+  }
+
   void _loadGames() {
     if (Connectivity().isNotOffline) {
       _setLoading(true);
@@ -394,12 +421,23 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   void _onTapHome() {
+    Analytics().logSelect(target: "Home");
     Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  void _onTapBack() {
+    Analytics().logSelect(target: "Back");
+    Navigator.pop(context);
   }
 
   void _onTapTeams() {
     Analytics().logSelect(target: "Teams");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamsPanel()));
+  }
+
+  void _onTapSettings() {
+    Analytics().logSelect(target: "Settings");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
   }
 
   void _onTapMoreUpcomingEvents() {

@@ -607,7 +607,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       return HomePanel();
     }
     else if (rootTab == RootTab.Athletics) {
-      return AthleticsHomePanel(showTabBar: false,);
+      return AthleticsHomePanel(rootTabDisplay: true,);
     }
     else if (rootTab == RootTab.Explore) {
       return ExplorePanel(rootTabDisplay: true);
