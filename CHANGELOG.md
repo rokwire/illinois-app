@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Cleaned up app, root panels and tab bar, prepare for UIUC 4 features [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 - Acknowledged order of Favorite items [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+- Various fixes in Favotires root panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 ### Added
 - Created Favorites root panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 
