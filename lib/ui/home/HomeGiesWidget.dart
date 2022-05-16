@@ -28,7 +28,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Gies.notifyPageChanged, Gies.notifyPageCompleted]);
+    NotificationService().subscribe(this, [Gies.notifyPageChanged, Gies.notifyPageCompleted, Gies.notifyLoadingChange]);
   }
 
   @override
@@ -82,6 +82,9 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   }
 
   Widget _buildContent() {
+    if(Gies().isLoading){
+      return _buildLoadingContent();
+    }
     if (!_isStarted) {
       return _buildStartContent();
     }
@@ -91,6 +94,25 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
     }
 
     return _buildProgressContent();
+  }
+
+  Widget _buildLoadingContent(){
+    return Padding(
+        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+        child:
+        Container(
+          constraints: BoxConstraints(maxHeight: 100),
+          padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(color: Styles().colors!.white,
+                borderRadius: BorderRadius.circular(5)),
+            child: Column(children: <Widget>[
+              Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ),
+                ),
+              ),
+            ]),)
+    );
   }
 
   Widget _buildStartContent() {
@@ -244,11 +266,11 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   }
 
   bool get _isEnded {
-    return Gies().completedStepsCount>= _stepsCount;
+    return (Gies().isLoading) ? Gies().completedStepsCount>= _stepsCount : false;
   }
 
   int get _completedStpsCount {
-    return Gies().completedStepsCount;
+    return (Gies().isLoading) ? Gies().completedStepsCount : 0;
   }
 
   int get _stepsCount {
@@ -257,7 +279,9 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
 
   @override
   void onNotification(String name, param) {
-    if(name == Gies.notifyPageChanged || name == Gies.notifyPageCompleted){
+    if(name == Gies.notifyPageChanged ||
+        name == Gies.notifyPageCompleted ||
+        name ==Gies.notifyLoadingChange){
       setState(() {});
     }
   }

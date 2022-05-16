@@ -1,8 +1,8 @@
 {
 	"content": {
-		"tabbar": ["home", "athletics", "explore", "wallet", "browse"],
+		"tabbar": ["home", "athletics", "favorites", "explore", "wallet", "browse"],
 
-		"home": ["gies", "emergency", "upgrade_version_message", "voter_registration", "connect", "safer", "twitter", "canvas", "my_groups", "highlighted_features", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_guide_highlights"],
+		"home": ["emergency", "upgrade_version_message", "voter_registration", "connect", "gies", "safer", "twitter", "canvas", "my_groups", "highlighted_features", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_guide_highlights"],
 		"home.connect": ["netid", "phone_or_email"],
 		"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 		"home.campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help"],

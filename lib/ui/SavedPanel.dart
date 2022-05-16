@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'dart:collection';
 import 'dart:io';
 import 'dart:math';
 
@@ -54,9 +55,7 @@ import 'package:notification_permissions/notification_permissions.dart';
 
 class SavedPanel extends StatefulWidget {
 
-  final ScrollController? scrollController;
-
-  SavedPanel({this.scrollController});
+  SavedPanel();
 
   @override
   _SavedPanelState createState() => _SavedPanelState();
@@ -139,13 +138,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                 CustomScrollView(
                   slivers: <Widget>[
                     SliverHeaderBar(
-                      leadingAsset: widget.scrollController == null
-                          ? 'images/chevron-left-white.png'
-                          : 'images/chevron-left-blue.png',
+                      leadingAsset: 'images/chevron-left-white.png',
                       title: Localization().getStringEx('panel.saved.header.label', 'Saved'),
-                      textColor: widget.scrollController == null
-                        ? Styles().colors!.white
-                        : Styles().colors!.fillColorPrimary,
+                      textColor: Styles().colors!.white,
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate([
@@ -191,9 +186,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
         ),
       ],),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: widget.scrollController == null
-          ? uiuc.TabBar()
-          : Container(height: 0,),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -208,7 +201,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadEvents() {
-    Set<String>? favoriteEventIds = Auth2().prefs?.getFavorites(Event.favoriteKeyName);
+    LinkedHashSet<String>? favoriteEventIds = Auth2().prefs?.getFavorites(Event.favoriteKeyName);
     if (CollectionUtils.isNotEmpty(favoriteEventIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -228,7 +221,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadDinings() {
-    Set<String>? favoriteDiningIds = Auth2().prefs?.getFavorites(Dining.favoriteKeyName);
+    LinkedHashSet<String>? favoriteDiningIds = Auth2().prefs?.getFavorites(Dining.favoriteKeyName);
     if (CollectionUtils.isNotEmpty(favoriteDiningIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -248,7 +241,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadAthletics() {
-    Set<String>? favoriteGameIds = Auth2().prefs?.getFavorites(Game.favoriteKeyName);
+    LinkedHashSet<String>? favoriteGameIds = Auth2().prefs?.getFavorites(Game.favoriteKeyName);
     if (CollectionUtils.isNotEmpty(favoriteGameIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -268,7 +261,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadNews() {
-    Set<String>? favoriteNewsIds = Auth2().prefs?.getFavorites(News.favoriteKeyName);
+    LinkedHashSet<String>? favoriteNewsIds = Auth2().prefs?.getFavorites(News.favoriteKeyName);
     if (CollectionUtils.isNotEmpty(favoriteNewsIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -291,7 +284,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     if (!_laundryAvailable) {
       return;
     }
-    Set<String>? favoriteLaundryIds = Auth2().prefs?.getFavorites(LaundryRoom.favoriteKeyName);
+    LinkedHashSet<String>? favoriteLaundryIds = Auth2().prefs?.getFavorites(LaundryRoom.favoriteKeyName);
     if (CollectionUtils.isNotEmpty(favoriteLaundryIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -312,32 +305,38 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   void _loadGuideItems() {
 
-    Set<String?>? favoriteGuideIds = Auth2().prefs?.getFavorites(GuideFavorite.favoriteKeyName);
-    List<Favorite> guideItems = <Favorite>[];
-    if (favoriteGuideIds != null) {
+    List<Favorite>? guideItems;
+    LinkedHashSet<String>? favoriteGuideIds = Auth2().prefs?.getFavorites(GuideFavorite.favoriteKeyName);
+    if (Connectivity().isNotOffline && (favoriteGuideIds != null) && (Guide().contentList != null)) {
+      
+      Map<String, Favorite> favorites = <String, Favorite>{};
       for (dynamic contentEntry in Guide().contentList!) {
         String? guideEntryId = Guide().entryId(JsonUtils.mapValue(contentEntry));
         
         if ((guideEntryId != null) && favoriteGuideIds.contains(guideEntryId)) {
-          guideItems.add(GuideFavorite(id: guideEntryId,));
+          favorites[guideEntryId] = GuideFavorite(id: guideEntryId);
         }
+      }
+
+      if (favorites.isNotEmpty) {
+        List<Favorite> result = <Favorite>[];
+        for (String favoriteId in favoriteGuideIds) {
+          Favorite? favorite = favorites[favoriteId];
+          if (favorite != null) {
+            result.add(favorite);
+          }
+        }
+        guideItems = List.from(result.reversed);
       }
     }
 
-    if (CollectionUtils.isNotEmpty(guideItems) && Connectivity().isNotOffline) {
-      setState(() {
-        _guideItems = guideItems;
-      });
-    }
-    else if (CollectionUtils.isNotEmpty(_guideItems)) {
-      setState(() {
-        _guideItems = null;
-      });
-    }
+    setState(() {
+      _guideItems = guideItems;
+    });
   }
 
   void _loadInboxMessages() {
-    Set<String?>? favoriteMessageIds = Auth2().prefs?.getFavorites(InboxMessage.favoriteKeyName);
+    LinkedHashSet<String>? favoriteMessageIds = Auth2().prefs?.getFavorites(InboxMessage.favoriteKeyName);
     if (favoriteMessageIds != null) {
       setState(() {
         _progress++;
@@ -353,18 +352,31 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
   }
 
-  List<Favorite>? _buildFilteredItems(List<Favorite>? items, Set<String>? ids) {
-    if (CollectionUtils.isEmpty(items) || CollectionUtils.isEmpty(ids)) {
-      return null;
-    }
-    List<Favorite> result = [];
-    items!.forEach((Favorite? item) {
-      String? id = item!.favoriteId;
-      if (StringUtils.isNotEmpty(id) && ids!.contains(id)) {
-        result.add(item);
+  List<Favorite>? _buildFilteredItems(List<Favorite>? items, LinkedHashSet<String>? ids) {
+    if ((items != null) && (ids != null)) {
+      Map<String, Favorite> favorites = <String, Favorite>{};
+      if (items.isNotEmpty && ids.isNotEmpty) {
+        for (Favorite item in items) {
+          if ((item.favoriteId != null) && ids.contains(item.favoriteId)) {
+            favorites[item.favoriteId!] = item;
+          }
+        }
       }
-    });
-    return result;
+
+      List<Favorite>? result = <Favorite>[];
+      if (favorites.isNotEmpty) {
+        for (String id in ids) {
+          Favorite? favorite = favorites[id];
+          if (favorite != null) {
+            result.add(favorite);
+          }
+        }
+      }
+      
+      // show last added at top
+      return List.from(result.reversed);
+    }
+    return null;
   }
 
   Widget _buildNotificationPermissionDialogWidget(BuildContext context, PermissionStatus permissionStatus) {
