@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Various fixes in Favotires root panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 ### Added
 - Created Favorites root panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+- Added API call for content items. Load Gies from network [#1636](https://github.com/rokwire/illinois-app/issues/1636).
 
 ## [4.0.9] - 2022-05-13
 ### Changed

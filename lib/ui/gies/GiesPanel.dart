@@ -31,8 +31,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Gies.notifyPageChanged]);
-
+    NotificationService().subscribe(this, [Gies.notifyPageChanged, Gies.notifyLoadingChange]);
   }
 
   @override
@@ -264,8 +263,14 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   @override
   void onNotification(String name, param) {
-    if(name == Gies.notifyPageChanged){
-      setState(() {});
+    if(name == Gies.notifyLoadingChange){
+      if(mounted) {
+        setState(() {});
+      }
+    } else if(name == Gies.notifyPageChanged){
+      if(mounted) {
+        setState(() {});
+      }
       _pageKey = GlobalKey();// reset page
       if(_titleKey.currentContext!=null) {
         Scrollable.ensureVisible(
