@@ -49,17 +49,10 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
   void initState() {
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
     ]);
 
-    _loadingFavorites = true;
-    _loadFavorites().then((Map<String, List<Favorite>?> favorites) {
-      if (mounted) {
-        setState(() {
-          _favorites = favorites;
-          _loadingFavorites = false;
-        });
-      }
-    }); 
+    _refreshFavorites();
 
     super.initState();
   }
@@ -75,7 +68,10 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
   @override
   void onNotification(String name, dynamic param) {
     if (name == Connectivity.notifyStatusChanged) {
-      _onConectivityStatusChanged();
+      _refreshFavorites();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      _refreshFavorites(showProgress: false);
     }
   }
 
@@ -328,21 +324,13 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
     }
   }
 
-  void _onTapSettings() {
-    Analytics().logSelect(target: "Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
-  }
-
-  void _onTapHome() {
-    Analytics().logSelect(target: "Home");
-    Navigator.of(context).popUntil((route) => route.isFirst);
-  }
-
-  void _onConectivityStatusChanged() {
-    if (Connectivity().isOnline && mounted) {
-      setState(() {
-        _loadingFavorites = true;
-      });
+  void _refreshFavorites({bool showProgress = true}) {
+    if (Connectivity().isOnline) {
+      if (showProgress && mounted) {
+        setState(() {
+          _loadingFavorites = true;
+        });
+      }
       _loadFavorites().then((Map<String, List<Favorite>?> favorites) {
         if (mounted) {
           setState(() {
@@ -352,6 +340,16 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
         }
       }); 
     }
+  }
+
+  void _onTapSettings() {
+    Analytics().logSelect(target: "Settings");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
+  }
+
+  void _onTapHome() {
+    Analytics().logSelect(target: "Home");
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }
 
