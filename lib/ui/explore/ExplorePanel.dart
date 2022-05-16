@@ -76,7 +76,7 @@ class ExplorePanel extends StatefulWidget {
   ExplorePanel({this.initialTab = ExploreTab.Events, this.initialFilter, this.rootTabDisplay = false, this.browseGroupId });
 
   static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
-    List<Event>? events = (eventId != null) ? await Events().loadEventsByIds(Set.from([eventId])) : null;
+    List<Event>? events = (eventId != null) ? await Events().loadEventsByIds([eventId]) : null;
     Event? event = ((events != null) && (0 < events.length)) ? events.first : null;
     //Explore explore = (eventId != null) ? await Events().getEventById(eventId) : null;
     //Event event = (explore is Event) ? explore : null;

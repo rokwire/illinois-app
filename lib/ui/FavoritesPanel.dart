@@ -1,4 +1,5 @@
 
+import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -208,7 +209,7 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
 
   Future<Map<String, List<Favorite>?>> _loadFavorites() async {
 
-    Map<String, Future<List<Favorite>?> Function(Set<String>?)> favoriteLoaders = <String, Future<List<Favorite>?> Function(Set<String>?)> {
+    Map<String, Future<List<Favorite>?> Function(LinkedHashSet<String>?)> favoriteLoaders = <String, Future<List<Favorite>?> Function(LinkedHashSet<String>?)> {
       Event.favoriteKeyName: _loadFavoriteEvents,
       Dining.favoriteKeyName: _loadFavoriteDinings,
       Game.favoriteKeyName: _loadFavoriteGames,
@@ -236,50 +237,76 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
     return result;
   }
 
-  Future<List<Favorite>?> _loadFavoriteEvents(Set<String>? favoriteIds) async =>
+  Future<List<Favorite>?> _loadFavoriteEvents(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events().loadEventsByIds(favoriteIds), favoriteIds) : null;
 
-  Future<List<Favorite>?> _loadFavoriteDinings(Set<String>? favoriteIds) async =>
+  Future<List<Favorite>?> _loadFavoriteDinings(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Dinings().loadBackendDinings(false, null, null), favoriteIds) : null;
 
-  Future<List<Favorite>?> _loadFavoriteGames(Set<String>? favoriteIds) async =>
+  Future<List<Favorite>?> _loadFavoriteGames(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Sports().loadGames(), favoriteIds) : null;
 
-  Future<List<Favorite>?> _loadFavoriteNews(Set<String>? favoriteIds) async =>
+  Future<List<Favorite>?> _loadFavoriteNews(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Sports().loadNews(null, 0), favoriteIds) : null;
 
-  Future<List<Favorite>?> _loadFavoriteLaundries(Set<String>? favoriteIds) async =>
+  Future<List<Favorite>?> _loadFavoriteLaundries(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList((await Laundries().loadSchoolRooms())?.rooms, favoriteIds) : null;
 
-  Future<List<Favorite>?> _loadFavoriteNotifications(Set<String>? favoriteIds) async =>
+  Future<List<Favorite>?> _loadFavoriteNotifications(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Inbox().loadMessages(messageIds: favoriteIds), favoriteIds) : null;
 
-  Future<List<Favorite>?> _loadFavoriteGuideItems(Set<String>? favoriteIds) async {
-    List<Favorite>? result;
-    if (favoriteIds != null) {
-      result = <Favorite>[];
+  Future<List<Favorite>?> _loadFavoriteGuideItems(LinkedHashSet<String>? favoriteIds) async {
+    List<Favorite>? guideItems;
+    if (Connectivity().isNotOffline && (favoriteIds != null) && (Guide().contentList != null)) {
+      
+      Map<String, Favorite> favorites = <String, Favorite>{};
       for (dynamic contentEntry in Guide().contentList!) {
         String? guideEntryId = Guide().entryId(JsonUtils.mapValue(contentEntry));
         
         if ((guideEntryId != null) && favoriteIds.contains(guideEntryId)) {
-          result.add(GuideFavorite(id: guideEntryId,));
+          favorites[guideEntryId] = GuideFavorite(id: guideEntryId);
         }
       }
+
+      if (favorites.isNotEmpty) {
+        List<Favorite> result = <Favorite>[];
+        for (String favoriteId in favoriteIds) {
+          Favorite? favorite = favorites[favoriteId];
+          if (favorite != null) {
+            result.add(favorite);
+          }
+        }
+        guideItems = List.from(result.reversed);
+      }
     }
-    return result;
+    return guideItems;
   }
 
-  List<Favorite>? _buildFavoritesList(List<Favorite>? sourceList, Set<String>? favoriteIds) {
-    List<Favorite>? result;
-    if (sourceList != null) {
-      result = <Favorite>[];
-      for (Favorite favorite in sourceList) {
-        if ((favoriteIds != null) && favoriteIds.contains(favorite.favoriteId)) {
-          result.add(favorite);
+  List<Favorite>? _buildFavoritesList(List<Favorite>? sourceList, LinkedHashSet<String>? favoriteIds) {
+    if ((sourceList != null) && (favoriteIds != null)) {
+      Map<String, Favorite> favorites = <String, Favorite>{};
+      if (sourceList.isNotEmpty && favoriteIds.isNotEmpty) {
+        for (Favorite sourceItem in sourceList) {
+          if ((sourceItem.favoriteId != null) && favoriteIds.contains(sourceItem.favoriteId)) {
+            favorites[sourceItem.favoriteId!] = sourceItem;
+          }
         }
       }
+
+      List<Favorite>? result = <Favorite>[];
+      if (favorites.isNotEmpty) {
+        for (String favoriteId in favoriteIds) {
+          Favorite? favorite = favorites[favoriteId];
+          if (favorite != null) {
+            result.add(favorite);
+          }
+        }
+      }
+      
+      // show last added at top
+      return List.from(result.reversed);
     }
-    return result;
+    return null;
   }
 
   bool get _isFavoritesEmpty {
