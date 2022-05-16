@@ -49,17 +49,11 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
   void initState() {
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
+      Guide.notifyChanged,
     ]);
 
-    _loadingFavorites = true;
-    _loadFavorites().then((Map<String, List<Favorite>?> favorites) {
-      if (mounted) {
-        setState(() {
-          _favorites = favorites;
-          _loadingFavorites = false;
-        });
-      }
-    }); 
+    _refreshFavorites();
 
     super.initState();
   }
@@ -75,7 +69,13 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
   @override
   void onNotification(String name, dynamic param) {
     if (name == Connectivity.notifyStatusChanged) {
-      setState(() { _loadFavorites(); });
+      _refreshFavorites();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      _refreshFavorites(showProgress: false);
+    }
+    else if (name == Guide.notifyChanged) {
+      //TBD: refresh only guide items!
     }
   }
 
@@ -111,11 +111,11 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
   // Widgets
 
   Widget _buildContent() {
-    if (_loadingFavorites) {
-      return _buildProgress();
-    }
-    else if (Connectivity().isOffline) {
+    if (Connectivity().isOffline) {
       return _buildOffline();
+    }
+    else if (_loadingFavorites) {
+      return _buildProgress();
     }
     else if (_isFavoritesEmpty) {
       return _buildEmpty();
@@ -325,6 +325,24 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
       setState(() {
         _favorites = favorites;
       });
+    }
+  }
+
+  void _refreshFavorites({bool showProgress = true}) {
+    if (Connectivity().isOnline) {
+      if (showProgress && mounted) {
+        setState(() {
+          _loadingFavorites = true;
+        });
+      }
+      _loadFavorites().then((Map<String, List<Favorite>?> favorites) {
+        if (mounted) {
+          setState(() {
+            _favorites = favorites;
+            _loadingFavorites = false;
+          });
+        }
+      }); 
     }
   }
 
