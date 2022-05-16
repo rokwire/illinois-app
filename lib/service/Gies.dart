@@ -1,4 +1,5 @@
 import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -8,6 +9,7 @@ class Gies with Service implements NotificationsListener{
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
   static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
+  static const String notifyLoadingChange  = "edu.illinois.rokwire.gies.service.status.loading.changed";
 
   List<dynamic>? _pages;
   List<String>?  _navigationPages;
@@ -15,6 +17,8 @@ class Gies with Service implements NotificationsListener{
   late Map<int, Set<String>> _progressPages;
   Set<String>? _verifiedPages;
   List<int>? _progressSteps;
+
+  bool _loading = false;
 
   // Singletone instance
   static final Gies _instance = Gies._internal();
@@ -43,17 +47,43 @@ class Gies with Service implements NotificationsListener{
   Future<void> initService() async{
     await super.initService();
     _navigationPages = Storage().giesNavPages ?? [];
-    AppBundle.loadString('assets/gies.json').then((String? assetsContentString) {
-        _pages = JsonUtils.decodeList(assetsContentString);
+    // AppBundle.loadString('assets/gies.json').then((String? assetsContentString) {
+    //     _pages = JsonUtils.decodeList(assetsContentString);
+    //     _buildProgressSteps();
+    //     _ensureNavigationPages();
+    //     _initialPageVerification();
+    // });
+    _loading = true;
+    NotificationService().notify(notifyLoadingChange);
+    _loadFromNet().then((List<dynamic>? data){
+        if(data == null){
+          print('Missing Gies Content');
+          return;
+        }
+        _pages = data;
         _buildProgressSteps();
         _ensureNavigationPages();
         _initialPageVerification();
+        _loading = false;
+        NotificationService().notify(notifyLoadingChange);
     });
   }
 
   @override
   Set<Service> get serviceDependsOn {
     return Set.from([Storage()]);
+  }
+  
+   Future<List<dynamic>?> _loadFromNet() async{
+      List<dynamic>? contentItemsData = await Content().loadContentItems(categories: ["gies"]);
+      try {
+        dynamic contentItemData = contentItemsData?.firstWhere((element) =>
+          (element is Map && JsonUtils.stringValue(element["category"]) == "gies"));
+        return contentItemData != null && contentItemData is Map ? JsonUtils.listValue(contentItemData["data"]) : null;
+      }catch(e){
+        print(e);
+      }
+      return null;
   }
 
   void _buildProgressSteps() {
@@ -282,7 +312,7 @@ class Gies with Service implements NotificationsListener{
   }
 
   String? get currentPageId {
-    return (_navigationPages?.isNotEmpty?? false) ? _navigationPages!.last : null;
+    return (_navigationPages?.isNotEmpty?? false) ? _navigationPages?.last : null;
   }
 
   String? get _navigationRootPageId {
@@ -299,15 +329,23 @@ class Gies with Service implements NotificationsListener{
     return null;
   }
 
-  int get completedStepsCount{
+  int get completedStepsCount {
     int count = 0;
-    for(int progress in _progressSteps!){
-      if(isProgressStepCompleted(progress)){
-        count++;
+    if (progressSteps != null) {
+      for (int progress in _progressSteps!) {
+        if (isProgressStepCompleted(progress)) {
+          count++;
+        }
       }
+
+      return count;
     }
 
-    return count;
+    return 0;
+  }
+
+  bool get isLoading{
+    return _loading;
   }
 
   bool get supportNotes{
