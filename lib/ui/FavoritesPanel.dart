@@ -75,7 +75,7 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
   @override
   void onNotification(String name, dynamic param) {
     if (name == Connectivity.notifyStatusChanged) {
-      setState(() { _loadFavorites(); });
+      _onConectivityStatusChanged();
     }
   }
 
@@ -111,11 +111,11 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
   // Widgets
 
   Widget _buildContent() {
-    if (_loadingFavorites) {
-      return _buildProgress();
-    }
-    else if (Connectivity().isOffline) {
+    if (Connectivity().isOffline) {
       return _buildOffline();
+    }
+    else if (_loadingFavorites) {
+      return _buildProgress();
     }
     else if (_isFavoritesEmpty) {
       return _buildEmpty();
@@ -336,6 +336,22 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
   void _onTapHome() {
     Analytics().logSelect(target: "Home");
     Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  void _onConectivityStatusChanged() {
+    if (Connectivity().isOnline && mounted) {
+      setState(() {
+        _loadingFavorites = true;
+      });
+      _loadFavorites().then((Map<String, List<Favorite>?> favorites) {
+        if (mounted) {
+          setState(() {
+            _favorites = favorites;
+            _loadingFavorites = false;
+          });
+        }
+      }); 
+    }
   }
 }
 
