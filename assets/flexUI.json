@@ -23,7 +23,7 @@
 		"settings.connected": ["netid", "phone", "email"],
 		"settings.link": ["netid", "phone", "email"],
 		"settings.linked": ["netid", "phone", "email"],
-		"settings.connected.netid": ["info", "disconnect", "connect"],
+		"settings.connected.netid": ["info", "disconnect", "authenticate"],
 		"settings.connected.phone": ["info", "disconnect", "verify"],
 		"settings.connected.email": ["info", "disconnect", "login"],
 		"settings.linked.netid": ["info", "remove"],
@@ -98,21 +98,18 @@
 			"recent_items"                    : 4,
 			"saved"                           : 3,
 			"converge"                        : 5,
+			"connect"                         : 4,
 
-			"home.connect"                    : 4,
 			"home.create_poll"                : 4,
 
 			"settings.user_info"              : 4,
-			"settings.connect"                : 4,
 			"settings.connected"              : 4,
 			"settings.link"                   : 4,
 			"settings.linked"                 : 4,
 			"settings.preferences"            : 4,
 
 			"tabbar.wallet"                   : 4,
-			"wallet.connect"                  : 4,
 
-			"privacy_center.connect"          : 4,
 			"privacy_center.buttons"          : 4,
 
 			"onboarding.notifications_auth"   : 4,
@@ -127,7 +124,7 @@
 			"authentication"                  : 4
 		},
 		"auth": {
-			"home.connect"                        : { "loggedIn": false },
+			"connect"                             : { "loggedIn": false },
 			"gies"                                : { "shibbolethLoggedIn": true },
 			"canvas"                              : { "shibbolethLoggedIn": true },
 			"browse.primary.building_access"      : { "shibbolethLoggedIn": true },
@@ -136,7 +133,6 @@
 			"create_stadium_poll"                 : { "accountRole": "stadium poll manager" },
 			"upgrade_version_message"             : { "shibbolethLoggedIn": true },
 
-			"wallet.connect"                      : { "loggedIn": false },
 			"wallet.vcards"                       : { "loggedIn": true },
 			"wallet.hcards"                       : { "loggedIn": true },
 			"illini_id"                           : { "iCardNum": true },
@@ -172,9 +168,7 @@
 			"settings.linked.phone.remove"        : { "phoneLinked": true },
 			"settings.linked.email"               : { "emailLinked": true },
 			"settings.linked.email.info"          : { "emailLinked": true },
-			"settings.linked.email.remove"        : { "emailLinked": true },
-
-			"privacy_center.connect"              : { "loggedIn": false }
+			"settings.linked.email.remove"        : { "emailLinked": true }
 		},
 		"platform":{
 			"onboarding.notifications_auth" : { "os": "ios" }
