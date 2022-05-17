@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -90,11 +88,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['browse'] ?? [];
     for (String code in codes) {
-      if (code == 'all') {
-        contentList.add(_buildBrowseAll());
+      if (code == 'primary') {
+        contentList.add(_buildBrowsePrimary());
       }
-      else if (code == 'content') {
-        contentList.addAll(_buildBrowseContent());
+      else if (code == 'secondary') {
+        contentList.addAll(_buildBrowseSecondary());
       }
     }
 
@@ -140,7 +138,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       );
   }
 
-  Widget _buildBrowseAll() {
+  Widget _buildBrowsePrimary() {
 
     List<Widget> row = [];
     int rowEntries = 0;
@@ -151,9 +149,9 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     list.add(Container(height: 18,));
 
     const int gridWidth = 2;
-    List<dynamic> codes = FlexUI()['browse.all'] ?? [];
+    List<dynamic> codes = FlexUI()['browse.primary'] ?? [];
     for (String code in codes) {
-      Widget? entry = _buildBrowseAllEntry(code);
+      Widget? entry = _buildBrowsePrimaryEntry(code);
       if (entry != null) {
         
         if (0 < rowEntries) {
@@ -196,7 +194,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(children: list),);
   }
   
-  Widget? _buildBrowseAllEntry(String code) {
+  Widget? _buildBrowsePrimaryEntry(String code) {
     if (code == 'athletics') {
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.athletics.title', 'Athletics'),
@@ -310,13 +308,13 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
-  List<Widget> _buildBrowseContent() {
+  List<Widget> _buildBrowseSecondary() {
     List<Widget> list = [
 //      Container(height: 1, color: Styles().colors.surfaceAccent,),
     ];
-    List<dynamic> codes = FlexUI()['browse.content'] ?? [];
+    List<dynamic> codes = FlexUI()['browse.secondary'] ?? [];
     for (String code in codes) {
-      Widget? entry = _buildBrowseContentEntry(code);
+      Widget? entry = _buildBrowseSecondaryEntry(code);
       if (entry != null) {
         list.add(entry);
         list.add(Padding(padding: _ribbonButtonPadding, child: Container(height: 1, color: Styles().colors!.surfaceAccent,),));
@@ -326,7 +324,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     return list;
   }
 
-  Widget? _buildBrowseContentEntry(String code) {
+  Widget? _buildBrowseSecondaryEntry(String code) {
     if (code == 'settings') {
       return _RibbonButton(
         icon: Image.asset('images/icon-settings.png'),

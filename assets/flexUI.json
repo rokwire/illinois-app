@@ -14,9 +14,9 @@
 		"wallet.content": ["illini_cash", "meal_plan"],
 		"wallet.cards":["bus_pass", "illini_id", "library_card"],
 
-		"browse": ["all", "content"],
-		"browse.all": ["athletics",  "building_access", "campus_guide", "crisis_help", "dining", "events", "groups", "inbox", "privacy_center", "quick_polls", "saved", "wellness"],
-		"browse.content": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "video_tutorial", "date_cat", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding", "faqs"],
+		"browse": ["primary", "secondary"],
+		"browse.primary": ["athletics",  "building_access", "campus_guide", "crisis_help", "dining", "events", "groups", "inbox", "privacy_center", "quick_polls", "saved", "wellness"],
+		"browse.secondary": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "video_tutorial", "date_cat", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding", "faqs"],
 
 		"settings": ["user_info", "privacy_center", "preferences", "connect", "connected", "link", "linked", "feedback", "delete"],
 		"settings.connect": ["netid", "phone_or_email"],
@@ -127,7 +127,7 @@
 			"home.connect"                        : { "loggedIn": false },
 			"gies"                                : { "shibbolethLoggedIn": true },
 			"canvas"                              : { "shibbolethLoggedIn": true },
-			"browse.all.building_access"          : { "shibbolethLoggedIn": true },
+			"browse.primary.building_access"      : { "shibbolethLoggedIn": true },
 			"laundry"                             : { "shibbolethLoggedIn": true },
 			"create_event"                        : { "accountRole": "event approvers" },
 			"create_stadium_poll"                 : { "accountRole": "stadium poll manager" },
