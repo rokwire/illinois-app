@@ -113,7 +113,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     ]);
 
     _tabs = _getTabs();
-    _initTabBarController();
+    _tabBarController = TabController(length: _tabs.length, vsync: this);
     _updatePanels(_tabs);
 
     Services().initUI();
@@ -262,11 +262,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   
-  void _initTabBarController({RootTab? rootTab}) {
-    int initialIndex = (rootTab != null) ? max(_getIndexByRootTab(rootTab), 0)  : 0;
-    _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: initialIndex);
-  }
-
   void _selectTab(int tabIndex) {
 
     if ((tabIndex >= 0) && (tabIndex != _currentTabIndex)) {
@@ -558,17 +553,24 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _updateContent() {
     List<RootTab> tabs = _getTabs();
     if (!DeepCollectionEquality().equals(_tabs, tabs)) {
-      RootTab? currentRootTab = getRootTabByIndex(_currentTabIndex);
       _updatePanels(tabs);
+      
+      RootTab? currentRootTab = getRootTabByIndex(_currentTabIndex);
       if (mounted) {
         setState(() {
           _tabs = tabs;
-          _initTabBarController(rootTab: currentRootTab);
+          _currentTabIndex = (currentRootTab != null) ? max(_getIndexByRootTab(currentRootTab), 0)  : 0;
+          
+          // Do not initialize _currentTabIndex as initialIndex because we get empty panel content.
+          // Initialize TabController with initialIndex = 0 and then manually animate to desired tab index.
+          _tabBarController = TabController(length: _tabs.length, vsync: this);
         });
+        _tabBarController!.animateTo(_currentTabIndex);
       }
       else {
         _tabs = tabs;
-        _initTabBarController(rootTab: currentRootTab);
+        _currentTabIndex = (currentRootTab != null) ? max(_getIndexByRootTab(currentRootTab), 0)  : 0;
+        _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: _currentTabIndex);
       }
     }
   }
