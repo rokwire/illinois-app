@@ -2276,11 +2276,16 @@
     "widget.home_prefered_sports.label.offline.sports":"Los deportes no están disponibles sin conexión.",
     
     "widget.home.illini_cash.title": "Illini Efectivo",
-    "widget.home.illini_cash.button.view.title": "Vista",
     "widget.home.illini_cash.label.current_balance": "Saldo de efectivo actual de Illini",
     "widget.home.illini_cash.button.add_illini_cash.title": "Agregar efectivo Illini",
 
+    "widget.home.meal_plan.title": "Meal Plan",
+    "widget.home.meal_plan.label.meals_remaining.text": "Comidas restantes",
+    "widget.home.meal_plan.label.dining_dollars.text": "Dólares para cenar",
+
     "widget.home.canvas_courses.header.label": "Cursos",
+
+    "widget.home.common.button.view.title": "Vista",
 
     "widget.food_detail.label.loading.title": "Cargando datos del menú",
     "widget.food_detail.label.loading.hint": "",

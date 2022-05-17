@@ -2276,11 +2276,16 @@
 	"widget.home_prefered_sports.label.offline.sports":"离线时无法查看运动。",
     
     "widget.home.illini_cash.title": "伊利尼現金",
-    "widget.home.illini_cash.button.view.title": "看法",
     "widget.home.illini_cash.label.current_balance": "當前伊利諾伊州現金餘額",
     "widget.home.illini_cash.button.add_illini_cash.title": "添加伊利尼現金",
 
+    "widget.home.meal_plan.title": "Meal Plan",
+    "widget.home.meal_plan.label.meals_remaining.text": "剩餘膳食",
+    "widget.home.meal_plan.label.dining_dollars.text": "餐飲美元",
+
 	"widget.home_canvas_courses.header.label": "培訓班",
+
+    "widget.home.common.button.view.title": "看法",
 
 	"widget.food_detail.label.loading.title":"正在加载菜单数据",
 	"widget.food_detail.label.loading.hint":"",

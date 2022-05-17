@@ -15,24 +15,22 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
-import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
+import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section.dart';
 
-class HomeIlliniCashWidget extends StatefulWidget {
-  HomeIlliniCashWidget();
+class HomeMealPlanWidget extends StatefulWidget {
+  HomeMealPlanWidget();
 
   @override
-  State<HomeIlliniCashWidget> createState() => _HomeIlliniCashWidgetState();
+  State<HomeMealPlanWidget> createState() => _HomeMealPlanWidgetState();
 }
 
-class _HomeIlliniCashWidgetState extends State<HomeIlliniCashWidget> implements NotificationsListener {
+class _HomeMealPlanWidgetState extends State<HomeMealPlanWidget> implements NotificationsListener {
   @override
   void initState() {
     super.initState();
@@ -67,7 +65,7 @@ class _HomeIlliniCashWidgetState extends State<HomeIlliniCashWidget> implements 
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
-                                      child: Text(Localization().getStringEx('widget.home.illini_cash.title', 'Illini Cash'),
+                                      child: Text(Localization().getStringEx('widget.home.meal_plan.title', 'Meal Plan'),
                                           style: TextStyle(
                                               color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20))),
                                   Row(children: <Widget>[
@@ -86,36 +84,22 @@ class _HomeIlliniCashWidgetState extends State<HomeIlliniCashWidget> implements 
                             child: Row(children: <Widget>[
                               Expanded(
                                   child: VerticalTitleValueSection(
-                                title: Localization()
-                                    .getStringEx('widget.home.illini_cash.label.current_balance', 'Current Illini Cash Balance'),
-                                value: IlliniCash().ballance?.balanceDisplayText ?? '\$0.00',
-                              )),
-                              Semantics(
-                                  button: true,
-                                  excludeSemantics: true,
-                                  label:
-                                      Localization().getStringEx('widget.home.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'),
-                                  hint: Localization().getStringEx('widget.home.illini_cash.button.add_illini_cash.hint', ''),
-                                  child: IconButton(
-                                      color: Styles().colors!.fillColorPrimary,
-                                      icon: Image.asset('images/button-plus-orange.png', excludeFromSemantics: true),
-                                      onPressed: _onTapPlus))
+                                      title:
+                                          Localization().getStringEx('widget.home.meal_plan.label.meals_remaining.text', 'Meals Remaining'),
+                                      value: IlliniCash().ballance?.mealBalanceDisplayText ?? "0")),
+                              Expanded(
+                                  child: VerticalTitleValueSection(
+                                      title:
+                                          Localization().getStringEx('widget.home.meal_plan.label.dining_dollars.text', 'Dining Dollars'),
+                                      value: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0"))
                             ])))
                   ]))
                 ]))));
   }
 
   void _onTap() {
-    Analytics().logSelect(target: 'Illini Cash');
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            settings: RouteSettings(name: SettingsIlliniCashPanel.routeName), builder: (context) => SettingsIlliniCashPanel()));
-  }
-
-  void _onTapPlus() {
-    Analytics().logSelect(target: "Add Illini Cash");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsAddIlliniCashPanel()));
+    Analytics().logSelect(target: 'Meal Plan');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsMealPlanPanel()));
   }
 
   // NotificationsListener

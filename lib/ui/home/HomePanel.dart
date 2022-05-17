@@ -23,6 +23,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeGiesWidget.dart';
 import 'package:illinois/ui/home/HomeIlliniCashWidget.dart';
+import 'package:illinois/ui/home/HomeMealPlanWidget.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -176,6 +177,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       }
       else if (code == 'illini_cash_card') {
         widget = HomeIlliniCashWidget();
+      }
+      else if (code == 'meal_plan_card') {
+        widget = HomeMealPlanWidget();
       }
       else {
         widget = FlexContent.fromAssets(code);
