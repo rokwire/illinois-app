@@ -19,11 +19,19 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/News.dart';
+import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
+import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeGiesWidget.dart';
 import 'package:illinois/ui/home/HomeIlliniCashWidget.dart';
 import 'package:illinois/ui/home/HomeMealPlanWidget.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -180,6 +188,27 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       }
       else if (code == 'meal_plan_card') {
         widget = HomeMealPlanWidget();
+      }
+      else if (code == 'events_favs') {
+        widget = HomeFavoritesWidget(favoriteKey: Event.favoriteKeyName);
+      }
+      else if (code == 'dining_favs') {
+        widget = HomeFavoritesWidget(favoriteKey: Dining.favoriteKeyName);
+      }
+      else if (code == 'athletics_favs') {
+        widget = HomeFavoritesWidget(favoriteKey: Game.favoriteKeyName);
+      }
+      else if (code == 'news_favs') {
+        widget = HomeFavoritesWidget(favoriteKey: News.favoriteKeyName);
+      }
+      else if (code == 'laundry_favs') {
+        widget = HomeFavoritesWidget(favoriteKey: LaundryRoom.favoriteKeyName);
+      }
+      else if (code == 'inbox_favs') {
+        widget = HomeFavoritesWidget(favoriteKey: InboxMessage.favoriteKeyName);
+      }
+      else if (code == 'campus_guide_favs') {
+        widget = HomeFavoritesWidget(favoriteKey: GuideFavorite.favoriteKeyName);
       }
       else {
         widget = FlexContent.fromAssets(code);

@@ -50,6 +50,7 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
+      Auth2.notifyLoginChanged,
       Guide.notifyChanged,
     ]);
 
@@ -72,6 +73,9 @@ class _FavoritesPanelState extends State<FavoritesPanel> with AutomaticKeepAlive
       _refreshFavorites();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      _refreshFavorites(showProgress: false);
+    }
+    else if (name == Auth2.notifyLoginChanged) {
       _refreshFavorites(showProgress: false);
     }
     else if (name == Guide.notifyChanged) {
