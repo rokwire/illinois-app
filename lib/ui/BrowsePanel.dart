@@ -266,7 +266,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         hint: Localization().getStringEx('panel.browse.button.building_access.hint', ''),
         icon: 'images/icon-browse-building-status.png',
         textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateToBuildingStatus(),
+        onTap: () => _navigateToBuildingAccess(),
       );
     }
     else if (code == 'campus_guide') {
@@ -516,6 +516,49 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
+  void _navigateToBuildingAccess() {
+    Analytics().logSelect(target: 'Building Access');
+    //TBD_XX: Remove the flexUI rule in auth for "browse.all.building_access" and make the same handling like in HomeSaferWidget
+    showModalBottomSheet(context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24.0),
+        ),
+        builder: (context){
+          return IDCardPanel();
+        }
+    );
+  }
+
+  void _navigateCampusGuide() {
+    Analytics().logSelect(target: "Campus Guide");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
+  }
+
+  void _navigateInbox() {
+    Analytics().logSelect(target: "Inbox");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => InboxHomePanel()));
+  }
+
+  void _navigatePrivacyCenter() {
+    Analytics().logSelect(target: "Privacy Center");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyCenterPanel()));
+  }
+
+  bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
+
+  void _navigateCrisisHelp() {
+    Analytics().logSelect(target: "Crisis Help");
+
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().crisisHelpUrl)) {
+      url_launcher.launch(Config().crisisHelpUrl!);
+    }
+  }
+
   void _navigateSettings() {
     Analytics().logSelect(target: "Settings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
@@ -589,21 +632,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     });
   }
 
-  void _navigateCampusGuide() {
-    Analytics().logSelect(target: "Campus Guide");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
-  }
-
-  void _navigateInbox() {
-    Analytics().logSelect(target: "Inbox");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => InboxHomePanel()));
-  }
-
-  void _navigatePrivacyCenter() {
-    Analytics().logSelect(target: "Privacy Center");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
-  }
-
   void _onFeedbackTap() {
     Analytics().logSelect(target: "Provide Feedback");
 
@@ -620,20 +648,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.feedback', 'Providing a Feedback is not available while offline.'));
-    }
-  }
-
-
-  bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
-
-  void _navigateCrisisHelp() {
-    Analytics().logSelect(target: "Crisis Help");
-
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
-    }
-    else if (StringUtils.isNotEmpty(Config().crisisHelpUrl)) {
-      url_launcher.launch(Config().crisisHelpUrl!);
     }
   }
 
@@ -696,22 +710,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     return result;
   }
 
-  void _navigateToBuildingStatus() {
-    Analytics().logSelect(target: 'Building Entry');
-    //Navigator.push(context, CupertinoPageRoute(
-    //  builder: (context) => IDCardPanel()
-    //));
-    showModalBottomSheet(context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24.0),
-        ),
-        builder: (context){
-          return IDCardPanel();
-        }
-    );
-  }
 
   void _navigateToAddIlliniCash(){
     Analytics().logSelect(target: "Add Illini Cash");
