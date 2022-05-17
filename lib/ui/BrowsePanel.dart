@@ -380,15 +380,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () =>  _navigateLaundry(),
       );
     }
-    else if (code == 'saved') {
-      return _RibbonButton(
-        icon: Image.asset('images/icon-saved.png'),
-        title: Localization().getStringEx('panel.browse.button.saved.title', 'Saved'),
-        hint: Localization().getStringEx('panel.browse.button.saved.hint', ''),
-        padding: _ribbonButtonPadding,
-        onTap: () => _navigateSaved(),
-      );
-    }
     else if (code == 'parking') {
       return _RibbonButton(
         icon: Image.asset('images/icon-parking.png'),
@@ -396,15 +387,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         hint: Localization().getStringEx('panel.browse.button.parking.hint',''),
         padding: _ribbonButtonPadding,
         onTap: () => _navigateParking(),
-      );
-    }
-    else if (code == 'quick_polls') {
-      return _RibbonButton(
-        icon: Image.asset('images/icon-quickpoll.png'),
-        title: Localization().getStringEx('panel.browse.button.quick_polls.title', 'Quick Polls'),
-        hint: Localization().getStringEx('panel.browse.button.quick_polls.hint',''),
-        padding: _ribbonButtonPadding,
-        onTap: () => _navigateQuickPolls(),
       );
     }
     else if (code == 'create_event') {
@@ -479,6 +461,8 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
+  // Primary
+
   void _navigateToAthletics() {
     Analytics().logSelect(target: "Athletics");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
@@ -516,7 +500,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateToBuildingAccess() {
     Analytics().logSelect(target: 'Building Access');
-    //TBD_XX: Remove the flexUI rule in auth for "browse.all.building_access" and make the same handling like in HomeSaferWidget
+    //TBD_XX: Remove the flexUI rule in auth for "browse.all.building_access" and make the same handling like in HomeSaferWidget.
     showModalBottomSheet(context: context,
         isScrollControlled: true,
         isDismissible: true,
@@ -557,6 +541,8 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
+  // Secondary
+
   void _navigateSettings() {
     Analytics().logSelect(target: "Settings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
@@ -580,6 +566,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
           return SettingsIlliniCashPanel();
         }
     ));
+  }
+
+  void _navigateToAddIlliniCash() {
+    Analytics().logSelect(target: "Add Illini Cash");
+    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsAddIlliniCashPanel()));
   }
 
   void _navigateMealPlan() {
@@ -623,6 +614,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateStateFarmWayfinding() {
     Analytics().logSelect(target: "State Farm Wayfinding");
+    //TBD_XX: Load these from app config.
     NativeCommunicator().launchMap(target: {
       'latitude': 40.096247,
       'longitude': -88.235923,
@@ -647,6 +639,23 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.feedback', 'Providing a Feedback is not available while offline.'));
     }
+  }
+
+  String _constructFeedbackParams(String? email, String? phone, String? name) {
+    Map params = Map();
+    params['email'] = Uri.encodeComponent(email != null ? email : "");
+    params['phone'] = Uri.encodeComponent(phone != null ? phone : "");
+    params['name'] = Uri.encodeComponent(name != null ? name : "");
+
+    String result = "";
+    if (params.length > 0) {
+      result += "?";
+      params.forEach((key, value) =>
+        result+= key + "=" + value + "&"
+      );
+      result = result.substring(0, result.length - 1); //remove the last symbol &
+    }
+    return result;
   }
 
   bool get _canFAQs => StringUtils.isNotEmpty(Config().faqsUrl);
@@ -689,29 +698,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     else if (_canVideoTutorial) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel()));
     }
-  }
-
-  String _constructFeedbackParams(String? email, String? phone, String? name) {
-    Map params = Map();
-    params['email'] = Uri.encodeComponent(email != null ? email : "");
-    params['phone'] = Uri.encodeComponent(phone != null ? phone : "");
-    params['name'] = Uri.encodeComponent(name != null ? name : "");
-
-    String result = "";
-    if (params.length > 0) {
-      result += "?";
-      params.forEach((key, value) =>
-        result+= key + "=" + value + "&"
-      );
-      result = result.substring(0, result.length - 1); //remove the last symbol &
-    }
-    return result;
-  }
-
-
-  void _navigateToAddIlliniCash(){
-    Analytics().logSelect(target: "Add Illini Cash");
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsAddIlliniCashPanel()));
   }
 
   // NotificationsListener
