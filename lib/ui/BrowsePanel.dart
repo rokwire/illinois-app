@@ -260,10 +260,10 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _navigateGroups(),
       );
     }
-    else if (code == 'building_status') {
+    else if (code == 'building_access') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Access'),
-        hint: Localization().getStringEx('panel.browse.button.building_status.hint', ''),
+        title: Localization().getStringEx('panel.browse.button.building_access.title', 'Building Access'),
+        hint: Localization().getStringEx('panel.browse.button.building_access.hint', ''),
         icon: 'images/icon-browse-building-status.png',
         textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateToBuildingStatus(),
