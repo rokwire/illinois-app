@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Created HomeIlliniCashWidget and HomeMealPlanWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+- Created HomeFavoritesWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+
 ## [4.0.10] - 2022-05-16
 ### Changed
 - Cleaned up app, root panels and tab bar, prepare for UIUC 4 features [#1629](https://github.com/rokwire/illinois-app/issues/1629).
