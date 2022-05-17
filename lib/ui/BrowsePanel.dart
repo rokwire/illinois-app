@@ -58,7 +58,7 @@ class BrowsePanel extends StatefulWidget {
   _BrowsePanelState createState() => _BrowsePanelState();
 }
 
-class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListener {
+class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClientMixin<BrowsePanel> implements NotificationsListener {
 
   final EdgeInsets _ribbonButtonPadding = EdgeInsets.symmetric(horizontal: 16);
   
@@ -85,7 +85,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
 
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['browse'] ?? [];
@@ -267,7 +271,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         icon: 'images/icon-browse-building-status.png',
         textColor: Styles().colors!.fillColorPrimary,
         loading: _buildingAccessAuthLoading,
-        onTap: () => _onBuildingAccess(),
+        onTap: () => _navigateBuildingAccess(),
       );
     }
     else if (code == 'campus_guide') {
@@ -521,7 +525,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
-  void _onBuildingAccess() {
+  void _navigateBuildingAccess() {
     if (!_buildingAccessAuthLoading) {
       Analytics().logSelect(target: 'Building Access');
       if (Connectivity().isOffline) {
@@ -914,7 +918,9 @@ class _GridSquareButton extends StatelessWidget {
               
             ],),)
         ))),
-        Visibility(visible: (loading == true), child: CircularProgressIndicator())
+        Visibility(visible: (loading == true), child:
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)),
+        ),
     ]);
   }
 }
