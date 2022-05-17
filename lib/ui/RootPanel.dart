@@ -21,7 +21,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/ui/FavoritesPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -60,7 +59,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/service/Canvas.dart';
 
-enum RootTab { Home, Athletics, Explore, Wallet, Browse, Favorites }
+enum RootTab { Home, Athletics, Explore, Wallet, Browse }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -613,9 +612,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (rootTab == RootTab.Browse) {
       return BrowsePanel();
     }
-    else if (rootTab == RootTab.Favorites) {
-      return FavoritesPanel();
-    }
     else {
       return null;
     }
@@ -672,9 +668,6 @@ RootTab? rootTabFromString(String? value) {
     }
     else if (value == 'browse') {
       return RootTab.Browse;
-    }
-    else if (value == 'favorites') {
-      return RootTab.Favorites;
     }
   }
   return null;

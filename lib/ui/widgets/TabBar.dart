@@ -34,10 +34,10 @@ class TabBar extends rokwire.TabBar {
   Widget? buildTab(BuildContext context, String code, int index) {
     if ((code == 'home') || (code == 'athletics')) {
       return rokwire.TabWidget(
-        label: Localization().getStringEx('tabbar.home.title', 'Home'),
-        hint: Localization().getStringEx('tabbar.home.hint', ''),
-        iconAsset: 'images/tab-home.png',
-        selectedIconAsset: 'images/tab-home-selected.png',
+        label: Localization().getStringEx('tabbar.favorites.title', 'Favorites'),
+        hint: Localization().getStringEx('tabbar.favorites.hint', ''),
+        iconAsset: 'images/tab-saved.png',
+        selectedIconAsset: 'images/tab-saved-selected.png',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -74,16 +74,6 @@ class TabBar extends rokwire.TabBar {
         hint: Localization().getStringEx('tabbar.browse.hint', ''),
         iconAsset: 'images/tab-browse.png',
         selectedIconAsset: 'images/tab-browse-selected.png',
-        selected: (tabController?.index == index),
-        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
-      );
-    }
-    else if (code == 'favorites') {
-      return rokwire.TabWidget(
-        label: Localization().getStringEx('tabbar.favorites.title', 'Favorites'),
-        hint: Localization().getStringEx('tabbar.favorites.hint', ''),
-        iconAsset: 'images/tab-saved.png',
-        selectedIconAsset: 'images/tab-saved-selected.png',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
