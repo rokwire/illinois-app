@@ -30,6 +30,10 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   void initState() {
     super.initState();
 
+    //TBD_DD: Refresh courses on awake from background (like HomeTwitterWidget does).
+    // Why do we need to listen for FlexUI.notifyChanged since HomeCanvasCoursesWidget does not depend on it?
+    // Search for Canvas().loadCourses() and think of caching courses content. Examples: Config, GeoFence, Groups
+
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
     ]);
