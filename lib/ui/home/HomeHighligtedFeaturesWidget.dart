@@ -29,7 +29,10 @@ class HomeHighlightedFeatures extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeHighlightedFeaturesState();
 }
 
-class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
+class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures> {
+
+  // TBD_TB: Load widget content from FlexUI (like HomeSaferWidget does).
+  // Please use the following entries: personalize, notifications, privacy, campus_guide 
 
   @override
   Widget build(BuildContext context) {
