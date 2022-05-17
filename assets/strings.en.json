@@ -2291,10 +2291,6 @@
     "widget.food_detail.button.prev_menu.title": "Previous dining date",
     "widget.food_detail.button.prev_menu.hint": "View previous date",
 
-    "widget.home.interest_selection.title": "What are you interested in?",
-    "widget.home.interest_selection.description": "See events based on topics you chose",
-    "widget.home.interest_selection.button.see_all": "See all",
-
     "widget.flex_content.button.close.label": "Close",
     "widget.flex_content.button.close.hint": "",
 

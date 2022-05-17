@@ -36,7 +36,6 @@ import 'package:illinois/ui/home/HomeCampusToolsWidget.dart';
 import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
 import 'package:illinois/ui/home/HomeGameDayWidget.dart';
 import 'package:illinois/ui/home/HomeHighligtedFeaturesWidget.dart';
-import 'package:illinois/ui/home/HomeInterestsSelectionWidget.dart';
 import 'package:illinois/ui/home/HomeLoginWidget.dart';
 import 'package:illinois/ui/home/HomeMyGroupsWidget.dart';
 import 'package:illinois/ui/home/HomePreferredSportsWidget.dart';
@@ -146,9 +145,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       }
       else if (code == 'upcoming_events') {
         widget = HomeUpcomingEventsWidget(refreshController: _refreshController);
-      }
-      else if (code == 'interests_selection') {
-        widget = HomeInterestsSelectionWidget(refreshController: _refreshController);
       }
       else if (code == 'recent_items') {
         widget = HomeRecentItemsWidget(refreshController: _refreshController);

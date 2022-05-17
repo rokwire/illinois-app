@@ -2286,10 +2286,6 @@
 	"widget.food_detail.button.prev_menu.title":"上次用餐日期",
 	"widget.food_detail.button.prev_menu.hint":"查看以前的日期",
 
-	"widget.home.interest_selection.title":"您感兴趣的是什么?",
-	"widget.home.interest_selection.description":"查看基于您选择的主题的活动",
-	"widget.home.interest_selection.button.see_all":"查看全部",
-
 	"widget.flex_content.button.close.label": "關閉",
 	"widget.flex_content.button.close.hint": "",
 

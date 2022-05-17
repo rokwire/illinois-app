@@ -2286,10 +2286,6 @@
     "widget.food_detail.button.prev_menu.title": "Fecha de cena anterior",
     "widget.food_detail.button.prev_menu.hint": "Ver fecha anterior",
 
-    "widget.home.interest_selection.title": "¿Qué le interesa?",
-    "widget.home.interest_selection.description": "Ver eventos según los temas que elegiste",
-    "widget.home.interest_selection.button.see_all": "Ver todo",
-
     "widget.flex_content.button.close.label": "Cerca",
     "widget.flex_content.button.close.hint": "",
 
