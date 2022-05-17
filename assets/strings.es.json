@@ -234,6 +234,10 @@
 
     "panel.browse.web_panel.header.schedule_grades_more.title": "Mi Illini",
 
+    "panel.browse.alert.building_access.privacy_update.msg": "Con su nivel de privacidad en {{privacy_level_icon}}, tendrá que iniciar sesión cada vez para mostrar el estado de acceso a su edificio. ¿Quieres cambiar tu nivel de privacidad a 4 o 5 para que solo tengas que iniciar sesión una vez?",
+    "panel.browse.alert.building_access.privacy_level.4.button.label": "Establecer en 4",
+    "panel.browse.alert.building_access.privacy_level.5.button.label": "Establecer en 5",
+
     "panel.search.header.title":"Buscar",
     "panel.search.label.search_for":"Buscar",
     "panel.search.label.results_for":"Resultados para ",

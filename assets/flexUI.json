@@ -127,7 +127,6 @@
 			"connect"                             : { "loggedIn": false },
 			"gies"                                : { "shibbolethLoggedIn": true },
 			"canvas"                              : { "shibbolethLoggedIn": true },
-			"browse.primary.building_access"      : { "shibbolethLoggedIn": true },
 			"laundry"                             : { "shibbolethLoggedIn": true },
 			"create_event"                        : { "accountRole": "event approvers" },
 			"create_stadium_poll"                 : { "accountRole": "stadium poll manager" },

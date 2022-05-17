@@ -61,6 +61,8 @@ class BrowsePanel extends StatefulWidget {
 class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListener {
 
   final EdgeInsets _ribbonButtonPadding = EdgeInsets.symmetric(horizontal: 16);
+  
+  bool _buildingAccessAuthLoading = false;
 
   @override
   void initState() {
@@ -264,7 +266,8 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         hint: Localization().getStringEx('panel.browse.button.building_access.hint', ''),
         icon: 'images/icon-browse-building-status.png',
         textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateToBuildingAccess(),
+        loading: _buildingAccessAuthLoading,
+        onTap: () => _onBuildingAccess(),
       );
     }
     else if (code == 'campus_guide') {
@@ -461,6 +464,26 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
+  Widget _buildPrivacyAlertWidget() {
+    final String iconMacro = '{{privacy_level_icon}}';
+    String privacyMsg = Localization().getStringEx('panel.browse.alert.building_access.privacy_update.msg', 'With your privacy level at $iconMacro , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?');
+    int iconMacroPosition = privacyMsg.indexOf(iconMacro);
+    String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
+    String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
+    return RichText(text: TextSpan(style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold), children: [
+      TextSpan(text: privacyMsgStart),
+      WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
+      TextSpan(text: privacyMsgEnd)
+    ]));
+  }
+
+  Widget _buildPrivacyLevelWidget() {
+    String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)), ), child:
+        Text(privacyLevel.toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))));
+  }
+
   // Primary
 
   void _navigateToAthletics() {
@@ -498,19 +521,89 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
-  void _navigateToBuildingAccess() {
-    Analytics().logSelect(target: 'Building Access');
-    //TBD_XX: Remove the flexUI rule in auth for "browse.all.building_access" and make the same handling like in HomeSaferWidget.
+  void _onBuildingAccess() {
+    if (!_buildingAccessAuthLoading) {
+      Analytics().logSelect(target: 'Building Access');
+      if (Connectivity().isOffline) {
+        AppAlert.showOfflineMessage(context, "");
+      } else if (!Auth2().privacyMatch(4)) {
+        _onBuildingAccessPrivacyDoNotMatch();
+      } else {
+        _onBuildingAccessPrivacyMatch();
+      }
+    }
+  }
+  
+  void _onBuildingAccessPrivacyDoNotMatch() {
+    AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertWidget(), actions: [
+      TextButton(
+          child: Text(Localization().getStringEx('panel.browse.alert.building_access.privacy_level.4.button.label', 'Set to 4')),
+          onPressed: () => _buildingAccessIncreasePrivacyLevelAndAuthentiate(4)),
+      TextButton(
+          child: Text(Localization().getStringEx('panel.browse.alert.building_access.privacy_level.5.button.label', 'Set to 5')),
+          onPressed: () => _buildingAccessIncreasePrivacyLevelAndAuthentiate(5)),
+      TextButton(child: Text(Localization().getStringEx('dialog.no.title', 'No')), onPressed: _buildingAccessNotIncreasePrivacyLevel)
+    ]);
+  }
+
+  void _onBuildingAccessPrivacyMatch() {
+    if (Auth2().isOidcLoggedIn) {
+      _showBuildingAccessPanel();
+    } else {
+      _buildingAccessOidcAuthenticate();
+    }
+  }
+
+  void _buildingAccessNotIncreasePrivacyLevel() {
+    Analytics().logSelect(target: 'No');
+    Navigator.of(context).pop();
+    if (StringUtils.isNotEmpty(Config().iCardBoardingPassUrl)) {
+      url_launcher.launch(Config().iCardBoardingPassUrl!);
+    }
+  }
+
+  void _buildingAccessIncreasePrivacyLevelAndAuthentiate(int privacyLevel) {
+    Analytics().logSelect(target: 'Yes');
+    Navigator.of(context).pop();
+    Auth2().prefs?.privacyLevel = privacyLevel;
+    Future.delayed(Duration(milliseconds: 300), () {
+      _onBuildingAccessPrivacyMatch();
+    });
+  }
+
+  void _buildingAccessOidcAuthenticate() {
+    if (mounted) {
+      setState(() {
+        _buildingAccessAuthLoading = true;
+      });
+    }
+    Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      if (mounted) {
+        setState(() {
+          _buildingAccessAuthLoading = false;
+        });
+        _buildingAccessOidcDidAuthenticate(result);
+      }
+    });
+  }
+
+  void _buildingAccessOidcDidAuthenticate(Auth2OidcAuthenticateResult? result) {
+    if (result == Auth2OidcAuthenticateResult.succeeded) {
+      _showBuildingAccessPanel();
+    } else if (result != null) {
+      AppAlert.showDialogResult(
+          context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+    }
+  }
+
+  void _showBuildingAccessPanel() {
     showModalBottomSheet(context: context,
         isScrollControlled: true,
         isDismissible: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24.0),
-        ),
-        builder: (context){
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+        builder: (context) {
           return IDCardPanel();
-        }
-    );
+        });
   }
 
   void _navigateCampusGuide() {
@@ -782,15 +875,17 @@ class _GridSquareButton extends StatelessWidget {
   final String? icon;
   final Color? color;
   final Color? textColor;
+  final bool? loading;
   final GestureTapCallback? onTap;
 
-  _GridSquareButton({this.title, this.hint = '', this.icon, this.color = Colors.white, this.textColor = Colors.white, this.onTap});
+  _GridSquareButton({this.title, this.hint = '', this.icon, this.color = Colors.white, this.textColor = Colors.white, this.loading = false, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     const int contentHeight = 80;
     double scaleFactorAdditionalHeight = MediaQuery.of(context).textScaleFactor * 30 ;
-    return GestureDetector(
+    return Stack(alignment: Alignment.center, children: [
+      GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Semantics(
@@ -818,6 +913,8 @@ class _GridSquareButton extends StatelessWidget {
               ),
               
             ],),)
-        )));
+        ))),
+        Visibility(visible: (loading == true), child: CircularProgressIndicator())
+    ]);
   }
 }

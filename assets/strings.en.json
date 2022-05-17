@@ -233,6 +233,10 @@
 
     "panel.browse.web_panel.header.schedule_grades_more.title": "My Illini",
 
+    "panel.browse.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
+    "panel.browse.alert.building_access.privacy_level.4.button.label": "Set to 4",
+    "panel.browse.alert.building_access.privacy_level.5.button.label": "Set to 5",
+
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Searching only Events Titles",
     "panel.search.label.results_for":"Results for ",
