@@ -134,12 +134,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       else if (code == 'pref_sports') {
         widget = HomePreferredSportsWidget(menSports: true, womenSports: true, refreshController: _refreshController);
       }
-      else if (code == 'pref_msports') {
-        widget = HomePreferredSportsWidget(menSports: true, refreshController: _refreshController);
-      }
-      else if (code == 'pref_wsports') {
-        widget = HomePreferredSportsWidget(womenSports: true, refreshController: _refreshController);
-      }
       else if (code == 'campus_reminders') {
         widget = HomeCampusRemindersWidget(refreshController: _refreshController);
       }
