@@ -2222,9 +2222,6 @@
 	"widget.home_create_poll.button.create_poll.label":"创建投票",
 	"widget.home_create_poll.button.login.label":"登录",
 
-	"widget.home_upgrade_version.text": "歡迎使用伊利諾伊州的最新版本。 我們建議您先註銷，然後再次登錄以確保所有功能都可用。",
-	"widget.home_upgrade_version.button.got_it": "得到它了",
-
 	"widget.home_campus_guide_highlights.label.heading": "Campus Guide Highlights",
 	"widget.home_campus_guide_highlights.button.more.title": "查看全部",
 	"widget.home_campus_guide_highlights.button.more.hint": "點按即可查看所有亮點",

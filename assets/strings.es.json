@@ -2222,9 +2222,6 @@
     "widget.home_create_poll.button.create_poll.label":"Crea una encuesta",
     "widget.home_create_poll.button.login.label":"Iniciar sesión",
 
-    "widget.home_upgrade_version.text": "Bienvenido a la última versión de Illinois. Le recomendamos que cierre sesión y luego vuelva a iniciar sesión para asegurarse de que todas las funciones estén disponibles.",
-    "widget.home_upgrade_version.button.got_it": "Entendido",
-
     "widget.home_campus_guide_highlights.label.heading": "Campus Guide Highlights",
     "widget.home_campus_guide_highlights.button.more.title": "Ver todo",
     "widget.home_campus_guide_highlights.button.more.hint": "Toca para ver todos los aspectos destacados",

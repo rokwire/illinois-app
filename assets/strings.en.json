@@ -2227,9 +2227,6 @@
     "widget.home_create_poll.button.create_poll.label":"Create a Poll",
     "widget.home_create_poll.button.login.label":"Login",
 
-    "widget.home_upgrade_version.text": "Welcome to the latest version of Illinois. We recommend that you Sign out and then Sign in again to ensure that all features are available.",
-    "widget.home_upgrade_version.button.got_it": "Got It",
-
     "widget.home_campus_guide_highlights.label.heading": "Campus Guide Highlights",
     "widget.home_campus_guide_highlights.button.more.title": "View All",
     "widget.home_campus_guide_highlights.button.more.hint": "Tap to view all highlights",
