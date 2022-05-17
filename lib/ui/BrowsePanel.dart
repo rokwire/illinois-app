@@ -62,10 +62,6 @@ class BrowsePanel extends StatefulWidget {
 
 class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListener {
 
-  static const _saferIllonoisAppDeeplink      = "edu.illinois.covid://covid.illinois.edu/health/status";
-  static const _saferIllonoisAppStoreApple    = "itms-apps://itunes.apple.com/us/app/apple-store/id1524691383";
-  static const _saferIllonoisAppStoreAndroid  = "market://details?id=edu.illinois.covid";
-
   final EdgeInsets _ribbonButtonPadding = EdgeInsets.symmetric(horizontal: 16);
 
   @override
@@ -262,15 +258,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         icon: 'images/icon-browse-gropus.png',
         textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _navigateGroups(),
-      );
-    }
-    else if (code == 'safer') {
-      return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.safer.title', 'Safer Illinois'),
-        hint: Localization().getStringEx('panel.browse.button.safer.hint', ''),
-        icon: 'images/icon-browse-safer.png',
-        textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateToSaferIllinois(),
       );
     }
     else if (code == 'building_status') {
@@ -494,6 +481,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
+  void _navigateToAthletics() {
+    Analytics().logSelect(target: "Athletics");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+  }
+
   void _navigateToExploreEvents() {
     Analytics().logSelect(target: "Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events)));
@@ -504,14 +496,24 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining)));
   }
 
-  void _navigateToAthletics() {
-    Analytics().logSelect(target: "Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
-  }
-
   void _navigateToWellness() {
     Analytics().logSelect(target: "Wellness");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessPanel()));
+  }
+
+  void _navigateSaved() {
+    Analytics().logSelect(target: "Saved");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
+  }
+
+  void _navigateQuickPolls() {
+    Analytics().logSelect(target: "Quick Polls");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
+  }
+
+  void _navigateGroups() {
+    Analytics().logSelect(target: "Groups");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
   void _navigateSettings() {
@@ -558,19 +560,9 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
-  void _navigateSaved() {
-    Analytics().logSelect(target: "Saved");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
-  }
-
   void _navigateParking() {
     Analytics().logSelect(target: "Parking");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ParkingEventsPanel()));
-  }
-
-  void _navigateQuickPolls() {
-    Analytics().logSelect(target: "Quick Polls");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 
   void _navigateCreateEvent() {
@@ -595,11 +587,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       'longitude': -88.235923,
       'zoom': 17,
     });
-  }
-
-  void _navigateGroups() {
-    Analytics().logSelect(target: "Groups");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
   void _navigateCampusGuide() {
@@ -707,30 +694,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       result = result.substring(0, result.length - 1); //remove the last symbol &
     }
     return result;
-  }
-
-  Future<void> _navigateToSaferIllinois() async{
-    Analytics().logSelect(target: "Safer Illinois");
-    try {
-
-      if (await url_launcher.canLaunch(_saferIllonoisAppDeeplink)) {
-        await url_launcher.launch(_saferIllonoisAppDeeplink);
-      } else {
-        if(Platform.isAndroid){
-          if(await url_launcher.canLaunch(_saferIllonoisAppStoreAndroid)) {
-            await url_launcher.launch(_saferIllonoisAppStoreAndroid);
-          }
-        }
-        else{
-          if(await url_launcher.canLaunch(_saferIllonoisAppStoreApple)) {
-            await url_launcher.launch(_saferIllonoisAppStoreApple);
-          }
-        }
-      }
-    }
-    catch(e) {
-      print(e);
-    }
   }
 
   void _navigateToBuildingStatus() {
