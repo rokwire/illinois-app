@@ -9,10 +9,10 @@
 
 		"home.twitter.account": ["gies", "", "canvas"],
 
-		"wallet": ["connect", "content", "cards"],
-		"wallet.connect":["netid", "phone_or_email"],
-		"wallet.content": ["illini_cash", "meal_plan"],
-		"wallet.cards":["bus_pass", "illini_id", "library_card"],
+		"wallet": ["connect", "vcards", "hcards"],
+		"wallet.connect": ["netid", "phone_or_email"],
+		"wallet.vcards": ["illini_cash_card", "meal_plan_card"],
+		"wallet.hcards": ["bus_pass_card", "illini_id_card", "library_card"],
 
 		"browse": ["primary", "secondary"],
 		"browse.primary": ["athletics",  "building_access", "campus_guide", "crisis_help", "dining", "events", "groups", "inbox", "privacy_center", "quick_polls", "saved", "wellness"],
@@ -65,7 +65,9 @@
 
 			"my_illini"                              : ["student"],
 			"illini_cash"                            : ["student", "OR", "employee", "OR", "parent"],
+			"illini_cash_card"                       : ["student", "OR", "employee", "OR", "parent"],
 			"meal_plan"                              : ["student"],
+			"meal_plan_card"                         : ["student"],
 			"create_poll"                            : ["student", "OR", "employee"],
 			"upgrade_version_message"                : ["student", "OR", "employee"],
 
@@ -76,7 +78,8 @@
 
 			"onboarding.sport_prefs"                 : ["fan"],
 
-			"bus_pass"                               : ["student", "OR", "employee", "OR", "resident"]
+			"bus_pass"                               : ["student", "OR", "employee", "OR", "resident"],
+			"bus_pass_card"                          : ["student", "OR", "employee", "OR", "resident"]
 		},
 		"groups": {
 			"safer"                                  : ["NOT", "Gies Online Programs"],
@@ -90,6 +93,7 @@
 		},
 		"privacy" : {
 			"illini_cash"                     : 3,
+			"illini_cash_card"                : 3,
 			"laundry"                         : 4,
 			"recent_items"                    : 4,
 			"saved"                           : 3,
@@ -133,9 +137,10 @@
 			"upgrade_version_message"             : { "shibbolethLoggedIn": true },
 
 			"wallet.connect"                      : { "loggedIn": false },
-			"wallet.content"                      : { "loggedIn": true },
-			"wallet.cards"                        : { "loggedIn": true },
+			"wallet.vcards"                       : { "loggedIn": true },
+			"wallet.hcards"                       : { "loggedIn": true },
 			"illini_id"                           : { "iCardNum": true },
+			"illini_id_card"                      : { "iCardNum": true },
 			"library_card"                        : { "iCardLibraryNum": true },
 			"inbox"                               : { "shibbolethLoggedIn": true },
 

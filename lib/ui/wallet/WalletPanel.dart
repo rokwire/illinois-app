@@ -140,11 +140,11 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       if (code == 'connect') {
         widget = _buildConnect();
       }
-      else if (code == 'content') {
-        widget = _buildContent();
+      else if (code == 'vcards') {
+        widget = _buildVerticalCardsList();
       }
-      else if (code == 'cards') {
-        widget = _buildCards();
+      else if (code == 'hcards') {
+        widget = _buildHorizontalCardsList();
       }
 
       if (widget != null) {
@@ -241,17 +241,17 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     });
   }
 
-  List<Widget> _buildContent() {
+  List<Widget> _buildVerticalCardsList() {
 
     List<Widget> contentList = [];
-    List<dynamic> codes = FlexUI()['wallet.content'] ?? [];
+    List<dynamic> codes = FlexUI()['wallet.vcards'] ?? [];
     for (String code in codes) {
       Widget? widget;
-      if (code == 'illini_cash') {
-        widget = _buildIlliniCash();
+      if (code == 'illini_cash_card') {
+        widget = _buildIlliniCashCard();
       }
-      else if (code == 'meal_plan') {
-        widget = _buildMealPlan();
+      else if (code == 'meal_plan_card') {
+        widget = _buildMealPlanCard();
       }
       if (widget != null) {
         if (0 < contentList.length) {
@@ -263,7 +263,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     return contentList;
   }
 
-  Widget _buildIlliniCash() {
+  Widget _buildIlliniCashCard() {
     return _RoundedWidget(
       onView: (){
         Analytics().logSelect(target: "Illini Cash");
@@ -305,7 +305,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     );
   }
 
-  Widget _buildMealPlan() {
+  Widget _buildMealPlanCard() {
     return _RoundedWidget(
       onView: (){
         Analytics().logSelect(target: "Meal plan");
@@ -340,16 +340,16 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     );
   }
 
-  Widget _buildCards() {
+  Widget _buildHorizontalCardsList() {
     List<Widget> contentList = [];
-    List<dynamic> codes = FlexUI()['wallet.cards'] ?? [];
+    List<dynamic> codes = FlexUI()['wallet.hcards'] ?? [];
     contentList.add(Container(width: 8,));
     for (String code in codes) {
       Widget? widget;
-      if (code == 'bus_pass') {
+      if (code == 'bus_pass_card') {
         widget = _buildMTDBusCard();
       }
-      else if (code == 'illini_id') {
+      else if (code == 'illini_id_card') {
         widget = _buildIlliniIdCard();
       }
       else if (code == 'library_card') {
