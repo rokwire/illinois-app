@@ -398,7 +398,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                   style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))),
             ]));
       }
-      else if (code == 'connect') {
+      else if (code == 'authenticate') {
         contentList.add(RibbonButton(
           borderRadius: borderRadius,
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0),

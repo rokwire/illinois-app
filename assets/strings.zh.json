@@ -193,10 +193,8 @@
 	"panel.browse.button.state_farm_wayfinding.hint":"",
 	"panel.browse.button.groups.title":"组",
 	"panel.browse.button.groups.hint":"",
-	"panel.browse.button.safer.title": "伊利诺伊",
-	"panel.browse.button.safer.hint": "",
-	"panel.browse.button.building_status.title": "建築物訪問",
-	"panel.browse.button.building_status.hint": "",
+	"panel.browse.button.building_access.title": "建築物訪問",
+	"panel.browse.button.building_access.hint": "",
 	"panel.browse.button.add_illini_cash.title": "添加伊利尼現金",
 	"panel.browse.button.add_illini_cash.hint": "",
 	"panel.browse.button.campus_guide.title":"校園指南",
@@ -235,6 +233,10 @@
 	"panel.browse.button.verify_phone.hint":"",
 
 	"panel.browse.web_panel.header.schedule_grades_more.title":"我的Illini",
+
+    "panel.browse.alert.building_access.privacy_update.msg": "您的隱私級別為 {{privacy_level_icon}} ，您每次都必須登錄才能顯示您的建築物訪問狀態。 您想將您的隱私級別更改為 4 或 5，以便您只需登錄一次？",
+    "panel.browse.alert.building_access.privacy_level.4.button.label": "設置為 4",
+    "panel.browse.alert.building_access.privacy_level.5.button.label": "設置為 5",
 
 	"panel.search.label.search_for":"搜索",
 	"panel.search.label.results_for":"结果为",
@@ -2224,9 +2226,6 @@
 	"widget.home_create_poll.button.create_poll.label":"创建投票",
 	"widget.home_create_poll.button.login.label":"登录",
 
-	"widget.home_upgrade_version.text": "歡迎使用伊利諾伊州的最新版本。 我們建議您先註銷，然後再次登錄以確保所有功能都可用。",
-	"widget.home_upgrade_version.button.got_it": "得到它了",
-
 	"widget.home_campus_guide_highlights.label.heading": "Campus Guide Highlights",
 	"widget.home_campus_guide_highlights.button.more.title": "查看全部",
 	"widget.home_campus_guide_highlights.button.more.hint": "點按即可查看所有亮點",
@@ -2275,6 +2274,18 @@
 	"widget.home_prefered_sports.label.womens_sports":"女子运动",
 	"widget.home_prefered_sports.label.womens_sports.hint":"标题2",
 	"widget.home_prefered_sports.label.offline.sports":"离线时无法查看运动。",
+    
+    "widget.home.illini_cash.title": "伊利尼現金",
+    "widget.home.illini_cash.label.current_balance": "當前伊利諾伊州現金餘額",
+    "widget.home.illini_cash.button.add_illini_cash.title": "添加伊利尼現金",
+
+    "widget.home.meal_plan.title": "Meal Plan",
+    "widget.home.meal_plan.label.meals_remaining.text": "剩餘膳食",
+    "widget.home.meal_plan.label.dining_dollars.text": "餐飲美元",
+
+	"widget.home_canvas_courses.header.label": "培訓班",
+
+    "widget.home.common.button.view.title": "看法",
 
 	"widget.food_detail.label.loading.title":"正在加载菜单数据",
 	"widget.food_detail.label.loading.hint":"",
@@ -2291,14 +2302,8 @@
 	"widget.food_detail.button.prev_menu.title":"上次用餐日期",
 	"widget.food_detail.button.prev_menu.hint":"查看以前的日期",
 
-	"widget.home.interest_selection.title":"您感兴趣的是什么?",
-	"widget.home.interest_selection.description":"查看基于您选择的主题的活动",
-	"widget.home.interest_selection.button.see_all":"查看全部",
-
 	"widget.flex_content.button.close.label": "關閉",
 	"widget.flex_content.button.close.hint": "",
-
-	"widget.home_canvas_courses.header.label": "培訓班",
 
 	"widget.add_image.heading":"选择图像",
 	"widget.add_image.description":"选择图像类型",

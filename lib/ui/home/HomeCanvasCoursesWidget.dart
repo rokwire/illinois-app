@@ -4,7 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
-import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
@@ -25,13 +26,16 @@ class HomeCanvasCoursesWidget extends StatefulWidget {
 class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> implements NotificationsListener {
 
   List<CanvasCourse>? _courses;
+  DateTime? _pausedDateTime;
 
   @override
   void initState() {
     super.initState();
 
+    // TBD: Search for Canvas().loadCourses() and think of caching courses content. Examples: Config, GeoFence, Groups
+
     NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
+      AppLivecycle.notifyStateChanged,
     ]);
 
 
@@ -54,52 +58,62 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      _loadCourses();
+    if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _loadCourses();
+        }
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(
-        visible: _hasCourses,
-        child: Container(
-            child: Column(children: [
+    return Visibility(visible: _hasCourses, child:
+      Container(child:
+        Column(children: [
           _buildHeader(),
           Stack(children: <Widget>[
             _buildSlant(),
             _buildCoursesContent(),
           ])
-        ])));
+        ])
+      )
+    );
   }
 
   Widget _buildHeader() {
-    return Semantics(
-        container: true,
-        header: true,
-        child: Container(
-            color: Styles().colors!.fillColorPrimary,
-            child: Padding(
-                padding: EdgeInsets.only(left: 20, top: 10, bottom: 10),
-                child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                  Padding(
-                      padding: EdgeInsets.only(right: 16),
-                      child: Image.asset(
-                        'images/campus-tools.png',
-                        excludeFromSemantics: true,
-                      )),
-                  Expanded(
-                      child: Text(Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses'),
-                          style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20)))
-                ]))));
+    return Semantics(container: true, header: true, child:
+      Container(color: Styles().colors!.fillColorPrimary, child:
+        Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Padding(padding: EdgeInsets.only(right: 16), child:
+              Image.asset( 'images/campus-tools.png',excludeFromSemantics: true,)
+            ),
+            Expanded(child:
+              Text(Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses'), style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20))
+            )
+          ])
+        )
+      )
+    );
   }
 
   Widget _buildSlant() {
     return Column(children: <Widget>[
       Container(color: Styles().colors!.fillColorPrimary, height: 45),
-      Container(
-          color: Styles().colors!.fillColorPrimary,
-          child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child: Container(height: 65)))
+      Container(color: Styles().colors!.fillColorPrimary, child:
+        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child: Container(height: 65)))
     ]);
   }
 
@@ -122,9 +136,10 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   void _loadCourses() {
     Canvas().loadCourses().then((courses) {
-      _courses = courses;
       if (mounted) {
-        setState(() {});
+        setState(() {
+          _courses = courses;
+        });
       }
     });
   }

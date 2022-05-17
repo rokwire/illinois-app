@@ -192,10 +192,8 @@
     "panel.browse.button.state_farm_wayfinding.hint":"",
     "panel.browse.button.groups.title":"Groups",
     "panel.browse.button.groups.hint":"",
-    "panel.browse.button.safer.title": "Safer Illinois",
-    "panel.browse.button.safer.hint": "",
-    "panel.browse.button.building_status.title": "Building Access",
-    "panel.browse.button.building_status.hint": "",
+    "panel.browse.button.building_access.title": "Building Access",
+    "panel.browse.button.building_access.hint": "",
     "panel.browse.button.add_illini_cash.title": "Add Illini Cash",
     "panel.browse.button.add_illini_cash.hint": "",
     "panel.browse.button.campus_guide.title":"Campus Guide",
@@ -234,6 +232,10 @@
     "panel.browse.button.verify_phone.hint":"",
 
     "panel.browse.web_panel.header.schedule_grades_more.title": "My Illini",
+
+    "panel.browse.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
+    "panel.browse.alert.building_access.privacy_level.4.button.label": "Set to 4",
+    "panel.browse.alert.building_access.privacy_level.5.button.label": "Set to 5",
 
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Searching only Events Titles",
@@ -2229,9 +2231,6 @@
     "widget.home_create_poll.button.create_poll.label":"Create a Poll",
     "widget.home_create_poll.button.login.label":"Login",
 
-    "widget.home_upgrade_version.text": "Welcome to the latest version of Illinois. We recommend that you Sign out and then Sign in again to ensure that all features are available.",
-    "widget.home_upgrade_version.button.got_it": "Got It",
-
     "widget.home_campus_guide_highlights.label.heading": "Campus Guide Highlights",
     "widget.home_campus_guide_highlights.button.more.title": "View All",
     "widget.home_campus_guide_highlights.button.more.hint": "Tap to view all highlights",
@@ -2280,6 +2279,18 @@
     "widget.home_prefered_sports.label.womens_sports":"WOMEN'S SPORTS",
     "widget.home_prefered_sports.label.womens_sports.hint":"Header 2",
     "widget.home_prefered_sports.label.offline.sports":"Sports are not available while offline.",
+    
+    "widget.home.illini_cash.title": "Illini Cash",
+    "widget.home.illini_cash.label.current_balance": "Current Illini Cash Balance",
+    "widget.home.illini_cash.button.add_illini_cash.title": "Add Illini Cash",
+
+    "widget.home.meal_plan.title": "Meal Plan",
+    "widget.home.meal_plan.label.meals_remaining.text": "Meals Remaining",
+    "widget.home.meal_plan.label.dining_dollars.text": "Dining Dollars",
+
+    "widget.home_canvas_courses.header.label": "Courses",
+
+    "widget.home.common.button.view.title": "View",
 
     "widget.food_detail.label.loading.title": "Loading menu data",
     "widget.food_detail.label.loading.hint": "",
@@ -2296,14 +2307,8 @@
     "widget.food_detail.button.prev_menu.title": "Previous dining date",
     "widget.food_detail.button.prev_menu.hint": "View previous date",
 
-    "widget.home.interest_selection.title": "What are you interested in?",
-    "widget.home.interest_selection.description": "See events based on topics you chose",
-    "widget.home.interest_selection.button.see_all": "See all",
-
     "widget.flex_content.button.close.label": "Close",
     "widget.flex_content.button.close.hint": "",
-
-    "widget.home_canvas_courses.header.label": "Courses",
 
     "widget.add_image.heading": "Select Image",
     "widget.add_image.description":"Select an image type",

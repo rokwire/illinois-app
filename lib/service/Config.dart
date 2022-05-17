@@ -53,6 +53,9 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get saferMcKinley => JsonUtils.mapValue(safer['mckinley']) ?? {};
   Map<String, dynamic> get saferWellness => JsonUtils.mapValue(safer['wellness']) ?? {};
 
+  Map<String, dynamic> get stateFarm => JsonUtils.mapValue(content['state_farm']) ?? {};
+  Map<String, dynamic> get stateFarmWayfinding => JsonUtils.mapValue(stateFarm['wayfinding']) ?? {};
+
   // Getters: Secret Keys
 
   String? get shibbolethClientId     => JsonUtils.stringValue(secretShibboleth['client_id']);

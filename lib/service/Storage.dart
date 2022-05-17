@@ -141,19 +141,6 @@ class Storage extends rokwire.Storage {
   }
 
   ////////////////////////////
-  // Upgrade Message Version
-
-  static const String _userLoginVersionKey = 'user_login_version';
-
-  String? get userLoginVersion {
-    return getStringWithName(_userLoginVersionKey);
-  }
-
-  set userLoginVersion(String? value) {
-    setStringWithName(_userLoginVersionKey, value);
-  }
-
-  ////////////////////////////
   // Last Run Version
 
   static const String lastRunVersionKey  = 'last_run_version';

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -60,13 +58,11 @@ class BrowsePanel extends StatefulWidget {
   _BrowsePanelState createState() => _BrowsePanelState();
 }
 
-class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListener {
-
-  static const _saferIllonoisAppDeeplink      = "edu.illinois.covid://covid.illinois.edu/health/status";
-  static const _saferIllonoisAppStoreApple    = "itms-apps://itunes.apple.com/us/app/apple-store/id1524691383";
-  static const _saferIllonoisAppStoreAndroid  = "market://details?id=edu.illinois.covid";
+class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClientMixin<BrowsePanel> implements NotificationsListener {
 
   final EdgeInsets _ribbonButtonPadding = EdgeInsets.symmetric(horizontal: 16);
+  
+  bool _buildingAccessAuthLoading = false;
 
   @override
   void initState() {
@@ -89,16 +85,20 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
 
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['browse'] ?? [];
     for (String code in codes) {
-      if (code == 'all') {
-        contentList.add(_buildBrowseAll());
+      if (code == 'primary') {
+        contentList.add(_buildBrowsePrimary());
       }
-      else if (code == 'content') {
-        contentList.addAll(_buildBrowseContent());
+      else if (code == 'secondary') {
+        contentList.addAll(_buildBrowseSecondary());
       }
     }
 
@@ -144,7 +144,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       );
   }
 
-  Widget _buildBrowseAll() {
+  Widget _buildBrowsePrimary() {
 
     List<Widget> row = [];
     int rowEntries = 0;
@@ -155,9 +155,9 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     list.add(Container(height: 18,));
 
     const int gridWidth = 2;
-    List<dynamic> codes = FlexUI()['browse.all'] ?? [];
+    List<dynamic> codes = FlexUI()['browse.primary'] ?? [];
     for (String code in codes) {
-      Widget? entry = _buildBrowseAllEntry(code);
+      Widget? entry = _buildBrowsePrimaryEntry(code);
       if (entry != null) {
         
         if (0 < rowEntries) {
@@ -200,7 +200,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(children: list),);
   }
   
-  Widget? _buildBrowseAllEntry(String code) {
+  Widget? _buildBrowsePrimaryEntry(String code) {
     if (code == 'athletics') {
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.athletics.title', 'Athletics'),
@@ -264,22 +264,14 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _navigateGroups(),
       );
     }
-    else if (code == 'safer') {
+    else if (code == 'building_access') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.safer.title', 'Safer Illinois'),
-        hint: Localization().getStringEx('panel.browse.button.safer.hint', ''),
-        icon: 'images/icon-browse-safer.png',
-        textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateToSaferIllinois(),
-      );
-    }
-    else if (code == 'building_status') {
-      return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Access'),
-        hint: Localization().getStringEx('panel.browse.button.building_status.hint', ''),
+        title: Localization().getStringEx('panel.browse.button.building_access.title', 'Building Access'),
+        hint: Localization().getStringEx('panel.browse.button.building_access.hint', ''),
         icon: 'images/icon-browse-building-status.png',
         textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateToBuildingStatus(),
+        loading: _buildingAccessAuthLoading,
+        onTap: () => _navigateBuildingAccess(),
       );
     }
     else if (code == 'campus_guide') {
@@ -323,13 +315,13 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
-  List<Widget> _buildBrowseContent() {
+  List<Widget> _buildBrowseSecondary() {
     List<Widget> list = [
 //      Container(height: 1, color: Styles().colors.surfaceAccent,),
     ];
-    List<dynamic> codes = FlexUI()['browse.content'] ?? [];
+    List<dynamic> codes = FlexUI()['browse.secondary'] ?? [];
     for (String code in codes) {
-      Widget? entry = _buildBrowseContentEntry(code);
+      Widget? entry = _buildBrowseSecondaryEntry(code);
       if (entry != null) {
         list.add(entry);
         list.add(Padding(padding: _ribbonButtonPadding, child: Container(height: 1, color: Styles().colors!.surfaceAccent,),));
@@ -339,7 +331,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     return list;
   }
 
-  Widget? _buildBrowseContentEntry(String code) {
+  Widget? _buildBrowseSecondaryEntry(String code) {
     if (code == 'settings') {
       return _RibbonButton(
         icon: Image.asset('images/icon-settings.png'),
@@ -395,15 +387,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () =>  _navigateLaundry(),
       );
     }
-    else if (code == 'saved') {
-      return _RibbonButton(
-        icon: Image.asset('images/icon-saved.png'),
-        title: Localization().getStringEx('panel.browse.button.saved.title', 'Saved'),
-        hint: Localization().getStringEx('panel.browse.button.saved.hint', ''),
-        padding: _ribbonButtonPadding,
-        onTap: () => _navigateSaved(),
-      );
-    }
     else if (code == 'parking') {
       return _RibbonButton(
         icon: Image.asset('images/icon-parking.png'),
@@ -411,15 +394,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         hint: Localization().getStringEx('panel.browse.button.parking.hint',''),
         padding: _ribbonButtonPadding,
         onTap: () => _navigateParking(),
-      );
-    }
-    else if (code == 'quick_polls') {
-      return _RibbonButton(
-        icon: Image.asset('images/icon-quickpoll.png'),
-        title: Localization().getStringEx('panel.browse.button.quick_polls.title', 'Quick Polls'),
-        hint: Localization().getStringEx('panel.browse.button.quick_polls.hint',''),
-        padding: _ribbonButtonPadding,
-        onTap: () => _navigateQuickPolls(),
       );
     }
     else if (code == 'create_event') {
@@ -494,6 +468,33 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
+  Widget _buildPrivacyAlertWidget() {
+    final String iconMacro = '{{privacy_level_icon}}';
+    String privacyMsg = Localization().getStringEx('panel.browse.alert.building_access.privacy_update.msg', 'With your privacy level at $iconMacro , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?');
+    int iconMacroPosition = privacyMsg.indexOf(iconMacro);
+    String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
+    String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
+    return RichText(text: TextSpan(style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold), children: [
+      TextSpan(text: privacyMsgStart),
+      WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
+      TextSpan(text: privacyMsgEnd)
+    ]));
+  }
+
+  Widget _buildPrivacyLevelWidget() {
+    String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)), ), child:
+        Text(privacyLevel.toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))));
+  }
+
+  // Primary
+
+  void _navigateToAthletics() {
+    Analytics().logSelect(target: "Athletics");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+  }
+
   void _navigateToExploreEvents() {
     Analytics().logSelect(target: "Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events)));
@@ -504,15 +505,140 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining)));
   }
 
-  void _navigateToAthletics() {
-    Analytics().logSelect(target: "Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
-  }
-
   void _navigateToWellness() {
     Analytics().logSelect(target: "Wellness");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessPanel()));
   }
+
+  void _navigateSaved() {
+    Analytics().logSelect(target: "Saved");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
+  }
+
+  void _navigateQuickPolls() {
+    Analytics().logSelect(target: "Quick Polls");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
+  }
+
+  void _navigateGroups() {
+    Analytics().logSelect(target: "Groups");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+  }
+
+  void _navigateBuildingAccess() {
+    if (!_buildingAccessAuthLoading) {
+      Analytics().logSelect(target: 'Building Access');
+      if (Connectivity().isOffline) {
+        AppAlert.showOfflineMessage(context, "");
+      } else if (!Auth2().privacyMatch(4)) {
+        _onBuildingAccessPrivacyDoNotMatch();
+      } else {
+        _onBuildingAccessPrivacyMatch();
+      }
+    }
+  }
+  
+  void _onBuildingAccessPrivacyDoNotMatch() {
+    AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertWidget(), actions: [
+      TextButton(
+          child: Text(Localization().getStringEx('panel.browse.alert.building_access.privacy_level.4.button.label', 'Set to 4')),
+          onPressed: () => _buildingAccessIncreasePrivacyLevelAndAuthentiate(4)),
+      TextButton(
+          child: Text(Localization().getStringEx('panel.browse.alert.building_access.privacy_level.5.button.label', 'Set to 5')),
+          onPressed: () => _buildingAccessIncreasePrivacyLevelAndAuthentiate(5)),
+      TextButton(child: Text(Localization().getStringEx('dialog.no.title', 'No')), onPressed: _buildingAccessNotIncreasePrivacyLevel)
+    ]);
+  }
+
+  void _onBuildingAccessPrivacyMatch() {
+    if (Auth2().isOidcLoggedIn) {
+      _showBuildingAccessPanel();
+    } else {
+      _buildingAccessOidcAuthenticate();
+    }
+  }
+
+  void _buildingAccessNotIncreasePrivacyLevel() {
+    Analytics().logSelect(target: 'No');
+    Navigator.of(context).pop();
+    if (StringUtils.isNotEmpty(Config().iCardBoardingPassUrl)) {
+      url_launcher.launch(Config().iCardBoardingPassUrl!);
+    }
+  }
+
+  void _buildingAccessIncreasePrivacyLevelAndAuthentiate(int privacyLevel) {
+    Analytics().logSelect(target: 'Yes');
+    Navigator.of(context).pop();
+    Auth2().prefs?.privacyLevel = privacyLevel;
+    Future.delayed(Duration(milliseconds: 300), () {
+      _onBuildingAccessPrivacyMatch();
+    });
+  }
+
+  void _buildingAccessOidcAuthenticate() {
+    if (mounted) {
+      setState(() {
+        _buildingAccessAuthLoading = true;
+      });
+    }
+    Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      if (mounted) {
+        setState(() {
+          _buildingAccessAuthLoading = false;
+        });
+        _buildingAccessOidcDidAuthenticate(result);
+      }
+    });
+  }
+
+  void _buildingAccessOidcDidAuthenticate(Auth2OidcAuthenticateResult? result) {
+    if (result == Auth2OidcAuthenticateResult.succeeded) {
+      _showBuildingAccessPanel();
+    } else if (result != null) {
+      AppAlert.showDialogResult(
+          context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+    }
+  }
+
+  void _showBuildingAccessPanel() {
+    showModalBottomSheet(context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+        builder: (context) {
+          return IDCardPanel();
+        });
+  }
+
+  void _navigateCampusGuide() {
+    Analytics().logSelect(target: "Campus Guide");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
+  }
+
+  void _navigateInbox() {
+    Analytics().logSelect(target: "Inbox");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => InboxHomePanel()));
+  }
+
+  void _navigatePrivacyCenter() {
+    Analytics().logSelect(target: "Privacy Center");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyCenterPanel()));
+  }
+
+  bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
+
+  void _navigateCrisisHelp() {
+    Analytics().logSelect(target: "Crisis Help");
+
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().crisisHelpUrl)) {
+      url_launcher.launch(Config().crisisHelpUrl!);
+    }
+  }
+
+  // Secondary
 
   void _navigateSettings() {
     Analytics().logSelect(target: "Settings");
@@ -539,6 +665,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     ));
   }
 
+  void _navigateToAddIlliniCash() {
+    Analytics().logSelect(target: "Add Illini Cash");
+    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsAddIlliniCashPanel()));
+  }
+
   void _navigateMealPlan() {
     Analytics().logSelect(target: "Meal Plan");
     Navigator.of(context, rootNavigator: false).push(CupertinoPageRoute(
@@ -558,19 +689,9 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
-  void _navigateSaved() {
-    Analytics().logSelect(target: "Saved");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
-  }
-
   void _navigateParking() {
     Analytics().logSelect(target: "Parking");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ParkingEventsPanel()));
-  }
-
-  void _navigateQuickPolls() {
-    Analytics().logSelect(target: "Quick Polls");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 
   void _navigateCreateEvent() {
@@ -591,30 +712,10 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   void _navigateStateFarmWayfinding() {
     Analytics().logSelect(target: "State Farm Wayfinding");
     NativeCommunicator().launchMap(target: {
-      'latitude': 40.096247,
-      'longitude': -88.235923,
-      'zoom': 17,
+      'latitude': Config().stateFarmWayfinding['latitude'],
+      'longitude': Config().stateFarmWayfinding['longitude'],
+      'zoom': Config().stateFarmWayfinding['zoom'],
     });
-  }
-
-  void _navigateGroups() {
-    Analytics().logSelect(target: "Groups");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
-  }
-
-  void _navigateCampusGuide() {
-    Analytics().logSelect(target: "Campus Guide");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
-  }
-
-  void _navigateInbox() {
-    Analytics().logSelect(target: "Inbox");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => InboxHomePanel()));
-  }
-
-  void _navigatePrivacyCenter() {
-    Analytics().logSelect(target: "Privacy Center");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
   }
 
   void _onFeedbackTap() {
@@ -636,18 +737,21 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
+  String _constructFeedbackParams(String? email, String? phone, String? name) {
+    Map params = Map();
+    params['email'] = Uri.encodeComponent(email != null ? email : "");
+    params['phone'] = Uri.encodeComponent(phone != null ? phone : "");
+    params['name'] = Uri.encodeComponent(name != null ? name : "");
 
-  bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
-
-  void _navigateCrisisHelp() {
-    Analytics().logSelect(target: "Crisis Help");
-
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
+    String result = "";
+    if (params.length > 0) {
+      result += "?";
+      params.forEach((key, value) =>
+        result+= key + "=" + value + "&"
+      );
+      result = result.substring(0, result.length - 1); //remove the last symbol &
     }
-    else if (StringUtils.isNotEmpty(Config().crisisHelpUrl)) {
-      url_launcher.launch(Config().crisisHelpUrl!);
-    }
+    return result;
   }
 
   bool get _canFAQs => StringUtils.isNotEmpty(Config().faqsUrl);
@@ -690,69 +794,6 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     else if (_canVideoTutorial) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel()));
     }
-  }
-
-  String _constructFeedbackParams(String? email, String? phone, String? name) {
-    Map params = Map();
-    params['email'] = Uri.encodeComponent(email != null ? email : "");
-    params['phone'] = Uri.encodeComponent(phone != null ? phone : "");
-    params['name'] = Uri.encodeComponent(name != null ? name : "");
-
-    String result = "";
-    if (params.length > 0) {
-      result += "?";
-      params.forEach((key, value) =>
-        result+= key + "=" + value + "&"
-      );
-      result = result.substring(0, result.length - 1); //remove the last symbol &
-    }
-    return result;
-  }
-
-  Future<void> _navigateToSaferIllinois() async{
-    Analytics().logSelect(target: "Safer Illinois");
-    try {
-
-      if (await url_launcher.canLaunch(_saferIllonoisAppDeeplink)) {
-        await url_launcher.launch(_saferIllonoisAppDeeplink);
-      } else {
-        if(Platform.isAndroid){
-          if(await url_launcher.canLaunch(_saferIllonoisAppStoreAndroid)) {
-            await url_launcher.launch(_saferIllonoisAppStoreAndroid);
-          }
-        }
-        else{
-          if(await url_launcher.canLaunch(_saferIllonoisAppStoreApple)) {
-            await url_launcher.launch(_saferIllonoisAppStoreApple);
-          }
-        }
-      }
-    }
-    catch(e) {
-      print(e);
-    }
-  }
-
-  void _navigateToBuildingStatus() {
-    Analytics().logSelect(target: 'Building Entry');
-    //Navigator.push(context, CupertinoPageRoute(
-    //  builder: (context) => IDCardPanel()
-    //));
-    showModalBottomSheet(context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24.0),
-        ),
-        builder: (context){
-          return IDCardPanel();
-        }
-    );
-  }
-
-  void _navigateToAddIlliniCash(){
-    Analytics().logSelect(target: "Add Illini Cash");
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsAddIlliniCashPanel()));
   }
 
   // NotificationsListener
@@ -838,15 +879,17 @@ class _GridSquareButton extends StatelessWidget {
   final String? icon;
   final Color? color;
   final Color? textColor;
+  final bool? loading;
   final GestureTapCallback? onTap;
 
-  _GridSquareButton({this.title, this.hint = '', this.icon, this.color = Colors.white, this.textColor = Colors.white, this.onTap});
+  _GridSquareButton({this.title, this.hint = '', this.icon, this.color = Colors.white, this.textColor = Colors.white, this.loading = false, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     const int contentHeight = 80;
     double scaleFactorAdditionalHeight = MediaQuery.of(context).textScaleFactor * 30 ;
-    return GestureDetector(
+    return Stack(alignment: Alignment.center, children: [
+      GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Semantics(
@@ -874,6 +917,10 @@ class _GridSquareButton extends StatelessWidget {
               ),
               
             ],),)
-        )));
+        ))),
+        Visibility(visible: (loading == true), child:
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)),
+        ),
+    ]);
   }
 }

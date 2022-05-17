@@ -14,7 +14,8 @@ class Gies with Service implements NotificationsListener{
   List<dynamic>? _pages;
   List<String>?  _navigationPages;
 
-  late Map<int, Set<String>> _progressPages;
+  Map<int, Set<String>>? _progressPages;
+
   Set<String>? _verifiedPages;
   List<int>? _progressSteps;
 
@@ -95,16 +96,16 @@ class Gies with Service implements NotificationsListener{
           if (pageProgress != null) {
             String? pageId = JsonUtils.stringValue(page['id']);
             if ((pageId != null) && pageId.isNotEmpty && _pageCanComplete(page)) {
-              Set<String>? progressPages = _progressPages[pageProgress];
+              Set<String>? progressPages = _progressPages![pageProgress];
               if (progressPages == null) {
-                _progressPages[pageProgress] = progressPages = Set<String>();
+                _progressPages![pageProgress] = progressPages = Set<String>();
               }
               progressPages.add(pageId);
             }
           }
         }
       }
-      _progressSteps = List.from(_progressPages.keys);
+      _progressSteps = List.from(_progressPages!.keys);
       _progressSteps!.sort();
     }
   }
@@ -204,7 +205,7 @@ class Gies with Service implements NotificationsListener{
   }
 
   bool isProgressStepCompleted(int? progressStep) {
-    Set<String>? progressPages = _progressPages[progressStep];
+    Set<String>? progressPages = (_progressPages != null) ? _progressPages![progressStep] : null;
     return (progressPages == null) ||
         (_verifiedPages?.containsAll(progressPages) ?? false);
   }
@@ -239,8 +240,8 @@ class Gies with Service implements NotificationsListener{
   }
 
   void _loadPageVerification({bool notify = false}){
-    if(_progressPages.isNotEmpty){
-      for(Set<String> steps in _progressPages.values){
+    if((_progressPages != null) && _progressPages!.isNotEmpty){
+      for(Set<String> steps in _progressPages!.values){
         if(steps.isNotEmpty){
           for(String pageId in steps){
             _verifyPage(pageId);
@@ -299,7 +300,7 @@ class Gies with Service implements NotificationsListener{
     return _navigationPages;
   }
 
-  Map<int, Set<String>> get progressPages{
+  Map<int, Set<String>>? get progressPages{
     return _progressPages;
   }
 

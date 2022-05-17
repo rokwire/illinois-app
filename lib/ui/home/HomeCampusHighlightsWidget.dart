@@ -17,17 +17,17 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class HomeCampusGuideHighlightsWidget extends StatefulWidget {
+class HomeCampusHighlightsWidget extends StatefulWidget {
 
   final StreamController<void>? refreshController;
 
-  HomeCampusGuideHighlightsWidget({this.refreshController});
+  HomeCampusHighlightsWidget({this.refreshController});
 
   @override
-  _HomeCampusGuideHighlightsWidgetState createState() => _HomeCampusGuideHighlightsWidgetState();
+  _HomeCampusHighlightsWidgetState createState() => _HomeCampusHighlightsWidgetState();
 }
 
-class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlightsWidget> implements NotificationsListener {
+class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget> implements NotificationsListener {
 
   static const int _maxItems = 3;
 
@@ -128,7 +128,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
   }
 
   void _showAll() {
-    Analytics().logSelect(target: "HomeCampusGuideHighlightsWidget View All");
+    Analytics().logSelect(target: "HomeCampusHighlightsWidget View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _promotedItems, contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'))));
   }
 }
