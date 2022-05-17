@@ -2274,6 +2274,13 @@
 	"widget.home_prefered_sports.label.womens_sports":"女子运动",
 	"widget.home_prefered_sports.label.womens_sports.hint":"标题2",
 	"widget.home_prefered_sports.label.offline.sports":"离线时无法查看运动。",
+    
+    "widget.home.illini_cash.title": "伊利尼現金",
+    "widget.home.illini_cash.button.view.title": "看法",
+    "widget.home.illini_cash.label.current_balance": "當前伊利諾伊州現金餘額",
+    "widget.home.illini_cash.button.add_illini_cash.title": "添加伊利尼現金",
+
+	"widget.home_canvas_courses.header.label": "培訓班",
 
 	"widget.food_detail.label.loading.title":"正在加载菜单数据",
 	"widget.food_detail.label.loading.hint":"",
@@ -2292,8 +2299,6 @@
 
 	"widget.flex_content.button.close.label": "關閉",
 	"widget.flex_content.button.close.hint": "",
-
-	"widget.home_canvas_courses.header.label": "培訓班",
 
 	"widget.add_image.heading":"选择图像",
 	"widget.add_image.description":"选择图像类型",

@@ -2279,6 +2279,13 @@
     "widget.home_prefered_sports.label.womens_sports":"WOMEN'S SPORTS",
     "widget.home_prefered_sports.label.womens_sports.hint":"Header 2",
     "widget.home_prefered_sports.label.offline.sports":"Sports are not available while offline.",
+    
+    "widget.home.illini_cash.title": "Illini Cash",
+    "widget.home.illini_cash.button.view.title": "View",
+    "widget.home.illini_cash.label.current_balance": "Current Illini Cash Balance",
+    "widget.home.illini_cash.button.add_illini_cash.title": "Add Illini Cash",
+
+    "widget.home_canvas_courses.header.label": "Courses",
 
     "widget.food_detail.label.loading.title": "Loading menu data",
     "widget.food_detail.label.loading.hint": "",
@@ -2297,8 +2304,6 @@
 
     "widget.flex_content.button.close.label": "Close",
     "widget.flex_content.button.close.hint": "",
-
-    "widget.home_canvas_courses.header.label": "Courses",
 
     "widget.add_image.heading": "Select Image",
     "widget.add_image.description":"Select an image type",

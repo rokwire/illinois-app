@@ -2274,6 +2274,13 @@
     "widget.home_prefered_sports.label.womens_sports":"DEPORTES DE MUJER",
     "widget.home_prefered_sports.label.womens_sports.hint":"Encabezado 2",
     "widget.home_prefered_sports.label.offline.sports":"Los deportes no están disponibles sin conexión.",
+    
+    "widget.home.illini_cash.title": "Illini Efectivo",
+    "widget.home.illini_cash.button.view.title": "Vista",
+    "widget.home.illini_cash.label.current_balance": "Saldo de efectivo actual de Illini",
+    "widget.home.illini_cash.button.add_illini_cash.title": "Agregar efectivo Illini",
+
+    "widget.home.canvas_courses.header.label": "Cursos",
 
     "widget.food_detail.label.loading.title": "Cargando datos del menú",
     "widget.food_detail.label.loading.hint": "",
@@ -2292,8 +2299,6 @@
 
     "widget.flex_content.button.close.label": "Cerca",
     "widget.flex_content.button.close.hint": "",
-
-    "widget.home_canvas_courses.header.label": "Cursos",
 
     "widget.add_image.heading": "Seleccionar imagen",
     "widget.add_image.description":"Seleccione un tipo de imagen",
