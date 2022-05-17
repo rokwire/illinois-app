@@ -6,6 +6,7 @@
 		"home.connect": ["netid", "phone_or_email"],
 		"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 		"home.campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help"],
+		"home.highlighted_features" : ["personalize", "notifications", "privacy", "campus_guide"],
 
 		"home.twitter.account": ["gies", "", "canvas"],
 
