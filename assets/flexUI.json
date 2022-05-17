@@ -95,6 +95,8 @@
 		"privacy" : {
 			"illini_cash"                     : 3,
 			"illini_cash_card"                : 3,
+			"meal_plan"                       : 3,
+			"meal_plan_card"                  : 3,
 			"laundry"                         : 4,
 			"recent_items"                    : 4,
 			"saved"                           : 3,
@@ -132,6 +134,8 @@
 			"create_event"                        : { "accountRole": "event approvers" },
 			"create_stadium_poll"                 : { "accountRole": "stadium poll manager" },
 			"upgrade_version_message"             : { "shibbolethLoggedIn": true },
+			"illini_cash_card"                    : { "loggedIn": true },
+			"meal_plan_card"                      : { "loggedIn": true },
 
 			"wallet.vcards"                       : { "loggedIn": true },
 			"wallet.hcards"                       : { "loggedIn": true },
