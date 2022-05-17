@@ -614,11 +614,10 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateStateFarmWayfinding() {
     Analytics().logSelect(target: "State Farm Wayfinding");
-    //TBD_XX: Load these from app config.
     NativeCommunicator().launchMap(target: {
-      'latitude': 40.096247,
-      'longitude': -88.235923,
-      'zoom': 17,
+      'latitude': Config().stateFarmWayfinding['latitude'],
+      'longitude': Config().stateFarmWayfinding['longitude'],
+      'zoom': Config().stateFarmWayfinding['zoom'],
     });
   }
 
