@@ -122,18 +122,18 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   Widget _buildOffline() {
     return Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 96, bottom: 16), child:
       Column(children: <Widget>[
-        Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 16),),
+        Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
         Container(height:8),
-        Text(Localization().getStringEx("panel.favorites.message.offline", "Favorite Items are not available while offline")),
+        Text(Localization().getStringEx("panel.favorites.message.offline", "Favorite Items are not available while offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
     ],),);
   }
 
   Widget _buildEmpty() {
     return Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 96, bottom: 16), child:
       Column(children: <Widget>[
-        Text(Localization().getStringEx("panel.favorites.message.empty", "Whoops! Nothing to see here."), style: TextStyle(fontSize: 16),),
+        Text(Localization().getStringEx("panel.favorites.message.empty", "Whoops! Nothing to see here."), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
         Container(height:8),
-        Text(Localization().getStringEx("panel.favorites.message.empty.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here.")),
+        Text(Localization().getStringEx("panel.favorites.message.empty.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
     ],),);
   }
 

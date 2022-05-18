@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Do not try to display courses that are restricted by date [#1641](https://github.com/rokwire/illinois-app/issues/1641).
+### Added
+- Created HomeBusPassWidget, HomeIlliniIdWidget and HomeLibraryCardWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 
 ## [4.0.11] - 2022-05-17
-### Changed
+### Added
 - Created HomeIlliniCashWidget and HomeMealPlanWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 - Created HomeFavoritesWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 

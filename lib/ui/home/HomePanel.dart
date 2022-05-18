@@ -25,10 +25,13 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/ui/home/HomeBusPassWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeGiesWidget.dart';
 import 'package:illinois/ui/home/HomeIlliniCashWidget.dart';
+import 'package:illinois/ui/home/HomeIlliniIdWidget.dart';
+import 'package:illinois/ui/home/HomeLibraryCardWidget.dart';
 import 'package:illinois/ui/home/HomeMealPlanWidget.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -183,12 +186,27 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       else if (code == 'safer') {
         widget = saferWidget = _saferWidget ??= HomeSaferWidget(key: _saferKey);
       }
+      
+      // Wallet Cards
+
       else if (code == 'illini_cash_card') {
         widget = HomeIlliniCashWidget();
       }
       else if (code == 'meal_plan_card') {
         widget = HomeMealPlanWidget();
       }
+      else if (code == 'bus_pass_card') {
+        widget = HomeBusPassWidget();
+      }
+      else if (code == 'illini_id_card') {
+        widget = HomeIlliniIdWidget();
+      }
+      else if (code == 'library_card') {
+        widget = HomeLibraryCardWidget();
+      }
+      
+      // Favs
+
       else if (code == 'events_favs') {
         widget = HomeFavoritesWidget(favoriteKey: Event.favoriteKeyName);
       }
@@ -210,6 +228,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       else if (code == 'campus_guide_favs') {
         widget = HomeFavoritesWidget(favoriteKey: GuideFavorite.favoriteKeyName);
       }
+
+      // Assets widget
+
       else {
         widget = FlexContent.fromAssets(code);
       }

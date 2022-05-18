@@ -16,25 +16,25 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section.dart';
 
-class HomeMealPlanWidget extends StatefulWidget {
-  HomeMealPlanWidget();
+class HomeIlliniIdWidget extends StatefulWidget {
+  HomeIlliniIdWidget();
 
   @override
-  State<HomeMealPlanWidget> createState() => _HomeMealPlanWidgetState();
+  State<HomeIlliniIdWidget> createState() => _HomeIlliniIdWidgetState();
 }
 
-class _HomeMealPlanWidgetState extends State<HomeMealPlanWidget> implements NotificationsListener {
+class _HomeIlliniIdWidgetState extends State<HomeIlliniIdWidget> implements NotificationsListener {
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      IlliniCash.notifyBallanceUpdated
+      Auth2.notifyCardChanged,
     ]);
     super.initState();
   }
@@ -57,7 +57,7 @@ class _HomeMealPlanWidgetState extends State<HomeMealPlanWidget> implements Noti
                   Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                       Expanded(child:
-                        Text(Localization().getStringEx('widget.home.meal_plan.title', 'Meal Plan'), style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20))
+                        Text(Localization().getStringEx('widget.home.illini_id.title', 'Illini ID'), style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20))
                       ),
                       Row(children: <Widget>[
                         Padding(padding: EdgeInsets.only(right: 10), child:
@@ -73,14 +73,8 @@ class _HomeMealPlanWidgetState extends State<HomeMealPlanWidget> implements Noti
                     Row(children: <Widget>[
                       Expanded(child:
                         VerticalTitleValueSection(
-                          title: Localization().getStringEx('widget.home.meal_plan.label.meals_remaining.text', 'Meals Remaining'),
-                          value: IlliniCash().ballance?.mealBalanceDisplayText ?? "0"
-                        )
-                      ),
-                      Expanded(child:
-                        VerticalTitleValueSection(
-                          title: Localization().getStringEx('widget.home.meal_plan.label.dining_dollars.text', 'Dining Dollars'),
-                          value: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0"
+                          title: Auth2().authCard?.fullName ?? '',
+                          value: Auth2().authCard?.uin ?? '',
                         )
                       ),
                     ]),
@@ -95,14 +89,14 @@ class _HomeMealPlanWidgetState extends State<HomeMealPlanWidget> implements Noti
   }
 
   void _onTap() {
-    Analytics().logSelect(target: 'Meal Plan');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsMealPlanPanel()));
+    Analytics().logSelect(target: 'Illini ID');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => IDCardPanel()));
   }
 
   // NotificationsListener
 
   void onNotification(String name, dynamic param) {
-    if (name == IlliniCash.notifyBallanceUpdated) {
+    if (name == Auth2.notifyCardChanged) {
       if (mounted) {
         setState(() {});
       }

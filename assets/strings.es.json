@@ -2283,6 +2283,13 @@
     "widget.home.meal_plan.label.meals_remaining.text": "Comidas restantes",
     "widget.home.meal_plan.label.dining_dollars.text": "Dólares para cenar",
 
+    "widget.home.bus_pass.title": "MTD",
+    "widget.home.bus_pass.label.card_expires.text": "La tarjeta caduca: %s",
+
+    "widget.home.illini_id.title": "Identificación Illini",
+
+    "widget.home.library_card.title": "Tarjeta de biblioteca",
+
     "widget.home.canvas_courses.header.label": "Cursos",
 
     "widget.home.common.button.view.title": "Vista",
