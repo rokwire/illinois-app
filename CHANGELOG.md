@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Do not try to display courses that are restricted by date [#1641](https://github.com/rokwire/illinois-app/issues/1641).
 
 ## [4.0.11] - 2022-05-17
 ### Changed
