@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
+- Fixed Gies Home Widget status [#1646](https://github.com/rokwire/illinois-app/issues/1646).
 - Do not try to display courses that are restricted by date [#1641](https://github.com/rokwire/illinois-app/issues/1641).
 ### Added
 - Created HomeBusPassWidget, HomeIlliniIdWidget and HomeLibraryCardWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
