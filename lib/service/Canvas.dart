@@ -86,7 +86,18 @@ class Canvas with Service implements NotificationsListener{
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      List<CanvasCourse>? courses = CanvasCourse.listFromJson(JsonUtils.decodeList(responseString));
+      List<dynamic>? coursesJson = JsonUtils.decodeList(responseString);
+      List<CanvasCourse>? courses;
+      if (coursesJson != null) {
+        courses = <CanvasCourse>[];
+        for (dynamic json in coursesJson) {
+          CanvasCourse? course = CanvasCourse.fromJson(json);
+          // Do not load course if it's null or its access is restricted by date
+          if ((course != null) && (course.accessRestrictedByDate != true)) {
+            courses.add(course);
+          }
+        }
+      }
       return courses;
     } else {
       Log.w('Failed to load canvas courses. Response:\n$responseCode: $responseString');
