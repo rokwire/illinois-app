@@ -17,13 +17,11 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeBusPassWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
@@ -33,6 +31,7 @@ import 'package:illinois/ui/home/HomeIlliniCashWidget.dart';
 import 'package:illinois/ui/home/HomeIlliniIdWidget.dart';
 import 'package:illinois/ui/home/HomeLibraryCardWidget.dart';
 import 'package:illinois/ui/home/HomeMealPlanWidget.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -56,7 +55,6 @@ import 'package:illinois/ui/home/HomeCampusHighlightsWidget.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeVoterRegistrationWidget.dart';
 import 'package:illinois/ui/home/HomeUpcomingEventsWidget.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -104,12 +102,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     super.build(context);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Styles().colors?.fillColorPrimaryVariant,
-        leading: _buildHeaderHomeButton(),
-        title: _buildHeaderTitle(),
-        actions: [_buildHeaderActions()],
-      ),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.home.header.title', 'ILLINOIS')),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(children: <Widget>[
           Expanded(child:
@@ -241,26 +234,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     return widgets;
   }
 
-  Widget _buildHeaderHomeButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),);
-  }
-
-  Widget _buildHeaderTitle() {
-    return Semantics(label: Localization().getStringEx('panel.home.header.title', 'ILLINOIS'), excludeSemantics: true, child:
-      Text(Localization().getStringEx('panel.home.header.title', 'ILLINOIS'), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
-  }
-
-  Widget _buildHeaderSettingsButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: _onTapSettings));
-  }
-
-  Widget _buildHeaderActions() {
-    List<Widget> actions = <Widget>[ _buildHeaderSettingsButton() ];
-    return Row(mainAxisSize: MainAxisSize.min, children: actions,);
-  }
-
   void _updateContentListCodes() {
     List<String>? contentListCodes = JsonUtils.listStringsValue(FlexUI()['home']);
     if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
@@ -280,16 +253,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       if (saferContext != null) {
         Scrollable.ensureVisible(saferContext, duration: Duration(milliseconds: 300));
       }
-  }
-
-  void _onTapSettings() {
-    Analytics().logSelect(target: "Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
-  }
-
-  void _onTapHome() {
-    Analytics().logSelect(target: "Home");
-    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   // NotificationsListener

@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -83,7 +83,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
     
     return Scaffold(
       backgroundColor: Styles().colors!.background,
-      appBar: widget.rootTabDisplay ? _buildRootTabHeaderBar() : _buildStandardHeaderBar(),
+      appBar: widget.rootTabDisplay ? RootHeaderBar(title: Localization().getStringEx('panel.wellness.header.title', 'Wellness')) : _buildStandardHeaderBar(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,36 +170,6 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
         ),
       );
   }
-
-  PreferredSizeWidget _buildRootTabHeaderBar() {
-  return AppBar(
-      backgroundColor: Styles().colors?.fillColorPrimaryVariant,
-      leading: _buildHeaderHomeButton(),
-      title: _buildHeaderTitle(),
-      actions: [_buildHeaderActions()],
-    );
-  }
-
-  Widget _buildHeaderHomeButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),);
-  }
-
-  Widget _buildHeaderTitle() {
-    return Semantics(label: Localization().getStringEx('panel.wellness.header.title', 'Wellness'), excludeSemantics: true, child:
-      Text(Localization().getStringEx('panel.wellness.header.title', 'Wellness'), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
-  }
-
-  Widget _buildHeaderSettingsButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: _onTapSettings));
-  }
-
-  Widget _buildHeaderActions() {
-    List<Widget> actions = <Widget>[ _buildHeaderSettingsButton() ];
-    return Row(mainAxisSize: MainAxisSize.min, children: actions,);
-  }
-
 
   Widget _buildDescriptionButtons() {
     List<dynamic>? ribbonButtonsContent = MapPathKey.entry(_jsonContent, 'description.ribbon_buttons');
@@ -560,16 +530,6 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
       default:
         return null;
     }
-  }
-
-  void _onTapSettings() {
-    Analytics().logSelect(target: "Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
-  }
-
-  void _onTapHome() {
-    Analytics().logSelect(target: "Home");
-    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   /// NotificationListener

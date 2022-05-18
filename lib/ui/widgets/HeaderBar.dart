@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/header_bar.dart' as rokwire;
@@ -231,3 +234,56 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
         actions: actions,
       );
 }*/
+
+class RootHeaderBar extends StatelessWidget implements PreferredSizeWidget {
+
+  final String? title;
+
+  RootHeaderBar({Key? key, this.title}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => AppBar(
+    backgroundColor: Styles().colors?.fillColorPrimaryVariant,
+    leading: _buildHeaderHomeButton(),
+    title: _buildHeaderTitle(),
+    actions: [_buildHeaderActions()],
+  );
+
+  // PreferredSizeWidget
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  Widget _buildHeaderHomeButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),);
+  }
+
+  Widget _buildHeaderTitle() {
+    return Semantics(label: title, excludeSemantics: true, child:
+      Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+  }
+
+  Widget _buildHeaderSettingsButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: _onTapSettings));
+  }
+
+  Widget _buildHeaderActions() {
+    List<Widget> actions = <Widget>[ _buildHeaderSettingsButton() ];
+    return Row(mainAxisSize: MainAxisSize.min, children: actions,);
+  }
+
+  void _onTapSettings() {
+    Analytics().logSelect(target: "Settings");
+    if (App.instance?.currentContext != null) {
+      Navigator.push(App.instance!.currentContext!, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
+    }
+  }
+
+  void _onTapHome() {
+    Analytics().logSelect(target: "Home");
+    if (App.instance?.currentContext != null) {
+      Navigator.of(App.instance!.currentContext!).popUntil((route) => route.isFirst);
+    }
+  }
+}

@@ -1,8 +1,21 @@
+/*
+ * Copyright 2020 Board of Trustees of the University of Illinois.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -47,12 +60,7 @@ class _NavigatePanelState extends State<NavigatePanel> with AutomaticKeepAliveCl
     super.build(context);
     
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Styles().colors?.fillColorPrimaryVariant,
-        leading: _buildHeaderHomeButton(),
-        title: _buildHeaderTitle(),
-        actions: [_buildHeaderActions()],
-      ),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.navigate.header.title', 'Navigate')),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(children: <Widget>[
           Expanded(child:
@@ -83,37 +91,6 @@ class _NavigatePanelState extends State<NavigatePanel> with AutomaticKeepAliveCl
     ],),);
   }
 
-  Widget _buildHeaderHomeButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),);
-  }
-
-  Widget _buildHeaderTitle() {
-    return Semantics(label: Localization().getStringEx('panel.navigate.header.title', 'Navigate'), excludeSemantics: true, child:
-      Text(Localization().getStringEx('panel.navigate.header.title', 'Navigate'), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
-  }
-
-  Widget _buildHeaderSettingsButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: _onTapSettings));
-  }
-
-  Widget _buildHeaderActions() {
-    List<Widget> actions = <Widget>[ _buildHeaderSettingsButton() ];
-    return Row(mainAxisSize: MainAxisSize.min, children: actions,);
-  }
-
-
   Future<void>_onPullToRefresh() async {
-  }
-
-  void _onTapSettings() {
-    Analytics().logSelect(target: "Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
-  }
-
-  void _onTapHome() {
-    Analytics().logSelect(target: "Home");
-    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }

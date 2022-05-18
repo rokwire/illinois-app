@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -107,12 +108,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     super.build(context);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Styles().colors?.fillColorPrimaryVariant,
-        leading: _buildHeaderHomeButton(),
-        title: _buildHeaderTitle(),
-        actions: [_buildHeaderActions()],
-      ),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.browse.label.title', 'Browse')),
       body: Column(children: <Widget>[
         Expanded(child:
           SingleChildScrollView(child:
@@ -482,38 +478,6 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
       Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)), ), child:
         Text(privacyLevel.toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))));
-  }
-
-  Widget _buildHeaderHomeButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),);
-  }
-
-  Widget _buildHeaderTitle() {
-    return Semantics(label: Localization().getStringEx('panel.browse.label.title', 'Browse'), excludeSemantics: true, child:
-      Text(Localization().getStringEx('panel.browse.label.title', 'Browse'), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
-  }
-
-  Widget _buildHeaderSettingsButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: _onTapSettings));
-  }
-
-  Widget _buildHeaderActions() {
-    List<Widget> actions = <Widget>[ _buildHeaderSettingsButton() ];
-    return Row(mainAxisSize: MainAxisSize.min, children: actions,);
-  }
-
-  // HeaderBar
-
-  void _onTapSettings() {
-    Analytics().logSelect(target: "Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
-  }
-
-  void _onTapHome() {
-    Analytics().logSelect(target: "Home");
-    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   // Primary
