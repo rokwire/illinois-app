@@ -2386,12 +2386,14 @@
 
 	"widget.group_card.status.private": "Private",
 	"widget.group_card.status.public": "Public",
-  "widget.group_card.status.authman": "Managed",
+    "widget.group_card.status.authman": "Managed",
 	"widget.group_card.status.hidden": "Hidden",
 	"widget.group_card.status.hint": "status: %s ,for: ",
-  "widget.group_card.member.label": "member",
-  "widget.group_card.members.label": "members",
+    "widget.group_card.member.label": "member",
+    "widget.group_card.members.label": "members",
 	"panel.group_card.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can only view existing groups.",
+
+    "widget.group.member.card.attended.label": "ATTENDED",
 
 	"widget.groups.selection.button.select.label": "選擇",
 	"widget.groups.selection.heading": "選擇組",

@@ -2398,6 +2398,8 @@
     "widget.group_card.members.label": "members",
     "panel.group_card.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can only view existing groups.",
 
+    "widget.group.member.card.attended.label": "ATTENDED",
+
     "widget.groups.selection.button.select.label": "Select",
     "widget.groups.selection.heading": "Select Group",
 
