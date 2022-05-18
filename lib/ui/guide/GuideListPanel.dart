@@ -24,7 +24,6 @@ import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
-import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -375,7 +374,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateLibraryCard() {
     Analytics().logSelect(target: "Library Card");
-    showModalBottomSheet(context: context, isScrollControlled: true, isDismissible: true, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0),), builder: (context) => WalletSheet(ensureVisibleCard: 'library',));
+    //showModalBottomSheet(context: context, isScrollControlled: true, isDismissible: true, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0),), builder: (context) => WalletSheet(ensureVisibleCard: 'library',));
   }
 
   void _navigateMealPlan() {

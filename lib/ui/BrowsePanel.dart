@@ -84,12 +84,48 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     super.dispose();
   }
 
+  // AutomaticKeepAliveClientMixin
   @override
   bool get wantKeepAlive => true;
+
+
+  // NotificationsListener
+  @override
+  void onNotification(String name, dynamic param) {
+    if ((name == Connectivity.notifyStatusChanged) ||
+        (name == Localization.notifyStringsUpdated) ||
+        (name == FlexUI.notifyChanged) ||
+        (name == Config.notifyConfigChanged) ||
+        (name == Styles.notifyChanged))
+    {
+      setState(() { });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Styles().colors?.fillColorPrimaryVariant,
+        leading: _buildHeaderHomeButton(),
+        title: _buildHeaderTitle(),
+        actions: [_buildHeaderActions()],
+      ),
+      body: Column(children: <Widget>[
+        Expanded(child:
+          SingleChildScrollView(child:
+            Column(children: _buildContentList(),)
+          )
+        ),
+      ]),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: null,
+    );
+  }
+
+  List<Widget> _buildContentList() {
 
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['browse'] ?? [];
@@ -101,47 +137,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         contentList.addAll(_buildBrowseSecondary());
       }
     }
-
-    return Scaffold(
-        body: Column(
-          children: <Widget>[
-            Expanded(
-                child: CustomScrollView(
-                  slivers: <Widget>[
-                    SliverAppBar(pinned: true, floating: true, primary: true, forceElevated: true, centerTitle: true,
-                      title: Text(
-                        Localization().getStringEx('panel.browse.label.title','Browse'),
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1.0),
-                      ),
-                      actions: <Widget>[
-                        Semantics(
-                          label: Localization().getStringEx('headerbar.settings.title', 'Settings'),
-                          hint: Localization().getStringEx('headerbar.settings.hint', ''),
-                          button: true,
-                          excludeSemantics: true,
-                          child: IconButton(
-                              icon: Image.asset('images/settings-white.png'),
-                              onPressed: () {_navigateSettings(); }))
-                      ],
-                    ),
-                    SliverList(
-                      delegate: SliverChildListDelegate([
-                        Column(
-                          children: contentList,
-                        )
-                      ]),
-                    )
-                  ],
-                )
-            ),
-          ],
-        ),
-        backgroundColor: Styles().colors!.background,
-      );
+    return contentList;
   }
 
   Widget _buildBrowsePrimary() {
@@ -488,6 +484,38 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         Text(privacyLevel.toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))));
   }
 
+  Widget _buildHeaderHomeButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),);
+  }
+
+  Widget _buildHeaderTitle() {
+    return Semantics(label: Localization().getStringEx('panel.browse.label.title', 'Browse'), excludeSemantics: true, child:
+      Text(Localization().getStringEx('panel.browse.label.title', 'Browse'), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+  }
+
+  Widget _buildHeaderSettingsButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: _onTapSettings));
+  }
+
+  Widget _buildHeaderActions() {
+    List<Widget> actions = <Widget>[ _buildHeaderSettingsButton() ];
+    return Row(mainAxisSize: MainAxisSize.min, children: actions,);
+  }
+
+  // HeaderBar
+
+  void _onTapSettings() {
+    Analytics().logSelect(target: "Settings");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
+  }
+
+  void _onTapHome() {
+    Analytics().logSelect(target: "Home");
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
   // Primary
 
   void _navigateToAthletics() {
@@ -793,20 +821,6 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     }
     else if (_canVideoTutorial) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel()));
-    }
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if ((name == Connectivity.notifyStatusChanged) ||
-        (name == Localization.notifyStringsUpdated) ||
-        (name == FlexUI.notifyChanged) ||
-        (name == Config.notifyConfigChanged) ||
-        (name == Styles.notifyChanged))
-    {
-      setState(() { });
     }
   }
 }

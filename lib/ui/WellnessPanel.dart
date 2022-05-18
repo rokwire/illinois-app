@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -31,8 +32,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class WellnessPanel extends StatefulWidget {
   final Map<String, dynamic>? content;
+  final bool rootTabDisplay;
 
-  WellnessPanel({this.content});
+  WellnessPanel({this.content, this.rootTabDisplay = false});
 
   @override
   _WellnessPanelState createState() => _WellnessPanelState();
@@ -70,8 +72,6 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
 
   @override
   Widget build(BuildContext context) {
-    String? headerTitleKey = MapPathKey.entry(_jsonContent, 'header.title');
-    String headerTitle = Localization().getStringFromKeyMapping(headerTitleKey, _stringsContent)!;
     String? introTextKey = MapPathKey.entry(_jsonContent, 'description.intro_text');
     String? introText = Localization().getStringFromKeyMapping(introTextKey, _stringsContent);
     String? mainTextKey = MapPathKey.entry(_jsonContent, 'description.main_text');
@@ -80,36 +80,10 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
     String? bullet = Localization().getStringFromKeyMapping(bulletKey, _stringsContent);
     String? secondaryTextKey = MapPathKey.entry(_jsonContent, 'description.secondary_text');
     String? secondaryText = Localization().getStringFromKeyMapping(secondaryTextKey, _stringsContent);
+    
     return Scaffold(
       backgroundColor: Styles().colors!.background,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(132),
-        child: AppBar(
-          leading: Semantics(
-              label: Localization().getStringEx('headerbar.back.title', 'Back'),
-              hint: Localization().getStringEx('headerbar.back.hint', ''),
-              button: true,
-              excludeSemantics: true,
-              child: IconButton(
-                  icon: Image.asset('images/chevron-left-white.png'),
-                  onPressed: () => _onTapBack(),)),
-          flexibleSpace: Align(alignment: Alignment.bottomCenter, child: SingleChildScrollView(child:Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              _buildImage(_jsonContent, 'header.image'),
-              Padding(
-                padding: EdgeInsets.only(top: 12, bottom: 24),
-                child: Semantics(label: headerTitle, hint:  Localization().getStringEx("app.common.heading.one.hint","Header 1"), header: true, excludeSemantics: true, child: Text(
-                  headerTitle,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 24),
-                )),
-              )
-            ],
-          ))),
-          centerTitle: true,
-        ),
-      ),
+      appBar: widget.rootTabDisplay ? _buildRootTabHeaderBar() : _buildStandardHeaderBar(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,9 +134,72 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
           ],
         ),
       ),
-      bottomNavigationBar: uiuc.TabBar(),
+      bottomNavigationBar: widget.rootTabDisplay ? null : uiuc.TabBar(),
     );
   }
+
+  PreferredSizeWidget _buildStandardHeaderBar() {
+    String? headerTitleKey = MapPathKey.entry(_jsonContent, 'header.title');
+    String headerTitle = Localization().getStringFromKeyMapping(headerTitleKey, _stringsContent)!;
+    return PreferredSize(
+        preferredSize: Size.fromHeight(132),
+        child: AppBar(
+          leading: Semantics(
+              label: Localization().getStringEx('headerbar.back.title', 'Back'),
+              hint: Localization().getStringEx('headerbar.back.hint', ''),
+              button: true,
+              excludeSemantics: true,
+              child: IconButton(
+                  icon: Image.asset('images/chevron-left-white.png'),
+                  onPressed: () => _onTapBack(),)),
+          flexibleSpace: Align(alignment: Alignment.bottomCenter, child: SingleChildScrollView(child:Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              _buildImage(_jsonContent, 'header.image'),
+              Padding(
+                padding: EdgeInsets.only(top: 12, bottom: 24),
+                child: Semantics(label: headerTitle, hint:  Localization().getStringEx("app.common.heading.one.hint","Header 1"), header: true, excludeSemantics: true, child: Text(
+                  headerTitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 24),
+                )),
+              )
+            ],
+          ))),
+          centerTitle: true,
+        ),
+      );
+  }
+
+  PreferredSizeWidget _buildRootTabHeaderBar() {
+  return AppBar(
+      backgroundColor: Styles().colors?.fillColorPrimaryVariant,
+      leading: _buildHeaderHomeButton(),
+      title: _buildHeaderTitle(),
+      actions: [_buildHeaderActions()],
+    );
+  }
+
+  Widget _buildHeaderHomeButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),);
+  }
+
+  Widget _buildHeaderTitle() {
+    return Semantics(label: Localization().getStringEx('panel.wellness.header.title', 'Wellness'), excludeSemantics: true, child:
+      Text(Localization().getStringEx('panel.wellness.header.title', 'Wellness'), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+  }
+
+  Widget _buildHeaderSettingsButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: _onTapSettings));
+  }
+
+  Widget _buildHeaderActions() {
+    List<Widget> actions = <Widget>[ _buildHeaderSettingsButton() ];
+    return Row(mainAxisSize: MainAxisSize.min, children: actions,);
+  }
+
 
   Widget _buildDescriptionButtons() {
     List<dynamic>? ribbonButtonsContent = MapPathKey.entry(_jsonContent, 'description.ribbon_buttons');
@@ -523,6 +560,16 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
       default:
         return null;
     }
+  }
+
+  void _onTapSettings() {
+    Analytics().logSelect(target: "Settings");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
+  }
+
+  void _onTapHome() {
+    Analytics().logSelect(target: "Home");
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   /// NotificationListener

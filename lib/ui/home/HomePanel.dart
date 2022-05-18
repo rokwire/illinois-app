@@ -42,8 +42,6 @@ import 'package:illinois/service/LiveStats.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/SavedPanel.dart';
-import 'package:illinois/ui/SearchPanel.dart';
 import 'package:illinois/ui/home/HomeCampusRemindersWidget.dart';
 import 'package:illinois/ui/home/HomeCampusToolsWidget.dart';
 import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
@@ -106,27 +104,23 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     super.build(context);
 
     return Scaffold(
-      body: RefreshIndicator(onRefresh: _onPullToRefresh, child: CustomScrollView(
-        slivers: <Widget>[
-          _SliverHomeHeaderBar(
-            context: context,
-            settingsVisible: true,
+      appBar: AppBar(
+        backgroundColor: Styles().colors?.fillColorPrimaryVariant,
+        leading: _buildHeaderHomeButton(),
+        title: _buildHeaderTitle(),
+        actions: [_buildHeaderActions()],
+      ),
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
+        Column(children: <Widget>[
+          Expanded(child:
+            SingleChildScrollView(child:
+              Column(children: _buildContentList(),)
+            )
           ),
-          SliverList(
-            delegate: SliverChildListDelegate(<Widget>[
-              Container(
-                color: Styles().colors!.background,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: _buildContentList(),
-                ),
-              ),
-            ]),
-          ),
-        ],
-      ),),
+        ]),
+      ),
       backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: null,
     );
   }
 
@@ -247,6 +241,26 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     return widgets;
   }
 
+  Widget _buildHeaderHomeButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),);
+  }
+
+  Widget _buildHeaderTitle() {
+    return Semantics(label: Localization().getStringEx('panel.home.header.title', 'ILLINOIS'), excludeSemantics: true, child:
+      Text(Localization().getStringEx('panel.home.header.title', 'ILLINOIS'), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+  }
+
+  Widget _buildHeaderSettingsButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: _onTapSettings));
+  }
+
+  Widget _buildHeaderActions() {
+    List<Widget> actions = <Widget>[ _buildHeaderSettingsButton() ];
+    return Row(mainAxisSize: MainAxisSize.min, children: actions,);
+  }
+
   void _updateContentListCodes() {
     List<String>? contentListCodes = JsonUtils.listStringsValue(FlexUI()['home']);
     if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
@@ -266,6 +280,16 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       if (saferContext != null) {
         Scrollable.ensureVisible(saferContext, duration: Duration(milliseconds: 300));
       }
+  }
+
+  void _onTapSettings() {
+    Analytics().logSelect(target: "Settings");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
+  }
+
+  void _onTapHome() {
+    Analytics().logSelect(target: "Home");
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   // NotificationsListener
@@ -301,92 +325,5 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 }
 
-class _SliverHomeHeaderBar extends SliverAppBar {
-  final BuildContext context;
-  final bool searchVisible;
-  final bool savedVisible;
-  final bool settingsVisible;
 
-  _SliverHomeHeaderBar(
-      {required this.context,  this.searchVisible = false, this.savedVisible = false, this.settingsVisible = false})
-      : super(
-      pinned: true,
-      floating: true,
-      primary:true,
-      backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-      title: ExcludeSemantics(
-          child: IconButton(
-              icon: Image.asset('images/block-i-orange.png'),
-              onPressed: () {
-                Analytics().logSelect(target: "Home");
-                Navigator.of(context).popUntil((route) => route.isFirst);
-//                NativeCommunicator().launchTest();
-              }
-          )
-      ),
-      actions: <Widget>[
-        Visibility(
-            visible: searchVisible,
-            child: Semantics(
-                label: Localization().getStringEx(
-                    'headerbar.search.title', 'Search'),
-                hint: Localization().getStringEx('headerbar.search.hint', ''),
-                button: true,
-                child: IconButton(
-                    icon: Image.asset('images/icon-search.png'),
-                    onPressed: () {
-                      Analytics().logSelect(target: "Search");
-                      Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) =>
-                                  SearchPanel()));
-                    }))),
-        Visibility(
-            visible: savedVisible,
-            child: Semantics(
-            label: Localization().getStringEx('headerbar.saved.title', 'Saved'),
-            hint: Localization().getStringEx('headerbar.saved.hint', ''),
-            button: true,
-              excludeSemantics: true,
-              child: InkWell(
-              onTap: () {
-                Analytics().logSelect(target: "Saved");
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                        builder: (context) =>
-                            SavedPanel()));
-                
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Text(Localization().getStringEx(
-                    'headerbar.saved.title', 'Saved'),
-                    style: TextStyle(color: Colors.white,
-                        fontSize: 16,
-                        fontFamily: Styles().fontFamilies!.semiBold,
-                        decoration: TextDecoration.underline,
-                        decorationColor: Styles().colors!.fillColorSecondary,
-                        decorationThickness: 1,
-                        decorationStyle: TextDecorationStyle.solid)),),))),
-
-
-            Visibility(
-            visible: settingsVisible,
-            child: Semantics(
-              label: Localization().getStringEx('headerbar.settings.title', 'Settings'),
-              hint: Localization().getStringEx('headerbar.settings.hint', ''),
-              button: true,
-              excludeSemantics: true,
-              child: IconButton(
-                  icon: Image.asset('images/settings-white.png'),
-                  onPressed: () {
-                    Analytics().logSelect(target: "Settings");
-                    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
-                  })))
-
-      ],
-      centerTitle: true);
-}
 
