@@ -266,11 +266,11 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   }
 
   bool get _isEnded {
-    return (Gies().isLoading) ? Gies().completedStepsCount>= _stepsCount : false;
+    return _completedStpsCount >= _stepsCount;
   }
 
   int get _completedStpsCount {
-    return (Gies().isLoading) ? Gies().completedStepsCount : 0;
+    return Gies().completedStepsCount;
   }
 
   int get _stepsCount {
