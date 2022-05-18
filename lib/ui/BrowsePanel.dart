@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -84,12 +85,43 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     super.dispose();
   }
 
+  // AutomaticKeepAliveClientMixin
   @override
   bool get wantKeepAlive => true;
+
+
+  // NotificationsListener
+  @override
+  void onNotification(String name, dynamic param) {
+    if ((name == Connectivity.notifyStatusChanged) ||
+        (name == Localization.notifyStringsUpdated) ||
+        (name == FlexUI.notifyChanged) ||
+        (name == Config.notifyConfigChanged) ||
+        (name == Styles.notifyChanged))
+    {
+      setState(() { });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    return Scaffold(
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.browse.label.title', 'Browse')),
+      body: Column(children: <Widget>[
+        Expanded(child:
+          SingleChildScrollView(child:
+            Column(children: _buildContentList(),)
+          )
+        ),
+      ]),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: null,
+    );
+  }
+
+  List<Widget> _buildContentList() {
 
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['browse'] ?? [];
@@ -101,47 +133,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         contentList.addAll(_buildBrowseSecondary());
       }
     }
-
-    return Scaffold(
-        body: Column(
-          children: <Widget>[
-            Expanded(
-                child: CustomScrollView(
-                  slivers: <Widget>[
-                    SliverAppBar(pinned: true, floating: true, primary: true, forceElevated: true, centerTitle: true,
-                      title: Text(
-                        Localization().getStringEx('panel.browse.label.title','Browse'),
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1.0),
-                      ),
-                      actions: <Widget>[
-                        Semantics(
-                          label: Localization().getStringEx('headerbar.settings.title', 'Settings'),
-                          hint: Localization().getStringEx('headerbar.settings.hint', ''),
-                          button: true,
-                          excludeSemantics: true,
-                          child: IconButton(
-                              icon: Image.asset('images/settings-white.png'),
-                              onPressed: () {_navigateSettings(); }))
-                      ],
-                    ),
-                    SliverList(
-                      delegate: SliverChildListDelegate([
-                        Column(
-                          children: contentList,
-                        )
-                      ]),
-                    )
-                  ],
-                )
-            ),
-          ],
-        ),
-        backgroundColor: Styles().colors!.background,
-      );
+    return contentList;
   }
 
   Widget _buildBrowsePrimary() {
@@ -793,20 +785,6 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     }
     else if (_canVideoTutorial) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel()));
-    }
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if ((name == Connectivity.notifyStatusChanged) ||
-        (name == Localization.notifyStringsUpdated) ||
-        (name == FlexUI.notifyChanged) ||
-        (name == Config.notifyConfigChanged) ||
-        (name == Styles.notifyChanged))
-    {
-      setState(() { });
     }
   }
 }

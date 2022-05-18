@@ -17,13 +17,11 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeBusPassWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
@@ -33,6 +31,7 @@ import 'package:illinois/ui/home/HomeIlliniCashWidget.dart';
 import 'package:illinois/ui/home/HomeIlliniIdWidget.dart';
 import 'package:illinois/ui/home/HomeLibraryCardWidget.dart';
 import 'package:illinois/ui/home/HomeMealPlanWidget.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -42,8 +41,6 @@ import 'package:illinois/service/LiveStats.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/SavedPanel.dart';
-import 'package:illinois/ui/SearchPanel.dart';
 import 'package:illinois/ui/home/HomeCampusRemindersWidget.dart';
 import 'package:illinois/ui/home/HomeCampusToolsWidget.dart';
 import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
@@ -58,7 +55,6 @@ import 'package:illinois/ui/home/HomeCampusHighlightsWidget.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeVoterRegistrationWidget.dart';
 import 'package:illinois/ui/home/HomeUpcomingEventsWidget.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -106,27 +102,18 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     super.build(context);
 
     return Scaffold(
-      body: RefreshIndicator(onRefresh: _onPullToRefresh, child: CustomScrollView(
-        slivers: <Widget>[
-          _SliverHomeHeaderBar(
-            context: context,
-            settingsVisible: true,
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.home.header.title', 'ILLINOIS')),
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
+        Column(children: <Widget>[
+          Expanded(child:
+            SingleChildScrollView(child:
+              Column(children: _buildContentList(),)
+            )
           ),
-          SliverList(
-            delegate: SliverChildListDelegate(<Widget>[
-              Container(
-                color: Styles().colors!.background,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: _buildContentList(),
-                ),
-              ),
-            ]),
-          ),
-        ],
-      ),),
+        ]),
+      ),
       backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: null,
     );
   }
 
@@ -301,92 +288,5 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 }
 
-class _SliverHomeHeaderBar extends SliverAppBar {
-  final BuildContext context;
-  final bool searchVisible;
-  final bool savedVisible;
-  final bool settingsVisible;
 
-  _SliverHomeHeaderBar(
-      {required this.context,  this.searchVisible = false, this.savedVisible = false, this.settingsVisible = false})
-      : super(
-      pinned: true,
-      floating: true,
-      primary:true,
-      backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-      title: ExcludeSemantics(
-          child: IconButton(
-              icon: Image.asset('images/block-i-orange.png'),
-              onPressed: () {
-                Analytics().logSelect(target: "Home");
-                Navigator.of(context).popUntil((route) => route.isFirst);
-//                NativeCommunicator().launchTest();
-              }
-          )
-      ),
-      actions: <Widget>[
-        Visibility(
-            visible: searchVisible,
-            child: Semantics(
-                label: Localization().getStringEx(
-                    'headerbar.search.title', 'Search'),
-                hint: Localization().getStringEx('headerbar.search.hint', ''),
-                button: true,
-                child: IconButton(
-                    icon: Image.asset('images/icon-search.png'),
-                    onPressed: () {
-                      Analytics().logSelect(target: "Search");
-                      Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) =>
-                                  SearchPanel()));
-                    }))),
-        Visibility(
-            visible: savedVisible,
-            child: Semantics(
-            label: Localization().getStringEx('headerbar.saved.title', 'Saved'),
-            hint: Localization().getStringEx('headerbar.saved.hint', ''),
-            button: true,
-              excludeSemantics: true,
-              child: InkWell(
-              onTap: () {
-                Analytics().logSelect(target: "Saved");
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                        builder: (context) =>
-                            SavedPanel()));
-                
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Text(Localization().getStringEx(
-                    'headerbar.saved.title', 'Saved'),
-                    style: TextStyle(color: Colors.white,
-                        fontSize: 16,
-                        fontFamily: Styles().fontFamilies!.semiBold,
-                        decoration: TextDecoration.underline,
-                        decorationColor: Styles().colors!.fillColorSecondary,
-                        decorationThickness: 1,
-                        decorationStyle: TextDecorationStyle.solid)),),))),
-
-
-            Visibility(
-            visible: settingsVisible,
-            child: Semantics(
-              label: Localization().getStringEx('headerbar.settings.title', 'Settings'),
-              hint: Localization().getStringEx('headerbar.settings.hint', ''),
-              button: true,
-              excludeSemantics: true,
-              child: IconButton(
-                  icon: Image.asset('images/settings-white.png'),
-                  onPressed: () {
-                    Analytics().logSelect(target: "Settings");
-                    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
-                  })))
-
-      ],
-      centerTitle: true);
-}
 
