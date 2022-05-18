@@ -88,6 +88,15 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Visibility(visible: widget.rootTabDisplay, child:
+              Row(children: [
+                Expanded(child:
+                  Container(color: Styles().colors?.fillColorPrimaryVariant, padding: EdgeInsets.symmetric(vertical: 24), child:
+                    Center(child: _buildImage(_jsonContent, 'header.image'))
+                 )
+                )
+              ],)
+            ),
             Visibility(
               visible: StringUtils.isNotEmpty(introText),
               child: Padding(
