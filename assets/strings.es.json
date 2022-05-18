@@ -1363,7 +1363,7 @@
     "panel.create_poll.setting.repeat_vote": "Permitir votos repetidos",
     "panel.create_poll.setting.hide_result": "Ocultar resultados hasta que finalice la encuesta",
     "panel.create_poll.setting.button.cancel.title": "Cancelar",
-    "panel.create_poll.setting.start.preview.title": "Iniciar Encuesta",
+    "panel.create_poll.setting.start.preview.title": "Start Poll Now",
     "panel.create_poll.cancel_dialog.message": "¿Estás segura de que deseas cancelar esta encuesta rápida?",
     "panel.create_poll.cancel_dialog.button.yes": "SI",
     "panel.create_poll.cancel_dialog.button.no": "No",

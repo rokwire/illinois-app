@@ -1365,7 +1365,7 @@
 	"panel.create_poll.setting.repeat_vote": " 允许重复投票 ",
 	"panel.create_poll.setting.hide_result": " 在投票结束前隐藏结果 ",
 	"panel.create_poll.setting.button.cancel.title": "取消",
-	"panel.create_poll.setting.start.preview.title": "开始投票",
+	"panel.create_poll.setting.start.preview.title": "Start Poll Now",
 	"panel.create_poll.cancel_dialog.message": " 是否确实要取消此快速投票?",
 	"panel.create_poll.cancel_dialog.button.yes": "是",
 	"panel.create_poll.cancel_dialog.button.no": "否",

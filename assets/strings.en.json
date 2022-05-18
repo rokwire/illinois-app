@@ -1365,7 +1365,7 @@
     "panel.create_poll.setting.repeat_vote": "Allow repeat votes",
     "panel.create_poll.setting.hide_result": "Hide results until poll ends",
     "panel.create_poll.setting.button.cancel.title": "Cancel",
-    "panel.create_poll.setting.start.preview.title": "Start Poll",
+    "panel.create_poll.setting.start.preview.title": "Start Poll Now",
     "panel.create_poll.cancel_dialog.message": "Are you sure you want to cancel this Quick Poll?",
     "panel.create_poll.cancel_dialog.button.yes": "Yes",
     "panel.create_poll.cancel_dialog.button.no": "No",
