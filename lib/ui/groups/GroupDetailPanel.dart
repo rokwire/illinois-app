@@ -571,6 +571,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       pendingMembers = "";
     }
 
+    int attendedCount = _group?.attendedCount ?? 0;
+    String? attendedMembers;
+    if (_group!.currentUserIsAdmin && (_group!.attendanceGroup == true)) {
+      if (attendedCount == 0) {
+        attendedMembers = Localization().getStringEx("panel.group_detail.attended_members.count.empty", "No Members Attended");
+      } else if (attendedCount == 1) {
+        attendedMembers = Localization().getStringEx("panel.group_detail.attended_members.count.one", "1 Member Attended");
+      } else {
+        attendedMembers =
+            sprintf(Localization().getStringEx("panel.group_detail.attended_members.count.format", "%s Members Attended"), [attendedCount]);
+      }
+    }
+
     if (_isMemberOrAdmin) {
       if(_isAdmin) {
         commands.add(RibbonButton(
@@ -657,6 +670,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               Visibility(visible: StringUtils.isNotEmpty(pendingMembers), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
                   Text(pendingMembers,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground,),)
+                ),
+              ),
+
+              Visibility(visible: StringUtils.isNotEmpty(attendedMembers), child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                  Text(StringUtils.ensureNotEmpty(attendedMembers), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground,),)
                 ),
               ),
               
