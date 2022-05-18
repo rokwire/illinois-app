@@ -19,7 +19,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/header_bar.dart' as rokwire;
@@ -246,7 +248,7 @@ class RootHeaderBar extends StatelessWidget implements PreferredSizeWidget {
     backgroundColor: Styles().colors?.fillColorPrimaryVariant,
     leading: _buildHeaderHomeButton(),
     title: _buildHeaderTitle(),
-    actions: [_buildHeaderActions()],
+    actions: _buildHeaderActions(),
   );
 
   // PreferredSizeWidget
@@ -263,21 +265,27 @@ class RootHeaderBar extends StatelessWidget implements PreferredSizeWidget {
       Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
   }
 
+  List<Widget> _buildHeaderActions() {
+    return <Widget>[
+      _buildHeaderPersonalInfoButton(),
+      _buildHeaderNotificationsButton(),
+      _buildHeaderSettingsButton()
+    ];
+  }
+
   Widget _buildHeaderSettingsButton() {
     return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
       IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: _onTapSettings));
   }
 
-  Widget _buildHeaderActions() {
-    List<Widget> actions = <Widget>[ _buildHeaderSettingsButton() ];
-    return Row(mainAxisSize: MainAxisSize.min, children: actions,);
+  Widget _buildHeaderNotificationsButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/notifications-white.png', excludeFromSemantics: true), onPressed: _onTapNotifications));
   }
 
-  void _onTapSettings() {
-    Analytics().logSelect(target: "Settings");
-    if (App.instance?.currentContext != null) {
-      Navigator.push(App.instance!.currentContext!, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
-    }
+  Widget _buildHeaderPersonalInfoButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/personal-white.png', excludeFromSemantics: true), onPressed: _onTapPersonalInformations));
   }
 
   void _onTapHome() {
@@ -286,4 +294,28 @@ class RootHeaderBar extends StatelessWidget implements PreferredSizeWidget {
       Navigator.of(App.instance!.currentContext!).popUntil((route) => route.isFirst);
     }
   }
+  void _onTapSettings() {
+    Analytics().logSelect(target: "Settings");
+    if (App.instance?.currentContext != null) {
+      Navigator.push(App.instance!.currentContext!, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
+    }
+  }
+
+  void _onTapNotifications() {
+    Analytics().logSelect(target: "Notifications");
+    if (App.instance?.currentContext != null) {
+      Navigator.push(App.instance!.currentContext!, CupertinoPageRoute(builder: (context) => InboxHomePanel()));
+    }
+  }
+  
+
+  void _onTapPersonalInformations() {
+    Analytics().logSelect(target: "Personal Information");
+    if (App.instance?.currentContext != null) {
+      Navigator.push(App.instance!.currentContext!, CupertinoPageRoute(builder: (context) => SettingsPrivacyCenterPanel()));
+    }
+  }
+
+  
+
 }
