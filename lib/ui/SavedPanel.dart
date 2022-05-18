@@ -101,11 +101,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       _refreshFavorites(showProgress: false);
     }
     else if (name == Assets.notifyChanged) {
-      _refreshFavorites(showProgress: false);
+      _refreshFavorites(favoriteCategories: [Dining.favoriteKeyName], showProgress: false);
     }
     else if (name == Guide.notifyChanged) {
-      //TBD: refresh only guide items!
-      _refreshFavorites(showProgress: false);
+      _refreshFavorites(favoriteCategories: [GuideFavorite.favoriteKeyName], showProgress: false);
     }
   }
 
@@ -257,23 +256,21 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   // Content
 
-  Future<Map<String, List<Favorite>?>> _loadFavorites() async {
+  static const List<String> _favoriteCategories = <String>[
+    Event.favoriteKeyName,
+    Dining.favoriteKeyName,
+    Game.favoriteKeyName,
+    News.favoriteKeyName,
+    LaundryRoom.favoriteKeyName,
+    InboxMessage.favoriteKeyName,
+    GuideFavorite.favoriteKeyName,
+  ];
 
-    Map<String, Future<List<Favorite>?> Function(LinkedHashSet<String>?)> favoriteLoaders = <String, Future<List<Favorite>?> Function(LinkedHashSet<String>?)> {
-      Event.favoriteKeyName: _loadFavoriteEvents,
-      Dining.favoriteKeyName: _loadFavoriteDinings,
-      Game.favoriteKeyName: _loadFavoriteGames,
-      News.favoriteKeyName: _loadFavoriteNews,
-      LaundryRoom.favoriteKeyName: _laundryAvailable ? _loadFavoriteLaundries : _loadNOP,
-      InboxMessage.favoriteKeyName: _loadFavoriteNotifications,
-      GuideFavorite.favoriteKeyName: _loadFavoriteGuideItems,
-    };
-    
-    List<String> favoriteCategories = List.from(favoriteLoaders.keys);
-    
+  Future<Map<String, List<Favorite>?>> _loadFavorites({List<String> favoriteCategories = _favoriteCategories}) async {
+
     List<Future<List<Favorite>?>> futures = <Future<List<Favorite>?>>[];
     for (String favoriteCategory in favoriteCategories) {
-      futures.add(favoriteLoaders[favoriteCategory]!(Auth2().prefs?.getFavorites(favoriteCategory)));
+      futures.add(_favoriteCategoryLoader(favoriteCategory)(Auth2().prefs?.getFavorites(favoriteCategory)));
     }
 
     List<List<Favorite>?> results = await Future.wait(futures);
@@ -285,6 +282,19 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       }
     }
     return result;
+  }
+
+  Future<List<Favorite>?> Function(LinkedHashSet<String>?) _favoriteCategoryLoader(String favoriteCategory) {
+    switch(favoriteCategory) {
+      case Event.favoriteKeyName: return _loadFavoriteEvents;
+      case Dining.favoriteKeyName: return _loadFavoriteDinings;
+      case Game.favoriteKeyName: return _loadFavoriteGames;
+      case News.favoriteKeyName: return _loadFavoriteNews;
+      case LaundryRoom.favoriteKeyName: return _laundryAvailable ? _loadFavoriteLaundries : _loadNOP;
+      case InboxMessage.favoriteKeyName: return _loadFavoriteNotifications;
+      case GuideFavorite.favoriteKeyName: return _loadFavoriteGuideItems;
+    }
+    return _loadNOP;
   }
 
   Future<List<Favorite>?> _loadNOP(LinkedHashSet<String>? favoriteIds) async => null;
@@ -361,14 +371,14 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return null;
   }
 
-  void _refreshFavorites({bool showProgress = true}) {
+  void _refreshFavorites({List<String> favoriteCategories = _favoriteCategories, bool showProgress = true}) {
     if (Connectivity().isOnline) {
       if (showProgress && mounted) {
         setState(() {
           _loadingFavorites = true;
         });
       }
-      _loadFavorites().then((Map<String, List<Favorite>?> favorites) {
+      _loadFavorites(favoriteCategories: favoriteCategories).then((Map<String, List<Favorite>?> favorites) {
         if (mounted) {
           setState(() {
             _favorites = favorites;
