@@ -4,7 +4,7 @@
 
 		"home": ["emergency", "voter_registration", "connect",
 			"gies", "safer", "twitter", "canvas", "my_groups", "highlighted_features", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_highlights",
-			"illini_cash_card", "meal_plan_card",
+			"illini_cash_card", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card",
 			"events_favs", "dining_favs", "athletics_favs", "news_favs", "laundry_favs", "inbox_favs", "campus_guide_favs"],
 		"home.connect": ["netid", "phone_or_email"],
 		"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
@@ -72,6 +72,9 @@
 			"illini_cash_card"                       : ["student", "OR", "employee", "OR", "parent"],
 			"meal_plan"                              : ["student"],
 			"meal_plan_card"                         : ["student"],
+			"bus_pass"                               : ["student", "OR", "employee", "OR", "resident"],
+			"bus_pass_card"                          : ["student", "OR", "employee", "OR", "resident"],
+
 			"create_poll"                            : ["student", "OR", "employee"],
 			"upgrade_version_message"                : ["student", "OR", "employee"],
 
@@ -80,10 +83,8 @@
 			"onboarding.verify_phone"                : ["NOT", ["employee", "OR", "student"]],
 			"onboarding.confirm_phone"               : ["NOT", ["employee", "OR", "student"]],
 
-			"onboarding.sport_prefs"                 : ["fan"],
+			"onboarding.sport_prefs"                 : ["fan"]
 
-			"bus_pass"                               : ["student", "OR", "employee", "OR", "resident"],
-			"bus_pass_card"                          : ["student", "OR", "employee", "OR", "resident"]
 		},
 		"groups": {
 			"safer"                                  : ["NOT", "Gies Online Programs"],
@@ -144,6 +145,7 @@
 
 			"wallet.vcards"                       : { "loggedIn": true },
 			"wallet.hcards"                       : { "loggedIn": true },
+			"bus_pass_card"                       : { "iCard":    true },
 			"illini_id"                           : { "iCardNum": true },
 			"illini_id_card"                      : { "iCardNum": true },
 			"library_card"                        : { "iCardLibraryNum": true },

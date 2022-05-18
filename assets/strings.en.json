@@ -2288,6 +2288,13 @@
     "widget.home.meal_plan.label.meals_remaining.text": "Meals Remaining",
     "widget.home.meal_plan.label.dining_dollars.text": "Dining Dollars",
 
+    "widget.home.bus_pass.title": "MTD",
+    "widget.home.bus_pass.label.card_expires.text": "Card Expires: %s",
+
+    "widget.home.illini_id.title": "Illini ID",
+
+    "widget.home.library_card.title": "Library Card",
+
     "widget.home_canvas_courses.header.label": "Courses",
 
     "widget.home.common.button.view.title": "View",
