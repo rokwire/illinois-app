@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.0.13] - 2022-05-19
+- Ui for Home Radio widget [#1652](https://github.com/rokwire/illinois-app/issues/1652).
 - Prompt before creating a group [#1650](https://github.com/rokwire/illinois-app/issues/1650).
 
 ## [4.0.12] - 2022-05-18
