@@ -666,6 +666,24 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void _onCreateTap() {
+    AppAlert.showCustomDialog(
+        context: context,
+        contentWidget: Text(Localization().getStringEx("panel.groups_create.prompt.msg.title", "Does this group comply with University guidelines? (It will be removed if it is does not!)")),
+        actions: <Widget>[
+          TextButton(
+              child:
+              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _onCreateGroup();
+              }),
+          TextButton(
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
+              onPressed: () => Navigator.of(context).pop())
+        ]);
+  }
+
+  void _onCreateGroup() {
     Analytics().logSelect(target: "Create Group");
     if(!_creating && _canSave) {
       setState(() {
