@@ -1374,7 +1374,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _onPullToRefresh() async {
-    if ((_group?.currentUserIsAdmin == true) && (_group?.attendanceGroup == true) && (_group?.authManEnabled == true)) {
+    if (_group?.syncAuthmanAllowed == true) {
       await Groups().syncAuthmanGroup(group: _group!);
     }
     Group? group = await Groups().loadGroup(widget.groupId); // The same as _refreshGroup(refreshEvents: true) but use await to show the pull to refresh progress indicator properly
