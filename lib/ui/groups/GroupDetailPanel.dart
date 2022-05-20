@@ -17,6 +17,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -1310,6 +1311,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapTakeAttendance() {
     Analytics().logSelect(target: "Take Attendance");
+    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors!.fillColorSecondary!)!,
+            Localization().getStringEx('panel.group_detail.take_attendance.scan.cancel.button.title', 'Cancel'), true, ScanMode.QR)
+        .then((scanResult) {
+      _onScanFinished(scanResult);
+    });
+  }
+
+  void _onScanFinished(String? scanResult) {
     //TBD implement
   }
 
