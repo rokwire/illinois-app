@@ -6,14 +6,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 //TBD LOCALIZE
-class HomeRadioWidget extends StatefulWidget {
-  HomeRadioWidget();
+class HomeWPGUFMRadioWidget extends StatefulWidget {
+  HomeWPGUFMRadioWidget();
 
   @override
-  State<HomeRadioWidget> createState() => _HomeRadioWidgetState();
+  State<HomeWPGUFMRadioWidget> createState() => _HomeWPGUFMRadioWidgetState();
 }
 
-class _HomeRadioWidgetState extends State<HomeRadioWidget> implements NotificationsListener {
+class _HomeWPGUFMRadioWidgetState extends State<HomeWPGUFMRadioWidget> implements NotificationsListener {
   late String _radioUrl;
   bool _playing = false;
 

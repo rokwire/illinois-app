@@ -31,7 +31,7 @@ import 'package:illinois/ui/home/HomeIlliniCashWidget.dart';
 import 'package:illinois/ui/home/HomeIlliniIdWidget.dart';
 import 'package:illinois/ui/home/HomeLibraryCardWidget.dart';
 import 'package:illinois/ui/home/HomeMealPlanWidget.dart';
-import 'package:illinois/ui/home/HomeRadioWidget.dart';
+import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -174,8 +174,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       else if (code == 'safer') {
         widget = saferWidget = _saferWidget ??= HomeSaferWidget(key: _saferKey);
       }
-      else if (code == 'radio') {
-        widget = HomeRadioWidget();
+      else if (code == 'wpgufm_radio') {
+        widget = HomeWPGUFMRadioWidget();
       }
 
       // Wallet Cards
