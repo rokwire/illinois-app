@@ -192,7 +192,8 @@
 			"parking_lot_directions"        : true,
 			"library_card"                  : false,
 			"emergency"                     : false,
-			"faqs"                          : false
+			"faqs"                          : false,
+			"personal_information.footer.delete": false
 		}
 	}
 }
