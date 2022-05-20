@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/section.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 //TBD LOCALIZE
@@ -117,13 +115,14 @@ class _HomeRadioWidgetState extends State<HomeRadioWidget> implements Notificati
 
   }
 
+  /* Commented out because of warning for not used code
   void _applyState(){
     if(_playing){
       //TBD implement play stream
     } else {
       //TBD STOP
     }
-  }
+  }*/
   
   // NotificationsListener
 
