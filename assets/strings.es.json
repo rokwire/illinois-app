@@ -1700,6 +1700,8 @@
     "panel.group_detail.button.group_settings.title": "Group Settings",
     "panel.group_detail.button.group_promote.title": "Promote this group",
     "panel.group_detail.button.group_promote.hint": "",
+    "panel.group_detail.button.take_attendance.title": "Take Attendance",
+    "panel.group_detail.button.take_attendance.hint": "",
     "panel.group_detail.button.group_settings.hint": "",
     "panel.group_detail.button.website.title": "Website",
     "panel.group_detail.label.tags": "Group Tags: ",

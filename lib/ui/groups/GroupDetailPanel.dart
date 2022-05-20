@@ -609,6 +609,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapPromote,
         ));
+        if (_group?.attendanceGroup == true) {
+          commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+          commands.add(RibbonButton(
+            label: Localization().getStringEx("panel.group_detail.button.take_attendance.title", "Take Attendance"),
+            hint: Localization().getStringEx("panel.group_detail.button.take_attendance.hint", ""),
+            leftIconAsset: 'images/icon-qr-code.png',
+            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+            onTap: _onTapTakeAttendance,
+          ));
+        }
       }
       if (StringUtils.isNotEmpty(_group?.webURL)) {
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
@@ -1296,6 +1306,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapPromote() {
     Analytics().logSelect(target: "Promote Group");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupQrCodePanel(group: _group)));
+  }
+
+  void _onTapTakeAttendance() {
+    Analytics().logSelect(target: "Take Attendance");
+    //TBD implement
   }
 
   void _onMembershipRequest() {
