@@ -1677,6 +1677,7 @@
     "panel.groups_create.authman.enabled.label": "Is this a managed membership group?",
     "panel.groups_create.authman.group.name.label": "Membership name",
     "panel.groups_create.prompt.msg.title": "Does this group comply with University guidelines? (It will be removed if it is does not!)",
+    "panel.groups_create.attendance_group.label": "Attendance Group",
 
     "panel.groups.common.privacy.title.private": "Private",
     "panel.groups.common.privacy.title.public":  "Public",
@@ -1921,6 +1922,7 @@
     "panel.groups_settings.authman.section.title": "University managed membership",
     "panel.groups_settings.authman.enabled.label": "Is this a managed membership group?",
     "panel.groups_settings.authman.group.name.label": "Membership name",
+    "panel.groups_settings.attendance_group.label": "Attendance Group",
 
     "panel.group.tags.header.title": "Group Tags",
     "panel.group.tags.button.done.title": "Done",
