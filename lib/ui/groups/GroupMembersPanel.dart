@@ -516,7 +516,19 @@ class _GroupMemberCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Expanded(child: Container(),),
+                        Visibility(
+                            visible: _displayAttended,
+                            child: Padding(
+                                padding: EdgeInsets.only(left: 10),
+                                child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                        color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.all(Radius.circular(2))),
+                                    child: Center(
+                                        child: Text(Localization().getStringEx('widget.group.member.card.attended.label', 'ATTENDED'),
+                                            style: TextStyle(
+                                                fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white)))))),
+                        Expanded(child: Container()),
                       ],
                     )
                   ],
@@ -546,5 +558,9 @@ class _GroupMemberCard extends StatelessWidget {
 
   bool get _isAdmin {
     return group?.currentUserAsMember?.isAdmin ?? false;
+  }
+
+  bool get _displayAttended {
+    return (group?.attendanceGroup == true) && _isAdmin && (member?.dateAttendedUtc != null);
   }
 }

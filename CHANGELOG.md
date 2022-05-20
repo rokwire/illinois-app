@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Audio and images for Home Radio widget [#1652](https://github.com/rokwire/illinois-app/issues/1652).
+- Group Attendance [#1643](https://github.com/rokwire/illinois-app/issues/1643).
 ### Changed
 - Updated delete account data strings and availability [#1655](https://github.com/rokwire/illinois-app/issues/1655).
 

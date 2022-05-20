@@ -153,6 +153,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                               ],)),
                             Container(height: 8),
                             _buildPollsLayout(),
+                            Container(height: 16),
+                            _buildAttendanceLayout(),
                             Container(height: 40),
                         ],),)
 
@@ -642,6 +644,25 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         setState(() {
           _group!.onlyAdminsCanCreatePolls = !(_group!.onlyAdminsCanCreatePolls ?? false);
         });
+      }
+    }
+  }
+
+  // Attendance
+  Widget _buildAttendanceLayout() {
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: _buildSwitch(
+            title: Localization().getStringEx("panel.groups_create.attendance_group.label", "Attendance Group"),
+            value: _group?.attendanceGroup,
+            onTap: _onTapAttendanceGroup));
+  }
+
+  void _onTapAttendanceGroup() {
+    if (_group != null) {
+      _group!.attendanceGroup = !(_group!.attendanceGroup ?? false);
+      if (mounted) {
+        setState(() {});
       }
     }
   }

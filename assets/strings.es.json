@@ -1675,6 +1675,7 @@
     "panel.groups_create.authman.enabled.label": "Is this a managed membership group?",
     "panel.groups_create.authman.group.name.label": "Membership name",
     "panel.groups_create.prompt.msg.title": "Does this group comply with University guidelines? (It will be removed if it is does not!)",
+    "panel.groups_create.attendance_group.label": "Attendance Group",
     
     "panel.groups.common.privacy.title.private": "Private",
     "panel.groups.common.privacy.title.public":  "Public",
@@ -1691,11 +1692,16 @@
     "panel.group_detail.pending_members.count.empty": "No Pending Members",
     "panel.group_detail.pending_members.count.one": "1 Pending Member",
     "panel.group_detail.pending_members.count.format": "%s Pending Member",
+    "panel.group_detail.attended_members.count.empty": "No Members Attended",
+    "panel.group_detail.attended_members.count.one": "1 Member Attended",
+    "panel.group_detail.attended_members.count.format": "%s Members Attended",
     "panel.group_detail.button.manage_members.title": "Manage Members",
     "panel.group_detail.button.manage_members.hint": "",
     "panel.group_detail.button.group_settings.title": "Group Settings",
     "panel.group_detail.button.group_promote.title": "Promote this group",
     "panel.group_detail.button.group_promote.hint": "",
+    "panel.group_detail.button.take_attendance.title": "Take Attendance",
+    "panel.group_detail.button.take_attendance.hint": "",
     "panel.group_detail.button.group_settings.hint": "",
     "panel.group_detail.button.website.title": "Website",
     "panel.group_detail.label.tags": "Group Tags: ",
@@ -1749,6 +1755,11 @@
     "panel.group_detail.members_count.group.delete.confirm.msg": "This group has %d members. Are you sure you want to delete this group?",
     "panel.group_detail.group.delete.confirm.msg": "Are you sure you want to delete this group?",
     "panel.group_detail.group.delete.failed.msg": "Failed to delete group.",
+    "panel.group_detail.attendance.scan.cancel.button.title": "Cancel",
+    "panel.group_detail.attendance.qr_code.uin.not_valid.msg": "This QR code does not contain valid UIN number.",
+    "panel.group_detail.attendance.authman.uin.not_member.msg": "Student with UIN '%s' is not a member of this group and is not allowed to attend.",
+    "panel.group_detail.attendance.member.succeeded.msg": "Successfully tagged member as attended.",
+    "panel.group_detail.attendance.member.failed.msg": "Failed to tag member as attended. Please try again.",
 
     "panel.group_qr_code.alert.no_qr_code.msg": "There is no QR Code",
     "panel.group_qr_code.alert.save.success.pictures": "Pictures",
@@ -1914,6 +1925,7 @@
     "panel.groups_settings.authman.section.title": "University managed membership",
     "panel.groups_settings.authman.enabled.label": "Is this a managed membership group?",
     "panel.groups_settings.authman.group.name.label": "Membership name",
+    "panel.groups_settings.attendance_group.label": "Attendance Group",
 
     "panel.group.tags.header.title": "Group Tags",
     "panel.group.tags.button.done.title": "Done",
@@ -2368,6 +2380,8 @@
     "widget.group_card.member.label": "member",
     "widget.group_card.members.label": "members",
     "panel.group_card.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can only view existing groups.",
+
+    "widget.group.member.card.attended.label": "ATTENDED",
 
     "widget.groups.selection.button.select.label": "Seleccione",
     "widget.groups.selection.heading": "Selecciona grupo",

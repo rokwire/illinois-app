@@ -17,6 +17,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -106,6 +108,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   GlobalKey          _pollsKey = GlobalKey();
   List<Poll>?        _groupPolls;
   bool               _pollsLoading = false;
+
+  bool               _memberAttendLoading = false;
 
   bool get _isMember {
     return _group?.currentUserAsMember?.isMember ?? false;
@@ -571,6 +575,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       pendingMembers = "";
     }
 
+    int attendedCount = _group?.attendedCount ?? 0;
+    String? attendedMembers;
+    if (_group!.currentUserIsAdmin && (_group!.attendanceGroup == true)) {
+      if (attendedCount == 0) {
+        attendedMembers = Localization().getStringEx("panel.group_detail.attended_members.count.empty", "No Members Attended");
+      } else if (attendedCount == 1) {
+        attendedMembers = Localization().getStringEx("panel.group_detail.attended_members.count.one", "1 Member Attended");
+      } else {
+        attendedMembers =
+            sprintf(Localization().getStringEx("panel.group_detail.attended_members.count.format", "%s Members Attended"), [attendedCount]);
+      }
+    }
+
     if (_isMemberOrAdmin) {
       if(_isAdmin) {
         commands.add(RibbonButton(
@@ -596,6 +613,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapPromote,
         ));
+        if (_group?.attendanceGroup == true) {
+          commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+          commands.add(Stack(alignment: Alignment.center, children: [
+            RibbonButton(
+            label: Localization().getStringEx("panel.group_detail.button.take_attendance.title", "Take Attendance"),
+            hint: Localization().getStringEx("panel.group_detail.button.take_attendance.hint", ""),
+            leftIconAsset: 'images/icon-qr-code.png',
+            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+            onTap: _onTapTakeAttendance,
+          ),
+          Visibility(
+                visible: _memberAttendLoading, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2))
+          ]));
+        }
       }
       if (StringUtils.isNotEmpty(_group?.webURL)) {
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
@@ -657,6 +688,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               Visibility(visible: StringUtils.isNotEmpty(pendingMembers), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
                   Text(pendingMembers,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground,),)
+                ),
+              ),
+
+              Visibility(visible: StringUtils.isNotEmpty(attendedMembers), child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                  Text(StringUtils.ensureNotEmpty(attendedMembers), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground,),)
                 ),
               ),
               
@@ -1279,6 +1316,142 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupQrCodePanel(group: _group)));
   }
 
+  void _onTapTakeAttendance() {
+    if (_memberAttendLoading) {
+      return;
+    }
+    Analytics().logSelect(target: "Take Attendance");
+    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors!.fillColorSecondary!)!,
+            Localization().getStringEx('panel.group_detail.attendance.scan.cancel.button.title', 'Cancel'), true, ScanMode.QR)
+        .then((scanResult) {
+      _onAttendanceScanFinished(scanResult);
+    });
+  }
+
+  void _onAttendanceScanFinished(String? scanResult) {
+    String? uin = _extractUin(scanResult);
+    // There is no uin in the scanned QRcode
+    if (uin == null) {
+      AppAlert.showDialogResult(
+          context,
+          Localization()
+              .getStringEx('panel.group_detail.attendance.qr_code.uin.not_valid.msg', 'This QR code does not contain valid UIN number.'));
+      return;
+    }
+
+    Member? member = _getExistingGroupMember(uin: uin);
+    if (member != null) {
+      // The member already attended.
+      if (_checkMemberAttended(member: member)) {
+        AppAlert.showDialogResult(
+            context,
+            sprintf(
+                Localization()
+                    .getStringEx('panel.group_detail.attendance.member.attended.msg', 'Student with UIN "%s" already attended on "%s"'),
+                [uin, _getAttendedDateTimeFormatted(member: member)]));
+      }
+      // Attend the member to the group
+      else {
+        _attendMember(member: member);
+      }
+    } else {
+      // Do not allow a student to attend to authman group which one is not member of.
+      if (_group?.authManEnabled == true) {
+        AppAlert.showDialogResult(
+            context,
+            sprintf(
+                Localization().getStringEx('panel.group_detail.attendance.authman.uin.not_member.msg',
+                    'Student with UIN "%s" is not a member of this group and is not allowed to attend.'),
+                [uin]));
+      } 
+      // Create new member and attend to non-authman group
+      else {
+        member = Member();
+        member.status = GroupMemberStatus.member;
+        member.externalId = uin;
+        _attendMember(member: member);
+      }
+    }
+  }
+
+  void _attendMember({required Member member}) {
+    _setMemberAttendLoading(true);
+    Groups().memberAttended(group: _group!, member: member).then((success) {
+      _setMemberAttendLoading(false);
+      String msg = success
+          ? Localization().getStringEx('panel.group_detail.attendance.member.succeeded.msg', 'Successfully tagged member as attended.')
+          : Localization()
+              .getStringEx('panel.group_detail.attendance.member.failed.msg', 'Failed to tag member as attended. Please try again.');
+      AppAlert.showDialogResult(context, msg);
+    });
+  }
+
+  String? _getAttendedDateTimeFormatted({required Member member}) {
+    DateTime? attendedUniTime = AppDateTime().getUniLocalTimeFromUtcTime(member.dateAttendedUtc);
+    String? dateTimeFormatted = AppDateTime().formatDateTime(attendedUniTime, format: 'yyyy/MM/dd h:mm');
+    return dateTimeFormatted;
+  }
+
+  ///
+  /// Returns UIN number from string (uin or megTrack2), null - otherwise
+  ///
+  String? _extractUin(String? stringToCheck) {
+    if (StringUtils.isEmpty(stringToCheck)) {
+      return stringToCheck;
+    }
+    int stringSymbolsCount = stringToCheck!.length;
+    final int uinNumbersCount = 9;
+    final int megTrack2SymbolsCount = 28;
+    // Validate UIN in format 'XXXXXXXXX'
+    if (stringSymbolsCount == uinNumbersCount) {
+      RegExp uinRegEx = RegExp('[0-9]{$uinNumbersCount}');
+      bool uinMatch = uinRegEx.hasMatch(stringToCheck);
+      return uinMatch ? stringToCheck : null;
+    }
+    // Validate megTrack2 in format 'AAAAXXXXXXXXXAAA=AAAAAAAAAAA' where 'XXXXXXXXX' is the UIN
+    else if (stringSymbolsCount == megTrack2SymbolsCount) {
+      RegExp megTrack2RegEx = RegExp('[0-9]{4}[0-9]{$uinNumbersCount}[0-9]{3}=[0-9]{11}');
+      bool megTrackMatch = megTrack2RegEx.hasMatch(stringToCheck);
+      if (megTrackMatch) {
+        String uin = stringToCheck.substring(4, 13);
+        return uin;
+      } else {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  ///
+  /// Returns group member by uin, null - otherwise
+  ///
+  Member? _getExistingGroupMember({required String uin}) {
+    List<Member>? members = _group?.members;
+    if (CollectionUtils.isEmpty(members)) {
+      return null;
+    }
+    for (Member member in members!) {
+      if (member.isMemberOrAdmin && (member.externalId == uin)) {
+        return member;
+      }
+    }
+    return null;
+  }
+
+  ///
+  /// Returns true if member has already attended, false - otherwise
+  ///
+  bool _checkMemberAttended({required Member member}) {
+    return (member.dateAttendedUtc != null);
+  }
+
+  void _setMemberAttendLoading(bool loading) {
+    _memberAttendLoading = loading;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   void _onMembershipRequest() {
     Analytics().logSelect(target: "Request to join", attributes: widget.group!.analyticsAttributes);
     if (CollectionUtils.isNotEmpty(_group?.questions)) {
@@ -1354,7 +1527,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
   }
 
-  Future<void>_onPullToRefresh() async {
+  Future<void> _onPullToRefresh() async {
+    if (_group?.syncAuthmanAllowed == true) {
+      await Groups().syncAuthmanGroup(group: _group!);
+    }
     Group? group = await Groups().loadGroup(widget.groupId); // The same as _refreshGroup(refreshEvents: true) but use await to show the pull to refresh progress indicator properly
     if ((group != null)) {
       if(mounted) {
