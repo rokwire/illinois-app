@@ -56,6 +56,7 @@ dependencies:
   image_cropping: ^0.0.11
   dropdown_button2: ^1.2.2
   video_player: ^2.3.0
+  just_audio: ^0.9.21
   flutter_barcode_scanner: ^2.0.0
 
   rokwire_plugin:
