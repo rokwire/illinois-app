@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-HomeIlliniCashWidget, HomeMealPlanWidget, HomeBusPassWidget, HomeIlliniIdWidget and HomeLibraryCardWidget moved inside the new HomeWalletWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+- HomeIlliniCashWidget, HomeMealPlanWidget, HomeBusPassWidget, HomeIlliniIdWidget and HomeLibraryCardWidget moved inside the new HomeWalletWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+- Rename "Attendance Group" to "Enable attendance checking" [#1643](https://github.com/rokwire/illinois-app/issues/1643).
+### Added
+- Cache attended group members when offline [#1643](https://github.com/rokwire/illinois-app/issues/1643).
 
 ## [4.0.14] - 2022-05-20
 ### Added

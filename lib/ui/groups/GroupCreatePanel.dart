@@ -653,7 +653,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: _buildSwitch(
-            title: Localization().getStringEx("panel.groups_create.attendance_group.label", "Attendance Group"),
+            title: Localization().getStringEx("panel.groups_create.attendance_group.label", "Enable attendance checking"),
             value: _group?.attendanceGroup,
             onTap: _onTapAttendanceGroup));
   }

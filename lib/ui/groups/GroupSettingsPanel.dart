@@ -879,7 +879,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: _buildSwitch(
-            title: Localization().getStringEx("panel.groups_settings.attendance_group.label", "Attendance Group"),
+            title: Localization().getStringEx("panel.groups_settings.attendance_group.label", "Enable attendance checking"),
             value: _group?.attendanceGroup,
             onTap: _onTapAttendanceGroup));
   }
