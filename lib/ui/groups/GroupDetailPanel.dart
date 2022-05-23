@@ -1329,6 +1329,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onAttendanceScanFinished(String? scanResult) {
+    if (scanResult == '-1') {
+      // The user hit "Cancel button"
+      return;
+    }
     String? uin = _extractUin(scanResult);
     // There is no uin in the scanned QRcode
     if (uin == null) {
