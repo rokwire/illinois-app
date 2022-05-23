@@ -44,7 +44,7 @@ class HomeUpcomingEventsWidget extends StatefulWidget {
 
   final StreamController<void>? refreshController;
 
-  HomeUpcomingEventsWidget({this.refreshController});
+  HomeUpcomingEventsWidget({Key? key, this.refreshController}) : super(key: key);
 
   @override
   _HomeUpcomingEventsWidgetState createState() => _HomeUpcomingEventsWidgetState();

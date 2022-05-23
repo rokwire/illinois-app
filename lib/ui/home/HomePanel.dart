@@ -23,15 +23,11 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/ui/home/HomeBusPassWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeGiesWidget.dart';
-import 'package:illinois/ui/home/HomeIlliniCashWidget.dart';
-import 'package:illinois/ui/home/HomeIlliniIdWidget.dart';
-import 'package:illinois/ui/home/HomeLibraryCardWidget.dart';
-import 'package:illinois/ui/home/HomeMealPlanWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
+import 'package:illinois/ui/home/HomeWalletWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -130,7 +126,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         widget = HomeGameDayWidget(refreshController: _refreshController);
       }
       else if (code == 'campus_tools') {
-        widget = HomeCampusToolsWidget();
+        widget = HomeCampusToolsWidget(refreshController: _refreshController);
       }
       else if (code == 'pref_sports') {
         widget = HomePreferredSportsWidget(menSports: true, womenSports: true, refreshController: _refreshController);
@@ -157,67 +153,52 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         widget = HomeCanvasCoursesWidget(refreshController: _refreshController);
       }
       else if (code == 'voter_registration') {
-        widget = HomeVoterRegistrationWidget();
+        widget = HomeVoterRegistrationWidget(refreshController: _refreshController,);
       }
       else if (code == 'create_poll') {
-        widget = HomeCreatePollWidget();
+        widget = HomeCreatePollWidget(refreshController: _refreshController,);
       }
       else if (code == 'connect') {
-        widget = HomeLoginWidget();
+        widget = HomeLoginWidget(refreshController: _refreshController,);
       }
       else if (code == 'highlighted_features') {
-        widget = HomeHighlightedFeatures();
+        widget = HomeHighlightedFeatures(refreshController: _refreshController,);
       }
       else if (code == 'my_groups') {
         widget = HomeMyGroupsWidget(refreshController: _refreshController,);
       }
       else if (code == 'safer') {
-        widget = saferWidget = _saferWidget ??= HomeSaferWidget(key: _saferKey);
+        widget = saferWidget = _saferWidget ??= HomeSaferWidget(key: _saferKey, refreshController: _refreshController,);
+      }
+      else if (code == 'wallet') {
+        widget = HomeWalletWidget(refreshController: _refreshController,);
       }
       else if (code == 'wpgufm_radio') {
-        widget = HomeWPGUFMRadioWidget();
+        widget = HomeWPGUFMRadioWidget(refreshController: _refreshController,);
       }
 
-      // Wallet Cards
-
-      else if (code == 'illini_cash_card') {
-        widget = HomeIlliniCashWidget();
-      }
-      else if (code == 'meal_plan_card') {
-        widget = HomeMealPlanWidget();
-      }
-      else if (code == 'bus_pass_card') {
-        widget = HomeBusPassWidget();
-      }
-      else if (code == 'illini_id_card') {
-        widget = HomeIlliniIdWidget();
-      }
-      else if (code == 'library_card') {
-        widget = HomeLibraryCardWidget();
-      }
-      
       // Favs
 
       else if (code == 'events_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: Event.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: Event.favoriteKeyName, refreshController: _refreshController,);
       }
       else if (code == 'dining_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: Dining.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: Dining.favoriteKeyName, refreshController: _refreshController,);
       }
       else if (code == 'athletics_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: Game.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: Game.favoriteKeyName, refreshController: _refreshController,);
       }
       else if (code == 'news_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: News.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: News.favoriteKeyName, refreshController: _refreshController,);
       }
       else if (code == 'laundry_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: LaundryRoom.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: LaundryRoom.favoriteKeyName, refreshController: _refreshController,);
       }
       else if (code == 'inbox_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: InboxMessage.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: InboxMessage.favoriteKeyName, refreshController: _refreshController,);
       }
       else if (code == 'campus_guide_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: GuideFavorite.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: GuideFavorite.favoriteKeyName, refreshController: _refreshController,);
       }
 
       // Assets widget

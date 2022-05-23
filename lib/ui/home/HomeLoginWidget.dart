@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
@@ -13,7 +15,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeLoginWidget extends StatefulWidget {
 
-  HomeLoginWidget();
+  final StreamController<void>? refreshController;
+
+  HomeLoginWidget({Key? key, this.refreshController}) : super(key: key);
 
   @override
   _HomeLoginWidgetState createState() => _HomeLoginWidgetState();

@@ -86,10 +86,12 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
 
   void _loadBallance() {
     _illiniCashLoading = (IlliniCash().ballance == null);
-    IlliniCash().updateBalance().then((_){
-      setState(() {
-        _illiniCashLoading = false;
-      });
+    IlliniCash().updateBalance().then((_) {
+      if (mounted) {
+        setState(() {
+          _illiniCashLoading = false;
+        });
+      }
     });
   }
 

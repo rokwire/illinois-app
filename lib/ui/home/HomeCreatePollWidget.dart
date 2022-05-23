@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -26,6 +28,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class HomeCreatePollWidget extends StatefulWidget {
+  final StreamController<void>? refreshController;
+
+  HomeCreatePollWidget({Key? key, this.refreshController}) : super(key: key);
+
   @override
   _HomeCreatePollWidgetState createState() => _HomeCreatePollWidgetState();
 }

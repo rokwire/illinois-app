@@ -26,7 +26,7 @@ import 'package:illinois/ui/athletics/AthleticsGameDayWidget.dart';
 class HomeGameDayWidget extends StatefulWidget {
   final StreamController<void>? refreshController;
 
-  HomeGameDayWidget({this.refreshController});
+  HomeGameDayWidget({Key? key, this.refreshController}) : super(key: key);
 
   _HomeGameDayState createState() => _HomeGameDayState();
 }

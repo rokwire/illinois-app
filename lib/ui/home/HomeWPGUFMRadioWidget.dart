@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -11,7 +13,9 @@ import 'package:just_audio/just_audio.dart';
 
 //TBD LOCALIZE
 class HomeWPGUFMRadioWidget extends StatefulWidget {
-  HomeWPGUFMRadioWidget();
+  final StreamController<void>? refreshController;
+
+  const HomeWPGUFMRadioWidget({Key? key, this.refreshController}) : super(key: key);
 
   @override
   State<HomeWPGUFMRadioWidget> createState() => _HomeWPGUFMRadioWidgetState();

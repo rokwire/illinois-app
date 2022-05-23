@@ -2232,6 +2232,23 @@
     "widget.home.safer.button.wellness_answer_center.description": "Get answers to your questions.",
     "widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
 
+    "widget.home.wallet.label.title": "Wallet",
+
+    "widget.home.wallet.illini_cash.title": "Illini Efectivo",
+    "widget.home.wallet.illini_cash.label.current_balance": "Saldo de efectivo actual de Illini",
+    "widget.home.wallet.illini_cash.button.add_illini_cash.title": "Agregar efectivo Illini",
+
+    "widget.home.wallet.meal_plan.title": "Meal Plan",
+    "widget.home.wallet.meal_plan.label.meals_remaining.text": "Comidas restantes",
+    "widget.home.wallet.meal_plan.label.dining_dollars.text": "Dólares para cenar",
+
+    "widget.home.wallet.bus_pass.title": "MTD",
+    "widget.home.wallet.bus_pass.label.card_expires.text": "La tarjeta caduca: %s",
+
+    "widget.home.wallet.illini_id.title": "Identificación Illini",
+
+    "widget.home.wallet.library_card.title": "Tarjeta de biblioteca",
+
     "widget.athletics_card.button.get_tickets.title":"Obtener boletos",
     "widget.athletics_card.button.get_tickets.hint":"",
 
@@ -2266,24 +2283,7 @@
     "widget.home_prefered_sports.label.womens_sports.hint":"Encabezado 2",
     "widget.home_prefered_sports.label.offline.sports":"Los deportes no están disponibles sin conexión.",
     
-    "widget.home.illini_cash.title": "Illini Efectivo",
-    "widget.home.illini_cash.label.current_balance": "Saldo de efectivo actual de Illini",
-    "widget.home.illini_cash.button.add_illini_cash.title": "Agregar efectivo Illini",
-
-    "widget.home.meal_plan.title": "Meal Plan",
-    "widget.home.meal_plan.label.meals_remaining.text": "Comidas restantes",
-    "widget.home.meal_plan.label.dining_dollars.text": "Dólares para cenar",
-
-    "widget.home.bus_pass.title": "MTD",
-    "widget.home.bus_pass.label.card_expires.text": "La tarjeta caduca: %s",
-
-    "widget.home.illini_id.title": "Identificación Illini",
-
-    "widget.home.library_card.title": "Tarjeta de biblioteca",
-
     "widget.home.canvas_courses.header.label": "Cursos",
-
-    "widget.home.common.button.view.title": "Vista",
 
     "widget.food_detail.label.loading.title": "Cargando datos del menú",
     "widget.food_detail.label.loading.hint": "",

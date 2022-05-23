@@ -46,7 +46,7 @@ class HomeRecentItemsWidget extends StatefulWidget {
 
   final StreamController<void>? refreshController;
 
-  HomeRecentItemsWidget({this.refreshController});
+  HomeRecentItemsWidget({Key? key, this.refreshController}) : super(key: key);
 
   @override
   _HomeRecentItemsWidgetState createState() => _HomeRecentItemsWidgetState();

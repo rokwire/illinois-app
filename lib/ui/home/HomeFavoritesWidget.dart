@@ -36,7 +36,7 @@ class HomeFavoritesWidget extends StatefulWidget {
   final String favoriteKey;
   final StreamController<void>? refreshController;
 
-  HomeFavoritesWidget({required this.favoriteKey, this.refreshController});
+  HomeFavoritesWidget({Key? key, required this.favoriteKey, this.refreshController}) : super(key: key);
 
   @override
   _HomeFavoritesWidgetState createState() => _HomeFavoritesWidgetState();
