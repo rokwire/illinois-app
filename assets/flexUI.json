@@ -13,11 +13,6 @@
 
 		"home.twitter.account": ["gies", "", "canvas"],
 
-		"wallet": ["connect", "vcards", "hcards"],
-		"wallet.connect": ["netid", "phone_or_email"],
-		"wallet.vcards": ["illini_cash_card", "meal_plan_card"],
-		"wallet.hcards": ["bus_pass_card", "illini_id_card", "library_card"],
-
 		"browse": ["primary", "secondary"],
 		"browse.primary": ["athletics",  "building_access", "campus_guide", "crisis_help", "dining", "events", "groups", "inbox", "privacy_center", "quick_polls", "saved", "wellness"],
 		"browse.secondary": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "video_tutorial", "date_cat", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding", "faqs"],
