@@ -28,6 +28,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -183,6 +184,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Polls.notifyStatusChanged,
       Polls.notifyVoteChanged,
       Polls.notifyResultsChanged,
+      Connectivity.notifyStatusChanged,
     ]);
 
     _loadGroup(loadEvents: true);
@@ -197,20 +199,29 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _loadGroup({bool loadEvents = false}) {
     _increaseProgress();
-    Groups().loadGroup(widget.groupId).then((Group? group) {
-      if (mounted) {
-        if (group != null) {
-          _group = group;
-          _groupAdmins = _group!.getMembersByStatus(GroupMemberStatus.admin);
-          _loadInitialPosts();
-          _loadPolls();
-        }
-        if (loadEvents) {
-          _loadEvents();
-        }
-        _decreaseProgress();
+    // Load group if the device is online, otherwise - use widget's argument
+    if (Connectivity().isOnline) {
+      Groups().loadGroup(widget.groupId).then((Group? group) {
+        _onGroupLoaded(group, loadEvents: loadEvents);
+      });
+    } else {
+      _onGroupLoaded(widget.group, loadEvents: loadEvents);
+    }
+  }
+
+  void _onGroupLoaded(Group? group, {bool loadEvents = false}) {
+    if (mounted) {
+      if (group != null) {
+        _group = group;
+        _groupAdmins = _group!.getMembersByStatus(GroupMemberStatus.admin);
+        _loadInitialPosts();
+        _loadPolls();
       }
-    });
+      if (loadEvents) {
+        _loadEvents();
+      }
+      _decreaseProgress();
+    }
   }
 
   void _refreshGroup({bool refreshEvents = false}) {
@@ -429,16 +440,25 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
       _loadGroup(loadEvents: true);
-    } else if (name == Groups.notifyGroupPostsUpdated) {
+    } 
+    else if (name == Groups.notifyGroupPostsUpdated) {
       _refreshCurrentPosts(delta: param is int ? param : null);
-    } else if (name == Polls.notifyCreated) {
+    } 
+    else if (name == Polls.notifyCreated) {
       _refreshPolls();
-    } else if (name == Polls.notifyVoteChanged
+    } 
+    else if (name == Polls.notifyVoteChanged
             || name == Polls.notifyResultsChanged 
             || name == Polls.notifyStatusChanged) {
       _onPollUpdated(param); // Deep collection update single element (do not reload whole list)
-    }else if (name == AppLivecycle.notifyStateChanged) {
+    } 
+    else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
+    } 
+    else if (name == Connectivity.notifyStatusChanged) {
+      if (Connectivity().isOnline && mounted) {
+        _loadGroup(loadEvents: true);
+      }
     }
   }
 
@@ -447,7 +467,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _pausedDateTime = DateTime.now();
     }
     else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
+      // Refresh group if the device is online
+      if ((_pausedDateTime != null) && Connectivity().isOnline) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _refreshGroup(refreshEvents: true);
@@ -1532,6 +1553,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _onPullToRefresh() async {
+    if (Connectivity().isOffline) {
+      // Do not try to refresh group if the device is offline
+      return;
+    }
     if (_group?.syncAuthmanAllowed == true) {
       await Groups().syncAuthmanGroup(group: _group!);
     }

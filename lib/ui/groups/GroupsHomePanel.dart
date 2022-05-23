@@ -20,6 +20,7 @@ import 'package:illinois/ui/settings/SettingsPersonalInfoPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -47,7 +48,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   bool _isFilterLoading = false;
   bool _isGroupsLoading = false;
   bool _myGroupsSelected = false;
-  bool _myGroupsBussy = false;
+  bool _myGroupsBusy = false;
 
   List<Group>? _allGroups;
 
@@ -67,6 +68,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Groups.notifyGroupDeleted,
       Auth2.notifyLoginSucceeded,
       Auth2.notifyLogout,
+      Connectivity.notifyStatusChanged,
     ]);
     _loadFilters();
     _loadGroupsContent(autoUpdateTabSelection: true);
@@ -99,7 +101,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       _isGroupsLoading = true;
     });
 
-    Groups().loadGroups().then((List<Group>? groups) {
+    // Load only my groups if the device is offline - allow the user to reach his groups
+    Groups().loadGroups(myGroups: Connectivity().isOffline).then((List<Group>? groups) {
       if (mounted) {
         if (groups != null) {
           setState(() {
@@ -293,7 +296,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                   ),
                   Visibility(visible: _showMyGroups, child:
                     Padding(padding: EdgeInsets.only(right: 15), child:
-                      _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups'), hint: '', selected: _myGroupsSelected, progress: _myGroupsBussy, onTap: _onTapMyGroups),
+                      _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups'), hint: '', selected: _myGroupsSelected, progress: _myGroupsBusy, onTap: _onTapMyGroups),
                     ),
                   ),
                   Flexible(child: Container()),
@@ -583,12 +586,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         setState(() { _myGroupsSelected = true; });
       }
       else {
-        setState(() { _myGroupsBussy = true; });
+        setState(() { _myGroupsBusy = true; });
         
         Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
           if (mounted) {
             setState(() {
-              _myGroupsBussy = false;
+              _myGroupsBusy = false;
               if (result == Auth2OidcAuthenticateResult.succeeded) {
                 _myGroupsSelected = true;
               }
@@ -607,7 +610,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Future<void> _onPullToRefresh() async {
     Analytics().logSelect(target: "Pull To Refresh");
-    List<Group>? groups = await Groups().loadGroups();
+    // Load only my groups if the device is offline - allow the user to reach his groups
+    List<Group>? groups = await Groups().loadGroups(myGroups: Connectivity().isOffline);
     if (mounted && (groups != null)) {
       setState(() {
         _allGroups = _sortGroups(groups);
@@ -653,7 +657,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         }
       });
     }
-
+    else if (name == Connectivity.notifyStatusChanged) {
+      if (Connectivity().isOnline && mounted) {
+        _loadGroupsContent();
+      }
+    }
   }
 }
 
