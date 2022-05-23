@@ -126,7 +126,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         widget = HomeGameDayWidget(refreshController: _refreshController);
       }
       else if (code == 'campus_tools') {
-        widget = HomeCampusToolsWidget();
+        widget = HomeCampusToolsWidget(refreshController: _refreshController);
       }
       else if (code == 'pref_sports') {
         widget = HomePreferredSportsWidget(menSports: true, womenSports: true, refreshController: _refreshController);
@@ -153,52 +153,52 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         widget = HomeCanvasCoursesWidget(refreshController: _refreshController);
       }
       else if (code == 'voter_registration') {
-        widget = HomeVoterRegistrationWidget();
+        widget = HomeVoterRegistrationWidget(refreshController: _refreshController,);
       }
       else if (code == 'create_poll') {
-        widget = HomeCreatePollWidget();
+        widget = HomeCreatePollWidget(refreshController: _refreshController,);
       }
       else if (code == 'connect') {
-        widget = HomeLoginWidget();
+        widget = HomeLoginWidget(refreshController: _refreshController,);
       }
       else if (code == 'highlighted_features') {
-        widget = HomeHighlightedFeatures();
+        widget = HomeHighlightedFeatures(refreshController: _refreshController,);
       }
       else if (code == 'my_groups') {
         widget = HomeMyGroupsWidget(refreshController: _refreshController,);
       }
       else if (code == 'safer') {
-        widget = saferWidget = _saferWidget ??= HomeSaferWidget(key: _saferKey);
+        widget = saferWidget = _saferWidget ??= HomeSaferWidget(key: _saferKey, refreshController: _refreshController,);
       }
       else if (code == 'wallet') {
         widget = HomeWalletWidget(refreshController: _refreshController,);
       }
       else if (code == 'wpgufm_radio') {
-        widget = HomeWPGUFMRadioWidget();
+        widget = HomeWPGUFMRadioWidget(refreshController: _refreshController,);
       }
 
       // Favs
 
       else if (code == 'events_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: Event.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: Event.favoriteKeyName, refreshController: _refreshController,);
       }
       else if (code == 'dining_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: Dining.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: Dining.favoriteKeyName, refreshController: _refreshController,);
       }
       else if (code == 'athletics_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: Game.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: Game.favoriteKeyName, refreshController: _refreshController,);
       }
       else if (code == 'news_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: News.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: News.favoriteKeyName, refreshController: _refreshController,);
       }
       else if (code == 'laundry_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: LaundryRoom.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: LaundryRoom.favoriteKeyName, refreshController: _refreshController,);
       }
       else if (code == 'inbox_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: InboxMessage.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: InboxMessage.favoriteKeyName, refreshController: _refreshController,);
       }
       else if (code == 'campus_guide_favs') {
-        widget = HomeFavoritesWidget(favoriteKey: GuideFavorite.favoriteKeyName);
+        widget = HomeFavoritesWidget(favoriteKey: GuideFavorite.favoriteKeyName, refreshController: _refreshController,);
       }
 
       // Assets widget

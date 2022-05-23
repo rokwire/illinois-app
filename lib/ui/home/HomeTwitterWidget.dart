@@ -22,7 +22,7 @@ class HomeTwitterWidget extends StatefulWidget {
 
   final StreamController<void>? refreshController;
 
-  HomeTwitterWidget({this.refreshController});
+  HomeTwitterWidget({Key? key, this.refreshController}) : super(key: key);
 
   @override
   _HomeTwitterWidgetState createState() => _HomeTwitterWidgetState();

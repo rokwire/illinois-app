@@ -21,7 +21,7 @@ class HomeCampusHighlightsWidget extends StatefulWidget {
 
   final StreamController<void>? refreshController;
 
-  HomeCampusHighlightsWidget({this.refreshController});
+  HomeCampusHighlightsWidget({Key? key, this.refreshController}) : super(key: key);
 
   @override
   _HomeCampusHighlightsWidgetState createState() => _HomeCampusHighlightsWidgetState();
