@@ -2232,6 +2232,23 @@
 	"widget.home.safer.button.wellness_answer_center.description": "Get answers to your questions.",
 	"widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
 
+	"widget.home.wallet.label.title": "Wallet",
+
+	"widget.home.wallet.illini_cash.title": "伊利尼現金",
+	"widget.home.wallet.illini_cash.label.current_balance": "當前伊利諾伊州現金餘額",
+	"widget.home.wallet.illini_cash.button.add_illini_cash.title": "添加伊利尼現金",
+
+	"widget.home.wallet.meal_plan.title": "Meal Plan",
+	"widget.home.wallet.meal_plan.label.meals_remaining.text": "剩餘膳食",
+	"widget.home.wallet.meal_plan.label.dining_dollars.text": "餐飲美元",
+
+	"widget.home.wallet.bus_pass.title": "MTD",
+	"widget.home.wallet.bus_pass.label.card_expires.text": "卡過期：%s",
+
+	"widget.home.wallet.illini_id.title": "伊利尼身份證",
+
+	"widget.home.wallet.library_card.title": "借書卡",
+
 	"widget.athletics_card.button.get_tickets.title":"获取门票",
 	"widget.athletics_card.button.get_tickets.hint":"",
 
@@ -2266,24 +2283,7 @@
 	"widget.home_prefered_sports.label.womens_sports.hint":"标题2",
 	"widget.home_prefered_sports.label.offline.sports":"离线时无法查看运动。",
     
-	"widget.home.illini_cash.title": "伊利尼現金",
-	"widget.home.illini_cash.label.current_balance": "當前伊利諾伊州現金餘額",
-	"widget.home.illini_cash.button.add_illini_cash.title": "添加伊利尼現金",
-
-	"widget.home.meal_plan.title": "Meal Plan",
-	"widget.home.meal_plan.label.meals_remaining.text": "剩餘膳食",
-	"widget.home.meal_plan.label.dining_dollars.text": "餐飲美元",
-
-	"widget.home.bus_pass.title": "MTD",
-	"widget.home.bus_pass.label.card_expires.text": "卡過期：%s",
-
-	"widget.home.illini_id.title": "伊利尼身份證",
-
-	"widget.home.library_card.title": "借書卡",
-
 	"widget.home_canvas_courses.header.label": "培訓班",
-
-	"widget.home.common.button.view.title": "看法",
 
 	"widget.food_detail.label.loading.title":"正在加载菜单数据",
 	"widget.food_detail.label.loading.hint":"",

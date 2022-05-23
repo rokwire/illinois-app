@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
@@ -35,6 +37,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class HomeVoterRegistrationWidget extends StatefulWidget {
+  final StreamController<void>? refreshController;
+
+  HomeVoterRegistrationWidget({Key? key, this.refreshController}) : super(key: key);
+
   @override
   _HomeVoterRegistrationWidgetState createState() => _HomeVoterRegistrationWidgetState();
 }

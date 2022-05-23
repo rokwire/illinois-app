@@ -17,7 +17,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class HomeCanvasCoursesWidget extends StatefulWidget {
   final StreamController<void>? refreshController;
 
-  HomeCanvasCoursesWidget({this.refreshController});
+  HomeCanvasCoursesWidget({Key? key, this.refreshController}) : super(key: key);
 
   @override
   _HomeCanvasCoursesWidgetState createState() => _HomeCanvasCoursesWidgetState();

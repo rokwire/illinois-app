@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -37,6 +38,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeCampusToolsWidget extends StatefulWidget {
+
+  final StreamController<void>? refreshController;
+
+  HomeCampusToolsWidget({Key? key, this.refreshController}) : super(key: key);
 
   _HomeCampusToolsWidgetState createState() => _HomeCampusToolsWidgetState();
 }
