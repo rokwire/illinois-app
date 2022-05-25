@@ -21,12 +21,15 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CanvasCourseAssignmentsPanel extends StatefulWidget {
@@ -206,14 +209,16 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
             ])));
   }
 
-  void _onTapAssignment(CanvasAssignment assignment) {
+  void _onTapAssignment(CanvasAssignment assignment) async {
     Analytics().logSelect(target: 'Canvas Assignment');
-    String? url = assignment.htmlUrl;
-    if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
-        launch(url!);
+    String? assignmentDeepLinkFormat = Config().canvasAssignmentDeepLinkFormat;
+    String? assignmentDeepLink =
+        StringUtils.isNotEmpty(assignmentDeepLinkFormat) ? sprintf(assignmentDeepLinkFormat!, [assignment.courseId, assignment.id]) : null;
+    bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": assignmentDeepLink});
+    if (appLaunched != true) {
+      String? canvasStoreUrl = Config().canvasStoreUrl;
+      if ((canvasStoreUrl != null) && await canLaunch(canvasStoreUrl)) {
+        await launch(canvasStoreUrl, forceSafariVC: false);
       }
     }
   }
