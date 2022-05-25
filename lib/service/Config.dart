@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
@@ -55,6 +57,9 @@ class Config extends rokwire.Config {
 
   Map<String, dynamic> get stateFarm => JsonUtils.mapValue(content['state_farm']) ?? {};
   Map<String, dynamic> get stateFarmWayfinding => JsonUtils.mapValue(stateFarm['wayfinding']) ?? {};
+
+  Map<String, dynamic> get canvas => JsonUtils.mapValue(content['canvas']) ?? {};
+  Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
 
   // Getters: Secret Keys
 
@@ -135,6 +140,21 @@ class Config extends rokwire.Config {
     Map<String, dynamic>? userAccount = twitterAccount(accountKey);
     return (userAccount != null) ? JsonUtils.stringValue(userAccount['name']) : null;
   }
+
+  // Getters: Canvas
+
+  String? get canvasStoreUrl {
+    dynamic storeUrlEntry = JsonUtils.mapValue(canvas['store_url']);
+    if (storeUrlEntry is Map) {
+      return storeUrlEntry[Platform.operatingSystem.toLowerCase()];
+    } else if (storeUrlEntry is String) {
+      return storeUrlEntry;
+    }
+    return null;
+  }
+
+  String? get canvasCourseDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['course_format']);
+  String? get canvasAssignmentDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['assignment_format']);
 
   // Getters: settings
 
