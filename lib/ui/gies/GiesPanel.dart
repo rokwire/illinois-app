@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Gies.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -15,7 +16,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../WebPanel.dart';
 
 class GiesPanel extends StatefulWidget{
 
@@ -31,7 +31,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Gies.notifyPageChanged, Gies.notifyLoadingChange]);
+    NotificationService().subscribe(this, [Gies.notifyPageChanged, Gies.notifyContentChanged]);
   }
 
   @override
@@ -263,7 +263,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   @override
   void onNotification(String name, param) {
-    if(name == Gies.notifyLoadingChange){
+    if(name == Gies.notifyContentChanged){
       if(mounted) {
         setState(() {});
       }

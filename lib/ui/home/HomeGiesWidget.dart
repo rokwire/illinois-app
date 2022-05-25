@@ -28,7 +28,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Gies.notifyPageChanged, Gies.notifyPageCompleted, Gies.notifyLoadingChange]);
+    NotificationService().subscribe(this, [Gies.notifyPageChanged, Gies.notifyPageCompleted, Gies.notifyContentChanged]);
   }
 
   @override
@@ -281,7 +281,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   void onNotification(String name, param) {
     if(name == Gies.notifyPageChanged ||
         name == Gies.notifyPageCompleted ||
-        name ==Gies.notifyLoadingChange){
+        name ==Gies.notifyContentChanged){
       setState(() {});
     }
   }
