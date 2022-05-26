@@ -7,6 +7,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -20,9 +21,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 class HomeTwitterWidget extends StatefulWidget {
 
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeScrollableDragging? scrollableDragging;
 
-  HomeTwitterWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeTwitterWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
 
   @override
   _HomeTwitterWidgetState createState() => _HomeTwitterWidgetState();

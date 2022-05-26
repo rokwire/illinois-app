@@ -19,6 +19,8 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeSlantHeader.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -30,13 +32,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCampusRemindersWidget extends StatefulWidget {
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeScrollableDragging? scrollableDragging;
 
-  HomeCampusRemindersWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeCampusRemindersWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
 
   @override
   _HomeCampusRemindersWidgetState createState() => _HomeCampusRemindersWidgetState();
@@ -97,9 +100,8 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(_reminderItems), child:
       Column(children: [
-          SectionSlantHeader(
+          HomeSlantHeader(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
             title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
-            titleIconAsset: 'images/campus-tools.png',
             children: _buildRemindersList()
           ),
         ]),

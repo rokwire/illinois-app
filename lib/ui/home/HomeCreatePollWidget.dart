@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -28,9 +29,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class HomeCreatePollWidget extends StatefulWidget {
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeScrollableDragging? scrollableDragging;
 
-  HomeCreatePollWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeCreatePollWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
 
   @override
   _HomeCreatePollWidgetState createState() => _HomeCreatePollWidgetState();

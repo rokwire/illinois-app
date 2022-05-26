@@ -18,6 +18,9 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeSlantHeader.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/ext/Event.dart';
@@ -42,9 +45,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class HomeUpcomingEventsWidget extends StatefulWidget {
 
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeScrollableDragging? scrollableDragging;
 
-  HomeUpcomingEventsWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeUpcomingEventsWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
 
   @override
   _HomeUpcomingEventsWidgetState createState() => _HomeUpcomingEventsWidgetState();
@@ -250,10 +255,11 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          SectionRibbonHeader(
+          _EventsRibbonHeader(
             title: Localization().getStringEx('widget.home_upcoming_events.label.events_for_you', 'Events For You'),
             subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home_upcoming_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
-            titleIconAsset: 'images/icon-calendar.png',
+            favoriteId: widget.favoriteId,
+            scrollableDragging: widget.scrollableDragging,
             rightIconAsset: 'images/settings-white.png',
             rightIconAction: () {
               Analytics().logSelect(target: "Events for you - settings");
@@ -350,4 +356,99 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     Analytics().logSelect(target: "HomeUpcomingEvents View all events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events)));
   }
+}
+
+class _EventsRibbonHeader extends StatelessWidget {
+  final String? title;
+  final String? subTitle;
+
+  final String? rightIconLabel;
+  final String? rightIconAsset;
+  final void Function()? rightIconAction;
+
+  final String? favoriteId;
+  final HomeScrollableDragging? scrollableDragging;
+
+  const _EventsRibbonHeader({Key? key,
+    this.title,
+    this.subTitle,
+
+    this.rightIconLabel,
+    this.rightIconAsset,
+    this.rightIconAction,
+
+    this.favoriteId,
+    this.scrollableDragging,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> titleList = <Widget>[];
+
+    titleList.add(Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
+      Draggable<HomeFavorite>(
+        data: HomeFavorite(id: favoriteId),
+        onDragStarted: () { scrollableDragging?.isDragging = true; },
+        onDragEnd: (details) { scrollableDragging?.isDragging = false; },
+        onDraggableCanceled: (velocity, offset) { scrollableDragging?.isDragging = false; },
+        feedback: Container(color: Styles().colors!.fillColorPrimary!.withOpacity(0.8), child:
+          Row(children: <Widget>[
+            HomeRibonHeader.dragHandle,
+            Padding(padding: EdgeInsets.only(right: 24), child:
+              Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
+                Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
+              ] ),),
+            ),
+          ],),
+        ),
+        childWhenDragging: HomeRibonHeader.dragHandle,
+        child: HomeRibonHeader.dragHandle
+      ),
+    ));
+    
+    titleList.add(
+      Expanded(child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+          StringUtils.isNotEmpty(subTitle) ?
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Semantics(label: title, header: true, excludeSemantics: true, child:
+                Text(title ?? '', style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+              ),
+              Semantics(label: subTitle, header: true, excludeSemantics: true, child:
+                Text(subTitle ?? '', style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.regular, fontSize: 16 ),)
+              ),
+            ],) :
+            Semantics(label: title, header: true, excludeSemantics: true, child:
+              Text(title ?? '', style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+            ),
+        ),
+      ),
+    );
+
+    Widget? rightIconWidget = (rightIconAsset != null) ?
+      Semantics(label: rightIconLabel, button: true, child:
+        InkWell(onTap: rightIconAction, child:
+          Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
+            Image.asset(rightIconAsset!, excludeFromSemantics: true,),
+          )
+        )
+      ) : null;
+
+    if (rightIconWidget != null) {
+      titleList.add(rightIconWidget);
+    }
+
+    titleList.add(Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
+      Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+        Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true,),
+      )
+    ));
+
+    Widget contentWidget = Container(color: Styles().colors?.fillColorPrimary, child: 
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: titleList,),
+    );
+
+    return contentWidget;
+  }
+
 }

@@ -18,6 +18,8 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeSlantHeader.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -28,15 +30,16 @@ import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeFavoritesWidget extends StatefulWidget {
 
+  final String? favoriteId;
   final String favoriteKey;
   final StreamController<void>? refreshController;
+  final HomeScrollableDragging? scrollableDragging;
 
-  HomeFavoritesWidget({Key? key, required this.favoriteKey, this.refreshController}) : super(key: key);
+  HomeFavoritesWidget({Key? key, required this.favoriteKey, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
 
   @override
   _HomeFavoritesWidgetState createState() => _HomeFavoritesWidgetState();
@@ -82,11 +85,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   Widget build(BuildContext context) {
     bool showMoreButton = (_favorites != null) && (limit < _favorites!.length);
     return Column(children: <Widget>[
-      SectionSlantHeader(
+      HomeSlantHeader(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
         title: headingTitle,
-        titleIconAsset: headingIconResource,
-        slantImageAsset: slantImageResource,
-        slantColor: slantColor,
         children: _buildContent()),
       Visibility(visible: showMoreButton, child:
         Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child:
@@ -350,23 +350,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     }
     return null;
   }
-
-  String? get headingIconResource {
-    switch(widget.favoriteKey) {
-      case Event.favoriteKeyName: return 'images/icon-calendar.png';
-      case Dining.favoriteKeyName: return 'images/icon-dining-orange.png';
-      case Game.favoriteKeyName: return 'images/icon-calendar.png';
-      case News.favoriteKeyName: return 'images/icon-news.png';
-      case LaundryRoom.favoriteKeyName: return 'images/icon-news.png';
-      case InboxMessage.favoriteKeyName: return 'images/icon-news.png';
-      case GuideFavorite.favoriteKeyName: return 'images/icon-news.png';
-    }
-    return null;
-  }
-
-  String get slantImageResource => 'images/slant-down-right-blue.png';
-
-  Color? get slantColor => Styles().colors?.fillColorPrimary;
 
   void _onTapItem(Favorite? item) {
     Analytics().logSelect(target: item?.favoriteTitle);

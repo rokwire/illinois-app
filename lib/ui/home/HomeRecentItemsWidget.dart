@@ -20,6 +20,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeSlantHeader.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -38,15 +40,16 @@ import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class HomeRecentItemsWidget extends StatefulWidget {
 
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeScrollableDragging? scrollableDragging;
 
-  HomeRecentItemsWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeRecentItemsWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
 
   @override
   _HomeRecentItemsWidgetState createState() => _HomeRecentItemsWidgetState();
@@ -79,9 +82,8 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
   @override
   Widget build(BuildContext context) {
-    return _RecentItemsList(
+    return _RecentItemsList(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
       heading: Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed'),
-      headingIconRes: 'images/campus-tools.png',
       items: _recentItems,
     );
   }
@@ -113,36 +115,31 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 }
 
 class _RecentItemsList extends StatelessWidget{
-  final int limit;
-  final List<RecentItem>? items;
   final String? heading;
   final String? subTitle;
-  final String? headingIconRes;
-  final String slantImageRes;
-  final Color? slantColor;
-  final void Function()? tapMore;
-  final bool showMoreButtonExplicitly;
+  final List<RecentItem>? items;
+  final int limit;
   final String? moreButtonLabel;
+  final void Function()? tapMore;
+  final String? favoriteId;
+  final HomeScrollableDragging? scrollableDragging;
 
-  //Card Options
-  final bool cardShowDate;
 
   const _RecentItemsList(
-      {Key? key, this.items, this.heading, this.subTitle, this.headingIconRes,
-        this.slantImageRes = 'images/slant-down-right-blue.png', this.slantColor, this.tapMore, this.cardShowDate = false, this.limit = 3,
-        this.moreButtonLabel, this.showMoreButtonExplicitly = false,})
+      {Key? key, this.items, this.heading, this.subTitle,
+        this.tapMore, this.limit = 3,
+        this.moreButtonLabel, this.favoriteId, this.scrollableDragging})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool showMoreButton =showMoreButtonExplicitly ||( tapMore!=null && limit<(items?.length??0));
+    bool showMoreButton = ((tapMore != null) && (limit < (items?.length ?? 0)));
     String? moreLabel = StringUtils.isEmpty(moreButtonLabel)? Localization().getStringEx('widget.home_recent_items.button.more.title', 'View All'): moreButtonLabel;
     return items!=null && items!.isNotEmpty? Column(
       children: <Widget>[
-        SectionSlantHeader(
-            title:heading,
+        HomeSlantHeader(favoriteId: favoriteId, scrollableDragging: scrollableDragging,
+            title: heading,
             subTitle: subTitle,
-            titleIconAsset: headingIconRes,
             children: _buildListItems(context)
         ),
         !showMoreButton?Container():
@@ -175,10 +172,7 @@ class _RecentItemsList extends StatelessWidget{
   }
 
   Widget _buildItemCart({RecentItem? recentItem, BuildContext? context}) {
-    return _HomeRecentItemCard(
-      item: recentItem,
-      showDate: cardShowDate,
-      onTap: () {
+    return _HomeRecentItemCard(item: recentItem, onTap: () {
         Analytics().logSelect(target: "HomeRecentItemCard clicked: " + recentItem!.recentTitle!);
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => _getDetailPanel(recentItem)));
       },);

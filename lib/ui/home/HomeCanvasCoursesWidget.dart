@@ -5,6 +5,8 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeSlantHeader.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -15,9 +17,11 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCanvasCoursesWidget extends StatefulWidget {
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeScrollableDragging? scrollableDragging;
 
-  HomeCanvasCoursesWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeCanvasCoursesWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
 
   @override
   _HomeCanvasCoursesWidgetState createState() => _HomeCanvasCoursesWidgetState();
@@ -93,19 +97,8 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   }
 
   Widget _buildHeader() {
-    return Semantics(container: true, header: true, child:
-      Container(color: Styles().colors!.fillColorPrimary, child:
-        Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Padding(padding: EdgeInsets.only(right: 16), child:
-              Image.asset( 'images/campus-tools.png',excludeFromSemantics: true,)
-            ),
-            Expanded(child:
-              Text(Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses'), style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20))
-            )
-          ])
-        )
-      )
+    return HomeRibonHeader(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+      title: Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses')
     );
   }
 

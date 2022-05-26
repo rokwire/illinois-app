@@ -4,6 +4,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Gies.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeSlantHeader.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -15,9 +17,11 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeGiesWidget extends StatefulWidget{
 
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeScrollableDragging? scrollableDragging;
 
-  const HomeGiesWidget({Key? key, this.refreshController}) : super(key: key);
+  const HomeGiesWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HomeGiesWidgetState();
@@ -52,22 +56,9 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   }
 
   Widget _buildHeader() {
-    return Semantics(
-      header: true,
-      child:Container(color: Styles().colors!.fillColorPrimary, child:
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10), child:
-          Column(children: [
-            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Expanded(child:
-              Text(Localization().getStringEx(
-                  'widget.gies.title', 'iDegrees New Student Checklist'),
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Styles().colors!.white,
-                  fontFamily: Styles().fontFamilies!.extraBold,
-                  fontSize: 20,),),),
-          ],),
-        ],),
-        ),));
+    return HomeRibonHeader(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+      title: Localization().getStringEx( 'widget.gies.title', 'iDegrees New Student Checklist')
+    );
   }
 
   Widget _buildSlant() {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -21,9 +22,11 @@ class HomeSaferWidget extends StatefulWidget {
 
   static const String notifyNeedsVisiblity = "edu.illinois.rokwire.home.safer.needs.visibility";
   
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeScrollableDragging? scrollableDragging;
 
-  HomeSaferWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeSaferWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
 
   @override
   _HomeSaferWidgetState createState() => _HomeSaferWidgetState();

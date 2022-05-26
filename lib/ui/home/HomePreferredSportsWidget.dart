@@ -18,6 +18,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -36,9 +37,11 @@ class HomePreferredSportsWidget extends StatefulWidget {
 
   final bool menSports;
   final bool womenSports;
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeScrollableDragging? scrollableDragging;
 
-  HomePreferredSportsWidget({Key? key, this.menSports = false, this.womenSports = false, this.refreshController}) : super(key: key);
+  HomePreferredSportsWidget({Key? key, this.menSports = false, this.womenSports = false, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
 
   _HomePreferredSportsWidgetState createState() => _HomePreferredSportsWidgetState();
 }
