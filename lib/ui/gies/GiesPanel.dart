@@ -19,6 +19,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class GiesPanel extends StatefulWidget{
 
+  final String contentKey;
+
+  const GiesPanel({Key? key, required this.contentKey}) : super(key: key);
+  
   @override
   State<StatefulWidget> createState() => _GiesPanelState();
 
@@ -31,7 +35,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Gies.notifyPageChanged, Gies.notifyContentChanged]);
+    NotificationService().subscribe(this, [CheckListService.notifyPageChanged, CheckListService.notifyContentChanged]);
   }
 
   @override
@@ -83,7 +87,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
             _buildProgress(),
             ),
             Expanded(child:
-              !Gies().supportNotes? Container() :
+              !CheckListService(widget.contentKey).supportNotes? Container() :
               Align(alignment: Alignment.centerRight, child:
                 InkWell(onTap: () => _onTapNotes(), child:
                   Padding(padding: EdgeInsets.only(top: 14, bottom: 4), child:
@@ -100,15 +104,15 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
   Widget _buildProgress() {
 
     List<Widget> progressWidgets = <Widget>[];
-    if (Gies().progressSteps != null) {
+    if (CheckListService(widget.contentKey).progressSteps != null) {
       int? currentPageProgress = _currentPageProgress;
 
-      for (int progressStep in Gies().progressSteps!) {
+      for (int progressStep in CheckListService(widget.contentKey).progressSteps!) {
 
         Color textColor;
         String? textFamily;
         bool showCheckIcon = false;
-        bool progressStepCompleted = Gies().isProgressStepCompleted(progressStep);
+        bool progressStepCompleted = CheckListService(widget.contentKey).isProgressStepCompleted(progressStep);
         bool currentStep = (currentPageProgress != null) && (progressStep == currentPageProgress);
 
         if (progressStepCompleted) {
@@ -175,7 +179,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   Widget _buildContent() {
     return Container(color: Colors.white, padding: EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0), child:
-      _GiesPageWidget(key: _pageKey, page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < Gies().navigationPages!.length) ? _onTapBack : null,onTapNotes: _onTapNotes, showTitle: false,),
+      _GiesPageWidget(contentKey: widget.contentKey, key: _pageKey, page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < CheckListService(widget.contentKey).navigationPages!.length) ? _onTapBack : null,onTapNotes: _onTapNotes, showTitle: false,),
     );
   }
 
@@ -194,7 +198,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
           (giesUri.path == uri.path))
       {
         String? pageId = JsonUtils.stringValue(uri.queryParameters['page_id']);
-        Gies().pushPage(Gies().getPage(id: pageId));
+        CheckListService(widget.contentKey).pushPage(CheckListService(widget.contentKey).getPage(id: pageId));
       }
       else if (UrlUtils.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
@@ -206,18 +210,18 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   void _onTapButton(Map<String, dynamic> button, String pageId) {
     _processButtonPopup(button, pageId).then((_) {
-      Gies().processButtonPage(button, callerPageId: pageId);
+      CheckListService(widget.contentKey).processButtonPage(button, callerPageId: pageId);
     });
   }
 
   void _onTapBack() {
-    Gies().popPage();
+    CheckListService(widget.contentKey).popPage();
   }
 
   void _onTapProgress(int progress) {
     int? currentPageProgress = _currentPageProgress;
     if (currentPageProgress != progress) {
-      Gies().pushPage(Gies().getPage(progress: progress));
+      CheckListService(widget.contentKey).pushPage(CheckListService(widget.contentKey).getPage(progress: progress));
     }
   }
 
@@ -235,7 +239,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
       }
       else if (popupId == 'current-notes') {
         List<dynamic> notes = JsonUtils.decodeList(Storage().giesNotes) ?? [];
-        String? focusNodeId =  Gies().setCurrentNotes(notes, pageId,);
+        String? focusNodeId =  CheckListService(widget.contentKey).setCurrentNotes(notes, pageId,);
         return GiesNotesWidget(notes: notes, focusNoteId: focusNodeId,);
       }
       else {
@@ -263,11 +267,11 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   @override
   void onNotification(String name, param) {
-    if(name == Gies.notifyContentChanged){
+    if(name == CheckListService.notifyContentChanged){
       if(mounted) {
         setState(() {});
       }
-    } else if(name == Gies.notifyPageChanged){
+    } else if(name == CheckListService.notifyPageChanged){
       if(mounted) {
         setState(() {});
       }
@@ -280,11 +284,11 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
   }
 
   int? get _currentPageProgress {
-    return Gies().getPageProgress(_currentPage);
+    return CheckListService(widget.contentKey).getPageProgress(_currentPage);
   }
 
   Map<String, dynamic> get _currentPage {
-    return Gies().getPage(id: Gies().currentPageId) ?? {};
+    return CheckListService(widget.contentKey).getPage(id: CheckListService(widget.contentKey).currentPageId) ?? {};
   }
 
   String get giesUrl => '${DeepLink().appUrl}/gies';
@@ -292,6 +296,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 }
 
 class _GiesPageWidget extends StatefulWidget{
+  final String contentKey;
   final Map<String, dynamic>? page;
   final void Function(String?)? onTapLink;
   final void Function(Map<String, dynamic> button, String panelId)? onTapButton;
@@ -299,7 +304,7 @@ class _GiesPageWidget extends StatefulWidget{
   final void Function()? onTapNotes;
   final bool showTitle;
 
-  _GiesPageWidget({Key? key, this.page, this.onTapLink, this.onTapButton, this.onTapBack, this.showTitle = true, this.onTapNotes}) : super(key: key);
+  _GiesPageWidget({Key? key, this.page, this.onTapLink, this.onTapButton, this.onTapBack, this.showTitle = true, this.onTapNotes, required this.contentKey}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GiesPageState();
@@ -453,8 +458,9 @@ class _GiesPageState extends State<_GiesPageWidget> {
           title:"${JsonUtils.stringValue(widget.page!["step_title"])}: ${widget.page!["title"]}",
           onTapLink: widget.onTapLink,
           onTapButton: widget.onTapButton,
-          onTapBack: (1 < Gies().navigationPages!.length) ? widget.onTapBack : null,
+          onTapBack: (1 < CheckListService(widget.contentKey).navigationPages!.length) ? widget.onTapBack : null,
           onTapNotes: widget.onTapNotes,
+          contentKey: widget.contentKey,
       ),
       );
     }
@@ -707,6 +713,7 @@ class _GiesNotesWidgetState extends State<GiesNotesWidget> {
 }
 
 class _StepsHorizontalListWidget extends StatefulWidget {
+  final String contentKey;
   final List<dynamic>? tabs;
   final String? title;
   final int pageProgress;
@@ -716,7 +723,7 @@ class _StepsHorizontalListWidget extends StatefulWidget {
   final void Function()? onTapBack;
   final void Function()? onTapNotes;
 
-  const _StepsHorizontalListWidget({Key? key, this.tabs, this.title, this.onTapLink, this.onTapButton, this.onTapBack, this.pageProgress = 0, this.onTapNotes}) : super(key: key);
+  const _StepsHorizontalListWidget({Key? key, this.tabs, this.title, this.onTapLink, this.onTapButton, this.onTapBack, this.pageProgress = 0, this.onTapNotes, required this.contentKey}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _StepsHorizontalListState();
@@ -732,9 +739,9 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      Gies.notifyPageChanged,
-      Gies.notifyPageCompleted,
-      Gies.notifySwipeToPage
+      CheckListService.notifyPageChanged,
+      CheckListService.notifyPageCompleted,
+      CheckListService.notifySwipeToPage
     ]);
     _currentPage = _initialPageIndex;
   }
@@ -779,7 +786,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
       }
     }
 
-    if(Gies().supportNotes) {
+    if(CheckListService(widget.contentKey).supportNotes) {
       tabs.add(
         GestureDetector(onTap: _onTapNotes,
           child: Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child:
@@ -806,7 +813,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   Widget _buildTab({required int index, dynamic tabData}){
     String? tabKey = JsonUtils.stringValue(tabData["key"]);
     String? pageId = JsonUtils.stringValue(tabData["page_id"]);
-    bool isCompleted = Gies().isPageVerified(pageId);
+    bool isCompleted = CheckListService(widget.contentKey).isPageVerified(pageId);
     bool isCurrentTab = _currentPage == index;
     Color textColor = Colors.white;
     String? textFamily = Styles().fontFamilies!.regular;
@@ -876,7 +883,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
               boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
               borderRadius: BorderRadius.all(Radius.circular(4))
           ),
-            child:_GiesPageWidget( page: Gies().getPage(id: tab!["page_id"]),
+            child:_GiesPageWidget(contentKey: widget.contentKey, page: CheckListService(widget.contentKey).getPage(id: tab!["page_id"]),
               onTapBack: widget.onTapBack,
               onTapButton: (button, id){
                 _onTapButton(button, id);
@@ -960,7 +967,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
       for (int index = 0; index<widget.tabs!.length; index++) {
         dynamic tabData = widget.tabs![index];
         String? pageId = tabData != null ? JsonUtils.stringValue(tabData["page_id"]) : null;
-        if(pageId!=null && !Gies().isPageVerified(pageId)){
+        if(pageId!=null && !CheckListService(widget.contentKey).isPageVerified(pageId)){
           return index;
         }
       }
@@ -971,15 +978,15 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
 
   @override
   void onNotification(String name, param) {
-    if(name == Gies.notifyPageChanged){
+    if(name == CheckListService.notifyPageChanged){
       if(mounted)
         setState(() {});
     }
-    else if(name == Gies.notifyPageCompleted){
+    else if(name == CheckListService.notifyPageCompleted){
       if(mounted)
         setState(() {}); //Need to reset tab color
     }
-    else if(name == Gies.notifySwipeToPage){
+    else if(name == CheckListService.notifySwipeToPage){
       if(mounted) {
         if (param is String){
           _swipeToPage(param);

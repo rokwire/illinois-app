@@ -16,15 +16,26 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'Config.dart';
 
-class Gies with Service implements NotificationsListener{
+abstract class CheckListService with Service implements NotificationsListener{
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
   static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
   static const String notifyContentChanged  = "edu.illinois.rokwire.gies.service.content.changed";
 
-  static const String _cacheFileName = "gies.json";
+  // Singleton instance wrapper
+  factory CheckListService(String serviceName){
+    switch (serviceName){
+      case "gies" : return _GiesCheckListInstanceWrapper();
+      case "uiuc_student" : return _StudentCheckListInstanceWrapper();
+    }
+    return _GiesCheckListInstanceWrapper(); //default
+  }
 
-  File?          _cacheFile;
+  CheckListService.fromName(this._contentName);
+
+  final String _contentName;
+
+  File? _cacheFile;
 
   List<dynamic>? _pages;
   List<String>?  _navigationPages;
@@ -36,14 +47,7 @@ class Gies with Service implements NotificationsListener{
 
   DateTime? _pausedDateTime;
 
-  // Singletone instance
-  static final Gies _instance = Gies._internal();
-
-  factory Gies() {
-    return _instance;
-  }
-
-  Gies._internal();
+  // String checklistName();
 
   // Service
   @override
@@ -134,7 +138,7 @@ class Gies with Service implements NotificationsListener{
   Future<String?> _loadContentStringFromNet() async {
     try {
       List<dynamic> result;
-      Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': ['gies']}), auth: Auth2());
+      Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': [_contentName]}), auth: Auth2());
       List<dynamic>? responseList = (response?.statusCode == 200) ? JsonUtils.decodeList(response?.body)  : null;
       if (responseList != null) {
         result = [];
@@ -247,8 +251,8 @@ class Gies with Service implements NotificationsListener{
   }
 
   void processButtonPage(Map<String, dynamic> button, {String? callerPageId}) {
-    String? pageId = callerPageId ?? Gies().currentPageId;
-    if (Gies().pageButtonCompletes(button)) {
+    String? pageId = callerPageId ?? currentPageId;
+    if (pageButtonCompletes(button)) {
       if ((pageId != null) && pageId.isNotEmpty) {
         _verifyPage(pageId);
         NotificationService().notify(notifyPageCompleted, pageId);
@@ -262,15 +266,15 @@ class Gies with Service implements NotificationsListener{
 
     String? pushPageId = JsonUtils.stringValue(button['page']);
     if ((pushPageId != null) && pushPageId.isNotEmpty) {
-      int? currentPageProgress = Gies().getPageProgress(currentPage);
+      int? currentPageProgress = getPageProgress(currentPage);
 
-      Map<String, dynamic>? pushPage = Gies().getPage(id: pushPageId);
-      int? pushPageProgress = Gies().getPageProgress(pushPage);
+      Map<String, dynamic>? pushPage = getPage(id: pushPageId);
+      int? pushPageProgress = getPageProgress(pushPage);
 
       if ((currentPageProgress != null) && (pushPageProgress != null) && (currentPageProgress < pushPageProgress)) {
-        while (Gies().isProgressStepCompleted(pushPageProgress)) {
+        while (isProgressStepCompleted(pushPageProgress)) {
           int nextPushPageProgress = pushPageProgress! + 1;
-          Map<String, dynamic>? nextPushPage = Gies().getPage(progress: nextPushPageProgress);
+          Map<String, dynamic>? nextPushPage = getPage(progress: nextPushPageProgress);
           String? nextPushPageId = (nextPushPage != null) ? JsonUtils.stringValue(nextPushPage['id']) : null;
           if ((nextPushPageId != null) && nextPushPageId.isNotEmpty) {
             pushPage = nextPushPage;
@@ -283,7 +287,7 @@ class Gies with Service implements NotificationsListener{
         }
       }
 
-      Gies().pushPage(pushPage);
+      this.pushPage(pushPage);
     }
   }
 
@@ -294,7 +298,7 @@ class Gies with Service implements NotificationsListener{
 
   String? setCurrentNotes(List<dynamic>? notes, String? pageId) {
 
-    Map<String, dynamic>? currentPage =pageId!=null? Gies().getPage(id: pageId): Gies().currentPage;
+    Map<String, dynamic>? currentPage =pageId!=null? this.getPage(id: pageId): this.currentPage;
     String? currentPageId = (currentPage != null) ? JsonUtils.stringValue(currentPage['id']) : null;
     if ((notes != null) && (currentPageId != null)) {
       for (dynamic note in notes) {
@@ -431,6 +435,7 @@ class Gies with Service implements NotificationsListener{
     return false; //Remove Notes buttons if we don't support them anymore. Hide for now
   }
 
+  String get _cacheFileName => "$_contentName.json";
   //Utils
   bool _pageCanComplete(Map? page) {
     // List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
@@ -489,4 +494,21 @@ class Gies with Service implements NotificationsListener{
       }
     }
   }
+}
+
+// Singleton instance wrappers
+class _GiesCheckListInstanceWrapper extends CheckListService{
+  static final _GiesCheckListInstanceWrapper _instance = _GiesCheckListInstanceWrapper._internal();
+
+  factory _GiesCheckListInstanceWrapper() => _instance;
+
+  _GiesCheckListInstanceWrapper._internal() : super.fromName("gies");
+}
+
+class _StudentCheckListInstanceWrapper extends CheckListService{
+  static final _StudentCheckListInstanceWrapper _instance = _StudentCheckListInstanceWrapper._internal();
+
+  factory _StudentCheckListInstanceWrapper() => _instance;
+
+  _StudentCheckListInstanceWrapper._internal() : super.fromName("uiuc_student");
 }
