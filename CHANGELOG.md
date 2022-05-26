@@ -5,6 +5,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Buttons for "On Campus" [#1664](https://github.com/rokwire/illinois-app/issues/1664).
+- Fix typo in HomeRadioWidget [#1666](https://github.com/rokwire/illinois-app/issues/1666).
+- Change comply message when creating a Group [#1668](https://github.com/rokwire/illinois-app/issues/1668).
+
+## [4.0.16] - 2022-05-25
+### Changed
+- Cash data in Gies service, various improvements added.
+### Added
+- Launch "Canvas Student" app - deep link to specific assignment [#1661](https://github.com/rokwire/illinois-app/issues/1661).
+
+## [4.0.15] - 2022-05-23
+### Changed
+- HomeIlliniCashWidget, HomeMealPlanWidget, HomeBusPassWidget, HomeIlliniIdWidget and HomeLibraryCardWidget moved inside the new HomeWalletWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+- Rename "Attendance Group" to "Enable attendance checking" [#1643](https://github.com/rokwire/illinois-app/issues/1643).
+### Added
+- Cache attended group members when offline [#1643](https://github.com/rokwire/illinois-app/issues/1643).
+
+## [4.0.14] - 2022-05-20
+### Added
+- Audio and images for Home Radio widget [#1652](https://github.com/rokwire/illinois-app/issues/1652).
+- Group Attendance [#1643](https://github.com/rokwire/illinois-app/issues/1643).
+### Changed
+- Updated delete account data strings and availability [#1655](https://github.com/rokwire/illinois-app/issues/1655).
+
+## [4.0.13] - 2022-05-19
+### Added
+- Ui for Home Radio widget [#1652](https://github.com/rokwire/illinois-app/issues/1652).
+### Changed
+- Prompt before creating a group [#1650](https://github.com/rokwire/illinois-app/issues/1650).
+
+## [4.0.12] - 2022-05-18
+### Fixed
+- Fixed Gies Home Widget status [#1646](https://github.com/rokwire/illinois-app/issues/1646).
+- Do not try to display courses that are restricted by date [#1641](https://github.com/rokwire/illinois-app/issues/1641).
+### Added
+- Created HomeBusPassWidget, HomeIlliniIdWidget and HomeLibraryCardWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+### Changed
+- Acknowledged new navigation tabbar content [#1645](https://github.com/rokwire/illinois-app/issues/1645).
+
+## [4.0.11] - 2022-05-17
+### Added
+- Created HomeIlliniCashWidget and HomeMealPlanWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+- Created HomeFavoritesWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+
 ## [4.0.10] - 2022-05-16
 ### Changed
 - Cleaned up app, root panels and tab bar, prepare for UIUC 4 features [#1629](https://github.com/rokwire/illinois-app/issues/1629).

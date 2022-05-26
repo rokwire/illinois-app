@@ -1,24 +1,40 @@
+import 'dart:io';
+
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:rokwire_plugin/service/content.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+import 'Config.dart';
 
 class Gies with Service implements NotificationsListener{
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
   static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
-  static const String notifyLoadingChange  = "edu.illinois.rokwire.gies.service.status.loading.changed";
+  static const String notifyContentChanged  = "edu.illinois.rokwire.gies.service.content.changed";
+
+  static const String _cacheFileName = "gies.json";
+
+  File?          _cacheFile;
 
   List<dynamic>? _pages;
   List<String>?  _navigationPages;
 
-  late Map<int, Set<String>> _progressPages;
-  Set<String>? _verifiedPages;
+  Map<int, Set<String>>? _progressPages;
+
+  Set<String> _verifiedPages = <String>{};
   List<int>? _progressSteps;
 
-  bool _loading = false;
+  DateTime? _pausedDateTime;
 
   // Singletone instance
   static final Gies _instance = Gies._internal();
@@ -33,7 +49,13 @@ class Gies with Service implements NotificationsListener{
   @override
   void createService() {
     super.createService();
-    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupUpdated, Groups.notifyGroupCreated, Groups.notifyUserGroupsUpdated]);
+    NotificationService().subscribe(this, [
+      Groups.notifyUserMembershipUpdated,
+      Groups.notifyGroupUpdated,
+      Groups.notifyGroupCreated,
+      Groups.notifyUserGroupsUpdated,
+      AppLivecycle.notifyStateChanged,
+    ]);
     super.createService();
   }
 
@@ -44,46 +66,108 @@ class Gies with Service implements NotificationsListener{
   }
 
   @override
-  Future<void> initService() async{
-    await super.initService();
+  Future<void> initService() async {
     _navigationPages = Storage().giesNavPages ?? [];
-    // AppBundle.loadString('assets/gies.json').then((String? assetsContentString) {
-    //     _pages = JsonUtils.decodeList(assetsContentString);
-    //     _buildProgressSteps();
-    //     _ensureNavigationPages();
-    //     _initialPageVerification();
-    // });
-    _loading = true;
-    NotificationService().notify(notifyLoadingChange);
-    _loadFromNet().then((List<dynamic>? data){
-        if(data == null){
-          print('Missing Gies Content');
-          return;
-        }
-        _pages = data;
-        _buildProgressSteps();
-        _ensureNavigationPages();
-        _initialPageVerification();
-        _loading = false;
-        NotificationService().notify(notifyLoadingChange);
-    });
+    _cacheFile = await _getCacheFile();
+    _pages = await _loadContentJsonFromCache();
+    if (_pages != null) {
+      _updateContentFromNet();
+    }
+    else {
+      String? contentString = await _loadContentStringFromNet();
+      _pages = JsonUtils.decodeList(contentString);
+      if (_pages != null) {
+        _saveContentStringToCache(contentString);
+      }
+    }
+
+    _buildProgressSteps();
+    _loadPageVerification();
+    _ensureNavigationPages();
+
+    if (_pages != null) {
+      await super.initService();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.nonFatal,
+        title: 'GIES Initialization Failed',
+        description: 'Failed to initialize GIES content.',
+      );
+    }
   }
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage()]);
+    return Set.from([Storage(), Config(), Groups()]);
   }
   
-   Future<List<dynamic>?> _loadFromNet() async{
-      List<dynamic>? contentItemsData = await Content().loadContentItems(categories: ["gies"]);
-      try {
-        dynamic contentItemData = contentItemsData?.firstWhere((element) =>
-          (element is Map && JsonUtils.stringValue(element["category"]) == "gies"));
-        return contentItemData != null && contentItemData is Map ? JsonUtils.listValue(contentItemData["data"]) : null;
-      }catch(e){
-        print(e);
+  // Implementation
+
+  Future<File> _getCacheFile() async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String cacheFilePath = join(appDocDir.path, _cacheFileName);
+    return File(cacheFilePath);
+  }
+
+  Future<String?> _loadContentStringFromCache() async {
+    return (await _cacheFile?.exists() == true) ? await _cacheFile?.readAsString() : null;
+  }
+
+  Future<void> _saveContentStringToCache(String? value) async {
+    try {
+      if (value != null) {
+        await _cacheFile?.writeAsString(value, flush: true);
       }
-      return null;
+      else {
+        await _cacheFile?.delete();
+      }
+    }
+    catch(e) { print(e.toString()); }
+  }
+
+  Future<List<dynamic>?> _loadContentJsonFromCache() async {
+    return JsonUtils.decodeList(await _loadContentStringFromCache());
+  }
+
+  Future<String?> _loadContentStringFromNet() async {
+    try {
+      List<dynamic> result;
+      Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': ['gies']}), auth: Auth2());
+      List<dynamic>? responseList = (response?.statusCode == 200) ? JsonUtils.decodeList(response?.body)  : null;
+      if (responseList != null) {
+        result = [];
+        for (dynamic responseEntry in responseList) {
+          Map<String, dynamic>? responseMap = JsonUtils.mapValue(responseEntry);
+          List<dynamic>? responseData = (responseMap != null) ? JsonUtils.listValue(responseMap['data']) : null;
+          if (responseData != null) {
+            result.addAll(responseData);
+          }
+        }
+        return JsonUtils.encode(result);
+      }
+    }
+    catch (e) { print(e.toString()); }
+    return null;
+  }
+
+  Future<void> _updateContentFromNet() async {
+    String? contentString = await _loadContentStringFromNet();
+    List<dynamic>? contentList = JsonUtils.decodeList(contentString);
+    if ((contentList != null) && !DeepCollectionEquality().equals(_pages, contentList)) {
+      _pages = contentList;
+      _buildProgressSteps();
+      _loadPageVerification();
+      _ensureNavigationPages();
+      _saveContentStringToCache(contentString);
+      NotificationService().notify(notifyContentChanged);
+    }
+  }
+
+  // ignore: unused_element
+  Future<List<dynamic>?> _loadFromAssets() async{
+    return JsonUtils.decodeList(await AppBundle.loadString('assets/gies.json'));
   }
 
   void _buildProgressSteps() {
@@ -95,16 +179,16 @@ class Gies with Service implements NotificationsListener{
           if (pageProgress != null) {
             String? pageId = JsonUtils.stringValue(page['id']);
             if ((pageId != null) && pageId.isNotEmpty && _pageCanComplete(page)) {
-              Set<String>? progressPages = _progressPages[pageProgress];
+              Set<String>? progressPages = _progressPages![pageProgress];
               if (progressPages == null) {
-                _progressPages[pageProgress] = progressPages = Set<String>();
+                _progressPages![pageProgress] = progressPages = Set<String>();
               }
               progressPages.add(pageId);
             }
           }
         }
       }
-      _progressSteps = List.from(_progressPages.keys);
+      _progressSteps = List.from(_progressPages!.keys);
       _progressSteps!.sort();
     }
   }
@@ -204,9 +288,8 @@ class Gies with Service implements NotificationsListener{
   }
 
   bool isProgressStepCompleted(int? progressStep) {
-    Set<String>? progressPages = _progressPages[progressStep];
-    return (progressPages == null) ||
-        (_verifiedPages?.containsAll(progressPages) ?? false);
+    Set<String>? progressPages = (_progressPages != null) ? _progressPages![progressStep] : null;
+    return (progressPages == null) || _verifiedPages.containsAll(progressPages);
   }
 
   String? setCurrentNotes(List<dynamic>? notes, String? pageId) {
@@ -233,14 +316,9 @@ class Gies with Service implements NotificationsListener{
     return currentPageId;
   }
 
-  void _initialPageVerification(){
-    _verifiedPages = new Set();
-    _loadPageVerification();
-  }
-
   void _loadPageVerification({bool notify = false}){
-    if(_progressPages.isNotEmpty){
-      for(Set<String> steps in _progressPages.values){
+    if((_progressPages != null) && _progressPages!.isNotEmpty){
+      for(Set<String> steps in _progressPages!.values){
         if(steps.isNotEmpty){
           for(String pageId in steps){
             _verifyPage(pageId);
@@ -251,20 +329,20 @@ class Gies with Service implements NotificationsListener{
   }
 
   void _verifyPage(String? page, {bool notify = true}){
-    if(page == null || _verifiedPages == null) {
+    if(page == null) {
       return;
     }
 
     if(_isPageGroupMembershipApproved(page)){
-      if(!_verifiedPages!.contains(page)) {
-        _verifiedPages?.add(page);
+      if(!_verifiedPages.contains(page)) {
+        _verifiedPages.add(page);
         if(notify){
           NotificationService().notify(notifyPageCompleted);
         }
       }
     } else {
-      if(_verifiedPages!.contains(page)){
-        _verifiedPages!.remove(page);
+      if(_verifiedPages.contains(page)){
+        _verifiedPages.remove(page);
         if(notify){
           NotificationService().notify(notifyPageCompleted);
         }
@@ -279,19 +357,20 @@ class Gies with Service implements NotificationsListener{
     dynamic pageData = getPage(id: pageId);
     String? groupName = pageData is Map ?  JsonUtils.stringValue(pageData["group_name"]) : null;
     Set<String>? groupsNames = Groups().userGroupNames;
+
     return groupName != null &&
         (groupsNames?.contains(groupName) ?? false);
   }
 
   bool isPageVerified(String? pageId){
-    return pageId!= null && (_verifiedPages?.contains(pageId) ?? false);
+    return pageId != null && _verifiedPages.contains(pageId);
   }
 
   List<dynamic>? get pages{
     return _pages;
   }
 
-  Set<String>? get verifiedPages{
+  Set<String> get verifiedPages{
     return _verifiedPages;
   }
 
@@ -299,7 +378,7 @@ class Gies with Service implements NotificationsListener{
     return _navigationPages;
   }
 
-  Map<int, Set<String>> get progressPages{
+  Map<int, Set<String>>? get progressPages{
     return _progressPages;
   }
 
@@ -345,7 +424,7 @@ class Gies with Service implements NotificationsListener{
   }
 
   bool get isLoading{
-    return _loading;
+    return false;
   }
 
   bool get supportNotes{
@@ -384,11 +463,30 @@ class Gies with Service implements NotificationsListener{
 
   @override
   void onNotification(String name, param) {
-     if (name == Groups.notifyUserMembershipUpdated ||
-         name == Groups.notifyGroupUpdated ||
-         // name == Groups.notifyGroupCreated ||
-         name == Groups.notifyUserGroupsUpdated) {
-       _loadPageVerification(notify: true);
+    if (name == Groups.notifyUserMembershipUpdated ||
+        name == Groups.notifyGroupUpdated ||
+        // name == Groups.notifyGroupCreated ||
+        name == Groups.notifyUserGroupsUpdated) {
+      _loadPageVerification(notify: true);
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      if (param == AppLifecycleState.resumed) {
+        //TMP: test
+      }
      }
+  }
+
+  void onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _updateContentFromNet();
+        }
+      }
+    }
   }
 }

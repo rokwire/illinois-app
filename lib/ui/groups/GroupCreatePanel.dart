@@ -153,6 +153,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                               ],)),
                             Container(height: 8),
                             _buildPollsLayout(),
+                            Container(height: 16),
+                            _buildAttendanceLayout(),
                             Container(height: 40),
                         ],),)
 
@@ -646,6 +648,25 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     }
   }
 
+  // Attendance
+  Widget _buildAttendanceLayout() {
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: _buildSwitch(
+            title: Localization().getStringEx("panel.groups_create.attendance_group.label", "Enable attendance checking"),
+            value: _group?.attendanceGroup,
+            onTap: _onTapAttendanceGroup));
+  }
+
+  void _onTapAttendanceGroup() {
+    if (_group != null) {
+      _group!.attendanceGroup = !(_group!.attendanceGroup ?? false);
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   //Buttons
   Widget _buildButtonsLayout() {
     return
@@ -666,6 +687,24 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void _onCreateTap() {
+    AppAlert.showCustomDialog(
+        context: context,
+        contentWidget: Text(Localization().getStringEx("panel.groups_create.prompt.msg.title", "Does this group comply with University guidelines? (It will be removed if the group is deemed not to comply.)")),
+        actions: <Widget>[
+          TextButton(
+              child:
+              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _onCreateGroup();
+              }),
+          TextButton(
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
+              onPressed: () => Navigator.of(context).pop())
+        ]);
+  }
+
+  void _onCreateGroup() {
     Analytics().logSelect(target: "Create Group");
     if(!_creating && _canSave) {
       setState(() {

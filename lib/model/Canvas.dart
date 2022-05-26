@@ -57,6 +57,7 @@ class CanvasCourse {
   final bool? restrictEnrollmentsToCourseDates;
   final bool? blueprint;
   final bool? template;
+  final bool? accessRestrictedByDate;
   
   final String? gradePassbackSetting;
   final String? workflowState;
@@ -70,13 +71,12 @@ class CanvasCourse {
   final String? syllabusBody;
 
   CanvasCourse({
-    this.id, this.accountId, this.rootAccountId, this.enrollmentTermId, this.gradingStandardId, this.sisImportId, this.integrationId, this.sisCourseId,
-    this.uuid, this.name, this.friendlyName, this.courseCode, this.courseColor, this.timezone,
-    this.createdAt, this.startAt, this.endAt,
-    this.isPublic, this.isPublicToAuthUsers, this.publicSyllabus, this.publicSyllabusToAuth, this.homeroomCourse, this.applyAssignmentGroupWeights, this.hideFinalGrades, this.restrictEnrollmentsToCourseDates, this.blueprint, this.template,
-    this.gradePassbackSetting, this.workflowState, this.defaultView, this.license,
-    this.storageQuotaMb, this.calendar, this.enrollments,
-    this.syllabusBody
+    this.id, this.accountId, this.rootAccountId, this.enrollmentTermId, this.gradingStandardId, this.sisImportId, this.integrationId, 
+    this.sisCourseId, this.uuid, this.name, this.friendlyName, this.courseCode, this.courseColor, this.timezone, this.createdAt, 
+    this.startAt, this.endAt, this.isPublic, this.isPublicToAuthUsers, this.publicSyllabus, this.publicSyllabusToAuth, this.homeroomCourse, 
+    this.applyAssignmentGroupWeights, this.hideFinalGrades, this.restrictEnrollmentsToCourseDates, this.blueprint, this.template, 
+    this.accessRestrictedByDate, this.gradePassbackSetting, this.workflowState, this.defaultView, this.license, this.storageQuotaMb, 
+    this.calendar, this.enrollments, this.syllabusBody
   });
 
   static CanvasCourse? fromJson(Map<String, dynamic>? json) {
@@ -111,6 +111,7 @@ class CanvasCourse {
       restrictEnrollmentsToCourseDates: JsonUtils.boolValue(json['restrict_enrollments_to_course_dates']),
       blueprint: JsonUtils.boolValue(json['blueprint']),
       template: JsonUtils.boolValue(json['template']),
+      accessRestrictedByDate: JsonUtils.boolValue(json['access_restricted_by_date']),
       
       gradePassbackSetting: JsonUtils.stringValue(json['grade_passback_setting']),
       workflowState: JsonUtils.stringValue(json['workflow_state']),
@@ -171,6 +172,7 @@ class CanvasCourse {
       'restrict_enrollments_to_course_dates': restrictEnrollmentsToCourseDates,
       'blueprint': blueprint,
       'template': template,
+      'access_restricted_by_date': accessRestrictedByDate,
       
       'grade_passback_setting': gradePassbackSetting,
       'workflow_state': workflowState,
@@ -217,6 +219,7 @@ class CanvasCourse {
       (o.restrictEnrollmentsToCourseDates == restrictEnrollmentsToCourseDates) &&
       (o.blueprint == blueprint) &&
       (o.template == template) &&
+      (o.accessRestrictedByDate == accessRestrictedByDate) &&
 
       (o.gradePassbackSetting == gradePassbackSetting) &&
       (o.workflowState == workflowState) &&
@@ -260,6 +263,7 @@ class CanvasCourse {
     (restrictEnrollmentsToCourseDates?.hashCode ?? 0) ^
     (blueprint?.hashCode ?? 0) ^
     (template?.hashCode ?? 0) ^
+    (accessRestrictedByDate?.hashCode ?? 0) ^
     
     (gradePassbackSetting?.hashCode ?? 0) ^
     (workflowState?.hashCode ?? 0) ^

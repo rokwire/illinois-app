@@ -29,6 +29,7 @@ enum RecentItemType{
   dining,
   explore, // for backward compatability only, we now use event / dining RecentItemType
   guide,
+  //TBD_TB: + laundry
 }
 
 class RecentItem{

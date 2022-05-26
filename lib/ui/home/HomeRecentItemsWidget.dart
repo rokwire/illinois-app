@@ -46,7 +46,7 @@ class HomeRecentItemsWidget extends StatefulWidget {
 
   final StreamController<void>? refreshController;
 
-  HomeRecentItemsWidget({this.refreshController});
+  HomeRecentItemsWidget({Key? key, this.refreshController}) : super(key: key);
 
   @override
   _HomeRecentItemsWidgetState createState() => _HomeRecentItemsWidgetState();
@@ -152,7 +152,7 @@ class _RecentItemsList extends StatelessWidget{
           label: moreLabel ?? '',
           hint: Localization().getStringEx('widget.home_recent_items.button.more.hint', ''),
           onTap: tapMore ?? (){},),
-        Container(height: 48,),
+        Container(height: 16,),
       ],
     ) : Container();
 
@@ -164,6 +164,9 @@ class _RecentItemsList extends StatelessWidget{
       int visibleCount = items!.length<limit?items!.length:limit;
       for(int i = 0 ; i<visibleCount; i++) {
         RecentItem item = items![i];
+        if (0 < widgets.length) {
+          widgets.add(Container(height: 4));
+        }
         widgets.add(_buildItemCart(
             recentItem: item, context: context));
       }
@@ -255,35 +258,37 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     String favIcon = isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png';
 
     return Padding(padding: EdgeInsets.only(bottom: 8), child:
-      Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4))), clipBehavior: Clip.none, child:
-        Stack(children: [
-          GestureDetector(behavior: HitTestBehavior.translucent, onTap: widget.onTap, child:
-            Padding(padding: EdgeInsets.all(16), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Expanded(child:
-                    Padding(padding: EdgeInsets.only(right: 24), child:
-                      Text(widget.item!.recentTitle ?? '', style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold, color: Styles().colors!.fillColorPrimary,),)
+      Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), clipBehavior: Clip.none, child:
+        ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
+          Stack(children: [
+            GestureDetector(behavior: HitTestBehavior.translucent, onTap: widget.onTap, child:
+              Container(color: Colors.white, padding: EdgeInsets.all(16), child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.only(right: 24), child:
+                        Text(widget.item!.recentTitle ?? '', style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold, color: Styles().colors!.fillColorPrimary,),)
+                      ),
                     ),
-                  ),
-                ]),
-                Padding(padding: EdgeInsets.only(top: 10), child:
-                  Column(children: _buildDetails()),
-                )
-              ])
-            )
-          ),
-          _topBorder(),
-          Visibility(visible: Auth2().canFavorite, child:
-            Align(alignment: Alignment.topRight, child:
-              GestureDetector(onTap: _onTapFavorite, child:
-                Semantics(excludeSemantics: true, label: favLabel, hint: favHint, child:
-                  Container(padding: EdgeInsets.all(16), child: 
-                    Image.asset(favIcon)
-            ),),),),
-          ),
+                  ]),
+                  Padding(padding: EdgeInsets.only(top: 10), child:
+                    Column(children: _buildDetails()),
+                  )
+                ])
+              )
+            ),
+            _topBorder(),
+            Visibility(visible: Auth2().canFavorite, child:
+              Align(alignment: Alignment.topRight, child:
+                GestureDetector(onTap: _onTapFavorite, child:
+                  Semantics(excludeSemantics: true, label: favLabel, hint: favHint, child:
+                    Container(padding: EdgeInsets.all(16), child: 
+                      Image.asset(favIcon)
+              ),),),),
+            ),
 
-        ],),
+          ],),
+      ),
     ),);
   }
 

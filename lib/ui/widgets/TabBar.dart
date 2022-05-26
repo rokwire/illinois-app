@@ -23,21 +23,27 @@ import 'package:rokwire_plugin/ui/widgets/tab_bar.dart' as rokwire;
 class TabBar extends rokwire.TabBar {
 
   static const String notifySelectionChanged = "edu.illinois.rokwire.tabbar_widget.selection.changed";
-  static const String notifyWalletShow = "edu.illinois.rokwire.tabbar_widget.wallet.show";
-  static const String notifyWalletClose = "edu.illinois.rokwire.tabbar_widget.wallet.close";
 
-  final bool? walletExpanded;
-
-  TabBar({Key? key, TabController? tabController, this.walletExpanded}) : super(key: key, tabController: tabController);
+  TabBar({Key? key, TabController? tabController}) : super(key: key, tabController: tabController);
 
   @override
   Widget? buildTab(BuildContext context, String code, int index) {
-    if ((code == 'home') || (code == 'athletics')) {
+    if (code == 'home') {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.home.title', 'Home'),
         hint: Localization().getStringEx('tabbar.home.hint', ''),
         iconAsset: 'images/tab-home.png',
         selectedIconAsset: 'images/tab-home-selected.png',
+        selected: (tabController?.index == index),
+        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
+      );
+    }
+    else if (code == 'favorites') {
+      return rokwire.TabWidget(
+        label: Localization().getStringEx('tabbar.favorites.title', 'Favorites'),
+        hint: Localization().getStringEx('tabbar.favorites.hint', ''),
+        iconAsset: 'images/tab-favorites.png',
+        selectedIconAsset: 'images/tab-favorites-selected.png',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -52,22 +58,6 @@ class TabBar extends rokwire.TabBar {
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
     }
-    else if (code == 'wallet') {
-      return (walletExpanded != true) ?
-        rokwire.TabWidget(
-          label: Localization().getStringEx('tabbar.wallet.title', 'Wallet'),
-          hint: Localization().getStringEx('tabbar.wallet.hint', ''),
-          iconAsset: 'images/tab-wallet.png',
-          selected: false,
-          onTap: (rokwire.TabWidget tabWidget) => _onShowWalletSheet(context, tabWidget),
-        ) :
-        rokwire.TabCloseWidget(
-          label: Localization().getStringEx('panel.wallet.button.close.title', 'close'),
-          hint: Localization().getStringEx('panel.wallet.button.close.hint', ''),
-          iconAsset: 'images/icon-close-big.png',
-          onTap: (rokwire.TabCloseWidget tabCloseWidget) => _onCloseWalletSheet(context, tabCloseWidget),
-        );
-    }
     else if (code == 'browse') {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.browse.title', 'Browse'),
@@ -78,12 +68,32 @@ class TabBar extends rokwire.TabBar {
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
     }
-    else if (code == 'favorites') {
+    else if (code == 'navigate') {
       return rokwire.TabWidget(
-        label: Localization().getStringEx('tabbar.favorites.title', 'Favorites'),
-        hint: Localization().getStringEx('tabbar.favorites.hint', ''),
-        iconAsset: 'images/tab-saved.png',
-        selectedIconAsset: 'images/tab-saved-selected.png',
+        label: Localization().getStringEx('tabbar.navigate.title', 'Navigate'),
+        hint: Localization().getStringEx('tabbar.navigate.hint', ''),
+        iconAsset: 'images/tab-navigate.png',
+        selectedIconAsset: 'images/tab-navigate-selected.png',
+        selected: (tabController?.index == index),
+        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
+      );
+    }
+    else if (code == 'academics') {
+      return rokwire.TabWidget(
+        label: Localization().getStringEx('tabbar.academics.title', 'Academics'),
+        hint: Localization().getStringEx('tabbar.academics.hint', ''),
+        iconAsset: 'images/tab-academics.png',
+        selectedIconAsset: 'images/tab-academics-selected.png',
+        selected: (tabController?.index == index),
+        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
+      );
+    }
+    else if (code == 'wellness') {
+      return rokwire.TabWidget(
+        label: Localization().getStringEx('tabbar.wellness.title', 'Wellness'),
+        hint: Localization().getStringEx('tabbar.wellness.hint', ''),
+        iconAsset: 'images/tab-wellness.png',
+        selectedIconAsset: 'images/tab-wellness-selected.png',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -96,15 +106,5 @@ class TabBar extends rokwire.TabBar {
   void _onSwitchTab(int tabIndex, rokwire.TabWidget tabWidget) {
     Analytics().logSelect(target: tabWidget.label);
     NotificationService().notify(TabBar.notifySelectionChanged, tabIndex);
-  }
-
-  void _onShowWalletSheet(BuildContext context, rokwire.TabWidget tabWidget) {
-    Analytics().logSelect(target: tabWidget.label);
-    NotificationService().notify(TabBar.notifyWalletShow);
-  }
-
-  void _onCloseWalletSheet(BuildContext context, rokwire.TabCloseWidget tabCloseWidget) {
-    Analytics().logSelect(target: tabCloseWidget.label);
-    NotificationService().notify(TabBar.notifyWalletClose);
   }
 }

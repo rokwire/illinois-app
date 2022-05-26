@@ -115,6 +115,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               child: _buildMembershipLayout()),
                             Container(height: 8, color: Styles().colors!.background),
                             _buildPollsLayout(),
+                            Container(height: 16, color: Styles().colors!.background),
+                            _buildAttendanceLayout(),
                             Container(height: 24,  color: Styles().colors!.background,),
                           ],),)
                       ]),
@@ -870,7 +872,26 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       }
     }
   }
-  //
+  
+  // Attendance
+  Widget _buildAttendanceLayout() {
+    return Container(
+      color: Styles().colors!.background,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: _buildSwitch(
+            title: Localization().getStringEx("panel.groups_settings.attendance_group.label", "Enable attendance checking"),
+            value: _group?.attendanceGroup,
+            onTap: _onTapAttendanceGroup));
+  }
+
+  void _onTapAttendanceGroup() {
+    if (_group != null) {
+      _group!.attendanceGroup = !(_group!.attendanceGroup ?? false);
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
 
   // Common
   Widget _buildInfoHeader(String title, String? description,{double topPadding = 24}){

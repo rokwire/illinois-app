@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
@@ -52,6 +54,12 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get safer => JsonUtils.mapValue(content['safer']) ?? {};
   Map<String, dynamic> get saferMcKinley => JsonUtils.mapValue(safer['mckinley']) ?? {};
   Map<String, dynamic> get saferWellness => JsonUtils.mapValue(safer['wellness']) ?? {};
+
+  Map<String, dynamic> get stateFarm => JsonUtils.mapValue(content['state_farm']) ?? {};
+  Map<String, dynamic> get stateFarmWayfinding => JsonUtils.mapValue(stateFarm['wayfinding']) ?? {};
+
+  Map<String, dynamic> get canvas => JsonUtils.mapValue(content['canvas']) ?? {};
+  Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
 
   // Getters: Secret Keys
 
@@ -92,6 +100,7 @@ class Config extends rokwire.Config {
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
   String? get videoTutorialUrl       => JsonUtils.stringValue(otherUniversityServices['video_tutorial_url']);
   String? get videoTutorialCcUrl     => JsonUtils.stringValue(otherUniversityServices['video_tutorial_cc_url']);
+  String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['wpgufm_radio_url']);
 
   // Getters: Platform Building Blocks
   String? get gatewayUrl             => JsonUtils.stringValue(platformBuildingBlocks['gateway_url']);
@@ -131,6 +140,21 @@ class Config extends rokwire.Config {
     Map<String, dynamic>? userAccount = twitterAccount(accountKey);
     return (userAccount != null) ? JsonUtils.stringValue(userAccount['name']) : null;
   }
+
+  // Getters: Canvas
+
+  String? get canvasStoreUrl {
+    dynamic storeUrlEntry = JsonUtils.mapValue(canvas['store_url']);
+    if (storeUrlEntry is Map) {
+      return storeUrlEntry[Platform.operatingSystem.toLowerCase()];
+    } else if (storeUrlEntry is String) {
+      return storeUrlEntry;
+    }
+    return null;
+  }
+
+  String? get canvasCourseDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['course_format']);
+  String? get canvasAssignmentDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['assignment_format']);
 
   // Getters: settings
 

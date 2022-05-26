@@ -36,7 +36,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class HomeCampusRemindersWidget extends StatefulWidget {
   final StreamController<void>? refreshController;
 
-  HomeCampusRemindersWidget({this.refreshController});
+  HomeCampusRemindersWidget({Key? key, this.refreshController}) : super(key: key);
 
   @override
   _HomeCampusRemindersWidgetState createState() => _HomeCampusRemindersWidgetState();

@@ -21,9 +21,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/ui/FavoritesPanel.dart';
+import 'package:illinois/ui/AcademicsPanel.dart';
+import 'package:illinois/ui/NavigatePanel.dart';
+import 'package:illinois/ui/WellnessPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
-import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -60,7 +61,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/service/Canvas.dart';
 
-enum RootTab { Home, Athletics, Explore, Wallet, Browse, Favorites }
+enum RootTab { Home, Favorites, Athletics, Explore, Browse, Navigate, Academics, Wellness }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -108,12 +109,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyCalendarSelectionPopup,
       DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
-      uiuc.TabBar.notifyWalletShow,
-      uiuc.TabBar.notifyWalletClose,
     ]);
 
     _tabs = _getTabs();
-    _initTabBarController();
+    _tabBarController = TabController(length: _tabs.length, vsync: this);
     _updatePanels(_tabs);
 
     Services().initUI();
@@ -206,12 +205,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
     }
-    else if (name == uiuc.TabBar.notifyWalletShow) {
-      _onShowWallet();
-    }
-    else if (name == uiuc.TabBar.notifyWalletClose) {
-      _onCloseWallet();
-    }
   }
 
   void _onTabSelectionChanged(int tabIndex) {
@@ -219,23 +212,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
       _selectTab(tabIndex);
     }
-  }
-
-  void _onShowWallet() {
-    showModalBottomSheet(context: context,
-      isScrollControlled: true,
-      isDismissible: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24.0),
-      ),
-      builder: (context){
-        return WalletSheet();
-      }
-    );
-  }
-  
-  void _onCloseWallet() {
-    Navigator.pop(context);
   }
 
   @override
@@ -262,11 +238,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   
-  void _initTabBarController({RootTab? rootTab}) {
-    int initialIndex = (rootTab != null) ? max(_getIndexByRootTab(rootTab), 0)  : 0;
-    _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: initialIndex);
-  }
-
   void _selectTab(int tabIndex) {
 
     if ((tabIndex >= 0) && (tabIndex != _currentTabIndex)) {
@@ -558,17 +529,24 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _updateContent() {
     List<RootTab> tabs = _getTabs();
     if (!DeepCollectionEquality().equals(_tabs, tabs)) {
-      RootTab? currentRootTab = getRootTabByIndex(_currentTabIndex);
       _updatePanels(tabs);
+      
+      RootTab? currentRootTab = getRootTabByIndex(_currentTabIndex);
       if (mounted) {
         setState(() {
           _tabs = tabs;
-          _initTabBarController(rootTab: currentRootTab);
+          _currentTabIndex = (currentRootTab != null) ? max(_getIndexByRootTab(currentRootTab), 0)  : 0;
+          
+          // Do not initialize _currentTabIndex as initialIndex because we get empty panel content.
+          // Initialize TabController with initialIndex = 0 and then manually animate to desired tab index.
+          _tabBarController = TabController(length: _tabs.length, vsync: this);
         });
+        _tabBarController!.animateTo(_currentTabIndex);
       }
       else {
         _tabs = tabs;
-        _initTabBarController(rootTab: currentRootTab);
+        _currentTabIndex = (currentRootTab != null) ? max(_getIndexByRootTab(currentRootTab), 0)  : 0;
+        _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: _currentTabIndex);
       }
     }
   }
@@ -599,20 +577,26 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if (rootTab == RootTab.Home) {
       return HomePanel();
     }
+    else if (rootTab == RootTab.Favorites) {
+      return HomePanel();
+    }
     else if (rootTab == RootTab.Athletics) {
       return AthleticsHomePanel(rootTabDisplay: true,);
     }
     else if (rootTab == RootTab.Explore) {
       return ExplorePanel(rootTabDisplay: true);
     }
-    else if (rootTab == RootTab.Wallet) {
-      return null;
-    }
     else if (rootTab == RootTab.Browse) {
       return BrowsePanel();
     }
-    else if (rootTab == RootTab.Favorites) {
-      return FavoritesPanel();
+    else if (rootTab == RootTab.Navigate) {
+      return NavigatePanel();
+    }
+    else if (rootTab == RootTab.Academics) {
+      return AcademicsPanel();
+    }
+    else if (rootTab == RootTab.Wellness) {
+      return WellnessPanel(rootTabDisplay: true,);
     }
     else {
       return null;
@@ -659,20 +643,26 @@ RootTab? rootTabFromString(String? value) {
     if (value == 'home') {
       return RootTab.Home;
     }
+    else if (value == 'favorites') {
+      return RootTab.Favorites;
+    }
     else if (value == 'athletics') {
       return RootTab.Athletics;
     }
     else if (value == 'explore') {
       return RootTab.Explore;
     }
-    else if (value == 'wallet') {
-      return RootTab.Wallet;
-    }
     else if (value == 'browse') {
       return RootTab.Browse;
     }
-    else if (value == 'favorites') {
-      return RootTab.Favorites;
+    else if (value == 'navigate') {
+      return RootTab.Navigate;
+    }
+    else if (value == 'academics') {
+      return RootTab.Academics;
+    }
+    else if (value == 'wellness') {
+      return RootTab.Wellness;
     }
   }
   return null;

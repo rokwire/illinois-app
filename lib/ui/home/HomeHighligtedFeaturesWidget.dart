@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
@@ -25,11 +29,49 @@ import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
 class HomeHighlightedFeatures extends StatefulWidget {
+
+  final StreamController<void>? refreshController;
+
+  const HomeHighlightedFeatures({Key? key, this.refreshController}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _HomeHighlightedFeaturesState();
 }
 
-class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
+class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures> implements NotificationsListener{
+
+  // TBD_TB: Load widget content from FlexUI (like HomeSaferWidget does).
+  // Please use the following entries: personalize, notifications, privacy, campus_guide 
+
+  @override
+  void initState() {
+    super.initState();
+
+    NotificationService().subscribe(this, [
+      FlexUI.notifyChanged,
+    ]);
+
+    if (widget.refreshController != null) {
+      widget.refreshController!.stream.listen((_) {
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    NotificationService().unsubscribe(this);
+  }
+
+  // NotificationsListener
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == FlexUI.notifyChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,40 +82,59 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Column(
-              children: [
-                RibbonButton(
-                  label: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.title',  'Personalize This App') ,
-                  hint: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.hint', '') ,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  onTap: _onTapPersonalize,
-                ),
-                Container(height: 12,),
-                RibbonButton(
-                  label: Localization().getStringEx('widgets.home_highlighted_features.button.notifications.title',  'Manage Notification Preferences') ,
-                  hint: Localization().getStringEx('widgets.home_highlighted_features.button.notifications.hint', '') ,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  onTap: _onTapNotificationPreferences,
-                ),
-                Container(height: 12,),
-                RibbonButton(
-                  label: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.title',  'Manage My Privacy') ,
-                  hint: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.hint', '') ,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  onTap: _onTapManagePrivacy,
-                ),
-                Container(height: 12,),
-                RibbonButton(
-                  label: Localization().getStringEx('widgets.home_highlighted_features.button.guide.title',  'Campus Guide') ,
-                  hint: Localization().getStringEx('widgets.home_highlighted_features.button.guide.hint', '') ,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  onTap: _onTapCampusGuide,
-                ),
-              ],
-            ),
+              children: _buildCommandsList()
+            )
           )
         ],
       )
     );
+  }
+
+  List<Widget> _buildCommandsList() {
+  List<Widget> contentList = <Widget>[];
+    List<dynamic>? contentListCodes = FlexUI()['home.highlighted_features'];
+    if (contentListCodes != null) {
+      for (dynamic contentListCode in contentListCodes) {
+        Widget? contentEntry;
+        if (contentListCode == 'personalize') {
+          contentEntry = _buildCommandEntry(
+            title: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.title',  'Personalize This App') ,
+            description: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.hint', '') ,
+            onTap: _onTapPersonalize,
+          );
+        }
+        else if (contentListCode == 'notifications') {
+          contentEntry = _buildCommandEntry(
+            title:  Localization().getStringEx('widgets.home_highlighted_features.button.notifications.title',  'Manage Notification Preferences') ,
+            description: Localization().getStringEx('widgets.home_highlighted_features.button.notifications.hint', '') ,
+            onTap: _onTapNotificationPreferences,
+          );
+        }
+        else if (contentListCode == 'privacy') {
+          contentEntry = _buildCommandEntry(
+            title: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.title',  'Manage My Privacy') ,
+            description: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.hint', '') ,
+            onTap: _onTapManagePrivacy,
+          );
+        }
+        else if (contentListCode == 'campus_guide') {
+          contentEntry = _buildCommandEntry(
+            title: Localization().getStringEx('widgets.home_highlighted_features.button.guide.title',  'Campus Guide') ,
+            description: Localization().getStringEx('widgets.home_highlighted_features.button.guide.hint', '') ,
+            onTap: _onTapCampusGuide,
+          );
+        }
+
+        if (contentEntry != null) {
+          if (contentList.isNotEmpty) {
+            contentList.add(Container(height: 12,));
+          }
+          contentList.add(contentEntry);
+        }
+      }
+
+    }
+    return contentList;
   }
 
   Widget _buildHeader() {
@@ -86,6 +147,11 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
             Text(Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features'), style:
             TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),),
     ],),),));
+  }
+
+  Widget _buildCommandEntry({required String title, String? description, void Function()? onTap}) {
+    return  RibbonButton(label:title, hint: description, onTap: onTap,
+              borderRadius: BorderRadius.all(Radius.circular(5)),);
   }
 
   void _onTapPersonalize() {

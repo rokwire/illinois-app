@@ -35,7 +35,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsPersonalInformationPanel extends StatefulWidget{
   @override
@@ -203,49 +202,100 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
 
     bool onCampusRegionMonitorEnabled = OnCampus().enabled;
     bool onCampusRegionMonitorSelected = OnCampus().monitorEnabled;
-    String onCampusRegionMonitorInfo = onCampusRegionMonitorEnabled ? '(requires location services)' : '(not avalable)';
+    String onCampusRegionMonitorInfo = onCampusRegionMonitorEnabled
+        ? Localization()
+            .getStringEx('panel.settings.personal_information.on_campus.location_services.required.label', 'requires location services')
+        : Localization()
+            .getStringEx('panel.settings.personal_information.on_campus.location_services.not_available.label', 'not available');
+    String autoOnCampusInfo = Localization().getStringEx(
+            'panel.settings.personal_information.on_campus.radio_button.auto.title', 'Automatically detect when I am on Campus') +
+        '\n($onCampusRegionMonitorInfo)';
 
-    bool campusRegionManualInsideEnabled = !onCampusRegionMonitorSelected;
     bool campusRegionManualInsideSelected = OnCampus().monitorManualInside;
+    bool onCampusSelected = !onCampusRegionMonitorSelected && campusRegionManualInsideSelected;
+    bool offCampusSelected = !onCampusRegionMonitorSelected && !campusRegionManualInsideSelected;
 
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['personal_information.on_campus'] ?? [];
     for (String code in codes) {
-      if (code == 'enabled') {
-        contentList.add(Container(height: 4,));
-        contentList.add(ToggleRibbonButton(
-          label: StringUtils.isNotEmpty(onCampusRegionMonitorInfo) ? 'Automatically detect I am on campus\n$onCampusRegionMonitorInfo' : 'Automatically detect I am on campus',
-          textColor: onCampusRegionMonitorEnabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-          toggled: onCampusRegionMonitorSelected,
-          border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          onTap: onCampusRegionMonitorEnabled ?
-            () { setState(() { OnCampus().monitorEnabled = !onCampusRegionMonitorSelected; }); } :
-            () {}
-        ));
-      }
-      else if (code == 'manual_inside') {
-        contentList.add(Container(height: 4,));
-        contentList.add(ToggleRibbonButton(
-          label: 'The App behaves as if I am on campus',
-          textColor: campusRegionManualInsideEnabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-          toggled: campusRegionManualInsideSelected,
-          border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          onTap: campusRegionManualInsideEnabled ?
-            () { setState(() { OnCampus().monitorManualInside = !campusRegionManualInsideSelected; }); } :
-            (){}
-        ));
+      if (code == 'auto') {
+        contentList.add(_buildOnCampusRadioItem(
+            label: autoOnCampusInfo,
+            enabled: onCampusRegionMonitorEnabled,
+            selected: onCampusRegionMonitorSelected,
+            onTap: onCampusRegionMonitorEnabled
+                ? () {
+                    setState(() {
+                      OnCampus().monitorEnabled = true;
+                    });
+                  }
+                : () {}));
+      } else if (code == 'on_campus') {
+        contentList.add(_buildOnCampusRadioItem(
+            label: Localization()
+                .getStringEx('panel.settings.personal_information.on_campus.radio_button.on.title', 'Always make me on campus'),
+            enabled: true,
+            selected: onCampusSelected,
+            onTap: !onCampusSelected
+                ? () {
+                    setState(() {
+                      OnCampus().monitorEnabled = false;
+                      OnCampus().monitorManualInside = true;
+                    });
+                  }
+                : () {}));
+      } else if (code == 'off_campus') {
+        contentList.add(_buildOnCampusRadioItem(
+            label: Localization()
+                .getStringEx('panel.settings.personal_information.on_campus.radio_button.off.title', 'Always make me off campus'),
+            enabled: true,
+            selected: offCampusSelected,
+            onTap: !offCampusSelected
+                ? () {
+                    setState(() {
+                      OnCampus().monitorEnabled = false;
+                      OnCampus().monitorManualInside = false;
+                    });
+                  }
+                : () {}));
       }
     }
     
     if (contentList.isNotEmpty) {
       contentList.insertAll(0, <Widget>[
-        Container(height: 16,),
-        Row(children: [ Expanded(child: Text('On Campus', style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies?.bold, color: Styles().colors!.fillColorPrimary,)), )],),
+        Container(height: 16),
+        Row(children: [
+          Expanded(
+              child: Text(Localization().getStringEx('panel.settings.personal_information.on_campus.title', 'On Campus'),
+                  style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies?.bold, color: Styles().colors!.fillColorPrimary)))
+        ])
       ]);
     }
     return contentList;
+  }
+
+  Widget _buildOnCampusRadioItem({required String label, required bool enabled, required bool selected, VoidCallback? onTap}) {
+    String imageAssetName = selected ? 'images/deselected-dark.png' : 'images/deselected.png';
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Container(height: 4),
+      GestureDetector(
+          onTap: onTap,
+          child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              decoration: BoxDecoration(
+                  color: Styles().colors!.white,
+                  border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Expanded(
+                    child: Text(label,
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: Styles().fontFamilies!.bold,
+                            color: (enabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent)))),
+                Padding(padding: EdgeInsets.only(left: 10), child: Image.asset(imageAssetName))
+              ])))
+    ]);
   }
 
   Widget _buildFooter() {
