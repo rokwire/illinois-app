@@ -2246,6 +2246,13 @@
 
 	"widget.home.wallet.library_card.title": "借書卡",
 
+	"widget.home.radio.button.pause.title": "Pause",
+	"widget.home.radio.button.play.title": "Play",
+	"widget.home.radio.button.initalize.title": "Initializing",
+	"widget.home.radio.button.fail.title": "Not Available",
+	"widget.home.radio.button.add_radio.hint": "",
+	"widget.home.radio.title": "WPGU FM Radio",
+
 	"widget.athletics_card.button.get_tickets.title":"获取门票",
 	"widget.athletics_card.button.get_tickets.hint":"",
 

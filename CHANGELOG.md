@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Buttons for "On Campus" [#1664](https://github.com/rokwire/illinois-app/issues/1664).
+- Fix typo in HomeRadioWidget [#1666](https://github.com/rokwire/illinois-app/issues/1666).
 
 ## [4.0.16] - 2022-05-25
 ### Changed

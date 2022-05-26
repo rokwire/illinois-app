@@ -11,7 +11,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:just_audio/just_audio.dart';
 
-//TBD LOCALIZE
 class HomeWPGUFMRadioWidget extends StatefulWidget {
   final StreamController<void>? refreshController;
 
@@ -82,7 +81,7 @@ class _HomeWPGUFMRadioWidgetState extends State<HomeWPGUFMRadioWidget> implement
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Expanded(child: Text(Localization().getStringEx(
-                  'widget.home.radio.title', 'WPGUFM Radio'),
+                  'widget.home.radio.title', 'WPGU FM Radio'),
                   style: TextStyle(color: Styles().colors!.white,
                       fontFamily: Styles().fontFamilies!.extraBold,
                       fontSize: 20))),
