@@ -1236,6 +1236,13 @@
     "panel.settings.personal_information.label.delete_message.description2":"Permanentemente ",
     "panel.settings.personal_information.label.delete_message.description3":"Eliminar:",
     "panel.settings.personal_information.button.forget_info.title": "Delete My Information",
+    "panel.settings.personal_information.on_campus.location_services.required.label": "requiere servicios de localización",
+    "panel.settings.personal_information.on_campus.location_services.not_available.label": "No disponible",
+    "panel.settings.personal_information.on_campus.radio_button.auto.title": "Detectar automáticamente cuando estoy en el Campus",
+    "panel.settings.personal_information.on_campus.radio_button.on.title": "Siempre hazme en el campus",
+    "panel.settings.personal_information.on_campus.radio_button.off.title": "Siempre hazme fuera del campus",
+    "panel.settings.personal_information.on_campus.title": "En el campus",
+
     "panel.settings.privacy.privacy.label.title": "Elija su nivel de privacidad",
     "panel.settings.privacy.privacy.label.slider_help": "Ajuste el control deslizante para cambiar su nivel de privacidad",
     "panel.settings.privacy.privacy.button.set_privacy.disabled.title": "Desplácese para revisar",
