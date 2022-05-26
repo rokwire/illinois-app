@@ -689,7 +689,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _onCreateTap() {
     AppAlert.showCustomDialog(
         context: context,
-        contentWidget: Text(Localization().getStringEx("panel.groups_create.prompt.msg.title", "Does this group comply with University guidelines? (It will be removed if it is does not!)")),
+        contentWidget: Text(Localization().getStringEx("panel.groups_create.prompt.msg.title", "Does this group comply with University guidelines? (It will be removed if the group is deemed not to comply.)")),
         actions: <Widget>[
           TextButton(
               child:
