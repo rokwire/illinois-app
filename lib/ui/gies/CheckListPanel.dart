@@ -17,18 +17,18 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
-class GiesPanel extends StatefulWidget{
+class CheckListPanel extends StatefulWidget{
 
   final String contentKey;
 
-  const GiesPanel({Key? key, required this.contentKey}) : super(key: key);
+  const CheckListPanel({Key? key, required this.contentKey}) : super(key: key);
   
   @override
-  State<StatefulWidget> createState() => _GiesPanelState();
+  State<StatefulWidget> createState() => _CheckListPanelState();
 
 }
 
-class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
+class _CheckListPanelState extends State<CheckListPanel> implements NotificationsListener{
   GlobalKey _titleKey = GlobalKey();
   GlobalKey _pageKey = GlobalKey();
 
@@ -179,7 +179,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
   Widget _buildContent() {
     return Container(color: Colors.white, padding: EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0), child:
-      _GiesPageWidget(contentKey: widget.contentKey, key: _pageKey, page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < CheckListService(widget.contentKey).navigationPages!.length) ? _onTapBack : null,onTapNotes: _onTapNotes, showTitle: false,),
+      _CheckListPageWidget(contentKey: widget.contentKey, key: _pageKey, page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < CheckListService(widget.contentKey).navigationPages!.length) ? _onTapBack : null,onTapNotes: _onTapNotes, showTitle: false,),
     );
   }
 
@@ -235,12 +235,12 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
   Future<void> _showPopup(String popupId, String pageId) async {
     return showDialog(context: context, builder: (BuildContext context) {
       if (popupId == 'notes') {
-        return GiesNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
+        return CheckListNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
       }
       else if (popupId == 'current-notes') {
         List<dynamic> notes = JsonUtils.decodeList(Storage().giesNotes) ?? [];
         String? focusNodeId =  CheckListService(widget.contentKey).setCurrentNotes(notes, pageId,);
-        return GiesNotesWidget(notes: notes, focusNoteId: focusNodeId,);
+        return CheckListNotesWidget(notes: notes, focusNoteId: focusNodeId,);
       }
       else {
         return Container();
@@ -295,7 +295,7 @@ class _GiesPanelState extends State<GiesPanel> implements NotificationsListener{
 
 }
 
-class _GiesPageWidget extends StatefulWidget{
+class _CheckListPageWidget extends StatefulWidget{
   final String contentKey;
   final Map<String, dynamic>? page;
   final void Function(String?)? onTapLink;
@@ -304,14 +304,14 @@ class _GiesPageWidget extends StatefulWidget{
   final void Function()? onTapNotes;
   final bool showTitle;
 
-  _GiesPageWidget({Key? key, this.page, this.onTapLink, this.onTapButton, this.onTapBack, this.showTitle = true, this.onTapNotes, required this.contentKey}) : super(key: key);
+  _CheckListPageWidget({Key? key, this.page, this.onTapLink, this.onTapButton, this.onTapBack, this.showTitle = true, this.onTapNotes, required this.contentKey}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _GiesPageState();
+  State<StatefulWidget> createState() => _CheckListPageState();
 
 }
 
-class _GiesPageState extends State<_GiesPageWidget> {
+class _CheckListPageState extends State<_CheckListPageWidget> {
 
   @override
   Widget build(BuildContext context) {
@@ -555,15 +555,15 @@ class _GiesPageState extends State<_GiesPageWidget> {
   }
 }
 
-class GiesNotesWidget extends StatefulWidget {
+class CheckListNotesWidget extends StatefulWidget {
   final List<dynamic>? notes;
   final String? focusNoteId;
 
-  GiesNotesWidget({this.notes, this.focusNoteId});
-  _GiesNotesWidgetState createState() => _GiesNotesWidgetState();
+  CheckListNotesWidget({this.notes, this.focusNoteId});
+  _CheckListNotesWidgetState createState() => _CheckListNotesWidgetState();
 }
 
-class _GiesNotesWidgetState extends State<GiesNotesWidget> {
+class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
 
   Map<String, TextEditingController> _textEditingControllers = Map<String, TextEditingController>();
   FocusNode _focusNode = FocusNode();
@@ -883,7 +883,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
               boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
               borderRadius: BorderRadius.all(Radius.circular(4))
           ),
-            child:_GiesPageWidget(contentKey: widget.contentKey, page: CheckListService(widget.contentKey).getPage(id: tab!["page_id"]),
+            child:_CheckListPageWidget(contentKey: widget.contentKey, page: CheckListService(widget.contentKey).getPage(id: tab!["page_id"]),
               onTapBack: widget.onTapBack,
               onTapButton: (button, id){
                 _onTapButton(button, id);

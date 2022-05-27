@@ -25,7 +25,6 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
-import 'package:illinois/ui/home/HomeGiesWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -55,6 +54,8 @@ import 'package:illinois/ui/home/HomeUpcomingEventsWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+import 'HomeCheckListWidget.dart';
 
 
 class HomePanel extends StatefulWidget {

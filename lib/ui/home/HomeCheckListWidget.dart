@@ -4,10 +4,10 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Gies.dart';
+import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/gies/GiesPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -227,12 +227,12 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   }
 
   void _onTapContinue(){
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GiesPanel(contentKey: widget.contentKey,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CheckListPanel(contentKey: widget.contentKey,)));
   }
 
   void _onTapViewNotes(){
     showDialog(context: context, builder: (BuildContext context) {
-        return GiesNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
+        return CheckListNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
     });
   }
 
