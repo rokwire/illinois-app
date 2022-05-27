@@ -251,7 +251,8 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     if (CollectionUtils.isEmpty(_events)) {
       return Container();
     }
-    return Column(
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
+      Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -288,9 +289,9 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
               ),
           ),
           Container(
-            height: 48,
+            height: 24,
           ),
-        ]);
+        ]));
   }
 
   List<Widget> _buildListItems(BuildContext context) {
@@ -393,7 +394,7 @@ class _EventsRibbonHeader extends StatelessWidget {
         onDraggableCanceled: (velocity, offset) { scrollableDragging?.isDragging = false; },
         feedback: Container(color: Styles().colors!.fillColorPrimary!.withOpacity(0.8), child:
           Row(children: <Widget>[
-            HomeRibonHeader.dragHandle,
+            HomeSlantWidget.dragHandle,
             Padding(padding: EdgeInsets.only(right: 24), child:
               Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
                 Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
@@ -401,8 +402,8 @@ class _EventsRibbonHeader extends StatelessWidget {
             ),
           ],),
         ),
-        childWhenDragging: HomeRibonHeader.dragHandle,
-        child: HomeRibonHeader.dragHandle
+        childWhenDragging: HomeSlantWidget.dragHandle,
+        child: HomeSlantWidget.dragHandle
       ),
     ));
     

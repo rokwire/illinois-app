@@ -9,10 +9,8 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -83,31 +81,16 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   @override
   Widget build(BuildContext context) {
+
     return Visibility(visible: _hasCourses, child:
-      Container(child:
-        Column(children: [
-          _buildHeader(),
-          Stack(children: <Widget>[
-            _buildSlant(),
-            _buildCoursesContent(),
-          ])
-        ])
-      )
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+          title: Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses'),
+          child: _buildCoursesContent(),
+          childPadding: const EdgeInsets.only(top: 8, bottom: 16),
+        ),
+      ),
     );
-  }
-
-  Widget _buildHeader() {
-    return HomeRibonHeader(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
-      title: Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses')
-    );
-  }
-
-  Widget _buildSlant() {
-    return Column(children: <Widget>[
-      Container(color: Styles().colors!.fillColorPrimary, height: 45),
-      Container(color: Styles().colors!.fillColorPrimary, child:
-        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child: Container(height: 65)))
-    ]);
   }
 
   Widget _buildCoursesContent() {
@@ -118,9 +101,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
       }
     }
 
-    return Center(child: Padding(
-        padding: EdgeInsets.only(top: 10, bottom: 20),
-        child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Padding(padding: EdgeInsets.only(right: 10, bottom: 6), child: Row(children: courseWidgets)))),);
+    return SingleChildScrollView(scrollDirection: Axis.horizontal, child: Padding(padding: EdgeInsets.only(right: 10, bottom: 6), child: Row(children: courseWidgets)));
   }
 
   Widget _buildCourseCard(CanvasCourse course) {

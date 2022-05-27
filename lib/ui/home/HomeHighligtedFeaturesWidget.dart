@@ -78,18 +78,13 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures> imple
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          _buildHeader(),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Column(
-              children: _buildCommandsList()
-            )
-          )
-        ],
-      )
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+        title: Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features'),
+        flatHeight: 0, slantHeight: 0,
+        child: Column(children: _buildCommandsList(),),
+        childPadding: EdgeInsets.all(16),
+      ),
     );
   }
 
@@ -138,12 +133,6 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures> imple
 
     }
     return contentList;
-  }
-
-  Widget _buildHeader() {
-    return HomeRibonHeader(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
-      title: Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features')
-    );
   }
 
   Widget _buildCommandEntry({required String title, String? description, void Function()? onTap}) {
