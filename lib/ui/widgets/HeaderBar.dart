@@ -20,7 +20,7 @@ import 'package:flutter/semantics.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/inbox/InboxHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel2.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -297,7 +297,7 @@ class RootHeaderBar extends StatelessWidget implements PreferredSizeWidget {
   void _onTapSettings() {
     Analytics().logSelect(target: "Settings");
     if (App.instance?.currentContext != null) {
-      Navigator.push(App.instance!.currentContext!, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
+      Navigator.push(App.instance!.currentContext!, CupertinoPageRoute(builder: (context) => SettingsHomePanel2()));
     }
   }
 

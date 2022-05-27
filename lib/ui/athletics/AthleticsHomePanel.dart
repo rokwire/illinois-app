@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel2.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -437,7 +437,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   void _onTapSettings() {
     Analytics().logSelect(target: "Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel2()));
   }
 
   void _onTapMoreUpcomingEvents() {

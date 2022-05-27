@@ -43,9 +43,7 @@ import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -152,36 +150,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     
     contentList.add(Container(height: 12,),);
 
-    return Scaffold(
-      appBar: HeaderBar(
-        titleWidget: _buildHeaderBarTitle(),
-        actions: actionsList,
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                color: Styles().colors!.background,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: contentList,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
-  }
-
-  //Header Bar
-  Widget _buildHeaderBarTitle() {
-    return _DebugContainer(child:
-      Text(Localization().getStringEx("panel.settings.home.settings.header", "Settings"), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0, ), textAlign: TextAlign.center,),
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
 
   //Privacy Center

@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel2.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -40,7 +41,6 @@ import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/WellnessPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
@@ -634,7 +634,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
 
   void _navigateSettings() {
     Analytics().logSelect(target: "Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel2()));
   }
 
   void _navigateMyIllini() {

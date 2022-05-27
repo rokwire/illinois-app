@@ -121,17 +121,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     String? userUuid = Auth2().accountId;
     String? pid = Auth2().profile?.id;
     String? firebaseProjectId = FirebaseCore().app?.options.projectId;
-    return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx("panel.debug.header.title", "Debug"),
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                color: Styles().colors!.background,
-                child: Column(
+    return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(height: 16,),
@@ -379,15 +369,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             onTap: _onTapCrash)),
                     Container(height: 16),
                   ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
+                );
   }
 
   // NotificationsListener
