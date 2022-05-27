@@ -16,14 +16,14 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'Config.dart';
 
-abstract class CheckListService with Service implements NotificationsListener{
+abstract class CheckList with Service implements NotificationsListener{
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
   static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
   static const String notifyContentChanged  = "edu.illinois.rokwire.gies.service.content.changed";
 
   // Singleton instance wrapper
-  factory CheckListService(String serviceName){
+  factory CheckList(String serviceName){
     switch (serviceName){
       case "gies" : return _GiesCheckListInstanceWrapper();
       case "uiuc_student" : return _StudentCheckListInstanceWrapper();
@@ -31,7 +31,7 @@ abstract class CheckListService with Service implements NotificationsListener{
     return _GiesCheckListInstanceWrapper(); //default
   }
 
-  CheckListService.fromName(this._contentName);
+  CheckList.fromName(this._contentName);
 
   final String _contentName;
 
@@ -497,7 +497,7 @@ abstract class CheckListService with Service implements NotificationsListener{
 }
 
 // Singleton instance wrappers
-class _GiesCheckListInstanceWrapper extends CheckListService{
+class _GiesCheckListInstanceWrapper extends CheckList{
   static final _GiesCheckListInstanceWrapper _instance = _GiesCheckListInstanceWrapper._internal();
 
   factory _GiesCheckListInstanceWrapper() => _instance;
@@ -505,7 +505,7 @@ class _GiesCheckListInstanceWrapper extends CheckListService{
   _GiesCheckListInstanceWrapper._internal() : super.fromName("gies");
 }
 
-class _StudentCheckListInstanceWrapper extends CheckListService{
+class _StudentCheckListInstanceWrapper extends CheckList{
   static final _StudentCheckListInstanceWrapper _instance = _StudentCheckListInstanceWrapper._internal();
 
   factory _StudentCheckListInstanceWrapper() => _instance;
