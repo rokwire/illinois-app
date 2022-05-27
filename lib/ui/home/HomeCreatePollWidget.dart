@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -58,36 +59,59 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   @override
   Widget build(BuildContext context) {
 
-    return Visibility(visible: _visible, child: Semantics(container: true, child:Container(
-        color: Styles().colors!.background,
-        child: Row(children: <Widget>[Expanded(child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            _buildHeader(),
-            _buildContent(),
-          ]),
-/*          Container(alignment: Alignment.topRight, child: Semantics(
-              label: Localization().getStringEx("widget.home_create_poll.button.close.label","Close"),
-              button: true,
-              excludeSemantics: true,
-              child: InkWell(
-                  onTap : _onClose,
-                  child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-orange.png'))))),
-*/
-        )],)
-    )));
+    return Visibility(visible: _visible, child:
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
+        Semantics(container: true, child:
+          Container( color: Styles().colors!.background, child:
+            Row(children: <Widget>[Expanded(child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                _buildHeader(),
+                _buildContent(),
+              ]),
+          )],)
+    ))));
   }
 
   Widget _buildHeader() {
     return Container(color: Styles().colors!.fillColorPrimary, child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        
+            Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
+              Draggable<HomeFavorite>(
+                data: HomeFavorite(id: widget.favoriteId),
+                onDragStarted: () { widget.scrollableDragging?.isDragging = true; },
+                onDragEnd: (details) { widget.scrollableDragging?.isDragging = false; },
+                onDraggableCanceled: (velocity, offset) { widget.scrollableDragging?.isDragging = false; },
+                feedback: Container(color: Styles().colors!.fillColorPrimary!.withOpacity(0.8), child:
+                  Row(children: <Widget>[
+                    HomeSlantWidget.dragHandle,
+                    Padding(padding: EdgeInsets.only(right: 24), child:
+                      Text('Twitter', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
+                        Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
+                      ] ),),
+                    ),
+                  ],),
+                ),
+                childWhenDragging: HomeSlantWidget.dragHandle,
+                child: HomeSlantWidget.dragHandle
+              ),
+            ),
+
         Expanded(child: 
-          Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
             Text(Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"), style:
               TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),),),
-        Semantics(label: Localization().getStringEx("widget.home_create_poll.button.close.label","Close"), button: true, excludeSemantics: true, child:
+        
+        /*Semantics(label: Localization().getStringEx("widget.home_create_poll.button.close.label","Close"), button: true, excludeSemantics: true, child:
           InkWell(onTap : _onClose, child:
-            Container(width: 48, height: 56, alignment: Alignment.center, child:
-              Image.asset('images/close-orange.png')))),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12), child:
+              Image.asset('images/close-orange.png')))),*/
+
+        Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true,),
+          )
+        ),
 
       ],),);
   }
