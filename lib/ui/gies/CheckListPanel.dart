@@ -813,7 +813,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   Widget _buildTab({required int index, dynamic tabData}){
     String? tabKey = JsonUtils.stringValue(tabData["key"]);
     String? pageId = JsonUtils.stringValue(tabData["page_id"]);
-    bool isCompleted = CheckList(widget.contentKey).isPageVerified(pageId);
+    bool isCompleted = CheckList(widget.contentKey).isPageCompleted(pageId);
     bool isCurrentTab = _currentPage == index;
     Color textColor = Colors.white;
     String? textFamily = Styles().fontFamilies!.regular;
@@ -967,7 +967,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
       for (int index = 0; index<widget.tabs!.length; index++) {
         dynamic tabData = widget.tabs![index];
         String? pageId = tabData != null ? JsonUtils.stringValue(tabData["page_id"]) : null;
-        if(pageId!=null && !CheckList(widget.contentKey).isPageVerified(pageId)){
+        if(pageId!=null && !CheckList(widget.contentKey).isPageCompleted(pageId)){
           return index;
         }
       }

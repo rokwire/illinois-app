@@ -1,0 +1,75 @@
+[
+  {
+    "id":"pick.icard",
+    "progress": 1,
+    "step_title": "Step 1",
+    "text":"Pick up your I-Card at the Illini Union Bookstore",
+    "buttons":[
+      {"title":"Done", "page":"take.picture", "completes": true}
+    ]
+  },
+  {
+    "id":"take.picture",
+    "progress": 2,
+    "step_title": "Step 2",
+    "text":"Take your first picture with Alma Mater",
+    "buttons":[
+      {"title":"Done", "page":"set.account.password", "completes": true}
+    ]
+  },
+  {
+    "id":"set.account.password",
+    "progress": 3,
+    "step_title": "Step 3",
+    "text":"Set your NetID and Password using your UIN",
+    "buttons":[
+      {"title":"Done", "page":"meet.one.person", "completes": true}
+    ]
+  },
+  {
+    "id":"meet.one.person",
+    "progress": 4,
+    "step_title": "Step 4",
+    "text":"Meet at least one new person!",
+    "buttons":[
+      {"title":"Done", "page":"plan.day.rout", "completes": true}
+    ]
+  },
+  {
+    "id":"plan.day.rout",
+    "progress": 5,
+    "step_title": "Step 5",
+    "text":"Plan your first day route to classes!",
+    "buttons":[
+      {"title":"Done", "page":"signup.to.involve", "completes": true}
+    ]
+  },
+  {
+    "id":"signup.to.involve",
+    "progress": 6,
+    "step_title": "Step 6",
+    "text":"Sign up to be involved with at least one Registered Student Organization (RSO) at Quad Day",
+    "buttons":[
+      {"title":"Done", "page":"attend.one.event", "completes": true}
+    ]
+  },
+  {
+    "id":"attend.one.event",
+    "progress": 7,
+    "step_title": "Step 7",
+    "text":"Attend Welcome Week Events!",
+    "buttons":[
+      {"title":"Done", "page":"setup.coursera.account", "completes": true}
+    ]
+  },
+  {
+    "id":"new.student.office.hours",
+    "progress-possition": 8,
+    "title":"Checklist completed",
+    "content":[{
+      "heading":"If you have questions as you work through your New Student Checklist, please email <a href='mailto:i-support@illinois.edu'>i-support@illinois.edu</a> or join our team for weekly new student office hours.",
+      "bullets":[
+        "Fridays from 9:00 – 10:00 AM CST: <a href='https://illinois.zoom.us/meeting/register/tZEqdu6sqzIvHNLI_abCyDrnxHZQgJiddf2s'>Register Here</a>"
+      ]}]
+  }
+]

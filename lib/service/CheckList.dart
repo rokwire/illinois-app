@@ -42,7 +42,9 @@ abstract class CheckList with Service implements NotificationsListener{
 
   Map<int, Set<String>>? _progressPages;
 
+  Set<String>? _completedPages;
   Set<String> _verifiedPages = <String>{};
+  Set<String> _pagesRequireVerification = <String> {};
   List<int>? _progressSteps;
 
   DateTime? _pausedDateTime;
@@ -72,6 +74,7 @@ abstract class CheckList with Service implements NotificationsListener{
   @override
   Future<void> initService() async {
     _navigationPages = Storage().giesNavPages ?? [];
+    _completedPages = Storage().giesCompletedPages ?? Set<String>();
     _cacheFile = await _getCacheFile();
     _pages = await _loadContentJsonFromCache();
     if (_pages != null) {
@@ -136,6 +139,12 @@ abstract class CheckList with Service implements NotificationsListener{
   }
 
   Future<String?> _loadContentStringFromNet() async {
+    //TBD REMOVE
+    //TMP:
+    if(_contentName == "uiuc_student"){
+      return AppBundle.loadString('assets/uiucStudent.json');
+    }
+
     try {
       List<dynamic> result;
       Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': [_contentName]}), auth: Auth2());
@@ -182,6 +191,9 @@ abstract class CheckList with Service implements NotificationsListener{
           int? pageProgress = JsonUtils.intValue(page['progress']);
           if (pageProgress != null) {
             String? pageId = JsonUtils.stringValue(page['id']);
+            if(JsonUtils.stringValue(page['group_name']) != null && pageId != null){
+              _pagesRequireVerification.add(pageId);
+            }
             if ((pageId != null) && pageId.isNotEmpty && _pageCanComplete(page)) {
               Set<String>? progressPages = _progressPages![pageProgress];
               if (progressPages == null) {
@@ -254,6 +266,10 @@ abstract class CheckList with Service implements NotificationsListener{
     String? pageId = callerPageId ?? currentPageId;
     if (pageButtonCompletes(button)) {
       if ((pageId != null) && pageId.isNotEmpty) {
+        if(!(_completedPages?.contains(pageId) ?? false)){
+          _completedPages!.add(pageId);
+          Storage().giesCompletedPages = _completedPages;
+        }
         _verifyPage(pageId);
         NotificationService().notify(notifyPageCompleted, pageId);
       }
@@ -293,7 +309,17 @@ abstract class CheckList with Service implements NotificationsListener{
 
   bool isProgressStepCompleted(int? progressStep) {
     Set<String>? progressPages = (_progressPages != null) ? _progressPages![progressStep] : null;
-    return (progressPages == null) || _verifiedPages.containsAll(progressPages);
+    return (progressPages == null) ||
+        _verifiedPages.containsAll(progressPages) ||
+        (!_stepNeedVerification(progressStep) && (_completedPages?.containsAll(progressPages) ?? false)); //All steps should request verification (no mix of verification and completion) for inner steps TBD implement mix here if needed
+  }
+
+  bool _stepNeedVerification(int? step){
+    if(step == null) {return false;}
+
+    Set<String>? progressPages = (_progressPages != null) ? _progressPages![step] : null;
+    return (progressPages == null) ||
+        _doPagesNeedVerification(progressPages);
   }
 
   String? setCurrentNotes(List<dynamic>? notes, String? pageId) {
@@ -366,16 +392,26 @@ abstract class CheckList with Service implements NotificationsListener{
         (groupsNames?.contains(groupName) ?? false);
   }
 
-  bool isPageVerified(String? pageId){
+  bool _isPageVerified(String? pageId){
     return pageId != null && _verifiedPages.contains(pageId);
+  }
+
+  bool _doPagesNeedVerification(Set<String?> pageIds){
+    return _pagesRequireVerification.containsAll(pageIds);
+  }
+
+  bool isPageCompleted(String? pageId){
+    if(StringUtils.isEmpty(pageId)){ return false;}
+
+    if(_doPagesNeedVerification({pageId})){
+      return _isPageVerified(pageId);
+    } else {
+      return _completedPages?.contains(pageId) ?? false;
+    }
   }
 
   List<dynamic>? get pages{
     return _pages;
-  }
-
-  Set<String> get verifiedPages{
-    return _verifiedPages;
   }
 
   List<dynamic>? get navigationPages{
@@ -438,24 +474,27 @@ abstract class CheckList with Service implements NotificationsListener{
   String get _cacheFileName => "$_contentName.json";
   //Utils
   bool _pageCanComplete(Map? page) {
-    // List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
-    // List<dynamic>? bnavigationButtons = (page != null) ? JsonUtils.listValue(page['navigation_buttons']) : null;
-    //
-    // if (buttons != null) {
-    //   for (dynamic button in buttons) {
-    //     if ((button is Map) && pageButtonCompletes(button)) {
-    //       return true;
-    //     }
-    //   }
-    // } else if (bnavigationButtons!=null){
-    //   for (dynamic button in bnavigationButtons) {
-    //     if ((button is Map) && pageButtonCompletes(button)) {
-    //       return true;
-    //     }
-    //   }
-    // }
-    // return false
-    return StringUtils.isNotEmpty(JsonUtils.stringValue(page?["group_name"]));
+    if(StringUtils.isNotEmpty(JsonUtils.stringValue(page?["group_name"]))){
+      return true;
+    }
+
+    List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
+    List<dynamic>? bnavigationButtons = (page != null) ? JsonUtils.listValue(page['navigation_buttons']) : null;
+
+    if (buttons != null) {
+      for (dynamic button in buttons) {
+        if ((button is Map) && pageButtonCompletes(button)) {
+          return true;
+        }
+      }
+    } else if (bnavigationButtons!=null){
+      for (dynamic button in bnavigationButtons) {
+        if ((button is Map) && pageButtonCompletes(button)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   bool pageButtonCompletes(Map button) {
