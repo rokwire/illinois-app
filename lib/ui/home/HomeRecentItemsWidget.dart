@@ -47,9 +47,9 @@ class HomeRecentItemsWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeRecentItemsWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  HomeRecentItemsWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeRecentItemsWidgetState createState() => _HomeRecentItemsWidgetState();
@@ -82,7 +82,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
   @override
   Widget build(BuildContext context) {
-    return _RecentItemsList(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+    return _RecentItemsList(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
       heading: Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed'),
       items: _recentItems,
     );
@@ -121,20 +121,20 @@ class _RecentItemsList extends StatelessWidget{
   final String? moreButtonLabel;
   final void Function()? tapMore;
   final String? favoriteId;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
 
   const _RecentItemsList(
       {Key? key, this.items, this.heading,
         this.tapMore, this.limit = 3,
-        this.moreButtonLabel, this.favoriteId, this.scrollableDragging})
+        this.moreButtonLabel, this.favoriteId, this.dragAndDropHost})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(items), child:
-      HomeDropTargetWidget(favoriteId: favoriteId, child:
-        HomeSlantWidget(favoriteId: favoriteId, scrollableDragging: scrollableDragging,
+      HomeDropTargetWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, child:
+        HomeSlantWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost,
             title: heading,
             child: Column(children: _buildListItems(context),)
         ),

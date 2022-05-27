@@ -15,9 +15,9 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 class HomeMyGroupsWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeMyGroupsWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  const HomeMyGroupsWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HomeMyGroupsState();
@@ -67,8 +67,8 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: _haveGroups, child:
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
           title: "My Groups",
           child: _buildContent(),
           childPadding: const EdgeInsets.only(top: 8, bottom: 16),

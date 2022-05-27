@@ -24,9 +24,9 @@ class HomeTwitterWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeTwitterWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  HomeTwitterWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeTwitterWidgetState createState() => _HomeTwitterWidgetState();
@@ -107,7 +107,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   Widget build(BuildContext context) {
     int displayPagesCount = tweetsCount + ((_loadingPage == true) ? 1 : 0);
     return Visibility(visible: (0 < displayPagesCount), child:
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
         Semantics(container: true, child:
           Column(children: <Widget>[
             _buildHeader(),
@@ -129,9 +129,9 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
             Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
               Draggable<HomeFavorite>(
                 data: HomeFavorite(id: widget.favoriteId),
-                onDragStarted: () { widget.scrollableDragging?.isDragging = true; },
-                onDragEnd: (details) { widget.scrollableDragging?.isDragging = false; },
-                onDraggableCanceled: (velocity, offset) { widget.scrollableDragging?.isDragging = false; },
+                onDragStarted: () { widget.dragAndDropHost?.isDragging = true; },
+                onDragEnd: (details) { widget.dragAndDropHost?.isDragging = false; },
+                onDraggableCanceled: (velocity, offset) { widget.dragAndDropHost?.isDragging = false; },
                 feedback: HomeSlantFeedback(title: 'Twitter'),
                 childWhenDragging: HomeDragHandle(),
                 child: HomeDragHandle()

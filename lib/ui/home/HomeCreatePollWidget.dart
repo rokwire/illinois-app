@@ -32,9 +32,9 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 class HomeCreatePollWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeCreatePollWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  HomeCreatePollWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeCreatePollWidgetState createState() => _HomeCreatePollWidgetState();
@@ -60,8 +60,8 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   Widget build(BuildContext context) {
 
     return Visibility(visible: _visible, child:
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
           title: Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"),
           flatHeight: 0, slantHeight: 0,
           child: _buildContent(),

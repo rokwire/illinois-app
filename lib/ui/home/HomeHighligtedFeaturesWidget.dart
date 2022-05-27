@@ -33,9 +33,9 @@ class HomeHighlightedFeatures extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeHighlightedFeatures({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  const HomeHighlightedFeatures({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HomeHighlightedFeaturesState();
@@ -78,8 +78,8 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures> imple
 
   @override
   Widget build(BuildContext context) {
-    return HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
-      HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
         title: Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features'),
         flatHeight: 0, slantHeight: 0,
         child: Column(children: _buildCommandsList(),),

@@ -24,9 +24,9 @@ class HomeSaferWidget extends StatefulWidget {
   
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeSaferWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  HomeSaferWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeSaferWidgetState createState() => _HomeSaferWidgetState();

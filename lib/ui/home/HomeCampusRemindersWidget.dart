@@ -37,9 +37,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class HomeCampusRemindersWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeCampusRemindersWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  HomeCampusRemindersWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeCampusRemindersWidgetState createState() => _HomeCampusRemindersWidgetState();
@@ -99,8 +99,8 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(_reminderItems), child:
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
           title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
           child: Column(children: _buildRemindersList())
         ),

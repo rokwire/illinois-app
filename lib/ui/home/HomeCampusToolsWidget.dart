@@ -43,10 +43,10 @@ class HomeCampusToolsWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
 
-  HomeCampusToolsWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  HomeCampusToolsWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   _HomeCampusToolsWidgetState createState() => _HomeCampusToolsWidgetState();
 }
@@ -158,8 +158,8 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
 
     rows.add(Container(height: 48,),);
 
-    return HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
-      HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
         title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
         child: Column(children: rows,
       ),

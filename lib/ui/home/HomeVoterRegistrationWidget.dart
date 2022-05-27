@@ -40,9 +40,9 @@ import 'package:sprintf/sprintf.dart';
 class HomeVoterRegistrationWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeVoterRegistrationWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  HomeVoterRegistrationWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeVoterRegistrationWidgetState createState() => _HomeVoterRegistrationWidgetState();

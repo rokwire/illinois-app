@@ -39,9 +39,9 @@ class HomePreferredSportsWidget extends StatefulWidget {
   final bool womenSports;
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomePreferredSportsWidget({Key? key, this.menSports = false, this.womenSports = false, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  HomePreferredSportsWidget({Key? key, this.menSports = false, this.womenSports = false, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   _HomePreferredSportsWidgetState createState() => _HomePreferredSportsWidgetState();
 }

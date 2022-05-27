@@ -25,9 +25,9 @@ class HomeWalletWidget extends StatefulWidget {
   
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeWalletWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  HomeWalletWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<HomeWalletWidget> createState() => _HomeWalletWidgetState();
@@ -52,8 +52,8 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
 
   @override
   Widget build(BuildContext context) {
-    return HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
-      HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
       title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
       child: Column(children: _buildCommandsList(),
     ),

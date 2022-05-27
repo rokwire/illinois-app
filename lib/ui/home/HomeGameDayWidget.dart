@@ -27,9 +27,9 @@ import 'package:illinois/ui/athletics/AthleticsGameDayWidget.dart';
 class HomeGameDayWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeGameDayWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging }) : super(key: key);
+  HomeGameDayWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost }) : super(key: key);
 
   _HomeGameDayState createState() => _HomeGameDayState();
 }

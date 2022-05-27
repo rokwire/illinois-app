@@ -22,9 +22,9 @@ class HomeCampusHighlightsWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeCampusHighlightsWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  HomeCampusHighlightsWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeCampusHighlightsWidgetState createState() => _HomeCampusHighlightsWidgetState();
@@ -85,8 +85,8 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(_promotedItems), child:
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
           title: Localization().getStringEx('widget.home_campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
           child: Column(children: _buildPromotedList(),) 
         ),

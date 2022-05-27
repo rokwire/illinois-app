@@ -37,9 +37,9 @@ class HomeFavoritesWidget extends StatefulWidget {
   final String? favoriteId;
   final String favoriteKey;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeFavoritesWidget({Key? key, required this.favoriteKey, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  HomeFavoritesWidget({Key? key, required this.favoriteKey, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeFavoritesWidgetState createState() => _HomeFavoritesWidgetState();
@@ -83,8 +83,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   @override
   Widget build(BuildContext context) {
-    return HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
-      HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
         title: headingTitle,
         child: Column(children: _buildContent()
       ),

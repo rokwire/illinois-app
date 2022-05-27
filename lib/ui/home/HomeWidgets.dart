@@ -8,9 +8,10 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 class HomeDropTargetWidget extends StatefulWidget {
 
   final String? favoriteId;
+  final HomeDragAndDropHost? dragAndDropHost;
   final Widget? child;
 
-  const HomeDropTargetWidget({Key? key, this.child, this.favoriteId, }) : super(key: key);
+  const HomeDropTargetWidget({Key? key, this.child, this.dragAndDropHost, this.favoriteId, }) : super(key: key);
 
   @override
   _HomeDropTargetWidgetState createState() => _HomeDropTargetWidgetState();
@@ -42,7 +43,7 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
         _onDragLeave();
       },
       onAccept: (HomeFavorite favorite) {
-
+        widget.dragAndDropHost?.onDragAndDrop(dragFavoriteId: favorite.favoriteId, dropFavoriteId: widget.favoriteId, dropAnchor: _dropAnchorAlignment);
       },
     );
   }
@@ -112,7 +113,7 @@ class HomeSlantWidget extends StatelessWidget {
   final EdgeInsetsGeometry childPadding;
   
   final String? favoriteId;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
   const HomeSlantWidget({Key? key,
     this.title,
@@ -125,7 +126,7 @@ class HomeSlantWidget extends StatelessWidget {
     this.childPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     
     this.favoriteId,
-    this.scrollableDragging,
+    this.dragAndDropHost,
   }) : super(key: key);
 
   @override
@@ -141,9 +142,9 @@ class HomeSlantWidget extends StatelessWidget {
             Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
               Draggable<HomeFavorite>(
                 data: HomeFavorite(id: favoriteId),
-                onDragStarted: () { scrollableDragging?.isDragging = true; },
-                onDragEnd: (details) { scrollableDragging?.isDragging = false; },
-                onDraggableCanceled: (velocity, offset) { scrollableDragging?.isDragging = false; },
+                onDragStarted: () { dragAndDropHost?.isDragging = true; },
+                onDragEnd: (details) { dragAndDropHost?.isDragging = false; },
+                onDraggableCanceled: (velocity, offset) { dragAndDropHost?.isDragging = false; },
                 feedback: HomeSlantFeedback(title: title),
                 childWhenDragging: HomeDragHandle(),
                 child: HomeDragHandle()

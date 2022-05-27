@@ -18,9 +18,9 @@ class HomeGiesWidget extends StatefulWidget{
 
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeGiesWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  const HomeGiesWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HomeGiesWidgetState();
@@ -44,8 +44,8 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   Widget build(BuildContext context) {
     return Visibility(visible: true, child:
     
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
           title: Localization().getStringEx( 'widget.gies.title', 'iDegrees New Student Checklist'),
           child: _buildContent(),
           headerAxisAlignment: CrossAxisAlignment.start,

@@ -47,9 +47,9 @@ class HomeUpcomingEventsWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeUpcomingEventsWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  HomeUpcomingEventsWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeUpcomingEventsWidgetState createState() => _HomeUpcomingEventsWidgetState();
@@ -251,7 +251,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     if (CollectionUtils.isEmpty(_events)) {
       return Container();
     }
-    return HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
       Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -260,7 +260,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
             title: Localization().getStringEx('widget.home_upcoming_events.label.events_for_you', 'Events For You'),
             subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home_upcoming_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
             favoriteId: widget.favoriteId,
-            scrollableDragging: widget.scrollableDragging,
+            dragAndDropHost: widget.dragAndDropHost,
             rightIconAsset: 'images/settings-white.png',
             rightIconAction: () {
               Analytics().logSelect(target: "Events for you - settings");
@@ -368,7 +368,7 @@ class _EventsRibbonHeader extends StatelessWidget {
   final void Function()? rightIconAction;
 
   final String? favoriteId;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
   const _EventsRibbonHeader({Key? key,
     this.title,
@@ -379,7 +379,7 @@ class _EventsRibbonHeader extends StatelessWidget {
     this.rightIconAction,
 
     this.favoriteId,
-    this.scrollableDragging,
+    this.dragAndDropHost,
   }) : super(key: key);
 
   @override
@@ -389,9 +389,9 @@ class _EventsRibbonHeader extends StatelessWidget {
     titleList.add(Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
       Draggable<HomeFavorite>(
         data: HomeFavorite(id: favoriteId),
-        onDragStarted: () { scrollableDragging?.isDragging = true; },
-        onDragEnd: (details) { scrollableDragging?.isDragging = false; },
-        onDraggableCanceled: (velocity, offset) { scrollableDragging?.isDragging = false; },
+        onDragStarted: () { dragAndDropHost?.isDragging = true; },
+        onDragEnd: (details) { dragAndDropHost?.isDragging = false; },
+        onDraggableCanceled: (velocity, offset) { dragAndDropHost?.isDragging = false; },
         feedback: HomeSlantFeedback(title: title),
         childWhenDragging: HomeDragHandle(),
         child: HomeDragHandle()

@@ -16,9 +16,9 @@ import 'package:just_audio/just_audio.dart';
 class HomeWPGUFMRadioWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<void>? refreshController;
-  final HomeScrollableDragging? scrollableDragging;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeWPGUFMRadioWidget({Key? key, this.favoriteId, this.refreshController, this.scrollableDragging}) : super(key: key);
+  const HomeWPGUFMRadioWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<HomeWPGUFMRadioWidget> createState() => _HomeWPGUFMRadioWidgetState();
@@ -55,8 +55,8 @@ class _HomeWPGUFMRadioWidgetState extends State<HomeWPGUFMRadioWidget> implement
   Widget build(BuildContext context) {
     return Visibility(visible: _isEnabled, child:
     
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
           title: Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'),
           child: _buildContentCard(),
           childPadding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 32),
