@@ -8,6 +8,7 @@ import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -106,39 +107,65 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   Widget build(BuildContext context) {
     int displayPagesCount = tweetsCount + ((_loadingPage == true) ? 1 : 0);
     return Visibility(visible: (0 < displayPagesCount), child:
-      Semantics(container: true, child:
-        Column(children: <Widget>[
-          _buildHeader(),
-          Stack(children:<Widget>[
-            _buildSlant(),
-            _buildContent(),
-          ])
-        ]),
-        )
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
+        Semantics(container: true, child:
+          Column(children: <Widget>[
+            _buildHeader(),
+            Stack(children:<Widget>[
+              _buildSlant(),
+              _buildContent(),
+            ])
+          ]),
+        ),
+      ),
     );
   }
 
   Widget _buildHeader() {
     return Semantics(child:
       Container(color: Styles().colors!.fillColorPrimary, child:
-        Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Expanded(child:
-              Semantics(header: true, container: true,
-                child:
-                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                  Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png', excludeFromSemantics: true,)),
-                  Expanded(flex: 20, child:
-                    Text("Twitter", style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),
-                  ),
-                ]),
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+
+            Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
+              Draggable<HomeFavorite>(
+                data: HomeFavorite(id: widget.favoriteId),
+                onDragStarted: () { widget.scrollableDragging?.isDragging = true; },
+                onDragEnd: (details) { widget.scrollableDragging?.isDragging = false; },
+                onDraggableCanceled: (velocity, offset) { widget.scrollableDragging?.isDragging = false; },
+                feedback: Container(color: Styles().colors!.fillColorPrimary!.withOpacity(0.8), child:
+                  Row(children: <Widget>[
+                    HomeSlantWidget.dragHandle,
+                    Padding(padding: EdgeInsets.only(right: 24), child:
+                      Text('Twitter', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
+                        Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
+                      ] ),),
+                    ),
+                  ],),
+                ),
+                childWhenDragging: HomeSlantWidget.dragHandle,
+                child: HomeSlantWidget.dragHandle
               ),
             ),
+
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(top: 14), child:
+                Semantics(label: 'Twitter', header: true, excludeSemantics: true, child:
+                  Text('Twitter', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                )
+              )
+            ),
+
             (1 < _accountKeys.length) ?
-            Semantics(container: true,  button: true,
-              child: Padding(padding: EdgeInsets.only(right: 16), child: buildAccountDropDown(), )) :
+              Semantics(container: true,  button: true, child: buildAccountDropDown(), ) :
               Container(),
-        ],),),));
+
+            Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+                Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true,),
+              )
+            ),
+            
+        ],),),);
   }
 
   Widget buildAccountDropDown() {
