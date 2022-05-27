@@ -392,16 +392,7 @@ class _EventsRibbonHeader extends StatelessWidget {
         onDragStarted: () { scrollableDragging?.isDragging = true; },
         onDragEnd: (details) { scrollableDragging?.isDragging = false; },
         onDraggableCanceled: (velocity, offset) { scrollableDragging?.isDragging = false; },
-        feedback: Container(color: Styles().colors!.fillColorPrimary!.withOpacity(0.8), child:
-          Row(children: <Widget>[
-            HomeSlantWidget.dragHandle,
-            Padding(padding: EdgeInsets.only(right: 24), child:
-              Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
-                Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
-              ] ),),
-            ),
-          ],),
-        ),
+        feedback: HomeSlantWidget.dragFeedback(title: title),
         childWhenDragging: HomeSlantWidget.dragHandle,
         child: HomeSlantWidget.dragHandle
       ),

@@ -144,16 +144,7 @@ class HomeSlantWidget extends StatelessWidget {
                 onDragStarted: () { scrollableDragging?.isDragging = true; },
                 onDragEnd: (details) { scrollableDragging?.isDragging = false; },
                 onDraggableCanceled: (velocity, offset) { scrollableDragging?.isDragging = false; },
-                feedback: Container(color: Styles().colors!.fillColorPrimary!.withOpacity(0.8), child:
-                  Row(children: <Widget>[
-                    dragHandle,
-                    Padding(padding: EdgeInsets.only(right: 24), child:
-                      Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
-                        Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
-                      ] ),),
-                    ),
-                  ],),
-                ),
+                feedback: dragFeedback(title: title),
                 childWhenDragging: dragHandle,
                 child: dragHandle
               ),
@@ -199,6 +190,19 @@ class HomeSlantWidget extends StatelessWidget {
   static Widget get dragHandle => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
     Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
   );
+
+  static Widget dragFeedback({String? title}) {
+    return Container(color: Styles().colors!.fillColorPrimary!.withOpacity(0.8), child:
+      Row(children: <Widget>[
+        dragHandle,
+        Padding(padding: EdgeInsets.only(right: 24), child:
+          Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
+            Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
+          ] ),),
+        ),
+      ],),
+    );
+  }
 
 }
 
