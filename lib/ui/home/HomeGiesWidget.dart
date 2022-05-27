@@ -48,6 +48,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
         HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
           title: Localization().getStringEx( 'widget.gies.title', 'iDegrees New Student Checklist'),
           child: _buildContent(),
+          headerAxisAlignment: CrossAxisAlignment.start,
         ),
       ),
 

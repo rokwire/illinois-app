@@ -103,6 +103,7 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
 class HomeSlantWidget extends StatelessWidget {
 
   final String? title;
+  final CrossAxisAlignment headerAxisAlignment;
 
   final double flatHeight;
   final double slantHeight;
@@ -115,6 +116,7 @@ class HomeSlantWidget extends StatelessWidget {
 
   const HomeSlantWidget({Key? key,
     this.title,
+    this.headerAxisAlignment = CrossAxisAlignment.center,
     
     this.flatHeight = 40,
     this.slantHeight = 65,
@@ -134,7 +136,7 @@ class HomeSlantWidget extends StatelessWidget {
       // Title Row
       Semantics(container: true, header: true,
         child: Container(color: Styles().colors!.fillColorPrimary, child:
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
             Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
               Draggable<HomeFavorite>(
@@ -158,7 +160,7 @@ class HomeSlantWidget extends StatelessWidget {
             ),
 
             Expanded(child:
-              Padding(padding: EdgeInsets.only(top: 14), child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
                 Semantics(label: title, header: true, excludeSemantics: true, child:
                   Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
                 )
