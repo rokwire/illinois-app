@@ -21,6 +21,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -33,15 +34,19 @@ import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'HomeWidgets.dart';
+
 class HomeCampusToolsWidget extends StatefulWidget {
 
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeCampusToolsWidget({Key? key, this.refreshController}) : super(key: key);
+
+  HomeCampusToolsWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   _HomeCampusToolsWidgetState createState() => _HomeCampusToolsWidgetState();
 }
@@ -150,15 +155,15 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
       Row row = Row(children: widgets.sublist(startRowIndex, endIndex));
       rows.add(row);
     }
-    return Column(
-      children: <Widget>[
-        SectionSlantHeader(title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
-          titleIconAsset: 'images/campus-tools.png',
-          childrenPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-          children: rows,),
-        Container(height: 48,),
-      ],
-    );
+
+    rows.add(Container(height: 48,),);
+
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+        title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
+        child: Column(children: rows,
+      ),
+    ),);
   }
 
   void _updateContentListCodes() {

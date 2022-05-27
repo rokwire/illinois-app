@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -12,9 +14,11 @@ import 'package:audio_session/audio_session.dart';
 import 'package:just_audio/just_audio.dart';
 
 class HomeWPGUFMRadioWidget extends StatefulWidget {
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeWPGUFMRadioWidget({Key? key, this.refreshController}) : super(key: key);
+  const HomeWPGUFMRadioWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<HomeWPGUFMRadioWidget> createState() => _HomeWPGUFMRadioWidgetState();
@@ -49,22 +53,34 @@ class _HomeWPGUFMRadioWidgetState extends State<HomeWPGUFMRadioWidget> implement
 
   @override
   Widget build(BuildContext context) {
-    if (_isEnabled) {
-      String? buttonTitle, iconAsset;
-      if (_player != null) {
-        buttonTitle = _isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'Play');
-        iconAsset = _isPlaying ? 'images/button-pause-orange.png' : 'images/button-play-orange.png';
-      }
-      else if (_initalizingPlayer) {
-        buttonTitle = Localization().getStringEx('widget.home.radio.button.initalize.title', 'Initializing');
-      }
-      else {
-        buttonTitle = Localization().getStringEx('widget.home.radio.button.fail.title', 'Not Available');
-      }
+    return Visibility(visible: _isEnabled, child:
+    
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+          title: Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'),
+          child: _buildContentCard(),
+          childPadding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 32),
+        ),
+      ),
 
-      return GestureDetector(onTap: _onTapPlayPause, child:
+    );
+  }
+
+  Widget _buildContentCard() {
+    String? buttonTitle, iconAsset;
+    if (_player != null) {
+      buttonTitle = _isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'Play');
+      iconAsset = _isPlaying ? 'images/button-pause-orange.png' : 'images/button-play-orange.png';
+    }
+    else if (_initalizingPlayer) {
+      buttonTitle = Localization().getStringEx('widget.home.radio.button.initalize.title', 'Initializing');
+    }
+    else {
+      buttonTitle = Localization().getStringEx('widget.home.radio.button.fail.title', 'Not Available');
+    }
+
+    return GestureDetector(onTap: _onTapPlayPause, child:
       Container(
-        margin: EdgeInsets.only(left: 16, right: 16, bottom: 20),
         decoration: BoxDecoration(boxShadow: [
           BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3),
               spreadRadius: 2.0,
@@ -73,60 +89,44 @@ class _HomeWPGUFMRadioWidgetState extends State<HomeWPGUFMRadioWidget> implement
         ]),
         child:
         ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
-        Row(children: <Widget>[
-          Expanded(child:
-          Column(children: <Widget>[
-            Container(color: Styles().colors!.fillColorPrimary, child:
-            Padding(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Expanded(child: Text(Localization().getStringEx(
-                  'widget.home.radio.title', 'WPGU FM Radio'),
-                  style: TextStyle(color: Styles().colors!.white,
-                      fontFamily: Styles().fontFamilies!.extraBold,
-                      fontSize: 20))),
-            ])
-            ),
-            ),
-            Container(color: Styles().colors!.white, child:
-            Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
-            Row(children: <Widget>[
-              Expanded(child:
+          Row(children: <Widget>[
+            Expanded(child:
+              Column(children: <Widget>[
                 Container(color: Styles().colors!.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Padding(padding: EdgeInsets.all(16), child:
-                          Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors!.fillColorSecondary! , width: 3))), child:
-                            Padding(padding: EdgeInsets.only(left: 10), child:
-                            Row(children: [Expanded(child: Text(buttonTitle, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 24, color: Styles().colors?.fillColorPrimary)))]))))),
-                    ],),
+                        Container(color: Styles().colors!.white, child:
+                          Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
+                            Row(children: <Widget>[
+                              Expanded(child:
+                                Padding(padding: EdgeInsets.all(16), child:
+                                  Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors!.fillColorSecondary! , width: 3))), child:
+                                    Padding(padding: EdgeInsets.only(left: 10), child:
+                                    Row(children: [Expanded(child: Text(buttonTitle, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 24, color: Styles().colors?.fillColorPrimary)))]))))),
+                            ],),
+                          ),
+                        ),
+                      ),
+                      (iconAsset != null) ? Semantics(button: true,
+                          excludeSemantics: true,
+                          label: buttonTitle,
+                          hint: Localization().getStringEx(
+                              'widget.home.radio.button.add_radio.hint', ''),
+                          child: 
+                          IconButton(color: Styles().colors!.fillColorPrimary,
+                            icon: Image.asset(iconAsset, excludeFromSemantics: true),
+                            onPressed: _onTapPlayPause)
+                      ) : Container(),
+                    ]),
                   ),
                 ),
-              ),
-              (iconAsset != null) ? Semantics(button: true,
-                  excludeSemantics: true,
-                  label: buttonTitle,
-                  hint: Localization().getStringEx(
-                      'widget.home.radio.button.add_radio.hint', ''),
-                  child: 
-                  IconButton(color: Styles().colors!.fillColorPrimary,
-                    icon: Image.asset(iconAsset, excludeFromSemantics: true),
-                    onPressed: _onTapPlayPause)
-              ) : Container(),
-            ]),
-            ),
+              ]),
             ),
           ]),
-          ),
-        ]),
         ),
       ),
-      );
-    }
-    else {
-      return Container();
-    }
+    );
   }
 
   bool get _isEnabled => StringUtils.isNotEmpty(Config().wpgufmRadioUrl);
