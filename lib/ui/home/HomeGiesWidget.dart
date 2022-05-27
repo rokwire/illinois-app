@@ -4,20 +4,23 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Gies.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/gies/GiesPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeGiesWidget extends StatefulWidget{
 
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeGiesWidget({Key? key, this.refreshController}) : super(key: key);
+  const HomeGiesWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HomeGiesWidgetState();
@@ -40,45 +43,16 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: true, child:
-    Semantics( child:
-    Column(children: <Widget>[
-      _buildHeader(),
-      Stack(children: <Widget>[
-        _buildSlant(),
-        _buildContent(),
-      ]),
-    ]),
-    ));
-  }
+    
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+          title: Localization().getStringEx( 'widget.gies.title', 'iDegrees New Student Checklist'),
+          child: _buildContent(),
+          headerAxisAlignment: CrossAxisAlignment.start,
+        ),
+      ),
 
-  Widget _buildHeader() {
-    return Semantics(
-      header: true,
-      child:Container(color: Styles().colors!.fillColorPrimary, child:
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10), child:
-          Column(children: [
-            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Expanded(child:
-              Text(Localization().getStringEx(
-                  'widget.gies.title', 'iDegrees New Student Checklist'),
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Styles().colors!.white,
-                  fontFamily: Styles().fontFamilies!.extraBold,
-                  fontSize: 20,),),),
-          ],),
-        ],),
-        ),));
-  }
-
-  Widget _buildSlant() {
-    return Column(children: <Widget>[
-      Container(color: Styles().colors!.fillColorPrimary, height: 45,),
-      Container(color: Styles().colors!.fillColorPrimary, child:
-      CustomPaint(painter: TrianglePainter(
-          painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
-      Container(height: 65,),
-      )),
-    ],);
+    );
   }
 
   Widget _buildContent() {
@@ -97,9 +71,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   }
 
   Widget _buildLoadingContent(){
-    return Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-        child:
+    return 
         Container(
           constraints: BoxConstraints(maxHeight: 100),
           padding: EdgeInsets.all(16),
@@ -111,14 +83,12 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
                   child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ),
                 ),
               ),
-            ]),)
+            ]),
     );
   }
 
   Widget _buildStartContent() {
-    return Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-        child:
+    return 
         Container(padding: EdgeInsets.all(16),
             decoration: BoxDecoration(color: Styles().colors!.white,
                 borderRadius: BorderRadius.circular(5)),
@@ -144,14 +114,11 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
                 ),
                 Container(height: 16,),
               ],
-            ))
-    );
+            ));
   }
 
   Widget _buildEndedContent() {
-    return Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-        child:
+    return 
         Container(padding: EdgeInsets.all(16),
             decoration: BoxDecoration(color: Styles().colors!.white,
                 borderRadius: BorderRadius.circular(5)),
@@ -189,14 +156,12 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
                 ],),
                 Container(height: 16,),
               ],
-            ))
+            )
     );
   }
 
   Widget _buildProgressContent() {
-    return Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-        child:
+    return 
         Container(padding: EdgeInsets.all(16),
             decoration: BoxDecoration(color: Styles().colors!.white,
                 borderRadius: BorderRadius.circular(5)),
@@ -221,7 +186,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
                 ),
                 Container(height: 16,),
               ],
-            ))
+            )
     );
   }
 

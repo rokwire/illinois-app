@@ -20,6 +20,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -38,15 +40,16 @@ import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class HomeRecentItemsWidget extends StatefulWidget {
 
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeRecentItemsWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeRecentItemsWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeRecentItemsWidgetState createState() => _HomeRecentItemsWidgetState();
@@ -79,9 +82,8 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
   @override
   Widget build(BuildContext context) {
-    return _RecentItemsList(
+    return _RecentItemsList(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
       heading: Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed'),
-      headingIconRes: 'images/campus-tools.png',
       items: _recentItems,
     );
   }
@@ -113,72 +115,64 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 }
 
 class _RecentItemsList extends StatelessWidget{
-  final int limit;
-  final List<RecentItem>? items;
   final String? heading;
-  final String? subTitle;
-  final String? headingIconRes;
-  final String slantImageRes;
-  final Color? slantColor;
-  final void Function()? tapMore;
-  final bool showMoreButtonExplicitly;
+  final List<RecentItem>? items;
+  final int limit;
   final String? moreButtonLabel;
+  final void Function()? tapMore;
+  final String? favoriteId;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  //Card Options
-  final bool cardShowDate;
 
   const _RecentItemsList(
-      {Key? key, this.items, this.heading, this.subTitle, this.headingIconRes,
-        this.slantImageRes = 'images/slant-down-right-blue.png', this.slantColor, this.tapMore, this.cardShowDate = false, this.limit = 3,
-        this.moreButtonLabel, this.showMoreButtonExplicitly = false,})
+      {Key? key, this.items, this.heading,
+        this.tapMore, this.limit = 3,
+        this.moreButtonLabel, this.favoriteId, this.dragAndDropHost})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool showMoreButton =showMoreButtonExplicitly ||( tapMore!=null && limit<(items?.length??0));
-    String? moreLabel = StringUtils.isEmpty(moreButtonLabel)? Localization().getStringEx('widget.home_recent_items.button.more.title', 'View All'): moreButtonLabel;
-    return items!=null && items!.isNotEmpty? Column(
-      children: <Widget>[
-        SectionSlantHeader(
-            title:heading,
-            subTitle: subTitle,
-            titleIconAsset: headingIconRes,
-            children: _buildListItems(context)
+    return Visibility(visible: CollectionUtils.isNotEmpty(items), child:
+      HomeDropTargetWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, child:
+        HomeSlantWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost,
+            title: heading,
+            child: Column(children: _buildListItems(context),)
         ),
-        !showMoreButton?Container():
-        Container(height: 20,),
-        !showMoreButton?Container():
-        SmallRoundedButton(
-          label: moreLabel ?? '',
-          hint: Localization().getStringEx('widget.home_recent_items.button.more.hint', ''),
-          onTap: tapMore ?? (){},),
-        Container(height: 16,),
-      ],
-    ) : Container();
-
+      ),
+    );
   }
 
   List<Widget> _buildListItems(BuildContext context){
     List<Widget> widgets =  [];
-    if(items?.isNotEmpty??false){
-      int visibleCount = items!.length<limit?items!.length:limit;
-      for(int i = 0 ; i<visibleCount; i++) {
+    if (items?.isNotEmpty??false){
+      
+      int visibleCount = (items!.length < limit) ? items!.length : limit;
+      for (int i = 0 ; i < visibleCount; i++) {
         RecentItem item = items![i];
         if (0 < widgets.length) {
           widgets.add(Container(height: 4));
         }
-        widgets.add(_buildItemCart(
-            recentItem: item, context: context));
+        widgets.add(_buildItemCart(recentItem: item, context: context));
       }
+
+      if ((tapMore != null) && (limit < items!.length)) {
+        widgets.add(Padding(padding: EdgeInsets.only(top: 16), child:
+          SmallRoundedButton(
+            label: StringUtils.isNotEmpty(moreButtonLabel) ? moreButtonLabel! : Localization().getStringEx('widget.home_recent_items.button.more.title', 'View All'),
+            hint: Localization().getStringEx('widget.home_recent_items.button.more.hint', ''),
+            onTap: tapMore ?? (){},),
+        ));
+      }
+      
+      widgets.add(Container(height: 16,));
     }
+
+    
     return widgets;
   }
 
   Widget _buildItemCart({RecentItem? recentItem, BuildContext? context}) {
-    return _HomeRecentItemCard(
-      item: recentItem,
-      showDate: cardShowDate,
-      onTap: () {
+    return _HomeRecentItemCard(item: recentItem, onTap: () {
         Analytics().logSelect(target: "HomeRecentItemCard clicked: " + recentItem!.recentTitle!);
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => _getDetailPanel(recentItem)));
       },);

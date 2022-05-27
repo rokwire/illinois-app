@@ -1,21 +1,23 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 
 class HomeMyGroupsWidget extends StatefulWidget {
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeMyGroupsWidget({Key? key, this.refreshController}) : super(key: key);
+  const HomeMyGroupsWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HomeMyGroupsState();
@@ -64,45 +66,15 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(
-      visible: _haveGroups,
-      child: Container(
-        child: Column(
-          children: [
-            _buildHeader(),
-            Stack(children:<Widget>[
-              _buildSlant(),
-              _buildContent(),
-            ]),
-          ],
-        )
-    ));
-  }
-
-  Widget _buildHeader() {
-    return Semantics(container: true , header: true,
-    child: Container(color: Styles().colors!.fillColorPrimary, child:
-      Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
-        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Padding(padding: EdgeInsets.only(right: 16),
-            child: Image.asset('images/campus-tools.png', excludeFromSemantics: true,)),
-          Expanded(child:
-            Text("My Groups", style:
-              TextStyle(
-                color: Styles().colors!.white,
-                fontFamily: Styles().fontFamilies!.extraBold,
-                fontSize: 20,),),),
-    ],),),));
-  }
-
-  Widget _buildSlant() {
-    return Column(children: <Widget>[
-      Container(color:  Styles().colors!.fillColorPrimary, height: 45,),
-      Container(color: Styles().colors!.fillColorPrimary, child:
-      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
-      Container(height: 65,),
-      )),
-    ],);
+    return Visibility(visible: _haveGroups, child:
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+          title: "My Groups",
+          child: _buildContent(),
+          childPadding: const EdgeInsets.only(top: 8, bottom: 16),
+        ),
+      ),
+    );
   }
 
   Widget _buildContent() {
@@ -124,12 +96,9 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
       _pageController = PageController(viewportFraction: pageViewport);
     }
 
-    return
-      Padding(padding: EdgeInsets.only(top: 10, bottom: 20), child:
-        Container(height: pageHeight, child:
-          PageView(controller: _pageController, children: pages,)
-        )
-      );
+    return Container(height: pageHeight, child:
+      PageView(controller: _pageController, children: pages,)
+    );
   }
 
   List<Group>? _sortGroups(List<Group>? groups){

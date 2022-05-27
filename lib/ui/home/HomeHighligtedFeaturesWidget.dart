@@ -19,9 +19,10 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
@@ -30,9 +31,11 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 
 class HomeHighlightedFeatures extends StatefulWidget {
 
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeHighlightedFeatures({Key? key, this.refreshController}) : super(key: key);
+  const HomeHighlightedFeatures({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HomeHighlightedFeaturesState();
@@ -75,18 +78,13 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures> imple
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          _buildHeader(),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Column(
-              children: _buildCommandsList()
-            )
-          )
-        ],
-      )
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+        title: Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features'),
+        flatHeight: 0, slantHeight: 0,
+        child: Column(children: _buildCommandsList(),),
+        childPadding: EdgeInsets.all(16),
+      ),
     );
   }
 
@@ -135,18 +133,6 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures> imple
 
     }
     return contentList;
-  }
-
-  Widget _buildHeader() {
-    return Semantics(container: true, header: true,
-      child: Container(color: Styles().colors!.fillColorPrimary, child:
-        Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),),
-            Expanded(child:
-            Text(Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features'), style:
-            TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),),
-    ],),),));
   }
 
   Widget _buildCommandEntry({required String title, String? description, void Function()? onTap}) {
