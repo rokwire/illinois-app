@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix typo in HomeRadioWidget [#1666](https://github.com/rokwire/illinois-app/issues/1666).
 - Change comply message when creating a Group [#1668](https://github.com/rokwire/illinois-app/issues/1668).
 - Implemented drag and drop capability in HomePanel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+### Added
+- Regular Student onboarding checklist (in progress) [#1671](https://github.com/rokwire/illinois-app/issues/1671).
 
 ## [4.0.16] - 2022-05-25
 ### Changed
