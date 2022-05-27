@@ -99,9 +99,11 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(_reminderItems), child:
-      HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
-        title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
-        child: Column(children: _buildRemindersList())
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+          title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
+          child: Column(children: _buildRemindersList())
+        ),
       ),
     );
   }

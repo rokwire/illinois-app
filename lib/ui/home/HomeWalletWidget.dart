@@ -52,9 +52,12 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
       title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
-      child: Column(children: _buildCommandsList(),));
+      child: Column(children: _buildCommandsList(),
+    ),
+    ),);
   }
 
   List<Widget> _buildCommandsList() {

@@ -133,9 +133,11 @@ class _RecentItemsList extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(items), child:
-      HomeSlantWidget(favoriteId: favoriteId, scrollableDragging: scrollableDragging,
-          title: heading,
-          child: Column(children: _buildListItems(context),)
+      HomeDropTargetWidget(favoriteId: favoriteId, child:
+        HomeSlantWidget(favoriteId: favoriteId, scrollableDragging: scrollableDragging,
+            title: heading,
+            child: Column(children: _buildListItems(context),)
+        ),
       ),
     );
   }

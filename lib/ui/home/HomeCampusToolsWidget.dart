@@ -158,9 +158,12 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
 
     rows.add(Container(height: 48,),);
 
-    return HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
-      title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
-      child: Column(children: rows,),);
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+        title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
+        child: Column(children: rows,
+      ),
+    ),);
   }
 
   void _updateContentListCodes() {

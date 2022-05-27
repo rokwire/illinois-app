@@ -85,9 +85,11 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(_promotedItems), child:
-      HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
-        title: Localization().getStringEx('widget.home_campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
-        child: Column(children: _buildPromotedList(),) 
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+          title: Localization().getStringEx('widget.home_campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
+          child: Column(children: _buildPromotedList(),) 
+        ),
       ),
     );
   }

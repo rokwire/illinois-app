@@ -5,20 +5,18 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
-class HomeSlantWidget extends StatefulWidget {
+class HomeDropTargetWidget extends StatefulWidget {
 
-  final String? title;
-  final Widget? child;
   final String? favoriteId;
-  final HomeScrollableDragging? scrollableDragging;
+  final Widget? child;
 
-  const HomeSlantWidget({Key? key, this.title, this.child, this.favoriteId, this.scrollableDragging, }) : super(key: key);
+  const HomeDropTargetWidget({Key? key, this.child, this.favoriteId, }) : super(key: key);
 
   @override
-  _HomeSlantWidgetState createState() => _HomeSlantWidgetState();
+  _HomeDropTargetWidgetState createState() => _HomeDropTargetWidgetState();
 }
 
-class _HomeSlantWidgetState extends State<HomeSlantWidget> {
+class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
 
   final GlobalKey _contentKey = GlobalKey();
   Size? _contentSize;
@@ -51,68 +49,10 @@ class _HomeSlantWidgetState extends State<HomeSlantWidget> {
 
   Widget _buildContent({bool dropTarget = false }) {
 
-    // Build Title Row
-    List<Widget> titleRaw = <Widget>[];
-    titleRaw.add(
-      Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
-        Draggable<HomeFavorite>(
-          data: HomeFavorite(id: widget.favoriteId),
-          onDragStarted: () { widget.scrollableDragging?.isDragging = true; },
-          onDragEnd: (details) { widget.scrollableDragging?.isDragging = false; },
-          onDraggableCanceled: (velocity, offset) { widget.scrollableDragging?.isDragging = false; },
-          feedback: Container(color: Styles().colors!.fillColorPrimary!.withOpacity(0.8), child:
-            Row(children: <Widget>[
-              dragHandle,
-              Padding(padding: EdgeInsets.only(right: 24), child:
-                Text(widget.title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
-                  Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
-                ] ),),
-              ),
-            ],),
-          ),
-          childWhenDragging: dragHandle,
-          child: dragHandle
-        ),
-      ),
-    );
-    
-    titleRaw.add(
-      Expanded(child:
-        Padding(padding: EdgeInsets.only(top: 14), child:
-          Semantics(label: widget.title, header: true, excludeSemantics: true, child:
-            Text(widget.title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
-          )
-        )
-      ),
-    );
-    
-    titleRaw.add(
-      Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-          Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true,),
-        )
-      ),
-    );
-
     List<Widget> layers = <Widget>[
       Opacity(opacity: dropTarget ? 0.3 : 1.0, child: 
-        Column(children: <Widget>[
-          Container(color: Styles().colors?.fillColorPrimary, height: 85,),
-          Container(color: Styles().colors?.fillColorPrimary, child:
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
-              Container(height: 67,),
-            ),
-          ),
-        ],),
+        widget.child
       ),
-      Opacity(opacity: dropTarget ? 0.3 : 1.0, child: 
-        Column(children: <Widget>[
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: titleRaw,),
-          Padding(padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8), child:
-            widget.child ?? Container()
-          )
-        ],),
-      )
     ];
 
     if (dropTarget) {
@@ -127,10 +67,6 @@ class _HomeSlantWidgetState extends State<HomeSlantWidget> {
     return Stack(key: _contentKey, children: layers,);
   }
 
-  static Widget get dragHandle => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-    Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
-  );
-
   void _onDragMove(Offset offset) {
     RenderBox render = _contentKey.currentContext?.findRenderObject() as RenderBox;
     _contentSize = render.size;
@@ -138,7 +74,6 @@ class _HomeSlantWidgetState extends State<HomeSlantWidget> {
     double topY = position.dy;  // top position of the widget
     double eventY = offset.dy;
     CrossAxisAlignment? dropAnchorAlignment;
-    debugPrint("${widget.title}: [$topY .. ${topY + _contentSize!.height}] <- $eventY ");
     if ((topY <= eventY) && (eventY < (topY + _contentSize!.height / 2))) {
       dropAnchorAlignment = CrossAxisAlignment.start;
     }
@@ -163,6 +98,84 @@ class _HomeSlantWidgetState extends State<HomeSlantWidget> {
       });
     }
   }
+}
+
+class HomeSlantWidget extends StatelessWidget {
+
+  final String? title;
+  final Widget? child;
+  final String? favoriteId;
+  final HomeScrollableDragging? scrollableDragging;
+
+  const HomeSlantWidget({Key? key, this.title, this.child, this.favoriteId, this.scrollableDragging, }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+
+    // Build Title Row
+    List<Widget> titleRaw = <Widget>[];
+    titleRaw.add(
+      Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
+        Draggable<HomeFavorite>(
+          data: HomeFavorite(id: favoriteId),
+          onDragStarted: () { scrollableDragging?.isDragging = true; },
+          onDragEnd: (details) { scrollableDragging?.isDragging = false; },
+          onDraggableCanceled: (velocity, offset) { scrollableDragging?.isDragging = false; },
+          feedback: Container(color: Styles().colors!.fillColorPrimary!.withOpacity(0.8), child:
+            Row(children: <Widget>[
+              dragHandle,
+              Padding(padding: EdgeInsets.only(right: 24), child:
+                Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
+                  Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
+                ] ),),
+              ),
+            ],),
+          ),
+          childWhenDragging: dragHandle,
+          child: dragHandle
+        ),
+      ),
+    );
+    
+    titleRaw.add(
+      Expanded(child:
+        Padding(padding: EdgeInsets.only(top: 14), child:
+          Semantics(label: title, header: true, excludeSemantics: true, child:
+            Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+          )
+        )
+      ),
+    );
+    
+    titleRaw.add(
+      Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+          Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true,),
+        )
+      ),
+    );
+
+    return Stack(children: <Widget>[
+      Column(children: <Widget>[
+        Container(color: Styles().colors?.fillColorPrimary, height: 85,),
+        Container(color: Styles().colors?.fillColorPrimary, child:
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+            Container(height: 67,),
+          ),
+        ),
+      ],),
+      Column(children: <Widget>[
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: titleRaw,),
+        Padding(padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8), child:
+          child ?? Container()
+        )
+      ],),
+    ]);
+  }
+
+  static Widget get dragHandle => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+    Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
+  );
 
 }
 

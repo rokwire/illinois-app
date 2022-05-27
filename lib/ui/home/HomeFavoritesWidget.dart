@@ -83,9 +83,12 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
-      title: headingTitle,
-      child: Column(children: _buildContent()),);
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+        title: headingTitle,
+        child: Column(children: _buildContent()
+      ),
+    ),);
   }
 
   List<Widget> _buildContent() {
