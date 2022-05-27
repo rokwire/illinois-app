@@ -46,9 +46,12 @@ class _SettingsHomePanel2State extends State<SettingsHomePanel2> {
 
   @override
   Widget build(BuildContext context) {
+    PreferredSizeWidget headerBar = (_selectedSection == _SettingsSection.debug)
+        ? RootHeaderBar(title: _panelHeaderLabel)
+        : _DebugContainer(child: RootHeaderBar(title: _panelHeaderLabel));
+
     return Scaffold(
-        //TODO: DebugContainer
-        appBar: RootHeaderBar(title: _panelHeaderLabel),
+        appBar: headerBar,
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
@@ -92,11 +95,12 @@ class _SettingsHomePanel2State extends State<SettingsHomePanel2> {
                     _sectionsVisible = false;
                   });
                 },
-                child: Container(color: Color(0x99000000)))));
+                child: Container(color: Styles().colors!.blackTransparent06))));
   }
 
   Widget _buildSectionsValuesContainer() {
     List<Widget> sectionList = <Widget>[];
+    sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
     bool debugVisible = (kDebugMode || (Config().configEnvironment == rokwire.ConfigEnvironment.dev));
     for (_SettingsSection section in _SettingsSection.values) {
       if ((_selectedSection != section)) {
@@ -223,10 +227,14 @@ class _SettingsHomePanel2State extends State<SettingsHomePanel2> {
 
 enum _SettingsSection { sections, profile, privacy, personal_info, who_are_you, interests, food_filters, sports, notifications, debug }
 
-class _DebugContainer extends StatefulWidget {
+class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
   final Widget _child;
 
   _DebugContainer({required Widget child}) : _child = child;
+
+  // PreferredSizeWidget
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   _DebugContainerState createState() => _DebugContainerState();
 }
@@ -244,7 +252,8 @@ class _DebugContainerState extends State<_DebugContainer> {
 
         if (_clickedCount == 7) {
           if (Auth2().isDebugManager) {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
+            //TODO: properly handle debug event with dropdowns
+            // Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
           }
           _clickedCount = 0;
         }
