@@ -291,7 +291,7 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
     return CheckList(widget.contentKey).getPage(id: CheckList(widget.contentKey).currentPageId) ?? {};
   }
 
-  String get giesUrl => '${DeepLink().appUrl}/gies';
+  String get giesUrl => '${DeepLink().appUrl}/${widget.contentKey}';
 
   String get _title {
     if(widget.contentKey == "gies"){
