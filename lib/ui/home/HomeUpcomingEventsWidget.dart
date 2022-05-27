@@ -392,9 +392,9 @@ class _EventsRibbonHeader extends StatelessWidget {
         onDragStarted: () { scrollableDragging?.isDragging = true; },
         onDragEnd: (details) { scrollableDragging?.isDragging = false; },
         onDraggableCanceled: (velocity, offset) { scrollableDragging?.isDragging = false; },
-        feedback: HomeSlantWidget.dragFeedback(title: title),
-        childWhenDragging: HomeSlantWidget.dragHandle,
-        child: HomeSlantWidget.dragHandle
+        feedback: HomeSlantFeedback(title: title),
+        childWhenDragging: HomeDragHandle(),
+        child: HomeDragHandle()
       ),
     ));
     
@@ -431,9 +431,7 @@ class _EventsRibbonHeader extends StatelessWidget {
     }
 
     titleList.add(Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-      Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-        Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true,),
-      )
+      HomeFavoriteStar()
     ));
 
     Widget contentWidget = Container(color: Styles().colors?.fillColorPrimary, child: 

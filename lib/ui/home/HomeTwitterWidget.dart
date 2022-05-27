@@ -132,9 +132,9 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
                 onDragStarted: () { widget.scrollableDragging?.isDragging = true; },
                 onDragEnd: (details) { widget.scrollableDragging?.isDragging = false; },
                 onDraggableCanceled: (velocity, offset) { widget.scrollableDragging?.isDragging = false; },
-                feedback: HomeSlantWidget.dragFeedback(title: 'Twitter'),
-                childWhenDragging: HomeSlantWidget.dragHandle,
-                child: HomeSlantWidget.dragHandle
+                feedback: HomeSlantFeedback(title: 'Twitter'),
+                childWhenDragging: HomeDragHandle(),
+                child: HomeDragHandle()
               ),
             ),
 
@@ -151,9 +151,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
               Container(),
 
             Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-                Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true,),
-              )
+              HomeFavoriteStar(),
             ),
             
         ],),),);

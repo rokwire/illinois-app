@@ -144,9 +144,9 @@ class HomeSlantWidget extends StatelessWidget {
                 onDragStarted: () { scrollableDragging?.isDragging = true; },
                 onDragEnd: (details) { scrollableDragging?.isDragging = false; },
                 onDraggableCanceled: (velocity, offset) { scrollableDragging?.isDragging = false; },
-                feedback: dragFeedback(title: title),
-                childWhenDragging: dragHandle,
-                child: dragHandle
+                feedback: HomeSlantFeedback(title: title),
+                childWhenDragging: HomeDragHandle(),
+                child: HomeDragHandle()
               ),
             ),
 
@@ -158,10 +158,9 @@ class HomeSlantWidget extends StatelessWidget {
               )
             ),
 
+            
             Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-                Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true,),
-              )
+              HomeFavoriteStar(),
             ),
           ],),
       ),),
@@ -186,23 +185,117 @@ class HomeSlantWidget extends StatelessWidget {
 
     ],);
   }
-
-  static Widget get dragHandle => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-    Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
-  );
-
-  static Widget dragFeedback({String? title}) {
-    return Container(color: Styles().colors!.fillColorPrimary!.withOpacity(0.8), child:
-      Row(children: <Widget>[
-        dragHandle,
-        Padding(padding: EdgeInsets.only(right: 24), child:
-          Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
-            Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
-          ] ),),
-        ),
-      ],),
-    );
-  }
-
 }
 
+class HomeDragHandle extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+      Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
+    );
+  }
+}
+
+class HomeFavoriteStar extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+      Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true,),
+    );
+  }
+}
+
+class HomeSlantFeedback extends StatelessWidget {
+  final String? title;
+  final CrossAxisAlignment headerAxisAlignment;
+
+  HomeSlantFeedback({
+    this.title,
+    this.headerAxisAlignment = CrossAxisAlignment.center,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Container(width: MediaQuery.of(context).size.width, color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), child:
+        Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
+          HomeDragHandle(),
+          
+          Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+              Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
+                Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
+              ] ),),
+            ),
+          ),
+
+          HomeFavoriteStar(),
+        ],),
+      ),
+      
+      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.fillColorPrimary?.withOpacity(0.5), horzDir: TriangleHorzDirection.leftToRight, vertDir: TriangleVertDirection.bottomToTop), child:
+        Container(width: MediaQuery.of(context).size.width, height: 45,),
+      ),
+
+    ],);
+  }
+}
+/*
+  @override
+  _HomeSlantFeedbackState createState() => _HomeSlantFeedbackState();
+
+class _HomeSlantFeedbackState extends State<HomeSlantFeedback> {
+
+  final GlobalKey _contentKey = GlobalKey();
+  Size? _contentSize;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _evalContentSize();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Container(key: _contentKey, color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), child:
+          Row(children: <Widget>[
+            HomeDragHandle(),
+            Padding(padding: EdgeInsets.only(right: 24), child:
+              Text(widget.title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
+                Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
+              ] ),),
+            ),
+          ],),
+      ),
+      
+      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.fillColorPrimary?.withOpacity(0.5), horzDir: TriangleHorzDirection.leftToRight, vertDir: TriangleVertDirection.bottomToTop), child:
+        Container(width: _contentSize?.width ?? 0, height: (_contentSize?.width ?? 0) / 10,),
+      ),
+
+    ],);
+  }
+
+  void _evalContentSize() {
+    try {
+      final RenderObject? renderBox = _contentKey.currentContext?.findRenderObject();
+      if (renderBox is RenderBox) {
+        if (mounted) {
+          setState(() {
+            //_contentSize = renderBox.size;
+            _contentSize = Size(MediaQuery.of(context).size.width, 0);
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+}
+
+*/
