@@ -16,34 +16,40 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'Config.dart';
 
-class Gies with Service implements NotificationsListener{
+abstract class CheckList with Service implements NotificationsListener{
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
   static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
   static const String notifyContentChanged  = "edu.illinois.rokwire.gies.service.content.changed";
 
-  static const String _cacheFileName = "gies.json";
+  // Singleton instance wrapper
+  factory CheckList(String serviceName){
+    switch (serviceName){
+      case "gies" : return _GiesCheckListInstanceWrapper();
+      case "uiuc_student" : return _StudentCheckListInstanceWrapper();
+    }
+    return _GiesCheckListInstanceWrapper(); //default
+  }
 
-  File?          _cacheFile;
+  CheckList.fromName(this._contentName);
+
+  final String _contentName;
+
+  File? _cacheFile;
 
   List<dynamic>? _pages;
   List<String>?  _navigationPages;
 
   Map<int, Set<String>>? _progressPages;
 
+  Set<String>? _completedPages;
   Set<String> _verifiedPages = <String>{};
+  Set<String> _pagesRequireVerification = <String> {};
   List<int>? _progressSteps;
 
   DateTime? _pausedDateTime;
 
-  // Singletone instance
-  static final Gies _instance = Gies._internal();
-
-  factory Gies() {
-    return _instance;
-  }
-
-  Gies._internal();
+  // String checklistName();
 
   // Service
   @override
@@ -67,7 +73,8 @@ class Gies with Service implements NotificationsListener{
 
   @override
   Future<void> initService() async {
-    _navigationPages = Storage().giesNavPages ?? [];
+    _navigationPages = Storage().getCheckListNavPages(_contentName) ?? [];
+    _completedPages = Storage().getChecklistCompletedPages(_contentName) ?? Set<String>();
     _cacheFile = await _getCacheFile();
     _pages = await _loadContentJsonFromCache();
     if (_pages != null) {
@@ -132,9 +139,15 @@ class Gies with Service implements NotificationsListener{
   }
 
   Future<String?> _loadContentStringFromNet() async {
+    //TBD REMOVE
+    //TMP:
+    if(_contentName == "uiuc_student"){
+      return AppBundle.loadString('assets/uiucStudent.json');
+    }
+
     try {
       List<dynamic> result;
-      Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': ['gies']}), auth: Auth2());
+      Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': [_contentName]}), auth: Auth2());
       List<dynamic>? responseList = (response?.statusCode == 200) ? JsonUtils.decodeList(response?.body)  : null;
       if (responseList != null) {
         result = [];
@@ -178,6 +191,9 @@ class Gies with Service implements NotificationsListener{
           int? pageProgress = JsonUtils.intValue(page['progress']);
           if (pageProgress != null) {
             String? pageId = JsonUtils.stringValue(page['id']);
+            if(JsonUtils.stringValue(page['group_name']) != null && pageId != null){
+              _pagesRequireVerification.add(pageId);
+            }
             if ((pageId != null) && pageId.isNotEmpty && _pageCanComplete(page)) {
               Set<String>? progressPages = _progressPages![pageProgress];
               if (progressPages == null) {
@@ -197,7 +213,7 @@ class Gies with Service implements NotificationsListener{
     if (_navigationPages!.isEmpty) {
       String? rootPageId = _navigationRootPageId;
       if ((rootPageId != null) && rootPageId.isNotEmpty) {
-        Storage().giesNavPages = _navigationPages = [rootPageId];
+        Storage().setCheckListNavPages(_contentName, _navigationPages = [rootPageId]);
       }
     }
   }
@@ -233,7 +249,7 @@ class Gies with Service implements NotificationsListener{
       else {
         _navigationPages = [pushPageId];
       }
-      Storage().giesNavPages = _navigationPages;
+      Storage().setCheckListNavPages(_contentName, _navigationPages);
       NotificationService().notify(notifyPageChanged, pushPageId);
     }
   }
@@ -241,15 +257,19 @@ class Gies with Service implements NotificationsListener{
   void popPage() {
     if (1 < _navigationPages!.length) {
       _navigationPages!.removeLast();
-      Storage().giesNavPages = _navigationPages;
+      Storage().setCheckListNavPages(_contentName,  _navigationPages);
       NotificationService().notify(notifyPageChanged);
     }
   }
 
   void processButtonPage(Map<String, dynamic> button, {String? callerPageId}) {
-    String? pageId = callerPageId ?? Gies().currentPageId;
-    if (Gies().pageButtonCompletes(button)) {
+    String? pageId = callerPageId ?? currentPageId;
+    if (pageButtonCompletes(button)) {
       if ((pageId != null) && pageId.isNotEmpty) {
+        if(!(_completedPages?.contains(pageId) ?? false)){
+          _completedPages!.add(pageId);
+          Storage().setChecklistCompletedPages(_contentName, _completedPages);
+        }
         _verifyPage(pageId);
         NotificationService().notify(notifyPageCompleted, pageId);
       }
@@ -262,15 +282,15 @@ class Gies with Service implements NotificationsListener{
 
     String? pushPageId = JsonUtils.stringValue(button['page']);
     if ((pushPageId != null) && pushPageId.isNotEmpty) {
-      int? currentPageProgress = Gies().getPageProgress(currentPage);
+      int? currentPageProgress = getPageProgress(currentPage);
 
-      Map<String, dynamic>? pushPage = Gies().getPage(id: pushPageId);
-      int? pushPageProgress = Gies().getPageProgress(pushPage);
+      Map<String, dynamic>? pushPage = getPage(id: pushPageId);
+      int? pushPageProgress = getPageProgress(pushPage);
 
       if ((currentPageProgress != null) && (pushPageProgress != null) && (currentPageProgress < pushPageProgress)) {
-        while (Gies().isProgressStepCompleted(pushPageProgress)) {
+        while (isProgressStepCompleted(pushPageProgress)) {
           int nextPushPageProgress = pushPageProgress! + 1;
-          Map<String, dynamic>? nextPushPage = Gies().getPage(progress: nextPushPageProgress);
+          Map<String, dynamic>? nextPushPage = getPage(progress: nextPushPageProgress);
           String? nextPushPageId = (nextPushPage != null) ? JsonUtils.stringValue(nextPushPage['id']) : null;
           if ((nextPushPageId != null) && nextPushPageId.isNotEmpty) {
             pushPage = nextPushPage;
@@ -283,18 +303,28 @@ class Gies with Service implements NotificationsListener{
         }
       }
 
-      Gies().pushPage(pushPage);
+      this.pushPage(pushPage);
     }
   }
 
   bool isProgressStepCompleted(int? progressStep) {
     Set<String>? progressPages = (_progressPages != null) ? _progressPages![progressStep] : null;
-    return (progressPages == null) || _verifiedPages.containsAll(progressPages);
+    return (progressPages == null) ||
+        _verifiedPages.containsAll(progressPages) ||
+        (!_stepNeedVerification(progressStep) && (_completedPages?.containsAll(progressPages) ?? false)); //All steps should request verification (no mix of verification and completion) for inner steps TBD implement mix here if needed
+  }
+
+  bool _stepNeedVerification(int? step){
+    if(step == null) {return false;}
+
+    Set<String>? progressPages = (_progressPages != null) ? _progressPages![step] : null;
+    return (progressPages == null) ||
+        _doPagesNeedVerification(progressPages);
   }
 
   String? setCurrentNotes(List<dynamic>? notes, String? pageId) {
 
-    Map<String, dynamic>? currentPage =pageId!=null? Gies().getPage(id: pageId): Gies().currentPage;
+    Map<String, dynamic>? currentPage =pageId!=null? this.getPage(id: pageId): this.currentPage;
     String? currentPageId = (currentPage != null) ? JsonUtils.stringValue(currentPage['id']) : null;
     if ((notes != null) && (currentPageId != null)) {
       for (dynamic note in notes) {
@@ -362,16 +392,26 @@ class Gies with Service implements NotificationsListener{
         (groupsNames?.contains(groupName) ?? false);
   }
 
-  bool isPageVerified(String? pageId){
+  bool _isPageVerified(String? pageId){
     return pageId != null && _verifiedPages.contains(pageId);
+  }
+
+  bool _doPagesNeedVerification(Set<String?> pageIds){
+    return _pagesRequireVerification.containsAll(pageIds);
+  }
+
+  bool isPageCompleted(String? pageId){
+    if(StringUtils.isEmpty(pageId)){ return false;}
+
+    if(_doPagesNeedVerification({pageId})){
+      return _isPageVerified(pageId);
+    } else {
+      return _completedPages?.contains(pageId) ?? false;
+    }
   }
 
   List<dynamic>? get pages{
     return _pages;
-  }
-
-  Set<String> get verifiedPages{
-    return _verifiedPages;
   }
 
   List<dynamic>? get navigationPages{
@@ -431,26 +471,30 @@ class Gies with Service implements NotificationsListener{
     return false; //Remove Notes buttons if we don't support them anymore. Hide for now
   }
 
+  String get _cacheFileName => "$_contentName.json";
   //Utils
   bool _pageCanComplete(Map? page) {
-    // List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
-    // List<dynamic>? bnavigationButtons = (page != null) ? JsonUtils.listValue(page['navigation_buttons']) : null;
-    //
-    // if (buttons != null) {
-    //   for (dynamic button in buttons) {
-    //     if ((button is Map) && pageButtonCompletes(button)) {
-    //       return true;
-    //     }
-    //   }
-    // } else if (bnavigationButtons!=null){
-    //   for (dynamic button in bnavigationButtons) {
-    //     if ((button is Map) && pageButtonCompletes(button)) {
-    //       return true;
-    //     }
-    //   }
-    // }
-    // return false
-    return StringUtils.isNotEmpty(JsonUtils.stringValue(page?["group_name"]));
+    if(StringUtils.isNotEmpty(JsonUtils.stringValue(page?["group_name"]))){
+      return true;
+    }
+
+    List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
+    List<dynamic>? bnavigationButtons = (page != null) ? JsonUtils.listValue(page['navigation_buttons']) : null;
+
+    if (buttons != null) {
+      for (dynamic button in buttons) {
+        if ((button is Map) && pageButtonCompletes(button)) {
+          return true;
+        }
+      }
+    } else if (bnavigationButtons!=null){
+      for (dynamic button in bnavigationButtons) {
+        if ((button is Map) && pageButtonCompletes(button)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   bool pageButtonCompletes(Map button) {
@@ -489,4 +533,21 @@ class Gies with Service implements NotificationsListener{
       }
     }
   }
+}
+
+// Singleton instance wrappers
+class _GiesCheckListInstanceWrapper extends CheckList{
+  static final _GiesCheckListInstanceWrapper _instance = _GiesCheckListInstanceWrapper._internal();
+
+  factory _GiesCheckListInstanceWrapper() => _instance;
+
+  _GiesCheckListInstanceWrapper._internal() : super.fromName("gies");
+}
+
+class _StudentCheckListInstanceWrapper extends CheckList{
+  static final _StudentCheckListInstanceWrapper _instance = _StudentCheckListInstanceWrapper._internal();
+
+  factory _StudentCheckListInstanceWrapper() => _instance;
+
+  _StudentCheckListInstanceWrapper._internal() : super.fromName("uiuc_student");
 }

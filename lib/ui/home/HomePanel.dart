@@ -26,7 +26,6 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
-import 'package:illinois/ui/home/HomeGiesWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -57,6 +56,8 @@ import 'package:illinois/ui/home/HomeUpcomingEventsWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+import 'HomeCheckListWidget.dart';
 
 
 class HomePanel extends StatefulWidget {
@@ -155,7 +156,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         widget = HomeTwitterWidget(favoriteId: code, refreshController: _refreshController, dragAndDropHost: this,);
       }
       else if (code == 'gies') {
-        widget = HomeGiesWidget(favoriteId: code, refreshController: _refreshController, dragAndDropHost: this,);
+        widget = HomeCheckListWidget(favoriteId: code, contentKey: code, refreshController: _refreshController, dragAndDropHost: this);
+      }
+      else if (code == 'uiuc_student') {
+        widget = HomeCheckListWidget(favoriteId: code, contentKey: "uiuc_student", refreshController: _refreshController, dragAndDropHost: this);
       }
       else if (code == 'canvas') {
         widget = HomeCanvasCoursesWidget(refreshController: _refreshController, dragAndDropHost: this,);

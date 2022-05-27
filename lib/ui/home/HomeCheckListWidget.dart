@@ -3,35 +3,36 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Gies.dart';
+import 'package:illinois/service/CheckList.dart';
+import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/gies/GiesPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class HomeGiesWidget extends StatefulWidget{
+class HomeCheckListWidget extends StatefulWidget{
 
+  final String contentKey;
   final String? favoriteId;
   final StreamController<void>? refreshController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeGiesWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  const HomeCheckListWidget({Key? key, required this.contentKey, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _HomeGiesWidgetState();
+  State<StatefulWidget> createState() => _HomeCheckListWidgetState();
 
 }
 
-class _HomeGiesWidgetState extends State<HomeGiesWidget> implements NotificationsListener{
+class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements NotificationsListener{
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Gies.notifyPageChanged, Gies.notifyPageCompleted, Gies.notifyContentChanged]);
+    NotificationService().subscribe(this, [CheckList.notifyPageChanged, CheckList.notifyPageCompleted, CheckList.notifyContentChanged]);
   }
 
   @override
@@ -46,7 +47,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
     
       HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
         HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
-          title: Localization().getStringEx( 'widget.gies.title', 'iDegrees New Student Checklist'),
+          title: _title,
           child: _buildContent(),
           headerAxisAlignment: CrossAxisAlignment.start,
         ),
@@ -56,7 +57,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   }
 
   Widget _buildContent() {
-    if(Gies().isLoading){
+    if(CheckList(widget.contentKey).isLoading){
       return _buildLoadingContent();
     }
     if (!_isStarted) {
@@ -143,7 +144,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
                   textColor: Styles().colors!.fillColorPrimary,
                   onTap: _onTapContinue,
                 ),
-                !Gies().supportNotes ? Container() :
+                !CheckList(widget.contentKey).supportNotes ? Container() :
                 Column(children: [
                   Container(height: 12,),
                   RoundedButton(
@@ -191,12 +192,12 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   }
 
   void _onTapContinue(){
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GiesPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CheckListPanel(contentKey: widget.contentKey,)));
   }
 
   void _onTapViewNotes(){
     showDialog(context: context, builder: (BuildContext context) {
-        return GiesNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
+        return CheckListNotesWidget(contentKey: widget.contentKey ,notes: JsonUtils.decodeList(Storage().getChecklistNotes(widget.contentKey)) ?? []);
     });
   }
 
@@ -205,8 +206,8 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
     List<String> notCompleted = [];
     String completedNames = "";
     String notCompletedNames = "";
-    for(int stepId in Gies().progressSteps??[]){
-      if(Gies().isProgressStepCompleted(stepId)){
+    for(int stepId in CheckList(widget.contentKey).progressSteps??[]){
+      if(CheckList(widget.contentKey).isProgressStepCompleted(stepId)){
         completed.add(stepId.toString());
         completedNames+= StringUtils.isNotEmpty(completedNames)? ", " : "";
         completedNames+= stepId.toString();
@@ -235,18 +236,28 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   }
 
   int get _completedStpsCount {
-    return Gies().completedStepsCount;
+    return CheckList(widget.contentKey).completedStepsCount;
   }
 
   int get _stepsCount {
-    return Gies().progressSteps?.length ?? 0;
+    return CheckList(widget.contentKey).progressSteps?.length ?? 0;
+  }
+
+  String get _title {
+    if(widget.contentKey == "gies"){
+      return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');// TBD localize
+    } else if (widget.contentKey == "uiuc_student"){
+      return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist'); // TBD localize
+    }
+
+    return "";
   }
 
   @override
   void onNotification(String name, param) {
-    if(name == Gies.notifyPageChanged ||
-        name == Gies.notifyPageCompleted ||
-        name ==Gies.notifyContentChanged){
+    if(name == CheckList.notifyPageChanged ||
+        name == CheckList.notifyPageCompleted ||
+        name ==CheckList.notifyContentChanged){
       setState(() {});
     }
   }
