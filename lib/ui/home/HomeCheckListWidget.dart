@@ -47,7 +47,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
     
       HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
         HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
-          title: Localization().getStringEx( 'widget.gies.title', 'iDegrees New Student Checklist'),
+          title: _title,
           child: _buildContent(),
           headerAxisAlignment: CrossAxisAlignment.start,
         ),
@@ -241,6 +241,16 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
 
   int get _stepsCount {
     return CheckList(widget.contentKey).progressSteps?.length ?? 0;
+  }
+
+  String get _title {
+    if(widget.contentKey == "gies"){
+      return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');// TBD localize
+    } else if (widget.contentKey == "uiuc_student"){
+      return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist'); // TBD localize
+    }
+
+    return "";
   }
 
   @override

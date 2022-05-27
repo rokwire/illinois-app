@@ -48,7 +48,7 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
   Widget build(BuildContext context) {
     return  Scaffold(
       appBar: HeaderBar(
-        title: Localization().getStringEx('widget.gies.title', 'iDegrees New Student Checklist'),
+        title: _title,
       ),
       body: SingleChildScrollView(child:
       Column(children: <Widget>[
@@ -292,6 +292,16 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
   }
 
   String get giesUrl => '${DeepLink().appUrl}/gies';
+
+  String get _title {
+    if(widget.contentKey == "gies"){
+      return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');// TBD localize
+    } else if (widget.contentKey == "uiuc_student"){
+      return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist'); // TBD localize
+    }
+
+    return "";
+  }
 
 }
 
