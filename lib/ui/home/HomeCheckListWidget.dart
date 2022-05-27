@@ -3,7 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Gies.dart';
+import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
@@ -29,7 +29,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [CheckListService.notifyPageChanged, CheckListService.notifyPageCompleted, CheckListService.notifyContentChanged]);
+    NotificationService().subscribe(this, [CheckList.notifyPageChanged, CheckList.notifyPageCompleted, CheckList.notifyContentChanged]);
   }
 
   @override
@@ -83,7 +83,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   }
 
   Widget _buildContent() {
-    if(CheckListService(widget.contentKey).isLoading){
+    if(CheckList(widget.contentKey).isLoading){
       return _buildLoadingContent();
     }
     if (!_isStarted) {
@@ -177,7 +177,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                   textColor: Styles().colors!.fillColorPrimary,
                   onTap: _onTapContinue,
                 ),
-                !CheckListService(widget.contentKey).supportNotes ? Container() :
+                !CheckList(widget.contentKey).supportNotes ? Container() :
                 Column(children: [
                   Container(height: 12,),
                   RoundedButton(
@@ -241,8 +241,8 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
     List<String> notCompleted = [];
     String completedNames = "";
     String notCompletedNames = "";
-    for(int stepId in CheckListService(widget.contentKey).progressSteps??[]){
-      if(CheckListService(widget.contentKey).isProgressStepCompleted(stepId)){
+    for(int stepId in CheckList(widget.contentKey).progressSteps??[]){
+      if(CheckList(widget.contentKey).isProgressStepCompleted(stepId)){
         completed.add(stepId.toString());
         completedNames+= StringUtils.isNotEmpty(completedNames)? ", " : "";
         completedNames+= stepId.toString();
@@ -271,18 +271,18 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   }
 
   int get _completedStpsCount {
-    return CheckListService(widget.contentKey).completedStepsCount;
+    return CheckList(widget.contentKey).completedStepsCount;
   }
 
   int get _stepsCount {
-    return CheckListService(widget.contentKey).progressSteps?.length ?? 0;
+    return CheckList(widget.contentKey).progressSteps?.length ?? 0;
   }
 
   @override
   void onNotification(String name, param) {
-    if(name == CheckListService.notifyPageChanged ||
-        name == CheckListService.notifyPageCompleted ||
-        name ==CheckListService.notifyContentChanged){
+    if(name == CheckList.notifyPageChanged ||
+        name == CheckList.notifyPageCompleted ||
+        name ==CheckList.notifyContentChanged){
       setState(() {});
     }
   }

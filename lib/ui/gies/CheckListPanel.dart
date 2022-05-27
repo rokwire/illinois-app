@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Gies.dart';
+import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
@@ -35,7 +35,7 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [CheckListService.notifyPageChanged, CheckListService.notifyContentChanged]);
+    NotificationService().subscribe(this, [CheckList.notifyPageChanged, CheckList.notifyContentChanged]);
   }
 
   @override
@@ -87,7 +87,7 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
             _buildProgress(),
             ),
             Expanded(child:
-              !CheckListService(widget.contentKey).supportNotes? Container() :
+              !CheckList(widget.contentKey).supportNotes? Container() :
               Align(alignment: Alignment.centerRight, child:
                 InkWell(onTap: () => _onTapNotes(), child:
                   Padding(padding: EdgeInsets.only(top: 14, bottom: 4), child:
@@ -104,15 +104,15 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
   Widget _buildProgress() {
 
     List<Widget> progressWidgets = <Widget>[];
-    if (CheckListService(widget.contentKey).progressSteps != null) {
+    if (CheckList(widget.contentKey).progressSteps != null) {
       int? currentPageProgress = _currentPageProgress;
 
-      for (int progressStep in CheckListService(widget.contentKey).progressSteps!) {
+      for (int progressStep in CheckList(widget.contentKey).progressSteps!) {
 
         Color textColor;
         String? textFamily;
         bool showCheckIcon = false;
-        bool progressStepCompleted = CheckListService(widget.contentKey).isProgressStepCompleted(progressStep);
+        bool progressStepCompleted = CheckList(widget.contentKey).isProgressStepCompleted(progressStep);
         bool currentStep = (currentPageProgress != null) && (progressStep == currentPageProgress);
 
         if (progressStepCompleted) {
@@ -179,7 +179,7 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
 
   Widget _buildContent() {
     return Container(color: Colors.white, padding: EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0), child:
-      _CheckListPageWidget(contentKey: widget.contentKey, key: _pageKey, page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < CheckListService(widget.contentKey).navigationPages!.length) ? _onTapBack : null,onTapNotes: _onTapNotes, showTitle: false,),
+      _CheckListPageWidget(contentKey: widget.contentKey, key: _pageKey, page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < CheckList(widget.contentKey).navigationPages!.length) ? _onTapBack : null,onTapNotes: _onTapNotes, showTitle: false,),
     );
   }
 
@@ -198,7 +198,7 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
           (giesUri.path == uri.path))
       {
         String? pageId = JsonUtils.stringValue(uri.queryParameters['page_id']);
-        CheckListService(widget.contentKey).pushPage(CheckListService(widget.contentKey).getPage(id: pageId));
+        CheckList(widget.contentKey).pushPage(CheckList(widget.contentKey).getPage(id: pageId));
       }
       else if (UrlUtils.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
@@ -210,18 +210,18 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
 
   void _onTapButton(Map<String, dynamic> button, String pageId) {
     _processButtonPopup(button, pageId).then((_) {
-      CheckListService(widget.contentKey).processButtonPage(button, callerPageId: pageId);
+      CheckList(widget.contentKey).processButtonPage(button, callerPageId: pageId);
     });
   }
 
   void _onTapBack() {
-    CheckListService(widget.contentKey).popPage();
+    CheckList(widget.contentKey).popPage();
   }
 
   void _onTapProgress(int progress) {
     int? currentPageProgress = _currentPageProgress;
     if (currentPageProgress != progress) {
-      CheckListService(widget.contentKey).pushPage(CheckListService(widget.contentKey).getPage(progress: progress));
+      CheckList(widget.contentKey).pushPage(CheckList(widget.contentKey).getPage(progress: progress));
     }
   }
 
@@ -239,7 +239,7 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
       }
       else if (popupId == 'current-notes') {
         List<dynamic> notes = JsonUtils.decodeList(Storage().giesNotes) ?? [];
-        String? focusNodeId =  CheckListService(widget.contentKey).setCurrentNotes(notes, pageId,);
+        String? focusNodeId =  CheckList(widget.contentKey).setCurrentNotes(notes, pageId,);
         return CheckListNotesWidget(notes: notes, focusNoteId: focusNodeId,);
       }
       else {
@@ -267,11 +267,11 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
 
   @override
   void onNotification(String name, param) {
-    if(name == CheckListService.notifyContentChanged){
+    if(name == CheckList.notifyContentChanged){
       if(mounted) {
         setState(() {});
       }
-    } else if(name == CheckListService.notifyPageChanged){
+    } else if(name == CheckList.notifyPageChanged){
       if(mounted) {
         setState(() {});
       }
@@ -284,11 +284,11 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
   }
 
   int? get _currentPageProgress {
-    return CheckListService(widget.contentKey).getPageProgress(_currentPage);
+    return CheckList(widget.contentKey).getPageProgress(_currentPage);
   }
 
   Map<String, dynamic> get _currentPage {
-    return CheckListService(widget.contentKey).getPage(id: CheckListService(widget.contentKey).currentPageId) ?? {};
+    return CheckList(widget.contentKey).getPage(id: CheckList(widget.contentKey).currentPageId) ?? {};
   }
 
   String get giesUrl => '${DeepLink().appUrl}/gies';
@@ -458,7 +458,7 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
           title:"${JsonUtils.stringValue(widget.page!["step_title"])}: ${widget.page!["title"]}",
           onTapLink: widget.onTapLink,
           onTapButton: widget.onTapButton,
-          onTapBack: (1 < CheckListService(widget.contentKey).navigationPages!.length) ? widget.onTapBack : null,
+          onTapBack: (1 < CheckList(widget.contentKey).navigationPages!.length) ? widget.onTapBack : null,
           onTapNotes: widget.onTapNotes,
           contentKey: widget.contentKey,
       ),
@@ -739,9 +739,9 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      CheckListService.notifyPageChanged,
-      CheckListService.notifyPageCompleted,
-      CheckListService.notifySwipeToPage
+      CheckList.notifyPageChanged,
+      CheckList.notifyPageCompleted,
+      CheckList.notifySwipeToPage
     ]);
     _currentPage = _initialPageIndex;
   }
@@ -786,7 +786,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
       }
     }
 
-    if(CheckListService(widget.contentKey).supportNotes) {
+    if(CheckList(widget.contentKey).supportNotes) {
       tabs.add(
         GestureDetector(onTap: _onTapNotes,
           child: Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child:
@@ -813,7 +813,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   Widget _buildTab({required int index, dynamic tabData}){
     String? tabKey = JsonUtils.stringValue(tabData["key"]);
     String? pageId = JsonUtils.stringValue(tabData["page_id"]);
-    bool isCompleted = CheckListService(widget.contentKey).isPageVerified(pageId);
+    bool isCompleted = CheckList(widget.contentKey).isPageVerified(pageId);
     bool isCurrentTab = _currentPage == index;
     Color textColor = Colors.white;
     String? textFamily = Styles().fontFamilies!.regular;
@@ -883,7 +883,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
               boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
               borderRadius: BorderRadius.all(Radius.circular(4))
           ),
-            child:_CheckListPageWidget(contentKey: widget.contentKey, page: CheckListService(widget.contentKey).getPage(id: tab!["page_id"]),
+            child:_CheckListPageWidget(contentKey: widget.contentKey, page: CheckList(widget.contentKey).getPage(id: tab!["page_id"]),
               onTapBack: widget.onTapBack,
               onTapButton: (button, id){
                 _onTapButton(button, id);
@@ -967,7 +967,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
       for (int index = 0; index<widget.tabs!.length; index++) {
         dynamic tabData = widget.tabs![index];
         String? pageId = tabData != null ? JsonUtils.stringValue(tabData["page_id"]) : null;
-        if(pageId!=null && !CheckListService(widget.contentKey).isPageVerified(pageId)){
+        if(pageId!=null && !CheckList(widget.contentKey).isPageVerified(pageId)){
           return index;
         }
       }
@@ -978,15 +978,15 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
 
   @override
   void onNotification(String name, param) {
-    if(name == CheckListService.notifyPageChanged){
+    if(name == CheckList.notifyPageChanged){
       if(mounted)
         setState(() {});
     }
-    else if(name == CheckListService.notifyPageCompleted){
+    else if(name == CheckList.notifyPageCompleted){
       if(mounted)
         setState(() {}); //Need to reset tab color
     }
-    else if(name == CheckListService.notifySwipeToPage){
+    else if(name == CheckList.notifySwipeToPage){
       if(mounted) {
         if (param is String){
           _swipeToPage(param);
