@@ -37,7 +37,7 @@ import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'HomeSlantHeader.dart';
+import 'HomeWidgets.dart';
 
 class HomeCampusToolsWidget extends StatefulWidget {
 
@@ -155,13 +155,12 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
       Row row = Row(children: widgets.sublist(startRowIndex, endIndex));
       rows.add(row);
     }
-    return Column(
-      children: <Widget>[
-        HomeSlantHeader(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging, title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
-          children: rows,),
-        Container(height: 48,),
-      ],
-    );
+
+    rows.add(Container(height: 48,),);
+
+    return HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+      title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
+      child: Column(children: rows,),);
   }
 
   void _updateContentListCodes() {

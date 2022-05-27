@@ -20,7 +20,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/home/HomeSlantHeader.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -99,12 +99,10 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(_reminderItems), child:
-      Column(children: [
-          HomeSlantHeader(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
-            title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
-            children: _buildRemindersList()
-          ),
-        ]),
+      HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+        title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
+        child: Column(children: _buildRemindersList())
+      ),
     );
   }
 

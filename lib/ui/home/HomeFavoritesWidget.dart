@@ -19,7 +19,7 @@ import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/home/HomeSlantHeader.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -83,17 +83,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   @override
   Widget build(BuildContext context) {
-    bool showMoreButton = (_favorites != null) && (limit < _favorites!.length);
-    return Column(children: <Widget>[
-      HomeSlantHeader(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
-        title: headingTitle,
-        children: _buildContent()),
-      Visibility(visible: showMoreButton, child:
-        Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child:
-          SmallRoundedButton(label: _showAll ? Localization().getStringEx('panel.favorites.button.less', "Show Less") : Localization().getStringEx('panel.favorites.button.all', "Show All"), onTap: _onViewAllTapped,),
-        ),
-      )
-    ],);
+    return HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+      title: headingTitle,
+      child: Column(children: _buildContent()),);
   }
 
   List<Widget> _buildContent() {
@@ -148,6 +140,14 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         if (i < (visibleCount - 1)) {
           widgets.add(Container(height: 12,));
         }
+      }
+
+      if (limit < _favorites!.length) {
+        widgets.add(
+          Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child:
+            SmallRoundedButton(label: _showAll ? Localization().getStringEx('panel.favorites.button.less', "Show Less") : Localization().getStringEx('panel.favorites.button.all', "Show All"), onTap: _onViewAllTapped,),
+          ),
+        );
       }
     }
     return widgets;

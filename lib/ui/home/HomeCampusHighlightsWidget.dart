@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/home/HomeSlantHeader.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -85,12 +85,10 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(_promotedItems), child:
-      Column(children: [
-          HomeSlantHeader(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
-            title: Localization().getStringEx('widget.home_campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
-            children: _buildPromotedList()
-          ),
-        ]),
+      HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+        title: Localization().getStringEx('widget.home_campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
+        child: Column(children: _buildPromotedList(),) 
+      ),
     );
   }
 

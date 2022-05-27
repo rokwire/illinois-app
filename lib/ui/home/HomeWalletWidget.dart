@@ -9,7 +9,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/home/HomeSlantHeader.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
@@ -52,9 +52,9 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantHeader(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
+    return HomeSlantWidget(favoriteId: widget.favoriteId, scrollableDragging: widget.scrollableDragging,
       title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
-      children: _buildCommandsList(),);
+      child: Column(children: _buildCommandsList(),));
   }
 
   List<Widget> _buildCommandsList() {

@@ -21,7 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/home/HomeSlantHeader.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -116,7 +116,6 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
 class _RecentItemsList extends StatelessWidget{
   final String? heading;
-  final String? subTitle;
   final List<RecentItem>? items;
   final int limit;
   final String? moreButtonLabel;
@@ -126,48 +125,47 @@ class _RecentItemsList extends StatelessWidget{
 
 
   const _RecentItemsList(
-      {Key? key, this.items, this.heading, this.subTitle,
+      {Key? key, this.items, this.heading,
         this.tapMore, this.limit = 3,
         this.moreButtonLabel, this.favoriteId, this.scrollableDragging})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool showMoreButton = ((tapMore != null) && (limit < (items?.length ?? 0)));
-    String? moreLabel = StringUtils.isEmpty(moreButtonLabel)? Localization().getStringEx('widget.home_recent_items.button.more.title', 'View All'): moreButtonLabel;
-    return items!=null && items!.isNotEmpty? Column(
-      children: <Widget>[
-        HomeSlantHeader(favoriteId: favoriteId, scrollableDragging: scrollableDragging,
-            title: heading,
-            subTitle: subTitle,
-            children: _buildListItems(context)
-        ),
-        !showMoreButton?Container():
-        Container(height: 20,),
-        !showMoreButton?Container():
-        SmallRoundedButton(
-          label: moreLabel ?? '',
-          hint: Localization().getStringEx('widget.home_recent_items.button.more.hint', ''),
-          onTap: tapMore ?? (){},),
-        Container(height: 16,),
-      ],
-    ) : Container();
-
+    return Visibility(visible: CollectionUtils.isNotEmpty(items), child:
+      HomeSlantWidget(favoriteId: favoriteId, scrollableDragging: scrollableDragging,
+          title: heading,
+          child: Column(children: _buildListItems(context),)
+      ),
+    );
   }
 
   List<Widget> _buildListItems(BuildContext context){
     List<Widget> widgets =  [];
-    if(items?.isNotEmpty??false){
-      int visibleCount = items!.length<limit?items!.length:limit;
-      for(int i = 0 ; i<visibleCount; i++) {
+    if (items?.isNotEmpty??false){
+      
+      int visibleCount = (items!.length < limit) ? items!.length : limit;
+      for (int i = 0 ; i < visibleCount; i++) {
         RecentItem item = items![i];
         if (0 < widgets.length) {
           widgets.add(Container(height: 4));
         }
-        widgets.add(_buildItemCart(
-            recentItem: item, context: context));
+        widgets.add(_buildItemCart(recentItem: item, context: context));
       }
+
+      if ((tapMore != null) && (limit < items!.length)) {
+        widgets.add(Padding(padding: EdgeInsets.only(top: 16), child:
+          SmallRoundedButton(
+            label: StringUtils.isNotEmpty(moreButtonLabel) ? moreButtonLabel! : Localization().getStringEx('widget.home_recent_items.button.more.title', 'View All'),
+            hint: Localization().getStringEx('widget.home_recent_items.button.more.hint', ''),
+            onTap: tapMore ?? (){},),
+        ));
+      }
+      
+      widgets.add(Container(height: 16,));
     }
+
+    
     return widgets;
   }
 
