@@ -232,7 +232,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
 
   void _onTapViewNotes(){
     showDialog(context: context, builder: (BuildContext context) {
-        return CheckListNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
+        return CheckListNotesWidget(contentKey: widget.contentKey ,notes: JsonUtils.decodeList(Storage().getChecklistNotes(widget.contentKey)) ?? []);
     });
   }
 

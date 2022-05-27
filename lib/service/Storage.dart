@@ -371,38 +371,38 @@ class Storage extends rokwire.Storage {
   @override String get calendarEnablePromptKey => 'calendar_enabled_to_prompt';
 
   //////////////////
-  // GIES
+  // Checklist
 
-  static const String _giesNavPagesKey  = 'gies_nav_pages';
+  static const String _navPagesKey  = 'checklist_nav_pages';
 
-  List<String>? get giesNavPages {
-    return getStringListWithName(_giesNavPagesKey);
+  List<String>? getCheckListNavPages(String contentKey) {
+    return getStringListWithName("${contentKey}_$_navPagesKey");
   }
 
-  set giesNavPages(List<String>? value) {
-    setStringListWithName(_giesNavPagesKey, value);
+  setCheckListNavPages(String contentKey, List<String>? value) {
+    setStringListWithName("${contentKey}_$_navPagesKey", value);
   }
 
-  static const String _giesCompletedPagesKey  = 'gies_completed_pages';
+  static const String _checkListCompletedPagesKey  = 'checklist_completed_pages';
   
-  Set<String>? get giesCompletedPages {
-    List<String>? pagesList = getStringListWithName(_giesCompletedPagesKey);
+  Set<String>? getChecklistCompletedPages(String contentKey) {
+    List<String>? pagesList = getStringListWithName("${contentKey}_$_checkListCompletedPagesKey");
     return (pagesList != null) ? Set.from(pagesList) : null;
   }
 
-  set giesCompletedPages(Set<String>? value) {
+  setChecklistCompletedPages(String contentKey, Set<String>? value) {
     List<String>? pagesList = (value != null) ? List.from(value) : null;
-    setStringListWithName(_giesCompletedPagesKey, pagesList);
+    setStringListWithName("${contentKey}_$_checkListCompletedPagesKey", pagesList);
   }
 
-  static const String _giesNotesKey = 'gies_notes';
+  static const String _giesNotesKey = 'checklist_notes';
 
-  String? get giesNotes {
-    return getStringWithName(_giesNotesKey);
+  String? getChecklistNotes(String contentKey) {
+    return getStringWithName("${contentKey}_$_giesNotesKey");
   }
 
-  set giesNotes(String? value) {
-    setStringWithName(_giesNotesKey, value);
+  setChecklistNotes(String contentKey, String? value) {
+    setStringWithName("${contentKey}_$_giesNotesKey", value);
   }
 
   //Groups

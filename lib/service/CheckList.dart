@@ -73,8 +73,8 @@ abstract class CheckList with Service implements NotificationsListener{
 
   @override
   Future<void> initService() async {
-    _navigationPages = Storage().giesNavPages ?? [];
-    _completedPages = Storage().giesCompletedPages ?? Set<String>();
+    _navigationPages = Storage().getCheckListNavPages(_contentName) ?? [];
+    _completedPages = Storage().getChecklistCompletedPages(_contentName) ?? Set<String>();
     _cacheFile = await _getCacheFile();
     _pages = await _loadContentJsonFromCache();
     if (_pages != null) {
@@ -213,7 +213,7 @@ abstract class CheckList with Service implements NotificationsListener{
     if (_navigationPages!.isEmpty) {
       String? rootPageId = _navigationRootPageId;
       if ((rootPageId != null) && rootPageId.isNotEmpty) {
-        Storage().giesNavPages = _navigationPages = [rootPageId];
+        Storage().setCheckListNavPages(_contentName, _navigationPages = [rootPageId]);
       }
     }
   }
@@ -249,7 +249,7 @@ abstract class CheckList with Service implements NotificationsListener{
       else {
         _navigationPages = [pushPageId];
       }
-      Storage().giesNavPages = _navigationPages;
+      Storage().setCheckListNavPages(_contentName, _navigationPages);
       NotificationService().notify(notifyPageChanged, pushPageId);
     }
   }
@@ -257,7 +257,7 @@ abstract class CheckList with Service implements NotificationsListener{
   void popPage() {
     if (1 < _navigationPages!.length) {
       _navigationPages!.removeLast();
-      Storage().giesNavPages = _navigationPages;
+      Storage().setCheckListNavPages(_contentName,  _navigationPages);
       NotificationService().notify(notifyPageChanged);
     }
   }
@@ -268,7 +268,7 @@ abstract class CheckList with Service implements NotificationsListener{
       if ((pageId != null) && pageId.isNotEmpty) {
         if(!(_completedPages?.contains(pageId) ?? false)){
           _completedPages!.add(pageId);
-          Storage().giesCompletedPages = _completedPages;
+          Storage().setChecklistCompletedPages(_contentName, _completedPages);
         }
         _verifyPage(pageId);
         NotificationService().notify(notifyPageCompleted, pageId);

@@ -235,12 +235,12 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
   Future<void> _showPopup(String popupId, String pageId) async {
     return showDialog(context: context, builder: (BuildContext context) {
       if (popupId == 'notes') {
-        return CheckListNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
+        return CheckListNotesWidget(contentKey: widget.contentKey, notes: JsonUtils.decodeList(Storage().getChecklistNotes(widget.contentKey)) ?? []);
       }
       else if (popupId == 'current-notes') {
-        List<dynamic> notes = JsonUtils.decodeList(Storage().giesNotes) ?? [];
+        List<dynamic> notes = JsonUtils.decodeList(Storage().getChecklistNotes(widget.contentKey)) ?? [];
         String? focusNodeId =  CheckList(widget.contentKey).setCurrentNotes(notes, pageId,);
-        return CheckListNotesWidget(notes: notes, focusNoteId: focusNodeId,);
+        return CheckListNotesWidget(contentKey: widget.contentKey, notes: notes, focusNoteId: focusNodeId,);
       }
       else {
         return Container();
@@ -558,8 +558,9 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
 class CheckListNotesWidget extends StatefulWidget {
   final List<dynamic>? notes;
   final String? focusNoteId;
+  final String contentKey;
 
-  CheckListNotesWidget({this.notes, this.focusNoteId});
+  CheckListNotesWidget({this.notes, this.focusNoteId, required this.contentKey});
   _CheckListNotesWidgetState createState() => _CheckListNotesWidgetState();
 }
 
@@ -706,7 +707,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
       }
     }
 
-    Storage().giesNotes = JsonUtils.encode(widget.notes);
+    Storage().setChecklistNotes(widget.contentKey, JsonUtils.encode(widget.notes));
     Navigator.of(context).pop();
   }
 
