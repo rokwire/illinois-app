@@ -174,7 +174,7 @@ abstract class CheckList with Service implements NotificationsListener{
       _loadPageVerification();
       _ensureNavigationPages();
       _saveContentStringToCache(contentString);
-      NotificationService().notify(notifyContentChanged);
+      NotificationService().notify(notifyContentChanged, {_contentName: ""});
     }
   }
 
@@ -250,7 +250,7 @@ abstract class CheckList with Service implements NotificationsListener{
         _navigationPages = [pushPageId];
       }
       Storage().setCheckListNavPages(_contentName, _navigationPages);
-      NotificationService().notify(notifyPageChanged, pushPageId);
+      NotificationService().notify(notifyPageChanged, {_contentName: pushPageId});
     }
   }
 
@@ -258,7 +258,7 @@ abstract class CheckList with Service implements NotificationsListener{
     if (1 < _navigationPages!.length) {
       _navigationPages!.removeLast();
       Storage().setCheckListNavPages(_contentName,  _navigationPages);
-      NotificationService().notify(notifyPageChanged);
+      NotificationService().notify(notifyPageChanged, {_contentName: ""});
     }
   }
 
@@ -271,13 +271,13 @@ abstract class CheckList with Service implements NotificationsListener{
           Storage().setChecklistCompletedPages(_contentName, _completedPages);
         }
         _verifyPage(pageId);
-        NotificationService().notify(notifyPageCompleted, pageId);
+        NotificationService().notify(notifyPageCompleted, {_contentName: pageId});
       }
     }
 
     String? swipeToId = JsonUtils.stringValue(button["swipe_page"]); //This is _StepsHorizontalListWidget action
     if(swipeToId!=null) {
-      NotificationService().notify(notifySwipeToPage, swipeToId);
+      NotificationService().notify(notifySwipeToPage, {_contentName: swipeToId});
     }
 
     String? pushPageId = JsonUtils.stringValue(button['page']);
@@ -367,14 +367,14 @@ abstract class CheckList with Service implements NotificationsListener{
       if(!_verifiedPages.contains(page)) {
         _verifiedPages.add(page);
         if(notify){
-          NotificationService().notify(notifyPageCompleted);
+          NotificationService().notify(notifyPageCompleted, {_contentName: page});
         }
       }
     } else {
       if(_verifiedPages.contains(page)){
         _verifiedPages.remove(page);
         if(notify){
-          NotificationService().notify(notifyPageCompleted);
+          NotificationService().notify(notifyPageCompleted, {_contentName: page});
         }
       }
     }

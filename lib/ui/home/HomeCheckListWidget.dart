@@ -258,7 +258,9 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
     if(name == CheckList.notifyPageChanged ||
         name == CheckList.notifyPageCompleted ||
         name ==CheckList.notifyContentChanged){
-      setState(() {});
+      if (param != null&& param is Map<String, dynamic> && param.containsKey(widget.contentKey)) {
+        setState(() {});
+      }
     }
   }
 

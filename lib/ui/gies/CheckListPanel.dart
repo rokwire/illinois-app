@@ -268,12 +268,16 @@ class _CheckListPanelState extends State<CheckListPanel> implements Notification
   @override
   void onNotification(String name, param) {
     if(name == CheckList.notifyContentChanged){
-      if(mounted) {
-        setState(() {});
+      if (param != null&& param is Map<String, dynamic> && param.containsKey(widget.contentKey)) {
+        if (mounted) {
+          setState(() {});
+        }
       }
     } else if(name == CheckList.notifyPageChanged){
-      if(mounted) {
-        setState(() {});
+      if (param != null&& param is Map<String, dynamic> && param.containsKey(widget.contentKey)) {
+        if (mounted) {
+          setState(() {});
+        }
       }
       _pageKey = GlobalKey();// reset page
       if(_titleKey.currentContext!=null) {
@@ -990,17 +994,23 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   @override
   void onNotification(String name, param) {
     if(name == CheckList.notifyPageChanged){
-      if(mounted)
-        setState(() {});
+      if (param != null&& param is Map<String, dynamic> && param.containsKey(widget.contentKey)) {
+        if (mounted)
+          setState(() {});
+      }
     }
     else if(name == CheckList.notifyPageCompleted){
-      if(mounted)
-        setState(() {}); //Need to reset tab color
+      if (param != null&& param is Map<String, dynamic> && param.containsKey(widget.contentKey)) {
+        if (mounted)
+          setState(() {}); //Need to reset tab color
+      }
     }
     else if(name == CheckList.notifySwipeToPage){
-      if(mounted) {
-        if (param is String){
-          _swipeToPage(param);
+      if (param != null&& param is Map<String, dynamic>){
+        if(param.containsKey(widget.contentKey)){
+          if(mounted) {
+            _swipeToPage(param[widget.contentKey]);
+          }
         }
       }//Need to reset tab color
     }
