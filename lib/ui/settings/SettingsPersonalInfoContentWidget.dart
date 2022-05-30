@@ -20,11 +20,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
+import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -82,7 +84,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return Column(children: <Widget>[
       Container(child: Column(children: [_buildProfilePicture(), _buildInfoContent()])),
       _buildAccountManagementOptions(),
-      Container(height: 16)
+      _buildDeleteMyAccount()
     ]);
   }
 
@@ -271,7 +273,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   Widget _buildShibbolethAccountManagementOptions() {
     return
       Padding(
-        padding: EdgeInsets.symmetric( vertical: 5, horizontal: 16),
+        padding: EdgeInsets.symmetric(vertical: 5),
         child: RoundedButton(
           label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
           hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
@@ -285,10 +287,10 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   }
 
   Widget _buildPhoneOrEmailAccountManagementOptions() {
-    return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return Container(child:
       Row(children: <Widget>[
         Expanded(child:
-          Padding(padding: EdgeInsets.symmetric( vertical: 5), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 5), child:
             RoundedButton(
               label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
               hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
@@ -304,7 +306,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         ),
         Container(width: 12,),
         Expanded(child:
-          Padding(padding: EdgeInsets.symmetric( vertical: 5), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 5), child:
             RoundedButton(
               label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
               hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
@@ -589,6 +591,62 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       }
     });
   }
+
+  Widget _buildDeleteMyAccount() {
+    return Padding(padding: EdgeInsets.only(top: 24, bottom: 12), child:
+    RoundedButton(
+        backgroundColor: Styles().colors!.white,
+        borderColor: Styles().colors!.white,
+        textColor: UiColors.fromHex("#f54400"),
+        fontSize: 16,
+        fontFamily: Styles().fontFamilies!.regular,
+        label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
+        hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
+        borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+        onTap: _onTapDeleteData
+      )
+    );
+  }
+
+  void _onTapDeleteData() async {
+    final String groupsSwitchTitle = Localization().getStringEx('panel.settings.privacy_center.delete_account.contributions.delete.msg', 'Please delete all my contributions.');
+    int userPostCount = await Groups().getUserPostCount();
+    bool contributeInGroups = userPostCount > 0;
+
+    SettingsDialog.show(context,
+        title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Delete your account?"),
+        message: [
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies!.bold)),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
+          TextSpan(text: contributeInGroups?
+          Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, and events) or leave them for others to see.") :
+          ""
+          ),
+        ],
+        options:contributeInGroups ? [groupsSwitchTitle] : null,
+        initialOptionsSelection:contributeInGroups ?  [groupsSwitchTitle] : [],
+        continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
+        onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
+          progressController(loading: true);
+          if(selectedValues.contains(groupsSwitchTitle)){
+            Groups().deleteUserData();
+          }
+          _deleteUserData().then((_){
+            progressController(loading: false);
+            Navigator.pop(context);
+          });
+
+        },
+        longButtonTitle: true
+    );
+  }
+
+  Future<void> _deleteUserData() async {
+    Analytics().logAlert(text: "Remove My Information", selection: "Yes");
+    await Auth2().deleteUser();
+  }
+
 
   bool get _canSave{
     return _isEmailChanged || _isNameChanged;
