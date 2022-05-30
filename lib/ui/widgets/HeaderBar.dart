@@ -240,15 +240,16 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
 class RootHeaderBar extends StatelessWidget implements PreferredSizeWidget {
 
   final String? title;
+  final bool? showActions;
 
-  RootHeaderBar({Key? key, this.title}) : super(key: key);
+  RootHeaderBar({Key? key, this.title, this.showActions = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => AppBar(
     backgroundColor: Styles().colors?.fillColorPrimaryVariant,
     leading: _buildHeaderHomeButton(),
     title: _buildHeaderTitle(),
-    actions: _buildHeaderActions(),
+    actions: (showActions == true) ? _buildHeaderActions() : null,
   );
 
   // PreferredSizeWidget
