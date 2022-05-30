@@ -44,7 +44,7 @@
 
 		"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 		
-		"features": ["authentication", "converge", "create_poll", "mtd_bus_number", "parking_lot_directions", "gies"],
+		"features": ["authentication", "converge", "create_poll", "mtd_bus_number", "parking_lot_directions", "gies", "uiuc_student"],
 		
 		"launch":["emergency"]
 		
@@ -78,6 +78,7 @@
 			"safer"                                  : ["NOT", "Gies Online Programs"],
 			"personal_information.on_campus"         : ["NOT", "Gies Online Programs"],
 			"gies"                                   : ["Gies Online Programs"],
+			"uiuc_student"                           : ["2022 New Students"],
 			"canvas"                                 : ["Canvas Beta"],
 			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", "Gies Online Programs"]]
 		},
@@ -120,6 +121,7 @@
 		"auth": {
 			"connect"                             : { "loggedIn": false },
 			"gies"                                : { "shibbolethLoggedIn": true },
+			"uiuc_student"                        : { "shibbolethLoggedIn": true },
 			"canvas"                              : { "shibbolethLoggedIn": true },
 			"laundry"                             : { "shibbolethLoggedIn": true },
 			"laundry_favs"                        : { "shibbolethLoggedIn": true },
