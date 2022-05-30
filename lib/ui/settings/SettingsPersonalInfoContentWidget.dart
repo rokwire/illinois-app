@@ -80,25 +80,27 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
-      Container(child: Column(children: [_buildInfoContent(), _buildProfilePicture()])),
+      Container(child: Column(children: [_buildProfilePicture(), _buildInfoContent()])),
       _buildAccountManagementOptions(),
       Container(height: 16)
     ]);
   }
 
   Widget _buildInfoContent() {
+    late Widget contentWidget;
     if (Auth2().isOidcLoggedIn) {
-      return _buildShibbolethInfoContent();
+      contentWidget = _buildShibbolethInfoContent();
     }
     else if (Auth2().isPhoneLoggedIn) {
-      return _buildPhoneVerifiedInfoContent();
+      contentWidget = _buildPhoneVerifiedInfoContent();
     }
     else if (Auth2().isEmailLoggedIn) {
-      return _buildEmailLoginInfoContent();
+      contentWidget = _buildEmailLoginInfoContent();
     }
     else {
-      return Container();
+      contentWidget = Container();
     }
+    return Padding(padding: EdgeInsets.only(bottom: 25), child: contentWidget);
   }
 
   Widget _buildShibbolethInfoContent(){
@@ -372,14 +374,6 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       contentWidget = Padding(
           padding: EdgeInsets.only(bottom: 25),
           child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Visibility(
-                visible: !_hasProfilePicture,
-                child: Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: _buildProfileImageButton(
-                        Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Picture"),
-                        Localization().getStringEx("panel.profile_info.button.profile_picture.hint", ""),
-                        _onTapProfilePicture))),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Visibility(
                   visible: _hasProfilePicture,
@@ -408,7 +402,15 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                           Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"),
                           Localization().getStringEx("panel.profile_info.button.picture.delete.hint", "Delete profile picture"),
                           _onTapDeletePicture)))
-            ])
+            ]),
+            Visibility(
+                visible: !_hasProfilePicture,
+                child: Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: _buildProfileImageButton(
+                        Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Picture"),
+                        Localization().getStringEx("panel.profile_info.button.profile_picture.hint", ""),
+                        _onTapProfilePicture)))
           ]));
     }
     return Padding(padding: EdgeInsets.only(top: 25), child: contentWidget);
