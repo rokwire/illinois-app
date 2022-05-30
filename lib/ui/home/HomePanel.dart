@@ -254,10 +254,14 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     if ((homeFavorites != null) && homeFavorites.isNotEmpty) {
       return List.from(homeFavorites);
     }
-    else {
-      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home'));
-      return (fullContent != null) ? List.from(fullContent) : <String>[];
+    
+    List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home'));
+    if (fullContent != null) {
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName, LinkedHashSet<String>.from(fullContent));
+      return List.from(fullContent);
     }
+    
+    return <String>[];
   }
 
   void _updateContentCodesList() {
@@ -270,6 +274,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   Future<void> _onPullToRefresh() async {
+    //TMP:
+    Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName, null);
     LiveStats().refresh();
     _refreshController.add(null);
   }
@@ -406,7 +412,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
 class HomeFavorite implements Favorite {
   final String? id;
-  HomeFavorite({this.id});
+  HomeFavorite(this.id);
 
   bool operator == (o) => o is HomeFavorite && o.id == id;
 

@@ -1,6 +1,8 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -141,7 +143,7 @@ class HomeSlantWidget extends StatelessWidget {
 
             Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
               Draggable<HomeFavorite>(
-                data: HomeFavorite(id: favoriteId),
+                data: HomeFavorite(favoriteId),
                 axis: Axis.vertical,
                 affinity: Axis.vertical,
                 maxSimultaneousDrags: 1,
@@ -164,7 +166,9 @@ class HomeSlantWidget extends StatelessWidget {
 
             
             Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-              HomeFavoriteStar(),
+              InkWell(onTap: _onFavorite, child:
+                HomeFavoriteStar(),
+              ),
             ),
           ],),
       ),),
@@ -188,6 +192,11 @@ class HomeSlantWidget extends StatelessWidget {
       ]),
 
     ],);
+  }
+
+  void _onFavorite() {
+    Analytics().logSelect(target: "Favorite: $favoriteId");
+    Auth2().prefs?.toggleFavorite(HomeFavorite(favoriteId));
   }
 }
 

@@ -388,7 +388,7 @@ class _EventsRibbonHeader extends StatelessWidget {
 
     titleList.add(Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
       Draggable<HomeFavorite>(
-        data: HomeFavorite(id: favoriteId),
+        data: HomeFavorite(favoriteId),
         onDragStarted: () { dragAndDropHost?.isDragging = true; },
         onDragEnd: (details) { dragAndDropHost?.isDragging = false; },
         onDraggableCanceled: (velocity, offset) { dragAndDropHost?.isDragging = false; },
@@ -431,7 +431,9 @@ class _EventsRibbonHeader extends StatelessWidget {
     }
 
     titleList.add(Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-      HomeFavoriteStar()
+      InkWell(onTap: _onFavorite, child:
+        HomeFavoriteStar(),
+      ),
     ));
 
     Widget contentWidget = Container(color: Styles().colors?.fillColorPrimary, child: 
@@ -441,4 +443,8 @@ class _EventsRibbonHeader extends StatelessWidget {
     return contentWidget;
   }
 
+  void _onFavorite() {
+    Analytics().logSelect(target: "Favorite: $favoriteId");
+    Auth2().prefs?.toggleFavorite(HomeFavorite(favoriteId));
+  }
 }

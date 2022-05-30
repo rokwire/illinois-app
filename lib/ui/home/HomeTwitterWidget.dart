@@ -12,6 +12,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 //import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -128,7 +129,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
             Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
               Draggable<HomeFavorite>(
-                data: HomeFavorite(id: widget.favoriteId),
+                data: HomeFavorite(widget.favoriteId),
                 onDragStarted: () { widget.dragAndDropHost?.isDragging = true; },
                 onDragEnd: (details) { widget.dragAndDropHost?.isDragging = false; },
                 onDraggableCanceled: (velocity, offset) { widget.dragAndDropHost?.isDragging = false; },
@@ -151,7 +152,9 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
               Container(),
 
             Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-              HomeFavoriteStar(),
+              InkWell(onTap: _onFavorite, child:
+                HomeFavoriteStar(),
+              ),
             ),
             
         ],),),);
@@ -337,6 +340,11 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
         setState(fn);
       }
     });
+  }
+
+  void _onFavorite() {
+    Analytics().logSelect(target: "Favorite: ${widget.favoriteId}");
+    Auth2().prefs?.toggleFavorite(HomeFavorite(widget.favoriteId));
   }
 }
 
