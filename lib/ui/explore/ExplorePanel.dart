@@ -17,7 +17,7 @@
 import 'package:flutter/semantics.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel2.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -1217,7 +1217,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _onTapSettings() {
     Analytics().logSelect(target: "Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel2()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel()));
   }
 
   void _onTapHeaderBackButton() {

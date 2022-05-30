@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel2.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -634,7 +634,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
 
   void _navigateSettings() {
     Analytics().logSelect(target: "Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel2()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel()));
   }
 
   void _navigateMyIllini() {

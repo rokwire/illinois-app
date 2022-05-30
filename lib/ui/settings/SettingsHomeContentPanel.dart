@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -26,15 +24,14 @@ import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/styles.dart';
 
-class SettingsHomePanel2 extends StatefulWidget {
+class SettingsHomeContentPanel extends StatefulWidget {
   @override
-  _SettingsHomePanel2State createState() => _SettingsHomePanel2State();
+  _SettingsHomeContentPanelState createState() => _SettingsHomeContentPanelState();
 }
 
-class _SettingsHomePanel2State extends State<SettingsHomePanel2> {
+class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   late _SettingsSection _selectedSection;
   bool _sectionsVisible = false;
 
@@ -97,7 +94,6 @@ class _SettingsHomePanel2State extends State<SettingsHomePanel2> {
   Widget _buildSectionsValuesContainer() {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
-    bool debugVisible = (kDebugMode || (Config().configEnvironment == rokwire.ConfigEnvironment.dev));
     for (_SettingsSection section in _SettingsSection.values) {
       if ((_selectedSection != section)) {
         sectionList.add(_buildSectionItem(section));
@@ -130,7 +126,7 @@ class _SettingsHomePanel2State extends State<SettingsHomePanel2> {
   Widget get _contentWidget {
     switch (_selectedSection) {
       case _SettingsSection.sections:
-        return SettingsHomePanel();
+        return SettingsSectionsContentWidget();
       case _SettingsSection.profile:
         //TODO: implement
         return Container();
