@@ -806,7 +806,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             ])
         ),
         Padding(
-          padding: EdgeInsets.only(bottom: 5),
+          padding: EdgeInsets.only(bottom: 20),
           child: RibbonButton(
             border: _allBorder,
             borderRadius: _allRounding,

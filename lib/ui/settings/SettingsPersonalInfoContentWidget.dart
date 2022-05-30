@@ -27,17 +27,15 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SettingsPersonalInfoPanel extends StatefulWidget {
-  _SettingsPersonalInfoPanelState createState() => _SettingsPersonalInfoPanelState();
+class SettingsPersonalInfoContentWidget extends StatefulWidget {
+  _SettingsPersonalInfoContentWidgetState createState() => _SettingsPersonalInfoContentWidgetState();
 }
 
-class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> implements NotificationsListener {
+class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfoContentWidget> implements NotificationsListener {
 
   TextEditingController? _nameController;
   TextEditingController? _emailController;
@@ -81,31 +79,11 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx("panel.profile_info.header.title", "PERSONAL INFO"),
-      ),
-      body: Column(children: <Widget>[
-        Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Container(
-                child: Column(children: [
-                  _buildInfoContent(),
-                  _buildProfilePicture()
-                ]),
-              ),
-            ),
-          ),
-        ),
-        _buildAccountManagementOptions(),
-        Container(height: 16,)
-      ],),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
+    return Column(children: <Widget>[
+      Container(child: Column(children: [_buildInfoContent(), _buildProfilePicture()])),
+      _buildAccountManagementOptions(),
+      Container(height: 16)
+    ]);
   }
 
   Widget _buildInfoContent() {
