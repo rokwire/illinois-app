@@ -142,6 +142,9 @@ class HomeSlantWidget extends StatelessWidget {
             Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
               Draggable<HomeFavorite>(
                 data: HomeFavorite(id: favoriteId),
+                axis: Axis.vertical,
+                affinity: Axis.vertical,
+                maxSimultaneousDrags: 1,
                 onDragStarted: () { dragAndDropHost?.isDragging = true; },
                 onDragEnd: (details) { dragAndDropHost?.isDragging = false; },
                 onDraggableCanceled: (velocity, offset) { dragAndDropHost?.isDragging = false; },
