@@ -100,6 +100,9 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
     for (SettingsSection section in SettingsSection.values) {
+      if ((section == SettingsSection.profile) && !Auth2().isLoggedIn) {
+        continue;
+      }
       if ((_selectedSection != section)) {
         sectionList.add(_buildSectionItem(section));
       }
