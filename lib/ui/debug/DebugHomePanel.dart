@@ -132,6 +132,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
               child: Container(
                 color: Styles().colors!.background,
                 child: Column(
+
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(height: 16,),
@@ -379,7 +380,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             onTap: _onTapCrash)),
                     Container(height: 16),
                   ],
-                ),
+                                ),
               ),
             ),
           ),

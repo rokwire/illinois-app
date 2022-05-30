@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/settings/SettingsPersonalInfoPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -628,7 +628,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void _onTapUserProfileImage() {
     Analytics().logSelect(target: "User Profile Image");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInfoPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel(section: SettingsSection.profile)));
   }
   
   bool get _canCreateGroup {

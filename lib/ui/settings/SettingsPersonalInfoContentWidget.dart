@@ -20,24 +20,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
+import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SettingsPersonalInfoPanel extends StatefulWidget {
-  _SettingsPersonalInfoPanelState createState() => _SettingsPersonalInfoPanelState();
+class SettingsPersonalInfoContentWidget extends StatefulWidget {
+  _SettingsPersonalInfoContentWidgetState createState() => _SettingsPersonalInfoContentWidgetState();
 }
 
-class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> implements NotificationsListener {
+class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfoContentWidget> implements NotificationsListener {
 
   TextEditingController? _nameController;
   TextEditingController? _emailController;
@@ -81,46 +81,28 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx("panel.profile_info.header.title", "PERSONAL INFO"),
-      ),
-      body: Column(children: <Widget>[
-        Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Container(
-                child: Column(children: [
-                  _buildInfoContent(),
-                  _buildProfilePicture()
-                ]),
-              ),
-            ),
-          ),
-        ),
-        _buildAccountManagementOptions(),
-        Container(height: 16,)
-      ],),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
+    return Column(children: <Widget>[
+      Container(child: Column(children: [_buildProfilePicture(), _buildInfoContent()])),
+      _buildAccountManagementOptions(),
+      _buildDeleteMyAccount()
+    ]);
   }
 
   Widget _buildInfoContent() {
+    late Widget contentWidget;
     if (Auth2().isOidcLoggedIn) {
-      return _buildShibbolethInfoContent();
+      contentWidget = _buildShibbolethInfoContent();
     }
     else if (Auth2().isPhoneLoggedIn) {
-      return _buildPhoneVerifiedInfoContent();
+      contentWidget = _buildPhoneVerifiedInfoContent();
     }
     else if (Auth2().isEmailLoggedIn) {
-      return _buildEmailLoginInfoContent();
+      contentWidget = _buildEmailLoginInfoContent();
     }
     else {
-      return Container();
+      contentWidget = Container();
     }
+    return Padding(padding: EdgeInsets.only(bottom: 25), child: contentWidget);
   }
 
   Widget _buildShibbolethInfoContent(){
@@ -291,7 +273,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   Widget _buildShibbolethAccountManagementOptions() {
     return
       Padding(
-        padding: EdgeInsets.symmetric( vertical: 5, horizontal: 16),
+        padding: EdgeInsets.symmetric(vertical: 5),
         child: RoundedButton(
           label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
           hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
@@ -305,10 +287,10 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   }
 
   Widget _buildPhoneOrEmailAccountManagementOptions() {
-    return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return Container(child:
       Row(children: <Widget>[
         Expanded(child:
-          Padding(padding: EdgeInsets.symmetric( vertical: 5), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 5), child:
             RoundedButton(
               label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
               hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
@@ -324,7 +306,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
         ),
         Container(width: 12,),
         Expanded(child:
-          Padding(padding: EdgeInsets.symmetric( vertical: 5), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 5), child:
             RoundedButton(
               label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
               hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
@@ -394,14 +376,6 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
       contentWidget = Padding(
           padding: EdgeInsets.only(bottom: 25),
           child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Visibility(
-                visible: !_hasProfilePicture,
-                child: Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: _buildProfileImageButton(
-                        Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Picture"),
-                        Localization().getStringEx("panel.profile_info.button.profile_picture.hint", ""),
-                        _onTapProfilePicture))),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Visibility(
                   visible: _hasProfilePicture,
@@ -430,7 +404,15 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
                           Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"),
                           Localization().getStringEx("panel.profile_info.button.picture.delete.hint", "Delete profile picture"),
                           _onTapDeletePicture)))
-            ])
+            ]),
+            Visibility(
+                visible: !_hasProfilePicture,
+                child: Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: _buildProfileImageButton(
+                        Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Picture"),
+                        Localization().getStringEx("panel.profile_info.button.profile_picture.hint", ""),
+                        _onTapProfilePicture)))
           ]));
     }
     return Padding(padding: EdgeInsets.only(top: 25), child: contentWidget);
@@ -609,6 +591,62 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
       }
     });
   }
+
+  Widget _buildDeleteMyAccount() {
+    return Padding(padding: EdgeInsets.only(top: 24, bottom: 12), child:
+    RoundedButton(
+        backgroundColor: Styles().colors!.white,
+        borderColor: Styles().colors!.white,
+        textColor: UiColors.fromHex("#f54400"),
+        fontSize: 16,
+        fontFamily: Styles().fontFamilies!.regular,
+        label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
+        hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
+        borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+        onTap: _onTapDeleteData
+      )
+    );
+  }
+
+  void _onTapDeleteData() async {
+    final String groupsSwitchTitle = Localization().getStringEx('panel.settings.privacy_center.delete_account.contributions.delete.msg', 'Please delete all my contributions.');
+    int userPostCount = await Groups().getUserPostCount();
+    bool contributeInGroups = userPostCount > 0;
+
+    SettingsDialog.show(context,
+        title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Delete your account?"),
+        message: [
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies!.bold)),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
+          TextSpan(text: contributeInGroups?
+          Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, and events) or leave them for others to see.") :
+          ""
+          ),
+        ],
+        options:contributeInGroups ? [groupsSwitchTitle] : null,
+        initialOptionsSelection:contributeInGroups ?  [groupsSwitchTitle] : [],
+        continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
+        onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
+          progressController(loading: true);
+          if(selectedValues.contains(groupsSwitchTitle)){
+            Groups().deleteUserData();
+          }
+          _deleteUserData().then((_){
+            progressController(loading: false);
+            Navigator.pop(context);
+          });
+
+        },
+        longButtonTitle: true
+    );
+  }
+
+  Future<void> _deleteUserData() async {
+    Analytics().logAlert(text: "Remove My Information", selection: "Yes");
+    await Auth2().deleteUser();
+  }
+
 
   bool get _canSave{
     return _isEmailChanged || _isNameChanged;
