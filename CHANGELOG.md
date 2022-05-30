@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Store HomePanel widgets order in user favorites, handled Favorite start on Home panel widgets [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+- New UI for Settings - Home and My Profile. (Task in progress) [#1670](https://github.com/rokwire/illinois-app/issues/1670).
+
 ## [4.0.17] - 2022-05-27
 ### Changed
 - Buttons for "On Campus" [#1664](https://github.com/rokwire/illinois-app/issues/1664).

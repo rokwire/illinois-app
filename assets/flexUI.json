@@ -17,19 +17,17 @@
 		"browse.primary": ["athletics",  "building_access", "campus_guide", "crisis_help", "dining", "events", "groups", "inbox", "privacy_center", "quick_polls", "saved", "wellness"],
 		"browse.secondary": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "video_tutorial", "date_cat", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding", "faqs"],
 
-		"settings": ["user_info", "privacy_center", "preferences", "connect", "connected", "link", "linked", "feedback", "delete"],
+		"settings": ["connect", "connected", "link", "linked", "feedback"],
 		"settings.connect": ["netid", "phone_or_email"],
 		"settings.connected": ["netid", "phone", "email"],
 		"settings.link": ["netid", "phone", "email"],
 		"settings.linked": ["netid", "phone", "email"],
-		"settings.connected.netid": ["info", "disconnect", "authenticate"],
+		"settings.connected.netid": ["info", "disconnect"],
 		"settings.connected.phone": ["info", "disconnect", "verify"],
 		"settings.connected.email": ["info", "disconnect", "login"],
 		"settings.linked.netid": ["info", "remove"],
 		"settings.linked.phone": ["info", "remove", "verify"],
 		"settings.linked.email": ["info", "remove", "verify"],
-		"settings.preferences": ["buttons"],
-		"settings.preferences.buttons": ["personal_information", "notifications"],
 
 		"privacy_center": ["connect", "heading", "manage", "buttons", "policy", "delete", "version"],
 		"privacy_center.buttons": ["personal_information", "notifications"],
@@ -100,11 +98,9 @@
 
 			"home.create_poll"                : 4,
 
-			"settings.user_info"              : 4,
 			"settings.connected"              : 4,
 			"settings.link"                   : 4,
 			"settings.linked"                 : 4,
-			"settings.preferences"            : 4,
 
 			"tabbar.wallet"                   : 4,
 
@@ -142,7 +138,6 @@
 			"inbox"                               : { "shibbolethLoggedIn": true },
 			"inbox_favs"                          : { "shibbolethLoggedIn": true },
 
-			"settings.user_info"                  : { "loggedIn": true },
 			"settings.connect"                    : { "loggedIn": false },
 			"settings.connected"                  : { "loggedIn": true },
 			"settings.connected.netid"            : { "shibbolethLoggedIn": true },

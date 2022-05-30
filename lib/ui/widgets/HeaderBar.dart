@@ -20,7 +20,7 @@ import 'package:flutter/semantics.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/inbox/InboxHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -240,15 +240,16 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
 class RootHeaderBar extends StatelessWidget implements PreferredSizeWidget {
 
   final String? title;
+  final bool? showActions;
 
-  RootHeaderBar({Key? key, this.title}) : super(key: key);
+  RootHeaderBar({Key? key, this.title, this.showActions = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => AppBar(
     backgroundColor: Styles().colors?.fillColorPrimaryVariant,
     leading: _buildHeaderHomeButton(),
     title: _buildHeaderTitle(),
-    actions: _buildHeaderActions(),
+    actions: (showActions == true) ? _buildHeaderActions() : null,
   );
 
   // PreferredSizeWidget
@@ -297,7 +298,7 @@ class RootHeaderBar extends StatelessWidget implements PreferredSizeWidget {
   void _onTapSettings() {
     Analytics().logSelect(target: "Settings");
     if (App.instance?.currentContext != null) {
-      Navigator.push(App.instance!.currentContext!, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
+      Navigator.push(App.instance!.currentContext!, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel()));
     }
   }
 
