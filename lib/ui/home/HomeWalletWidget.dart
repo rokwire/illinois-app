@@ -8,6 +8,8 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
@@ -17,13 +19,15 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:sprintf/sprintf.dart';
 
 class HomeWalletWidget extends StatefulWidget {
+  
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeWalletWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeWalletWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<HomeWalletWidget> createState() => _HomeWalletWidgetState();
@@ -48,10 +52,12 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
 
   @override
   Widget build(BuildContext context) {
-    return SectionSlantHeader(
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
       title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
-      titleIconAsset: 'images/campus-tools.png',
-      children: _buildCommandsList(),);
+      child: Column(children: _buildCommandsList(),
+    ),
+    ),);
   }
 
   List<Widget> _buildCommandsList() {

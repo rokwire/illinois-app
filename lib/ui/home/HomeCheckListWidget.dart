@@ -3,32 +3,36 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Gies.dart';
+import 'package:illinois/service/CheckList.dart';
+import 'package:illinois/ui/gies/CheckListPanel.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/gies/GiesPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class HomeGiesWidget extends StatefulWidget{
+class HomeCheckListWidget extends StatefulWidget{
 
+  final String contentKey;
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeGiesWidget({Key? key, this.refreshController}) : super(key: key);
+  const HomeCheckListWidget({Key? key, required this.contentKey, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _HomeGiesWidgetState();
+  State<StatefulWidget> createState() => _HomeCheckListWidgetState();
 
 }
 
-class _HomeGiesWidgetState extends State<HomeGiesWidget> implements NotificationsListener{
+class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements NotificationsListener{
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Gies.notifyPageChanged, Gies.notifyPageCompleted, Gies.notifyContentChanged]);
+    NotificationService().subscribe(this, [CheckList.notifyPageChanged, CheckList.notifyPageCompleted, CheckList.notifyContentChanged]);
   }
 
   @override
@@ -40,49 +44,20 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: true, child:
-    Semantics( child:
-    Column(children: <Widget>[
-      _buildHeader(),
-      Stack(children: <Widget>[
-        _buildSlant(),
-        _buildContent(),
-      ]),
-    ]),
-    ));
-  }
+    
+      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+          title: _title,
+          child: _buildContent(),
+          headerAxisAlignment: CrossAxisAlignment.start,
+        ),
+      ),
 
-  Widget _buildHeader() {
-    return Semantics(
-      header: true,
-      child:Container(color: Styles().colors!.fillColorPrimary, child:
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10), child:
-          Column(children: [
-            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Expanded(child:
-              Text(Localization().getStringEx(
-                  'widget.gies.title', 'iDegrees New Student Checklist'),
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Styles().colors!.white,
-                  fontFamily: Styles().fontFamilies!.extraBold,
-                  fontSize: 20,),),),
-          ],),
-        ],),
-        ),));
-  }
-
-  Widget _buildSlant() {
-    return Column(children: <Widget>[
-      Container(color: Styles().colors!.fillColorPrimary, height: 45,),
-      Container(color: Styles().colors!.fillColorPrimary, child:
-      CustomPaint(painter: TrianglePainter(
-          painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
-      Container(height: 65,),
-      )),
-    ],);
+    );
   }
 
   Widget _buildContent() {
-    if(Gies().isLoading){
+    if(CheckList(widget.contentKey).isLoading){
       return _buildLoadingContent();
     }
     if (!_isStarted) {
@@ -97,9 +72,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   }
 
   Widget _buildLoadingContent(){
-    return Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-        child:
+    return 
         Container(
           constraints: BoxConstraints(maxHeight: 100),
           padding: EdgeInsets.all(16),
@@ -111,14 +84,12 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
                   child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ),
                 ),
               ),
-            ]),)
+            ]),
     );
   }
 
   Widget _buildStartContent() {
-    return Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-        child:
+    return 
         Container(padding: EdgeInsets.all(16),
             decoration: BoxDecoration(color: Styles().colors!.white,
                 borderRadius: BorderRadius.circular(5)),
@@ -144,14 +115,11 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
                 ),
                 Container(height: 16,),
               ],
-            ))
-    );
+            ));
   }
 
   Widget _buildEndedContent() {
-    return Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-        child:
+    return 
         Container(padding: EdgeInsets.all(16),
             decoration: BoxDecoration(color: Styles().colors!.white,
                 borderRadius: BorderRadius.circular(5)),
@@ -176,7 +144,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
                   textColor: Styles().colors!.fillColorPrimary,
                   onTap: _onTapContinue,
                 ),
-                !Gies().supportNotes ? Container() :
+                !CheckList(widget.contentKey).supportNotes ? Container() :
                 Column(children: [
                   Container(height: 12,),
                   RoundedButton(
@@ -189,14 +157,12 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
                 ],),
                 Container(height: 16,),
               ],
-            ))
+            )
     );
   }
 
   Widget _buildProgressContent() {
-    return Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-        child:
+    return 
         Container(padding: EdgeInsets.all(16),
             decoration: BoxDecoration(color: Styles().colors!.white,
                 borderRadius: BorderRadius.circular(5)),
@@ -221,17 +187,17 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
                 ),
                 Container(height: 16,),
               ],
-            ))
+            )
     );
   }
 
   void _onTapContinue(){
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GiesPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CheckListPanel(contentKey: widget.contentKey,)));
   }
 
   void _onTapViewNotes(){
     showDialog(context: context, builder: (BuildContext context) {
-        return GiesNotesWidget(notes: JsonUtils.decodeList(Storage().giesNotes) ?? []);
+        return CheckListNotesWidget(contentKey: widget.contentKey ,notes: JsonUtils.decodeList(Storage().getChecklistNotes(widget.contentKey)) ?? []);
     });
   }
 
@@ -240,8 +206,8 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
     List<String> notCompleted = [];
     String completedNames = "";
     String notCompletedNames = "";
-    for(int stepId in Gies().progressSteps??[]){
-      if(Gies().isProgressStepCompleted(stepId)){
+    for(int stepId in CheckList(widget.contentKey).progressSteps??[]){
+      if(CheckList(widget.contentKey).isProgressStepCompleted(stepId)){
         completed.add(stepId.toString());
         completedNames+= StringUtils.isNotEmpty(completedNames)? ", " : "";
         completedNames+= stepId.toString();
@@ -270,18 +236,28 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget> implements Notification
   }
 
   int get _completedStpsCount {
-    return Gies().completedStepsCount;
+    return CheckList(widget.contentKey).completedStepsCount;
   }
 
   int get _stepsCount {
-    return Gies().progressSteps?.length ?? 0;
+    return CheckList(widget.contentKey).progressSteps?.length ?? 0;
+  }
+
+  String get _title {
+    if(widget.contentKey == "gies"){
+      return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');// TBD localize
+    } else if (widget.contentKey == "uiuc_student"){
+      return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist'); // TBD localize
+    }
+
+    return "";
   }
 
   @override
   void onNotification(String name, param) {
-    if(name == Gies.notifyPageChanged ||
-        name == Gies.notifyPageCompleted ||
-        name ==Gies.notifyContentChanged){
+    if(name == CheckList.notifyPageChanged ||
+        name == CheckList.notifyPageCompleted ||
+        name ==CheckList.notifyContentChanged){
       setState(() {});
     }
   }

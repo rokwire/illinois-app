@@ -18,15 +18,18 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDayWidget.dart';
 
 class HomeGameDayWidget extends StatefulWidget {
+  final String? favoriteId;
   final StreamController<void>? refreshController;
+  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeGameDayWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeGameDayWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost }) : super(key: key);
 
   _HomeGameDayState createState() => _HomeGameDayState();
 }
