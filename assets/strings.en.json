@@ -1036,7 +1036,6 @@
     "panel.settings.home.header.food_filter.label": "My Food Filter",
     "panel.settings.home.header.sports.label": "My Sports Teams",
     "panel.settings.home.header.notifications.label": "My Notifications",
-    "panel.settings.home.header.debug.label": "Debug",
     "panel.settings.home.settings.sections.section.label": "Setting Sections",
     "panel.settings.home.settings.sections.profile.label": "My Profile",
     "panel.settings.home.settings.sections.privacy.label": "My App Privacy Settings",
@@ -1046,7 +1045,6 @@
     "panel.settings.home.settings.sections.food_filter.label": "My Food Filter",
     "panel.settings.home.settings.sections.sports.label": "My Sports Teams",
     "panel.settings.home.settings.sections.notifications.label": "My Notifications",
-    "panel.settings.home.settings.sections.debug.label": "Debug",
 
     "panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",
     "panel.settings.home.connect.not_logged_in.netid.description.part_1": "Are you a ",

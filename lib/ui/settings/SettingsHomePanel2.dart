@@ -46,12 +46,8 @@ class _SettingsHomePanel2State extends State<SettingsHomePanel2> {
 
   @override
   Widget build(BuildContext context) {
-    PreferredSizeWidget headerBar = (_selectedSection == _SettingsSection.debug)
-        ? RootHeaderBar(title: _panelHeaderLabel)
-        : _DebugContainer(child: RootHeaderBar(title: _panelHeaderLabel));
-
     return Scaffold(
-        appBar: headerBar,
+        appBar: _DebugContainer(child: RootHeaderBar(title: _panelHeaderLabel)),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
@@ -104,13 +100,7 @@ class _SettingsHomePanel2State extends State<SettingsHomePanel2> {
     bool debugVisible = (kDebugMode || (Config().configEnvironment == rokwire.ConfigEnvironment.dev));
     for (_SettingsSection section in _SettingsSection.values) {
       if ((_selectedSection != section)) {
-        if (section == _SettingsSection.debug) {
-          if (debugVisible) {
-            sectionList.add(_buildSectionItem(section));
-          }
-        } else {
-          sectionList.add(_buildSectionItem(section));
-        }
+        sectionList.add(_buildSectionItem(section));
       }
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
@@ -165,8 +155,6 @@ class _SettingsHomePanel2State extends State<SettingsHomePanel2> {
       case _SettingsSection.notifications:
         //TODO: implement
         return Container();
-      case _SettingsSection.debug:
-        return DebugHomePanel();
       default:
         return Container();
     }
@@ -194,8 +182,6 @@ class _SettingsHomePanel2State extends State<SettingsHomePanel2> {
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
       case _SettingsSection.notifications:
         return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notifications');
-      case _SettingsSection.debug:
-        return Localization().getStringEx('panel.settings.home.settings.sections.debug.label', 'Debug');
     }
   }
 
@@ -219,13 +205,11 @@ class _SettingsHomePanel2State extends State<SettingsHomePanel2> {
         return Localization().getStringEx('panel.settings.home.header.sports.label', 'My Sports Teams');
       case _SettingsSection.notifications:
         return Localization().getStringEx('panel.settings.home.header.notifications.label', 'My Notifications');
-      case _SettingsSection.debug:
-        return Localization().getStringEx('panel.settings.home.header.debug.label', 'Debug');
     }
   }
 }
 
-enum _SettingsSection { sections, profile, privacy, personal_info, who_are_you, interests, food_filters, sports, notifications, debug }
+enum _SettingsSection { sections, profile, privacy, personal_info, who_are_you, interests, food_filters, sports, notifications }
 
 class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
   final Widget _child;
@@ -252,8 +236,7 @@ class _DebugContainerState extends State<_DebugContainer> {
 
         if (_clickedCount == 7) {
           if (Auth2().isDebugManager) {
-            //TODO: properly handle debug event with dropdowns
-            // Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
           }
           _clickedCount = 0;
         }

@@ -1036,7 +1036,6 @@
     "panel.settings.home.header.food_filter.label": "我的食物過濾器",
     "panel.settings.home.header.sports.label": "我的運動隊",
     "panel.settings.home.header.notifications.label": "我的通知",
-    "panel.settings.home.header.debug.label": "調試",
     "panel.settings.home.settings.sections.section.label": "設置部分",
     "panel.settings.home.settings.sections.profile.label": "我的簡歷",
     "panel.settings.home.settings.sections.privacy.label": "我的應用隱私設置",
@@ -1046,7 +1045,6 @@
     "panel.settings.home.settings.sections.food_filter.label": "我的食物過濾器",
     "panel.settings.home.settings.sections.sports.label": "我的運動隊",
     "panel.settings.home.settings.sections.notifications.label": "我的通知",
-    "panel.settings.home.settings.sections.debug.label": "調試",
 
 	"panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",
 	"panel.settings.home.connect.not_logged_in.netid.description.part_1": "你是不是一位",
