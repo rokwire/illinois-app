@@ -29,8 +29,7 @@
 		"settings.linked.phone": ["info", "remove", "verify"],
 		"settings.linked.email": ["info", "remove", "verify"],
 
-		"privacy_center": ["connect", "heading", "manage", "buttons", "policy", "delete", "version"],
-		"privacy_center.buttons": ["personal_information", "notifications"],
+		"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 
 		"personal_information": ["buttons", "calendar", "on_campus"],
 		"personal_information.buttons": ["personal_info", "roles", "interests", "food_filters"],

@@ -16,8 +16,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/PrivacyData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -26,14 +28,11 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:package_info/package_info.dart';
-
-import 'SettingsNotificationsPanel.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsPrivacyCenterContentWidget extends StatefulWidget{
   @override
@@ -41,16 +40,18 @@ class SettingsPrivacyCenterContentWidget extends StatefulWidget{
 
 }
 
-class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCenterContentWidget> implements NotificationsListener{
-  String _versionName = "";
+class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCenterContentWidget> implements NotificationsListener {
+  PrivacyData? _data;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
-      Auth2.notifyLoginChanged
+      Auth2.notifyLoginChanged,
+      Assets.notifyChanged,
+      Localization.notifyLocaleChanged
     ]);
-    _loadVersionInfo();
+    _loadPrivacyData();
     super.initState();
   }
 
@@ -58,6 +59,11 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
   void dispose() {
     NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  void _loadPrivacyData() async {
+    dynamic privacyJson = Assets()["privacy"];
+    _data = PrivacyData.fromJson(privacyJson);
   }
 
   @override
@@ -75,20 +81,17 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
       else if (code == 'heading') {
         contentList.add(_buildHeadingWidget());
       }
+      else if (code == 'description') {
+        contentList.add(_buildDescriptionWidget());
+      }
       else if (code == 'manage') {
         contentList.add(_buildManagePrivacyWidget());
-      }
-      else if (code == 'buttons') {
-        contentList.add(_buildSquareButtonsLayout());
       }
       else if (code == 'policy') {
         contentList.add(_buildPrivacyPolicyButton());
       }
       else if (code == 'delete') {
         contentList.add(_buildDeleteButton());
-      }
-      else if (code == 'version') {
-        contentList.add(_buildVersionInfo());
       }
     }
 
@@ -145,7 +148,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
 
   Widget _buildHeadingWidget(){
     return Padding(
-      padding: EdgeInsets.only(top: 40, bottom: 20),
+      padding: EdgeInsets.only(bottom: 20),
       child: Text(Localization().getStringEx("panel.settings.privacy_center.label.description", "Personalize your privacy and data preferences."),
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -157,10 +160,55 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
     );
   }
 
+  Widget _buildDescriptionWidget() {
+    int? level = Auth2().prefs?.privacyLevel;
+    PrivacyDescription? description;
+    if (CollectionUtils.isNotEmpty(_data?.privacyDescription)) {
+      for (PrivacyDescription desc in _data!.privacyDescription!) {
+        if (desc.level == level) {
+          description = desc;
+          break;
+        }
+      }
+    }
+    if (description == null) {
+      return Container();
+    }
+    return Container(
+        padding: EdgeInsets.only(bottom: 20),
+        color: Styles().colors!.background,
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Container(
+                  height: 60,
+                  width: 60,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2),
+                      color: Styles().colors!.white,
+                      borderRadius: BorderRadius.all(Radius.circular(100))),
+                  child: Container(
+                      height: 52,
+                      width: 52,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2),
+                          color: Styles().colors!.white,
+                          borderRadius: BorderRadius.all(Radius.circular(100))),
+                      child: Semantics(
+                          label: Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
+                          child: Text(level.toString(),
+                              style: TextStyle(
+                                  fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24, color: Styles().colors!.fillColorPrimary))))),
+              Container(width: 20),
+              Expanded(
+                  child: Text(Localization().getString(description.key, defaults: description.text) ?? '',
+                      style: new TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16.0, color: Styles().colors!.textSurface),
+                      textAlign: TextAlign.left))
+            ]));
+  }
+
   Widget _buildManagePrivacyWidget(){
-    return Padding(
-      padding: EdgeInsets.only(bottom: 12),
-      child: Row(children: <Widget>[
+    return Row(children: <Widget>[
         Expanded(
           child: GestureDetector(
             onTap: _onTapManagePrivacy,
@@ -207,160 +255,12 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
             )),
           ),
         )
-      ],),
-    );
+      ]);
   }
 
-  Widget _buildSquareButtonsLayout(){
-    //return Container(height: 80, color: Colors.amber,);
-    List<Widget> contentList = [];
-    List<dynamic> codes = FlexUI()['privacy_center.buttons'] ?? [];
-    for (String code in codes) {
-      if (code == 'personal_information') {
-        contentList.add(_buildSquareButton(
-          label: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.title", "Personal Information"),
-          hint: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.hint", ""),
-          iconPath: 'images/group-5.png',
-          onTap: _onTapPersonalInformation,
-          ),);
-      }
-      else if (code == 'notifications') {
-        contentList.add(_buildSquareButton(
-          label: Localization().getStringEx("panel.settings.privacy_center.button.notifications.title", "Notification Preferences"),
-          hint: Localization().getStringEx("panel.settings.privacy_center.button.notifications.", ""),
-          iconPath: 'images/notifications.png',
-          onTap: _onTapNotifications,
-        ),);
-      }
-    }
-
-    final int buttonsPerRow = 2;
-    final int entriesPerRow = buttonsPerRow + (buttonsPerRow - 1);
-    List<Widget> row = [];
-    List<Widget> cols = [];
-    for (Widget entry in contentList) {
-      if (entriesPerRow <= row.length) {
-        cols.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children:row));
-        cols.add(Container(height: 12,));
-        row = [];
-      }
-      if (row.isNotEmpty) {
-        row.add(Container(width: 12,));
-      }
-      row.add(Expanded(child: entry));
-    }
-    
-    // add last row
-    if (row.isNotEmpty) {
-      while (row.length < entriesPerRow) {
-        if (row.isNotEmpty) {
-          row.add(Container(width: 12,));
-        }
-        row.add(Expanded(child: Container()));
-      }
-      cols.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: row));
-      cols.add(Container(height: 12,));
-      row = [];
-    }
-
-    return Column(
-      children: cols,
-    );
-
-
-
-/*
+  Widget _buildPrivacyPolicyButton() {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Expanded(child: _buildSquareButton(
-            label: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.title", "Personal Information"),
-            hint: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.hint", ""),
-            iconPath: 'images/group-5.png',
-            onTap: _onTapPersonalInformation,
-            ),),
-          Container(width: 12,),
-          Expanded(child: _buildSquareButton(
-            label: Localization().getStringEx("panel.settings.privacy_center.button.notifications.title", "Notification Preferences"),
-            hint: Localization().getStringEx("panel.settings.privacy_center.button.notifications.", ""),
-            iconPath: 'images/notifications.png',
-            onTap: _onTapNotifications,
-          )),
-        ],),
-    );*/
-  }
-
-  Widget _buildSquareButton({void Function()? onTap, required String label, String? hint, required String iconPath}){
-    Color _boxShadowColor = Color.fromRGBO(19, 41, 75, 0.3);
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Semantics(label: label, hint:hint, button:true, excludeSemantics: true, child:Stack(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(2),
-            child: Container(
-              decoration: BoxDecoration(color: (Styles().colors!.white),
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: Colors.white, width: 2),
-                  boxShadow: [BoxShadow(color: _boxShadowColor, spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
-              child: Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child:
-                      Image.asset(iconPath, excludeFromSemantics: true),
-                    ),
-                    Container(height: 10,),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child:Text(
-                        label,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)))
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      )),
-    );
-  }
-
-  /*Widget _buildButtonsLayout(){
-      return
-        Container(
-            alignment: Alignment.topCenter,
-            child:
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                RibbonButton(
-                  label: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.title", "Personal Information"),
-                  borderRadius: BorderRadius.circular(4),
-                  onTap: _onTapPersonalInformation
-                ),
-                Container(height: 10,),
-                RibbonButton(
-                  label: Localization().getStringEx("panel.settings.privacy_center.button.notifications.title", "Notification Preferences"),
-                  borderRadius: BorderRadius.circular(4),
-                  onTap: _onTapNotifications
-                ),
-              ],)
-        );
-  }*/
-
-  Widget _buildPrivacyPolicyButton(){
-    return Padding(
-      padding: EdgeInsets.only(top: 40),
+      padding: EdgeInsets.only(top: 20),
       child: Semantics( button: true,
         child: GestureDetector(
           onTap: _onTapPrivacyPolicy,
@@ -368,22 +268,6 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
             Localization().getStringEx("panel.settings.privacy_center.button.privacy_policy.title", "Privacy Statement"),
             style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, decoration: TextDecoration.underline,decorationColor:  Styles().colors!.fillColorSecondary,),
         ))));
-  }
-
-  //Version Info
-  Widget _buildVersionInfo(){
-    return Padding(
-      padding: EdgeInsets.only(top: 40),
-      child: Column(children: <Widget>[
-        Container(height: 1, color: Styles().colors!.surfaceAccent,),
-        Container(height: 12,),
-        Container(
-          alignment: Alignment.center,
-          child:  Text(
-            "Version: $_versionName",
-            style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
-          )),
-      ],),);
   }
 
   Widget _buildDeleteButton(){
@@ -409,28 +293,10 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
       ],),);
   }
 
-  void _loadVersionInfo() async {
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      setState(() {
-        _versionName = packageInfo.version;
-      });
-    });
-  }
-
 
   void _onTapVerifyIdentity(){
     Analytics().logSelect(target: "Verify Identity");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVerifyIdentityPanel()));
-  }
-
-  void _onTapPersonalInformation(){
-    Analytics().logSelect(target: "Personal Information");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInformationPanel()));
-  }
-
-  void _onTapNotifications(){
-    Analytics().logSelect(target: "Notifications");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
   }
 
   void _onTapPrivacyPolicy(){
@@ -490,9 +356,23 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
   @override
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged) {
-      setState(() {});
+      _updateState();
     }
     else if (name == FlexUI.notifyChanged) {
+      _updateState();
+    }
+    else if (name == Assets.notifyChanged) {
+      _loadPrivacyData();
+      _updateState();
+    } 
+    else if (name == Localization.notifyLocaleChanged) {
+      _data?.reload();
+      _updateState();
+    }
+  }
+
+  void _updateState() {
+    if (mounted) {
       setState(() {});
     }
   }
