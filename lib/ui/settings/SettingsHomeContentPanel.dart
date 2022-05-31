@@ -161,16 +161,12 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
     switch (section) {
       case SettingsContent.sections:
         return Localization().getStringEx('panel.settings.home.settings.sections.section.label', 'Setting Sections');
-      // case SettingsSection.personal_info:
-      //   return Localization().getStringEx('panel.settings.home.settings.sections.personal_info.label', 'Personal Information');
       case SettingsContent.interests:
         return Localization().getStringEx('panel.settings.home.settings.sections.interests.label', 'My Interests Filter');
       case SettingsContent.food_filters:
         return Localization().getStringEx('panel.settings.home.settings.sections.food_filter.label', 'My Food Filter');
       case SettingsContent.sports:
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
-      // case SettingsSection.notifications:
-      //   return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notifications');
       case SettingsContent.calendar:
         return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'My Calendar Settings');
     }
@@ -180,16 +176,12 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
     switch (_selectedContent) {
       case SettingsContent.sections:
         return Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings');
-      // case SettingsSection.personal_info:
-      //   return Localization().getStringEx('panel.settings.home.header.personal_info.label', 'Personal Information');
       case SettingsContent.interests:
         return Localization().getStringEx('panel.settings.home.header.interests.label', 'My Interests');
       case SettingsContent.food_filters:
         return Localization().getStringEx('panel.settings.home.header.food_filter.label', 'My Food Filter');
       case SettingsContent.sports:
         return Localization().getStringEx('panel.settings.home.header.sports.label', 'My Sports Teams');
-      // case SettingsSection.notifications:
-      //   return Localization().getStringEx('panel.settings.home.header.notifications.label', 'My Notifications');
       case SettingsContent.calendar:
         return Localization().getStringEx('panel.settings.home.header.calendar.label', 'My Calendar Settings');
     }

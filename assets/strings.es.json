@@ -1028,18 +1028,14 @@
     "panel.laundry.issues_submitted.return.button": "Devolver",
 
     "panel.settings.home.header.settings.label": "Configuración",
-    "panel.settings.home.header.personal_info.label": "Informacion personal",
     "panel.settings.home.header.interests.label": "Mis intereses",
     "panel.settings.home.header.food_filter.label": "Mi filtro de comida",
     "panel.settings.home.header.sports.label": "Mis equipos deportivos",
-    "panel.settings.home.header.notifications.label": "Mis Notificaciones",
     "panel.settings.home.header.calendar.label": "Configuración de mi calendario",
     "panel.settings.home.settings.sections.section.label": "Configuración de secciones",
-    "panel.settings.home.settings.sections.personal_info.label": "Informacion personal",
     "panel.settings.home.settings.sections.interests.label": "Filtro Mis intereses",
     "panel.settings.home.settings.sections.food_filter.label": "Mi filtro de comida",
     "panel.settings.home.settings.sections.sports.label": "Mis equipos deportivos",
-    "panel.settings.home.settings.sections.notifications.label": "Mis Notificaciones",
     "panel.settings.home.settings.sections.calendar.label": "Configuración de mi calendario",
 
     "panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",
@@ -1114,6 +1110,11 @@
     "panel.settings.profile.header.profile.label": "Perfil",
     "panel.settings.profile.header.who_are_you.label": "Quién eres tú",
     "panel.settings.profile.header.privacy.label": "Privacidad",
+
+    "panel.settings.notifications.content.inbox.label": "Mis Notificaciones",
+    "panel.settings.notifications.content.preferences.label": "Mis preferencias de notificación",
+    "panel.settings.notifications.header.inbox.label": "Mis Notificaciones",
+    "panel.settings.notifications.header.preferences.label": "Mis preferencias de notificación",
 
     "panel.settings.privacy_center.label.title":"Centro de privacidad",
     "panel.settings.privacy_center.label.description":"Personalice sus preferencias de privacidad y datos.",
@@ -1221,7 +1222,6 @@
 
     "widget.settings.dialog.button.cancel.title": "Cancelar",
 
-    "panel.settings.notifications.label.title":"Notificaciones",
     "panel.settings.notifications.label.desctiption":"No se pierda ningún evento o actualización del campus.",
     "panel.settings.notifications.label.notifications":"Notificaciones",
     "panel.settings.notifications.label.info":"Para recibir notificaciones, habilite en la configuración de su dispositivo.",

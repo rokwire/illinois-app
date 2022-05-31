@@ -25,20 +25,18 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:notification_permissions/notification_permissions.dart';
 
 import 'SettingsWidgets.dart';
 
-class SettingsNotificationsPanel extends StatefulWidget{
+class SettingsNotificationPreferencesContentWidget extends StatefulWidget{
 
   @override
-  State<StatefulWidget> createState() => _SettingsNotificationsPanelState();
+  State<StatefulWidget> createState() => _SettingsNotificationPreferencesContentWidgetState();
 }
 
-class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel> implements NotificationsListener{
+class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsNotificationPreferencesContentWidget> implements NotificationsListener{
   bool _notificationsAuthorized = false;
 
   @override
@@ -68,21 +66,12 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx("panel.settings.notifications.label.title", "Notifications"),
-      ),
-      body: SingleChildScrollView(child: _buildContent()),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
+    return _buildContent();
   }
 
   Widget _buildContent() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(children: <Widget>[
-        Container(height: 24,),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 6),
           child: Text(
@@ -203,7 +192,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
           textStyle: _groupsSubNotificationsEnabled ? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold) :
           TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies!.bold))
     ]))))]));
-    widgets.add(Container(color: Styles().colors!.white, height: 20));
+    widgets.add(Container(color:Styles().colors!.surfaceAccent,height: 1,));
     widgets.add(_CustomToggleButton(
         enabled: _notificationsEnabled,
         borderRadius: BorderRadius.zero,
@@ -212,8 +201,6 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
         onTap: _notificationsEnabled? _onPauseNotificationsToggled : (){},
         textStyle: _notificationsEnabled? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold) :
         TextStyle(color: Styles().colors!.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)));
-    widgets.add(Container(color:Styles().colors!.surfaceAccent,height: 1,));
-    widgets.add(Container(color: Styles().colors!.white, height: 20));
 //    widgets.add(_CustomToggleButton(
 //          enabled: _notificationsEnabled,
 //          borderRadius: _bottomRounding,

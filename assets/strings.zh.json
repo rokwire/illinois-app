@@ -1028,18 +1028,14 @@
     "panel.laundry.issues_submitted.return.button": "返回",
 
     "panel.settings.home.header.settings.label": "設置",
-    "panel.settings.home.header.personal_info.label": "個人信息",
     "panel.settings.home.header.interests.label": "我的興趣",
     "panel.settings.home.header.food_filter.label": "我的食物過濾器",
     "panel.settings.home.header.sports.label": "我的運動隊",
-    "panel.settings.home.header.notifications.label": "我的通知",
 	"panel.settings.home.header.calendar.label": "我的日曆設置",
     "panel.settings.home.settings.sections.section.label": "設置部分",
-    "panel.settings.home.settings.sections.personal_info.label": "個人信息",
     "panel.settings.home.settings.sections.interests.label": "我的興趣過濾器",
     "panel.settings.home.settings.sections.food_filter.label": "我的食物過濾器",
     "panel.settings.home.settings.sections.sports.label": "我的運動隊",
-    "panel.settings.home.settings.sections.notifications.label": "我的通知",
     "panel.settings.home.settings.sections.calendar.label": "我的日曆設置",
 
 	"panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",
@@ -1114,6 +1110,11 @@
     "panel.settings.profile.header.profile.label": "輪廓",
     "panel.settings.profile.header.who_are_you.label": "你是誰",
     "panel.settings.profile.header.privacy.label": "隱私",
+
+    "panel.settings.notifications.content.inbox.label": "我的通知",
+    "panel.settings.notifications.content.preferences.label": "我的通知偏好",
+    "panel.settings.notifications.header.inbox.label": "我的通知",
+    "panel.settings.notifications.header.preferences.label": "我的通知偏好",
 
 	"panel.settings.privacy_center.label.title":"隐私中心",
 	"panel.settings.privacy_center.label.description":"个性化您的隐私和数据偏好.",
@@ -1223,7 +1224,6 @@
 	
 	"widget.settings.dialog.button.cancel.title": "取消",
 
-	"panel.settings.notifications.label.title":"通知",
 	"panel.settings.notifications.label.desctiption":"不要错过活动或校园更新.",
 	"panel.settings.notifications.label.notifications":"通知",
 	"panel.settings.notifications.label.info":"在设备设置中启用接收通知.",
