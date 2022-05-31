@@ -21,10 +21,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class HomeCampusHighlightsWidget extends StatefulWidget {
 
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeCampusHighlightsWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  HomeCampusHighlightsWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeCampusHighlightsWidgetState createState() => _HomeCampusHighlightsWidgetState();
@@ -47,9 +47,11 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       Auth2.notifyCardChanged,
     ]);
 
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-        _updatePromotedItems();
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          _updatePromotedItems();
+        }
       });
     }
 

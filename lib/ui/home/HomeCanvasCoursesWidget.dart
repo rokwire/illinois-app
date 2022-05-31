@@ -16,10 +16,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCanvasCoursesWidget extends StatefulWidget {
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeCanvasCoursesWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  HomeCanvasCoursesWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeCanvasCoursesWidgetState createState() => _HomeCanvasCoursesWidgetState();
@@ -41,9 +41,11 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
     ]);
 
 
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-        _loadCourses();
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          _loadCourses();
+        }
       });
     }
 

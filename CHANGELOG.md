@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed scrolling in Home panel after drag and drop operation [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+### Changed
+- Prompt before unfavorite home widget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+
 ## [4.0.18] - 2022-05-30
 ### Added
 - Store HomePanel widgets order in user favorites, handled Favorite start on Home panel widgets [#1629](https://github.com/rokwire/illinois-app/issues/1629).

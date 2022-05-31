@@ -2275,6 +2275,8 @@
     "widget.home.radio.button.add_radio.hint": "",
     "widget.home.radio.title": "WPGU FM Radio",
 
+    "widget.home.promot.remove.favorite": "Are you sure you want to remove this favorite?",
+
     "widget.athletics_card.button.get_tickets.title":"Obtener boletos",
     "widget.athletics_card.button.get_tickets.hint":"",
 

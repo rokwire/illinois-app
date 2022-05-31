@@ -38,10 +38,10 @@ class HomePreferredSportsWidget extends StatefulWidget {
   final bool menSports;
   final bool womenSports;
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  HomePreferredSportsWidget({Key? key, this.menSports = false, this.womenSports = false, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  HomePreferredSportsWidget({Key? key, this.menSports = false, this.womenSports = false, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   _HomePreferredSportsWidgetState createState() => _HomePreferredSportsWidgetState();
 }
@@ -62,9 +62,11 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
       Auth2UserPrefs.notifyInterestsChanged,
     ]);
 
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-        _refreshSports();
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          _refreshSports();
+        }
       });
     }
 

@@ -46,10 +46,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 class HomeUpcomingEventsWidget extends StatefulWidget {
 
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeUpcomingEventsWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  HomeUpcomingEventsWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeUpcomingEventsWidgetState createState() => _HomeUpcomingEventsWidgetState();
@@ -66,6 +66,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
 
   @override
   void initState() {
+    
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyTagsChanged,
@@ -74,11 +75,15 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       Events.notifyEventUpdated,
       AppLivecycle.notifyStateChanged,
     ]);
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-        _loadEvents();
+    
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          _loadEvents();
+        }
       });
     }
+
     _loadAvailableCategories();
     super.initState();
   }
@@ -391,6 +396,7 @@ class _EventsRibbonHeader extends StatelessWidget {
         data: HomeFavorite(favoriteId),
         onDragStarted: () { dragAndDropHost?.isDragging = true; },
         onDragEnd: (details) { dragAndDropHost?.isDragging = false; },
+        onDragCompleted: () { dragAndDropHost?.isDragging = false; },
         onDraggableCanceled: (velocity, offset) { dragAndDropHost?.isDragging = false; },
         feedback: HomeSlantFeedback(title: title),
         childWhenDragging: HomeDragHandle(),
@@ -430,21 +436,12 @@ class _EventsRibbonHeader extends StatelessWidget {
       titleList.add(rightIconWidget);
     }
 
-    titleList.add(Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-      InkWell(onTap: _onFavorite, child:
-        HomeFavoriteStar(),
-      ),
-    ));
+    titleList.add(HomeFavoriteButton(favoriteId: favoriteId,));
 
     Widget contentWidget = Container(color: Styles().colors?.fillColorPrimary, child: 
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: titleList,),
     );
 
     return contentWidget;
-  }
-
-  void _onFavorite() {
-    Analytics().logSelect(target: "Favorite: $favoriteId");
-    Auth2().prefs?.toggleFavorite(HomeFavorite(favoriteId));
   }
 }
