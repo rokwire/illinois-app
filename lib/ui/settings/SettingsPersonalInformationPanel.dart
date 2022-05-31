@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/OnCampus.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
@@ -28,7 +28,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
-import 'package:illinois/ui/settings/SettingsRolesPanel.dart';
 import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -342,7 +341,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
 
   void _onTapPersonalInfo(){
     if(isLoggedIn){
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel(section: SettingsSection.profile)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsProfileContentPanel()));
     } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVerifyIdentityPanel()));
     }
@@ -350,7 +349,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
 
   void _onTapWhoYouAre(){
     Analytics().logSelect(target: "Who are you");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsRolesPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsProfileContentPanel(content: SettingsProfileContent.who_are_you)));
   }
 
   void _onTapInterests(){

@@ -21,11 +21,11 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
@@ -150,7 +150,7 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures> imple
 
   void _onTapNotificationPreferences() {
     Analytics().logSelect(target: "HomeHighlightedFeatures: Notification Preferences");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.preferences)));
   }
 
   void _onTapManagePrivacy() {

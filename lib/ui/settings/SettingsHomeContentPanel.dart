@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/ui/settings/SettingsPersonalInfoContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -28,45 +27,45 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class SettingsHomeContentPanel extends StatefulWidget {
-  final SettingsSection? section;
+  final SettingsContent? content;
 
-  SettingsHomeContentPanel({this.section});
+  SettingsHomeContentPanel({this.content});
 
   @override
   _SettingsHomeContentPanelState createState() => _SettingsHomeContentPanelState();
 }
 
 class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
-  late SettingsSection _selectedSection;
-  bool _sectionsVisible = false;
+  late SettingsContent _selectedContent;
+  bool _contentValuesVisible = false;
 
   @override
   void initState() {
     super.initState();
-    _selectedSection = widget.section ?? SettingsSection.sections;
+    _selectedContent = widget.content ?? SettingsContent.sections;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: _DebugContainer(child: RootHeaderBar(title: _panelHeaderLabel, showActions: false)),
+        appBar: HeaderBar(titleWidget: _buildHeaderBarTitle()),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
-                  physics: (_sectionsVisible ? NeverScrollableScrollPhysics() : null),
+                  physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null),
                   child: Container(
                       color: Styles().colors!.background,
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Padding(
                             padding: EdgeInsets.only(left: 16, top: 16, right: 16),
                             child: RibbonButton(
-                                textColor: (_sectionsVisible ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary),
+                                textColor: (_contentValuesVisible ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary),
                                 backgroundColor: Styles().colors!.white,
                                 borderRadius: BorderRadius.all(Radius.circular(5)),
                                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                                rightIconAsset: (_sectionsVisible ? 'images/icon-up.png' : 'images/icon-down.png'),
-                                label: _getSectionLabel(_selectedSection),
-                                onTap: _changeSettingsSectionsVisibility)),
+                                rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down.png'),
+                                label: _getContentLabel(_selectedContent),
+                                onTap: _changeSettingsContentValuesVisibility)),
                         _buildContent()
                       ]))))
         ]),
@@ -74,88 +73,81 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         bottomNavigationBar: uiuc.TabBar());
   }
 
+  Widget _buildHeaderBarTitle() {
+    return _DebugContainer(
+        child: Text(_panelHeaderLabel,
+            style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
+            textAlign: TextAlign.center));
+  }
+
   Widget _buildContent() {
-    return Stack(children: [Padding(padding: EdgeInsets.all(16), child: _contentWidget), _buildSectionsContainer()]);
+    return Stack(children: [Padding(padding: EdgeInsets.all(16), child: _contentWidget), _buildContentValuesContainer()]);
   }
 
-  Widget _buildSectionsContainer() {
+  Widget _buildContentValuesContainer() {
     return Visibility(
-        visible: _sectionsVisible,
-        child: Positioned.fill(child: Stack(children: <Widget>[_buildSectionsDismissLayer(), _buildSectionsValuesContainer()])));
+        visible: _contentValuesVisible,
+        child: Positioned.fill(child: Stack(children: <Widget>[_buildContentDismissLayer(), _buildContentValuesWidget()])));
   }
 
-  Widget _buildSectionsDismissLayer() {
+  Widget _buildContentDismissLayer() {
     return Positioned.fill(
         child: BlockSemantics(
             child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    _sectionsVisible = false;
+                    _contentValuesVisible = false;
                   });
                 },
                 child: Container(color: Styles().colors!.blackTransparent06))));
   }
 
-  Widget _buildSectionsValuesContainer() {
+  Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
-    for (SettingsSection section in SettingsSection.values) {
-      if ((section == SettingsSection.profile) && !Auth2().isLoggedIn) {
-        continue;
-      }
-      if ((_selectedSection != section)) {
-        sectionList.add(_buildSectionItem(section));
+    for (SettingsContent section in SettingsContent.values) {
+      if ((_selectedContent != section)) {
+        sectionList.add(_buildContentItem(section));
       }
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
   }
 
-  Widget _buildSectionItem(SettingsSection section) {
+  Widget _buildContentItem(SettingsContent contentItem) {
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
         rightIconAsset: null,
-        label: _getSectionLabel(section),
-        onTap: () => _onTapSection(section));
+        label: _getContentLabel(contentItem),
+        onTap: () => _onTapContentItem(contentItem));
   }
 
-  void _onTapSection(SettingsSection section) {
-    _selectedSection = section;
-    _changeSettingsSectionsVisibility();
+  void _onTapContentItem(SettingsContent contentItem) {
+    _selectedContent = contentItem;
+    _changeSettingsContentValuesVisibility();
   }
 
-  void _changeSettingsSectionsVisibility() {
-    _sectionsVisible = !_sectionsVisible;
+  void _changeSettingsContentValuesVisibility() {
+    _contentValuesVisible = !_contentValuesVisible;
     if (mounted) {
       setState(() {});
     }
   }
 
   Widget get _contentWidget {
-    switch (_selectedSection) {
-      case SettingsSection.sections:
+    switch (_selectedContent) {
+      case SettingsContent.sections:
         return SettingsSectionsContentWidget();
-      case SettingsSection.profile:
-        return SettingsPersonalInfoContentWidget();
-      case SettingsSection.privacy:
+      case SettingsContent.interests:
         //TODO: implement
         return Container();
-      case SettingsSection.personal_info:
+      case SettingsContent.food_filters:
         //TODO: implement
         return Container();
-      case SettingsSection.who_are_you:
+      case SettingsContent.sports:
         //TODO: implement
         return Container();
-      case SettingsSection.interests:
-        //TODO: implement
-        return Container();
-      case SettingsSection.food_filters:
-        //TODO: implement
-        return Container();
-      case SettingsSection.sports:
-        //TODO: implement
-        return Container();
-      case SettingsSection.notifications:
+      case SettingsContent.calendar:
         //TODO: implement
         return Container();
       default:
@@ -165,54 +157,38 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
 
   // Utilities
 
-  String _getSectionLabel(SettingsSection section) {
+  String _getContentLabel(SettingsContent section) {
     switch (section) {
-      case SettingsSection.sections:
+      case SettingsContent.sections:
         return Localization().getStringEx('panel.settings.home.settings.sections.section.label', 'Setting Sections');
-      case SettingsSection.profile:
-        return Localization().getStringEx('panel.settings.home.settings.sections.profile.label', 'My Profile');
-      case SettingsSection.privacy:
-        return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings');
-      case SettingsSection.personal_info:
-        return Localization().getStringEx('panel.settings.home.settings.sections.personal_info.label', 'Personal Information');
-      case SettingsSection.who_are_you:
-        return Localization().getStringEx('panel.settings.home.settings.sections.who_are_you.label', 'Who Are You');
-      case SettingsSection.interests:
+      case SettingsContent.interests:
         return Localization().getStringEx('panel.settings.home.settings.sections.interests.label', 'My Interests Filter');
-      case SettingsSection.food_filters:
+      case SettingsContent.food_filters:
         return Localization().getStringEx('panel.settings.home.settings.sections.food_filter.label', 'My Food Filter');
-      case SettingsSection.sports:
+      case SettingsContent.sports:
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
-      case SettingsSection.notifications:
-        return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notifications');
+      case SettingsContent.calendar:
+        return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'My Calendar Settings');
     }
   }
 
   String get _panelHeaderLabel {
-    switch (_selectedSection) {
-      case SettingsSection.sections:
+    switch (_selectedContent) {
+      case SettingsContent.sections:
         return Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings');
-      case SettingsSection.profile:
-        return Localization().getStringEx('panel.settings.home.header.profile.label', 'Profile');
-      case SettingsSection.privacy:
-        return Localization().getStringEx('panel.settings.home.header.privacy.label', 'Privacy');
-      case SettingsSection.personal_info:
-        return Localization().getStringEx('panel.settings.home.header.personal_info.label', 'Personal Information');
-      case SettingsSection.who_are_you:
-        return Localization().getStringEx('panel.settings.home.header.who_are_you.label', 'Who Are You');
-      case SettingsSection.interests:
+      case SettingsContent.interests:
         return Localization().getStringEx('panel.settings.home.header.interests.label', 'My Interests');
-      case SettingsSection.food_filters:
+      case SettingsContent.food_filters:
         return Localization().getStringEx('panel.settings.home.header.food_filter.label', 'My Food Filter');
-      case SettingsSection.sports:
+      case SettingsContent.sports:
         return Localization().getStringEx('panel.settings.home.header.sports.label', 'My Sports Teams');
-      case SettingsSection.notifications:
-        return Localization().getStringEx('panel.settings.home.header.notifications.label', 'My Notifications');
+      case SettingsContent.calendar:
+        return Localization().getStringEx('panel.settings.home.header.calendar.label', 'My Calendar Settings');
     }
   }
 }
 
-enum SettingsSection { sections, profile, privacy, personal_info, who_are_you, interests, food_filters, sports, notifications }
+enum SettingsContent { sections, interests, food_filters, sports, calendar }
 
 class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
   final Widget _child;

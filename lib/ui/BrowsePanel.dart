@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -45,7 +46,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ui/WellnessPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
-import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -614,7 +614,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
 
   void _navigatePrivacyCenter() {
     Analytics().logSelect(target: "Privacy Center");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyCenterPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsProfileContentPanel(content: SettingsProfileContent.privacy)));
   }
 
   bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
