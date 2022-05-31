@@ -28,7 +28,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
-import 'package:illinois/ui/settings/SettingsRolesPanel.dart';
 import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -350,7 +349,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
 
   void _onTapWhoYouAre(){
     Analytics().logSelect(target: "Who are you");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsRolesPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsProfileContentPanel(content: SettingsProfileContent.who_are_you)));
   }
 
   void _onTapInterests(){

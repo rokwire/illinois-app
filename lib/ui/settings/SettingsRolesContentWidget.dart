@@ -22,17 +22,15 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class SettingsRolesPanel extends StatefulWidget {
-  _SettingsRolesPanelState createState() => _SettingsRolesPanelState();
+class SettingsRolesContentWidget extends StatefulWidget {
+  _SettingsRolesContentWidgetState createState() => _SettingsRolesContentWidgetState();
 }
 
-class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
+class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget> {
   Set<UserRole>? _selectedRoles;
 
   Timer? _saveRolesTimer;
@@ -56,23 +54,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx('panel.onboarding.roles.label.title', 'Who Are You?'),
-        onLeading: _onBack,
-      ),
-      body: _buildContent(),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
-  }
-
-  Widget _buildContent() {
-    return
-      Column (children: <Widget>[
-        Expanded(
-        child: SingleChildScrollView(
-        child: Container(
+    return Container(
           color: Styles().colors!.background,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -90,14 +72,9 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
                 padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 0),
                 child: RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton),
               ),
-
             ],
           ),
-        ),
-      )),
-//      _buildSaveButton()
-      ],)
-    ;
+        );
   }
 
   /*Widget _buildSaveButton(){
@@ -142,12 +119,12 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
     }
   }
 
-  void _onBack() {
+  /*void _onBack() {
     if (_saveRolesTimer != null) {
       _saveSelectedRoles();
     }
     Navigator.pop(context);
-  }
+  }*/
 
   //TBD clear up when sure that timer saving approach won't be needed
   void _startSaveRolesTimer() {
