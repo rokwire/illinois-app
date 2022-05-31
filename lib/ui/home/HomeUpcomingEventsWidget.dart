@@ -431,21 +431,12 @@ class _EventsRibbonHeader extends StatelessWidget {
       titleList.add(rightIconWidget);
     }
 
-    titleList.add(Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-      InkWell(onTap: _onFavorite, child:
-        HomeFavoriteStar(),
-      ),
-    ));
+    titleList.add(HomeFavoriteButton(favoriteId: favoriteId,));
 
     Widget contentWidget = Container(color: Styles().colors?.fillColorPrimary, child: 
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: titleList,),
     );
 
     return contentWidget;
-  }
-
-  void _onFavorite() {
-    Analytics().logSelect(target: "Favorite: $favoriteId");
-    Auth2().prefs?.toggleFavorite(HomeFavorite(favoriteId));
   }
 }
