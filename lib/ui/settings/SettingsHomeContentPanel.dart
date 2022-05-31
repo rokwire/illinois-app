@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/ui/settings/SettingsPersonalInfoContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -49,7 +48,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: _DebugContainer(child: RootHeaderBar(title: _panelHeaderLabel, showActions: false)),
+        appBar: HeaderBar(titleWidget: _buildHeaderBarTitle()),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
@@ -72,6 +71,13 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         ]),
         backgroundColor: Styles().colors!.background,
         bottomNavigationBar: uiuc.TabBar());
+  }
+
+  Widget _buildHeaderBarTitle() {
+    return _DebugContainer(
+        child: Text(_panelHeaderLabel,
+            style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
+            textAlign: TextAlign.center));
   }
 
   Widget _buildContent() {
@@ -100,9 +106,6 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
     for (SettingsSection section in SettingsSection.values) {
-      if ((section == SettingsSection.profile) && !Auth2().isLoggedIn) {
-        continue;
-      }
       if ((_selectedSection != section)) {
         sectionList.add(_buildSectionItem(section));
       }
@@ -135,17 +138,6 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
     switch (_selectedSection) {
       case SettingsSection.sections:
         return SettingsSectionsContentWidget();
-      case SettingsSection.profile:
-        return SettingsPersonalInfoContentWidget();
-      case SettingsSection.privacy:
-        //TODO: implement
-        return Container();
-      case SettingsSection.personal_info:
-        //TODO: implement
-        return Container();
-      case SettingsSection.who_are_you:
-        //TODO: implement
-        return Container();
       case SettingsSection.interests:
         //TODO: implement
         return Container();
@@ -155,7 +147,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
       case SettingsSection.sports:
         //TODO: implement
         return Container();
-      case SettingsSection.notifications:
+      case SettingsSection.calendar:
         //TODO: implement
         return Container();
       default:
@@ -169,22 +161,24 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
     switch (section) {
       case SettingsSection.sections:
         return Localization().getStringEx('panel.settings.home.settings.sections.section.label', 'Setting Sections');
-      case SettingsSection.profile:
-        return Localization().getStringEx('panel.settings.home.settings.sections.profile.label', 'My Profile');
-      case SettingsSection.privacy:
-        return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings');
-      case SettingsSection.personal_info:
-        return Localization().getStringEx('panel.settings.home.settings.sections.personal_info.label', 'Personal Information');
-      case SettingsSection.who_are_you:
-        return Localization().getStringEx('panel.settings.home.settings.sections.who_are_you.label', 'Who Are You');
+      // case SettingsSection.profile:
+        // return Localization().getStringEx('panel.settings.home.settings.sections.profile.label', 'My Profile');
+      // case SettingsSection.privacy:
+      //   return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings');
+      // case SettingsSection.personal_info:
+      //   return Localization().getStringEx('panel.settings.home.settings.sections.personal_info.label', 'Personal Information');
+      // case SettingsSection.who_are_you:
+      //   return Localization().getStringEx('panel.settings.home.settings.sections.who_are_you.label', 'Who Are You');
       case SettingsSection.interests:
         return Localization().getStringEx('panel.settings.home.settings.sections.interests.label', 'My Interests Filter');
       case SettingsSection.food_filters:
         return Localization().getStringEx('panel.settings.home.settings.sections.food_filter.label', 'My Food Filter');
       case SettingsSection.sports:
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
-      case SettingsSection.notifications:
-        return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notifications');
+      // case SettingsSection.notifications:
+      //   return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notifications');
+      case SettingsSection.calendar:
+        return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'My Calendar Settings');
     }
   }
 
@@ -192,27 +186,29 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
     switch (_selectedSection) {
       case SettingsSection.sections:
         return Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings');
-      case SettingsSection.profile:
-        return Localization().getStringEx('panel.settings.home.header.profile.label', 'Profile');
-      case SettingsSection.privacy:
-        return Localization().getStringEx('panel.settings.home.header.privacy.label', 'Privacy');
-      case SettingsSection.personal_info:
-        return Localization().getStringEx('panel.settings.home.header.personal_info.label', 'Personal Information');
-      case SettingsSection.who_are_you:
-        return Localization().getStringEx('panel.settings.home.header.who_are_you.label', 'Who Are You');
+      // case SettingsSection.profile:
+      //   return Localization().getStringEx('panel.settings.home.header.profile.label', 'Profile');
+      // case SettingsSection.privacy:
+        // return Localization().getStringEx('panel.settings.home.header.privacy.label', 'Privacy');
+      // case SettingsSection.personal_info:
+      //   return Localization().getStringEx('panel.settings.home.header.personal_info.label', 'Personal Information');
+      // case SettingsSection.who_are_you:
+      //   return Localization().getStringEx('panel.settings.home.header.who_are_you.label', 'Who Are You');
       case SettingsSection.interests:
         return Localization().getStringEx('panel.settings.home.header.interests.label', 'My Interests');
       case SettingsSection.food_filters:
         return Localization().getStringEx('panel.settings.home.header.food_filter.label', 'My Food Filter');
       case SettingsSection.sports:
         return Localization().getStringEx('panel.settings.home.header.sports.label', 'My Sports Teams');
-      case SettingsSection.notifications:
-        return Localization().getStringEx('panel.settings.home.header.notifications.label', 'My Notifications');
+      // case SettingsSection.notifications:
+      //   return Localization().getStringEx('panel.settings.home.header.notifications.label', 'My Notifications');
+      case SettingsSection.calendar:
+        return Localization().getStringEx('panel.settings.home.header.calendar.label', 'My Calendar Settings');
     }
   }
 }
 
-enum SettingsSection { sections, profile, privacy, personal_info, who_are_you, interests, food_filters, sports, notifications }
+enum SettingsSection { sections, interests, food_filters, sports, calendar }
 
 class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
   final Widget _child;
