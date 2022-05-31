@@ -44,6 +44,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
+    // Do not allow not logged in users to view "Profile" content
     _selectedContent = widget.content ?? (Auth2().isLoggedIn ? SettingsProfileContent.profile : SettingsProfileContent.privacy);
   }
 
@@ -182,6 +183,10 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   @override
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged) {
+      if ((_selectedContent == SettingsProfileContent.profile) && !Auth2().isLoggedIn) {
+        // Do not allow not logged in users to view "Profile" content
+        _selectedContent = SettingsProfileContent.privacy;
+      }
       if (mounted) {
         setState(() {});
       }
