@@ -41,7 +41,7 @@ class SettingsPrivacyCenterContentWidget extends StatefulWidget{
 }
 
 class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCenterContentWidget> implements NotificationsListener {
-  PrivacyData? _data;
+  PrivacyData? _privacyData;
 
   @override
   void initState() {
@@ -63,7 +63,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
 
   void _loadPrivacyData() async {
     dynamic privacyJson = Assets()["privacy"];
-    _data = PrivacyData.fromJson(privacyJson);
+    _privacyData = PrivacyData.fromJson(privacyJson);
   }
 
   @override
@@ -163,8 +163,8 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
   Widget _buildDescriptionWidget() {
     int? level = Auth2().prefs?.privacyLevel;
     PrivacyDescription? description;
-    if (CollectionUtils.isNotEmpty(_data?.privacyDescription)) {
-      for (PrivacyDescription desc in _data!.privacyDescription!) {
+    if (CollectionUtils.isNotEmpty(_privacyData?.privacyDescription)) {
+      for (PrivacyDescription desc in _privacyData!.privacyDescription!) {
         if (desc.level == level) {
           description = desc;
           break;
@@ -366,7 +366,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
       _updateState();
     } 
     else if (name == Localization.notifyLocaleChanged) {
-      _data?.reload();
+      _privacyData?.reload();
       _updateState();
     }
   }
