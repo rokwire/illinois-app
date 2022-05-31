@@ -487,11 +487,6 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
     return !Auth2().isLoggedIn && Auth2().privacyMatch(4);
   }
 
-  void _onTapBack() {
-    Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
-  }
-
   @override
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged) {
