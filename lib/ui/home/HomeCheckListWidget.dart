@@ -18,10 +18,10 @@ class HomeCheckListWidget extends StatefulWidget{
 
   final String contentKey;
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeCheckListWidget({Key? key, required this.contentKey, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  const HomeCheckListWidget({Key? key, required this.contentKey, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HomeCheckListWidgetState();

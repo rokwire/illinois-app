@@ -42,11 +42,11 @@ import 'HomeWidgets.dart';
 class HomeCampusToolsWidget extends StatefulWidget {
 
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
 
-  HomeCampusToolsWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  HomeCampusToolsWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   _HomeCampusToolsWidgetState createState() => _HomeCampusToolsWidgetState();
 }

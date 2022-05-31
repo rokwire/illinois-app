@@ -24,10 +24,10 @@ import 'package:sprintf/sprintf.dart';
 class HomeWalletWidget extends StatefulWidget {
   
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeWalletWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  HomeWalletWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<HomeWalletWidget> createState() => _HomeWalletWidgetState();
@@ -67,19 +67,19 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
       for (dynamic contentListCode in contentListCodes) {
         Widget? contentEntry;
         if (contentListCode == 'illini_cash_card') {
-          contentEntry = HomeIlliniCashWalletWidget(refreshController: widget.refreshController,);
+          contentEntry = HomeIlliniCashWalletWidget(updateController: widget.updateController,);
         }
         else if (contentListCode == 'meal_plan_card') {
-          contentEntry = HomeMealPlanWalletWidget(refreshController: widget.refreshController,);
+          contentEntry = HomeMealPlanWalletWidget(updateController: widget.updateController,);
         }
         else if (contentListCode == 'bus_pass_card') {
-          contentEntry = HomeBusPassWalletWidget(refreshController: widget.refreshController,);
+          contentEntry = HomeBusPassWalletWidget(updateController: widget.updateController,);
         }
         else if (contentListCode == 'illini_id_card') {
-          contentEntry = HomeIlliniIdWalletWidget(refreshController: widget.refreshController,);
+          contentEntry = HomeIlliniIdWalletWidget(updateController: widget.updateController,);
         }
         else if (contentListCode == 'library_card') {
-          contentEntry = HomeLibraryCardWalletWidget(refreshController: widget.refreshController,);
+          contentEntry = HomeLibraryCardWalletWidget(updateController: widget.updateController,);
         }
 
         if (contentEntry != null) {
@@ -105,9 +105,9 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
 // HomeIlliniCashWalletWidget
 
 class HomeIlliniCashWalletWidget extends StatefulWidget {
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
 
-  HomeIlliniCashWalletWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeIlliniCashWalletWidget({Key? key, this.updateController}) : super(key: key);
 
   @override
   State<HomeIlliniCashWalletWidget> createState() => _HomeIlliniCashWalletWidgetState();
@@ -194,9 +194,9 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
 // HomeMealPlanWalletWidget
 
 class HomeMealPlanWalletWidget extends StatefulWidget {
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
 
-  HomeMealPlanWalletWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeMealPlanWalletWidget({Key? key, this.updateController}) : super(key: key);
 
   @override
   State<HomeMealPlanWalletWidget> createState() => _HomeMealPlanWalletWidgetState();
@@ -284,9 +284,9 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
 // HomeBusPassWalletWidget
 
 class HomeBusPassWalletWidget extends StatefulWidget {
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
 
-  HomeBusPassWalletWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeBusPassWalletWidget({Key? key, this.updateController}) : super(key: key);
 
   @override
   State<HomeBusPassWalletWidget> createState() => _HomeBusPassWalletWidgetState();
@@ -369,9 +369,9 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
 // HomeIlliniIdWalletWidget
 
 class HomeIlliniIdWalletWidget extends StatefulWidget {
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
 
-  HomeIlliniIdWalletWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeIlliniIdWalletWidget({Key? key, this.updateController}) : super(key: key);
 
   @override
   State<HomeIlliniIdWalletWidget> createState() => _HomeIlliniIdWalletWidgetState();
@@ -452,9 +452,9 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
 // HomeLibraryCardWalletWidget
 
 class HomeLibraryCardWalletWidget extends StatefulWidget {
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
 
-  HomeLibraryCardWalletWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeLibraryCardWalletWidget({Key? key, this.updateController}) : super(key: key);
 
   @override
   State<HomeLibraryCardWalletWidget> createState() => _HomeLibraryCardWalletWidgetState();
