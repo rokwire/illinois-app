@@ -36,10 +36,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCampusRemindersWidget extends StatefulWidget {
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeCampusRemindersWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  HomeCampusRemindersWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeCampusRemindersWidgetState createState() => _HomeCampusRemindersWidgetState();
@@ -61,9 +61,11 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
       Auth2.notifyCardChanged,
     ]);
 
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-        Guide().refresh();
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          Guide().refresh();
+        }
       });
     }
 

@@ -12,7 +12,6 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 //import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -24,10 +23,10 @@ import 'package:url_launcher/url_launcher.dart';
 class HomeTwitterWidget extends StatefulWidget {
 
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeTwitterWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  HomeTwitterWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeTwitterWidgetState createState() => _HomeTwitterWidgetState();
@@ -53,9 +52,11 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     ]);
 
 
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-        _refresh(noCache: true);
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          _refresh(noCache: true);
+        }
       });
     }
 
@@ -132,6 +133,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
                 data: HomeFavorite(widget.favoriteId),
                 onDragStarted: () { widget.dragAndDropHost?.isDragging = true; },
                 onDragEnd: (details) { widget.dragAndDropHost?.isDragging = false; },
+                onDragCompleted: () { widget.dragAndDropHost?.isDragging = false; },
                 onDraggableCanceled: (velocity, offset) { widget.dragAndDropHost?.isDragging = false; },
                 feedback: HomeSlantFeedback(title: 'Twitter'),
                 childWhenDragging: HomeDragHandle(),
@@ -151,11 +153,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
               Semantics(container: true,  button: true, child: buildAccountDropDown(), ) :
               Container(),
 
-            Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-              InkWell(onTap: _onFavorite, child:
-                HomeFavoriteStar(),
-              ),
-            ),
+            HomeFavoriteButton(favoriteId: widget.favoriteId,),
             
         ],),),);
   }
@@ -340,11 +338,6 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
         setState(fn);
       }
     });
-  }
-
-  void _onFavorite() {
-    Analytics().logSelect(target: "Favorite: ${widget.favoriteId}");
-    Auth2().prefs?.toggleFavorite(HomeFavorite(widget.favoriteId));
   }
 }
 

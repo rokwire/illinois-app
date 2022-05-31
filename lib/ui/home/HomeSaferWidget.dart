@@ -23,10 +23,10 @@ class HomeSaferWidget extends StatefulWidget {
   static const String notifyNeedsVisiblity = "edu.illinois.rokwire.home.safer.needs.visibility";
   
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeSaferWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  HomeSaferWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeSaferWidgetState createState() => _HomeSaferWidgetState();
@@ -44,8 +44,10 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
       FlexUI.notifyChanged,
     ]);
 
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+        }
       });
     }
   }

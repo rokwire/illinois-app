@@ -26,10 +26,10 @@ import 'package:illinois/ui/athletics/AthleticsGameDayWidget.dart';
 
 class HomeGameDayWidget extends StatefulWidget {
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeGameDayWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost }) : super(key: key);
+  HomeGameDayWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost }) : super(key: key);
 
   _HomeGameDayState createState() => _HomeGameDayState();
 }
@@ -43,11 +43,11 @@ class _HomeGameDayState extends State<HomeGameDayWidget> implements Notification
     super.initState();
     NotificationService().subscribe(this, Connectivity.notifyStatusChanged);
 
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
+    widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
         _loadTodayGames();
-      });
-    }
+      }
+    });
 
     _loadTodayGames();
   }

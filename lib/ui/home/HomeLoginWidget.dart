@@ -17,10 +17,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class HomeLoginWidget extends StatefulWidget {
 
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeLoginWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  HomeLoginWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeLoginWidgetState createState() => _HomeLoginWidgetState();

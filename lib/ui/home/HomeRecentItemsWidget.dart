@@ -46,10 +46,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 class HomeRecentItemsWidget extends StatefulWidget {
 
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeRecentItemsWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  HomeRecentItemsWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeRecentItemsWidgetState createState() => _HomeRecentItemsWidgetState();
@@ -65,9 +65,11 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
     NotificationService().subscribe(this, RecentItems.notifyChanged);
 
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-        _loadRecentItems();
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          _loadRecentItems();
+        }
       });
     }
 

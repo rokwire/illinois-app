@@ -15,10 +15,10 @@ import 'package:just_audio/just_audio.dart';
 
 class HomeWPGUFMRadioWidget extends StatefulWidget {
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeWPGUFMRadioWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  const HomeWPGUFMRadioWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<HomeWPGUFMRadioWidget> createState() => _HomeWPGUFMRadioWidgetState();

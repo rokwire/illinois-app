@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
@@ -149,6 +150,7 @@ class HomeSlantWidget extends StatelessWidget {
                 maxSimultaneousDrags: 1,
                 onDragStarted: () { dragAndDropHost?.isDragging = true; },
                 onDragEnd: (details) { dragAndDropHost?.isDragging = false; },
+                onDragCompleted: () { dragAndDropHost?.isDragging = false; },
                 onDraggableCanceled: (velocity, offset) { dragAndDropHost?.isDragging = false; },
                 feedback: HomeSlantFeedback(title: title),
                 childWhenDragging: HomeDragHandle(),
@@ -165,11 +167,7 @@ class HomeSlantWidget extends StatelessWidget {
             ),
 
             
-            Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-              InkWell(onTap: _onFavorite, child:
-                HomeFavoriteStar(),
-              ),
-            ),
+            HomeFavoriteButton(favoriteId: favoriteId,),
           ],),
       ),),
       
@@ -194,10 +192,6 @@ class HomeSlantWidget extends StatelessWidget {
     ],);
   }
 
-  void _onFavorite() {
-    Analytics().logSelect(target: "Favorite: $favoriteId");
-    Auth2().prefs?.toggleFavorite(HomeFavorite(favoriteId));
-  }
 }
 
 class HomeDragHandle extends StatelessWidget {
@@ -217,6 +211,60 @@ class HomeFavoriteStar extends StatelessWidget {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
       Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true,),
     );
+  }
+
+}
+
+class HomeFavoriteButton extends StatelessWidget {
+
+  final String? favoriteId;
+
+  HomeFavoriteButton({this.favoriteId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
+      InkWell(onTap: () => _onFavorite(context), child:
+        HomeFavoriteStar()
+      ),
+    );
+  }
+
+  void _onFavorite(BuildContext context) {
+    Analytics().logSelect(target: "Favorite: $favoriteId");
+
+    HomeFavorite favorite = HomeFavorite(favoriteId);
+    if (Auth2().prefs?.isFavorite(favorite) ?? false) {
+      _promptRemoveFavorite(context).then((bool? result) {
+        if (result == true) {
+          Auth2().prefs?.toggleFavorite(favorite);
+        }
+      });
+    }
+    else {
+      Auth2().prefs?.toggleFavorite(favorite);
+    }
+  }
+
+  Future<bool?> _promptRemoveFavorite(BuildContext context) async {
+    String message = Localization().getStringEx('widget.home.promot.remove.favorite', 'Are you sure you want to remove this favorite');
+    return await showDialog(context: context, builder: (BuildContext context) {
+      return AlertDialog(
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(child: Text(Localization().getStringEx("dialog.yes.title", "Yes")),
+            onPressed:(){
+              Analytics().logAlert(text: message, selection: "Yes");
+              Navigator.pop(context, true);
+            }),
+          TextButton(child: Text(Localization().getStringEx("dialog.no.title", "No")),
+            onPressed:(){
+              Analytics().logAlert(text: message, selection: "No");
+              Navigator.pop(context, false);
+            }),
+        ]
+      );
+    });
   }
 }
 

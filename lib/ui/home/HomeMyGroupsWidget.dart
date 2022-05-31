@@ -14,10 +14,10 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 
 class HomeMyGroupsWidget extends StatefulWidget {
   final String? favoriteId;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeMyGroupsWidget({Key? key, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  const HomeMyGroupsWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HomeMyGroupsState();
@@ -31,6 +31,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   @override
   void initState() {
     super.initState();
+
     NotificationService().subscribe(this, [
       Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupCreated,
@@ -38,9 +39,12 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
       Groups.notifyGroupDeleted,
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,]);
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-        _loadGroups();
+
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          _loadGroups();
+        }
       });
     }
 

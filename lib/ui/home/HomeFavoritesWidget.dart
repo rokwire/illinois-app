@@ -36,10 +36,10 @@ class HomeFavoritesWidget extends StatefulWidget {
 
   final String? favoriteId;
   final String favoriteKey;
-  final StreamController<void>? refreshController;
+  final StreamController<String>? updateController;
   final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeFavoritesWidget({Key? key, required this.favoriteKey, this.favoriteId, this.refreshController, this.dragAndDropHost}) : super(key: key);
+  HomeFavoritesWidget({Key? key, required this.favoriteKey, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
 
   @override
   _HomeFavoritesWidgetState createState() => _HomeFavoritesWidgetState();
@@ -59,11 +59,15 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Auth2UserPrefs.notifyFavoritesChanged,
       Guide.notifyChanged,
     ]);
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-        _refreshFavorites();
+    
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          _refreshFavorites();
+        }
       });
     }
+
     _refreshFavorites();
     super.initState();
   }

@@ -3,7 +3,7 @@
 		"tabbar": ["favorites", "browse", "navigate", "academics", "wellness"],
 
 		"home": ["emergency", "voter_registration", "connect",
-			"gies", "uiuc_student", "safer", "twitter", "canvas", "my_groups", "highlighted_features", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_highlights", "wallet", "wpgufm_radio",
+			"gies_checklist", "new_student_checklist", "safer", "twitter", "canvas_courses", "my_groups", "highlighted_features", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "campus_highlights", "wallet", "wpgufm_radio",
 			"events_favs", "dining_favs", "athletics_favs", "news_favs", "laundry_favs", "inbox_favs", "campus_guide_favs"],
 		"home.connect": ["netid", "phone_or_email"],
 		"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
@@ -43,7 +43,7 @@
 
 		"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 		
-		"features": ["authentication", "converge", "create_poll", "mtd_bus_number", "parking_lot_directions", "gies", "uiuc_student"],
+		"features": ["authentication", "converge", "create_poll", "mtd_bus_number", "parking_lot_directions", "gies", "new_student", "canvas"],
 		
 		"launch":["emergency"]
 		
@@ -77,8 +77,11 @@
 			"safer"                                  : ["NOT", "Gies Online Programs"],
 			"personal_information.on_campus"         : ["NOT", "Gies Online Programs"],
 			"gies"                                   : ["Gies Online Programs"],
-			"uiuc_student"                           : ["2022 New Students"],
+			"gies_checklist"                         : ["Gies Online Programs"],
+			"new_student"                            : ["2022 New Students"],
+			"new_student_checklist"                  : ["2022 New Students"],
 			"canvas"                                 : ["Canvas Beta"],
+			"canvas_courses"                         : ["Canvas Beta"],
 			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", "Gies Online Programs"]]
 		},
 		"locations": {
@@ -120,8 +123,11 @@
 		"auth": {
 			"connect"                             : { "loggedIn": false },
 			"gies"                                : { "shibbolethLoggedIn": true },
-			"uiuc_student"                        : { "shibbolethLoggedIn": true },
+			"gies_checklist"                      : { "shibbolethLoggedIn": true },
+			"new_student"                         : { "shibbolethLoggedIn": true },
+			"new_student_checklist"               : { "shibbolethLoggedIn": true },
 			"canvas"                              : { "shibbolethLoggedIn": true },
+			"canvas_courses"                      : { "shibbolethLoggedIn": true },
 			"laundry"                             : { "shibbolethLoggedIn": true },
 			"laundry_favs"                        : { "shibbolethLoggedIn": true },
 			"create_event"                        : { "accountRole": "event approvers" },
