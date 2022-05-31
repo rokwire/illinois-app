@@ -162,11 +162,11 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           else if (code == 'twitter') {
             widget = HomeTwitterWidget(favoriteId: code, refreshController: _refreshController, dragAndDropHost: this,);
           }
-          else if (code == 'gies') {
-            widget = HomeCheckListWidget(favoriteId: code, contentKey: code, refreshController: _refreshController, dragAndDropHost: this);
+          else if (code == 'gies_checklist') {
+            widget = HomeCheckListWidget(favoriteId: code, contentKey: 'gies', refreshController: _refreshController, dragAndDropHost: this);
           }
-          else if (code == 'uiuc_student') {
-            widget = HomeCheckListWidget(favoriteId: code, contentKey: "uiuc_student", refreshController: _refreshController, dragAndDropHost: this);
+          else if (code == 'new_student_checklist') {
+            widget = HomeCheckListWidget(favoriteId: code, contentKey: "uiuc_student" /* TBD => "new_student" */, refreshController: _refreshController, dragAndDropHost: this);
           }
           else if (code == 'canvas') {
             widget = HomeCanvasCoursesWidget(refreshController: _refreshController, dragAndDropHost: this,);
