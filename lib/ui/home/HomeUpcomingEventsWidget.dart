@@ -391,6 +391,7 @@ class _EventsRibbonHeader extends StatelessWidget {
         data: HomeFavorite(favoriteId),
         onDragStarted: () { dragAndDropHost?.isDragging = true; },
         onDragEnd: (details) { dragAndDropHost?.isDragging = false; },
+        onDragCompleted: () { dragAndDropHost?.isDragging = false; },
         onDraggableCanceled: (velocity, offset) { dragAndDropHost?.isDragging = false; },
         feedback: HomeSlantFeedback(title: title),
         childWhenDragging: HomeDragHandle(),

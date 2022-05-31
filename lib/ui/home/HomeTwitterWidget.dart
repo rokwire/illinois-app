@@ -132,6 +132,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
                 data: HomeFavorite(widget.favoriteId),
                 onDragStarted: () { widget.dragAndDropHost?.isDragging = true; },
                 onDragEnd: (details) { widget.dragAndDropHost?.isDragging = false; },
+                onDragCompleted: () { widget.dragAndDropHost?.isDragging = false; },
                 onDraggableCanceled: (velocity, offset) { widget.dragAndDropHost?.isDragging = false; },
                 feedback: HomeSlantFeedback(title: 'Twitter'),
                 childWhenDragging: HomeDragHandle(),

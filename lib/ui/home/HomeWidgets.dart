@@ -149,6 +149,7 @@ class HomeSlantWidget extends StatelessWidget {
                 maxSimultaneousDrags: 1,
                 onDragStarted: () { dragAndDropHost?.isDragging = true; },
                 onDragEnd: (details) { dragAndDropHost?.isDragging = false; },
+                onDragCompleted: () { dragAndDropHost?.isDragging = false; },
                 onDraggableCanceled: (velocity, offset) { dragAndDropHost?.isDragging = false; },
                 feedback: HomeSlantFeedback(title: title),
                 childWhenDragging: HomeDragHandle(),

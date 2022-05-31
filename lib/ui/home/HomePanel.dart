@@ -77,7 +77,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   GlobalKey _contentWrapperKey = GlobalKey();
   ScrollController _scrollController = ScrollController();
   Timer? _scrollTimer;
-  bool isDragging = false;
+  bool _isDragging = false;
 
   @override
   void initState() {
@@ -281,7 +281,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _onPointerMove(PointerMoveEvent event) {
-    if (isDragging) {
+    if (_isDragging) {
       RenderBox render = _contentWrapperKey.currentContext?.findRenderObject() as RenderBox;
       Offset position = render.localToGlobal(Offset.zero);
       double topY = position.dy;  // top position of the widget
@@ -341,7 +341,25 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
   }
 
+  // HomeDragAndDropHost
+  
+  bool get isDragging => _isDragging;
+
+  set isDragging(bool value) {
+    if (_isDragging != value) {
+      _isDragging = value;
+      
+      if (_isDragging) {
+      }
+      else {
+        _cancelScrollTimer();
+      }
+    }
+  }
+
   void onDragAndDrop({String? dragFavoriteId, String? dropFavoriteId, CrossAxisAlignment? dropAnchor}) {
+
+    isDragging = false;
 
     if ((_contentCodesList != null) && (dragFavoriteId != null) && (dropFavoriteId != null)) {
       int dragIndex = _contentCodesList?.indexOf(dragFavoriteId) ?? -1;
