@@ -454,7 +454,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         });
 
       }
-      else if ((0 <= dragIndex) && (dropFavoriteId == null)) {
+      else if ((0 <= dragIndex) && (dropFavoriteId != '')) {
         // Remove favorite
         HomeFavoriteButton.promptFavorite(context, dragFavoriteId).then((bool? result) {
           if (result == true) {
