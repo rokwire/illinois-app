@@ -17,7 +17,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
@@ -246,74 +245,66 @@ class RootHeaderBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) => AppBar(
     backgroundColor: Styles().colors?.fillColorPrimaryVariant,
-    leading: _buildHeaderHomeButton(),
-    title: _buildHeaderTitle(),
-    actions: _buildHeaderActions(),
+    leading: buildHeaderHomeButton(context),
+    title: buildHeaderTitle(context),
+    actions: buildHeaderActions(context),
   );
 
   // PreferredSizeWidget
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
-  Widget _buildHeaderHomeButton() {
+  Widget buildHeaderHomeButton(BuildContext context) {
     return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),);
+      IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: () => onTapHome(context),),);
   }
 
-  Widget _buildHeaderTitle() {
+  Widget buildHeaderTitle(BuildContext context) {
     return Semantics(label: title, excludeSemantics: true, child:
       Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
   }
 
-  List<Widget> _buildHeaderActions() {
+  List<Widget> buildHeaderActions(BuildContext context) {
     return <Widget>[
-      _buildHeaderPersonalInfoButton(),
-      _buildHeaderNotificationsButton(),
-      _buildHeaderSettingsButton()
+      buildHeaderPersonalInfoButton(context),
+      buildHeaderNotificationsButton(context),
+      buildHeaderSettingsButton(context)
     ];
   }
 
-  Widget _buildHeaderSettingsButton() {
+  Widget buildHeaderSettingsButton(BuildContext context) {
     return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: _onTapSettings));
+      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: () => onTapSettings(context)));
   }
 
-  Widget _buildHeaderNotificationsButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/notifications-white.png', excludeFromSemantics: true), onPressed: _onTapNotifications));
+  Widget buildHeaderNotificationsButton(BuildContext context) {
+    return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/notifications-white.png', excludeFromSemantics: true), onPressed: () => onTapNotifications(context)));
   }
 
-  Widget _buildHeaderPersonalInfoButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/personal-white.png', excludeFromSemantics: true), onPressed: _onTapPersonalInformations));
+  Widget buildHeaderPersonalInfoButton(BuildContext context) {
+    return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/personal-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations(context)));
   }
 
-  void _onTapHome() {
+  void onTapHome(BuildContext context) {
     Analytics().logSelect(target: "Home");
-    if (App.instance?.currentContext != null) {
-      Navigator.of(App.instance!.currentContext!).popUntil((route) => route.isFirst);
-    }
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
-  void _onTapSettings() {
+  void onTapSettings(BuildContext context) {
     Analytics().logSelect(target: "Settings");
-    if (App.instance?.currentContext != null) {
-      Navigator.push(App.instance!.currentContext!, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel()));
-    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel()));
   }
 
-  void _onTapNotifications() {
+  void onTapNotifications(BuildContext context) {
     Analytics().logSelect(target: "Notifications");
-    if (App.instance?.currentContext != null) {
-      Navigator.push(App.instance!.currentContext!, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel()));
-    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel()));
   }
   
 
-  void _onTapPersonalInformations() {
+  void onTapPersonalInformations(BuildContext context) {
     Analytics().logSelect(target: "Personal Information");
-    if (App.instance?.currentContext != null) {
-      Navigator.push(App.instance!.currentContext!, CupertinoPageRoute(builder: (context) => SettingsProfileContentPanel()));
-    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsProfileContentPanel()));
   }
 
   

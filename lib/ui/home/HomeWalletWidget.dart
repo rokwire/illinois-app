@@ -55,6 +55,7 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
     return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
       HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
       title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
       child: Column(children: _buildCommandsList(),
     ),
     ),);

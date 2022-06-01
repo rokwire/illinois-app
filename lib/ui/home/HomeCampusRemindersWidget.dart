@@ -104,6 +104,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
       HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
         HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
           title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
+          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: Column(children: _buildRemindersList())
         ),
       ),
