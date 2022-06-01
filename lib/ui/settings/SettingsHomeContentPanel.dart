@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -142,8 +143,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
       case SettingsContent.interests:
         return SettingsInterestsContentWidget();
       case SettingsContent.food_filters:
-        //TODO: implement
-        return Container();
+        return SettingsFoodFiltersContentWidget();
       case SettingsContent.sports:
         //TODO: implement
         return Container();

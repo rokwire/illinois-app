@@ -944,7 +944,6 @@
     "panel.food_details.label.dietary_preferences.title": "DIETARY PREFERENCES",
     "panel.food_details.label.dietary_preferences.hint": "",
 
-    "panel.food_filters.header.title": "Food Filters",
     "panel.food_filters.label.only_show_food_that_are.title": "ONLY SHOW FOODS THAT ARE",
     "panel.food_filters.label.only_show_food_that_are.hint": "Filter foods by ingredient",
     "panel.food_filters.label.include_ingredients.title": "INCLUDE INGREDIENTS",

@@ -944,7 +944,6 @@
 	"panel.food_details.label.dietary_preferences.title":"饮食习惯",
 	"panel.food_details.label.dietary_preferences.hint":"",
 
-	"panel.food_filters.header.title":"食品过滤器",
 	"panel.food_filters.label.only_show_food_that_are.title":"只显示某类食物",
 	"panel.food_filters.label.only_show_food_that_are.hint":"按成分过滤食物",
 	"panel.food_filters.label.include_ingredients.title":"包括成分",
