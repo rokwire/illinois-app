@@ -412,7 +412,7 @@ class _EventsRibbonHeader extends StatelessWidget {
           child: HomeDragHandle()
         ),
       ) :
-      HomeTitleIcon(image: Image.asset('images/campus-calendar.png')),
+      HomeTitleIcon(image: Image.asset('images/icon-calendar.png')),
     );
       
 
