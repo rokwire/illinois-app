@@ -795,8 +795,7 @@
     "panel.events_schedule.button.details.title": "Detalles",
     "panel.events_schedule.button.details.hint": "",
 
-    "panel.settings.manage_interests.title":"Administrar mis intereses",
-    "panel.settings.manage_interests.instructions.tap":"Toque el",
+    "panel.settings.manage_interests.instructions.tap":"Toque el ",
     "panel.settings.manage_interests.instructions.follow":"para seguir las etiquetas que más le interesan",
     "panel.settings.manage_interests.list.following":"SIGUIENTE",
     "panel.settings.manage_interests.list.all_tags":"TODAS LAS ETIQUETAS",
@@ -1033,7 +1032,7 @@
     "panel.settings.home.header.sports.label": "Mis equipos deportivos",
     "panel.settings.home.header.calendar.label": "Configuración de mi calendario",
     "panel.settings.home.settings.sections.section.label": "Configuración de secciones",
-    "panel.settings.home.settings.sections.interests.label": "Filtro Mis intereses",
+    "panel.settings.home.settings.sections.interests.label": "Mis intereses",
     "panel.settings.home.settings.sections.food_filter.label": "Mi filtro de comida",
     "panel.settings.home.settings.sections.sports.label": "Mis equipos deportivos",
     "panel.settings.home.settings.sections.calendar.label": "Configuración de mi calendario",

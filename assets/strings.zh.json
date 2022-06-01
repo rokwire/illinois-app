@@ -795,8 +795,7 @@
 	"panel.events_schedule.button.details.title": "细节",
 	"panel.events_schedule.button.details.hint": "",
 
-	"panel.settings.manage_interests.title":"管理我的兴趣",
-	"panel.settings.manage_interests.instructions.tap":"点击",
+	"panel.settings.manage_interests.instructions.tap":"点击 ",
 	"panel.settings.manage_interests.instructions.follow":"跟随您最感兴趣的标签",
 	"panel.settings.manage_interests.list.following":"关注对象",
 	"panel.settings.manage_interests.list.all_tags":"所有标签",
@@ -1033,7 +1032,7 @@
     "panel.settings.home.header.sports.label": "我的運動隊",
 	"panel.settings.home.header.calendar.label": "我的日曆設置",
     "panel.settings.home.settings.sections.section.label": "設置部分",
-    "panel.settings.home.settings.sections.interests.label": "我的興趣過濾器",
+    "panel.settings.home.settings.sections.interests.label": "我的興趣",
     "panel.settings.home.settings.sections.food_filter.label": "我的食物過濾器",
     "panel.settings.home.settings.sections.sports.label": "我的運動隊",
     "panel.settings.home.settings.sections.calendar.label": "我的日曆設置",

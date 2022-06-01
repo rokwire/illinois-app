@@ -23,23 +23,19 @@ import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 enum _InterestTab { Categories, Tags, Athletics }
 
-class SettingsManageInterestsPanel extends StatefulWidget {
-  const SettingsManageInterestsPanel({
-    Key? key,
-  }) : super(key: key);
+class SettingsInterestsContentWidget extends StatefulWidget {
+
   @override
   _SettingsManageInterestsState createState() => _SettingsManageInterestsState();
 }
 
-class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> implements NotificationsListener {
+class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget> implements NotificationsListener {
   //Tabs
   List<_InterestTab> _tabs = [];
   _InterestTab? _selectedTab;
@@ -100,28 +96,17 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx('panel.settings.manage_interests.title', 'Manage My Interests'),
-      ),
-      body: _buildContent(),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
+    return _buildContent();
   }
 
   Widget _buildContent() {
+
+    //TODO: adjust with textspan
     return Container(
-        color: Styles().colors!.background,
-        child: Stack(children: <Widget>[
-          Column(children:[
-          Expanded(
-          child:SingleChildScrollView(
-            child: Container(
                 color: Styles().colors!.background,
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Semantics(
-                      label: Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the") +
+                      label: Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the ") +
                           Localization().getStringEx("panel.settings.manage_interests.instructions.check_mark", "check-mark") +
                           Localization().getStringEx('panel.settings.manage_interests.instructions.follow', ' to follow the tags that interest you most'),
                       excludeSemantics: true,
@@ -129,13 +114,13 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
                           alignment: Alignment.topCenter,
                           color: Styles().colors!.fillColorPrimary,
                           child: Padding(
-                              padding: EdgeInsets.only(left: 32, right: 32, bottom: 24),
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
-                                    Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the"),
+                                    Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the "),
                                     style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.white, fontSize: 16),
                                     textAlign: TextAlign.start,
                                   ),
@@ -150,17 +135,13 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
                                       )))
                                 ],
                               )))),
-                  Padding(padding: EdgeInsets.all(16), child:
+                  Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
                     SingleChildScrollView(scrollDirection: Axis.horizontal, child:
                       Row(children: _buildTabWidgets(),),
                     ),
                   ),
                   _buildTabContent(),
-                ])),
-          )),
-//          _buildSaveButton()
-          ]),
-        ]));
+                ]));
   }
 
   Widget _buildTabContent() {
@@ -193,9 +174,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }
 
   Widget _buildCategoriesContent() {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12),
-        child: ClipRRect(
+    return ClipRRect(
           borderRadius: BorderRadius.circular(15),
           child: Container(
             foregroundDecoration: BoxDecoration(
@@ -209,7 +188,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
               children: _buildCategories(),
             ),
           ),
-        ));
+        );
   }
 
   List<Widget> _buildCategories() {
@@ -367,9 +346,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }
 
   Widget _buildTagsList(List<String>? tags) {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12),
-        child: ClipRRect(
+    return ClipRRect(
           borderRadius: BorderRadius.circular(15),
           child: Container(
             foregroundDecoration: BoxDecoration(
@@ -383,7 +360,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
               children: _buildTagsItems(tags),
             ),
           ),
-        ));
+        );
   }
 
   List<Widget> _buildTagsItems(List<String>? tags) {
