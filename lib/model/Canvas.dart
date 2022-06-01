@@ -311,33 +311,24 @@ class CanvasCalendar {
 class CanvasEnrollment {
   final int? id;
   final int? userId;
-  final String? type;
+  final CanvasEnrollmentType? type;
   final String? role;
   final String? enrollmentState;
+  final CanvasGrade? grade;
   final bool? limitPrivilegesToCourseSection;
 
-  CanvasEnrollment({this.id, this.userId, this.type, this.role, this.enrollmentState, this.limitPrivilegesToCourseSection});
+  CanvasEnrollment({this.id, this.userId, this.type, this.role, this.enrollmentState, this.grade, this.limitPrivilegesToCourseSection});
 
   static CanvasEnrollment? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? CanvasEnrollment(
       id: JsonUtils.intValue(json['id']),
       userId: JsonUtils.intValue(json['user_id']),
-      type: JsonUtils.stringValue(json['type']),
+      type: CanvasEnrollment.typeFromString(JsonUtils.stringValue(json['type'])),
       role: JsonUtils.stringValue(json['role']),
       enrollmentState: JsonUtils.stringValue(json['enrollment_state']),
+      grade: CanvasGrade.fromJson(JsonUtils.mapValue(json['grades'])),
       limitPrivilegesToCourseSection: JsonUtils.boolValue(json['limit_privileges_to_course_section']),
     ) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'user_id': userId,
-      'type': type,
-      'role': role,
-      'enrollment_state': enrollmentState,
-      'limit_privileges_to_course_section': limitPrivilegesToCourseSection,
-    };
   }
 
   bool operator ==(o) =>
@@ -378,6 +369,87 @@ class CanvasEnrollment {
     }
     return jsonList;
   }
+
+  static CanvasEnrollmentType? typeFromString(String? value) {
+    switch (value) {
+      case 'StudentEnrollment':
+        return CanvasEnrollmentType.student;
+      case 'TeacherEnrollment':
+        return CanvasEnrollmentType.teacher;
+      case 'TaEnrollment':
+        return CanvasEnrollmentType.ta;
+      case 'DesignerEnrollment':
+        return CanvasEnrollmentType.designer;
+      case 'ObserverEnrollment':
+        return CanvasEnrollmentType.observer;
+      default:
+        return null;
+    }
+  }
+}
+
+////////////////////////////////
+// CanvasEnrollmentType
+
+enum CanvasEnrollmentType { student, teacher, ta, designer, observer }
+
+////////////////////////////////
+// CanvasGrade
+
+class CanvasGrade {
+  final String? htmlUrl;
+  final int? gradingPeriodId;
+  final String? currentGrade;
+  final double? currentScore;
+  final String? finalGrade;
+  final double? finalScore;
+  final String? unpostedCurrentGrade;
+  final double? unpostedCurrentScore;
+  final String? unpostedFinalGrade;
+  final double? unpostedFinalScore;
+
+  CanvasGrade({this.htmlUrl, this.gradingPeriodId, this.currentGrade, this.currentScore, this.finalGrade, this.finalScore, 
+  this.unpostedCurrentGrade, this.unpostedCurrentScore, this.unpostedFinalGrade, this.unpostedFinalScore});
+
+  static CanvasGrade? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? CanvasGrade(
+      htmlUrl: JsonUtils.stringValue(json['html_url']),
+      gradingPeriodId: JsonUtils.intValue(json['grading_period_id']),
+      currentGrade: JsonUtils.stringValue(json['current_grade']),
+      currentScore: JsonUtils.doubleValue(json['current_score']),
+      finalGrade: JsonUtils.stringValue(json['final_grade']),
+      finalScore: JsonUtils.doubleValue(json['final_score']),
+      unpostedCurrentGrade: JsonUtils.stringValue(json['unposted_current_grade']),
+      unpostedCurrentScore: JsonUtils.doubleValue(json['unposted_current_score']),
+      unpostedFinalGrade: JsonUtils.stringValue(json['unposted_final_grade']),
+      unpostedFinalScore: JsonUtils.doubleValue(json['unposted_final_score']),
+    ) : null;
+  }
+
+  bool operator ==(o) =>
+    (o is CanvasGrade) &&
+      (o.htmlUrl == htmlUrl) &&
+      (o.gradingPeriodId == gradingPeriodId) &&
+      (o.currentGrade == currentGrade) &&
+      (o.currentScore == currentScore) &&
+      (o.finalGrade == finalGrade) &&
+      (o.finalScore == finalScore) &&
+      (o.unpostedCurrentGrade == unpostedCurrentGrade) &&
+      (o.unpostedCurrentScore == unpostedCurrentScore) &&
+      (o.unpostedFinalGrade == unpostedFinalGrade) &&
+      (o.unpostedFinalScore == unpostedFinalScore);
+
+  int get hashCode =>
+    (htmlUrl?.hashCode ?? 0) ^
+    (gradingPeriodId?.hashCode ?? 0) ^
+    (currentGrade?.hashCode ?? 0) ^
+    (currentScore?.hashCode ?? 0) ^
+    (finalGrade?.hashCode ?? 0) ^
+    (finalScore?.hashCode ?? 0) ^
+    (unpostedCurrentGrade?.hashCode ?? 0) ^
+    (unpostedCurrentScore?.hashCode ?? 0) ^
+    (unpostedFinalGrade?.hashCode ?? 0) ^
+    (unpostedFinalScore?.hashCode ?? 0);
 }
 
 ////////////////////////////////

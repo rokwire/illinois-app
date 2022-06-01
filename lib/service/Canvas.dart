@@ -498,6 +498,41 @@ class Canvas with Service implements NotificationsListener{
     }
   }
 
+  // Grades
+
+  Future<double?> loadCourseGradeScore(int courseId) async {
+    if (!_available) {
+      return null;
+    }
+    String? url =
+        _masquerade('${Config().lmsUrl}/v1/courses/$courseId/users/self?include[]=enrollments&include[]=current_grading_period_scores');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      CanvasUser? user = CanvasUser.fromJson(JsonUtils.decodeMap(responseString));
+      List<CanvasEnrollment>? enrollments = user?.enrollments;
+      double? currentScore;
+      if (CollectionUtils.isNotEmpty(enrollments)) {
+        for (CanvasEnrollment enrollment in enrollments!) {
+          if (enrollment.type == CanvasEnrollmentType.student) {
+            CanvasGrade? grade = enrollment.grade;
+            currentScore = grade?.currentScore;
+            break;
+          }
+        }
+      }
+      return currentScore;
+    } else {
+      Log.w('Failed to load canvas user with enrollments. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
   // Canvas Self User
 
   Future<Map<String, dynamic>?> loadSelfUser() async {
