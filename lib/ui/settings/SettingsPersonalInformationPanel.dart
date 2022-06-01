@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/OnCampus.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -26,8 +27,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
-import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -354,12 +353,12 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
 
   void _onTapInterests(){
     Analytics().logSelect(target: "Manage Your Interests");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsManageInterestsPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel(content: SettingsContent.interests)));
   }
 
   void _onTapFoodFilters(){
     Analytics().logSelect(target: "Food Filters");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => FoodFiltersPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel(content: SettingsContent.food_filters)));
   }
 
   void _onTapDeleteData(){

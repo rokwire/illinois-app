@@ -19,18 +19,16 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 
-class FoodFiltersPanel extends StatefulWidget{
+class SettingsFoodFiltersContentWidget extends StatefulWidget{
 
-  _FoodFiltersPanelState createState() => _FoodFiltersPanelState();
+  _SettingsFoodFiltersContentWidgetState createState() => _SettingsFoodFiltersContentWidgetState();
 }
 
-class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
+class _SettingsFoodFiltersContentWidgetState extends State<SettingsFoodFiltersContentWidget> {
 
   //Set<String> selectedPreferences;
   late Set<String>? _selectedTypesPrefs;
@@ -55,17 +53,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
   @override
   Widget build(BuildContext context) {
     String onlyShow = Localization().getStringEx("panel.food_filters.label.only_show_food_that_are.title", "ONLY SHOW FOODS THAT ARE");
-    return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx("panel.food_filters.header.title", "Food Filters"),
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
+    return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(height: 20,),
@@ -136,16 +124,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
                     _buildFoodIngredients(),
                     Container(height: 20,),
                   ],
-                ),
-              ),
-            ),
-          ),
-//          _buildSaveButton()
-        ],
-      ),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
+                );
   }
 
   Widget _buildFoodTypes(){
@@ -224,34 +203,4 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
       setState((){});
     }
   }
-
-  //SaveButton
-  /*Widget _buildSaveButton(){
-    return
-      Padding(
-        padding: EdgeInsets.symmetric( vertical: 20,horizontal: 16),
-        child: RoundedButton(
-          label: Localization().getStringEx("panel.food_filters.button.save.title", "Save Changes"),
-          hint: Localization().getStringEx("panel.food_filters.button.save.hint", ""),
-          enabled: _canSave,
-          fontFamily: Styles().fontFamilies.bold,
-          backgroundColor: Styles().colors.white,
-          fontSize: 16.0,
-          textColor: Styles().colors.fillColorPrimary,
-          borderColor: Styles().colors.fillColorSecondary,
-          onTap: _onSaveChangesClicked,
-        ),
-      );
-  }
-
-  _onSaveChangesClicked(){
-    //Store when save clicked
-    Dinings().setIncludedFoodTypesPrefs(_selectedTypesPrefs.toList());
-    Dinings().setExcludedFoodIngredientsPrefs(_selectedIngredientsPrefs.toList());
-    Navigator.pop(context);
-  }
-
-  bool get _canSave{
-    return true; //TBD
-  }*/
 }

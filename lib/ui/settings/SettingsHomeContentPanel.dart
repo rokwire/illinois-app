@@ -16,6 +16,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
+import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -59,11 +62,11 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
                         Padding(
                             padding: EdgeInsets.only(left: 16, top: 16, right: 16),
                             child: RibbonButton(
-                                textColor: (_contentValuesVisible ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary),
+                                textColor: Styles().colors!.fillColorSecondary,
                                 backgroundColor: Styles().colors!.white,
                                 borderRadius: BorderRadius.all(Radius.circular(5)),
                                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                                rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down.png'),
+                                rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
                                 label: _getContentLabel(_selectedContent),
                                 onTap: _changeSettingsContentValuesVisibility)),
                         _buildContent()
@@ -139,14 +142,11 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
       case SettingsContent.sections:
         return SettingsSectionsContentWidget();
       case SettingsContent.interests:
-        //TODO: implement
-        return Container();
+        return SettingsInterestsContentWidget();
       case SettingsContent.food_filters:
-        //TODO: implement
-        return Container();
+        return SettingsFoodFiltersContentWidget();
       case SettingsContent.sports:
-        //TODO: implement
-        return Container();
+        return AthleticsTeamsWidget();
       case SettingsContent.calendar:
         //TODO: implement
         return Container();
@@ -162,7 +162,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
       case SettingsContent.sections:
         return Localization().getStringEx('panel.settings.home.settings.sections.section.label', 'Setting Sections');
       case SettingsContent.interests:
-        return Localization().getStringEx('panel.settings.home.settings.sections.interests.label', 'My Interests Filter');
+        return Localization().getStringEx('panel.settings.home.settings.sections.interests.label', 'My Interests');
       case SettingsContent.food_filters:
         return Localization().getStringEx('panel.settings.home.settings.sections.food_filter.label', 'My Food Filter');
       case SettingsContent.sports:
