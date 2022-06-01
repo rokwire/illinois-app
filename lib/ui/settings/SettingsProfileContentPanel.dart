@@ -68,12 +68,11 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
                         Padding(
                             padding: EdgeInsets.only(left: 16, top: 16, right: 16),
                             child: RibbonButton(
-                                textColor:
-                                    (_contentValuesVisible ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary),
+                                textColor: Styles().colors!.fillColorSecondary,
                                 backgroundColor: Styles().colors!.white,
                                 borderRadius: BorderRadius.all(Radius.circular(5)),
                                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                                rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down.png'),
+                                rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
                                 label: _getContentLabel(_selectedContent),
                                 onTap: _changeSettingsContentValuesVisibility)),
                         _buildContent()
