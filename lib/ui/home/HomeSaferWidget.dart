@@ -5,6 +5,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -14,7 +15,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -71,10 +71,12 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   @override
   Widget build(BuildContext context) {
-    return SectionSlantHeader(
-      title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
-      titleIconAsset: 'images/campus-tools.png',
-      children: _buildCommandsList(),);
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+        title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
+        titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+        child: Column(children: _buildCommandsList(),),
+    ),);
   }
 
   List<Widget> _buildCommandsList() {

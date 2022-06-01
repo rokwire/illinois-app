@@ -72,6 +72,44 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
     super.dispose();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> widgets = [];
+    final int widgetsPerRow = 2;
+    if (_contentListCodes != null) {
+      for (String code in _contentListCodes!) {
+        Widget? widget = _widgetFromCode(context, code, widgetsPerRow);
+        if (widget != null) {
+          widgets.add(Expanded(child: widget),);
+        }
+      }
+    }
+    if (widgets.length == 0) {
+      return Container();
+    }
+    while(0 < (widgets.length % widgetsPerRow)) {
+      widgets.add(Expanded(child: Container(),));
+    }
+    int widgetsCount = widgets.length;
+    int rowsCount = widgetsCount ~/ widgetsPerRow;
+    List<Widget> rows = [];
+    for (int i = 0; i < rowsCount; i++) {
+      int startRowIndex = i * widgetsPerRow;
+      int endIndex = min((startRowIndex + widgetsPerRow), widgetsCount);
+      Row row = Row(children: widgets.sublist(startRowIndex, endIndex));
+      rows.add(row);
+    }
+
+    rows.add(Container(height: 48,),);
+
+    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+        title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
+        titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+        child: Column(children: rows,),
+    ),);
+  }
+
   Widget? _widgetFromCode(BuildContext context, String code, int countPerRow) {
     String? title, hint, iconAsset;
     GestureTapCallback onTap;
@@ -126,44 +164,6 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
     return (countPerRow == 1) ?
       TileWideButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap) :
       TileButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> widgets = [];
-    final int widgetsPerRow = 2;
-    if (_contentListCodes != null) {
-      for (String code in _contentListCodes!) {
-        Widget? widget = _widgetFromCode(context, code, widgetsPerRow);
-        if (widget != null) {
-          widgets.add(Expanded(child: widget),);
-        }
-      }
-    }
-    if (widgets.length == 0) {
-      return Container();
-    }
-    while(0 < (widgets.length % widgetsPerRow)) {
-      widgets.add(Expanded(child: Container(),));
-    }
-    int widgetsCount = widgets.length;
-    int rowsCount = widgetsCount ~/ widgetsPerRow;
-    List<Widget> rows = [];
-    for (int i = 0; i < rowsCount; i++) {
-      int startRowIndex = i * widgetsPerRow;
-      int endIndex = min((startRowIndex + widgetsPerRow), widgetsCount);
-      Row row = Row(children: widgets.sublist(startRowIndex, endIndex));
-      rows.add(row);
-    }
-
-    rows.add(Container(height: 48,),);
-
-    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
-        title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
-        child: Column(children: rows,
-      ),
-    ),);
   }
 
   void _updateContentListCodes() {

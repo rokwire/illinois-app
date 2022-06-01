@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Load and display user's grade for each canvas course [#1681](https://github.com/rokwire/illinois-app/issues/1681).
+- Implemented edit mode in Home panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 
 ## [4.0.19] - 2022-05-31
 ### Added
