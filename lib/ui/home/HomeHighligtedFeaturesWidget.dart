@@ -84,6 +84,7 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures> imple
     return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
       HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
         title: Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features'),
+        titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
         flatHeight: 0, slantHeight: 0,
         child: Column(children: _buildCommandsList(),),
         childPadding: EdgeInsets.all(16),

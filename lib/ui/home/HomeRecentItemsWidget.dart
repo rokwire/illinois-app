@@ -138,6 +138,7 @@ class _RecentItemsList extends StatelessWidget{
       HomeDropTargetWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, child:
         HomeSlantWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost,
             title: heading,
+            titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
             child: Column(children: _buildListItems(context),)
         ),
       ),

@@ -58,6 +58,7 @@ class _HomeWPGUFMRadioWidgetState extends State<HomeWPGUFMRadioWidget> implement
       HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
         HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
           title: Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'),
+          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: _buildContentCard(),
           childPadding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 32),
         ),

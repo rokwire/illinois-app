@@ -88,6 +88,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
       HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
         HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
           title: Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses'),
+          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: _buildCoursesContent(),
           childPadding: const EdgeInsets.only(top: 8, bottom: 16),
         ),

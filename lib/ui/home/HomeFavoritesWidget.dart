@@ -90,6 +90,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
       HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
         title: headingTitle,
+        titleIcon: headingIcon,
         child: Column(children: _buildContent()
       ),
     ),);
@@ -354,6 +355,19 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.laundry', 'Laundry');
       case InboxMessage.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.campus_guide', 'Campus Guide');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.inbox', 'Inbox');
+    }
+    return null;
+  }
+
+  Image? get headingIcon {
+    switch(widget.favoriteKey) {
+      case Event.favoriteKeyName: return Image.asset('images/icon-calendar.png', excludeFromSemantics: true,);
+      case Dining.favoriteKeyName: return Image.asset('images/icon-dining-orange.png', excludeFromSemantics: true,);
+      case Game.favoriteKeyName: return Image.asset('images/icon-calendar.png', excludeFromSemantics: true,);
+      case News.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
+      case LaundryRoom.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
+      case InboxMessage.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
+      case GuideFavorite.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
     }
     return null;
   }

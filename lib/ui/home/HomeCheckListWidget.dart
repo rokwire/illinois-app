@@ -48,6 +48,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
       HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
         HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
           title: _title,
+          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: _buildContent(),
           headerAxisAlignment: CrossAxisAlignment.start,
         ),
