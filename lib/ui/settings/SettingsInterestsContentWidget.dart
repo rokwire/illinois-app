@@ -22,12 +22,11 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum _InterestTab { Categories, Tags, Athletics }
+enum _InterestTab { Categories, Tags }
 
 class SettingsInterestsContentWidget extends StatefulWidget {
 
@@ -49,9 +48,6 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
   List<String>? _followingTags;
   bool _tagSearchMode = false;
 
-//  //Athletics sports
-//  List<String> _preferredSports;
-
   //Search
   TextEditingController _textEditingController = TextEditingController();
 
@@ -64,8 +60,6 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
     _initTabs();
     _initCategories();
     _initTags();
-//    _loadPreferredSports();
-    //_stopProgress();
     super.initState();
   }
 
@@ -100,48 +94,39 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
   }
 
   Widget _buildContent() {
-
-    //TODO: adjust with textspan
+    final String iconMacro = '{{check_mark_icon}}';
+    String headerMsg = Localization()
+        .getStringEx('panel.settings.manage_interests.instructions.format', 'Tap the $iconMacro to follow the tags that interest you most');
+    int iconMacroPosition = headerMsg.indexOf(iconMacro);
+    String headerMsgStart = (0 < iconMacroPosition) ? headerMsg.substring(0, iconMacroPosition) : '';
+    String headerMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < headerMsg.length))
+        ? headerMsg.substring(iconMacroPosition + iconMacro.length)
+        : '';
     return Container(
-                color: Styles().colors!.background,
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Semantics(
-                      label: Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the ") +
-                          Localization().getStringEx("panel.settings.manage_interests.instructions.check_mark", "check-mark") +
-                          Localization().getStringEx('panel.settings.manage_interests.instructions.follow', ' to follow the tags that interest you most'),
-                      excludeSemantics: true,
-                      child: Container(
-                          alignment: Alignment.topCenter,
-                          color: Styles().colors!.fillColorPrimary,
-                          child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    Localization().getStringEx('panel.settings.manage_interests.instructions.tap', "Tap the "),
-                                    style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.white, fontSize: 16),
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  Image.asset('images/example.png'),
-                                  Expanded(child: Container(
-                                      child:Text(
-                                        Localization()
-                                            .getStringEx('panel.settings.manage_interests.instructions.follow', ' to follow the tags that interest you most'),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.white, fontSize: 16),
-                                      )))
-                                ],
-                              )))),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-                    SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-                      Row(children: _buildTabWidgets(),),
-                    ),
-                  ),
-                  _buildTabContent(),
-                ]));
+        color: Styles().colors!.background,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+          Semantics(
+              label: headerMsg,
+              excludeSemantics: true,
+              child: Container(
+                  alignment: Alignment.topCenter,
+                  color: Styles().colors!.fillColorPrimary,
+                  child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                              style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.white, fontSize: 16),
+                              children: [
+                            TextSpan(text: headerMsgStart),
+                            WidgetSpan(alignment: PlaceholderAlignment.middle, child: Image.asset('images/example.png')),
+                            TextSpan(text: headerMsgEnd)
+                          ]))))),
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: _buildTabWidgets()))),
+          _buildTabContent(),
+        ]));
   }
 
   Widget _buildTabContent() {
@@ -151,11 +136,6 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
           return _buildCategoriesContent();
         case _InterestTab.Tags:
           return _buildTagsContent();
-        case _InterestTab.Athletics:
-          return Padding(
-            padding: EdgeInsets.all(16),
-            child: AthleticsTeamsWidget(), //TBD pass _preferredSpords and tapListener if using save button
-          );
       }
     }
     return Container();
@@ -399,7 +379,6 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
   }
 
   bool? _isTagSelected(String tag) {
-//    return _followingTags.contains(tag);
     return Auth2().prefs?.hasTag(tag);
   }
 
@@ -407,32 +386,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
     Analytics().logSelect(target: "Tag: $tag");
     AppSemantics.announceCheckBoxStateChange(context, _isTagSelected(tag)!, tag);
     Auth2().prefs?.toggleTag(tag);
-//    switchTag(tag);
   }
-
-  //Athletics
-/*  void _loadPreferredSports() {
-    _preferredSports = [];
-    if(User()?.getSportsInterestSubCategories()?.isNotEmpty ?? false) {
-      _preferredSports.addAll(User()?.getSportsInterestSubCategories());
-    }
-    setState(() {});
-  }
-
-  switchSport(String sport){
-    if(_preferredSports?.contains(sport)??false){
-      _preferredSports.remove(sport);
-    } else {
-      if(_preferredSports!=null){
-        _preferredSports.add(sport);
-      }
-    }
-    setState(() {});
-  }*/
-
-  // NotificationsListener
-
-  /////
 
   //Tabs
   List<Widget> _buildTabWidgets() {
@@ -461,66 +415,6 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
     }
   }
 
-  ////
-
-  //SaveButton
-/*  Widget _buildSaveButton(){
-    return
-      Padding(
-        padding: EdgeInsets.symmetric( vertical: 20,horizontal: 16),
-        child: RoundedButton(
-          label: Localization().getStringEx("panel.settings.manage_interests.button.save.title", "Save Changes"),
-          hint: Localization().getStringEx("panel.settings.manage_interests.button.save.hint", ""),
-          enabled: _canSave,
-          fontFamily: Styles().fontFamilies.bold,
-          backgroundColor: _canSave? Styles().colors.white: Styles().colors.background,
-          fontSize: 16.0,
-          textColor: _canSave? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
-          borderColor: _canSave? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-          onTap: _onSaveChangesClicked,
-        ),
-      );
-  }
-
-  _onSaveChangesClicked(){
-    if(_categoriesHasChanged) {
-      User()?.updateCategories(_preferredCategories);
-    }
-    if(_sportsHasChanged) {
-      User()?.updateSportsSubCategories(_preferredSports);
-    }
-    if(_tagsHasChanged) {
-      User()?.updateTags(_followingTags);
-    }
-    Navigator.pop(context);
-  }
-
-  bool get _canSave{
-    return _categoriesHasChanged || _tagsHasChanged ||_sportsHasChanged;
-  }
-
-  bool get _categoriesHasChanged{
-    bool changed = false;
-    if ((_preferredCategories?.isEmpty?? true) && (User().getInterestsCategories()?.isEmpty?? true)) {
-      return changed;
-    }
-
-    return !IterableEquality().equals(_preferredCategories, User().getInterestsCategories());
-  }
-
-  bool get _tagsHasChanged{
-    if ((_followingTags?.isEmpty?? true) && (User().getTags()?.isEmpty?? true)) {
-      return false;
-    }
-    return !IterableEquality().equals(_followingTags, User().getTags());
-  }
-
-  bool get _sportsHasChanged{
-    if ((_preferredSports?.isEmpty?? true) && (User().getSportsInterestSubCategories()?.isEmpty?? true)) {
-      return false;
-    }
-    return !IterableEquality().equals(_preferredSports, User().getSportsInterestSubCategories());
-  }*/
 
   static String? _interestTabName(_InterestTab tab) {
     switch (tab) {
@@ -528,8 +422,6 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
         return Localization().getStringEx('panel.settings.manage_interests.tab.categories', "Categories");
       case _InterestTab.Tags:
         return Localization().getStringEx('panel.settings.manage_interests.tab.tags', "Tags");
-      case _InterestTab.Athletics:
-        return Localization().getStringEx('panel.settings.manage_interests.tab.athletics', "Athletics");
       default:
         return null;
     }
