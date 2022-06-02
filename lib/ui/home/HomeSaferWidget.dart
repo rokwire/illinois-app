@@ -24,9 +24,13 @@ class HomeSaferWidget extends StatefulWidget {
   
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeSaferWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  HomeSaferWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
+    );
 
   @override
   _HomeSaferWidgetState createState() => _HomeSaferWidgetState();
@@ -71,12 +75,11 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   @override
   Widget build(BuildContext context) {
-    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
         titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
         child: Column(children: _buildCommandsList(),),
-    ),);
+    );
   }
 
   List<Widget> _buildCommandsList() {

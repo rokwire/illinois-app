@@ -25,6 +25,7 @@ import 'package:illinois/ui/AcademicsPanel.dart';
 import 'package:illinois/ui/NavigatePanel.dart';
 import 'package:illinois/ui/WellnessPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
+import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -50,7 +51,6 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
-import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
@@ -634,7 +634,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebaseInboxNotification() {
-    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => InboxHomePanel()));
+    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.inbox)));
   }
 }
 

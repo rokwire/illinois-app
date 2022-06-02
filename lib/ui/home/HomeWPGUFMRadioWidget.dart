@@ -16,9 +16,13 @@ import 'package:just_audio/just_audio.dart';
 class HomeWPGUFMRadioWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeWPGUFMRadioWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  const HomeWPGUFMRadioWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'),
+    );
 
   @override
   State<HomeWPGUFMRadioWidget> createState() => _HomeWPGUFMRadioWidgetState();
@@ -54,15 +58,12 @@ class _HomeWPGUFMRadioWidgetState extends State<HomeWPGUFMRadioWidget> implement
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: _isEnabled, child:
-    
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+        HomeSlantWidget(favoriteId: widget.favoriteId,
           title: Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'),
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: _buildContentCard(),
           childPadding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 32),
         ),
-      ),
 
     );
   }

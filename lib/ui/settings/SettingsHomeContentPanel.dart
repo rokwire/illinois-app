@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
+import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
@@ -148,8 +149,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
       case SettingsContent.sports:
         return AthleticsTeamsWidget();
       case SettingsContent.calendar:
-        //TODO: implement
-        return Container();
+        return SettingsCalendarContentWidget();
       default:
         return Container();
     }

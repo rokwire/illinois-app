@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -18,9 +17,8 @@ class HomeLoginWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeLoginWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  HomeLoginWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
   @override
   _HomeLoginWidgetState createState() => _HomeLoginWidgetState();
@@ -45,7 +43,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
       }
     }
 
-    if (CollectionUtils.isNotEmpty(contentList) || (widget.dragAndDropHost != null)) {
+    if (CollectionUtils.isNotEmpty(contentList)) {
       
       List<Widget> content = <Widget>[];
       for (Widget entry in contentList) {
@@ -59,12 +57,11 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
         content.add(Container(height: 20,),);
       }
 
-      return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+      return HomeSlantWidget(favoriteId: widget.favoriteId,
           title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
           titleIcon: Image.asset('images/icon-member.png', excludeFromSemantics: true,),
           child: Column(children: content,),
-      ),);
+      );
     }
     else {
       return Container();

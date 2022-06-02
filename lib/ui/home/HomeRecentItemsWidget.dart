@@ -47,9 +47,13 @@ class HomeRecentItemsWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeRecentItemsWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  HomeRecentItemsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed'),
+    );
 
   @override
   _HomeRecentItemsWidgetState createState() => _HomeRecentItemsWidgetState();
@@ -84,7 +88,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
   @override
   Widget build(BuildContext context) {
-    return _RecentItemsList(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+    return _RecentItemsList(favoriteId: widget.favoriteId,
       heading: Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed'),
       items: _recentItems,
     );
@@ -135,12 +139,10 @@ class _RecentItemsList extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(items), child:
-      HomeDropTargetWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, child:
-        HomeSlantWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost,
-            title: heading,
-            titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-            child: Column(children: _buildListItems(context),)
-        ),
+      HomeSlantWidget(favoriteId: favoriteId,
+          title: heading,
+          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+          child: Column(children: _buildListItems(context),)
       ),
     );
   }
