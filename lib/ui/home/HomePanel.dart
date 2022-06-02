@@ -20,21 +20,19 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
+import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -66,8 +64,8 @@ import 'HomeCheckListWidget.dart';
 
 class HomePanel extends StatefulWidget {
   static const String notifyRefresh      = "edu.illinois.rokwire.home.refresh";
-  static const String notifyCollapse     = "edu.illinois.rokwire.home.collapse";
-  static const String notifyExpand       = "edu.illinois.rokwire.home.expand";
+  static const String notifyEdit         = "edu.illinois.rokwire.home.edit";
+  static const String notifyEditDone     = "edu.illinois.rokwire.home.edit.done";
 
   @override
   _HomePanelState createState() => _HomePanelState();
@@ -78,6 +76,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   
   Set<String>? _contentCodesSet;
   List<String>? _contentCodesList;
+  HomeToutWidget? _toutWidget;
   StreamController<String> _updateController = StreamController.broadcast();
   GlobalKey _saferKey = GlobalKey();
   GlobalKey _contentWrapperKey = GlobalKey();
@@ -118,7 +117,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     super.build(context);
 
     return Scaffold(
-      appBar: _HomeHeaderBar(title: Localization().getStringEx('panel.home.header.title', 'ILLINOIS'), editing: _isEditing, onEdit: _onEdit, onEditDone: _onEditDone,),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.home.header.title', 'ILLINOIS')),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Listener(onPointerMove: _onPointerMove, onPointerUp: (_) => _onPointerCancel, onPointerCancel: (_) => _onPointerCancel, child:
           Column(key: _contentWrapperKey, children: <Widget>[
@@ -139,6 +138,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     List<Widget> widgets = [];
 
+    widgets.add(_toutWidget ??= HomeToutWidget(updateController: _updateController, editing: _isEditing, onEdit: _onEdit, onEditDone: _onEditDone,));
+
     if (_contentCodesList != null) {
       for (String code in _contentCodesList!) {
         if (_contentCodesSet?.contains(code) ?? false) {
@@ -155,51 +156,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         }
       }
     }
-
-    return widgets;
-  }
-
-  List<Widget> _buildEditingContentList() {
-    List<Widget> widgets = [];
-
-    LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName);
-
-    if (homeFavorites != null) {
-
-      widgets.add(_buildEditingHeader(title: 'Favorites', favoriteId: '', dropAnchorAlignment: CrossAxisAlignment.end,
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus sapien, tempus sed bibendum et, accumsan interdum velit. Integer bibendum feugiat lectus, eget sollicitudin enim vulputate sit amet. Pellentesque at risus odio.',
-      ));
-       
-      int position = 0;
-      for (String code in homeFavorites) {
-        Widget? widget = _buildWidgetHandleFromCode(code, position);
-        if (widget != null) {
-          widgets.add(widget);
-          position++;
-        }
-      }
-    }
-
-    List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home'));
-    if (fullContent != null) {
-
-      widgets.add(_buildEditingHeader(title: 'Unused Favorites', favoriteId: null, dropAnchorAlignment: CrossAxisAlignment.end,
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus sapien, tempus sed bibendum et, accumsan interdum velit. Integer bibendum feugiat lectus, eget sollicitudin enim vulputate sit amet. Pellentesque at risus odio.',
-      ));
-
-      int position = 0;
-      for (String code in fullContent) {
-        if (!(homeFavorites?.contains(code) ?? false)) {
-          Widget? widget = _buildWidgetHandleFromCode(code, position);
-          if (widget != null) {
-            widgets.add(widget);
-            position++;
-          }
-        }
-      }
-    }
-
-    widgets.add(Container(height: 24,));
 
     return widgets;
   }
@@ -289,6 +245,53 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     else {
       return null;
     }
+  }
+
+  List<Widget> _buildEditingContentList() {
+    List<Widget> widgets = [];
+
+    widgets.add(_toutWidget ??= HomeToutWidget(updateController: _updateController, editing: _isEditing, onEdit: _onEdit, onEditDone: _onEditDone,));
+
+    LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName);
+
+    if (homeFavorites != null) {
+
+      widgets.add(_buildEditingHeader(title: 'Favorites', favoriteId: '', dropAnchorAlignment: CrossAxisAlignment.end,
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus sapien, tempus sed bibendum et, accumsan interdum velit. Integer bibendum feugiat lectus, eget sollicitudin enim vulputate sit amet. Pellentesque at risus odio.',
+      ));
+       
+      int position = 0;
+      for (String code in homeFavorites) {
+        Widget? widget = _buildWidgetHandleFromCode(code, position);
+        if (widget != null) {
+          widgets.add(widget);
+          position++;
+        }
+      }
+    }
+
+    List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home'));
+    if (fullContent != null) {
+
+      widgets.add(_buildEditingHeader(title: 'Unused Favorites', favoriteId: null, dropAnchorAlignment: CrossAxisAlignment.end,
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus sapien, tempus sed bibendum et, accumsan interdum velit. Integer bibendum feugiat lectus, eget sollicitudin enim vulputate sit amet. Pellentesque at risus odio.',
+      ));
+
+      int position = 0;
+      for (String code in fullContent) {
+        if (!(homeFavorites?.contains(code) ?? false)) {
+          Widget? widget = _buildWidgetHandleFromCode(code, position);
+          if (widget != null) {
+            widgets.add(widget);
+            position++;
+          }
+        }
+      }
+    }
+
+    widgets.add(Container(height: 24,));
+
+    return widgets;
   }
 
   Widget? _buildWidgetHandleFromCode(String code, int position) {
@@ -580,6 +583,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _onEdit() {
+    _updateController.add(HomePanel.notifyEdit);
     if (mounted) {
       setState(() {
         _isEditing = true;
@@ -588,6 +592,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _onEditDone() {
+    _updateController.add(HomePanel.notifyEditDone);
     if (mounted) {
       setState(() {
         _isEditing = false;
@@ -655,101 +660,3 @@ abstract class HomeDragAndDropHost  {
   void onDragAndDrop({String? dragFavoriteId, String? dropFavoriteId, CrossAxisAlignment? dropAnchor});
 }
 
-// _HomeHeaderBar
-
-class _HomeHeaderBar extends RootHeaderBar {
-
-  final bool editing;
-  final void Function()? onEdit;
-  final void Function()? onEditDone;
-  
-  _HomeHeaderBar({Key? key, String? title, this.editing = false, this.onEdit, this.onEditDone}) :
-    super(key: key, title: title);
-
-  @override
-  List<Widget> buildHeaderActions(BuildContext context) {
-    return <Widget>[
-      editing ? buildHeaderEditDoneButton(context) : buildHeaderOptionsButton(context),
-    ];
-  }
-
-  Widget buildHeaderOptionsButton(BuildContext context) {
-    return Semantics(label: Localization().getStringEx('headerbar.options.title', 'Options'), hint: Localization().getStringEx('headerbar.options.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/groups-more-inactive.png', excludeFromSemantics: true), onPressed: () =>onTapOptions(context)));
-  }
-
-  Widget buildHeaderEditDoneButton(BuildContext context) {
-    return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
-      TextButton(onPressed: () => onTapEditDone(context), child:
-        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
-      )
-    );
-  }
-
-  void onTapOptions(BuildContext context) {
-    Analytics().logSelect(target: 'Home Options');
-    BuildContext? context = App.instance?.currentContext;
-    if (context != null) {
-      showModalBottomSheet(context: context, backgroundColor: Colors.white, isScrollControlled: true, isDismissible: true, shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(6))), builder: (context) {
-        return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-          Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            RibbonButton(
-              leftIcon: Image.asset('images/icon-settings.png') /* 'images/icon-gear.png' */,
-              label: Localization().getStringEx('headerbar.settings.title', 'Settings'),
-              hint: Localization().getStringEx('headerbar.settings.hint', ''),
-              onTap: () => onTapSettings(context)),
-            Container(height: 1, color: Styles().colors?.disabledTextColor ),
-            RibbonButton(
-              leftIcon: Image.asset('images/notifications-white.png', color: Styles().colors!.fillColorSecondary, colorBlendMode: BlendMode.srcIn),
-              label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'),
-              hint: Localization().getStringEx('headerbar.notifications.hint', ''),
-              onTap: () => onTapNotifications(context)),
-            Container(height: 1, color: Styles().colors?.disabledTextColor ),
-            RibbonButton(
-              leftIcon: Image.asset('images/personal-white.png', color: Styles().colors!.fillColorSecondary, colorBlendMode: BlendMode.srcIn),
-              label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'),
-              hint: Localization().getStringEx('headerbar.personal_information.hint', ''),
-              onTap: () => onTapPersonalInformations(context)),
-            Container(height: 1, color: Styles().colors?.disabledTextColor ),
-            RibbonButton(
-              leftIcon: Image.asset('images/icon-edit.png') /* 'images/icon-gear.png' */,
-              label: Localization().getStringEx('headerbar.edit.title', 'Edit'),
-              hint: Localization().getStringEx('headerbar.edit.hint', ''),
-              onTap: () => onTapEdit(context)),
-          ])
-        );
-      });
-    }
-  }
-
-  @override
-  void onTapSettings(BuildContext context) {
-    Navigator.of(context).pop();
-    super.onTapSettings(context);
-  }
-
-  @override
-  void onTapNotifications(BuildContext context) {
-    Navigator.of(context).pop();
-    super.onTapNotifications(context);
-  }
-
-  @override
-  void onTapPersonalInformations(BuildContext context) {
-    Navigator.of(context).pop();
-   super.onTapPersonalInformations(context);
-  }
-
-  void onTapEdit(BuildContext context) {
-    Navigator.of(context).pop();
-    if (onEdit != null) {
-      onEdit!();
-    }
-  }
-
-  void onTapEditDone(BuildContext context) {
-    if (onEditDone != null) {
-      onEditDone!();
-    }
-  }
-}
