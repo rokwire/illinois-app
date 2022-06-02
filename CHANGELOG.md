@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - HomeToutWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 ### Changed
 - Cleaned up Drag & Drop in Home panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+- Removed Group polls hook methods [#1679](https://github.com/rokwire/app-flutter-plugin/issues/1679).
 
 ## [4.0.20] - 2022-06-01
 ### Added

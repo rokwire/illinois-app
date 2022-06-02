@@ -442,20 +442,15 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         creatorUserName: Auth2().fullName ?? 'Someone',
         pinCode: Poll.randomPin,
         status: status,
-        groupId: widget.group?.id
+        groupId: widget.group?.id,
+        toMembers: _groupMembersSelection
       );
       
       setState(() {
         _progressPollStatus = status;
       });
       Polls().create(poll).then((Poll poll){
-        if(widget.group?.id != null && poll.pollId != null) {
-          Groups().linkPollToGroup(groupId: widget.group!.id!, pollId: poll.pollId!, toMembers: _groupMembersSelection).then((success) {
-            Navigator.pop(context);
-          });
-        } else {
-          Navigator.pop(context);
-        }
+        Navigator.pop(context);
       }).catchError((e){
         Log.d(e);
         String? errorMessage = Localization().getStringEx("panel.create_poll.message.error.default", "Failed to create poll. Please fill all fields and try again.");
