@@ -82,9 +82,11 @@ class _HomeGameDayState extends State<HomeGameDayWidget> implements Notification
   void _loadTodayGames() {
     if (Connectivity().isNotOffline) {
       Sports().loadTopScheduleGames().then((List<Game>? games) {
-        setState(() {
-          _todayGames = Sports().getTodayGames(games);
-        });
+        if (mounted) {
+          setState(() {
+            _todayGames = Sports().getTodayGames(games);
+          });
+        }
       });
     }
   }
