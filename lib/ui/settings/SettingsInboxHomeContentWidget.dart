@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -244,8 +243,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
 
   Widget _buildFilters() {
     return SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-      Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12), child:
-        Row(children: <Widget>[
+      Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
           // Hide the "Categories" drop down in Inbox panel (#721)
           /*FilterSelector(
             title: _FilterEntry.entryInList(_categories, _selectedCategory)?.name ?? '',
@@ -253,12 +251,14 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
             onTap: () { _onFilter(_FilterType.Category); }
           ),*/
           FilterSelector(
+            padding: EdgeInsets.symmetric(horizontal: 4),
             title: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
             active: _selectedFilter == _FilterType.Time,
             onTap: () { _onFilter(_FilterType.Time); }
           ),
+          _buildEditBar()
         ],
-    ),),);
+    ));
   }
 
   void _onFilter(_FilterType? filterType) {
@@ -369,44 +369,29 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
 
   // Header bar
 
-  PreferredSizeWidget _buildHeaderBar() {
-    List<Widget> actions = <Widget>[];
+  Widget _buildEditBar() {
+    List<Widget> contentList = <Widget>[];
     if (_isEditMode == true) {
-      actions.addAll(<Widget>[
+      contentList.addAll(<Widget>[
         _isAllMessagesSelected ? _buildDeselectAllButton() : _buildSelectAllButton(),
         _buildDoneButton()
       ]);
     }
     else {
-      actions.add(_buildEditButton());
+      contentList.add(_buildEditButton());
     }
     
-    return PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child:
-      Semantics(sortKey: const OrdinalSortKey(1), child:
-        AppBar(
-          title: _buildTitle(),
-          centerTitle: true,
-          backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-          leading: ((_isEditMode == true) && _isAnyMessageSelected) ? _buildOptionsButton() : _buildBackButton(),
-          actions: actions
-        )
-      ),
-    );
-  }
+    if ((_isEditMode == true) && _isAnyMessageSelected) {
+      contentList.insert(0, _buildOptionsButton());
+    }
 
-  Widget _buildTitle() {
-    return Text(Localization().getStringEx('panel.inbox.label.heading', 'Notifications'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),);
-  }
-
-  Widget _buildBackButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/chevron-left-white.png'), onPressed: _onBack),);
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.end, children: contentList);
   }
 
   Widget _buildOptionsButton() {
     return Semantics(label: Localization().getStringEx('headerbar.options.title', 'Options'), hint: Localization().getStringEx('headerbar.options.hint', ''), button: true, excludeSemantics: true, child:
       Stack(children: [
-        IconButton(icon: Image.asset('images/groups-more-inactive.png'), onPressed: _onOptions),
+        IconButton(icon: Image.asset('images/groups-more-inactive.png', color: Styles().colors!.fillColorPrimary), onPressed: _onOptions),
         Visibility(visible: (_processingOption == true), child:
           Container(padding: EdgeInsets.all(13), child:
             SizedBox(width: 22, height: 22, child:
@@ -421,28 +406,28 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Widget _buildEditButton() {
     return Semantics(label: Localization().getStringEx('headerbar.edit.title', 'Edit'), hint: Localization().getStringEx('headerbar.edit.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onEdit, child:
-        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildDoneButton() {
     return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDone, child:
-        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildSelectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.select.all.title', 'Select All'), hint: Localization().getStringEx('headerbar.select.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onSelectAll, child:
-        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildDeselectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), hint: Localization().getStringEx('headerbar.deselect.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDeselectAll, child:
-        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
@@ -542,11 +527,6 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
         ),
       ); },
     );
-  }
-
-  void _onBack() {
-    Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
   }
 
   void _onEdit() {
