@@ -450,13 +450,6 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         _progressPollStatus = status;
       });
       Polls().create(poll).then((Poll poll){
-        // if(widget.group?.id != null && poll.pollId != null) {
-        //   Groups().linkPollToGroup(groupId: widget.group!.id!, pollId: poll.pollId!, toMembers: _groupMembersSelection).then((success) {
-        //     Navigator.pop(context);
-        //   });
-        // } else {
-        //   Navigator.pop(context);
-        // }
         Navigator.pop(context);
       }).catchError((e){
         Log.d(e);
