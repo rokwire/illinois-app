@@ -17,27 +17,15 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class InboxHomePanel extends StatefulWidget {
-  InboxHomePanel();
+class SettingsInboxHomeContentWidget extends StatefulWidget {
+  SettingsInboxHomeContentWidget();
 
-  _InboxHomePanelState createState() => _InboxHomePanelState();
-
-  static void launchMessageDetail(InboxMessage message) {
-    FirebaseMessaging().processDataMessageEx(message.data, allowedPayloadTypes: {
-      FirebaseMessaging.payloadTypeEventDetail,
-      FirebaseMessaging.payloadTypeGameDetail,
-      FirebaseMessaging.payloadTypeAthleticsGameStarted,
-      FirebaseMessaging.payloadTypeAthleticsNewDetail,
-      FirebaseMessaging.payloadTypeGroup
-    });
-  }
-
+  _SettingsInboxHomeContentWidgetState createState() => _SettingsInboxHomeContentWidgetState();
 }
 
-class _InboxHomePanelState extends State<InboxHomePanel> implements NotificationsListener {
+class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeContentWidget> implements NotificationsListener {
 
   final List<_FilterEntry> _categories = [
     _FilterEntry(value: null, name: "Any Category"),
@@ -107,20 +95,12 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildHeaderBar(),
-      // Text(Localization().getStringEx('panel.inbox.label.heading', 'Inbox'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
-      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          _buildBanner(),
-          _buildFilters(),
-          Expanded(child:
-            _buildContent(),
-          ),
-          uiuc.TabBar(),
-        ],)),
-      backgroundColor: Styles().colors!.background,
-    );
+    return RefreshIndicator(
+        onRefresh: _onPullToRefresh,
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[_buildBanner(), _buildFilters(), Expanded(child: _buildContent())]));
   }
 
   // Messages
@@ -128,9 +108,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   Widget _buildContent() {
     return Stack(children: [
       Visibility(visible: (_loading != true), child:
-        Padding(padding: EdgeInsets.only(top: 12), child:
-          _buildMessagesContent()
-        ),
+        Padding(padding: EdgeInsets.only(top: 12), child: _buildMessagesContent())
       ),
       Visibility(visible: (_loading == true), child:
         Align(alignment: Alignment.center, child:
@@ -220,7 +198,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   void _handleRedirectTap(InboxMessage message) {
     Analytics().logSelect(target: message.subject);
-    InboxHomePanel.launchMessageDetail(message);
+    SettingsNotificationsContentPanel.launchMessageDetail(message);
   }
   
   // Banner
@@ -918,8 +896,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
   @override
   Widget build(BuildContext context) {
     double leftPadding = (widget.selected != null) ? 12 : 16;
-    return Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
-      Container(
+    return Container(
         decoration: BoxDecoration(
           color: Styles().colors!.white,
           borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -987,7 +964,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
                   Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
             ),)),),),
         ],)
-    ),);
+    );
   }
 
   void _onTapFavorite() {
