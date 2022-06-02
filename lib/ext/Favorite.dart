@@ -12,8 +12,8 @@ import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
+import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -135,7 +135,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id,)));
     }
     else if (this is InboxMessage) {
-      InboxHomePanel.launchMessageDetail(this as InboxMessage);
+      SettingsNotificationsContentPanel.launchMessageDetail(this as InboxMessage);
     }
   }
   

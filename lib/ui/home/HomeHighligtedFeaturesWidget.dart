@@ -21,12 +21,12 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
 class HomeHighlightedFeatures extends StatefulWidget {
@@ -148,7 +148,7 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures> imple
 
   void _onTapPersonalize() {
     Analytics().logSelect(target: "HomeHighlightedFeatures: Personalize");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInformationPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel(content: SettingsContent.interests)));
   }
 
   void _onTapNotificationPreferences() {

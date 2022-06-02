@@ -31,11 +31,9 @@
 
 		"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 
-		"personal_information": ["buttons", "calendar", "on_campus"],
-		"personal_information.buttons": ["personal_info", "roles", "interests", "food_filters"],
-		"personal_information.calendar": ["add", "prompt"],
-		"personal_information.on_campus": ["auto", "on_campus", "off_campus"],
-		"personal_information.footer": ["delete"],
+		"calendar": ["settings", "on_campus"],
+		"calendar.settings": ["add", "prompt"],
+		"calendar.on_campus": ["auto", "on_campus", "off_campus"],
 
 		"roles": ["student", "visitor", "fan", "employee", "alumni", "parent", "resident"],
 		
@@ -75,7 +73,7 @@
 		},
 		"groups": {
 			"safer"                                  : ["NOT", "Gies Online Programs"],
-			"personal_information.on_campus"         : ["NOT", "Gies Online Programs"],
+			"calendar.on_campus"                     : ["NOT", "Gies Online Programs"],
 			"gies"                                   : ["Gies Online Programs"],
 			"gies_checklist"                         : ["Gies Online Programs"],
 			"new_student"                            : ["2022 New Students"],
@@ -189,8 +187,7 @@
 			"parking_lot_directions"        : true,
 			"library_card"                  : false,
 			"emergency"                     : false,
-			"faqs"                          : false,
-			"personal_information.footer.delete": false
+			"faqs"                          : false
 		}
 	}
 }
