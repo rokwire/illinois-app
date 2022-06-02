@@ -113,10 +113,12 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
         Semantics(container: true, child:
           Column(children: <Widget>[
             _buildHeader(),
-            Stack(children:<Widget>[
-              _buildSlant(),
-              _buildContent(),
-            ])
+            (widget.dragAndDropHost == null) ?
+              Stack(children:<Widget>[
+                _buildSlant(),
+                _buildContent(),
+              ]) :
+              Container(height: 3,),
           ]),
         ),
       ),
@@ -125,21 +127,24 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
   Widget _buildHeader() {
     return Semantics(child:
-      Container(color: Styles().colors!.fillColorPrimary, child:
+      Padding(padding: EdgeInsets.zero, child: 
+        Container(color: Styles().colors!.fillColorPrimary, child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-            Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
-              Draggable<HomeFavorite>(
-                data: HomeFavorite(widget.favoriteId),
-                onDragStarted: () { widget.dragAndDropHost?.isDragging = true; },
-                onDragEnd: (details) { widget.dragAndDropHost?.isDragging = false; },
-                onDragCompleted: () { widget.dragAndDropHost?.isDragging = false; },
-                onDraggableCanceled: (velocity, offset) { widget.dragAndDropHost?.isDragging = false; },
-                feedback: HomeSlantFeedback(title: 'Twitter'),
-                childWhenDragging: HomeDragHandle(),
-                child: HomeDragHandle()
-              ),
-            ),
+            (widget.dragAndDropHost != null) ?
+              Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
+                Draggable<HomeFavorite>(
+                  data: HomeFavorite(widget.favoriteId),
+                  onDragStarted: () { widget.dragAndDropHost?.isDragging = true; },
+                  onDragEnd: (details) { widget.dragAndDropHost?.isDragging = false; },
+                  onDragCompleted: () { widget.dragAndDropHost?.isDragging = false; },
+                  onDraggableCanceled: (velocity, offset) { widget.dragAndDropHost?.isDragging = false; },
+                  feedback: HomeSlantFeedback(title: 'Twitter'),
+                  childWhenDragging: HomeDragHandle(),
+                  child: HomeDragHandle()
+                ),
+              ) :
+            HomeTitleIcon(image: Image.asset('images/campus-tools.png')),
 
             Expanded(child:
               Padding(padding: EdgeInsets.only(top: 14), child:
@@ -149,13 +154,13 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
               )
             ),
 
-            (1 < _accountKeys.length) ?
+            ((1 < _accountKeys.length) && (widget.dragAndDropHost == null)) ?
               Semantics(container: true,  button: true, child: buildAccountDropDown(), ) :
               Container(),
 
             HomeFavoriteButton(favoriteId: widget.favoriteId,),
             
-        ],),),);
+        ],),),),);
   }
 
   Widget buildAccountDropDown() {

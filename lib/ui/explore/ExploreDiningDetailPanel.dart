@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
@@ -39,7 +40,6 @@ import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ui/dining/FoodDetailPanel.dart';
-import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
@@ -759,9 +759,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
 
   void _onFoodFilersTapped(){
     Analytics().logSelect(target: "Food filters");
-    Navigator.push(context, CupertinoPageRoute(
-        builder: (context) => FoodFiltersPanel()
-    ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel(content: SettingsContent.food_filters)));
   }
 
 

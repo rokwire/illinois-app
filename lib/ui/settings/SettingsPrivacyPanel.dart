@@ -61,7 +61,6 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     super.initState();
 
     NotificationService().subscribe(this,[
-      Assets.notifyChanged,
       Localization.notifyLocaleChanged,
       Assets.notifyChanged
     ]);
@@ -93,12 +92,6 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
       //We need to refresh because the text fields are preloaded with the locale
       _data?.reload();
       setState(() {});
-    }
-    else if (name == Assets.notifyChanged) {
-      setState(() {
-        _loadPrivacyData();
-      });
-
     }
   }
 

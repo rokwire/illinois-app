@@ -74,6 +74,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
       HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
         HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
           title: "My Groups",
+          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: _buildContent(),
           childPadding: const EdgeInsets.only(top: 8, bottom: 16),
         ),

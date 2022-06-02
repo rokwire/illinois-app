@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/ext/Event.dart';
@@ -37,7 +38,6 @@ import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
-import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -253,14 +253,17 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
 
   @override
   Widget build(BuildContext context) {
-    if (CollectionUtils.isEmpty(_events)) {
-      return Container();
+    if (widget.dragAndDropHost != null) {
+      return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+          title: Localization().getStringEx('widget.home_upcoming_events.label.events_for_you', 'Events For You'),
+          titleIcon: Image.asset('images/campus-calendar.png', excludeFromSemantics: true,),
+          child: Container(),
+      ),);
     }
-    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
+    else if (CollectionUtils.isNotEmpty(_events)) {
+      return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+        Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
           _EventsRibbonHeader(
             title: Localization().getStringEx('widget.home_upcoming_events.label.events_for_you', 'Events For You'),
             subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home_upcoming_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
@@ -269,7 +272,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
             rightIconAsset: 'images/settings-white.png',
             rightIconAction: () {
               Analytics().logSelect(target: "Events for you - settings");
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsManageInterestsPanel()));
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel(content: SettingsContent.interests)));
             },
           ),
           Column(
@@ -297,6 +300,10 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
             height: 24,
           ),
         ]));
+    }
+    else {
+      return Container();
+    }
   }
 
   List<Widget> _buildListItems(BuildContext context) {
@@ -391,18 +398,24 @@ class _EventsRibbonHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> titleList = <Widget>[];
 
-    titleList.add(Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
-      Draggable<HomeFavorite>(
-        data: HomeFavorite(favoriteId),
-        onDragStarted: () { dragAndDropHost?.isDragging = true; },
-        onDragEnd: (details) { dragAndDropHost?.isDragging = false; },
-        onDragCompleted: () { dragAndDropHost?.isDragging = false; },
-        onDraggableCanceled: (velocity, offset) { dragAndDropHost?.isDragging = false; },
-        feedback: HomeSlantFeedback(title: title),
-        childWhenDragging: HomeDragHandle(),
-        child: HomeDragHandle()
-      ),
-    ));
+    
+    titleList.add((dragAndDropHost != null) ?
+      Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
+        Draggable<HomeFavorite>(
+          data: HomeFavorite(favoriteId),
+          onDragStarted: () { dragAndDropHost?.isDragging = true; },
+          onDragEnd: (details) { dragAndDropHost?.isDragging = false; },
+          onDragCompleted: () { dragAndDropHost?.isDragging = false; },
+          onDraggableCanceled: (velocity, offset) { dragAndDropHost?.isDragging = false; },
+          feedback: HomeSlantFeedback(title: title),
+          childWhenDragging: HomeDragHandle(),
+          child: HomeDragHandle()
+        ),
+      ) :
+      HomeTitleIcon(image: Image.asset('images/icon-calendar.png')),
+    );
+      
+
     
     titleList.add(
       Expanded(child:

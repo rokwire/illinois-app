@@ -21,11 +21,11 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
@@ -84,6 +84,7 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures> imple
     return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
       HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
         title: Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features'),
+        titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
         flatHeight: 0, slantHeight: 0,
         child: Column(children: _buildCommandsList(),),
         childPadding: EdgeInsets.all(16),
@@ -150,7 +151,7 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures> imple
 
   void _onTapNotificationPreferences() {
     Analytics().logSelect(target: "HomeHighlightedFeatures: Notification Preferences");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.preferences)));
   }
 
   void _onTapManagePrivacy() {
