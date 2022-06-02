@@ -41,7 +41,6 @@ import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/LiveStats.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -437,10 +436,13 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   Future<void> _onPullToRefresh() async {
-    //TMP:
-    Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName, null);
-    LiveStats().refresh();
-    _updateController.add(HomePanel.notifyRefresh);
+    if (_isEditing) {
+      //TMP:
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName, null);
+    }
+    else {
+      _updateController.add(HomePanel.notifyRefresh);
+    }
   }
 
   void _onPointerMove(PointerMoveEvent event) {
