@@ -32,9 +32,13 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 class HomeCreatePollWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeCreatePollWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  HomeCreatePollWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"),
+    );
 
   @override
   _HomeCreatePollWidgetState createState() => _HomeCreatePollWidgetState();
@@ -60,13 +64,12 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   Widget build(BuildContext context) {
 
     return Visibility(visible: _visible, child:
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+        HomeSlantWidget(favoriteId: widget.favoriteId,
           title: Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"),
           flatHeight: 0, slantHeight: 0,
           child: _buildContent(),
           childPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-      )));
+      ));
   }
 
   Widget _buildContent() {

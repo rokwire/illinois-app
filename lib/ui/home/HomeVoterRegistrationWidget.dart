@@ -17,7 +17,6 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:illinois/model/Voter.dart';
@@ -40,9 +39,8 @@ import 'package:sprintf/sprintf.dart';
 class HomeVoterRegistrationWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeVoterRegistrationWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  HomeVoterRegistrationWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
   @override
   _HomeVoterRegistrationWidgetState createState() => _HomeVoterRegistrationWidgetState();

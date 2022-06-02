@@ -47,9 +47,13 @@ class HomeUpcomingEventsWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeUpcomingEventsWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  HomeUpcomingEventsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: Localization().getStringEx('widget.home_upcoming_events.label.events_for_you', 'Events For You'),
+    );
 
   @override
   _HomeUpcomingEventsWidgetState createState() => _HomeUpcomingEventsWidgetState();
@@ -253,22 +257,13 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
 
   @override
   Widget build(BuildContext context) {
-    if (widget.dragAndDropHost != null) {
-      return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
-          title: Localization().getStringEx('widget.home_upcoming_events.label.events_for_you', 'Events For You'),
-          titleIcon: Image.asset('images/campus-calendar.png', excludeFromSemantics: true,),
-          child: Container(),
-      ),);
-    }
-    else if (CollectionUtils.isNotEmpty(_events)) {
-      return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
+    if (CollectionUtils.isNotEmpty(_events)) {
+      return 
         Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
           _EventsRibbonHeader(
             title: Localization().getStringEx('widget.home_upcoming_events.label.events_for_you', 'Events For You'),
             subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home_upcoming_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
             favoriteId: widget.favoriteId,
-            dragAndDropHost: widget.dragAndDropHost,
             rightIconAsset: 'images/settings-white.png',
             rightIconAction: () {
               Analytics().logSelect(target: "Events for you - settings");
@@ -299,7 +294,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
           Container(
             height: 24,
           ),
-        ]));
+        ]);
     }
     else {
       return Container();
@@ -380,7 +375,6 @@ class _EventsRibbonHeader extends StatelessWidget {
   final void Function()? rightIconAction;
 
   final String? favoriteId;
-  final HomeDragAndDropHost? dragAndDropHost;
 
   const _EventsRibbonHeader({Key? key,
     this.title,
@@ -391,32 +385,16 @@ class _EventsRibbonHeader extends StatelessWidget {
     this.rightIconAction,
 
     this.favoriteId,
-    this.dragAndDropHost,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     List<Widget> titleList = <Widget>[];
 
-    
-    titleList.add((dragAndDropHost != null) ?
-      Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
-        Draggable<HomeFavorite>(
-          data: HomeFavorite(favoriteId),
-          onDragStarted: () { dragAndDropHost?.isDragging = true; },
-          onDragEnd: (details) { dragAndDropHost?.isDragging = false; },
-          onDragCompleted: () { dragAndDropHost?.isDragging = false; },
-          onDraggableCanceled: (velocity, offset) { dragAndDropHost?.isDragging = false; },
-          feedback: HomeSlantFeedback(title: title),
-          childWhenDragging: HomeDragHandle(),
-          child: HomeDragHandle()
-        ),
-      ) :
+    titleList.add(
       HomeTitleIcon(image: Image.asset('images/icon-calendar.png')),
     );
       
-
-    
     titleList.add(
       Expanded(child:
         Padding(padding: EdgeInsets.symmetric(vertical: 12), child:

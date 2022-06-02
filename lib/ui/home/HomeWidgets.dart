@@ -8,46 +8,38 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
-class HomeDropTargetWidget extends StatefulWidget {
+class HomeHandleWidget extends StatefulWidget {
+  final String? title;
+  final int? position;
+  final CrossAxisAlignment crossAxisAlignment;
 
   final String? favoriteId;
   final HomeDragAndDropHost? dragAndDropHost;
-  final CrossAxisAlignment? dropAnchorAlignment;
-  final double dropOpacity;
-  final Widget? child;
 
-  const HomeDropTargetWidget({Key? key, this.child, this.dragAndDropHost, this.favoriteId, this.dropAnchorAlignment, this.dropOpacity = 1}): super(key: key);
+  const HomeHandleWidget({Key? key, this.title, this.position, this.crossAxisAlignment = CrossAxisAlignment.center, this.favoriteId, this.dragAndDropHost}): super(key: key);
 
   @override
-  _HomeDropTargetWidgetState createState() => _HomeDropTargetWidgetState();
+  _HomeHandleWidgetState createState() => _HomeHandleWidgetState();
 }
 
-class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
+class _HomeHandleWidgetState extends State<HomeHandleWidget> {
 
   final GlobalKey _contentKey = GlobalKey();
-  Size? _contentSize;
   CrossAxisAlignment? _dropAnchorAlignment;
 
   @override
   void initState() {
-    _dropAnchorAlignment = widget.dropAnchorAlignment;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return (widget.dragAndDropHost != null) ? _buildDragTargetContent(context) : (widget.child ?? Container());
-  }
-
-  Widget _buildDragTargetContent(BuildContext context) {
     return DragTarget<HomeFavorite>(
       builder: (BuildContext context, List <HomeFavorite?> candidateData, List<dynamic> rejectedData) {
-        debugPrint("Build ${widget.favoriteId}");
         HomeFavorite? homeFavorite = candidateData.isNotEmpty ? candidateData.first : null;
-        return _buildContent(dropTarget: homeFavorite != null);
+        return _buildContent(context, dropTarget: homeFavorite != null);
       },
       onMove: (DragTargetDetails<HomeFavorite> details) {
-        debugPrint("Move ${widget.favoriteId}");
         _onDragMove(details.offset);
       },
       onLeave: (_) {
@@ -59,42 +51,55 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
     );
   }
 
-  Widget _buildContent({bool dropTarget = false }) {
+  Widget _buildContent(BuildContext context, {bool dropTarget = false }) {
+    return Column(key: _contentKey, children: <Widget>[
+      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors?.fillColorSecondary : ((widget.position == 0) ? Styles().colors!.surfaceAccent : Colors.transparent),),
+      Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
 
-    List<Widget> layers = <Widget>[
-      Opacity(key: _contentKey, opacity: dropTarget ? widget.dropOpacity : 1.0, child: 
-        widget.child
-      ),
-    ];
+        Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
+          Draggable<HomeFavorite>(
+            data: HomeFavorite(widget.favoriteId),
+            axis: Axis.vertical,
+            affinity: Axis.vertical,
+            maxSimultaneousDrags: 1,
+            onDragStarted: () { widget.dragAndDropHost?.isDragging = true; },
+            onDragEnd: (details) { widget.dragAndDropHost?.isDragging = false; },
+            onDragCompleted: () { widget.dragAndDropHost?.isDragging = false; },
+            onDraggableCanceled: (velocity, offset) { widget.dragAndDropHost?.isDragging = false; },
+            feedback: HomeDragFeedback(title: widget.title),
+            childWhenDragging: HomeDragHandle(),
+            child: HomeDragHandle()
+          ),
+        ),
 
-    if (dropTarget) {
-      if (_dropAnchorAlignment == CrossAxisAlignment.start) {
-        layers.add(Container(height: 3, color: Styles().colors?.fillColorSecondary),);
-      }
-      else if ((_dropAnchorAlignment == CrossAxisAlignment.end) && (_contentSize != null)) {
-        layers.add(Padding(padding: EdgeInsets.only(top: (_contentSize!.height - 3)), child: Container(height: 3, color: Styles().colors?.fillColorSecondary?.withOpacity(0.8)),),);
-      }
-    }
+        Expanded(child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+            Semantics(label: widget.title, header: true, excludeSemantics: true, child:
+              Text(widget.title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18),)
+            )
+          )
+        ),
 
-    return Stack(children: layers,);
+              
+        HomeFavoriteButton(favoriteId: widget.favoriteId,),
+      ],),
+      Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors?.fillColorSecondary : Styles().colors!.surfaceAccent,),
+    ]);
   }
 
   void _onDragMove(Offset offset) {
-    if (widget.dropAnchorAlignment == null) {
-      RenderBox render = _contentKey.currentContext?.findRenderObject() as RenderBox;
-      _contentSize = render.size;
-      Offset position = render.localToGlobal(Offset.zero);
-      double topY = position.dy;  // top position of the widget
-      double middleY = topY + render.size.height / 2;
-      double eventY = offset.dy + 25; //TBD: handle properly the offset
-      
-      CrossAxisAlignment dropAnchorAlignment = (eventY < middleY) ? CrossAxisAlignment.start : CrossAxisAlignment.end;
+    RenderBox render = _contentKey.currentContext?.findRenderObject() as RenderBox;
+    Offset position = render.localToGlobal(Offset.zero);
+    double topY = position.dy;  // top position of the widget
+    double middleY = topY + render.size.height / 2;
+    double eventY = offset.dy + 25; //TBD: handle properly the offset
+    
+    CrossAxisAlignment dropAnchorAlignment = (eventY < middleY) ? CrossAxisAlignment.start : CrossAxisAlignment.end;
 
-      if ((_dropAnchorAlignment != dropAnchorAlignment) && mounted) {
-        setState(() {
-          _dropAnchorAlignment = dropAnchorAlignment;
-        });
-      }
+    if ((_dropAnchorAlignment != dropAnchorAlignment) && mounted) {
+      setState(() {
+        _dropAnchorAlignment = dropAnchorAlignment;
+      });
     }
   }
 
@@ -104,6 +109,51 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
         _dropAnchorAlignment = null;
       });
     }
+  }
+}
+
+class HomeDropTargetWidget extends StatefulWidget {
+
+  final String? favoriteId;
+  final HomeDragAndDropHost? dragAndDropHost;
+  final Widget Function(BuildContext context, { bool? dropTarget }) childBuilder;
+
+  const HomeDropTargetWidget({Key? key, required this.childBuilder, this.dragAndDropHost, this.favoriteId}): super(key: key);
+
+  @override
+  _HomeDropTargetWidgetState createState() => _HomeDropTargetWidgetState();
+}
+
+class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DragTarget<HomeFavorite>(
+      builder: (BuildContext context, List <HomeFavorite?> candidateData, List<dynamic> rejectedData) {
+        HomeFavorite? homeFavorite = candidateData.isNotEmpty ? candidateData.first : null;
+        return widget.childBuilder(context, dropTarget: homeFavorite != null,);
+      },
+      onMove: (DragTargetDetails<HomeFavorite> details) {
+        _onDragMove(details.offset);
+      },
+      onLeave: (_) {
+        _onDragLeave();
+      },
+      onAccept: (HomeFavorite favorite) {
+        widget.dragAndDropHost?.onDragAndDrop(dragFavoriteId: favorite.favoriteId, dropFavoriteId: widget.favoriteId, dropAnchor: null);
+      },
+    );
+  }
+
+  void _onDragMove(Offset offset) {
+  }
+
+  void _onDragLeave() {
   }
 }
 
@@ -120,7 +170,6 @@ class HomeSlantWidget extends StatelessWidget {
   final EdgeInsetsGeometry childPadding;
   
   final String? favoriteId;
-  final HomeDragAndDropHost? dragAndDropHost;
 
   const HomeSlantWidget({Key? key,
     this.title,
@@ -134,7 +183,6 @@ class HomeSlantWidget extends StatelessWidget {
     this.childPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     
     this.favoriteId,
-    this.dragAndDropHost,
   }) : super(key: key);
 
   @override
@@ -148,23 +196,7 @@ class HomeSlantWidget extends StatelessWidget {
           child: Container(color: Styles().colors!.fillColorPrimary, child:
             Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
-              (dragAndDropHost != null) ?
-                Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
-                  Draggable<HomeFavorite>(
-                    data: HomeFavorite(favoriteId),
-                    axis: Axis.vertical,
-                    affinity: Axis.vertical,
-                    maxSimultaneousDrags: 1,
-                    onDragStarted: () { dragAndDropHost?.isDragging = true; },
-                    onDragEnd: (details) { dragAndDropHost?.isDragging = false; },
-                    onDragCompleted: () { dragAndDropHost?.isDragging = false; },
-                    onDraggableCanceled: (velocity, offset) { dragAndDropHost?.isDragging = false; },
-                    feedback: HomeSlantFeedback(title: title),
-                    childWhenDragging: HomeDragHandle(),
-                    child: HomeDragHandle()
-                  ),
-                ) :
-                HomeTitleIcon(image: titleIcon),
+              HomeTitleIcon(image: titleIcon),
 
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
@@ -180,25 +212,23 @@ class HomeSlantWidget extends StatelessWidget {
         ),),
       ),
       
-      (dragAndDropHost == null) ?
-        Stack(children:<Widget>[
-        
-          // Slant
-          Column(children: <Widget>[
-            Container(color: Styles().colors?.fillColorPrimary, height: flatHeight,),
-            Container(color: Styles().colors?.fillColorPrimary, child:
-              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
-                Container(height: slantHeight,),
-              ),
+      Stack(children:<Widget>[
+      
+        // Slant
+        Column(children: <Widget>[
+          Container(color: Styles().colors?.fillColorPrimary, height: flatHeight,),
+          Container(color: Styles().colors?.fillColorPrimary, child:
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+              Container(height: slantHeight,),
             ),
-          ],),
-          
-          // Content
-          Padding(padding: childPadding, child:
-            child ?? Container()
-          )
-        ]) :
-        Container(height: 3),
+          ),
+        ],),
+        
+        // Content
+        Padding(padding: childPadding, child:
+          child ?? Container()
+        )
+      ])
 
     ],);
   }
@@ -297,11 +327,11 @@ class HomeFavoriteButton extends StatelessWidget {
   }
 }
 
-class HomeSlantFeedback extends StatelessWidget {
+class HomeDragFeedback extends StatelessWidget {
   final String? title;
   final CrossAxisAlignment headerAxisAlignment;
 
-  HomeSlantFeedback({
+  HomeDragFeedback({
     this.title,
     this.headerAxisAlignment = CrossAxisAlignment.center,
   });
@@ -309,7 +339,7 @@ class HomeSlantFeedback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(width: MediaQuery.of(context).size.width, color: Styles().colors!.white!.withOpacity(0.25), child:
+      Container(width: MediaQuery.of(context).size.width, color: Styles().colors!.accentColor3!.withOpacity(0.25), child:
         Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
           HomeDragHandle(),
           

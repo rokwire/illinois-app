@@ -37,9 +37,13 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class HomeCampusRemindersWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeCampusRemindersWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  HomeCampusRemindersWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
+    );
 
   @override
   _HomeCampusRemindersWidgetState createState() => _HomeCampusRemindersWidgetState();
@@ -101,13 +105,11 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(_reminderItems), child:
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+        HomeSlantWidget(favoriteId: widget.favoriteId,
           title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: Column(children: _buildRemindersList())
         ),
-      ),
     );
   }
 
