@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Settings Content - Calendar settings and My Notifications (Done) [#1670](https://github.com/rokwire/illinois-app/issues/1670).
+- HomeToutWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+### Changed
+- Cleaned up Drag & Drop in Home panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 
 ## [4.0.20] - 2022-06-01
 ### Added
