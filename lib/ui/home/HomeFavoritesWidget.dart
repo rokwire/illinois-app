@@ -37,12 +37,31 @@ class HomeFavoritesWidget extends StatefulWidget {
   final String? favoriteId;
   final String favoriteKey;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeFavoritesWidget({Key? key, required this.favoriteKey, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  HomeFavoritesWidget({Key? key, required this.favoriteKey, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({required String favoriteKey, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: titleFromKey(favoriteKey),
+    );
 
   @override
   _HomeFavoritesWidgetState createState() => _HomeFavoritesWidgetState();
+
+  String? get title => titleFromKey(favoriteKey);
+
+  static String? titleFromKey(String favoriteKey) {
+    switch(favoriteKey) {
+      case Event.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.events', 'Events');
+      case Dining.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.dining', "Dining");
+      case Game.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.athletics', 'Athletics');
+      case News.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.news', 'News');
+      case LaundryRoom.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.laundry', 'Laundry');
+      case InboxMessage.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.campus_guide', 'Campus Guide');
+      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.inbox', 'Inbox');
+    }
+    return null;
+  }
 }
 
 class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements NotificationsListener {
@@ -87,13 +106,13 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   @override
   Widget build(BuildContext context) {
-    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+    return 
+      HomeSlantWidget(favoriteId: widget.favoriteId,
         title: headingTitle,
         titleIcon: headingIcon,
         child: Column(children: _buildContent()
       ),
-    ),);
+    );
   }
 
   List<Widget> _buildContent() {
@@ -346,18 +365,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     return null;
   }
 
-  String? get headingTitle {
-    switch(widget.favoriteKey) {
-      case Event.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.events', 'Events');
-      case Dining.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.dining', "Dining");
-      case Game.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.athletics', 'Athletics');
-      case News.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.news', 'News');
-      case LaundryRoom.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.laundry', 'Laundry');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.campus_guide', 'Campus Guide');
-      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.inbox', 'Inbox');
-    }
-    return null;
-  }
+  String? get headingTitle => widget.title;
 
   Image? get headingIcon {
     switch(widget.favoriteKey) {

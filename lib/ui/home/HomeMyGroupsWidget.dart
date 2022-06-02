@@ -15,9 +15,13 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 class HomeMyGroupsWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeMyGroupsWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  const HomeMyGroupsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: 'My Groups' /*TBD: Localization */,
+    );
 
   @override
   State<StatefulWidget> createState() => _HomeMyGroupsState();
@@ -71,14 +75,12 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: _haveGroups, child:
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
-          title: "My Groups",
+        HomeSlantWidget(favoriteId: widget.favoriteId,
+          title: "My Groups" /*TBD: Localization */,
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: _buildContent(),
           childPadding: const EdgeInsets.only(top: 8, bottom: 16),
         ),
-      ),
     );
   }
 

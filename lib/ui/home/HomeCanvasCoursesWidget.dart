@@ -17,9 +17,13 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class HomeCanvasCoursesWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeCanvasCoursesWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  HomeCanvasCoursesWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses'),
+    );
 
   @override
   _HomeCanvasCoursesWidgetState createState() => _HomeCanvasCoursesWidgetState();
@@ -85,14 +89,12 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   Widget build(BuildContext context) {
 
     return Visibility(visible: _hasCourses, child:
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+        HomeSlantWidget(favoriteId: widget.favoriteId,
           title: Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses'),
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: _buildCoursesContent(),
           childPadding: const EdgeInsets.only(top: 8, bottom: 16),
         ),
-      ),
     );
   }
 

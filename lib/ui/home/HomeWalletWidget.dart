@@ -25,9 +25,13 @@ class HomeWalletWidget extends StatefulWidget {
   
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeWalletWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  HomeWalletWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
+    );
 
   @override
   State<HomeWalletWidget> createState() => _HomeWalletWidgetState();
@@ -52,13 +56,12 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
 
   @override
   Widget build(BuildContext context) {
-    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
       child: Column(children: _buildCommandsList(),
     ),
-    ),);
+    );
   }
 
   List<Widget> _buildCommandsList() {

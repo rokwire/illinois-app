@@ -43,10 +43,13 @@ class HomeCampusToolsWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
+  HomeCampusToolsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  HomeCampusToolsWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
+    );
 
   _HomeCampusToolsWidgetState createState() => _HomeCampusToolsWidgetState();
 }
@@ -102,12 +105,11 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
 
     rows.add(Container(height: 48,),);
 
-    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
         titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
         child: Column(children: rows,),
-    ),);
+    );
   }
 
   Widget? _widgetFromCode(BuildContext context, String code, int countPerRow) {

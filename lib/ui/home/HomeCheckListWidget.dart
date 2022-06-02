@@ -19,12 +19,28 @@ class HomeCheckListWidget extends StatefulWidget{
   final String contentKey;
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeCheckListWidget({Key? key, required this.contentKey, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  const HomeCheckListWidget({Key? key, required this.contentKey, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({required String contentKey, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: titleFromKey(contentKey),
+    );
 
   @override
   State<StatefulWidget> createState() => _HomeCheckListWidgetState();
+
+  String get title => titleFromKey(contentKey);
+
+  static String titleFromKey(String contentKey) {
+    if(contentKey == "gies"){
+      return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');// TBD localize
+    } else if (contentKey == "uiuc_student"){
+      return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist'); // TBD localize
+    }
+
+    return "";
+  }
 
 }
 
@@ -44,16 +60,12 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: true, child:
-    
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+        HomeSlantWidget(favoriteId: widget.favoriteId,
           title: _title,
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: _buildContent(),
           headerAxisAlignment: CrossAxisAlignment.start,
         ),
-      ),
-
     );
   }
 
@@ -244,15 +256,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
     return CheckList(widget.contentKey).progressSteps?.length ?? 0;
   }
 
-  String get _title {
-    if(widget.contentKey == "gies"){
-      return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');// TBD localize
-    } else if (widget.contentKey == "uiuc_student"){
-      return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist'); // TBD localize
-    }
-
-    return "";
-  }
+  String get _title => widget.title;
 
   @override
   void onNotification(String name, param) {

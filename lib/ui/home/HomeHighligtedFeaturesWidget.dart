@@ -33,9 +33,13 @@ class HomeHighlightedFeatures extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  const HomeHighlightedFeatures({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  const HomeHighlightedFeatures({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features'),
+    );
 
   @override
   State<StatefulWidget> createState() => _HomeHighlightedFeaturesState();
@@ -81,15 +85,13 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures> imple
 
   @override
   Widget build(BuildContext context) {
-    return HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
-      HomeSlantWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost,
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features'),
         titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
         flatHeight: 0, slantHeight: 0,
         child: Column(children: _buildCommandsList(),),
         childPadding: EdgeInsets.all(16),
-      ),
-    );
+      );
   }
 
   List<Widget> _buildCommandsList() {

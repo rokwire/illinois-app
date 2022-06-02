@@ -24,9 +24,13 @@ class HomeTwitterWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final HomeDragAndDropHost? dragAndDropHost;
 
-  HomeTwitterWidget({Key? key, this.favoriteId, this.updateController, this.dragAndDropHost}) : super(key: key);
+  HomeTwitterWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: 'Twitter' /* TBD: Localization */,
+    );
 
   @override
   _HomeTwitterWidgetState createState() => _HomeTwitterWidgetState();
@@ -109,19 +113,15 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   Widget build(BuildContext context) {
     int displayPagesCount = tweetsCount + ((_loadingPage == true) ? 1 : 0);
     return Visibility(visible: (0 < displayPagesCount), child:
-      HomeDropTargetWidget(favoriteId: widget.favoriteId, dragAndDropHost: widget.dragAndDropHost, child:
         Semantics(container: true, child:
           Column(children: <Widget>[
             _buildHeader(),
-            (widget.dragAndDropHost == null) ?
-              Stack(children:<Widget>[
-                _buildSlant(),
-                _buildContent(),
-              ]) :
-              Container(height: 3,),
+            Stack(children:<Widget>[
+              _buildSlant(),
+              _buildContent(),
+            ]),
           ]),
         ),
-      ),
     );
   }
 
@@ -131,30 +131,17 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
         Container(color: Styles().colors!.fillColorPrimary, child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-            (widget.dragAndDropHost != null) ?
-              Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
-                Draggable<HomeFavorite>(
-                  data: HomeFavorite(widget.favoriteId),
-                  onDragStarted: () { widget.dragAndDropHost?.isDragging = true; },
-                  onDragEnd: (details) { widget.dragAndDropHost?.isDragging = false; },
-                  onDragCompleted: () { widget.dragAndDropHost?.isDragging = false; },
-                  onDraggableCanceled: (velocity, offset) { widget.dragAndDropHost?.isDragging = false; },
-                  feedback: HomeSlantFeedback(title: 'Twitter'),
-                  childWhenDragging: HomeDragHandle(),
-                  child: HomeDragHandle()
-                ),
-              ) :
             HomeTitleIcon(image: Image.asset('images/campus-tools.png')),
 
             Expanded(child:
               Padding(padding: EdgeInsets.only(top: 14), child:
-                Semantics(label: 'Twitter', header: true, excludeSemantics: true, child:
-                  Text('Twitter', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                Semantics(label: 'Twitter' /* TBD: Localization */, header: true, excludeSemantics: true, child:
+                  Text('Twitter' /* TBD: Localization */, style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
                 )
               )
             ),
 
-            ((1 < _accountKeys.length) && (widget.dragAndDropHost == null)) ?
+            (1 < _accountKeys.length) ?
               Semantics(container: true,  button: true, child: buildAccountDropDown(), ) :
               Container(),
 
