@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -17,27 +16,15 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class InboxHomePanel extends StatefulWidget {
-  InboxHomePanel();
+class SettingsInboxHomeContentWidget extends StatefulWidget {
+  SettingsInboxHomeContentWidget();
 
-  _InboxHomePanelState createState() => _InboxHomePanelState();
-
-  static void launchMessageDetail(InboxMessage message) {
-    FirebaseMessaging().processDataMessageEx(message.data, allowedPayloadTypes: {
-      FirebaseMessaging.payloadTypeEventDetail,
-      FirebaseMessaging.payloadTypeGameDetail,
-      FirebaseMessaging.payloadTypeAthleticsGameStarted,
-      FirebaseMessaging.payloadTypeAthleticsNewDetail,
-      FirebaseMessaging.payloadTypeGroup
-    });
-  }
-
+  _SettingsInboxHomeContentWidgetState createState() => _SettingsInboxHomeContentWidgetState();
 }
 
-class _InboxHomePanelState extends State<InboxHomePanel> implements NotificationsListener {
+class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeContentWidget> implements NotificationsListener {
 
   final List<_FilterEntry> _categories = [
     _FilterEntry(value: null, name: "Any Category"),
@@ -107,20 +94,12 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildHeaderBar(),
-      // Text(Localization().getStringEx('panel.inbox.label.heading', 'Inbox'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
-      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          _buildBanner(),
-          _buildFilters(),
-          Expanded(child:
-            _buildContent(),
-          ),
-          uiuc.TabBar(),
-        ],)),
-      backgroundColor: Styles().colors!.background,
-    );
+    return RefreshIndicator(
+        onRefresh: _onPullToRefresh,
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[_buildBanner(), _buildFilters(), Expanded(child: _buildContent())]));
   }
 
   // Messages
@@ -128,9 +107,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   Widget _buildContent() {
     return Stack(children: [
       Visibility(visible: (_loading != true), child:
-        Padding(padding: EdgeInsets.only(top: 12), child:
-          _buildMessagesContent()
-        ),
+        Padding(padding: EdgeInsets.only(top: 12), child: _buildMessagesContent())
       ),
       Visibility(visible: (_loading == true), child:
         Align(alignment: Alignment.center, child:
@@ -220,7 +197,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   void _handleRedirectTap(InboxMessage message) {
     Analytics().logSelect(target: message.subject);
-    InboxHomePanel.launchMessageDetail(message);
+    SettingsNotificationsContentPanel.launchMessageDetail(message);
   }
   
   // Banner
@@ -266,8 +243,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   Widget _buildFilters() {
     return SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-      Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12), child:
-        Row(children: <Widget>[
+      Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
           // Hide the "Categories" drop down in Inbox panel (#721)
           /*FilterSelector(
             title: _FilterEntry.entryInList(_categories, _selectedCategory)?.name ?? '',
@@ -275,12 +251,14 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
             onTap: () { _onFilter(_FilterType.Category); }
           ),*/
           FilterSelector(
+            padding: EdgeInsets.symmetric(horizontal: 4),
             title: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
             active: _selectedFilter == _FilterType.Time,
             onTap: () { _onFilter(_FilterType.Time); }
           ),
+          _buildEditBar()
         ],
-    ),),);
+    ));
   }
 
   void _onFilter(_FilterType? filterType) {
@@ -391,44 +369,29 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   // Header bar
 
-  PreferredSizeWidget _buildHeaderBar() {
-    List<Widget> actions = <Widget>[];
+  Widget _buildEditBar() {
+    List<Widget> contentList = <Widget>[];
     if (_isEditMode == true) {
-      actions.addAll(<Widget>[
+      contentList.addAll(<Widget>[
         _isAllMessagesSelected ? _buildDeselectAllButton() : _buildSelectAllButton(),
         _buildDoneButton()
       ]);
     }
     else {
-      actions.add(_buildEditButton());
+      contentList.add(_buildEditButton());
     }
     
-    return PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child:
-      Semantics(sortKey: const OrdinalSortKey(1), child:
-        AppBar(
-          title: _buildTitle(),
-          centerTitle: true,
-          backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-          leading: ((_isEditMode == true) && _isAnyMessageSelected) ? _buildOptionsButton() : _buildBackButton(),
-          actions: actions
-        )
-      ),
-    );
-  }
+    if ((_isEditMode == true) && _isAnyMessageSelected) {
+      contentList.insert(0, _buildOptionsButton());
+    }
 
-  Widget _buildTitle() {
-    return Text(Localization().getStringEx('panel.inbox.label.heading', 'Notifications'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),);
-  }
-
-  Widget _buildBackButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/chevron-left-white.png'), onPressed: _onBack),);
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.end, children: contentList);
   }
 
   Widget _buildOptionsButton() {
     return Semantics(label: Localization().getStringEx('headerbar.options.title', 'Options'), hint: Localization().getStringEx('headerbar.options.hint', ''), button: true, excludeSemantics: true, child:
       Stack(children: [
-        IconButton(icon: Image.asset('images/groups-more-inactive.png'), onPressed: _onOptions),
+        IconButton(icon: Image.asset('images/groups-more-inactive.png', color: Styles().colors!.fillColorPrimary), onPressed: _onOptions),
         Visibility(visible: (_processingOption == true), child:
           Container(padding: EdgeInsets.all(13), child:
             SizedBox(width: 22, height: 22, child:
@@ -443,28 +406,28 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   Widget _buildEditButton() {
     return Semantics(label: Localization().getStringEx('headerbar.edit.title', 'Edit'), hint: Localization().getStringEx('headerbar.edit.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onEdit, child:
-        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildDoneButton() {
     return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDone, child:
-        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildSelectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.select.all.title', 'Select All'), hint: Localization().getStringEx('headerbar.select.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onSelectAll, child:
-        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildDeselectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), hint: Localization().getStringEx('headerbar.deselect.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDeselectAll, child:
-        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
@@ -564,11 +527,6 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
         ),
       ); },
     );
-  }
-
-  void _onBack() {
-    Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
   }
 
   void _onEdit() {
@@ -918,8 +876,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
   @override
   Widget build(BuildContext context) {
     double leftPadding = (widget.selected != null) ? 12 : 16;
-    return Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
-      Container(
+    return Container(
         decoration: BoxDecoration(
           color: Styles().colors!.white,
           borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -987,7 +944,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
                   Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
             ),)),),),
         ],)
-    ),);
+    );
   }
 
   void _onTapFavorite() {

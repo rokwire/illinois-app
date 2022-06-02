@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -36,7 +37,6 @@ import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
-import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
@@ -609,7 +609,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
 
   void _navigateInbox() {
     Analytics().logSelect(target: "Inbox");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => InboxHomePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.inbox)));
   }
 
   void _navigatePrivacyCenter() {
