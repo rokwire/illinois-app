@@ -138,7 +138,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     widgets.add(HomeToutWidget(updateController: _updateController, onEdit: _onEdit,));
 
     if (_contentCodesList != null) {
-      for (String code in _contentCodesList!) {
+      for (String code in _contentCodesList!.reversed) {
         if (_contentCodesSet?.contains(code) ?? false) {
           Widget? widget = _buildWidgetFromCode(code);
 
@@ -256,7 +256,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       ));
        
       int position = 0;
-      for (String code in homeFavorites) {
+      for (String code in List<String>.from(homeFavorites).reversed) {
         Widget? widget = _buildWidgetHandleFromCode(code, position);
         if (widget != null) {
           widgets.add(widget);
@@ -411,17 +411,14 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   List<String> _buildContentCodesList() {
     LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName);
-    if ((homeFavorites != null) && homeFavorites.isNotEmpty) {
-      return List.from(homeFavorites);
+    if (homeFavorites == null) {
+      // Build a default set of favorites
+      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home'));
+      if (fullContent != null) {
+        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName, homeFavorites = LinkedHashSet<String>.from(fullContent.reversed));
+      }
     }
-    
-    List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home'));
-    if (fullContent != null) {
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName, LinkedHashSet<String>.from(fullContent));
-      return List.from(fullContent);
-    }
-    
-    return <String>[];
+    return (homeFavorites != null) ? List.from(homeFavorites) : <String>[];
   }
 
   void _updateContentCodesList() {
@@ -536,7 +533,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           if (dragIndex < dropIndex) {
             dropIndex--;
           }
-          if (dropAnchor == CrossAxisAlignment.end) {
+          if (dropAnchor == CrossAxisAlignment.start) {
             dropIndex++;
           }
           favoritesList.insert(dropIndex, dragFavoriteId);
@@ -547,7 +544,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         // Add favorite at specific position
         HomeFavoriteButton.promptFavorite(context, dragFavoriteId).then((bool? result) {
           if (result == true) {
-            if (dropAnchor == CrossAxisAlignment.end) {
+            if (dropAnchor == CrossAxisAlignment.start) {
               dropIndex++;
             }
             favoritesList.insert(dropIndex, dragFavoriteId);
