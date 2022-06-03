@@ -74,7 +74,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   
   Set<String>? _contentCodesSet;
   List<String>? _contentCodesList;
-  HomeToutWidget? _toutWidget;
   StreamController<String> _updateController = StreamController.broadcast();
   GlobalKey _saferKey = GlobalKey();
   GlobalKey _contentWrapperKey = GlobalKey();
@@ -136,7 +135,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     List<Widget> widgets = [];
 
-    widgets.add(_toutWidget ??= HomeToutWidget(updateController: _updateController, onEdit: _onEdit,));
+    widgets.add(HomeToutWidget(updateController: _updateController, onEdit: _onEdit,));
 
     if (_contentCodesList != null) {
       for (String code in _contentCodesList!) {

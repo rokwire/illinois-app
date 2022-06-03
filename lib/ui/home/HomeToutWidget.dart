@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -34,14 +35,19 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
       AppLivecycle.notifyStateChanged,
     ]);
 
-      widget.updateController?.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _refresh();
-        }
-      });
+    widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        _refresh();
+      }
+    });
 
-    _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
-    _imageDateTime = DateTime.now();
+    _imageUrl = Storage().homeToutImageUrl;
+    _imageDateTime = DateTime.fromMillisecondsSinceEpoch(Storage().homeToutImageTime ?? 0);
+    if ((_imageUrl == null) || (_imageDateTime == null) || _shouldUpdateImage) {
+      Storage().homeToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
+      Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).microsecondsSinceEpoch;
+    }
+
     _greeting = AppDateTimeUtils.getDayGreeting();
     
     super.initState();
@@ -103,14 +109,17 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     return Auth2().fullName;
   }
 
+  bool get _shouldUpdateImage {
+    return (_imageDateTime == null) || (4 < DateTime.now().difference(_imageDateTime!).inHours);
+  }
+
   void _update() {
     String? greeting = AppDateTimeUtils.getDayGreeting();
-    bool updateImage = (_imageDateTime != null) && (4 < DateTime.now().difference(_imageDateTime!).inHours);
-    if (mounted && ((_greeting != greeting) || updateImage)) {
+    if (mounted && ((_greeting != greeting) || _shouldUpdateImage)) {
       setState(() {
+        Storage().homeToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
+        Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).microsecondsSinceEpoch;
         _greeting = greeting;
-        _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
-        _imageDateTime = DateTime.now();
       });
     }
   }
@@ -118,9 +127,9 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   void _refresh() {
     if (mounted) {
       setState(() {
+        Storage().homeToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
+        Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).microsecondsSinceEpoch;
         _greeting = AppDateTimeUtils.getDayGreeting();
-        _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
-        _imageDateTime = DateTime.now();
       });
     }
   }
