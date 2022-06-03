@@ -259,10 +259,10 @@ class HomeFavoriteStar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
       selected ?
         Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true) :
-        Image.asset('images/icon-star-white.png', excludeFromSemantics: true,),
+        Image.asset('images/icon-star-gray.png', excludeFromSemantics: true,),
     );
   }
 
