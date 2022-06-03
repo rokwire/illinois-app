@@ -64,8 +64,6 @@ import 'HomeCheckListWidget.dart';
 
 class HomePanel extends StatefulWidget {
   static const String notifyRefresh      = "edu.illinois.rokwire.home.refresh";
-  static const String notifyEdit         = "edu.illinois.rokwire.home.edit";
-  static const String notifyEditDone     = "edu.illinois.rokwire.home.edit.done";
 
   @override
   _HomePanelState createState() => _HomePanelState();
@@ -117,7 +115,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     super.build(context);
 
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx('panel.home.header.title', 'ILLINOIS')),
+      appBar: _HomeHeaderBar(title: Localization().getStringEx('panel.home.header.title', 'ILLINOIS'), onEditDone: _isEditing ? _onEditDone : null,),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Listener(onPointerMove: _onPointerMove, onPointerUp: (_) => _onPointerCancel, onPointerCancel: (_) => _onPointerCancel, child:
           Column(key: _contentWrapperKey, children: <Widget>[
@@ -138,7 +136,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     List<Widget> widgets = [];
 
-    widgets.add(_toutWidget ??= HomeToutWidget(updateController: _updateController, editing: _isEditing, onEdit: _onEdit, onEditDone: _onEditDone,));
+    widgets.add(_toutWidget ??= HomeToutWidget(updateController: _updateController, onEdit: _onEdit,));
 
     if (_contentCodesList != null) {
       for (String code in _contentCodesList!) {
@@ -249,8 +247,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   List<Widget> _buildEditingContentList() {
     List<Widget> widgets = [];
-
-    widgets.add(_toutWidget ??= HomeToutWidget(updateController: _updateController, editing: _isEditing, onEdit: _onEdit, onEditDone: _onEditDone,));
 
     LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName);
 
@@ -583,7 +579,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _onEdit() {
-    _updateController.add(HomePanel.notifyEdit);
     if (mounted) {
       setState(() {
         _isEditing = true;
@@ -592,7 +587,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _onEditDone() {
-    _updateController.add(HomePanel.notifyEditDone);
     if (mounted) {
       setState(() {
         _isEditing = false;
@@ -660,3 +654,34 @@ abstract class HomeDragAndDropHost  {
   void onDragAndDrop({String? dragFavoriteId, String? dropFavoriteId, CrossAxisAlignment? dropAnchor});
 }
 
+
+// _HomeHeaderBar
+
+class _HomeHeaderBar extends RootHeaderBar {
+
+  final void Function()? onEditDone;
+  
+  _HomeHeaderBar({Key? key, String? title, this.onEditDone}) :
+    super(key: key, title: title);
+
+  bool get editing => (onEditDone != null);
+
+  @override
+  List<Widget> buildHeaderActions(BuildContext context) {
+    return editing ? <Widget>[ buildHeaderEditDoneButton(context), ] : super.buildHeaderActions(context);
+  }
+
+  Widget buildHeaderEditDoneButton(BuildContext context) {
+    return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
+      TextButton(onPressed: () => onTapEditDone(context), child:
+        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+      )
+    );
+  }
+
+  void onTapEditDone(BuildContext context) {
+    if (onEditDone != null) {
+      onEditDone!();
+    }
+  }
+}

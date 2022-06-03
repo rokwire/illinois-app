@@ -13,11 +13,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeToutWidget extends StatefulWidget {
   final StreamController<String>? updateController;
-  final bool editing;
   final void Function()? onEdit;
-  final void Function()? onEditDone;
   
-  HomeToutWidget({Key? key, this.updateController, this.editing = false, this.onEdit, this.onEditDone});
+  HomeToutWidget({Key? key, this.updateController, this.onEdit});
 
   @override
   _HomeToutWidgetState createState() => _HomeToutWidgetState();
@@ -28,7 +26,6 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   String? _imageUrl;
   DateTime? _imageDateTime;
   String? _greeting;
-  bool? _editing;
   
   @override
   void initState() {
@@ -38,18 +35,11 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     ]);
 
       widget.updateController?.stream.listen((String command) {
-        if (command == HomePanel.notifyEdit) {
-          editing = true;
-        }
-        else if (command == HomePanel.notifyEditDone) {
-          editing = false;
-        }
-        else if (command == HomePanel.notifyRefresh) {
+        if (command == HomePanel.notifyRefresh) {
           _refresh();
         }
       });
 
-    _editing = widget.editing;
     _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
     _imageDateTime = DateTime.now();
     _greeting = AppDateTimeUtils.getDayGreeting();
@@ -86,14 +76,8 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
               ],),
             )
           ),
-          (_editing != true) ?
             Semantics(label: Localization().getStringEx('headerbar.edit.title', 'Edit'), hint: Localization().getStringEx('headerbar.options.hint', ''), button: true, excludeSemantics: true, child:
               IconButton(icon: Image.asset('images/icon-drag-white.png', excludeFromSemantics: true), onPressed: widget.onEdit)
-            ) :
-            Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
-              TextButton(onPressed: widget.onEditDone, child:
-                Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
-              )
             ),
         ],)
       )
@@ -137,14 +121,6 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
         _greeting = AppDateTimeUtils.getDayGreeting();
         _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
         _imageDateTime = DateTime.now();
-      });
-    }
-  }
-
-  set editing(bool? value) {
-    if (mounted) {
-      setState(() {
-        _editing = value;
       });
     }
   }
