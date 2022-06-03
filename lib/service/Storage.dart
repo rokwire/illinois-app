@@ -470,4 +470,14 @@ class Storage extends rokwire.Storage {
   bool? get onCampusRegionManualInside => getBoolWithName(onCampusRegionManualInsideKey);
   set onCampusRegionManualInside(bool? value) => setBoolWithName(onCampusRegionManualInsideKey, value);
 
+
+  // Home Tout
+
+  String get homeToutImageUrlKey => 'edu.illinois.rokwire.home.tout.image.url';
+  String? get homeToutImageUrl => getStringWithName(homeToutImageUrlKey);
+  set homeToutImageUrl(String? value) => setStringWithName(homeToutImageUrlKey, value);
+
+  String get homeToutImageTimeKey => 'edu.illinois.rokwire.home.tout.image.time';
+  int? get homeToutImageTime => getIntWithName(homeToutImageTimeKey);
+  set homeToutImageTime(int? value) => setIntWithName(homeToutImageTimeKey, value);
 }

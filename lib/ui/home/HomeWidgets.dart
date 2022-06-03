@@ -54,35 +54,38 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
   Widget _buildContent(BuildContext context, {bool dropTarget = false }) {
     return Column(key: _contentKey, children: <Widget>[
       Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors?.fillColorSecondary : ((widget.position == 0) ? Styles().colors!.surfaceAccent : Colors.transparent),),
-      Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
 
-        Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
-          Draggable<HomeFavorite>(
-            data: HomeFavorite(widget.favoriteId),
-            axis: Axis.vertical,
-            affinity: Axis.vertical,
-            maxSimultaneousDrags: 1,
-            onDragStarted: () { widget.dragAndDropHost?.isDragging = true; },
-            onDragEnd: (details) { widget.dragAndDropHost?.isDragging = false; },
-            onDragCompleted: () { widget.dragAndDropHost?.isDragging = false; },
-            onDraggableCanceled: (velocity, offset) { widget.dragAndDropHost?.isDragging = false; },
-            feedback: HomeDragFeedback(title: widget.title),
-            childWhenDragging: HomeDragHandle(),
-            child: HomeDragHandle()
+      Draggable<HomeFavorite>(
+        data: HomeFavorite(widget.favoriteId),
+        axis: Axis.vertical,
+        affinity: Axis.vertical,
+        maxSimultaneousDrags: 1,
+        onDragStarted: () { widget.dragAndDropHost?.isDragging = true; },
+        onDragEnd: (details) { widget.dragAndDropHost?.isDragging = false; },
+        onDragCompleted: () { widget.dragAndDropHost?.isDragging = false; },
+        onDraggableCanceled: (velocity, offset) { widget.dragAndDropHost?.isDragging = false; },
+        feedback: HomeDragFeedback(title: widget.title),
+        child: Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
+
+          Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
+            Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+              Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
+            ),
           ),
-        ),
 
-        Expanded(child:
-          Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-            Semantics(label: widget.title, header: true, excludeSemantics: true, child:
-              Text(widget.title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18),)
+          Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+              Semantics(label: widget.title, header: true, excludeSemantics: true, child:
+                Text(widget.title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18),)
+              )
             )
-          )
-        ),
+          ),
 
-              
-        HomeFavoriteButton(favoriteId: widget.favoriteId,),
-      ],),
+                
+          HomeFavoriteButton(favoriteId: widget.favoriteId,),
+        ],),
+      ),
+
       Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors?.fillColorSecondary : Styles().colors!.surfaceAccent,),
     ]);
   }
@@ -235,17 +238,6 @@ class HomeSlantWidget extends StatelessWidget {
 
 }
 
-class HomeDragHandle extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    //NB: (color != null) causes the parent Draggable to acknowledge the entire container area
-    return Container(color: Colors.transparent, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-      Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
-    );
-  }
-}
-
 class HomeTitleIcon extends StatelessWidget {
 
   final Image? image;
@@ -267,10 +259,10 @@ class HomeFavoriteStar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
       selected ?
         Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true) :
-        Image.asset('images/icon-star-white.png', excludeFromSemantics: true,),
+        Image.asset('images/icon-star-gray.png', excludeFromSemantics: true,),
     );
   }
 
@@ -341,7 +333,10 @@ class HomeDragFeedback extends StatelessWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(width: MediaQuery.of(context).size.width, color: Styles().colors!.accentColor3!.withOpacity(0.25), child:
         Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
-          HomeDragHandle(),
+
+          Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
+          ),
           
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
