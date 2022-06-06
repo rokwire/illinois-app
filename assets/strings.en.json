@@ -249,6 +249,12 @@
     "panel.wellness.section.rings.label": "Daily Wellness Rings",
     "panel.wellness.section.todo.label": "To-Do List",
 
+    "panel.wellness.sections.description.header.text": "Learn to prioritize. Take care of what you can get done today, right now. This will help you be a better time manager and reduce the risk of procrastination.",
+    "panel.wellness.sections.description.footer.wellness.text": "Wellness ",
+    "panel.wellness.sections.description.footer.description.text": "is a state of optimal well-being that is oriented toward maximizing an individual's potential. This is a life-long process of moving towards enhancing your ",
+    "panel.wellness.sections.description.footer.dimensions.text": "physical, mental, environmental, financial, spiritual, vocational, emotional and social wellness.",
+    "panel.wellness.sections.dimensions.button": "Learn more about the 8 dimensions",
+
     "panel.athletics.header.title": "Athletics",
     "panel.athletics.label.upcoming_events.title": "Upcoming Events",
     "panel.athletics.label.upcoming_events.hint": "",
