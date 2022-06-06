@@ -30,18 +30,17 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-//TBD: DD - check if we need this and remove it.
-class WellnessPanel extends StatefulWidget {
+class WellnessEightDimensionsPanel extends StatefulWidget {
   final Map<String, dynamic>? content;
   final bool rootTabDisplay;
 
-  WellnessPanel({this.content, this.rootTabDisplay = false});
+  WellnessEightDimensionsPanel({this.content, this.rootTabDisplay = false});
 
   @override
-  _WellnessPanelState createState() => _WellnessPanelState();
+  _WellnessEightDimensionsPanelState createState() => _WellnessEightDimensionsPanelState();
 }
 
-class _WellnessPanelState extends State<WellnessPanel> implements NotificationsListener {
+class _WellnessEightDimensionsPanelState extends State<WellnessEightDimensionsPanel> implements NotificationsListener {
   Map<String, dynamic>? _jsonContent;
   Map<String, dynamic>? _stringsContent;
 
@@ -315,7 +314,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
       String? panelSource = MapPathKey.entry(action, 'source');
       Map<String, dynamic>? panelContent = MapPathKey.entry(Assets()['wellness.panels'], panelSource);
       if (panelContent != null) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessPanel(content: panelContent,)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessEightDimensionsPanel(content: panelContent,)));
       }
     } else /*if ('web' == actionName)*/ {
       _launchUrl(MapPathKey.entry(action, 'source'));
