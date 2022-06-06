@@ -97,7 +97,7 @@
 			"converge"                        : 5,
 			"connect"                         : 4,
 
-			"home.create_poll"                : 4,
+			"create_poll"                     : 4,
 
 			"settings.connected"              : 4,
 			"settings.link"                   : 4,
