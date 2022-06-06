@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
-import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeFavorite.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';

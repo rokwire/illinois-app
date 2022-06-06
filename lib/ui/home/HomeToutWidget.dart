@@ -13,10 +13,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeToutWidget extends StatefulWidget {
+  final String? favoriteId;
   final StreamController<String>? updateController;
   final void Function()? onEdit;
   
-  HomeToutWidget({Key? key, this.updateController, this.onEdit});
+  HomeToutWidget({Key? key, this.favoriteId, this.updateController, this.onEdit});
 
   @override
   _HomeToutWidgetState createState() => _HomeToutWidgetState();

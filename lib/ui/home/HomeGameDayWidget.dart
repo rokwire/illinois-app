@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/LiveStats.dart';
+import 'package:illinois/ui/home/HomeFavorite.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';

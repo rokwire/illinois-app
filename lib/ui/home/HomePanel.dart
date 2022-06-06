@@ -27,6 +27,7 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
+import 'package:illinois/ui/home/HomeFavorite.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
@@ -43,10 +44,9 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomeCampusRemindersWidget.dart';
-import 'package:illinois/ui/home/HomeCampusToolsWidget.dart';
+import 'package:illinois/ui/home/HomeCampusResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
 import 'package:illinois/ui/home/HomeGameDayWidget.dart';
-import 'package:illinois/ui/home/HomeHighligtedFeaturesWidget.dart';
 import 'package:illinois/ui/home/HomeLoginWidget.dart';
 import 'package:illinois/ui/home/HomeMyGroupsWidget.dart';
 import 'package:illinois/ui/home/HomePreferredSportsWidget.dart';
@@ -72,8 +72,8 @@ class HomePanel extends StatefulWidget {
 
 class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixin<HomePanel> implements NotificationsListener, HomeDragAndDropHost {
   
-  Set<String>? _contentCodesSet;
-  List<String>? _contentCodesList;
+  Set<String>? _availableCodes;
+  List<String>? _displayCodes;
   StreamController<String> _updateController = StreamController.broadcast();
   GlobalKey _saferKey = GlobalKey();
   GlobalKey _contentWrapperKey = GlobalKey();
@@ -93,8 +93,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       Assets.notifyChanged,
       HomeSaferWidget.notifyNeedsVisiblity,
     ]);
-    _contentCodesSet = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
-    _contentCodesList = _buildContentCodesList();
+    _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
+    _displayCodes = _buildDisplayCodes();
     super.initState();
   }
 
@@ -132,115 +132,134 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   List<Widget> _buildRegularContentList() {
-
     List<Widget> widgets = [];
+    widgets.addAll(_buildWidgetsFromCodes(JsonUtils.listStringsValue(FlexUI()['home.system'])));
+    widgets.addAll(_buildWidgetsFromCodes(_displayCodes?.reversed, availableCodes: _availableCodes));
+    return widgets;
+  }
 
-    widgets.add(HomeToutWidget(updateController: _updateController, onEdit: _onEdit,));
-
-    if (_contentCodesList != null) {
-      for (String code in _contentCodesList!.reversed) {
-        if (_contentCodesSet?.contains(code) ?? false) {
+  List<Widget> _buildWidgetsFromCodes(Iterable<String>? codes, { Set<String>? availableCodes }) {
+    List<Widget> widgets = [];
+    if (codes != null) {
+      for (String code in codes) {
+        if ((availableCodes == null) || availableCodes.contains(code)) {
           Widget? widget = _buildWidgetFromCode(code);
-
-          // Assets widget
-          if (widget == null) {
-            widget = FlexContent.fromAssets(code);
-          }
-
           if (widget != null) {
             widgets.add(widget);
           }
         }
       }
     }
-
     return widgets;
   }
 
-  Widget? _buildWidgetFromCode(String code) {
-    if (code == 'game_day') {
-      return HomeGameDayWidget(favoriteId: code, updateController: _updateController,);
+  Widget? _buildWidgetFromCode(String code, { bool handle = false, int position = 0 }) {
+    if (code == 'tout') {
+      return handle ? null : HomeToutWidget(favoriteId: code, updateController: _updateController, onEdit: _onEdit,);
     }
-    else if (code == 'campus_tools') {
-      return HomeCampusToolsWidget(favoriteId: code, updateController: _updateController,);
-    }
-    else if (code == 'pref_sports') {
-      return HomePreferredSportsWidget(menSports: true, womenSports: true, favoriteId: code, updateController: _updateController,);
-    }
-    else if (code == 'campus_reminders') {
-      return HomeCampusRemindersWidget(favoriteId: code, updateController: _updateController,);
-    }
-    else if (code == 'upcoming_events') {
-      return HomeUpcomingEventsWidget(favoriteId: code, updateController: _updateController,);
-    }
-    else if (code == 'recent_items') {
-      return HomeRecentItemsWidget(favoriteId: code, updateController: _updateController,);
-    }
-    else if (code == 'campus_highlights') {
-      return HomeCampusHighlightsWidget(favoriteId: code, updateController: _updateController,);
-    }
-    else if (code == 'twitter') {
-      return HomeTwitterWidget(favoriteId: code, updateController: _updateController,);
-    }
-    else if (code == 'gies_checklist') {
-      return HomeCheckListWidget(contentKey: 'gies', favoriteId: code, updateController: _updateController);
-    }
-    else if (code == 'new_student_checklist') {
-      return HomeCheckListWidget(contentKey: "uiuc_student" /* TBD => "new_student" */, favoriteId: code, updateController: _updateController);
-    }
-    else if (code == 'canvas_courses') {
-      return HomeCanvasCoursesWidget(favoriteId: code, updateController: _updateController,);
+    else if (code == 'emergency') {
+      return handle ? null : FlexContent.fromAssets(code, favoriteId: code, updateController: _updateController);
     }
     else if (code == 'voter_registration') {
-      return HomeVoterRegistrationWidget(favoriteId: code, updateController: _updateController,);
-    }
-    else if (code == 'create_poll') {
-      return HomeCreatePollWidget(favoriteId: code, updateController: _updateController,);
+      return handle ? null : HomeVoterRegistrationWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'connect') {
-      return HomeLoginWidget(favoriteId: code, updateController: _updateController,);
+      return handle ? null : HomeLoginWidget(favoriteId: code, updateController: _updateController,);
     }
-    else if (code == 'highlighted_features') {
-      return HomeHighlightedFeatures(favoriteId: code, updateController: _updateController,);
+    else if (code == 'welcome') {
+      return null; //TBD
+    }
+
+    if (code == 'game_day') {
+      return handle ? HomeGameDayWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeGameDayWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'campus_resources') {
+      return handle ? HomeCampusResourcesWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCampusResourcesWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'pref_sports') {
+      return handle ? HomePreferredSportsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomePreferredSportsWidget(menSports: true, womenSports: true, favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'campus_reminders') {
+      return handle ? HomeCampusRemindersWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCampusRemindersWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'upcoming_events') {
+      return handle ? HomeUpcomingEventsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeUpcomingEventsWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'recent_items') {
+      return handle ? HomeRecentItemsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeRecentItemsWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'campus_highlights') {
+      return handle ? HomeCampusHighlightsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCampusHighlightsWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'twitter') {
+      return handle ? HomeTwitterWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeTwitterWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'gies_checklist') {
+      return handle ? HomeCheckListWidget.handle(contentKey: 'gies', favoriteId: code, dragAndDropHost: this, position: position) : HomeCheckListWidget(contentKey: 'gies', favoriteId: code, updateController: _updateController);
+    }
+    else if (code == 'new_student_checklist') {
+      return handle ? HomeCheckListWidget.handle(contentKey: "uiuc_student" /* TBD => "new_student" */, favoriteId: code, dragAndDropHost: this, position: position) : HomeCheckListWidget(contentKey: "uiuc_student" /* TBD => "new_student" */, favoriteId: code, updateController: _updateController);
+    }
+    else if (code == 'canvas_courses') {
+      return handle ? HomeCanvasCoursesWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCanvasCoursesWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'create_poll') {
+      return handle ? HomeCreatePollWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCreatePollWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'my_groups') {
-      return HomeMyGroupsWidget(favoriteId: code, updateController: _updateController,);
+      return handle ? HomeMyGroupsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeMyGroupsWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'safer') {
-      return HomeSaferWidget(key: _saferKey, favoriteId: code, updateController: _updateController,);
+      return handle ? HomeSaferWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeSaferWidget(key: _saferKey, favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'wallet') {
-      return HomeWalletWidget(favoriteId: code, updateController: _updateController,);
+      return handle ? HomeWalletWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeWalletWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'wpgufm_radio') {
-      return HomeWPGUFMRadioWidget(favoriteId: code, updateController: _updateController,);
+      return handle ? HomeWPGUFMRadioWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeWPGUFMRadioWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'illini_news') {
+      return null; //TBD
+    }
+    else if (code == 'app_help') {
+      return null; //TBD
+    }
+    else if (code == 'campus_links') {
+      return null; //TBD
+    }
+    else if (code == 'state_farm_center') {
+      return null; //TBD
+    }
+    else if (code == 'wellness_rings') {
+      return null; //TBD
+    }
+    else if (code == 'wellness_todo') {
+      return null; //TBD
     }
 
-    // Favs
-
-    else if (code == 'events_favs') {
-      return HomeFavoritesWidget(favoriteKey: Event.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+    else if (code == 'my_events') {
+      return handle ? HomeFavoritesWidget.handle(favoriteKey: Event.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: Event.favoriteKeyName, favoriteId: code, updateController: _updateController,);
     }
-    else if (code == 'dining_favs') {
-      return HomeFavoritesWidget(favoriteKey: Dining.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+    else if (code == 'my_dining') {
+      return handle ? HomeFavoritesWidget.handle(favoriteKey: Dining.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: Dining.favoriteKeyName, favoriteId: code, updateController: _updateController,);
     }
-    else if (code == 'athletics_favs') {
-      return HomeFavoritesWidget(favoriteKey: Game.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+    else if (code == 'my_athletics') {
+      return handle ? HomeFavoritesWidget.handle(favoriteKey: Game.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: Game.favoriteKeyName, favoriteId: code, updateController: _updateController,);
     }
-    else if (code == 'news_favs') {
-      return HomeFavoritesWidget(favoriteKey: News.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+    else if (code == 'my_news') {
+      return handle ? HomeFavoritesWidget.handle(favoriteKey: News.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: News.favoriteKeyName, favoriteId: code, updateController: _updateController,);
     }
-    else if (code == 'laundry_favs') {
-      return HomeFavoritesWidget(favoriteKey: LaundryRoom.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+    else if (code == 'my_laundry') {
+      return handle ? HomeFavoritesWidget.handle(favoriteKey: LaundryRoom.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: LaundryRoom.favoriteKeyName, favoriteId: code, updateController: _updateController,);
     }
-    else if (code == 'inbox_favs') {
-      return HomeFavoritesWidget(favoriteKey: InboxMessage.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+    else if (code == 'my_inbox') {
+      return handle ? HomeFavoritesWidget.handle(favoriteKey: InboxMessage.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: InboxMessage.favoriteKeyName, favoriteId: code, updateController: _updateController,);
     }
-    else if (code == 'campus_guide_favs') {
-      return HomeFavoritesWidget(favoriteKey: GuideFavorite.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+    else if (code == 'my_campus_guide') {
+      return handle ? HomeFavoritesWidget.handle(favoriteKey: GuideFavorite.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: GuideFavorite.favoriteKeyName, favoriteId: code, updateController: _updateController,);
     }
     else {
-      return null;
+      return handle ? null : FlexContent.fromAssets(code, favoriteId: code, updateController: _updateController);
     }
   }
 
@@ -257,7 +276,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
        
       int position = 0;
       for (String code in List<String>.from(homeFavorites).reversed) {
-        Widget? widget = _buildWidgetHandleFromCode(code, position);
+        Widget? widget = _buildWidgetFromCode(code, handle: true, position: position);
         if (widget != null) {
           widgets.add(widget);
           position++;
@@ -275,7 +294,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       int position = 0;
       for (String code in fullContent) {
         if (!(homeFavorites?.contains(code) ?? false)) {
-          Widget? widget = _buildWidgetHandleFromCode(code, position);
+          Widget? widget = _buildWidgetFromCode(code, handle: true, position: position);
           if (widget != null) {
             widgets.add(widget);
             position++;
@@ -287,93 +306,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     widgets.add(Container(height: 24,));
 
     return widgets;
-  }
-
-  Widget? _buildWidgetHandleFromCode(String code, int position) {
-    if (code == 'game_day') {
-      return HomeGameDayWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'campus_tools') {
-      return HomeCampusToolsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'pref_sports') {
-      return HomePreferredSportsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'campus_reminders') {
-      return HomeCampusRemindersWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'upcoming_events') {
-      return HomeUpcomingEventsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'recent_items') {
-      return HomeRecentItemsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'campus_highlights') {
-      return HomeCampusHighlightsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'twitter') {
-      return HomeTwitterWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'gies_checklist') {
-      return HomeCheckListWidget.handle(contentKey: 'gies', favoriteId: code, dragAndDropHost: this, position: position);
-    }
-    else if (code == 'new_student_checklist') {
-      return HomeCheckListWidget.handle(contentKey: "uiuc_student" /* TBD => "new_student" */, favoriteId: code, dragAndDropHost: this, position: position);
-    }
-    else if (code == 'canvas_courses') {
-      return HomeCanvasCoursesWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'voter_registration') {
-      return null;
-    }
-    else if (code == 'create_poll') {
-      return HomeCreatePollWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'connect') {
-      return null;
-    }
-    else if (code == 'highlighted_features') {
-      return HomeHighlightedFeatures.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'my_groups') {
-      return HomeMyGroupsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'safer') {
-      return HomeSaferWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'wallet') {
-      return HomeWalletWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'wpgufm_radio') {
-      return HomeWPGUFMRadioWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-
-    // Favs
-
-    else if (code == 'events_favs') {
-      return HomeFavoritesWidget.handle(favoriteKey: Event.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'dining_favs') {
-      return HomeFavoritesWidget.handle(favoriteKey: Dining.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'athletics_favs') {
-      return HomeFavoritesWidget.handle(favoriteKey: Game.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'news_favs') {
-      return HomeFavoritesWidget.handle(favoriteKey: News.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'laundry_favs') {
-      return HomeFavoritesWidget.handle(favoriteKey: LaundryRoom.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'inbox_favs') {
-      return HomeFavoritesWidget.handle(favoriteKey: InboxMessage.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else if (code == 'campus_guide_favs') {
-      return HomeFavoritesWidget.handle(favoriteKey: GuideFavorite.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
-    }
-    else {
-      return null;
-    }
   }
 
   Widget _buildEditingHeader({String? title, String? description, String? favoriteId, CrossAxisAlignment? dropAnchorAlignment}) {
@@ -400,16 +332,16 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     },);
   }
 
-  void _updateContentCodesSet() {
-    Set<String>? contentCodesSet = JsonUtils.setStringsValue(FlexUI()['home']);
-    if ((contentCodesSet != null) && !DeepCollectionEquality().equals(_contentCodesSet, contentCodesSet)) {
+  void _updateAvailableCodes() {
+    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home']);
+    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes)) {
       setState(() {
-        _contentCodesSet = contentCodesSet;
+        _availableCodes = availableCodes;
       });
     }
   }
 
-  List<String> _buildContentCodesList() {
+  List<String> _buildDisplayCodes() {
     LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName);
     if (homeFavorites == null) {
       // Build a default set of favorites
@@ -421,11 +353,11 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     return (homeFavorites != null) ? List.from(homeFavorites) : <String>[];
   }
 
-  void _updateContentCodesList() {
-    List<String> contentCodesList = _buildContentCodesList();
-    if (contentCodesList.isNotEmpty && !DeepCollectionEquality().equals(_contentCodesList, contentCodesList)) {
+  void _updateDisplayCodes() {
+    List<String> displayCodes = _buildDisplayCodes();
+    if (displayCodes.isNotEmpty && !DeepCollectionEquality().equals(_displayCodes, displayCodes)) {
       setState(() {
-        _contentCodesList = contentCodesList;
+        _displayCodes = displayCodes;
       });
     }
   }
@@ -603,10 +535,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       setState(() { });
     }
     else if (name == FlexUI.notifyChanged) {
-      _updateContentCodesSet();
+      _updateAvailableCodes();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _updateContentCodesList();
+      _updateDisplayCodes();
     }
     else if(name == Storage.offsetDateKey){
       setState(() {});
@@ -625,31 +557,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
   }
 }
-
-// HomeFavorite
-
-class HomeFavorite implements Favorite {
-  final String? id;
-  HomeFavorite(this.id);
-
-  bool operator == (o) => o is HomeFavorite && o.id == id;
-
-  int get hashCode => (id?.hashCode ?? 0);
-
-  static const String keyName = "home";
-  static const String categoryName = "WidgetIds";
-  static const String favoriteKeyName = "$keyName$categoryName";
-  @override String get favoriteKey => favoriteKeyName;
-  @override String? get favoriteId => id;
-}
-
-// HomeDragAndDropHost
-
-abstract class HomeDragAndDropHost  {
-  set isDragging(bool value);
-  void onDragAndDrop({String? dragFavoriteId, String? dropFavoriteId, CrossAxisAlignment? dropAnchor});
-}
-
 
 // _HomeHeaderBar
 

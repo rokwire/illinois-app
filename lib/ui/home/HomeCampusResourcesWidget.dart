@@ -21,7 +21,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeFavorite.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -39,22 +39,22 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'HomeWidgets.dart';
 
-class HomeCampusToolsWidget extends StatefulWidget {
+class HomeCampusResourcesWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeCampusToolsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  HomeCampusResourcesWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
     );
 
-  _HomeCampusToolsWidgetState createState() => _HomeCampusToolsWidgetState();
+  _HomeCampusResourcesWidgetState createState() => _HomeCampusResourcesWidgetState();
 }
 
-class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implements NotificationsListener {
+class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> implements NotificationsListener {
 
   List<dynamic>? _contentListCodes;
 
@@ -65,7 +65,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
       FlexUI.notifyChanged,
     ]);
 
-    _contentListCodes = FlexUI()['home.campus_tools'] ?? [];
+    _contentListCodes = FlexUI()['home.campus_resources'] ?? [];
     super.initState();
   }
 
@@ -169,7 +169,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   }
 
   void _updateContentListCodes() {
-    List<dynamic>? contentListCodes = FlexUI()['home.campus_tools'];
+    List<dynamic>? contentListCodes = FlexUI()['home.campus_resources'];
     if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       setState(() {
         _contentListCodes = contentListCodes;

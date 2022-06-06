@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/assets.dart';
@@ -23,12 +25,15 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/ui/widgets/flex_content.dart' as rokwire;
 
 class FlexContent extends rokwire.FlexContent {
-  FlexContent({Key? key, String? assetsKey, Map<String, dynamic>? jsonContent, void Function(BuildContext context)? onClose }) :
+  final String? favoriteId;
+  final StreamController<String>? updateController;
+
+  FlexContent({Key? key, String? assetsKey, Map<String, dynamic>? jsonContent, void Function(BuildContext context)? onClose, this.favoriteId, this.updateController}) :
     super(key: key, assetsKey: assetsKey, jsonContent: jsonContent, onClose: onClose);
 
-  static FlexContent? fromAssets(dynamic assetsKey, { void Function(BuildContext context)? onClose }) {
+  static FlexContent? fromAssets(dynamic assetsKey, { String? favoriteId, StreamController<String>? updateController, void Function(BuildContext context)? onClose }) {
     Map<String, dynamic>? jsonContent = JsonUtils.mapValue(Assets()[assetsKey]);
-    return (jsonContent != null) ? FlexContent(assetsKey: assetsKey, jsonContent: jsonContent, onClose: onClose) : null;
+    return (jsonContent != null) ? FlexContent(assetsKey: assetsKey, jsonContent: jsonContent, onClose: onClose, favoriteId: favoriteId, updateController: updateController,) : null;
   }
 
   @override
