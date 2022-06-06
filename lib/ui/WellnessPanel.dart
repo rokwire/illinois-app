@@ -30,6 +30,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+//TBD: DD - check if we need this and remove it.
 class WellnessPanel extends StatefulWidget {
   final Map<String, dynamic>? content;
   final bool rootTabDisplay;

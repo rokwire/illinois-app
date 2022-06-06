@@ -242,6 +242,13 @@
 
     "panel.wellness.header.title": "Wellness",
 
+    "panel.wellness.home.header.sections.title": "Wellness",
+    "panel.wellness.home.header.rings.title": "Daily Wellness Rings",
+    "panel.wellness.home.header.todo.title": "My To-Do List",
+    "panel.wellness.section.sections.label": "Wellness Sections",
+    "panel.wellness.section.rings.label": "Daily Wellness Rings",
+    "panel.wellness.section.todo.label": "To-Do List",
+
     "panel.athletics.header.title": "Athletics",
     "panel.athletics.label.upcoming_events.title": "Upcoming Events",
     "panel.athletics.label.upcoming_events.hint": "",

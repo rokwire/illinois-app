@@ -243,6 +243,13 @@
 
     "panel.wellness.header.title": "Bienestar",
 
+    "panel.wellness.home.header.sections.title": "Bienestar",
+    "panel.wellness.home.header.rings.title": "Anillos de bienestar diarios",
+    "panel.wellness.home.header.todo.title": "Mi lista de tareas pendientes",
+    "panel.wellness.section.sections.label": "Secciones de Bienestar",
+    "panel.wellness.section.rings.label": "Anillos de bienestar diarios",
+    "panel.wellness.section.todo.label": "Lista de quehaceres",
+
     "panel.athletics.header.title": "Atletismo",
     "panel.athletics.label.upcoming_events.title": "Próximos eventos",
     "panel.athletics.label.upcoming_events.hint": "",

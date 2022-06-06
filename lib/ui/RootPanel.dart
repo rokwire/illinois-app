@@ -23,9 +23,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/ui/AcademicsPanel.dart';
 import 'package:illinois/ui/NavigatePanel.dart';
-import 'package:illinois/ui/WellnessPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -596,7 +596,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       return AcademicsPanel();
     }
     else if (rootTab == RootTab.Wellness) {
-      return WellnessPanel(rootTabDisplay: true,);
+      return WellnessHomePanel(rootTabDisplay: true,);
     }
     else {
       return null;

@@ -22,13 +22,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/WellnessPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
@@ -245,7 +245,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
 
   void _onTapWellness() {
     Analytics().logSelect(target: "Wellness");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel()));
 
   }
   void _onTapCrisisHelp() {
