@@ -2420,12 +2420,6 @@
 	"widget.gies.button.title.view_notes": "查看我的筆記",
 	"widget.gies.button.title.continue": "繼續",
 
-	"widgets.home_highlighted_features.header.title": "突出特點",
-	"widgets.home_highlighted_features.button.personalize.title": "個性化這個應用程序",
-	"widgets.home_highlighted_features.button.notifications.title": "管理通知首選項",
-	"widgets.home_highlighted_features.button.privacy.title": "管理我的隱私",
-	"widgets.home_highlighted_features.button.guide.title": "校園指南",
-
 	"model.group.updated.now": "Updated now",
 	"model.group.updated.minute": "Updated about a minute ago",
 	"model.group.updated.minutes": "Updated about %s minutes ago",

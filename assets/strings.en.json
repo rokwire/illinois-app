@@ -2424,12 +2424,6 @@
     "widget.gies.button.title.view_notes": "View My Notes",
     "widget.gies.button.title.continue": "Continue",
 
-    "widgets.home_highlighted_features.header.title": "Highlighted Features",
-    "widgets.home_highlighted_features.button.personalize.title": "Personalize This App",
-    "widgets.home_highlighted_features.button.notifications.title": "Manage Notification Preferences",
-    "widgets.home_highlighted_features.button.privacy.title": "Manage My Privacy",
-    "widgets.home_highlighted_features.button.guide.title": "Campus Guide",
-
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",
     "model.group.updated.minutes": "Updated about %s minutes ago",
