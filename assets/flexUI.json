@@ -12,7 +12,7 @@
 		"home.app_help": ["video_tutorial", "feedback", "faqs"],
 		"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 		"home.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide"],
-		"home.state_farm_center": ["parking", "state_farm_wayfinding", "create_stadium_poll"],
+		"home.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
 		"home.wallet": ["illini_cash_card", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
 		"home.twitter.account": ["gies", "", "canvas"],
 
@@ -33,7 +33,7 @@
 		"browse2.my": ["my_groups", "my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide"],
 		"browse2.pools": ["create_poll"],
 		"browse2.recent": ["recent_items"],
-		"browse2.state_farm_center": ["parking", "state_farm_wayfinding", "create_stadium_poll"],
+		"browse2.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
 		"browse2.wallet": ["illini_cash_card", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
 		"browse2.wellness": ["wellness_rings", "wellness_todo"],
 

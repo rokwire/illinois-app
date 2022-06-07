@@ -2438,6 +2438,14 @@
     "widgets.home.app_help.faqs.label.offline": "FAQs is not available while offline.",
     "widgets.home.app_help.faqs.panel.title": "FAQs",
 
+    "widgets.home.state_farm_center.header.title": "State Farm Center",
+    "widgets.home.state_farm_center.parking.button.title": "Parking",
+    "widgets.home.state_farm_center.parking.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "widgets.home.state_farm_center.wayfinding.button.title": "Wayfinding",
+    "widgets.home.state_farm_center.wayfinding.button.description": "Aenean commodo faucibus sem, id finibus tortor rutrum consectetur.",
+    "widgets.home.state_farm_center.create_stadium_poll.button.title": "Create Stadium Poll",
+    "widgets.home.state_farm_center.create_stadium_poll.button.description": "Vivamus aliquam hendrerit risus eget accumsan.",
+
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",
     "model.group.updated.minutes": "Updated about %s minutes ago",

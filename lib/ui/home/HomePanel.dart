@@ -29,6 +29,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
+import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
@@ -218,16 +219,16 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     else if (code == 'wpgufm_radio') {
       return handle ? HomeWPGUFMRadioWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeWPGUFMRadioWidget(favoriteId: code, updateController: _updateController,);
     }
-    else if (code == 'illini_news') {
-      return null; //TBD
-    }
     else if (code == 'app_help') {
       return handle ? HomeAppHelpWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAppHelpWidget(favoriteId: code, updateController: _updateController,);
     }
-    else if (code == 'campus_links') {
+    else if (code == 'state_farm_center') {
+      return handle ? HomeStateFarmCenterWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeStateFarmCenterWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'illini_news') {
       return null; //TBD
     }
-    else if (code == 'state_farm_center') {
+    else if (code == 'campus_links') {
       return null; //TBD
     }
     else if (code == 'wellness_rings') {
@@ -368,6 +369,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName, null);
       Auth2().prefs?.setFavorites(HomeSaferFavorite.favoriteKeyName, null);
       Auth2().prefs?.setFavorites(HomeAppHelpFavorite.favoriteKeyName, null);
+      Auth2().prefs?.setFavorites(HomeStateFarmCenterFavorite.favoriteKeyName, null);
     }
     else {
       _updateController.add(HomePanel.notifyRefresh);
