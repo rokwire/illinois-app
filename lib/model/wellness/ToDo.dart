@@ -17,11 +17,12 @@
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ToDoItem {
+  static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm';
+
   final String? id;
   final String? name;
   final ToDoCategory? category;
-  final String? dueDateString;
-  final String? dueTimeString;
+  final String? dueDateTimeString;
   final List<String>? workDays;
   final ToDoItemLocation? location;
   final String? description;
@@ -31,8 +32,7 @@ class ToDoItem {
       {this.id,
       this.name,
       this.category,
-      this.dueDateString,
-      this.dueTimeString,
+      this.dueDateTimeString,
       this.workDays,
       this.location,
       this.description,
@@ -46,12 +46,31 @@ class ToDoItem {
         id: JsonUtils.stringValue(json['id']),
         name: JsonUtils.stringValue(json['name']),
         category: ToDoCategory.fromJson(JsonUtils.mapValue(json['category'])),
-        dueDateString: JsonUtils.stringValue(json['due_date']),
-        dueTimeString: JsonUtils.stringValue(json['due_time']),
+        dueDateTimeString: JsonUtils.stringValue(json['due_date_time']),
         workDays: JsonUtils.listStringsValue(json['work_days']),
         location: ToDoItemLocation.fromJson(JsonUtils.mapValue(json['location'])),
         description: JsonUtils.stringValue(json['description']),
         isCompleted: JsonUtils.boolValue(json['completed']) ?? false);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'category': category?.toJson(),
+      'due_date_time': dueDateTimeString,
+      'work_days': workDays,
+      'location': location?.toJson(),
+      'description': description,
+      'completed': isCompleted
+    };
+  }
+
+  DateTime? get dueDateTime {
+    if (StringUtils.isEmpty(dueDateTimeString)) {
+      return null;
+    }
+    return DateTimeUtils.dateTimeFromString(dueDateTimeString, format: _dateTimeFormat);
   }
 
   static List<ToDoItem>? listFromJson(List<dynamic>? jsonList) {
@@ -63,20 +82,6 @@ class ToDoItem {
       }
     }
     return items;
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'category': category?.toJson(),
-      'due_date': dueDateString,
-      'due_time': dueTimeString,
-      'work_days': workDays,
-      'location': location?.toJson(),
-      'description': description,
-      'completed': isCompleted
-    };
   }
 }
 
