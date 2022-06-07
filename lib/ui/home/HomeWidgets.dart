@@ -185,7 +185,7 @@ class HomeSlantWidget extends StatelessWidget {
     this.slantHeight = 65,
 
     this.child,
-    this.childPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    this.childPadding = const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 24),
     
     this.favoriteId,
   }) : super(key: key);
