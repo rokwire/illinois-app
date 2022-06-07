@@ -1511,6 +1511,7 @@
     "panel.wellness.todo.tab.daily.label": "Diariamente",
     "panel.wellness.todo.tab.category.label": "Categoría",
     "panel.wellness.todo.tab.reminders.label": "Recordatorios",
+    "panel.wellness.todo.items.completed.clear.button": "Borrar elementos completados",
 
     "panel.wellness.home.header.title": "Bienestar",
     "panel.wellness.home.description.main_text": "Lograr y mantener el bienestar es un proceso dinámico que implica la autorreflexión y la creación de conciencia sobre lo que es el bienestar y lo individualizado que puede ser el proceso para abordarlo.",

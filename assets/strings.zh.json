@@ -1513,6 +1513,7 @@
     "panel.wellness.todo.tab.daily.label": "日常的",
     "panel.wellness.todo.tab.category.label": "類別",
     "panel.wellness.todo.tab.reminders.label": "提醒",
+    "panel.wellness.todo.items.completed.clear.button": "清除已完成的項目",
 
 	"panel.wellness.home.header.title": "養生",
 	"panel.wellness.home.description.main_text": "實現和維持健康是一個動態的過程，其中涉及自我反思以及對什麼是幸福以及如何解決該幸福的個性化意識的認識。",

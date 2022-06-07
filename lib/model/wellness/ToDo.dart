@@ -25,9 +25,18 @@ class ToDoItem {
   final List<String>? workDays;
   final ToDoItemLocation? location;
   final String? description;
-  final bool? isCompleted;
+  final bool isCompleted;
 
-  ToDoItem({this.id, this.name, this.category, this.dueDateString, this.dueTimeString, this.workDays, this.location, this.description, this.isCompleted});
+  ToDoItem(
+      {this.id,
+      this.name,
+      this.category,
+      this.dueDateString,
+      this.dueTimeString,
+      this.workDays,
+      this.location,
+      this.description,
+      this.isCompleted = false});
 
   static ToDoItem? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -42,8 +51,7 @@ class ToDoItem {
         workDays: JsonUtils.listStringsValue(json['work_days']),
         location: ToDoItemLocation.fromJson(JsonUtils.mapValue(json['location'])),
         description: JsonUtils.stringValue(json['description']),
-        isCompleted: JsonUtils.boolValue(json['completed'])
-        );
+        isCompleted: JsonUtils.boolValue(json['completed']) ?? false);
   }
 
   static List<ToDoItem>? listFromJson(List<dynamic>? jsonList) {
@@ -58,7 +66,17 @@ class ToDoItem {
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'name': name, 'category': category?.toJson(), 'due_date': dueDateString, 'due_time': dueTimeString, 'work_days': workDays, 'location': location?.toJson(), 'description':description, 'completed':isCompleted};
+    return {
+      'id': id,
+      'name': name,
+      'category': category?.toJson(),
+      'due_date': dueDateString,
+      'due_time': dueTimeString,
+      'work_days': workDays,
+      'location': location?.toJson(),
+      'description': description,
+      'completed': isCompleted
+    };
   }
 }
 
@@ -72,9 +90,7 @@ class ToDoItemLocation {
     if (json == null) {
       return null;
     }
-    return ToDoItemLocation(
-        latitude: JsonUtils.doubleValue(json['latitude']),
-        longitude: JsonUtils.doubleValue(json['longitude']));
+    return ToDoItemLocation(latitude: JsonUtils.doubleValue(json['latitude']), longitude: JsonUtils.doubleValue(json['longitude']));
   }
 
   Map<String, dynamic> toJson() {
