@@ -18,7 +18,6 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
-import 'package:illinois/ui/home/HomeFavorite.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';

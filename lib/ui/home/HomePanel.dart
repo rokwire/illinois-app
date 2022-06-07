@@ -27,7 +27,6 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
-import 'package:illinois/ui/home/HomeFavorite.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
@@ -588,3 +587,26 @@ class _HomeHeaderBar extends RootHeaderBar {
     }
   }
 }
+
+// HomeFavorite
+
+class HomeFavorite implements Favorite {
+  final String? id;
+  HomeFavorite(this.id);
+
+  bool operator == (o) => o is HomeFavorite && o.id == id;
+
+  int get hashCode => (id?.hashCode ?? 0);
+
+  static const String favoriteKeyName = "homeWidgetIds";
+  @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => id;
+}
+
+// HomeDragAndDropHost
+
+abstract class HomeDragAndDropHost  {
+  set isDragging(bool value);
+  void onDragAndDrop({String? dragFavoriteId, String? dropFavoriteId, CrossAxisAlignment? dropAnchor});
+}
+
