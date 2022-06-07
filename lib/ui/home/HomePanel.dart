@@ -31,6 +31,7 @@ import 'package:illinois/ui/home/HomeCampusLinksWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
+import 'package:illinois/ui/home/HomeTBDWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
@@ -230,13 +231,13 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       return handle ? HomeCampusLinksWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCampusLinksWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'illini_news') {
-      return null; //TBD
+      return handle ? HomeHandleWidget(title: 'Illini News', favoriteId: code, dragAndDropHost: this, position: position,) : HomeTBDWidget(title: 'Illini News', favoriteId: code, updateController: _updateController);
     }
     else if (code == 'wellness_rings') {
-      return null; //TBD
+      return handle ? HomeHandleWidget(title: 'Wellness Rings', favoriteId: code, dragAndDropHost: this, position: position,) : HomeTBDWidget(title: 'Wellness Rings', favoriteId: code, updateController: _updateController);
     }
     else if (code == 'wellness_todo') {
-      return null; //TBD
+      return handle ? HomeHandleWidget(title: 'Wellness To Do', favoriteId: code, dragAndDropHost: this, position: position,) : HomeTBDWidget(title: 'Wellness To Do', favoriteId: code, updateController: _updateController);
     }
 
     else if (code == 'my_events') {
