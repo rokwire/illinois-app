@@ -241,25 +241,6 @@
 
 	"panel.academics.header.title": "學者",
 
-	"panel.wellness.header.title": "健康",
-
-    "panel.wellness.home.header.sections.title": "健康",
-    "panel.wellness.home.header.rings.title": "每日健康戒指",
-    "panel.wellness.home.header.todo.title": "我的待辦事項清單",
-    "panel.wellness.section.sections.label": "健康部分",
-    "panel.wellness.section.rings.label": "每日健康戒指",
-    "panel.wellness.section.todo.label": "待辦事項清單",
-
-    "panel.wellness.sections.description.header.text": "學會優先考慮。 照顧你今天可以完成的事情，現在。 這將幫助您成為更好的時間管理者並降低拖延的風險。",
-    "panel.wellness.sections.description.footer.wellness.text": "健康 ",
-    "panel.wellness.sections.description.footer.description.text": "是一種以最大化個人潛力為導向的最佳幸福狀態。 這是一個終生的過程，旨在提高你的 ",
-    "panel.wellness.sections.description.footer.dimensions.text": "身體, 心理, 環境, 財務, 精神, 職業, 情感和社會健康.",
-    "panel.wellness.sections.dimensions.button": "了解有關 8 個維度的更多信息",
-
-    "panel.wellness.todo.tab.daily.label": "日常的",
-    "panel.wellness.todo.tab.category.label": "類別",
-    "panel.wellness.todo.tab.reminders.label": "提醒",
-
 	"panel.athletics.header.title":"运动",
 	"panel.athletics.label.upcoming_events.title":"近期活动",
 	"panel.athletics.label.upcoming_events.hint":"",
@@ -1513,6 +1494,25 @@
 	"panel.bus_pass.description.text": " 上车时向司机显示此屏幕.",
 	"panel.bus_pass.error.duplicate.text": "此MTD總線通行證已經顯示在另一台設備上。\n\n每個Illini ID僅一台設備可以顯示MTD總線通行證。",
 	"panel.bus_pass.error.default.text": "無法加載公交通行證",
+
+	"panel.wellness.header.title": "健康",
+
+    "panel.wellness.home.header.sections.title": "健康",
+    "panel.wellness.home.header.rings.title": "每日健康戒指",
+    "panel.wellness.home.header.todo.title": "我的待辦事項清單",
+    "panel.wellness.section.sections.label": "健康部分",
+    "panel.wellness.section.rings.label": "每日健康戒指",
+    "panel.wellness.section.todo.label": "待辦事項清單",
+
+    "panel.wellness.sections.description.header.text": "學會優先考慮。 照顧你今天可以完成的事情，現在。 這將幫助您成為更好的時間管理者並降低拖延的風險。",
+    "panel.wellness.sections.description.footer.wellness.text": "健康 ",
+    "panel.wellness.sections.description.footer.description.text": "是一種以最大化個人潛力為導向的最佳幸福狀態。 這是一個終生的過程，旨在提高你的 ",
+    "panel.wellness.sections.description.footer.dimensions.text": "身體, 心理, 環境, 財務, 精神, 職業, 情感和社會健康.",
+    "panel.wellness.sections.dimensions.button": "了解有關 8 個維度的更多信息",
+
+    "panel.wellness.todo.tab.daily.label": "日常的",
+    "panel.wellness.todo.tab.category.label": "類別",
+    "panel.wellness.todo.tab.reminders.label": "提醒",
 
 	"panel.wellness.home.header.title": "養生",
 	"panel.wellness.home.description.main_text": "實現和維持健康是一個動態的過程，其中涉及自我反思以及對什麼是幸福以及如何解決該幸福的個性化意識的認識。",
