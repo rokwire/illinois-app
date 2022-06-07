@@ -256,6 +256,10 @@
     "panel.wellness.sections.description.footer.dimensions.text": "bienestar físico, mental, ambiental, financiero, espiritual, vocacional, emocional y social.",
     "panel.wellness.sections.dimensions.button": "Más información sobre las 8 dimensiones",
 
+    "panel.wellness.todo.tab.daily.label": "Diariamente",
+    "panel.wellness.todo.tab.category.label": "Categoría",
+    "panel.wellness.todo.tab.reminders.label": "Recordatorios",
+
     "panel.athletics.header.title": "Atletismo",
     "panel.athletics.label.upcoming_events.title": "Próximos eventos",
     "panel.athletics.label.upcoming_events.hint": "",

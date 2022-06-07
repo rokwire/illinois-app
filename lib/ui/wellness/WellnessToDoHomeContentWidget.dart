@@ -15,6 +15,8 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class WellnessToDoHomeContentWidget extends StatefulWidget {
   WellnessToDoHomeContentWidget();
@@ -24,10 +26,112 @@ class WellnessToDoHomeContentWidget extends StatefulWidget {
 }
 
 class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentWidget> {
+  late _ToDoTab _selectedTab;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTab = _ToDoTab.daily;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text('TBD: implement TODO list content'),
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [_buildTabButtonRow()]);
+  }
+
+  Widget _buildTabButtonRow() {
+    return Row(children: [
+      Expanded(
+          child: _TabButton(
+              position: _TabButtonPosition.first,
+              selected: (_selectedTab == _ToDoTab.daily),
+              label: Localization().getStringEx('panel.wellness.todo.tab.daily.label', 'Daily'),
+              hint: Localization().getStringEx('panel.wellness.todo.tab.daily.hint', ''),
+              onTap: () => _onTabChanged(tab: _ToDoTab.daily))),
+      Expanded(
+          child: _TabButton(
+              position: _TabButtonPosition.middle,
+              selected: (_selectedTab == _ToDoTab.category),
+              label: Localization().getStringEx('panel.wellness.todo.tab.category.label', 'Category'),
+              hint: Localization().getStringEx('panel.wellness.todo.tab.category.hint', ''),
+              onTap: () => _onTabChanged(tab: _ToDoTab.category))),
+      Expanded(
+          child: _TabButton(
+              position: _TabButtonPosition.last,
+              selected: (_selectedTab == _ToDoTab.reminders),
+              label: Localization().getStringEx('panel.wellness.todo.tab.reminders.label', 'Reminders'),
+              hint: Localization().getStringEx('panel.wellness.todo.tab.reminders.hint', ''),
+              onTap: () => _onTabChanged(tab: _ToDoTab.reminders)))
+    ]);
+  }
+
+  void _onTabChanged({required _ToDoTab tab}) {
+    if (_selectedTab != tab) {
+      _selectedTab = tab;
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 }
+
+class _TabButton extends StatelessWidget {
+  final String? label;
+  final String? hint;
+  final _TabButtonPosition position;
+  final bool? selected;
+  final GestureTapCallback? onTap;
+
+  _TabButton({this.label, this.hint, required this.position, this.selected, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Semantics(
+            label: label,
+            hint: hint,
+            button: true,
+            excludeSemantics: true,
+            child: Container(
+                height: 24 + 16 * MediaQuery.of(context).textScaleFactor,
+                decoration: BoxDecoration(
+                    color: selected! ? Colors.white : Styles().colors!.lightGray, border: _border, borderRadius: _borderRadius),
+                child: Center(
+                    child: Text(label!,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: selected! ? Styles().fontFamilies!.extraBold : Styles().fontFamilies!.medium,
+                            fontSize: 16,
+                            color: Styles().colors!.fillColorPrimary))))));
+  }
+
+  BorderRadiusGeometry? get _borderRadius {
+    switch (position) {
+      case _TabButtonPosition.first:
+        return BorderRadius.horizontal(left: Radius.circular(100.0));
+      case _TabButtonPosition.middle:
+        return null;
+      case _TabButtonPosition.last:
+        return BorderRadius.horizontal(right: Radius.circular(100.0));
+    }
+  }
+
+  BoxBorder? get _border {
+    BorderSide borderSide = BorderSide(color: Styles().colors!.surfaceAccent!, width: 2, style: BorderStyle.solid);
+    switch (position) {
+      case _TabButtonPosition.first:
+        return Border.fromBorderSide(borderSide);
+      case _TabButtonPosition.middle:
+        return Border(top: borderSide, bottom: borderSide);
+      case _TabButtonPosition.last:
+        return Border.fromBorderSide(borderSide);
+    }
+  }
+}
+
+enum _ToDoTab { daily, category, reminders }
+
+enum _TabButtonPosition { first, middle, last }
