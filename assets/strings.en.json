@@ -240,21 +240,6 @@
 
     "panel.academics.header.title": "Academics",
 
-    "panel.wellness.header.title": "Wellness",
-
-    "panel.wellness.home.header.sections.title": "Wellness",
-    "panel.wellness.home.header.rings.title": "Daily Wellness Rings",
-    "panel.wellness.home.header.todo.title": "My To-Do List",
-    "panel.wellness.section.sections.label": "Wellness Sections",
-    "panel.wellness.section.rings.label": "Daily Wellness Rings",
-    "panel.wellness.section.todo.label": "To-Do List",
-
-    "panel.wellness.sections.description.header.text": "Learn to prioritize. Take care of what you can get done today, right now. This will help you be a better time manager and reduce the risk of procrastination.",
-    "panel.wellness.sections.description.footer.wellness.text": "Wellness ",
-    "panel.wellness.sections.description.footer.description.text": "is a state of optimal well-being that is oriented toward maximizing an individual's potential. This is a life-long process of moving towards enhancing your ",
-    "panel.wellness.sections.description.footer.dimensions.text": "physical, mental, environmental, financial, spiritual, vocational, emotional and social wellness.",
-    "panel.wellness.sections.dimensions.button": "Learn more about the 8 dimensions",
-
     "panel.athletics.header.title": "Athletics",
     "panel.athletics.label.upcoming_events.title": "Upcoming Events",
     "panel.athletics.label.upcoming_events.hint": "",
@@ -1508,6 +1493,26 @@
     "panel.bus_pass.description.text": "Show this screen to the bus driver as you board.",
     "panel.bus_pass.error.duplicate.text": "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.",
     "panel.bus_pass.error.default.text": "Unable to load bus pass",
+
+    "panel.wellness.header.title": "Wellness",
+
+    "panel.wellness.home.header.sections.title": "Wellness",
+    "panel.wellness.home.header.rings.title": "Daily Wellness Rings",
+    "panel.wellness.home.header.todo.title": "My To-Do List",
+    "panel.wellness.section.sections.label": "Wellness Sections",
+    "panel.wellness.section.rings.label": "Daily Wellness Rings",
+    "panel.wellness.section.todo.label": "To-Do List",
+
+    "panel.wellness.sections.description.header.text": "Learn to prioritize. Take care of what you can get done today, right now. This will help you be a better time manager and reduce the risk of procrastination.",
+    "panel.wellness.sections.description.footer.wellness.text": "Wellness ",
+    "panel.wellness.sections.description.footer.description.text": "is a state of optimal well-being that is oriented toward maximizing an individual's potential. This is a life-long process of moving towards enhancing your ",
+    "panel.wellness.sections.description.footer.dimensions.text": "physical, mental, environmental, financial, spiritual, vocational, emotional and social wellness.",
+    "panel.wellness.sections.dimensions.button": "Learn more about the 8 dimensions",
+
+    "panel.wellness.todo.tab.daily.label": "Daily",
+    "panel.wellness.todo.tab.category.label": "Category",
+    "panel.wellness.todo.tab.reminders.label": "Reminders",
+    "panel.wellness.todo.items.completed.clear.button": "Clear Completed Items",
 
     "panel.wellness.home.header.title": "Wellness",
     "panel.wellness.home.description.main_text": "Achieving and sustaining wellness is a dynamic process that involves self-reflection and the building of awareness of what well-being is and how individualized the process of addressing it can be.",
