@@ -389,7 +389,7 @@ class HomeCommandButton extends StatelessWidget {
               )
             ],),
             StringUtils.isNotEmpty(description)
-              ? Padding(padding: EdgeInsets.only(top: 5), child:
+              ? Padding(padding: EdgeInsets.only(top: 5, right: 16), child:
                   Text(description ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), semanticsLabel: "",),
                 )
               : Container(),
