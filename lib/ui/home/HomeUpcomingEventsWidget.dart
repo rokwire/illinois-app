@@ -427,7 +427,7 @@ class _EventsRibbonHeader extends StatelessWidget {
       titleList.add(rightIconWidget);
     }
 
-    titleList.add(HomeFavoriteButton(favoriteId: favoriteId,));
+    titleList.add(HomeFavoriteButton(favorite: HomeFavorite(favoriteId),));
 
     Widget contentWidget = Container(color: Styles().colors?.fillColorPrimary, child: 
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: titleList,),

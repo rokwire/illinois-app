@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:collection';
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -7,6 +9,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -39,6 +42,8 @@ class HomeSaferWidget extends StatefulWidget {
 class _HomeSaferWidgetState extends State<HomeSaferWidget> implements NotificationsListener {
 
   bool _buildingAccessAuthLoading = false;
+  List<String>? _displayCodes;
+  Set<String>? _availableCodes;
 
   @override
   void initState() {
@@ -46,6 +51,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -54,6 +60,9 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
         }
       });
     }
+
+    _availableCodes = _buildAvailableCodes();
+    _displayCodes = _buildDisplayCodes();
   }
 
   @override
@@ -67,9 +76,10 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
-      if (mounted) {
-        setState(() {});
-      }
+      _updateAvailableCodes();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      _updateDisplayCodes();
     }
   }
 
@@ -84,45 +94,50 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   List<Widget> _buildCommandsList() {
     List<Widget> contentList = <Widget>[];
-    List<dynamic>? contentListCodes = FlexUI()['home.safer'];
-    if (contentListCodes != null) {
-      for (dynamic contentListCode in contentListCodes) {
-        Widget? contentEntry;
-        if (contentListCode == 'building_access') {
-          contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access'),
-            description: Localization().getStringEx('widget.home.safer.button.building_access.description', 'Check your current building access.'),
-            loading: _buildingAccessAuthLoading,
-            onTap: _onBuildingAccess,
-          );
-        }
-        else if (contentListCode == 'test_locations') {
-          contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.test_locations.title', 'Test Locations'),
-            description: Localization().getStringEx('widget.home.safer.button.test_locations.description', 'Find test locations'),
-            onTap: _onTestLocations,
-          );
-        }
-        else if (contentListCode == 'my_mckinley') {
-          contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley'),
-            description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'MyMcKinley Patient Health Portal'),
-            onTap: _onMyMcKinley,
-          );
-        }
-        else if (contentListCode == 'wellness_answer_center') {
-          contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Answer Center'),
-            description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Get answers to your questions.'),
-            onTap: _onWellnessAnswerCenter,
-          );
-        }
-
-        if (contentEntry != null) {
-          if (contentList.isNotEmpty) {
-            contentList.add(Container(height: 6,));
+    if (_displayCodes != null) {
+      for (dynamic code in _displayCodes!.reversed) {
+        if ((_availableCodes == null) || _availableCodes!.contains(code)) {
+          Widget? contentEntry;
+          if (code == 'building_access') {
+            contentEntry = HomeCommandButton(
+              title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access'),
+              description: Localization().getStringEx('widget.home.safer.button.building_access.description', 'Check your current building access.'),
+              favorite: HomeSaferFavorite(code),
+              loading: _buildingAccessAuthLoading,
+              onTap: _onBuildingAccess,
+            );
           }
-          contentList.add(contentEntry);
+          else if (code == 'test_locations') {
+            contentEntry = HomeCommandButton(
+              title: Localization().getStringEx('widget.home.safer.button.test_locations.title', 'Test Locations'),
+              description: Localization().getStringEx('widget.home.safer.button.test_locations.description', 'Find test locations'),
+              favorite: HomeSaferFavorite(code),
+              onTap: _onTestLocations,
+            );
+          }
+          else if (code == 'my_mckinley') {
+            contentEntry = HomeCommandButton(
+              title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley'),
+              description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'MyMcKinley Patient Health Portal'),
+              favorite: HomeSaferFavorite(code),
+              onTap: _onMyMcKinley,
+            );
+          }
+          else if (code == 'wellness_answer_center') {
+            contentEntry = HomeCommandButton(
+              title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Answer Center'),
+              description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Get answers to your questions.'),
+              favorite: HomeSaferFavorite(code),
+              onTap: _onWellnessAnswerCenter,
+            );
+          }
+
+          if (contentEntry != null) {
+            if (contentList.isNotEmpty) {
+              contentList.add(Container(height: 6,));
+            }
+            contentList.add(contentEntry);
+          }
         }
       }
 
@@ -130,31 +145,37 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
    return contentList;
   }
 
-  Widget _buildCommandEntry({required String title, String? description, bool? loading, void Function()? onTap}) {
-    return Semantics(label: title, hint: description, button: true, child:
-      GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-          decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Row(children: <Widget>[
-              Expanded(child:
-                Text(title, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary), semanticsLabel: "",),
-              ),
-              ((loading == true)
-                ? SizedBox(height: 16, width: 16, child:
-                    CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2),
-                  )
-                : Image.asset('images/chevron-right.png', excludeFromSemantics: true))
-            ],),
-            StringUtils.isNotEmpty(description)
-              ? Padding(padding: EdgeInsets.only(top: 5), child:
-                  Text(description!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), semanticsLabel: "",),
-                )
-              : Container(),
-        ],),),),
-      );
+  Set<String>? _buildAvailableCodes() => JsonUtils.setStringsValue(FlexUI()['home.safer']);
+
+  void _updateAvailableCodes() {
+    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home.safer']);
+    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes)) {
+      setState(() {
+        _availableCodes = availableCodes;
+      });
+    }
+  }
+
+  List<String> _buildDisplayCodes() {
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeSaferFavorite.favoriteKeyName);
+    if (favorites == null) {
+      // Build a default set of favorites
+      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.safer'));
+      if (fullContent != null) {
+        Auth2().prefs?.setFavorites(HomeSaferFavorite.favoriteKeyName, favorites = LinkedHashSet<String>.from(fullContent.reversed));
+      }
+    }
+    
+    return (favorites != null) ? List.from(favorites) : <String>[];
+  }
+
+  void _updateDisplayCodes() {
+    List<String> displayCodes = _buildDisplayCodes();
+    if (displayCodes.isNotEmpty && !DeepCollectionEquality().equals(_displayCodes, displayCodes)) {
+      setState(() {
+        _displayCodes = displayCodes;
+      });
+    }
   }
 
   void _onBuildingAccess() {
@@ -281,4 +302,19 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
       builder: (context) => HomeSaferWellnessAnswerCenterPanel()
     ));
   }
+}
+
+// HomeSaferFavorite
+
+class HomeSaferFavorite implements Favorite {
+  final String? id;
+  HomeSaferFavorite(this.id);
+
+  bool operator == (o) => o is HomeSaferFavorite && o.id == id;
+
+  int get hashCode => (id?.hashCode ?? 0);
+
+  static const String favoriteKeyName = "homeSaferWidgetIds";
+  @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => id;
 }

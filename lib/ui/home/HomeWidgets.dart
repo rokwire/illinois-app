@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeHandleWidget extends StatefulWidget {
   final String? title;
@@ -82,7 +84,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
           ),
 
                 
-          HomeFavoriteButton(favoriteId: widget.favoriteId,),
+          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId),),
         ],),
       ),
 
@@ -210,7 +212,7 @@ class HomeSlantWidget extends StatelessWidget {
               ),
 
               
-              HomeFavoriteButton(favoriteId: favoriteId,),
+              HomeFavoriteButton(favorite: HomeFavorite(favoriteId),),
             ],),
         ),),
       ),
@@ -270,9 +272,9 @@ class HomeFavoriteStar extends StatelessWidget {
 
 class HomeFavoriteButton extends StatelessWidget {
 
-  final String? favoriteId;
+  final Favorite? favorite;
 
-  HomeFavoriteButton({this.favoriteId});
+  HomeFavoriteButton({this.favorite});
 
   @override
   Widget build(BuildContext context) {
@@ -283,20 +285,20 @@ class HomeFavoriteButton extends StatelessWidget {
     );
   }
 
-  bool get _isFavorite => Auth2().prefs?.isFavorite(HomeFavorite(favoriteId)) ?? false;
+  bool get _isFavorite => Auth2().prefs?.isFavorite(favorite) ?? false;
 
   void _onFavorite(BuildContext context) {
-    Analytics().logSelect(target: "Favorite: $favoriteId");
+    Analytics().logSelect(target: "Favorite: $favorite");
 
-    promptFavorite(context, favoriteId).then((bool? result) {
+    promptFavorite(context, favorite).then((bool? result) {
       if (result == true) {
-        Auth2().prefs?.toggleFavorite(HomeFavorite(favoriteId));
+        Auth2().prefs?.toggleFavorite(favorite);
       }
     });
   }
 
-  static Future<bool?> promptFavorite(BuildContext context, String? favoriteId) async {
-    String message = (Auth2().prefs?.isFavorite(HomeFavorite(favoriteId)) ?? false) ?
+  static Future<bool?> promptFavorite(BuildContext context, Favorite? favorite) async {
+    String message = (Auth2().prefs?.isFavorite(favorite) ?? false) ?
       Localization().getStringEx('widget.home.prompt.remove.favorite', 'Are you sure you want to REMOVE this favorite') :
       Localization().getStringEx('widget.home.prompt.add.favorite', 'Are you sure you want to ADD this favorite');
     return await showDialog(context: context, builder: (BuildContext context) {
@@ -351,4 +353,48 @@ class HomeDragFeedback extends StatelessWidget {
       ),
     ],);
   }
+}
+
+class HomeCommandButton extends StatelessWidget {
+  final Favorite? favorite;
+  final String? title;
+  final String? description;
+  final bool? loading;
+  final Function()? onTap;
+
+
+  HomeCommandButton({Key? key, this.favorite, this.title, this.description, this.loading, this.onTap}) : super(key: key);
+  
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(label: title, hint: description, button: true, child:
+      InkWell(onTap: onTap, child: Container(
+          padding: EdgeInsets.only(left: 16, bottom: 16),
+          decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Row(children: <Widget>[
+              Expanded(child:
+                Padding(padding: EdgeInsets.only(top: 16), child:
+                  Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary), semanticsLabel: "",),
+                )
+              ),
+              // Image.asset('images/chevron-right.png', excludeFromSemantics: true)
+              ((loading == true)
+                ? Padding(padding: EdgeInsets.all(16), child:
+                    SizedBox(height: 16, width: 16, child:
+                      CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2),
+                    )
+                )
+                : HomeFavoriteButton(favorite: favorite,)
+              )
+            ],),
+            StringUtils.isNotEmpty(description)
+              ? Padding(padding: EdgeInsets.only(top: 5), child:
+                  Text(description ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), semanticsLabel: "",),
+                )
+              : Container(),
+        ],),),),
+      );
+  }
+
 }

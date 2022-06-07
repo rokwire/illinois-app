@@ -365,6 +365,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     if (_isEditing) {
       //TMP:
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName, null);
+      Auth2().prefs?.setFavorites(HomeSaferFavorite.favoriteKeyName, null);
     }
     else {
       _updateController.add(HomePanel.notifyRefresh);
@@ -473,7 +474,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       }
       else if ((0 <= dropIndex)) {
         // Add favorite at specific position
-        HomeFavoriteButton.promptFavorite(context, dragFavoriteId).then((bool? result) {
+        HomeFavoriteButton.promptFavorite(context, HomeFavorite(dragFavoriteId)).then((bool? result) {
           if (result == true) {
             if (dropAnchor == CrossAxisAlignment.start) {
               dropIndex++;
@@ -486,7 +487,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       }
       else if ((0 <= dragIndex) && (dropFavoriteId != '')) {
         // Remove favorite
-        HomeFavoriteButton.promptFavorite(context, dragFavoriteId).then((bool? result) {
+        HomeFavoriteButton.promptFavorite(context, HomeFavorite(dragFavoriteId)).then((bool? result) {
           if (result == true) {
             Auth2().prefs?.toggleFavorite(HomeFavorite(dragFavoriteId));
           }
@@ -595,7 +596,6 @@ class HomeFavorite implements Favorite {
   HomeFavorite(this.id);
 
   bool operator == (o) => o is HomeFavorite && o.id == id;
-
   int get hashCode => (id?.hashCode ?? 0);
 
   static const String favoriteKeyName = "homeWidgetIds";
