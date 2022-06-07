@@ -67,8 +67,8 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   @override
   void dispose() {
-    super.dispose();
     NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   // NotificationsListener
@@ -85,17 +85,18 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    List<Widget> commandsList = _buildCommandsList();
+    return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
         titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
         child: Column(children: _buildCommandsList(),),
-    );
+    ) : Container();
   }
 
   List<Widget> _buildCommandsList() {
     List<Widget> contentList = <Widget>[];
     if (_displayCodes != null) {
-      for (dynamic code in _displayCodes!.reversed) {
+      for (String code in _displayCodes!.reversed) {
         if ((_availableCodes == null) || _availableCodes!.contains(code)) {
           Widget? contentEntry;
           if (code == 'building_access') {
