@@ -13,6 +13,7 @@
 		"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 		"home.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide"],
 		"home.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
+		"home.campus_links": ["due_date_catalog"],
 		"home.wallet": ["illini_cash_card", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
 		"home.twitter.account": ["gies", "", "canvas"],
 
@@ -26,7 +27,7 @@
 		"browse2.athletics": ["game_day"],
 		"browse2.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 		"browse2.campus_guide": ["campus_highlights"],
-		"browse2.campus_links": ["date_cat"],
+		"browse2.campus_links": ["due_date_catalog"],
 		"browse2.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide"],
 		"browse2.events": ["upcoming_events"],
 		"browse2.feeds": ["twitter", "wpgufm_radio", "illini_news"],
