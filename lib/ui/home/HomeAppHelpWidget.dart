@@ -112,7 +112,7 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
           if ((code == 'video_tutorial') && _canVideoTutorial) {
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widgets.home.app_help.video_tutorial.button.title', 'Video Tutorial'),
-              description: Localization().getStringEx('"widgets.home.app_help.video_tutorial.button.description', 'Play video tutorial to learn great new features.'),
+              description: Localization().getStringEx('widgets.home.app_help.video_tutorial.button.description', 'Play video tutorial to learn great new features.'),
               favorite: HomeAppHelpFavorite(code),
               onTap: _onVideoTutorial,
             );
@@ -120,7 +120,7 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
           else if ((code == 'feedback') && _canFeedback) {
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widgets.home.app_help.feedback.button.title', 'Provide Feedback'),
-              description: Localization().getStringEx('"widgets.home.app_help.feedback.button.description', 'Enjoying the app? Missing something? The University of Illinois Smart, Healthy Communities Initiative needs your ideas and input. Thank you!'),
+              description: Localization().getStringEx('widgets.home.app_help.feedback.button.description', 'Enjoying the app? Missing something? The University of Illinois Smart, Healthy Communities Initiative needs your ideas and input. Thank you!'),
               favorite: HomeAppHelpFavorite(code),
               onTap: _onFeedback,
             );
@@ -128,7 +128,7 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
           else if ((code == 'faqs') && _canFAQs) {
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widgets.home.app_help.faqs.button.title', 'FAQs'),
-              description: Localization().getStringEx('"widgets.home.app_help.faqs.button.description', 'Check your question in frequently asked questions.'),
+              description: Localization().getStringEx('widgets.home.app_help.faqs.button.description', 'Check your question in frequently asked questions.'),
               favorite: HomeAppHelpFavorite(code),
               onTap: _onFAQs,
             );
