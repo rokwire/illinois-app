@@ -276,12 +276,12 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
 
   void _onTapEvents() {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialTab: ExploreTab.Events); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
   }
     
   void _onTapDining() {
     Analytics().logSelect(target: "Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialTab: ExploreTab.Dining); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Dining); } ));
   }
 
   void _onTapAthletics() {

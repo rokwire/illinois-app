@@ -34,8 +34,8 @@
     "tabbar.wallet.hint":"Wallet Page",
     "tabbar.favorites.title":"Favorites",
     "tabbar.favorites.hint":"Favorites Page",
-    "tabbar.navigate.title":"Navigate",
-    "tabbar.navigate.hint":"Navigate Page",
+    "tabbar.maps.title":"Maps",
+    "tabbar.maps.hint":"Maps Page",
     "tabbar.academics.title":"Academics",
     "tabbar.academics.hint":"Academics Page",
     "tabbar.wellness.title":"Wellness",
@@ -236,7 +236,7 @@
     "panel.search.field.search.title": "Search",
     "panel.search.field.search.hint": "Type a search term",
 
-    "panel.navigate.header.title": "Navigate",
+    "panel.maps.header.title": "Maps",
 
     "panel.academics.header.title": "Academics",
 

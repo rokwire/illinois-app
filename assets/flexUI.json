@@ -1,6 +1,6 @@
 {
 	"content": {
-		"tabbar": ["favorites", "browse", "navigate", "academics", "wellness"],
+		"tabbar": ["favorites", "browse", "maps", "academics", "wellness"],
 
 		"home": ["gies_checklist", "new_student_checklist", "safer", "twitter", "canvas_courses", "my_groups", "game_day",
 			"campus_resources", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "wallet",

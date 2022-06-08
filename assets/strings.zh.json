@@ -34,8 +34,8 @@
 	"tabbar.wallet.hint":"钱包页面",
 	"tabbar.favorites.title":"收藏夾",
 	"tabbar.favorites.hint":"收藏頁面",
-	"tabbar.navigate.title":"導航",
-	"tabbar.navigate.hint":"導航頁面",
+	"tabbar.maps.title":"地圖",
+	"tabbar.maps.hint":"地圖頁面",
 	"tabbar.academics.title":"學者",
 	"tabbar.academics.hint":"學者頁面",
 	"tabbar.wellness.title":"健康",
@@ -237,7 +237,7 @@
 	"panel.search.field.search.title":"搜索",
 	"panel.search.field.search.hint":"输入搜索词",
 
-	"panel.navigate.header.title": "導航",
+	"panel.maps.header.title": "地圖",
 
 	"panel.academics.header.title": "學者",
 

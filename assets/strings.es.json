@@ -34,8 +34,8 @@
     "tabbar.wallet.hint":"Página de cartera",
     "tabbar.favorites.title":"Favoritas",
     "tabbar.favorites.hint":"Página de favoritos",
-    "tabbar.navigate.title":"Navegar",
-    "tabbar.navigate.hint":"Navegar página",
+    "tabbar.maps.title":"Mapas",
+    "tabbar.maps.hint":"Página de mapas",
     "tabbar.academics.title":"Académica",
     "tabbar.academics.hint":"Página académica",
     "tabbar.wellness.title":"Bienestar",
@@ -237,7 +237,7 @@
     "panel.search.field.search.title": "Buscar",
     "panel.search.field.search.hint": "Escriba un término de búsqueda",
 
-    "panel.navigate.header.title": "Navegar",
+    "panel.maps.header.title": "Mapas",
 
     "panel.academics.header.title": "Académica",
 
