@@ -279,15 +279,17 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
        
       int position = 0;
       for (String code in List<String>.from(homeFavorites).reversed) {
-        Widget? widget = _buildWidgetFromCode(code, handle: true, position: position);
-        if (widget != null) {
-          widgets.add(widget);
-          position++;
+        if (_availableCodes?.contains(code) ?? false) {
+          Widget? widget = _buildWidgetFromCode(code, handle: true, position: position);
+          if (widget != null) {
+            widgets.add(widget);
+            position++;
+          }
         }
       }
     }
 
-    List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home'));
+    List<String>? fullContent = JsonUtils.listStringsValue(FlexUI()['home']);
     if (fullContent != null) {
 
       widgets.add(_buildEditingHeader(title: 'Unused Favorites', favoriteId: null, dropAnchorAlignment: CrossAxisAlignment.end,
