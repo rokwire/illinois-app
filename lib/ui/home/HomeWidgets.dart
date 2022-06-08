@@ -84,7 +84,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
           ),
 
                 
-          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId),),
+          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: HomeFavoriteStyle.SlantHeader),
         ],),
       ),
 
@@ -212,7 +212,9 @@ class HomeSlantWidget extends StatelessWidget {
               ),
 
               
-              HomeFavoriteButton(favorite: HomeFavorite(favoriteId),),
+              Opacity(opacity: (favoriteId != null) ? 1 : 0, child:
+                HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: HomeFavoriteStyle.SlantHeader,),
+              ),
             ],),
         ),),
       ),
@@ -253,19 +255,41 @@ class HomeTitleIcon extends StatelessWidget {
   }
 }
 
+enum HomeFavoriteStyle { SlantHeader, Button }
+
 class HomeFavoriteStar extends StatelessWidget {
 
-  final bool selected;
+  final bool? selected;
+  final HomeFavoriteStyle style;
 
-  HomeFavoriteStar({Key? key, this.selected = false}) : super(key: key);
+  HomeFavoriteStar({Key? key, this.selected, required this.style }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-      selected ?
-        Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true) :
-        Image.asset('images/icon-star-gray.png', excludeFromSemantics: true,),
+      _starImage,
     );
+  }
+
+  Widget get _starImage {
+    if (style == HomeFavoriteStyle.SlantHeader) {
+      return (selected == true) ?
+        Image.asset('images/icon-star-yellow.png', excludeFromSemantics: true) :
+        Image.asset('images/icon-star-gray.png', excludeFromSemantics: true,);
+    }
+    else if (style == HomeFavoriteStyle.Button) {
+      if (selected == null) {
+        return Image.asset('images/icon-star-gray.png', excludeFromSemantics: true);
+      }
+      else if (selected == true) {
+        return Image.asset('images/icon-star-selected.png', excludeFromSemantics: true);
+      }
+      else if (selected == false) {
+        return Image.asset('images/icon-star.png', excludeFromSemantics: true);
+      }
+    }
+    
+    return Image.asset('images/icon-star-gray.png', excludeFromSemantics: true);
   }
 
 }
@@ -273,14 +297,15 @@ class HomeFavoriteStar extends StatelessWidget {
 class HomeFavoriteButton extends StatelessWidget {
 
   final Favorite? favorite;
+  final HomeFavoriteStyle style;
 
-  HomeFavoriteButton({this.favorite});
+  HomeFavoriteButton({this.favorite, required this.style});
 
   @override
   Widget build(BuildContext context) {
     return Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
       InkWell(onTap: () => _onFavorite(context), child:
-        HomeFavoriteStar(selected: _isFavorite,)
+        HomeFavoriteStar(selected: _isFavorite, style: style)
       ),
     );
   }
@@ -385,7 +410,7 @@ class HomeCommandButton extends StatelessWidget {
                       CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2),
                     )
                 )
-                : HomeFavoriteButton(favorite: favorite,)
+                : HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button,)
               )
             ],),
             StringUtils.isNotEmpty(description)
