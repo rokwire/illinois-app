@@ -22,7 +22,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/ui/AcademicsPanel.dart';
-import 'package:illinois/ui/MapsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -590,7 +589,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       return BrowsePanel();
     }
     else if (rootTab == RootTab.Maps) {
-      return MapsPanel();
+      return ExplorePanel(rootTabDisplay: true, mapOnly: true);
     }
     else if (rootTab == RootTab.Academics) {
       return AcademicsPanel();

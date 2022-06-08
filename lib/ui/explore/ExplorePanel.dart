@@ -17,7 +17,6 @@
 import 'package:flutter/semantics.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -70,10 +69,11 @@ class ExplorePanel extends StatefulWidget {
 
   final ExploreTab initialTab;
   final ExploreFilter? initialFilter;
+  final bool mapOnly;
   final bool rootTabDisplay;
   final String? browseGroupId;
 
-  ExplorePanel({this.initialTab = ExploreTab.Events, this.initialFilter, this.rootTabDisplay = false, this.browseGroupId });
+  ExplorePanel({this.initialTab = ExploreTab.Events, this.initialFilter, this.mapOnly = false, this.rootTabDisplay = false, this.browseGroupId });
 
   static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
     List<Event>? events = (eventId != null) ? await Events().loadEventsByIds([eventId]) : null;
@@ -139,7 +139,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   bool? _mapAllowed;
   MapController? _nativeMapController;
-  ListMapDisplayType _displayType = ListMapDisplayType.List;
+  ListMapDisplayType? _displayType;
   dynamic _selectedMapExplore;
   late AnimationController _mapExploreBarAnimationController;
 
@@ -160,6 +160,7 @@ class ExplorePanelState extends State<ExplorePanel>
     _selectedTab = widget.initialTab;
     _initialSelectedFilter = widget.initialFilter;
 
+    _initListDisplayType();
     _initTabs();
     _initFilters();
     _loadEventCategories();
@@ -203,21 +204,15 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar: HeaderBar(
-        title:  Localization().getStringEx("panel.explore.label.title", "Explore"),
-        sortKey: _ExploreSortKey.headerBar,
-        leadingAsset: widget.rootTabDisplay ? null : HeaderBar.defaultLeadingAsset,
-        onLeading: _onTapHeaderBackButton,
-        actions: widget.rootTabDisplay ? [ _buildSettingsButton() ] : null,
-      ),
+      appBar: headerBarWidget,
       body: RefreshIndicator(onRefresh: () => _loadExplores(progress: false), child: 
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          ExploreDisplayTypeHeader(
+          Visibility(visible: (widget.mapOnly != true), child: ExploreDisplayTypeHeader(
             displayType: _displayType,
             searchVisible: (_selectedTab != ExploreTab.Dining),
             additionalData: {"group_id": widget.browseGroupId},
             onTapList: () => _selectDisplayType(ListMapDisplayType.List),
-            onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
+            onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),)),
           
           Padding(padding: EdgeInsets.all(16), child:
             Wrap(spacing: 8, runSpacing: 8, children: _buildTabWidgets(),
@@ -266,6 +261,11 @@ class ExplorePanelState extends State<ExplorePanel>
     else {
         _updateTabs();
     }
+  }
+
+  void _initListDisplayType() {
+    ListMapDisplayType displayType = widget.mapOnly ? ListMapDisplayType.Map : ListMapDisplayType.List;
+    _selectDisplayType(displayType);
   }
 
   void _updateTabs() {
@@ -764,6 +764,17 @@ class ExplorePanelState extends State<ExplorePanel>
 
   // Build UI
 
+  PreferredSizeWidget get headerBarWidget {
+    String headerLabel = (widget.mapOnly)
+        ? Localization().getStringEx("panel.maps.header.title", "Maps")
+        : Localization().getStringEx("panel.explore.label.title", "Explore");
+    if (widget.rootTabDisplay) {
+      return RootHeaderBar(title: headerLabel);
+    } else {
+      return HeaderBar(title: headerLabel, sortKey: _ExploreSortKey.headerBar);
+    }
+  }
+
   Widget _buildListView() {
     if (_loadingProgress == true) {
       return _buildLoading();
@@ -1202,26 +1213,6 @@ class ExplorePanelState extends State<ExplorePanel>
     selectedFilter.selectedIndexes = selectedIndexes;
     selectedFilter.active = _filterOptionsVisible = false;
     _loadExplores();
-  }
-
-  Widget _buildSettingsButton() {
-    return Semantics(
-      label: Localization().getStringEx('headerbar.settings.title', 'Settings'),
-      hint: Localization().getStringEx('headerbar.settings.hint', ''),
-      button: true,
-      excludeSemantics: true,
-      child: IconButton(
-        icon: Image.asset('images/settings-white.png'),
-        onPressed: _onTapSettings));
-  }
-
-  void _onTapSettings() {
-    Analytics().logSelect(target: "Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel()));
-  }
-
-  void _onTapHeaderBackButton() {
-    Navigator.pop(context);
   }
 
   void _onTapTab(RoundedTab tab) {
