@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Use LongPressDraggable instead of Draggable in HomeHandleWidget [#1696](https://github.com/rokwire/illinois-app/issues/1696).
+- Rename "Navigate" tab to "Maps" [#1695](https://github.com/rokwire/illinois-app/issues/1695).
+- Explore tabs in ExplorePanel to dropdown items [#1695](https://github.com/rokwire/illinois-app/issues/1695).
+### Added
+- Show Explore panel on "Maps" tab [#1695](https://github.com/rokwire/illinois-app/issues/1695).
 
 ## [4.0.24] - 2022-06-07
 ### Added

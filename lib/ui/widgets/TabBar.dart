@@ -68,10 +68,10 @@ class TabBar extends rokwire.TabBar {
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
     }
-    else if (code == 'navigate') {
+    else if (code == 'maps') {
       return rokwire.TabWidget(
-        label: Localization().getStringEx('tabbar.navigate.title', 'Navigate'),
-        hint: Localization().getStringEx('tabbar.navigate.hint', ''),
+        label: Localization().getStringEx('tabbar.maps.title', 'Maps'),
+        hint: Localization().getStringEx('tabbar.maps.hint', ''),
         iconAsset: 'images/tab-navigate.png',
         selectedIconAsset: 'images/tab-navigate-selected.png',
         selected: (tabController?.index == index),
