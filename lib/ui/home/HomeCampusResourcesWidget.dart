@@ -15,15 +15,21 @@
  */
 
 import 'dart:async';
-import 'dart:math';
+import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/groups/GroupsHomePanel.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/polls/PollsHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -48,7 +54,7 @@ class HomeCampusResourcesWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
+      title: Localization().getStringEx('widget.home.campus_resources.label.campus_tools', 'Campus Resources'),
     );
 
   _HomeCampusResourcesWidgetState createState() => _HomeCampusResourcesWidgetState();
@@ -56,16 +62,30 @@ class HomeCampusResourcesWidget extends StatefulWidget {
 
 class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> implements NotificationsListener {
 
-  List<dynamic>? _contentListCodes;
+  List<String>? _displayCodes;
+  Set<String>? _availableCodes;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Connectivity.notifyStatusChanged,
       FlexUI.notifyChanged,
     ]);
 
-    _contentListCodes = FlexUI()['home.campus_resources'] ?? [];
+    NotificationService().subscribe(this, [
+      FlexUI.notifyChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
+
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+        }
+      });
+    }
+
+    _availableCodes = _buildAvailableCodes();
+    _displayCodes = _buildDisplayCodes();
+
     super.initState();
   }
 
@@ -75,116 +95,182 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
     super.dispose();
   }
 
+  // NotificationsListener
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == FlexUI.notifyChanged) {
+      _updateAvailableCodes();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      _updateDisplayCodes();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = [];
+    List<Widget> contentList = _buildContentList();
+    return contentList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
+        title: Localization().getStringEx('widget.home.campus_resources.label.campus_tools', 'Campus Resources'),
+        titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+        child: Column(children: contentList,),
+    ) : Container();
+  }
+
+  List<Widget> _buildContentList() {
     final int widgetsPerRow = 2;
-    if (_contentListCodes != null) {
-      for (String code in _contentListCodes!) {
-        Widget? widget = _widgetFromCode(context, code, widgetsPerRow);
-        if (widget != null) {
-          widgets.add(Expanded(child: widget),);
+    List<Widget> contentList = <Widget>[];
+    if (_displayCodes != null) {
+      List<Widget> currentRow = <Widget>[];
+      for (String code in _displayCodes!.reversed) {
+        if ((_availableCodes == null) || _availableCodes!.contains(code)) {
+          Widget? contentEntry = _widgetFromCode(code);
+          if (contentEntry != null) {
+            currentRow.add(Expanded(child: contentEntry));
+            if (widgetsPerRow <= currentRow.length) {
+              contentList.add(Row(children: List.from(currentRow)));
+              currentRow.clear();
+            }
+          }
         }
       }
+      if (0 < currentRow.length) {
+        while (currentRow.length < widgetsPerRow) {
+          currentRow.add(Expanded(child: Container()));
+        }
+        contentList.add(Row(children: List.from(currentRow)));
+        currentRow.clear();
+      }
     }
-    if (widgets.length == 0) {
-      return Container();
+    if (0 < contentList.length) {
+      contentList.add(Container(height: 24,),);
     }
-    while(0 < (widgets.length % widgetsPerRow)) {
-      widgets.add(Expanded(child: Container(),));
-    }
-    int widgetsCount = widgets.length;
-    int rowsCount = widgetsCount ~/ widgetsPerRow;
-    List<Widget> rows = [];
-    for (int i = 0; i < rowsCount; i++) {
-      int startRowIndex = i * widgetsPerRow;
-      int endIndex = min((startRowIndex + widgetsPerRow), widgetsCount);
-      Row row = Row(children: widgets.sublist(startRowIndex, endIndex));
-      rows.add(row);
-    }
-
-    rows.add(Container(height: 48,),);
-
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
-        title: Localization().getStringEx('widget.home_campus_tools.label.campus_tools', 'Campus Resources'),
-        titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-        child: Column(children: rows,),
-    );
+    return contentList;
   }
 
-  Widget? _widgetFromCode(BuildContext context, String code, int countPerRow) {
-    String? title, hint, iconAsset;
-    GestureTapCallback onTap;
+  Widget? _widgetFromCode(String code) {
     if (code == 'events') {
-      title = Localization().getStringEx('widget.home_campus_tools.button.events.title', 'Events');
-      hint = Localization().getStringEx('widget.home_campus_tools.button.events.hint', '');
-      iconAsset = 'images/icon-campus-tools-events.png';
-      onTap = _onTapEvents;
+      return TileButton(
+        title: Localization().getStringEx('widget.home.campus_resources.button.events.title', 'Events'),
+        hint: Localization().getStringEx('widget.home.campus_resources.button.events.hint', ''),
+        iconAsset: 'images/icon-campus-tools-events.png',
+        onTap: _onTapEvents,);
     }
     else if (code == 'dining') {
-      title = Localization().getStringEx('widget.home_campus_tools.button.dining.title', 'Dining');
-      hint = Localization().getStringEx('widget.home_campus_tools.button.dining.hint', '');
-      iconAsset = 'images/icon-campus-tools-dining.png';
-      onTap = _onTapDining;
+      return TileButton(
+        title: Localization().getStringEx('widget.home.campus_resources.button.dining.title', 'Dining'),
+        hint: Localization().getStringEx('widget.home.campus_resources.button.dining.hint', ''),
+        iconAsset: 'images/icon-campus-tools-dining.png',
+        onTap: _onTapDining,);
     }
     else if (code == 'athletics') {
-      title = Localization().getStringEx('widget.home_campus_tools.button.athletics.title', 'Athletics');
-      hint = Localization().getStringEx('widget.home_campus_tools.button.athletics.hint', '');
-      iconAsset = 'images/icon-campus-tools-athletics.png';
-      onTap = _onTapAthletics;
-    }
-    else if (code == 'laundry') {
-      title = Localization().getStringEx('widget.home_campus_tools.button.laundry.title', 'Laundry');
-      hint = Localization().getStringEx('widget.home_campus_tools.button.laundry.hint', '');
-      iconAsset = 'images/icon-campus-tools-laundry.png';
-      onTap = _onTapLaundry;
+      return TileButton(
+        title: Localization().getStringEx('widget.home.campus_resources.button.athletics.title', 'Athletics'),
+        hint: Localization().getStringEx('widget.home.campus_resources.button.athletics.hint', ''),
+        iconAsset: 'images/icon-campus-tools-athletics.png',
+        onTap: _onTapAthletics);
     }
     else if (code == 'illini_cash') {
-      title = Localization().getStringEx('widget.home_campus_tools.button.illini_cash.title', 'Illini Cash');
-      hint = Localization().getStringEx('widget.home_campus_tools.button.illini_cash.hint', '');
-      iconAsset = 'images/icon-campus-tools-illini-cash.png';
-      onTap = _onTapIlliniCash;
-    } else if (code == 'my_illini') {
-      title = Localization().getStringEx('widget.home_campus_tools.button.my_illini.title', 'My Illini');
-      hint = Localization().getStringEx('widget.home_campus_tools.button.my_illini.hint', '');
-      iconAsset = 'images/icon-campus-tools-my-illini.png';
-      onTap = _onTapMyIllini;
-    } else if (code == 'wellness') {
-      title = Localization().getStringEx('widget.home_campus_tools.button.wellness.title', 'Wellness');
-      hint = Localization().getStringEx('widget.home_campus_tools.button.wellness.hint', '');
-      iconAsset = 'images/icon-campus-tools-wellness.png';
-      onTap = _onTapWellness;
-    } else if (code == 'crisis_help') {
-      title = Localization().getStringEx('widget.home_campus_tools.button.crisis_help.title', 'Crisis Help');
-      hint = Localization().getStringEx('widget.home_campus_tools.button.crisis_help.hint', '');
-      iconAsset = 'images/icon-campus-tools-crisis.png';
-      onTap = _onTapCrisisHelp;
-     } else {
+      return TileButton(
+        title: Localization().getStringEx('widget.home.campus_resources.button.illini_cash.title', 'Illini Cash'),
+        hint: Localization().getStringEx('widget.home.campus_resources.button.illini_cash.hint', ''),
+        iconAsset: 'images/icon-campus-tools-illini-cash.png',
+        onTap: _onTapIlliniCash);
+    }
+    else if (code == 'laundry') {
+      return TileButton(
+        title: Localization().getStringEx('widget.home.campus_resources.button.laundry.title', 'Laundry'),
+        hint: Localization().getStringEx('widget.home.campus_resources.button.laundry.hint', ''),
+        iconAsset: 'images/icon-campus-tools-laundry.png',
+        onTap: _onTapLaundry);
+    }
+    else if (code == 'my_illini') {
+      return TileButton(
+        title: Localization().getStringEx('widget.home.campus_resources.button.my_illini.title', 'My Illini'),
+        hint: Localization().getStringEx('widget.home.campus_resources.button.my_illini.hint', ''),
+        iconAsset: 'images/icon-campus-tools-my-illini.png',
+        onTap: _onTapMyIllini);
+    }
+    else if (code == 'wellness') {
+      return TileButton(
+        title: Localization().getStringEx('widget.home.campus_resources.button.wellness.title', 'Wellness'),
+        hint: Localization().getStringEx('widget.home.campus_resources.button.wellness.hint', ''),
+        iconAsset: 'images/icon-campus-tools-wellness.png',
+        onTap: _onTapWellness);
+    }
+    else if ((code == 'crisis_help') && _canCrisisHelp) {
+      return TileButton(
+        title: Localization().getStringEx('widget.home.campus_resources.button.crisis_help.title', 'Crisis Help'),
+        hint: Localization().getStringEx('widget.home.campus_resources.button.crisis_help.hint', ''),
+        iconAsset: 'images/icon-campus-tools-crisis.png',
+        onTap: _onTapCrisisHelp);
+    }
+    else if (code == 'groups') {
+      return TileButton(
+        title: Localization().getStringEx('widget.home.campus_resources.button.groups.title', 'Groups'),
+        hint: Localization().getStringEx('widget.home.campus_resources.button.groups.hint', ''),
+        iconAsset: 'images/icon-campus-tools-groups.png',
+        onTap: _onTapGroups,
+      );
+    }
+    else if (code == 'quick_polls') {
+      return TileButton(
+        title: Localization().getStringEx('widget.home.campus_resources.button.quick_polls.title', 'Quick Polls'),
+        hint: Localization().getStringEx('widget.home.campus_resources.button.quick_polls.hint', ''),
+        iconAsset: 'images/icon-campus-tools-quick-polls.png',
+        onTap: _onTapQuickPolls,
+      );
+    }
+    else if (code == 'campus_guide') {
+      return TileButton(
+        title: Localization().getStringEx('widget.home.campus_resources.button.campus_guide.title', 'Campus Guide'),
+        hint: Localization().getStringEx('widget.home.campus_resources.button.campus_guide.hint', ''),
+        iconAsset: 'images/icon-campus-tools-campus-guide.png',
+        onTap: _onTapCampusGuide,
+      );
+    }
+    else if (code == 'inbox') {
+      return TileButton(
+        title: Localization().getStringEx('widget.home.campus_resources.button.inbox.title', 'Notifications'),
+        hint: Localization().getStringEx('widget.home.campus_resources.button.inbox.hint', ''),
+        iconAsset: 'images/icon-campus-tools-inbox.png',
+        onTap: _onTapInbox,
+      );
+    }
+    else {
       return null;
     }
-
-    return (countPerRow == 1) ?
-      TileWideButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap) :
-      TileButton(title: title, hint: hint, iconAsset: iconAsset, onTap: onTap);
   }
 
-  void _updateContentListCodes() {
-    List<dynamic>? contentListCodes = FlexUI()['home.campus_resources'];
-    if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
+  Set<String>? _buildAvailableCodes() => JsonUtils.setStringsValue(FlexUI()['home.campus_resources']);
+
+  void _updateAvailableCodes() {
+    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home.campus_resources']);
+    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes)) {
       setState(() {
-        _contentListCodes = contentListCodes;
+        _availableCodes = availableCodes;
       });
     }
   }
 
-  // NotificationsListener
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == Connectivity.notifyStatusChanged) {
-      _updateContentListCodes();
+  List<String> _buildDisplayCodes() {
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeCampusResourcesFavorite.favoriteKeyName);
+    if (favorites == null) {
+      // Build a default set of favorites
+      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.campus_resources'));
+      if (fullContent != null) {
+        Auth2().prefs?.setFavorites(HomeCampusResourcesFavorite.favoriteKeyName, favorites = LinkedHashSet<String>.from(fullContent.reversed));
+      }
     }
-    else if (name == FlexUI.notifyChanged) {
-      _updateContentListCodes();
+    
+    return (favorites != null) ? List.from(favorites) : <String>[];
+  }
+
+  void _updateDisplayCodes() {
+    List<String> displayCodes = _buildDisplayCodes();
+    if (displayCodes.isNotEmpty && !DeepCollectionEquality().equals(_displayCodes, displayCodes)) {
+      setState(() {
+        _displayCodes = displayCodes;
+      });
     }
   }
 
@@ -203,21 +289,21 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
-  void _onTapLaundry() {
-    Analytics().logSelect(target: "Laundry");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
-  }
-
   void _onTapIlliniCash() {
     Analytics().logSelect(target: "Illini Cash");
     Navigator.push(
         context, CupertinoPageRoute(settings: RouteSettings(name: SettingsIlliniCashPanel.routeName), builder: (context) => SettingsIlliniCashPanel()));
   }
 
+  void _onTapLaundry() {
+    Analytics().logSelect(target: "Laundry");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
+  }
+
   void _onTapMyIllini() {
     Analytics().logSelect(target: "My Illini");
     if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.campus_resources.label.my_illini.offline', 'My Illini not available while offline.'));
     }
     else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
 
@@ -237,7 +323,7 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
       // }
       // else {
       //   String myIlliniPanelTitle = Localization().getStringEx(
-      //       'widget.home_campus_tools.header.my_illini.title', 'My Illini');
+      //       'widget.home.campus_resources.header.my_illini.title', 'My Illini');
       //   Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: myIlliniPanelTitle,)));
       // }
     }
@@ -246,8 +332,10 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
   void _onTapWellness() {
     Analytics().logSelect(target: "Wellness");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel()));
-
   }
+
+  bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
+  
   void _onTapCrisisHelp() {
     Analytics().logSelect(target: "Crisis Help");
     String? url = Config().crisisHelpUrl;
@@ -257,5 +345,40 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
       Log.e("Missing Config().crisisHelpUrl");
     }
   }
+
+  void _onTapGroups() {
+    Analytics().logSelect(target: "Groups");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+  }
+
+  void _onTapQuickPolls() {
+    Analytics().logSelect(target: "Quick Polls");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
+  }
+
+  void _onTapCampusGuide() {
+    Analytics().logSelect(target: "Campus Guide");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
+  }
+
+  void _onTapInbox() {
+    Analytics().logSelect(target: "Inbox");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.inbox)));
+  }
 }
 
+
+// HomeCampusResourcesFavorite
+
+class HomeCampusResourcesFavorite implements Favorite {
+  final String? id;
+  HomeCampusResourcesFavorite(this.id);
+
+  bool operator == (o) => o is HomeCampusResourcesFavorite && o.id == id;
+
+  int get hashCode => (id?.hashCode ?? 0);
+
+  static const String favoriteKeyName = "homeCampusResourcesWidgetIds";
+  @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => id;
+}

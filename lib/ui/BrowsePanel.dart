@@ -193,22 +193,13 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
   }
   
   Widget? _buildBrowsePrimaryEntry(String code) {
-    if (code == 'athletics') {
-      return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.athletics.title', 'Athletics'),
-        hint: Localization().getStringEx('panel.browse.button.athletics.hint', ''),
-        icon: 'images/icon-browse-athletics.png',
-        textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateToAthletics(),
-      );
-    }
-    else if (code == 'events') {
+    if (code == 'events') {
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.events.title', 'Events'),
         hint: Localization().getStringEx('panel.browse.button.events.hint', ''),
         icon: 'images/icon-browse-events.png',
         textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateToExploreEvents(),
+        onTap: _onTapEvents,
       );
     }
     else if (code == 'dining') {
@@ -217,8 +208,41 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         hint: Localization().getStringEx('panel.browse.button.dining.hint', ''),
         icon: 'images/icon-browse-dinings.png',
         textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateToExploreDining(),
+        onTap: _onTapDining,
       );
+    }
+    else if (code == 'athletics') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.athletics.title', 'Athletics'),
+        hint: Localization().getStringEx('panel.browse.button.athletics.hint', ''),
+        icon: 'images/icon-browse-athletics.png',
+        textColor: Styles().colors!.fillColorPrimary,
+        onTap: _onTapAthletics,
+      );
+    }
+    else if (code == 'illini_cash') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.illini_cash.title', 'Illini Cash'),
+        hint: Localization().getStringEx('panel.browse.button.illini_cash.hint', ''),
+        icon: 'images/icon-browse-illini-cash.png',
+        onTap: _onTapIlliniCash);
+    }
+    else if (code == 'laundry') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.laundry.title', 'Laundry'),
+        hint: Localization().getStringEx('panel.browse.button.laundry.hint', ''),
+        icon: 'images/icon-browse-laundry.png',
+        textColor: Styles().colors!.fillColorPrimary,
+        onTap: _onTapLaundry,
+      );
+    }
+    else if (code == 'my_illini') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.my_illini.title', 'My Illini'),
+        hint: Localization().getStringEx('panel.browse.button.my_illini.hint', ''),
+        icon: 'images/icon-browse-my-illini.png',
+        textColor: Styles().colors!.fillColorPrimary,
+        onTap: _onTapMyIllini);
     }
     else if (code == 'wellness') {
       return _GridSquareButton(
@@ -226,25 +250,16 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         hint: Localization().getStringEx('panel.browse.button.wellness.hint', ''),
         icon: 'images/icon-browse-wellness.png',
         textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateToWellness(),
+        onTap: _onTapWellness,
       );
     }
-    else if (code == 'saved') {
+    else if ((code == 'crisis_help') && _canCrisisHelp) {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.saved.title', 'Saved'),
-        hint: Localization().getStringEx('panel.browse.button.saved.hint', ''),
-        icon: 'images/icon-browse-saved.png',
+        title: Localization().getStringEx('panel.browse.button.crisis_help.title', 'Crisis Help'),
+        hint: Localization().getStringEx('panel.browse.button.crisis_help.hint', ''),
+        icon: 'images/icon-browse-crisis-help.png',
         textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateSaved(),
-      );
-    }
-    else if (code == 'quick_polls') {
-      return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.quick_polls.title', 'Quick Polls'),
-        hint: Localization().getStringEx('panel.browse.button.quick_polls.hint', ''),
-        icon: 'images/icon-browse-quick-polls.png',
-        textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateQuickPolls(),
+        onTap: _onTapCrisisHelp,
       );
     }
     else if (code == 'groups') {
@@ -253,7 +268,34 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
         icon: 'images/icon-browse-gropus.png',
         textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateGroups(),
+        onTap: _onTapGroups,
+      );
+    }
+    else if (code == 'quick_polls') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.quick_polls.title', 'Quick Polls'),
+        hint: Localization().getStringEx('panel.browse.button.quick_polls.hint', ''),
+        icon: 'images/icon-browse-quick-polls.png',
+        textColor: Styles().colors!.fillColorPrimary,
+        onTap: _onTapQuickPolls,
+      );
+    }
+    else if (code == 'campus_guide') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.campus_guide.title', 'Campus Guide'),
+        hint: Localization().getStringEx('panel.browse.button.campus_guide.hint', ''),
+        icon: 'images/icon-browse-campus-guide.png',
+        textColor: Styles().colors!.fillColorPrimary,
+        onTap: _onTapCampusGuide,
+      );
+    }
+    else if (code == 'inbox') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.inbox.title', 'Notifications'),
+        hint: Localization().getStringEx('panel.browse.button.inbox.hint', ''),
+        icon: 'images/icon-browse-inbox.png',
+        textColor: Styles().colors!.fillColorPrimary,
+        onTap: _onTapInbox,
       );
     }
     else if (code == 'building_access') {
@@ -263,25 +305,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         icon: 'images/icon-browse-building-status.png',
         textColor: Styles().colors!.fillColorPrimary,
         loading: _buildingAccessAuthLoading,
-        onTap: () => _navigateBuildingAccess(),
-      );
-    }
-    else if (code == 'campus_guide') {
-      return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.campus_guide.title', 'Campus Guide'),
-        hint: Localization().getStringEx('panel.browse.button.campus_guide.hint', ''),
-        icon: 'images/icon-browse-student-guide.png',
-        textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateCampusGuide(),
-      );
-    }
-    else if (code == 'inbox') {
-      return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.inbox.title', 'Notifications'),
-        hint: Localization().getStringEx('panel.browse.button.inbox.hint', ''),
-        icon: 'images/icon-browse-inbox.png',
-        textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateInbox(),
+        onTap: _onTapBuildingAccess,
       );
     }
     else if (code == 'privacy_center') {
@@ -290,16 +314,16 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         hint: Localization().getStringEx('panel.browse.button.privacy_center.hint', ''),
         icon: 'images/icon-browse-privacy-center.png',
         textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigatePrivacyCenter(),
+        onTap: _onTapPrivacyCenter,
       );
     }
-    else if ((code == 'crisis_help') && _canCrisisHelp) {
+    else if (code == 'saved') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.crisis_help.title', 'Crisis Help'),
-        hint: Localization().getStringEx('panel.browse.button.crisis_help.hint', ''),
-        icon: 'images/icon-browse-crisis-help.png',
+        title: Localization().getStringEx('panel.browse.button.saved.title', 'Saved'),
+        hint: Localization().getStringEx('panel.browse.button.saved.hint', ''),
+        icon: 'images/icon-browse-saved.png',
         textColor: Styles().colors!.fillColorPrimary,
-        onTap: () => _navigateCrisisHelp(),
+        onTap: _onTapSaved,
       );
     }
     else {
@@ -330,7 +354,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         title: Localization().getStringEx("panel.browse.button.settings.title","Settings"),
         hint: Localization().getStringEx("panel.browse.button.settings.hint",""),
         padding: _ribbonButtonPadding,
-        onTap: () => _navigateSettings(),
+        onTap: _onTapSettings,
       );
     }
     else if (code == 'my_illini') {
@@ -340,7 +364,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         title: Localization().getStringEx('panel.browse.button.my_illini.title', 'My Illini'),
         hint: Localization().getStringEx('panel.browse.button.my_illini.hint', ''),
         padding: _ribbonButtonPadding,
-        onTap: () =>  _navigateMyIllini(),
+        onTap: _onTapMyIllini,
       );
     }
     else if (code == 'illini_cash') {
@@ -349,7 +373,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         title: Localization().getStringEx('panel.browse.button.illini_cash.title', 'Illini Cash'),
         hint: Localization().getStringEx('panel.browse.button.illini_cash.hint', ''),
         padding: _ribbonButtonPadding,
-        onTap: () =>  _navigateIlliniCash(),
+        onTap:  _onTapIlliniCash,
       );
     }
     else if (code == 'add_illini_cash') {
@@ -358,7 +382,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         hint: Localization().getStringEx('panel.browse.button.add_illini_cash.hint', ''),
         icon: Image.asset('images/icon-illini-cash.png'),
         padding: _ribbonButtonPadding,
-        onTap: () => _navigateToAddIlliniCash(),
+        onTap: () => _onTapAddIlliniCash,
       );
     }
     else if (code == 'meal_plan') {
@@ -367,7 +391,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         title: Localization().getStringEx('panel.browse.button.meal_plan.title', 'Meal Plan'),
         hint: Localization().getStringEx('panel.browse.button.meal_plan.hint', ''),
         padding: _ribbonButtonPadding,
-        onTap: () =>  _navigateMealPlan(),
+        onTap: _onTapMealPlan,
       );
     }
     else if (code == 'laundry') {
@@ -376,7 +400,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         title: Localization().getStringEx('panel.browse.button.laundry.title', 'Laundry'),
         hint: Localization().getStringEx('panel.browse.button.laundry.hint', ''),
         padding: _ribbonButtonPadding,
-        onTap: () =>  _navigateLaundry(),
+        onTap: _onTapLaundry,
       );
     }
     else if (code == 'parking') {
@@ -385,7 +409,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         title: Localization().getStringEx('panel.browse.button.parking.title', 'State Farm Event Parking'),
         hint: Localization().getStringEx('panel.browse.button.parking.hint',''),
         padding: _ribbonButtonPadding,
-        onTap: () => _navigateParking(),
+        onTap: _onTapParking,
       );
     }
     else if (code == 'create_event') {
@@ -394,7 +418,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         title: Localization().getStringEx('panel.browse.button.create_event.title', 'Create an event'),
         hint: Localization().getStringEx('panel.browse.button.create_event.hint', ''),
         padding: _ribbonButtonPadding,
-        onTap: () => _navigateCreateEvent(),
+        onTap: _onTapCreateEvent,
       );
     }
     else if (code == 'create_stadium_poll') {
@@ -403,7 +427,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         title: Localization().getStringEx('panel.browse.button.create_stadium_poll.title', 'Create Stadium Poll'),
         hint: Localization().getStringEx('panel.browse.button.create_stadium_poll.hint',''),
         padding: _ribbonButtonPadding,
-        onTap:  () => _navigateCreateStadiumPoll(),
+        onTap:  _onTapCreateStadiumPoll,
       );
     }
     else if (code == 'state_farm_wayfinding') {
@@ -412,17 +436,17 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         title: Localization().getStringEx('panel.browse.button.state_farm_wayfinding.title', 'State Farm Wayfinding'),
         hint: Localization().getStringEx('panel.browse.button.state_farm_wayfinding.hint',''),
         padding: _ribbonButtonPadding,
-        onTap:  () => _navigateStateFarmWayfinding(),
+        onTap:  _onTapStateFarmWayfinding,
       );
     }
-    else if (code == 'feedback') {
+    else if ((code == 'feedback') && _canFeedback) {
       return _RibbonButton(
         icon: Image.asset('images/icon-feedback.png'),
         accessoryIcon: Image.asset('images/link-out.png'),
         title: Localization().getStringEx('panel.browse.button.feedback.title', 'Provide Feedback'),
         hint: Localization().getStringEx('panel.browse.button.feedback.hint', ''),
         padding: _ribbonButtonPadding,
-        onTap: () => _onFeedbackTap(),
+        onTap: _onTapFeedback,
       );
     }
     else if ((code == 'faqs') && _canFAQs) {
@@ -432,17 +456,17 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         title: Localization().getStringEx('panel.browse.button.faqs.title', 'FAQs'),
         hint: Localization().getStringEx('panel.browse.button.faqs.hint', ''),
         padding: _ribbonButtonPadding,
-        onTap: () => _onFAQsTap(),
+        onTap: _onTapFAQs,
       );
     }
-    else if ((code == 'date_cat') && _canDateCat) {
+    else if ((code == 'due_date_catalog') && _canDueDateCatalog) {
       return _RibbonButton(
         icon: Image.asset('images/icon-settings.png'),
         accessoryIcon: Image.asset('images/link-out.png'),
         title: Localization().getStringEx('panel.browse.button.date_cat.title', 'Due Date Catalog'),
         hint: Localization().getStringEx('panel.browse.button.date_cat.hint', ''),
         padding: _ribbonButtonPadding,
-        onTap: () => _onDateCatTap(),
+        onTap: _onTapDueDateCatalog,
       );
     }
     else if ((code == 'video_tutorial') && _canVideoTutorial) {
@@ -451,7 +475,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         title: Localization().getStringEx('panel.browse.button.video_tutorial.title', 'Video Tutorial'),
         hint: Localization().getStringEx('panel.browse.button.video_tutorial.hint', ''),
         padding: _ribbonButtonPadding,
-        onTap: () => _onVideoTutorialTap(),
+        onTap: _onTapVideoTutorial,
       );
     }
 
@@ -482,42 +506,90 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
 
   // Primary
 
-  void _navigateToAthletics() {
-    Analytics().logSelect(target: "Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
-  }
-
-  void _navigateToExploreEvents() {
+  void _onTapEvents() {
     Analytics().logSelect(target: "Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events)));
   }
 
-  void _navigateToExploreDining() {
+  void _onTapDining() {
     Analytics().logSelect(target: "Dining");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining)));
   }
 
-  void _navigateToWellness() {
+  void _onTapAthletics() {
+    Analytics().logSelect(target: "Athletics");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+  }
+
+  void _onTapIlliniCash() {
+    Analytics().logSelect(target: "Illini Cash");
+    Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
+        settings: RouteSettings(name: SettingsIlliniCashPanel.routeName),
+        builder: (context){
+          return SettingsIlliniCashPanel();
+        }
+    ));
+  }
+
+  void _onTapLaundry() {
+    Analytics().logSelect(target: "Laundry");
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.laundry', 'Laundry not available while offline.'));
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
+    }
+  }
+
+  void _onTapMyIllini() {
+    Analytics().logSelect(target: "My Illini");
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
+      url_launcher.launch(Config().myIlliniUrl!);
+    }
+  }
+
+  void _onTapWellness() {
     Analytics().logSelect(target: "Wellness");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel()));
   }
 
-  void _navigateSaved() {
-    Analytics().logSelect(target: "Saved");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
+  bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
+
+  void _onTapCrisisHelp() {
+    Analytics().logSelect(target: "Crisis Help");
+
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
+    }
+    else if (StringUtils.isNotEmpty(Config().crisisHelpUrl)) {
+      url_launcher.launch(Config().crisisHelpUrl!);
+    }
   }
 
-  void _navigateQuickPolls() {
-    Analytics().logSelect(target: "Quick Polls");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
-  }
-
-  void _navigateGroups() {
+  void _onTapGroups() {
     Analytics().logSelect(target: "Groups");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
-  void _navigateBuildingAccess() {
+  void _onTapQuickPolls() {
+    Analytics().logSelect(target: "Quick Polls");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
+  }
+
+  void _onTapCampusGuide() {
+    Analytics().logSelect(target: "Campus Guide");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
+  }
+
+  void _onTapInbox() {
+    Analytics().logSelect(target: "Inbox");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.inbox)));
+  }
+
+  void _onTapBuildingAccess() {
     if (!_buildingAccessAuthLoading) {
       Analytics().logSelect(target: 'Building Access');
       if (Connectivity().isOffline) {
@@ -602,67 +674,33 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         });
   }
 
-  void _navigateCampusGuide() {
-    Analytics().logSelect(target: "Campus Guide");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
-  }
-
-  void _navigateInbox() {
-    Analytics().logSelect(target: "Inbox");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.inbox)));
-  }
-
-  void _navigatePrivacyCenter() {
+  void _onTapPrivacyCenter() {
     Analytics().logSelect(target: "Privacy Center");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsProfileContentPanel(content: SettingsProfileContent.privacy)));
   }
 
-  bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
-
-  void _navigateCrisisHelp() {
-    Analytics().logSelect(target: "Crisis Help");
-
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.crisis_help', 'Crisis Help is not available while offline.'));
-    }
-    else if (StringUtils.isNotEmpty(Config().crisisHelpUrl)) {
-      url_launcher.launch(Config().crisisHelpUrl!);
-    }
+  void _onTapSaved() {
+    Analytics().logSelect(target: "Saved");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
   }
 
   // Secondary
 
-  void _navigateSettings() {
+  void _onTapSettings() {
     Analytics().logSelect(target: "Settings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel()));
   }
 
-  void _navigateMyIllini() {
-    Analytics().logSelect(target: "My Illini");
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
-    }
-    else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
-      url_launcher.launch(Config().myIlliniUrl!);
-    }
-  }
+//void _onTapMyIllini() ^
 
-  void _navigateIlliniCash() {
-    Analytics().logSelect(target: "Illini Cash");
-    Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
-        settings: RouteSettings(name: SettingsIlliniCashPanel.routeName),
-        builder: (context){
-          return SettingsIlliniCashPanel();
-        }
-    ));
-  }
+//void _onTapIlliniCash() ^
 
-  void _navigateToAddIlliniCash() {
+  void _onTapAddIlliniCash() {
     Analytics().logSelect(target: "Add Illini Cash");
     Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsAddIlliniCashPanel()));
   }
 
-  void _navigateMealPlan() {
+  void _onTapMealPlan() {
     Analytics().logSelect(target: "Meal Plan");
     Navigator.of(context, rootNavigator: false).push(CupertinoPageRoute(
         builder: (context){
@@ -671,22 +709,14 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     ));
   }
 
-  void _navigateLaundry() {
-    Analytics().logSelect(target: "Laundry");
-    if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
-    }
-    else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.laundry', 'Laundry not available while offline.'));
-    }
-  }
+//void _onTapLaundry() ^  
 
-  void _navigateParking() {
+  void _onTapParking() {
     Analytics().logSelect(target: "Parking");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ParkingEventsPanel()));
   }
 
-  void _navigateCreateEvent() {
+  void _onTapCreateEvent() {
     Analytics().logSelect(target: "Create an Event");
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
@@ -696,12 +726,12 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     }
   }
 
-  void _navigateCreateStadiumPoll() {
+  void _onTapCreateStadiumPoll() {
     Analytics().logSelect(target: "Create Stadium Poll");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateStadiumPollPanel()));
   }
 
-  void _navigateStateFarmWayfinding() {
+  void _onTapStateFarmWayfinding() {
     Analytics().logSelect(target: "State Farm Wayfinding");
     NativeCommunicator().launchMap(target: {
       'latitude': Config().stateFarmWayfinding['latitude'],
@@ -710,45 +740,29 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     });
   }
 
-  void _onFeedbackTap() {
+  bool get _canFeedback => StringUtils.isNotEmpty(Config().feedbackUrl);
+
+  void _onTapFeedback() {
     Analytics().logSelect(target: "Provide Feedback");
 
-    if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String? email = Auth2().email;
-      String? name =  Auth2().fullName;
-      String? phone = Auth2().phone;
-      String params = _constructFeedbackParams(email, phone, name);
-      String feedbackUrl = Config().feedbackUrl! + params;
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('widgets.home.app_help.feedback.label.offline', 'Providing a Feedback is not available while offline.'));
+    }
+    else if (_canFeedback) {
+      String email = Uri.encodeComponent(Auth2().email ?? '');
+      String name =  Uri.encodeComponent(Auth2().fullName ?? '');
+      String phone = Uri.encodeComponent(Auth2().phone ?? '');
+      String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
 
-      String? panelTitle = Localization().getStringEx('panel.settings.feedback.label.title', 'PROVIDE FEEDBACK');
+      String? panelTitle = Localization().getStringEx('widgets.home.app_help.feedback.panel.title', 'PROVIDE FEEDBACK');
       Navigator.push(
           context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
     }
-    else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.feedback', 'Providing a Feedback is not available while offline.'));
-    }
-  }
-
-  String _constructFeedbackParams(String? email, String? phone, String? name) {
-    Map params = Map();
-    params['email'] = Uri.encodeComponent(email != null ? email : "");
-    params['phone'] = Uri.encodeComponent(phone != null ? phone : "");
-    params['name'] = Uri.encodeComponent(name != null ? name : "");
-
-    String result = "";
-    if (params.length > 0) {
-      result += "?";
-      params.forEach((key, value) =>
-        result+= key + "=" + value + "&"
-      );
-      result = result.substring(0, result.length - 1); //remove the last symbol &
-    }
-    return result;
   }
 
   bool get _canFAQs => StringUtils.isNotEmpty(Config().faqsUrl);
 
-  void _onFAQsTap() {
+  void _onTapFAQs() {
     Analytics().logSelect(target: "FAQs");
 
     if (Connectivity().isOffline) {
@@ -762,9 +776,9 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     }
   }
 
-  bool get _canDateCat => StringUtils.isNotEmpty(Config().dateCatalogUrl);
+  bool get _canDueDateCatalog => StringUtils.isNotEmpty(Config().dateCatalogUrl);
 
-  void _onDateCatTap() {
+  void _onTapDueDateCatalog() {
     Analytics().logSelect(target: "Due Date Catalog");
     
     if (Connectivity().isOffline) {
@@ -777,7 +791,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
 
   bool get _canVideoTutorial => StringUtils.isNotEmpty(Config().videoTutorialUrl);
 
-  void _onVideoTutorialTap() {
+  void _onTapVideoTutorial() {
     Analytics().logSelect(target: "Video Tutorial");
     
     if (Connectivity().isOffline) {
