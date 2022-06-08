@@ -17,6 +17,7 @@
 import 'package:flutter/semantics.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -49,7 +50,6 @@ import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -127,6 +127,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Future<List<Explore>?>? _loadingTask;
   bool? _loadingProgress;
+  bool _dropDownValuesVisible = false;
   
 
   // When we click item[index == 2] -the TabBar creates and immediately dispose item[index == 1] (But _state.mounted = true)
@@ -203,43 +204,46 @@ class ExplorePanelState extends State<ExplorePanel>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     return Scaffold(
-      appBar: headerBarWidget,
-      body: RefreshIndicator(onRefresh: () => _loadExplores(progress: false), child: 
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Visibility(visible: (widget.mapOnly != true), child: ExploreDisplayTypeHeader(
-            displayType: _displayType,
-            searchVisible: (_selectedTab != ExploreTab.Dining),
-            additionalData: {"group_id": widget.browseGroupId},
-            onTapList: () => _selectDisplayType(ListMapDisplayType.List),
-            onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),)),
-          
-          Padding(padding: EdgeInsets.all(16), child:
-            Wrap(spacing: 8, runSpacing: 8, children: _buildTabWidgets(),
-          )),
-          
-          Expanded(child:
-            Stack(children: <Widget>[
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
-                    Wrap(children: _buildFilterWidgets(),
-                ),),
-                Expanded(child:
-                  Container(color: Styles().colors!.background, child:
-                    Stack(children: <Widget>[
-                      _buildMapView(),
-                      _buildListView(),
-                    ]),
-                ),),
-              ],),
-              _buildFilterValuesContainer()
-            ],),
-          ),
-        ]),
-      ),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: widget.rootTabDisplay ? null : uiuc.TabBar(),
-    );
+        appBar: headerBarWidget,
+        body: RefreshIndicator(
+            onRefresh: () => _loadExplores(progress: false),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Visibility(
+                  visible: (widget.mapOnly != true),
+                  child: ExploreDisplayTypeHeader(
+                      displayType: _displayType,
+                      searchVisible: (_selectedTab != ExploreTab.Dining),
+                      additionalData: {"group_id": widget.browseGroupId},
+                      onTapList: () => _selectDisplayType(ListMapDisplayType.List),
+                      onTapMap: () => _selectDisplayType(ListMapDisplayType.Map))),
+              Padding(
+                  padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+                  child: RibbonButton(
+                      textColor: Styles().colors!.fillColorSecondary,
+                      backgroundColor: Styles().colors!.white,
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                      rightIconAsset: (_dropDownValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                      label: exploreTabName(_selectedTab!),
+                      onTap: _changeDropDownValuesVisibility)),
+              Expanded(
+                  child: Stack(children: [
+                Stack(children: <Widget>[
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child: Wrap(children: _buildFilterWidgets())),
+                    Expanded(
+                        child: Container(
+                            color: Styles().colors!.background, child: Stack(children: <Widget>[_buildMapView(), _buildListView()])))
+                  ]),
+                  _buildFilterValuesContainer()
+                ]),
+                _buildExploreTabDropDownContainer()
+              ]))
+            ])),
+        backgroundColor: Styles().colors!.background,
+        bottomNavigationBar: widget.rootTabDisplay ? null : uiuc.TabBar());
   }
 
   void _initTabs() {
@@ -266,6 +270,13 @@ class ExplorePanelState extends State<ExplorePanel>
   void _initListDisplayType() {
     ListMapDisplayType displayType = widget.mapOnly ? ListMapDisplayType.Map : ListMapDisplayType.List;
     _selectDisplayType(displayType);
+  }
+
+  void _changeDropDownValuesVisibility() {
+    _dropDownValuesVisible = !_dropDownValuesVisible;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _updateTabs() {
@@ -775,6 +786,50 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
+  Widget _buildExploreTabDropDownContainer() {
+    return Visibility(
+        visible: _dropDownValuesVisible,
+        child: Positioned.fill(child: Stack(children: <Widget>[_buildExploreDropDownDismissLayer(), _buildTabDropDownWidget()])));
+  }
+
+  Widget _buildExploreDropDownDismissLayer() {
+    return Positioned.fill(
+        child: BlockSemantics(
+            child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _dropDownValuesVisible = false;
+                  });
+                },
+                child: Container(color: Styles().colors!.blackTransparent06))));
+  }
+
+  Widget _buildTabDropDownWidget() {
+    List<Widget> tabList = <Widget>[];
+    tabList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    for (ExploreTab exploreTab in _exploreTabs) {
+      if ((_selectedTab != exploreTab)) {
+        tabList.add(_buildTabDropDownItem(exploreTab));
+      }
+    }
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: tabList)));
+  }
+
+  Widget _buildTabDropDownItem(ExploreTab exploreTab) {
+    return RibbonButton(
+        backgroundColor: Styles().colors!.white,
+        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        rightIconAsset: null,
+        label: exploreTabName(exploreTab),
+        onTap: () => _onTapExploreTab(exploreTab));
+  }
+
+  void _onTapExploreTab(ExploreTab tab) {
+    Analytics().logSelect(target: exploreTabName(tab));
+    selectTab(tab);
+    _changeDropDownValuesVisibility();
+  }
+
   Widget _buildListView() {
     if (_loadingProgress == true) {
       return _buildLoading();
@@ -1131,15 +1186,6 @@ class ExplorePanelState extends State<ExplorePanel>
     return filterTypeWidgets;
   }
 
-  List<RoundedTab> _buildTabWidgets() {
-
-    List<RoundedTab> tabs = [];
-    for (ExploreTab exploreTab in _exploreTabs) {
-      tabs.add(RoundedTab(title: exploreTabName(exploreTab), hint: exploreTabHint(exploreTab), tabIndex: ExploreTab.values.indexOf(exploreTab), onTap: _onTapTab, selected: (_selectedTab == exploreTab)));
-    }
-    return tabs;
-  }
-
   //Click listeners
 
   void _onExploreTap(Explore explore) {
@@ -1213,13 +1259,6 @@ class ExplorePanelState extends State<ExplorePanel>
     selectedFilter.selectedIndexes = selectedIndexes;
     selectedFilter.active = _filterOptionsVisible = false;
     _loadExplores();
-  }
-
-  void _onTapTab(RoundedTab tab) {
-    if ((0 <= tab.tabIndex) && (tab.tabIndex < ExploreTab.values.length)) {
-      Analytics().logSelect(target: tab.title) ;
-      selectTab(ExploreTab.values[tab.tabIndex]);
-    }
   }
 
   ///Public interface
