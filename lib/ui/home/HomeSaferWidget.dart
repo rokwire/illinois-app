@@ -103,7 +103,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access'),
               description: Localization().getStringEx('widget.home.safer.button.building_access.description', 'Check your current building access.'),
-              favorite: HomeSaferFavorite(code),
+              favorite: HomeFavorite(code, category: widget.favoriteId),
               loading: _buildingAccessAuthLoading,
               onTap: _onBuildingAccess,
             );
@@ -112,7 +112,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widget.home.safer.button.test_locations.title', 'Test Locations'),
               description: Localization().getStringEx('widget.home.safer.button.test_locations.description', 'Find test locations'),
-              favorite: HomeSaferFavorite(code),
+              favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onTestLocations,
             );
           }
@@ -120,7 +120,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley'),
               description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'MyMcKinley Patient Health Portal'),
-              favorite: HomeSaferFavorite(code),
+              favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onMyMcKinley,
             );
           }
@@ -128,7 +128,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Answer Center'),
               description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Get answers to your questions.'),
-              favorite: HomeSaferFavorite(code),
+              favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onWellnessAnswerCenter,
             );
           }
@@ -158,12 +158,12 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   List<String> _buildDisplayCodes() {
-    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeSaferFavorite.favoriteKeyName);
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
     if (favorites == null) {
       // Build a default set of favorites
       List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.safer'));
       if (fullContent != null) {
-        Auth2().prefs?.setFavorites(HomeSaferFavorite.favoriteKeyName, favorites = LinkedHashSet<String>.from(fullContent.reversed));
+        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites = LinkedHashSet<String>.from(fullContent.reversed));
       }
     }
     
@@ -303,19 +303,4 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
       builder: (context) => HomeSaferWellnessAnswerCenterPanel()
     ));
   }
-}
-
-// HomeSaferFavorite
-
-class HomeSaferFavorite implements Favorite {
-  final String? id;
-  HomeSaferFavorite(this.id);
-
-  bool operator == (o) => o is HomeSaferFavorite && o.id == id;
-
-  int get hashCode => (id?.hashCode ?? 0);
-
-  static const String favoriteKeyName = "homeSaferWidgetIds";
-  @override String get favoriteKey => favoriteKeyName;
-  @override String? get favoriteId => id;
 }

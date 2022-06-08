@@ -253,12 +253,12 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
   }
 
   List<String> _buildDisplayCodes() {
-    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeCampusResourcesFavorite.favoriteKeyName);
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
     if (favorites == null) {
       // Build a default set of favorites
       List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.campus_resources'));
       if (fullContent != null) {
-        Auth2().prefs?.setFavorites(HomeCampusResourcesFavorite.favoriteKeyName, favorites = LinkedHashSet<String>.from(fullContent.reversed));
+        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites = LinkedHashSet<String>.from(fullContent.reversed));
       }
     }
     
@@ -365,20 +365,4 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
     Analytics().logSelect(target: "Inbox");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.inbox)));
   }
-}
-
-
-// HomeCampusResourcesFavorite
-
-class HomeCampusResourcesFavorite implements Favorite {
-  final String? id;
-  HomeCampusResourcesFavorite(this.id);
-
-  bool operator == (o) => o is HomeCampusResourcesFavorite && o.id == id;
-
-  int get hashCode => (id?.hashCode ?? 0);
-
-  static const String favoriteKeyName = "homeCampusResourcesWidgetIds";
-  @override String get favoriteKey => favoriteKeyName;
-  @override String? get favoriteId => id;
 }

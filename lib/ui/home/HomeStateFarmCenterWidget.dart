@@ -112,7 +112,7 @@ class _HomeStateFarmCenterWidgetState extends State<HomeStateFarmCenterWidget> i
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widgets.home.state_farm_center.parking.button.title', 'Parking'),
               description: Localization().getStringEx('widgets.home.state_farm_center.parking.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
-              favorite: HomeStateFarmCenterFavorite(code),
+              favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onParking,
             );
           }
@@ -120,7 +120,7 @@ class _HomeStateFarmCenterWidgetState extends State<HomeStateFarmCenterWidget> i
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widgets.home.state_farm_center.wayfinding.button.title', 'Wayfinding'),
               description: Localization().getStringEx('widgets.home.state_farm_center.wayfinding.button.description', 'Aenean commodo faucibus sem, id finibus tortor rutrum consectetur.'),
-              favorite: HomeStateFarmCenterFavorite(code),
+              favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onWayfinding,
             );
           }
@@ -128,7 +128,7 @@ class _HomeStateFarmCenterWidgetState extends State<HomeStateFarmCenterWidget> i
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widgets.home.state_farm_center.create_stadium_poll.button.title', 'Create Stadium Poll'),
               description: Localization().getStringEx('widgets.home.state_farm_center.create_stadium_poll.button.description', 'Vivamus aliquam hendrerit risus eget accumsan.'),
-              favorite: HomeStateFarmCenterFavorite(code),
+              favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onCreateStadiumPoll,
             );
           }
@@ -158,12 +158,12 @@ class _HomeStateFarmCenterWidgetState extends State<HomeStateFarmCenterWidget> i
   }
 
   List<String> _buildDisplayCodes() {
-    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeStateFarmCenterFavorite.favoriteKeyName);
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
     if (favorites == null) {
       // Build a default set of favorites
       List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.state_farm_center'));
       if (fullContent != null) {
-        Auth2().prefs?.setFavorites(HomeStateFarmCenterFavorite.favoriteKeyName, favorites = LinkedHashSet<String>.from(fullContent.reversed));
+        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites = LinkedHashSet<String>.from(fullContent.reversed));
       }
     }
     
@@ -198,19 +198,4 @@ class _HomeStateFarmCenterWidgetState extends State<HomeStateFarmCenterWidget> i
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateStadiumPollPanel()));
   }
 
-}
-
-// HomeStateFarmCenterFavorite
-
-class HomeStateFarmCenterFavorite implements Favorite {
-  final String? id;
-  HomeStateFarmCenterFavorite(this.id);
-
-  bool operator == (o) => o is HomeStateFarmCenterFavorite && o.id == id;
-
-  int get hashCode => (id?.hashCode ?? 0);
-
-  static const String favoriteKeyName = "homeStateFarmCenterWidgetIds";
-  @override String get favoriteKey => favoriteKeyName;
-  @override String? get favoriteId => id;
 }

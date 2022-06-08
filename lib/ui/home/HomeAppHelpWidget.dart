@@ -113,7 +113,7 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widgets.home.app_help.video_tutorial.button.title', 'Video Tutorial'),
               description: Localization().getStringEx('widgets.home.app_help.video_tutorial.button.description', 'Play video tutorial to learn great new features.'),
-              favorite: HomeAppHelpFavorite(code),
+              favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onVideoTutorial,
             );
           }
@@ -121,7 +121,7 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widgets.home.app_help.feedback.button.title', 'Provide Feedback'),
               description: Localization().getStringEx('widgets.home.app_help.feedback.button.description', 'Enjoying the app? Missing something? The University of Illinois Smart, Healthy Communities Initiative needs your ideas and input. Thank you!'),
-              favorite: HomeAppHelpFavorite(code),
+              favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onFeedback,
             );
           }
@@ -129,7 +129,7 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widgets.home.app_help.faqs.button.title', 'FAQs'),
               description: Localization().getStringEx('widgets.home.app_help.faqs.button.description', 'Check your question in frequently asked questions.'),
-              favorite: HomeAppHelpFavorite(code),
+              favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onFAQs,
             );
           }
@@ -159,12 +159,12 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
   }
 
   List<String> _buildDisplayCodes() {
-    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeAppHelpFavorite.favoriteKeyName);
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
     if (favorites == null) {
       // Build a default set of favorites
       List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.app_help'));
       if (fullContent != null) {
-        Auth2().prefs?.setFavorites(HomeAppHelpFavorite.favoriteKeyName, favorites = LinkedHashSet<String>.from(fullContent.reversed));
+        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites = LinkedHashSet<String>.from(fullContent.reversed));
       }
     }
     
@@ -229,17 +229,3 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
 
 }
 
-// HomeAppHelpFavorite
-
-class HomeAppHelpFavorite implements Favorite {
-  final String? id;
-  HomeAppHelpFavorite(this.id);
-
-  bool operator == (o) => o is HomeAppHelpFavorite && o.id == id;
-
-  int get hashCode => (id?.hashCode ?? 0);
-
-  static const String favoriteKeyName = "homeAppHelpWidgetIds";
-  @override String get favoriteKey => favoriteKeyName;
-  @override String? get favoriteId => id;
-}

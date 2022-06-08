@@ -112,7 +112,7 @@ class _HomeCampusLinksWidgetState extends State<HomeCampusLinksWidget> implement
             contentEntry = HomeCommandButton(
               title: Localization().getStringEx('widgets.home.campus_links.date_cat.button.title', 'Due Date Catalog'),
               description: Localization().getStringEx('widgets.home.campus_links.date_cat.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
-              favorite: HomeCampusLinksFavorite(code),
+              favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onDueDateCatalog,
             );
           }
@@ -142,12 +142,12 @@ class _HomeCampusLinksWidgetState extends State<HomeCampusLinksWidget> implement
   }
 
   List<String> _buildDisplayCodes() {
-    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeCampusLinksFavorite.favoriteKeyName);
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
     if (favorites == null) {
       // Build a default set of favorites
       List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.campus_links'));
       if (fullContent != null) {
-        Auth2().prefs?.setFavorites(HomeCampusLinksFavorite.favoriteKeyName, favorites = LinkedHashSet<String>.from(fullContent.reversed));
+        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites = LinkedHashSet<String>.from(fullContent.reversed));
       }
     }
     
@@ -175,21 +175,4 @@ class _HomeCampusLinksWidgetState extends State<HomeCampusLinksWidget> implement
       url_launcher.launch(Config().dateCatalogUrl!);
     }
   }
-
-
-}
-
-// HomeCampusLinksFavorite
-
-class HomeCampusLinksFavorite implements Favorite {
-  final String? id;
-  HomeCampusLinksFavorite(this.id);
-
-  bool operator == (o) => o is HomeCampusLinksFavorite && o.id == id;
-
-  int get hashCode => (id?.hashCode ?? 0);
-
-  static const String favoriteKeyName = "homeCampusLinksWidgetIds";
-  @override String get favoriteKey => favoriteKeyName;
-  @override String? get favoriteId => id;
 }

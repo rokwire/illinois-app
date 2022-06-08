@@ -269,7 +269,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   List<Widget> _buildEditingContentList() {
     List<Widget> widgets = [];
 
-    LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName);
+    LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
 
     if (homeFavorites != null) {
 
@@ -347,12 +347,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   List<String> _buildDisplayCodes() {
-    LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName);
+    LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
     if (homeFavorites == null) {
       // Build a default set of favorites
       List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home'));
       if (fullContent != null) {
-        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName, homeFavorites = LinkedHashSet<String>.from(fullContent.reversed));
+        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), homeFavorites = LinkedHashSet<String>.from(fullContent.reversed));
       }
     }
     return (homeFavorites != null) ? List.from(homeFavorites) : <String>[];
@@ -370,11 +370,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   Future<void> _onPullToRefresh() async {
     if (_isEditing) {
       //TMP:
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName, null);
-      Auth2().prefs?.setFavorites(HomeSaferFavorite.favoriteKeyName, null);
-      Auth2().prefs?.setFavorites(HomeAppHelpFavorite.favoriteKeyName, null);
-      Auth2().prefs?.setFavorites(HomeStateFarmCenterFavorite.favoriteKeyName, null);
-      Auth2().prefs?.setFavorites(HomeCampusLinksFavorite.favoriteKeyName, null);
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), null);
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'safer'), null);
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'app_help'), null);
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'state_farm_center'), null);
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'campus_links'), null);
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'campus_resources'), null);
     }
     else {
       _updateController.add(HomePanel.notifyRefresh);
@@ -463,7 +464,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     isDragging = false;
 
     if (dragFavoriteId != null) {
-      List<String> favoritesList = List.from(Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName) ?? <String>{});
+      List<String> favoritesList = List.from(Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName()) ?? <String>{});
       int dragIndex = favoritesList.indexOf(dragFavoriteId);
       int dropIndex = (dropFavoriteId != null) ? favoritesList.indexOf(dropFavoriteId) : -1;
       
@@ -478,7 +479,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
             dropIndex++;
           }
           favoritesList.insert(dropIndex, dragFavoriteId);
-          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName, LinkedHashSet<String>.from(favoritesList));
+          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
         }
       }
       else if ((0 <= dropIndex)) {
@@ -489,7 +490,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
               dropIndex++;
             }
             favoritesList.insert(dropIndex, dragFavoriteId);
-            Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName, LinkedHashSet<String>.from(favoritesList));
+            Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
           }
         });
 
@@ -602,13 +603,14 @@ class _HomeHeaderBar extends RootHeaderBar {
 
 class HomeFavorite implements Favorite {
   final String? id;
-  HomeFavorite(this.id);
+  final String? category;
+  HomeFavorite(this.id, {this.category});
 
-  bool operator == (o) => o is HomeFavorite && o.id == id;
-  int get hashCode => (id?.hashCode ?? 0);
+  bool operator == (o) => o is HomeFavorite && o.id == id && o.category == category;
+  int get hashCode => (id?.hashCode ?? 0) ^ (category?.hashCode ?? 0);
 
-  static const String favoriteKeyName = "homeWidgetIds";
-  @override String get favoriteKey => favoriteKeyName;
+  static String favoriteKeyName({String? category}) => (category != null) ? "home.$category.widgetIds" : "home.widgetIds";
+  @override String get favoriteKey => favoriteKeyName(category: category);
   @override String? get favoriteId => id;
 }
 
