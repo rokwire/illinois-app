@@ -19,6 +19,7 @@ import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -39,7 +40,7 @@ import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
-import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -127,7 +128,7 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
           if (contentEntry != null) {
             currentRow.add(Expanded(child: contentEntry));
             if (widgetsPerRow <= currentRow.length) {
-              contentList.add(Row(children: List.from(currentRow)));
+              contentList.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: List.from(currentRow)));
               currentRow.clear();
             }
           }
@@ -137,7 +138,7 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
         while (currentRow.length < widgetsPerRow) {
           currentRow.add(Expanded(child: Container()));
         }
-        contentList.add(Row(children: List.from(currentRow)));
+        contentList.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: List.from(currentRow)));
         currentRow.clear();
       }
     }
@@ -149,90 +150,102 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
 
   Widget? _widgetFromCode(String code) {
     if (code == 'events') {
-      return TileButton(
+      return _TileButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.events.title', 'Events'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.events.hint', ''),
-        iconAsset: 'images/icon-campus-tools-events.png',
+        iconAsset: 'images/icon-browse-events.png',
+        favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapEvents,);
     }
     else if (code == 'dining') {
-      return TileButton(
+      return _TileButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.dining.title', 'Dining'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.dining.hint', ''),
-        iconAsset: 'images/icon-campus-tools-dining.png',
+        iconAsset: 'images/icon-browse-dinings.png',
+        favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapDining,);
     }
     else if (code == 'athletics') {
-      return TileButton(
+      return _TileButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.athletics.title', 'Athletics'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.athletics.hint', ''),
-        iconAsset: 'images/icon-campus-tools-athletics.png',
+        iconAsset: 'images/icon-browse-athletics.png',
+        favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapAthletics);
     }
     else if (code == 'illini_cash') {
-      return TileButton(
+      return _TileButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.illini_cash.title', 'Illini Cash'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.illini_cash.hint', ''),
-        iconAsset: 'images/icon-campus-tools-illini-cash.png',
+        iconAsset: 'images/icon-browse-illini-cash.png',
+        favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapIlliniCash);
     }
     else if (code == 'laundry') {
-      return TileButton(
+      return _TileButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.laundry.title', 'Laundry'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.laundry.hint', ''),
-        iconAsset: 'images/icon-campus-tools-laundry.png',
+        iconAsset: 'images/icon-browse-laundry.png',
+        favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapLaundry);
     }
     else if (code == 'my_illini') {
-      return TileButton(
+      return _TileButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.my_illini.title', 'My Illini'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.my_illini.hint', ''),
-        iconAsset: 'images/icon-campus-tools-my-illini.png',
+        iconAsset: 'images/icon-browse-my-illini.png',
+        favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapMyIllini);
     }
     else if (code == 'wellness') {
-      return TileButton(
+      return _TileButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.wellness.title', 'Wellness'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.wellness.hint', ''),
-        iconAsset: 'images/icon-campus-tools-wellness.png',
+        iconAsset: 'images/icon-browse-wellness.png',
+        favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapWellness);
     }
     else if ((code == 'crisis_help') && _canCrisisHelp) {
-      return TileButton(
+      return _TileButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.crisis_help.title', 'Crisis Help'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.crisis_help.hint', ''),
-        iconAsset: 'images/icon-campus-tools-crisis.png',
+        iconAsset: 'images/icon-browse-crisis-help.png',
+        favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapCrisisHelp);
     }
     else if (code == 'groups') {
-      return TileButton(
+      return _TileButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.groups.title', 'Groups'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.groups.hint', ''),
-        iconAsset: 'images/icon-campus-tools-groups.png',
+        iconAsset: 'images/icon-browse-groups.png',
+        favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapGroups,
       );
     }
     else if (code == 'quick_polls') {
-      return TileButton(
+      return _TileButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.quick_polls.title', 'Quick Polls'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.quick_polls.hint', ''),
-        iconAsset: 'images/icon-campus-tools-quick-polls.png',
+        iconAsset: 'images/icon-browse-quick-polls.png',
+        favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapQuickPolls,
       );
     }
     else if (code == 'campus_guide') {
-      return TileButton(
+      return _TileButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.campus_guide.title', 'Campus Guide'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.campus_guide.hint', ''),
-        iconAsset: 'images/icon-campus-tools-campus-guide.png',
+        iconAsset: 'images/icon-browse-campus-guide.png',
+        favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapCampusGuide,
       );
     }
     else if (code == 'inbox') {
-      return TileButton(
+      return _TileButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.inbox.title', 'Notifications'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.inbox.hint', ''),
-        iconAsset: 'images/icon-campus-tools-inbox.png',
+        iconAsset: 'images/icon-browse-inbox.png',
+        favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapInbox,
       );
     }
@@ -364,5 +377,64 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
   void _onTapInbox() {
     Analytics().logSelect(target: "Inbox");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.inbox)));
+  }
+}
+
+
+class _TileButton extends StatelessWidget {
+  final Favorite? favorite;
+  final String? title;
+  final String? hint;
+  final String? iconAsset;
+  final GestureTapCallback? onTap;
+
+  const _TileButton({ Key? key, this.favorite, this.title,  this.hint, this.iconAsset,  this.onTap,  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> contentList = <Widget>[];
+    if (title != null) {
+      contentList.add(Text(title!, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 20)));
+    } 
+    if ((title != null) && (iconAsset != null)) {
+      contentList.add(Container(height: 26));
+    } 
+    if (iconAsset != null) {
+      contentList.add(Image.asset(iconAsset!));
+    }
+
+    return InkWell(onTap: onTap, child:
+      Semantics(label: title, hint: hint, button: true, excludeSemantics: true, child:
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6), child:
+          Container(decoration: BoxDecoration(color: Styles().colors?.white ?? const Color(0x00FFFFFF), borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors?.white ?? const Color(0x00FFFFFF), width: 2), boxShadow: [const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
+            Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child: 
+              Column(children: [
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Expanded(child:
+                    Padding(padding: EdgeInsets.only(top: 16), child: 
+                      Text(title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 20)),
+                    ),
+                  ),
+                  HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button,)
+                ],),
+                Row(children: [
+                  Expanded(child:
+                    Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
+                      Align(alignment: Alignment.centerRight, child:
+                        SizedBox(width: 44, height: 44, child:
+                          Align(alignment: Alignment.bottomRight, child:
+                            Image.asset(iconAsset!)
+                          ),
+                        )
+                      )
+                    ),
+                  ),
+                ],),
+              ],),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

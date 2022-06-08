@@ -261,12 +261,13 @@ class HomeFavoriteStar extends StatelessWidget {
 
   final bool? selected;
   final HomeFavoriteStyle style;
+  final EdgeInsetsGeometry padding;
 
-  HomeFavoriteStar({Key? key, this.selected, required this.style }) : super(key: key);
+  HomeFavoriteStar({Key? key, this.selected, required this.style, this.padding = const EdgeInsets.all(16) }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+    return Container(padding: padding, child:
       _starImage,
     );
   }
@@ -298,8 +299,9 @@ class HomeFavoriteButton extends StatelessWidget {
 
   final Favorite? favorite;
   final HomeFavoriteStyle style;
+  final EdgeInsetsGeometry padding;
 
-  HomeFavoriteButton({this.favorite, required this.style});
+  HomeFavoriteButton({this.favorite, required this.style, this.padding = const EdgeInsets.all(16)});
 
   @override
   Widget build(BuildContext context) {

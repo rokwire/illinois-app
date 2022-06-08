@@ -264,7 +264,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
         hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
-        icon: 'images/icon-browse-gropus.png',
+        icon: 'images/icon-browse-groups.png',
         textColor: Styles().colors!.fillColorPrimary,
         onTap: _onTapGroups,
       );
