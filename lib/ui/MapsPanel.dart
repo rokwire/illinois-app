@@ -20,15 +20,15 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class NavigatePanel extends StatefulWidget {
+class MapsPanel extends StatefulWidget {
 
-  NavigatePanel();
+  MapsPanel();
 
   @override
-  _NavigatePanelState createState() => _NavigatePanelState();
+  _MapsPanelState createState() => _MapsPanelState();
 }
 
-class _NavigatePanelState extends State<NavigatePanel> with AutomaticKeepAliveClientMixin<NavigatePanel> implements NotificationsListener {
+class _MapsPanelState extends State<MapsPanel> with AutomaticKeepAliveClientMixin<MapsPanel> implements NotificationsListener {
   
   @override
   void initState() {
@@ -60,7 +60,7 @@ class _NavigatePanelState extends State<NavigatePanel> with AutomaticKeepAliveCl
     super.build(context);
     
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx('panel.navigate.header.title', 'Navigate')),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.maps.header.title', 'Maps')),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(children: <Widget>[
           Expanded(child:

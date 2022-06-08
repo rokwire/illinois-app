@@ -22,7 +22,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/ui/AcademicsPanel.dart';
-import 'package:illinois/ui/NavigatePanel.dart';
+import 'package:illinois/ui/MapsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -61,7 +61,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/service/Canvas.dart';
 
-enum RootTab { Home, Favorites, Athletics, Explore, Browse, Navigate, Academics, Wellness }
+enum RootTab { Home, Favorites, Athletics, Explore, Browse, Maps, Academics, Wellness }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -589,8 +589,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (rootTab == RootTab.Browse) {
       return BrowsePanel();
     }
-    else if (rootTab == RootTab.Navigate) {
-      return NavigatePanel();
+    else if (rootTab == RootTab.Maps) {
+      return MapsPanel();
     }
     else if (rootTab == RootTab.Academics) {
       return AcademicsPanel();
@@ -655,8 +655,8 @@ RootTab? rootTabFromString(String? value) {
     else if (value == 'browse') {
       return RootTab.Browse;
     }
-    else if (value == 'navigate') {
-      return RootTab.Navigate;
+    else if (value == 'maps') {
+      return RootTab.Maps;
     }
     else if (value == 'academics') {
       return RootTab.Academics;
