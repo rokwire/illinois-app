@@ -55,10 +55,10 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
     return Column(key: _contentKey, children: <Widget>[
       Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors?.fillColorSecondary : ((widget.position == 0) ? Styles().colors!.surfaceAccent : Colors.transparent),),
 
-      Draggable<HomeFavorite>(
+      LongPressDraggable<HomeFavorite>(
         data: HomeFavorite(widget.favoriteId),
         axis: Axis.vertical,
-        affinity: Axis.vertical,
+        //affinity: Axis.vertical,
         maxSimultaneousDrags: 1,
         onDragStarted: () { widget.dragAndDropHost?.isDragging = true; },
         onDragEnd: (details) { widget.dragAndDropHost?.isDragging = false; },
