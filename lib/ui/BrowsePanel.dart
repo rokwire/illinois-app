@@ -73,7 +73,6 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       FlexUI.notifyChanged,
       Config.notifyConfigChanged,
       Styles.notifyChanged,
-      Storage.notifySettingChanged,
     ]);
     
     super.initState();
