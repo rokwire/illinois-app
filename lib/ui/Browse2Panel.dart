@@ -158,7 +158,7 @@ class _BrowseSectionState extends State<_BrowseSection> {
             Row(children: [
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 16), child:
-                  Text('${widget.sectionId.toUpperCase()}', style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
+                  Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
                 )
               ),
               _HomeSectionFavoriteButton(sectionId: widget.sectionId,)
@@ -166,7 +166,7 @@ class _BrowseSectionState extends State<_BrowseSection> {
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Expanded(child:
                 Padding(padding: EdgeInsets.only(bottom: 16), child:
-                  Text('From academics and sporting events to arts and culture and more.', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface))
+                  Text(_description, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface))
                 )
               ),
               Semantics(label: _expanded ? 'Colapse' : 'Expand' /* TBD: Localization */, button: true, child:
@@ -186,6 +186,9 @@ class _BrowseSectionState extends State<_BrowseSection> {
       ),
     );
   }
+
+  String get _title => StringUtils.capitalize(widget.sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
+  String get _description => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.';
 
   void _onExpand() {
     setState(() {
