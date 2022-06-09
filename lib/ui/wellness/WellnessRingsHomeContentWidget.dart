@@ -51,7 +51,7 @@ class WellnessRing extends StatefulWidget{
   State<WellnessRing> createState() => _WellnessRingState();
 }
 
-class _WellnessRingState extends State<WellnessRing>{
+class _WellnessRingState extends State<WellnessRing> implements NotificationsListener{
   static const int OUTER_SIZE = 250;
   static const int STROKE_SIZE = 35;
   static const int PADDING_SIZE = 2;
@@ -64,6 +64,9 @@ class _WellnessRingState extends State<WellnessRing>{
   @override
   void initState() { //TBD add to services, for now this is not called
     super.initState();
+    NotificationService().subscribe(this, [
+        WellnessRingService.notifyUserRingsUpdated,
+    ]);
     _loadRingsData();
   }
 
@@ -77,6 +80,7 @@ class _WellnessRingState extends State<WellnessRing>{
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.symmetric(vertical: 10),
       child:
       Center(
         // This Tween Animation Builder is Just For Demonstration, Do not use this AS-IS in Projects
@@ -190,6 +194,16 @@ class _WellnessRingState extends State<WellnessRing>{
             )
         )
     );
+  }
+
+  @override
+  void onNotification(String name, param) {
+      if(name == WellnessRingService.notifyUserRingsUpdated){
+        WellnessRingService().getWellnessRings().then((value){
+          _data = value;
+          setState(() {});
+        });
+      }
   }
 }
 
@@ -376,7 +390,6 @@ class WellnessRingService with Service{
   }
 
   Future<List<WellnessRingData>?> getWellnessRings() async {
-    return MOC_RINGS;
     if(_wellnessRings == null){ //TBD REMOVE workaround while we are not added to the Services
       _loadFromStorage();
     }
@@ -384,7 +397,6 @@ class WellnessRingService with Service{
   }
 
   List<WellnessRingData>? get wellnessRings{
-    return MOC_RINGS;
     return _wellnessRings;
   }
 }

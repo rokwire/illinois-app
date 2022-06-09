@@ -17,6 +17,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
+import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -480,4 +481,16 @@ class Storage extends rokwire.Storage {
   String get homeToutImageTimeKey => 'edu.illinois.rokwire.home.tout.image.time';
   int? get homeToutImageTime => getIntWithName(homeToutImageTimeKey);
   set homeToutImageTime(int? value) => setIntWithName(homeToutImageTimeKey, value);
+
+  //Wellness Rings
+  static const String _userWellnessRings = 'group_members_selection';
+
+  set userWellnessRings(List<WellnessRingData>? wellnessRings){
+    setStringWithName(_userWellnessRings, JsonUtils.encode(wellnessRings));
+  }
+
+  List<WellnessRingData>? get userWellnessRings{
+    List<dynamic>? ringsData = JsonUtils.decodeList(getStringWithName(_userWellnessRings));
+    return WellnessRingData.listFromJson(ringsData);
+  }
 }
