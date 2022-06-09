@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -21,6 +22,9 @@ class Browse2Panel extends StatefulWidget {
 
 class _Browse2PanelState extends State<Browse2Panel> with AutomaticKeepAliveClientMixin<Browse2Panel> implements NotificationsListener {
 
+  List<String>? _contentCodes;
+  Set<String> _expandedCodes = <String>{};
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -31,6 +35,7 @@ class _Browse2PanelState extends State<Browse2Panel> with AutomaticKeepAliveClie
       Styles.notifyChanged,
     ]);
     
+    _contentCodes = JsonUtils.listStringsValue(FlexUI()['browse2']);
     super.initState();
   }
 
@@ -48,11 +53,13 @@ class _Browse2PanelState extends State<Browse2Panel> with AutomaticKeepAliveClie
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == FlexUI.notifyChanged) ||
-        (name == Auth2UserPrefs.notifyFavoritesChanged) ||
-        (name == HomeToutWidget.notifyImageUpdate) ||
-        (name == Localization.notifyStringsUpdated) ||
-        (name == Styles.notifyChanged))
+    if (name == FlexUI.notifyChanged) {
+      _updateContentCodes();
+    } 
+    else if((name == Auth2UserPrefs.notifyFavoritesChanged) ||
+      (name == HomeToutWidget.notifyImageUpdate) ||
+      (name == Localization.notifyStringsUpdated) ||
+      (name == Styles.notifyChanged))
     {
       setState(() { });
     }
@@ -95,10 +102,11 @@ class _Browse2PanelState extends State<Browse2Panel> with AutomaticKeepAliveClie
     }
 
     List<Widget> sectionsList = <Widget>[];
-    List<String>? sectionsCodes = JsonUtils.listStringsValue(FlexUI()['browse2']);
-    if (sectionsCodes != null) {
-      for (String code in sectionsCodes) {
-        sectionsList.add(_BrowseSection(sectionId: code));
+    if (_contentCodes != null) {
+      for (String code in _contentCodes!) {
+        sectionsList.add(_BrowseSection(sectionId: code,
+          expanded: _isExpanded(code),
+          onExpand: () => _toggleExpanded(code),));
       }
     }
 
@@ -114,43 +122,53 @@ class _Browse2PanelState extends State<Browse2Panel> with AutomaticKeepAliveClie
     
     return contentList;
   }
+
+  void _updateContentCodes() {
+    List<String>?  contentCodes = JsonUtils.listStringsValue(FlexUI()['browse2']);
+    if ((contentCodes != null) && !DeepCollectionEquality().equals(_contentCodes, contentCodes)) {
+      if (mounted) {
+        setState(() {
+          _contentCodes = contentCodes;
+        });
+      }
+    }
+  }
+
+  bool _isExpanded(String sectionId) => _expandedCodes.contains(sectionId);
+
+  void _toggleExpanded(String sectionId) {
+    if (mounted) {
+      setState(() {
+        if (_expandedCodes.contains(sectionId)) {
+          _expandedCodes.remove(sectionId);
+        }
+        else {
+          _expandedCodes.add(sectionId);
+        }
+      });
+    }
+  }
 }
 
-class _BrowseSection extends StatefulWidget {
+class _BrowseSection extends StatelessWidget {
 
   final String sectionId;
+  final bool expanded;
+  final void Function()? onExpand;
 
-  _BrowseSection({required this.sectionId});
-
-  @override
-  _BrowseSectionState createState() => _BrowseSectionState();
-}
-
-class _BrowseSectionState extends State<_BrowseSection> {
-
-  bool _expanded = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  _BrowseSection({required this.sectionId, this.expanded = false, this.onExpand});
 
   @override
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
     contentList.add(_buildHeading());
-
+    contentList.add(_buildEntries());
     return Column(children: contentList,);
   }
 
   Widget _buildHeading() {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
-      InkWell(onTap: _onExpand, child:
+      InkWell(onTap: onExpand, child:
         Container(
           decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),),
           padding: EdgeInsets.only(left: 16),
@@ -161,7 +179,7 @@ class _BrowseSectionState extends State<_BrowseSection> {
                   Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
                 )
               ),
-              _HomeSectionFavoriteButton(sectionId: widget.sectionId,)
+              _BrowseFavoriteButton(sectionId: sectionId,)
             ],),
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Expanded(child:
@@ -169,11 +187,11 @@ class _BrowseSectionState extends State<_BrowseSection> {
                   Text(_description, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface))
                 )
               ),
-              Semantics(label: _expanded ? 'Colapse' : 'Expand' /* TBD: Localization */, button: true, child:
+              Semantics(label: expanded ? 'Colapse' : 'Expand' /* TBD: Localization */, button: true, child:
                   Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
                     SizedBox(width: 18, height: 18, child:
                       Center(child:
-                        _expanded ?
+                        expanded ?
                           Image.asset('images/arrow-up-orange.png', excludeFromSemantics: true) :
                           Image.asset('images/arrow-down-orange.png', excludeFromSemantics: true),
                       ),
@@ -187,22 +205,68 @@ class _BrowseSectionState extends State<_BrowseSection> {
     );
   }
 
-  String get _title => StringUtils.capitalize(widget.sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
-  String get _description => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.';
-
-  void _onExpand() {
-    setState(() {
-      _expanded = !_expanded;
-    });
+  Widget _buildEntries() {
+      List<Widget> entriesList = <Widget>[];
+      if (expanded) {
+        List<String>? entriesCodes = JsonUtils.listStringsValue(FlexUI()['browse2.$sectionId']);
+        if (entriesCodes != null) {
+          for (String code in entriesCodes) {
+            entriesList.add(_BrowseEntry(sectionId: sectionId, entryId: code,));
+          }
+        }
+      }
+      return entriesList.isNotEmpty ? Padding(padding: EdgeInsets.only(left: 24), child:
+        Column(children: entriesList,)
+      ) : Container();
   }
+
+  String get _title => StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
+  String get _description => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.';
 
 }
 
-class _HomeSectionFavoriteButton extends StatelessWidget {
+class _BrowseEntry extends StatelessWidget {
+
+  final String sectionId;
+  final String entryId;
+
+  _BrowseEntry({required this.sectionId, required this.entryId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(padding: EdgeInsets.only(bottom: 4), child:
+      InkWell(onTap: _onTap, child:
+        Container(
+          decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),),
+          padding: EdgeInsets.zero,
+          child: 
+            Row(children: [
+              _BrowseFavoriteButton(sectionId: sectionId, entryId: entryId,),
+              Expanded(child:
+                Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary)),
+              ),
+              Padding(padding: EdgeInsets.only(right: 16), child:
+                Image.asset('images/chevron-right.png'),
+              ),
+            ],),
+        ),
+      ),
+    );
+  }
+
+  String get _title => StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
+
+  void _onTap() {
+    
+  }
+}
+
+class _BrowseFavoriteButton extends StatelessWidget {
 
   final String? sectionId;
+  final String? entryId;
 
-  _HomeSectionFavoriteButton({this.sectionId});
+  _BrowseFavoriteButton({this.sectionId, this.entryId});
 
   @override
   Widget build(BuildContext context) {
@@ -216,6 +280,7 @@ class _HomeSectionFavoriteButton extends StatelessWidget {
   bool? get _isFavorite => true;
 
   void _onFavorite(BuildContext context) {
-    Analytics().logSelect(target: "Favorite: $sectionId");
+    Analytics().logSelect(target: "Favorite: $sectionId: $entryId");
   }
 }
+
