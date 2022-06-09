@@ -49,7 +49,7 @@ import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/Browse2Panel.dart';
+import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
@@ -587,7 +587,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       return ExplorePanel(rootTabDisplay: true);
     }
     else if (rootTab == RootTab.Browse) {
-      return Browse2Panel();
+      return BrowsePanel();
     }
     else if (rootTab == RootTab.Maps) {
       return ExplorePanel(rootTabDisplay: true, mapDisplayType: ListMapDisplayType.Map);

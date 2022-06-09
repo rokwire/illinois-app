@@ -18,15 +18,15 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Browse2Panel extends StatefulWidget {
+class BrowsePanel extends StatefulWidget {
 
-  Browse2Panel();
+  BrowsePanel();
 
   @override
-  _Browse2PanelState createState() => _Browse2PanelState();
+  _BrowsePanelState createState() => _BrowsePanelState();
 }
 
-class _Browse2PanelState extends State<Browse2Panel> with AutomaticKeepAliveClientMixin<Browse2Panel> implements NotificationsListener {
+class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClientMixin<BrowsePanel> implements NotificationsListener {
 
   List<String>? _contentCodes;
   Set<String> _expandedCodes = <String>{};
@@ -41,7 +41,7 @@ class _Browse2PanelState extends State<Browse2Panel> with AutomaticKeepAliveClie
       Styles.notifyChanged,
     ]);
     
-    _contentCodes = JsonUtils.listStringsValue(FlexUI()['browse2']);
+    _contentCodes = JsonUtils.listStringsValue(FlexUI()['browse']);
     super.initState();
   }
 
@@ -136,7 +136,7 @@ class _Browse2PanelState extends State<Browse2Panel> with AutomaticKeepAliveClie
   }
 
   void _updateContentCodes() {
-    List<String>?  contentCodes = JsonUtils.listStringsValue(FlexUI()['browse2']);
+    List<String>?  contentCodes = JsonUtils.listStringsValue(FlexUI()['browse']);
     if ((contentCodes != null) && !DeepCollectionEquality().equals(_contentCodes, contentCodes)) {
       if (mounted) {
         setState(() {
@@ -171,7 +171,7 @@ class _BrowseSection extends StatelessWidget {
   final String? _favoriteCategory;
 
   _BrowseSection({Key? key, required this.sectionId, this.expanded = false, this.onExpand}) :
-    _entriesCodes = JsonUtils.listStringsValue(FlexUI()['browse2.$sectionId']),
+    _entriesCodes = JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']),
     _favoriteCategory = (FlexUI().contentSourceEntry('home.$sectionId') != null) ? sectionId : null,
     super(key: key);
 
