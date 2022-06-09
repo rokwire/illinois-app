@@ -15,7 +15,7 @@
 
 		"browse": ["primary", "secondary"],
 		"browse.primary": ["athletics",  "building_access", "campus_guide", "crisis_help", "dining", "events", "groups", "inbox", "privacy_center", "quick_polls", "saved", "wellness"],
-		"browse.secondary": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "video_tutorial", "date_cat", "parking", "feedback", "create_event", "create_stadium_poll", "faqs"],
+		"browse.secondary": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "video_tutorial", "date_cat", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding", "faqs"],
 
 		"settings": ["connect", "connected", "link", "linked", "feedback"],
 		"settings.connect": ["netid", "phone_or_email"],

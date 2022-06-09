@@ -28,6 +28,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -405,6 +406,15 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         onTap:  () => _navigateCreateStadiumPoll(),
       );
     }
+    else if (code == 'state_farm_wayfinding') {
+      return _RibbonButton(
+        icon: Image.asset('images/icon-settings.png'),
+        title: Localization().getStringEx('panel.browse.button.state_farm_wayfinding.title', 'State Farm Wayfinding'),
+        hint: Localization().getStringEx('panel.browse.button.state_farm_wayfinding.hint',''),
+        padding: _ribbonButtonPadding,
+        onTap:  () => _navigateStateFarmWayfinding(),
+      );
+    }
     else if (code == 'feedback') {
       return _RibbonButton(
         icon: Image.asset('images/icon-feedback.png'),
@@ -689,6 +699,15 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
   void _navigateCreateStadiumPoll() {
     Analytics().logSelect(target: "Create Stadium Poll");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateStadiumPollPanel()));
+  }
+
+  void _navigateStateFarmWayfinding() {
+    Analytics().logSelect(target: "State Farm Wayfinding");
+    NativeCommunicator().launchMap(target: {
+      'latitude': Config().stateFarmWayfinding['latitude'],
+      'longitude': Config().stateFarmWayfinding['longitude'],
+      'zoom': Config().stateFarmWayfinding['zoom'],
+    });
   }
 
   void _onFeedbackTap() {
