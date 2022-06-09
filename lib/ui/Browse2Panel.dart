@@ -225,8 +225,7 @@ class _BrowseSection extends StatelessWidget {
           entriesList.add(_BrowseEntry(
             sectionId: sectionId,
             entryId: code,
-            favorite: _isEntryFavorite(code),
-            onToggleFavorite: () => _toggleEntryFavorite(code),
+            favoriteCategory: _favoriteCategory,
           ));
         }
       }
@@ -250,7 +249,7 @@ class _BrowseSection extends StatelessWidget {
     int favCount = 0, unfavCount = 0;
     if (_entriesCodes?.isNotEmpty ?? false) {
       for (String code in _entriesCodes!) {
-        if (_isEntryFavorite(code)) {
+        if (Auth2().prefs?.isFavorite(HomeFavorite(code, category: _favoriteCategory)) ?? false) {
           favCount++;
         }
         else {
@@ -277,20 +276,15 @@ class _BrowseSection extends StatelessWidget {
     }
   }
 
-  bool _isEntryFavorite(String entryId) => Auth2().prefs?.isFavorite(HomeFavorite(entryId, category: _favoriteCategory)) ?? false;
-
-  void _toggleEntryFavorite(String entryId) => Auth2().prefs?.toggleFavorite(HomeFavorite(entryId, category: _favoriteCategory));
-
 }
 
 class _BrowseEntry extends StatelessWidget {
 
   final String sectionId;
   final String entryId;
-  final bool? favorite;
-  final void Function()? onToggleFavorite;
+  final String? favoriteCategory;
 
-  _BrowseEntry({required this.sectionId, required this.entryId, this.favorite, this.onToggleFavorite});
+  _BrowseEntry({required this.sectionId, required this.entryId, this.favoriteCategory});
 
   @override
   Widget build(BuildContext context) {
@@ -301,7 +295,12 @@ class _BrowseEntry extends StatelessWidget {
           padding: EdgeInsets.zero,
           child: 
             Row(children: [
-              _BrowseFavoriteButton(sectionId: sectionId, entryId: entryId, selected: favorite, onToggle: onToggleFavorite,),
+              _BrowseFavoriteButton(
+                sectionId: sectionId,
+                entryId: entryId,
+                selected: Auth2().prefs?.isFavorite(HomeFavorite(entryId, category: favoriteCategory)) ?? false,
+                onToggle: () => Auth2().prefs?.toggleFavorite(HomeFavorite(entryId, category: favoriteCategory))
+              ),
               Expanded(child:
                 Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary)),
               ),
