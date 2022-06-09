@@ -599,6 +599,13 @@ class _HomeHeaderBar extends RootHeaderBar {
   }
 }
 
+// HomeDragAndDropHost
+
+abstract class HomeDragAndDropHost  {
+  set isDragging(bool value);
+  void onDragAndDrop({String? dragFavoriteId, String? dropFavoriteId, CrossAxisAlignment? dropAnchor});
+}
+
 // HomeFavorite
 
 class HomeFavorite implements Favorite {
@@ -612,12 +619,5 @@ class HomeFavorite implements Favorite {
   static String favoriteKeyName({String? category}) => (category != null) ? "home.$category.widgetIds" : "home.widgetIds";
   @override String get favoriteKey => favoriteKeyName(category: category);
   @override String? get favoriteId => id;
-}
-
-// HomeDragAndDropHost
-
-abstract class HomeDragAndDropHost  {
-  set isDragging(bool value);
-  void onDragAndDrop({String? dragFavoriteId, String? dropFavoriteId, CrossAxisAlignment? dropAnchor});
 }
 
