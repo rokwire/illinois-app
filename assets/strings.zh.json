@@ -689,8 +689,6 @@
 	"panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
 	"panel.explore.label.title":"探索",
-	"panel.explore.button.all.title":"所有",
-	"panel.explore.button.all.hint":"查看全部",
 	"panel.explore.button.events.title":"活动",
 	"panel.explore.button.events.hint":"",
 	"panel.explore.button.dining.title":"用餐",
@@ -726,8 +724,6 @@
 	"panel.explore.state.loading.title":"正在载入",
 	"panel.explore.state.loading.hint":"请稍候",
 
-	"panel.explore.state.online.empty.all":"没有条目。",
-	"panel.explore.state.offline.empty.all":"离线时无可用条目。",
 	"panel.explore.state.online.empty.events":"没有即将发生的活动。",
 	"panel.explore.state.offline.empty.events":"离线时无即将发生的活动。",
 	"panel.explore.state.online.empty.dining":"目前尚无用餐场所",

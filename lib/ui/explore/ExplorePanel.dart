@@ -54,7 +54,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
-enum ExploreItem { All, Events, Dining }
+enum ExploreItem { Events, Dining }
 
 enum ExploreFilterType { categories, event_time, event_tags, payment_type, work_time }
 
@@ -282,15 +282,6 @@ class ExplorePanelState extends State<ExplorePanel>
   void _updateExploreItems() {
 
     List<ExploreItem> exploreItems = [];
-
-    // Remove "Near Me" from dorp down #1699
-    // if (_userLocationEnabled()) {
-    //   exploreItems.add(ExploreItem.NearMe);
-    // }
-    // else {
-      // We would like you to "omit it" (point 3.3.2).
-      // exploreItems.add(ExploreItem.All);
-    // }
     exploreItems.add(ExploreItem.Events);
     exploreItems.add(ExploreItem.Dining);
 
@@ -314,10 +305,6 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _initFilters() {
     _itemToFilterMap = {
-      ExploreItem.All: <ExploreFilter>[
-        ExploreFilter(type: ExploreFilterType.categories),
-        ExploreFilter(type: ExploreFilterType.event_tags)
-      ],
       ExploreItem.Events: <ExploreFilter>[
         ExploreFilter(type: ExploreFilterType.categories),
         ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {2}),
@@ -434,10 +421,6 @@ class ExplorePanelState extends State<ExplorePanel>
       List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedItem] : null;
       switch (_selectedItem) {
         
-        case ExploreItem.All:
-          task = _loadAll(selectedFilterList);
-          break;
-        
         case ExploreItem.Events: 
           {
             if (_initialSelectedFilter != null) {
@@ -487,24 +470,6 @@ class ExplorePanelState extends State<ExplorePanel>
         _displayExplores = explores;
         _placeExploresOnMap();
       });
-  }
-
-  Future<List<Explore>> _loadAll(List<ExploreFilter>? selectedFilterList) async {
-    Set<String?>? categories = _getSelectedCategories(selectedFilterList);
-    List<Explore> explores = [];
-    List<Explore>? events = await Events().loadEvents(categories: categories, eventFilter: EventTimeFilter.upcoming);
-    if (CollectionUtils.isNotEmpty(events)) {
-      explores.addAll(events!);
-    }
-    if (_shouldLoadGames(categories)) {
-      List<DateTime?> gamesTimeFrame = _getGamesTimeFrame(EventTimeFilter.upcoming);
-      List<Explore>? games = await Sports().loadGames(startDate: gamesTimeFrame.first, endDate: gamesTimeFrame.last);
-      if (CollectionUtils.isNotEmpty(games)) {
-        explores.addAll(games!);
-      }
-    }
-    _sortExplores(explores);
-    return explores;
   }
 
   Future<List<Explore>> _loadEvents(List<ExploreFilter>? selectedFilterList) async {
@@ -1019,7 +984,6 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget _buildEmpty() {
     String message;
     switch (_selectedItem) {
-      case ExploreItem.All:    message = Localization().getStringEx('panel.explore.state.online.empty.all', 'No events.'); break;
       case ExploreItem.Events: message = Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.'); break;
       case ExploreItem.Dining: message = Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.'); break;
       default:                message =  ''; break;
@@ -1038,7 +1002,6 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget _buildOffline() {
     String message;
     switch (_selectedItem) {
-      case ExploreItem.All:    message = Localization().getStringEx('panel.explore.state.offline.empty.all', 'No events available while offline.'); break;
       case ExploreItem.Events: message = Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..'); break;
       case ExploreItem.Dining: message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
       default:                message =  ''; break;
@@ -1264,7 +1227,6 @@ class ExplorePanelState extends State<ExplorePanel>
 
   static String? exploreItemName(ExploreItem exploreItem) {
     switch (exploreItem) {
-      case ExploreItem.All:    return Localization().getStringEx('panel.explore.button.all.title', 'All');
       case ExploreItem.Events: return Localization().getStringEx('panel.explore.button.events.title', 'Events');
       case ExploreItem.Dining: return Localization().getStringEx('panel.explore.button.dining.title', 'Dining');
       default:                return null;
@@ -1273,7 +1235,6 @@ class ExplorePanelState extends State<ExplorePanel>
 
   static String? exploreItemHint(ExploreItem exploreItem) {
     switch (exploreItem) {
-      case ExploreItem.All:    return Localization().getStringEx('panel.explore.button.all.hint', '');
       case ExploreItem.Events: return Localization().getStringEx('panel.explore.button.events.hint', '');
       case ExploreItem.Dining: return Localization().getStringEx('panel.explore.button.dining.hint', '');
       default:                return null;

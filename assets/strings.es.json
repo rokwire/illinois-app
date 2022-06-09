@@ -689,8 +689,6 @@
     "panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
     "panel.explore.label.title":"Explorar",
-    "panel.explore.button.all.title":"Todos",
-    "panel.explore.button.all.hint":"Ver todo",
     "panel.explore.button.events.title":"Eventos",
     "panel.explore.button.events.hint":"",
     "panel.explore.button.dining.title":"Comida",
@@ -726,8 +724,6 @@
     "panel.explore.state.loading.title":"Cargando",
     "panel.explore.state.loading.hint":"Espere",
 
-    "panel.explore.state.online.empty.all":"Sin entradas",
-    "panel.explore.state.offline.empty.all":"No hay entradas disponibles sin conexión",
     "panel.explore.state.online.empty.events":"No hay eventos próximos",
     "panel.explore.state.offline.empty.events":"No hay próximos eventos disponibles sin conexión",
     "panel.explore.state.online.empty.dining":"Actualmente no hay restaurantes abiertos",
