@@ -69,11 +69,11 @@ class ExplorePanel extends StatefulWidget {
 
   final ExploreItem initialItem;
   final ExploreFilter? initialFilter;
-  final bool mapOnly;
+  final ListMapDisplayType mapDisplayType;
   final bool rootTabDisplay;
   final String? browseGroupId;
 
-  ExplorePanel({this.initialItem = ExploreItem.Events, this.initialFilter, this.mapOnly = false, this.rootTabDisplay = false, this.browseGroupId });
+  ExplorePanel({this.initialItem = ExploreItem.Events, this.initialFilter, this.mapDisplayType = ListMapDisplayType.List, this.rootTabDisplay = false, this.browseGroupId });
 
   static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
     List<Event>? events = (eventId != null) ? await Events().loadEventsByIds([eventId]) : null;
@@ -161,7 +161,7 @@ class ExplorePanelState extends State<ExplorePanel>
     _selectedItem = widget.initialItem;
     _initialSelectedFilter = widget.initialFilter;
 
-    _initListDisplayType();
+    _selectDisplayType(widget.mapDisplayType);
     _initExploreItems();
     _initFilters();
     _loadEventCategories();
@@ -210,14 +210,6 @@ class ExplorePanelState extends State<ExplorePanel>
         body: RefreshIndicator(
             onRefresh: () => _loadExplores(progress: false),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Visibility(
-                  visible: (widget.mapOnly != true),
-                  child: ExploreDisplayTypeHeader(
-                      displayType: _displayType,
-                      searchVisible: (_selectedItem != ExploreItem.Dining),
-                      additionalData: {"group_id": widget.browseGroupId},
-                      onTapList: () => _selectDisplayType(ListMapDisplayType.List),
-                      onTapMap: () => _selectDisplayType(ListMapDisplayType.Map))),
               Padding(
                   padding: EdgeInsets.only(left: 16, top: 16, right: 16),
                   child: RibbonButton(
@@ -265,11 +257,6 @@ class ExplorePanelState extends State<ExplorePanel>
     else {
         _updateExploreItems();
     }
-  }
-
-  void _initListDisplayType() {
-    ListMapDisplayType displayType = widget.mapOnly ? ListMapDisplayType.Map : ListMapDisplayType.List;
-    _selectDisplayType(displayType);
   }
 
   void _changeDropDownValuesVisibility() {
@@ -724,9 +711,17 @@ class ExplorePanelState extends State<ExplorePanel>
   // Build UI
 
   PreferredSizeWidget get headerBarWidget {
-    String headerLabel = (widget.mapOnly)
-        ? Localization().getStringEx("panel.maps.header.title", "Maps")
-        : Localization().getStringEx("panel.explore.label.title", "Explore");
+    String? headerLabel;
+    switch (_displayType) {
+      case ListMapDisplayType.List:
+        headerLabel = Localization().getStringEx("panel.explore.label.title", "Explore");
+        break;
+      case ListMapDisplayType.Map:
+        headerLabel = Localization().getStringEx("panel.maps.header.title", "Maps");
+        break;
+      default:
+        break;
+    }
     if (widget.rootTabDisplay) {
       return RootHeaderBar(title: headerLabel);
     } else {
