@@ -223,6 +223,9 @@
     "panel.browse.alert.building_access.privacy_level.4.button.label": "Set to 4",
     "panel.browse.alert.building_access.privacy_level.5.button.label": "Set to 5",
 
+    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to favorites?",
+    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from favorites?",
+
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Searching only Events Titles",
     "panel.search.label.results_for":"Results for ",

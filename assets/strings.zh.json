@@ -211,7 +211,7 @@
 	"panel.browse.label.offline.faqs": "離線時無法使用常見問題解答。",
 	"panel.browse.label.offline.crisis_help": "離線時無法使用危機幫助。",
 	"panel.browse.label.offline.date_cat": "截止日期目錄在離線時不可用。",
-    "panel.browse.label.offline.video_tutorial": "離線時無法使用視頻教程.",
+  "panel.browse.label.offline.video_tutorial": "離線時無法使用視頻教程.",
 
 	"panel.browse.button.sign_in.title":"登录",
 	"panel.browse.button.sign_in.hint":"",
@@ -220,9 +220,12 @@
 
 	"panel.browse.web_panel.header.schedule_grades_more.title":"我的Illini",
 
-    "panel.browse.alert.building_access.privacy_update.msg": "您的隱私級別為 {{privacy_level_icon}} ，您每次都必須登錄才能顯示您的建築物訪問狀態。 您想將您的隱私級別更改為 4 或 5，以便您只需登錄一次？",
-    "panel.browse.alert.building_access.privacy_level.4.button.label": "設置為 4",
-    "panel.browse.alert.building_access.privacy_level.5.button.label": "設置為 5",
+	"panel.browse.alert.building_access.privacy_update.msg": "您的隱私級別為 {{privacy_level_icon}} ，您每次都必須登錄才能顯示您的建築物訪問狀態。 您想將您的隱私級別更改為 4 或 5，以便您只需登錄一次？",
+	"panel.browse.alert.building_access.privacy_level.4.button.label": "設置為 4",
+	"panel.browse.alert.building_access.privacy_level.5.button.label": "設置為 5",
+
+	"panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to favorites?",
+	"panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from favorites?",
 
 	"panel.search.label.search_for":"搜索",
 	"panel.search.label.results_for":"结果为",

@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -177,12 +178,12 @@ class _BrowseSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
-    contentList.add(_buildHeading());
-    contentList.add(_buildEntries());
+    contentList.add(_buildHeading(context));
+    contentList.add(_buildEntries(context));
     return Column(children: contentList,);
   }
 
-  Widget _buildHeading() {
+  Widget _buildHeading(BuildContext context) {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: _onTapExpand, child:
         Container(
@@ -196,7 +197,7 @@ class _BrowseSection extends StatelessWidget {
                 )
               ),
               _hasContent ?
-                _BrowseFavoriteButton(sectionId: sectionId, selected: _isSectionFavorite, onToggle: _toggleSectionFavorite,) :
+                _BrowseFavoriteButton(sectionId: sectionId, selected: _isSectionFavorite, onToggle: () => _onTapSectionFavorite(context),) :
                 Container()
             ],),
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
@@ -225,7 +226,7 @@ class _BrowseSection extends StatelessWidget {
     );
   }
 
-  Widget _buildEntries() {
+  Widget _buildEntries(BuildContext context) {
       List<Widget> entriesList = <Widget>[];
       if (expanded && (_entriesCodes != null)) {
         for (String code in _entriesCodes!) {
@@ -273,8 +274,21 @@ class _BrowseSection extends StatelessWidget {
     return null;
   }
 
-  void _toggleSectionFavorite() {
+  void _onTapSectionFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: $sectionId");
+    if (kReleaseMode) {
+      promptSectionFavorite(context).then((bool? result) {
+        if (result == true) {
+          _toggleSectionFavorite();
+        }
+      });
+    }
+    else {
+      _toggleSectionFavorite();
+    }
+  }
+
+  void _toggleSectionFavorite() {
     if (_isSectionFavorite == true) {
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), LinkedHashSet<String>());
     }
@@ -282,6 +296,31 @@ class _BrowseSection extends StatelessWidget {
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), LinkedHashSet<String>.from(_entriesCodes?.reversed ?? <String>[]));
     }
   }
+
+  Future<bool?> promptSectionFavorite(BuildContext context) async {
+    String message = (_isSectionFavorite != true) ?
+      Localization().getStringEx('panel.browse.prompt.add.all.favorites', 'Are you sure you want to ADD ALL items to favorites?') :
+      Localization().getStringEx('panel.browse.prompt.remove.all.favorites', 'Are you sure you want to REMOVE ALL items from favorites?');
+    return await showDialog(context: context, builder: (BuildContext context) {
+      return AlertDialog(
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(child: Text(Localization().getStringEx("dialog.yes.title", "Yes")),
+            onPressed:(){
+              Analytics().logAlert(text: message, selection: "Yes");
+              Navigator.pop(context, true);
+            }),
+          TextButton(child: Text(Localization().getStringEx("dialog.no.title", "No")),
+            onPressed:(){
+              Analytics().logAlert(text: message, selection: "No");
+              Navigator.pop(context, false);
+            }),
+        ]
+      );
+    });
+  }
+
+
 }
 
 class _BrowseEntry extends StatelessWidget {
@@ -304,8 +343,8 @@ class _BrowseEntry extends StatelessWidget {
               _BrowseFavoriteButton(
                 sectionId: sectionId,
                 entryId: entryId,
-                selected: Auth2().prefs?.isFavorite(HomeFavorite(entryId, category: favoriteCategory)) ?? false,
-                onToggle: () => Auth2().prefs?.toggleFavorite(HomeFavorite(entryId, category: favoriteCategory))
+                selected: _isFavorite,
+                onToggle: () => _onTapFavorite(context)
               ),
               Expanded(child:
                 Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary)),
@@ -320,6 +359,25 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   String get _title => StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
+
+  bool get _isFavorite => Auth2().prefs?.isFavorite(HomeFavorite(entryId, category: favoriteCategory)) ?? false;
+
+  void _onTapFavorite(BuildContext context) {
+    Analytics().logSelect(target: "Favorite: $favoriteCategory:$entryId");
+    Favorite favorite = HomeFavorite(entryId, category: favoriteCategory);
+    if (kReleaseMode) {
+      HomeFavoriteButton.promptFavorite(context, favorite).then((bool? result) {
+        if (result == true) {
+          _toggleFavorite();
+        }
+      });
+    }
+    else {
+      _toggleFavorite();
+    }
+  }
+
+  void _toggleFavorite() => Auth2().prefs?.toggleFavorite(HomeFavorite(entryId, category: favoriteCategory));
 
   void _onTap() {
     
@@ -353,10 +411,10 @@ class _BrowseCampusResourcesSection extends _BrowseSection {
     super(key: key, sectionId: contentCode, expanded: expanded, onExpand: onExpand);
 
   @override
-  Widget _buildEntries() {
+  Widget _buildEntries(BuildContext context) {
     return (expanded && (_entriesCodes?.isNotEmpty ?? false)) ?
       Padding(padding: EdgeInsets.only(left: 16, bottom: 4), child:
-        HomeCampusResourcesGridWidget(favoriteCategory: contentCode, contentCodes: _entriesCodes!, promptFavorite: false,)
+        HomeCampusResourcesGridWidget(favoriteCategory: contentCode, contentCodes: _entriesCodes!, promptFavorite: true,)
       ) :
       Container();
   }
