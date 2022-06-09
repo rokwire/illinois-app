@@ -22,7 +22,7 @@
 		"browse.secondary": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "video_tutorial", "due_date_catalog", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding", "faqs"],
 
 		"browse2": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_links", "campus_resources", "events", "feeds", "my", "polls", "recent", "state_farm_center", "wallet", "wellness"],
-		"browse2.academics:": ["gies_checklist", "new_student_checklist", "canvas_courses", "my_illini", "campus_reminders"],
+		"browse2.academics": ["gies_checklist", "new_student_checklist", "canvas_courses", "my_illini", "campus_reminders"],
 		"browse2.app_help": ["video_tutorial", "feedback", "faqs"],
 		"browse2.athletics": ["game_day", "pref_sports"],
 		"browse2.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
