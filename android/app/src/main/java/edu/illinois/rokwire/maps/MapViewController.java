@@ -26,7 +26,6 @@ import java.util.HashMap;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.platform.PlatformView;
 
 public class MapViewController implements PlatformView, MethodChannel.MethodCallHandler {
@@ -56,6 +55,10 @@ public class MapViewController implements PlatformView, MethodChannel.MethodCall
                 result.success(true);
             } else if ("enableMyLocation".equals(methodCall.method)) {
                 enableMyLocation(methodCall.arguments);
+                result.success(true);
+            } else if ("viewPoi".equals(methodCall.method)) {
+                Object target = methodCall.argument("target");
+                viewPoi(target);
                 result.success(true);
             } else {
                 result.notImplemented();
@@ -103,6 +106,13 @@ public class MapViewController implements PlatformView, MethodChannel.MethodCall
         }
         if (mapView != null) {
             mapView.applyExplores(explores, options);
+        }
+    }
+
+    private void viewPoi(Object target) {
+        HashMap targetMap = (target instanceof HashMap) ? (HashMap) target : null;
+        if (mapView != null) {
+            mapView.viewPoi(targetMap);
         }
     }
 }

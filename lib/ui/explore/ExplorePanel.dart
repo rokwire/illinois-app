@@ -17,6 +17,7 @@
 import 'package:flutter/semantics.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -54,7 +55,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
-enum ExploreItem { Events, Dining }
+enum ExploreItem { Events, Dining, State_Farm }
 
 enum ExploreFilterType { categories, event_time, event_tags, payment_type, work_time }
 
@@ -271,6 +272,9 @@ class ExplorePanelState extends State<ExplorePanel>
     List<ExploreItem> exploreItems = [];
     exploreItems.add(ExploreItem.Events);
     exploreItems.add(ExploreItem.Dining);
+    if (_displayType == ListMapDisplayType.Map) {
+      exploreItems.add(ExploreItem.State_Farm);
+    }
 
     if (!ListEquality().equals(_exploreItems, exploreItems)) {
       _exploreItems = exploreItems;
@@ -425,6 +429,11 @@ class ExplorePanelState extends State<ExplorePanel>
         
         case ExploreItem.Dining:
           task = _loadDining(selectedFilterList);
+          break;
+
+        case ExploreItem.State_Farm:
+          _clearExploresFromMap();
+          _viewStateFarmPoi();
           break;
 
         default:
@@ -981,7 +990,7 @@ class ExplorePanelState extends State<ExplorePanel>
     switch (_selectedItem) {
       case ExploreItem.Events: message = Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.'); break;
       case ExploreItem.Dining: message = Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.'); break;
-      default:                message =  ''; break;
+      default:                 message =  ''; break;
     }
     return SingleChildScrollView(child:
       Center(child:
@@ -997,9 +1006,10 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget _buildOffline() {
     String message;
     switch (_selectedItem) {
-      case ExploreItem.Events: message = Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..'); break;
-      case ExploreItem.Dining: message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
-      default:                message =  ''; break;
+      case ExploreItem.Events:      message = Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..'); break;
+      case ExploreItem.Dining:      message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
+      case ExploreItem.State_Farm:  message = Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.'); break;
+      default:                      message =  ''; break;
     }
     return SingleChildScrollView(child:
       Center(child:
@@ -1222,17 +1232,19 @@ class ExplorePanelState extends State<ExplorePanel>
 
   static String? exploreItemName(ExploreItem exploreItem) {
     switch (exploreItem) {
-      case ExploreItem.Events: return Localization().getStringEx('panel.explore.button.events.title', 'Events');
-      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
-      default:                return null;
+      case ExploreItem.Events:      return Localization().getStringEx('panel.explore.button.events.title', 'Events');
+      case ExploreItem.Dining:      return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
+      case ExploreItem.State_Farm:  return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
+      default:                      return null;
     }
   }
 
   static String? exploreItemHint(ExploreItem exploreItem) {
     switch (exploreItem) {
-      case ExploreItem.Events: return Localization().getStringEx('panel.explore.button.events.hint', '');
-      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.button.dining.hint', '');
-      default:                return null;
+      case ExploreItem.Events:      return Localization().getStringEx('panel.explore.button.events.hint', '');
+      case ExploreItem.Dining:      return Localization().getStringEx('panel.explore.button.dining.hint', '');
+      case ExploreItem.State_Farm:  return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
+      default:                      return null;
     }
   }
 
@@ -1268,6 +1280,12 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
+  void _clearExploresFromMap() {
+    if (_nativeMapController != null) {
+      _nativeMapController!.placePOIs(null);
+    }
+  }
+
   void _enableMap(bool enable) {
     if (_nativeMapController != null) {
       _nativeMapController!.enable(enable);
@@ -1278,6 +1296,17 @@ class ExplorePanelState extends State<ExplorePanel>
   void _enableMyLocationOnMap() {
     if (_nativeMapController != null) {
       _nativeMapController!.enableMyLocation(_userLocationEnabled());
+    }
+  }
+
+  void _viewStateFarmPoi() {
+    Analytics().logSelect(target: "State Farm Wayfinding");
+    if (_nativeMapController != null) {
+      _nativeMapController!.viewPoi({
+        'latitude': Config().stateFarmWayfinding['latitude'],
+        'longitude': Config().stateFarmWayfinding['longitude'],
+        'zoom': Config().stateFarmWayfinding['zoom'],
+      });
     }
   }
 
