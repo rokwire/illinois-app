@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Various updates in Maps, Events and Dinings [#1699](https://github.com/rokwire/illinois-app/issues/1699).
+### Changed
+- Implemnted new Browse panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+
 
 ## [4.0.25] - 2022-06-08
 ### Changed
