@@ -356,7 +356,11 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
 
   void _onTap() {
     Analytics().logSelect(target: 'Bus Pass');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDBusPassPanel()));
+    showModalBottomSheet(context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+        builder: (context) => MTDBusPassPanel());
   }
 
   // NotificationsListener
@@ -439,7 +443,11 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
 
   void _onTap() {
     Analytics().logSelect(target: 'Illini ID');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => IDCardPanel()));
+    showModalBottomSheet(context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+        builder: (context) => IDCardPanel());
   }
 
   // NotificationsListener
