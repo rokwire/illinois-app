@@ -1228,7 +1228,7 @@ class ExplorePanelState extends State<ExplorePanel>
   static String? exploreItemName(ExploreItem exploreItem) {
     switch (exploreItem) {
       case ExploreItem.Events: return Localization().getStringEx('panel.explore.button.events.title', 'Events');
-      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.button.dining.title', 'Dining');
+      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
       default:                return null;
     }
   }
