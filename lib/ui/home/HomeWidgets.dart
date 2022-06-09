@@ -84,7 +84,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
           ),
 
                 
-          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: HomeFavoriteStyle.SlantHeader),
+          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: HomeFavoriteStyle.SlantHeader, prompt: true),
         ],),
       ),
 
@@ -213,7 +213,7 @@ class HomeSlantWidget extends StatelessWidget {
 
               
               Opacity(opacity: (favoriteId != null) ? 1 : 0, child:
-                HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: HomeFavoriteStyle.SlantHeader,),
+                HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: HomeFavoriteStyle.SlantHeader, prompt: true),
               ),
             ],),
         ),),
@@ -300,8 +300,9 @@ class HomeFavoriteButton extends StatelessWidget {
   final Favorite? favorite;
   final HomeFavoriteStyle style;
   final EdgeInsetsGeometry padding;
+  final bool prompt;
 
-  HomeFavoriteButton({this.favorite, required this.style, this.padding = const EdgeInsets.all(16)});
+  HomeFavoriteButton({this.favorite, required this.style, this.padding = const EdgeInsets.all(16), this.prompt = false});
 
   @override
   Widget build(BuildContext context) {
@@ -317,11 +318,16 @@ class HomeFavoriteButton extends StatelessWidget {
   void _onFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: $favorite");
 
-    promptFavorite(context, favorite).then((bool? result) {
-      if (result == true) {
-        Auth2().prefs?.toggleFavorite(favorite);
-      }
-    });
+    if (prompt) {
+      promptFavorite(context, favorite).then((bool? result) {
+        if (result == true) {
+          Auth2().prefs?.toggleFavorite(favorite);
+        }
+      });
+    }
+    else {
+      Auth2().prefs?.toggleFavorite(favorite);
+    }
   }
 
   static Future<bool?> promptFavorite(BuildContext context, Favorite? favorite) async {
@@ -412,7 +418,7 @@ class HomeCommandButton extends StatelessWidget {
                       CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2),
                     )
                 )
-                : HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button,)
+                : HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, prompt: true)
               )
             ],),
             StringUtils.isNotEmpty(description)

@@ -6,6 +6,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/home/HomeCampusResourcesWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -108,9 +109,15 @@ class _Browse2PanelState extends State<Browse2Panel> with AutomaticKeepAliveClie
     List<Widget> sectionsList = <Widget>[];
     if (_contentCodes != null) {
       for (String code in _contentCodes!) {
-        sectionsList.add(_BrowseSection(sectionId: code,
-          expanded: _isExpanded(code),
-          onExpand: () => _toggleExpanded(code),));
+        sectionsList.add((code == _BrowseCampusResourcesSection.contentCode) ?
+          _BrowseCampusResourcesSection(
+            expanded: _isExpanded(code),
+            onExpand: () => _toggleExpanded(code),) :
+          _BrowseSection(
+            sectionId: code,
+            expanded: _isExpanded(code),
+            onExpand: () => _toggleExpanded(code),)
+        );
       }
     }
 
@@ -275,7 +282,6 @@ class _BrowseSection extends StatelessWidget {
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), LinkedHashSet<String>.from(_entriesCodes?.reversed ?? <String>[]));
     }
   }
-
 }
 
 class _BrowseEntry extends StatelessWidget {
@@ -339,3 +345,19 @@ class _BrowseFavoriteButton extends StatelessWidget {
   }
 }
 
+class _BrowseCampusResourcesSection extends _BrowseSection {
+
+  static const String contentCode = 'campus_resources';
+
+  _BrowseCampusResourcesSection({Key? key, bool expanded = false, void Function()? onExpand}) :
+    super(key: key, sectionId: contentCode, expanded: expanded, onExpand: onExpand);
+
+  @override
+  Widget _buildEntries() {
+    return (expanded && (_entriesCodes?.isNotEmpty ?? false)) ?
+      Padding(padding: EdgeInsets.only(left: 16, bottom: 4), child:
+        HomeCampusResourcesGridWidget(favoriteCategory: contentCode, contentCodes: _entriesCodes!, promptFavorite: false,)
+      ) :
+      Container();
+  }
+}

@@ -145,7 +145,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
               Semantics(container: true,  button: true, child: buildAccountDropDown(), ) :
               Container(),
 
-            HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: HomeFavoriteStyle.SlantHeader,),
+            HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: HomeFavoriteStyle.SlantHeader, prompt: true),
             
         ],),),),);
   }
