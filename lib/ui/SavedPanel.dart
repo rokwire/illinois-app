@@ -176,29 +176,29 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   Widget _buildFavoritesContent() {
     return SingleChildScrollView(child:
       Column(children: [
-        _SavedItemsList(headingTitle: Localization().getStringEx('panel.favorites.label.events', 'Events'),
+        _SavedItemsList(headingTitle: Localization().getStringEx('panel.saved.label.events', 'My Events'),
           headingIconResource: 'images/icon-calendar.png',
           items: _favorites[Event.favoriteKeyName]),
-        _SavedItemsList(headingTitle: Localization().getStringEx('panel.favorites.label.dining', "Dining"),
+        _SavedItemsList(headingTitle: Localization().getStringEx('panel.saved.label.dining', "My Dining"),
           headingIconResource: 'images/icon-dining-orange.png',
           items: _favorites[Dining.favoriteKeyName],),
-        _SavedItemsList(headingTitle: Localization().getStringEx('panel.favorites.label.athletics', 'Athletics'),
+        _SavedItemsList(headingTitle: Localization().getStringEx('panel.saved.label.athletics', 'My Athletics'),
           headingIconResource: 'images/icon-calendar.png',
           items: _favorites[Game.favoriteKeyName]),
         _SavedItemsList(
-          headingTitle: Localization().getStringEx('panel.favorites.label.news', 'News'),
+          headingTitle: Localization().getStringEx('panel.saved.label.news', 'My News'),
           headingIconResource: 'images/icon-news.png',
           items: _favorites[News.favoriteKeyName],),
         _SavedItemsList(
-          headingTitle: Localization().getStringEx('panel.favorites.label.laundry', 'Laundry'),
+          headingTitle: Localization().getStringEx('panel.saved.label.laundry', 'My Laundry'),
           headingIconResource: 'images/icon-news.png',
           items: _favorites[LaundryRoom.favoriteKeyName],),
         _SavedItemsList(
-          headingTitle: Localization().getStringEx('panel.favorites.label.campus_guide', 'Campus Guide'),
+          headingTitle: Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide'),
           headingIconResource: 'images/icon-news.png',
           items: _favorites[GuideFavorite.favoriteKeyName],),
         _SavedItemsList(
-          headingTitle: Localization().getStringEx('panel.favorites.label.inbox', 'Inbox'),
+          headingTitle: Localization().getStringEx('panel.saved.label.inbox', 'My Notifications'),
           headingIconResource: 'images/icon-news.png',
           items: _favorites[InboxMessage.favoriteKeyName],),
       ],)
