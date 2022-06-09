@@ -150,14 +150,14 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   void _updateAvailableCodes() {
     Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home.safer']);
-    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes)) {
+    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
       setState(() {
         _availableCodes = availableCodes;
       });
     }
   }
 
-  List<String> _buildDisplayCodes() {
+  List<String>? _buildDisplayCodes() {
     LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
     if (favorites == null) {
       // Build a default set of favorites
@@ -167,12 +167,12 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
       }
     }
     
-    return (favorites != null) ? List.from(favorites) : <String>[];
+    return (favorites != null) ? List.from(favorites) : null;
   }
 
   void _updateDisplayCodes() {
-    List<String> displayCodes = _buildDisplayCodes();
-    if (displayCodes.isNotEmpty && !DeepCollectionEquality().equals(_displayCodes, displayCodes)) {
+    List<String>? displayCodes = _buildDisplayCodes();
+    if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes) && mounted) {
       setState(() {
         _displayCodes = displayCodes;
       });

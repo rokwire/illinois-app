@@ -339,14 +339,14 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   void _updateAvailableCodes() {
     Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home']);
-    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes)) {
+    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
       setState(() {
         _availableCodes = availableCodes;
       });
     }
   }
 
-  List<String> _buildDisplayCodes() {
+  List<String>? _buildDisplayCodes() {
     LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
     if (homeFavorites == null) {
       // Build a default set of favorites
@@ -355,12 +355,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), homeFavorites = LinkedHashSet<String>.from(fullContent.reversed));
       }
     }
-    return (homeFavorites != null) ? List.from(homeFavorites) : <String>[];
+    return (homeFavorites != null) ? List.from(homeFavorites) : null;
   }
 
   void _updateDisplayCodes() {
-    List<String> displayCodes = _buildDisplayCodes();
-    if (displayCodes.isNotEmpty && !DeepCollectionEquality().equals(_displayCodes, displayCodes)) {
+    List<String>? displayCodes = _buildDisplayCodes();
+    if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes) && mounted) {
       setState(() {
         _displayCodes = displayCodes;
       });
@@ -536,34 +536,25 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      if (param == AppLifecycleState.resumed) {
-        setState(() {});
-      }
-    }
-    else if (name == Localization.notifyStringsUpdated) {
-      setState(() { });
-    }
-    else if (name == FlexUI.notifyChanged) {
+    if (name == FlexUI.notifyChanged) {
       _updateAvailableCodes();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _updateDisplayCodes();
     }
-    else if(name == Storage.offsetDateKey){
-      setState(() {});
-    }
-    else if(name == Storage.useDeviceLocalTimeZoneKey){
-      setState(() {});
-    }
-    else if (name == Styles.notifyChanged){
-      setState(() {});
-    }
-    else if (name == Assets.notifyChanged) {
-      setState(() {});
-    }
     else if (name == HomeSaferWidget.notifyNeedsVisiblity) {
       _ensureSaferWidgetVisibiity();
+    }
+    else if (((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) ||
+        (name == Localization.notifyStringsUpdated) ||
+        (name == Styles.notifyChanged) ||
+        (name == Assets.notifyChanged) ||
+        (name == Storage.offsetDateKey) ||
+        (name == Storage.useDeviceLocalTimeZoneKey))
+    {
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 }

@@ -68,9 +68,6 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
-    ]);
 
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
@@ -137,14 +134,14 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
 
   void _updateAvailableCodes() {
     Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home.campus_resources']);
-    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes)) {
+    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
       setState(() {
         _availableCodes = availableCodes;
       });
     }
   }
 
-  List<String> _buildDisplayCodes() {
+  List<String>? _buildDisplayCodes() {
     LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
     if (favorites == null) {
       // Build a default set of favorites
@@ -154,12 +151,12 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
       }
     }
     
-    return (favorites != null) ? List.from(favorites) : <String>[];
+    return (favorites != null) ? List.from(favorites) : null;
   }
 
   void _updateDisplayCodes() {
-    List<String> displayCodes = _buildDisplayCodes();
-    if (displayCodes.isNotEmpty && !DeepCollectionEquality().equals(_displayCodes, displayCodes)) {
+    List<String>? displayCodes = _buildDisplayCodes();
+    if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes) && mounted) {
       setState(() {
         _displayCodes = displayCodes;
       });
