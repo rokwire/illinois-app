@@ -690,8 +690,6 @@
     "panel.explore.label.title":"Explore",
     "panel.explore.button.all.title":"All",
     "panel.explore.button.all.hint":"View all",
-    "panel.explore.button.near_me.title":"Events Near Me",
-    "panel.explore.button.near_me.hint":"",
     "panel.explore.button.events.title":"Events",
     "panel.explore.button.events.hint":"",
     "panel.explore.button.dining.title":"Dining",
@@ -729,8 +727,6 @@
 
     "panel.explore.state.online.empty.all":"No events.",
     "panel.explore.state.offline.empty.all":"No events available while offline.",
-    "panel.explore.state.online.empty.near_me":"No events near me.",
-    "panel.explore.state.offline.empty.near_me":"No events near me available while offline.",
     "panel.explore.state.online.empty.events":"No upcoming events.",
     "panel.explore.state.offline.empty.events":"No upcoming events available while offline.",
     "panel.explore.state.online.empty.dining":"No dining locations are currently open",

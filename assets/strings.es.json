@@ -691,8 +691,6 @@
     "panel.explore.label.title":"Explorar",
     "panel.explore.button.all.title":"Todos",
     "panel.explore.button.all.hint":"Ver todo",
-    "panel.explore.button.near_me.title":"Eventos cerca de mí",
-    "panel.explore.button.near_me.hint":"",
     "panel.explore.button.events.title":"Eventos",
     "panel.explore.button.events.hint":"",
     "panel.explore.button.dining.title":"Comida",
@@ -730,8 +728,6 @@
 
     "panel.explore.state.online.empty.all":"Sin entradas",
     "panel.explore.state.offline.empty.all":"No hay entradas disponibles sin conexión",
-    "panel.explore.state.online.empty.near_me":"No hay entradas cerca de mí",
-    "panel.explore.state.offline.empty.near_me":"No hay entradas cerca de mí disponibles sin conexión",
     "panel.explore.state.online.empty.events":"No hay eventos próximos",
     "panel.explore.state.offline.empty.events":"No hay próximos eventos disponibles sin conexión",
     "panel.explore.state.online.empty.dining":"Actualmente no hay restaurantes abiertos",
