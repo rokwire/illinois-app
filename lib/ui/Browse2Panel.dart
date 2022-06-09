@@ -242,8 +242,8 @@ class _BrowseSection extends StatelessWidget {
       ) : Container();
   }
 
-  String get _title => StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
-  String get _description => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.';
+  String get _title => Localization().getStringEx('panel.browse.section.$sectionId.title', StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
+  String get _description => Localization().getStringEx('panel.browse.section.$sectionId.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.');
 
   bool get _hasContent => (_entriesCodes?.isNotEmpty ?? false);
 
@@ -358,7 +358,7 @@ class _BrowseEntry extends StatelessWidget {
     );
   }
 
-  String get _title => StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
+  String get _title => Localization().getStringEx('panel.browse.entry.$sectionId.$entryId.title', StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
 
   bool get _isFavorite => Auth2().prefs?.isFavorite(HomeFavorite(entryId, category: favoriteCategory)) ?? false;
 
