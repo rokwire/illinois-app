@@ -234,6 +234,15 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         }
     }
 
+    public void viewPoi(HashMap target) {
+        if (mapLayoutPassed) {
+            double latitude = Utils.Map.getValueFromPath(target, "latitude", Constants.DEFAULT_INITIAL_CAMERA_POSITION.latitude);
+            double longitude = Utils.Map.getValueFromPath(target, "longitude", Constants.DEFAULT_INITIAL_CAMERA_POSITION.longitude);
+            double zoom = Utils.Map.getValueFromPath(target, "zoom", Constants.DEFAULT_CAMERA_ZOOM);
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(new LatLng(latitude, longitude), (float) zoom)));
+        }
+    }
+
     // This has already been checked in flutter portion of the app
     @SuppressLint("MissingPermission")
     public void enableMyLocation(boolean enable) {
