@@ -155,8 +155,11 @@ class _BrowseSection extends StatelessWidget {
   final String sectionId;
   final bool expanded;
   final void Function()? onExpand;
+  final List<String>? _entriesCodes;
 
-  _BrowseSection({required this.sectionId, this.expanded = false, this.onExpand});
+  _BrowseSection({Key? key, required this.sectionId, this.expanded = false, this.onExpand}) :
+    _entriesCodes = JsonUtils.listStringsValue(FlexUI()['browse2.$sectionId']),
+    super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +171,7 @@ class _BrowseSection extends StatelessWidget {
 
   Widget _buildHeading() {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
-      InkWell(onTap: onExpand, child:
+      InkWell(onTap: _onTapExpand, child:
         Container(
           decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),),
           padding: EdgeInsets.only(left: 16),
@@ -191,9 +194,11 @@ class _BrowseSection extends StatelessWidget {
                   Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
                     SizedBox(width: 18, height: 18, child:
                       Center(child:
-                        expanded ?
-                          Image.asset('images/arrow-up-orange.png', excludeFromSemantics: true) :
-                          Image.asset('images/arrow-down-orange.png', excludeFromSemantics: true),
+                        _canExpand ? (
+                          expanded ?
+                            Image.asset('images/arrow-up-orange.png', excludeFromSemantics: true) :
+                            Image.asset('images/arrow-down-orange.png', excludeFromSemantics: true)
+                        ) : Container()
                       ),
                     )
                   ),
@@ -207,12 +212,9 @@ class _BrowseSection extends StatelessWidget {
 
   Widget _buildEntries() {
       List<Widget> entriesList = <Widget>[];
-      if (expanded) {
-        List<String>? entriesCodes = JsonUtils.listStringsValue(FlexUI()['browse2.$sectionId']);
-        if (entriesCodes != null) {
-          for (String code in entriesCodes) {
-            entriesList.add(_BrowseEntry(sectionId: sectionId, entryId: code,));
-          }
+      if (expanded && (_entriesCodes != null)) {
+        for (String code in _entriesCodes!) {
+          entriesList.add(_BrowseEntry(sectionId: sectionId, entryId: code,));
         }
       }
       return entriesList.isNotEmpty ? Padding(padding: EdgeInsets.only(left: 24), child:
@@ -222,6 +224,14 @@ class _BrowseSection extends StatelessWidget {
 
   String get _title => StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
   String get _description => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.';
+
+  bool get _canExpand => (_entriesCodes?.isNotEmpty ?? false);
+
+  void _onTapExpand() {
+    if (_canExpand && (onExpand != null)) {
+      onExpand!();
+    }
+  }
 
 }
 
