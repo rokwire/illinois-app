@@ -29,11 +29,20 @@ class WellnessRingsHomeContentWidget extends StatefulWidget {
   State<WellnessRingsHomeContentWidget> createState() => _WellnessRingsHomeContentWidgetState();
 }
 
-class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeContentWidget> {
+class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeContentWidget> implements NotificationsListener{
 
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [
+      WellnessRingService.notifyUserRingsUpdated,
+    ]);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    NotificationService().unsubscribe(this);
   }
 
   @override
@@ -49,11 +58,48 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           Container(height: 16,),
           WellnessRing(),
           Container(height: 16,),
-          WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total", onTapWidget: (context){},),
+          _buildButtons(),
+          Container(height: 16,),
+          WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total", onTapWidget: (context){}, showLeftIcon: true,),
           Container(height: 16,),
         ],
       ),
     );
+  }
+
+  Widget _buildButtons(){
+    return _mocButtons;
+  }
+
+  Widget get _mocButtons{
+    List<Widget> content = [];
+    for(dynamic jsonData in WellnessRingService.predefinedRings){
+      WellnessRingData? data = WellnessRingData.fromJson(jsonData);
+      if(data!=null){
+        content.add(WellnessRingButton(
+            label: data.name??"",
+            color: data.color,
+            showRightIcon: true,
+            description: "${WellnessRingService().getRingDailyValue(data.id).toInt()}/${data.goal.toInt()} ${data.unit}s",
+            onTapWidget: (context){
+              WellnessRingService().addRecord(WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: data.id));
+           }));
+        content.add(Container(height: 10,));
+      }
+    }
+
+    return Container(
+      child: Column(children: content,),
+    );
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if(name == WellnessRingService.notifyUserRingsUpdated){
+      if(mounted) {
+        setState(() {});
+      }
+    }
   }
 
 }
@@ -74,7 +120,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   static const int OUTER_SIZE = 250;
   static const int STROKE_SIZE = 35;
   static const int PADDING_SIZE = 2;
-  static const int ANIMATION_DURATION_MILLISECONDS = 1300;
+  static const int ANIMATION_DURATION_MILLISECONDS = 1500;
   static const int MIN_RINGS_COUNT = 4;
 
   List<WellnessRingData>? _ringsData ;
@@ -94,6 +140,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   @override
   void dispose() {
     super.dispose();
+    NotificationService().unsubscribe(this);
     if(_animationControllers.isNotEmpty) {
       _animationControllers.values.forEach((controller) {
         controller.dispose();
@@ -173,7 +220,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     }
 
     if(controller.value!=completion) {
-      controller.animateTo(completion);
+      controller.animateTo(completion, );
     }
 
       return AnimatedBuilder(
@@ -257,9 +304,10 @@ class WellnessRingButton extends StatefulWidget{
   final bool showLeftIcon;
   final bool showRightIcon;
   final Color? color;
-  final Function(BuildContext context) onTapWidget;
+  final void Function(BuildContext context) onTapWidget;
+  final void Function(BuildContext context)? onTapRightWidget;
 
-  const WellnessRingButton({Key? key, required this.label, this.description, this.showLeftIcon = false, this.showRightIcon = false, this.color, required this.onTapWidget}) : super(key: key);
+  const WellnessRingButton({Key? key, required this.label, this.description, this.showLeftIcon = false, this.showRightIcon = false, this.color, required this.onTapWidget, this.onTapRightWidget}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _WellnessRingButtonState();
@@ -267,6 +315,7 @@ class WellnessRingButton extends StatefulWidget{
 }
 
 class _WellnessRingButtonState extends State<WellnessRingButton>{
+
   @override
   Widget build(BuildContext context) {
     return Semantics(label: widget.label, hint: widget.description, button: true, excludeSemantics: true, child:
@@ -274,14 +323,14 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Expanded(child:
       Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6), child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
       Row(children: <Widget>[
         widget.showLeftIcon ? Padding(padding: EdgeInsets.only(right: 6), child: _leftIcon) : Container(),
         Expanded(child:
-          Text(widget.label , style: TextStyle(color: widget.color!=null? Colors.white : Styles().colors!.fillColorPrimary!, fontFamily: Styles().fontFamilies!.bold, fontSize: 24), textAlign: TextAlign.start,),
+          Text(widget.label , style: TextStyle(color: widget.color!=null? Colors.white : Styles().colors!.fillColorPrimary!, fontFamily: Styles().fontFamilies!.bold, fontSize: 16), textAlign: TextAlign.start,),
         ),
         Expanded(child:
-          Text(widget.description ?? "" , style: TextStyle(color: widget.color!=null? Colors.white : Styles().colors!.textColorPrimary!, fontFamily: Styles().fontFamilies!.regular, fontSize: 16), textAlign: TextAlign.end,),
+          Text(widget.description ?? "" , style: TextStyle(color: widget.color!=null? Colors.white : Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.end,),
         ),
         widget.showRightIcon ? Padding(padding: EdgeInsets.only(left: 6), child: _rightIcon) : Container(),
       ],),
@@ -294,11 +343,19 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
   }
 
   Widget get _leftIcon{
-    return Container(); //TBD
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: Image.asset('images/icon-create-event.png', excludeFromSemantics: true, color:  Styles().colors!.fillColorPrimary!),
+    ); //TBD
   }
 
   Widget get _rightIcon{
-    return Container(); //TBD
+    return GestureDetector(
+      onTap: (){ if (widget.onTapRightWidget!=null) widget.onTapRightWidget!(context);},
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        child: Image.asset('images/icon-gear.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+    ));
   }
 }
 
@@ -459,9 +516,9 @@ class WellnessRingService with Service{
   static const String notifyUserRingsUpdated = "edu.illinois.rokwire.wellness.user.rings.updated";
   static const int MAX_RINGS = 4;
   static const List<dynamic> predefinedRings = [
-    {'name': "Hobby", 'goal': 10, 'color': 'FFF57C00' , 'id': "id_0",},
-    {'name': "Physical Activity", 'goal': 10, 'color': 'FF4CAF50', 'id': "id_1"},
-    {'name': "Mindfulness", 'goal': 10, 'color': 'FF2196F3' , 'id': "id_2"},
+    {'name': "Hobby", 'goal': 10, 'color': 'FFF57C00' , 'id': "id_0", 'unit':'session'},
+    {'name': "Physical Activity", 'goal': 10, 'color': 'FF4CAF50', 'id': "id_1", 'unit':'activity'},
+    {'name': "Mindfulness", 'goal': 10, 'color': 'FF2196F3' , 'id': "id_2", 'unit':'moment'},
   ];
 
   final List <WellnessRingRecord> _mocWellnessRecords = [
