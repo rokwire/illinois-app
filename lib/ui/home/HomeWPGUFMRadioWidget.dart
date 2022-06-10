@@ -13,7 +13,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:just_audio/just_audio.dart';
 
-class HomeWPGUFMRadioWidget extends StatefulWidget {
+class HomeWPGUFMRadioWidget extends StatelessWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
 
@@ -25,10 +25,73 @@ class HomeWPGUFMRadioWidget extends StatefulWidget {
     );
 
   @override
-  State<HomeWPGUFMRadioWidget> createState() => _HomeWPGUFMRadioWidgetState();
+  Widget build(BuildContext context) {
+    return Visibility(visible: _isEnabled, child:
+        HomeSlantWidget(favoriteId: favoriteId,
+          title: Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'),
+          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+          childPadding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 32),
+          child: _WPGUFMRadioControl(borderRadius: BorderRadius.all(Radius.circular(6)),),
+        ),
+    );
+  }
+
+  bool get _isEnabled => StringUtils.isNotEmpty(Config().wpgufmRadioUrl);
+
+  static void showPopup(BuildContext context) {
+    showDialog(context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return _buildPopup(context);
+      },
+    );
+  }
+
+  static Widget _buildPopup(BuildContext context) {
+    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+      Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
+        Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          Container(color: Styles().colors!.fillColorPrimary, child:
+            Row(children: <Widget>[
+              Expanded(child:
+                Padding(padding: EdgeInsets.all(8), child:
+                  Center(child:
+                    Text(Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'), style: TextStyle(fontSize: 20, color: Colors.white),),
+                  ),
+                ),
+              ),
+              Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), button: true, child:
+                InkWell(onTap : () => _onClosePopup(context), child:
+                  Padding(padding: EdgeInsets.all(16), child: 
+                    Image.asset('images/close-white.png', semanticLabel: '',),
+                  ),
+                ),
+              ),
+            ],),
+          ),
+          _WPGUFMRadioControl(borderRadius: BorderRadius.vertical(bottom: Radius.circular(6))),
+        ],),
+      ),
+    );
+  }
+
+  static void _onClosePopup(BuildContext context) {
+    Analytics().logSelect(target: 'Close');
+    Navigator.of(context).pop();
+  }
 }
 
-class _HomeWPGUFMRadioWidgetState extends State<HomeWPGUFMRadioWidget> implements NotificationsListener {
+class _WPGUFMRadioControl extends StatefulWidget {
+
+  final BorderRadius borderRadius;
+
+  const _WPGUFMRadioControl({Key? key, required this.borderRadius}) : super(key: key);
+
+  @override
+  State<_WPGUFMRadioControl> createState() => _WPGUFMRadioControlState();
+}
+
+class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements NotificationsListener {
   AudioPlayer? _player;
   bool _initalizingPlayer = false;
 
@@ -58,13 +121,7 @@ class _HomeWPGUFMRadioWidgetState extends State<HomeWPGUFMRadioWidget> implement
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: _isEnabled, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId,
-          title: Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'),
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-          child: _buildContentCard(),
-          childPadding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 32),
-        ),
-
+      _buildContentCard(),
     );
   }
 
@@ -84,13 +141,10 @@ class _HomeWPGUFMRadioWidgetState extends State<HomeWPGUFMRadioWidget> implement
     return GestureDetector(onTap: _onTapPlayPause, child:
       Container(
         decoration: BoxDecoration(boxShadow: [
-          BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3),
-              spreadRadius: 2.0,
-              blurRadius: 8.0,
-              offset: Offset(0, 2))
+          BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))
         ]),
         child:
-        ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
+        ClipRRect(borderRadius: widget.borderRadius, child:
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
@@ -113,10 +167,8 @@ class _HomeWPGUFMRadioWidgetState extends State<HomeWPGUFMRadioWidget> implement
                       (iconAsset != null) ? Semantics(button: true,
                           excludeSemantics: true,
                           label: buttonTitle,
-                          hint: Localization().getStringEx(
-                              'widget.home.radio.button.add_radio.hint', ''),
-                          child: 
-                          IconButton(color: Styles().colors!.fillColorPrimary,
+                          hint: Localization().getStringEx('widget.home.radio.button.add_radio.hint', ''),
+                          child:  IconButton(color: Styles().colors!.fillColorPrimary,
                             icon: Image.asset(iconAsset, excludeFromSemantics: true),
                             onPressed: _onTapPlayPause)
                       ) : Container(),
