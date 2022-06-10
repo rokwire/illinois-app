@@ -29,6 +29,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
+import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
@@ -709,7 +710,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapTwitter(BuildContext context) {
     Analytics().logSelect(target: "Twitter");
-    _notImplemented(context);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return TwitterPanel(); } ));
   }
 
   void _onTapWPGUFMRadio(BuildContext context) {
