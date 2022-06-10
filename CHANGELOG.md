@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.0.27] - 2022-06-10
 ### Added
 - Content for Academics Panel [#1701](https://github.com/rokwire/illinois-app/issues/1701).
 - Store user selection for Settings, Profile, Notifications and Wellness [#1706](https://github.com/rokwire/illinois-app/issues/1706).
@@ -18,7 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Various updates in Maps, Events and Dinings [#1699](https://github.com/rokwire/illinois-app/issues/1699).
 ### Changed
 - Implemnted new Browse panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
-
 
 ## [4.0.25] - 2022-06-08
 ### Changed
