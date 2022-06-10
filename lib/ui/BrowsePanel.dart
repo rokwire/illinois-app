@@ -823,12 +823,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapWellnessRings(BuildContext context) {
     Analytics().logSelect(target: "Wellness Rings");
-    _notImplemented(context);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.rings,)));
   }
 
   void _onTapWellnessToDo(BuildContext context) {
     Analytics().logSelect(target: "Wellness To Do");
-    _notImplemented(context);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.todo,)));
   }
 
   void _notImplemented(BuildContext context) {
