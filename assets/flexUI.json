@@ -17,6 +17,8 @@
 		"home.wallet": ["illini_cash_card", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
 		"home.twitter.account": ["gies", "", "canvas"],
 
+		"academics": ["gies_checklist", "new_student_checklist", "canvas_courses", "academics_events", "my_illini"],
+
 		"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_links", "campus_resources", "events", "feeds", "my", "polls", "recent", "state_farm_center", "wallet", "wellness"],
 		"browse.academics": ["gies_checklist", "new_student_checklist", "canvas_courses", "my_illini", "campus_reminders"],
 		"browse.app_help": ["video_tutorial", "feedback", "faqs"],
