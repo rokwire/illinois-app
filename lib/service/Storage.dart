@@ -483,21 +483,13 @@ class Storage extends rokwire.Storage {
 
   // User's Drop Down Selection - Profile, Notifications, Settings, Wellness
 
-  String get _userDropDownSelectionKey => 'user.drop.down.selection';
-
-  Map<String, dynamic>? get _userDropDownSelectionMap {
-    String? userSelectionValue = getStringWithName(_userDropDownSelectionKey);
-    return JsonUtils.decodeMap(userSelectionValue);
-  }
+  Map<String, dynamic>? _userDropDownSelectionMap; // Store it "per app run, not permanent"
 
   void _setUserDropDownSelectionMapValue(String key, String? value) {
-    Map<String, dynamic>? selectionMap = _userDropDownSelectionMap;
-    if (selectionMap == null) {
-      selectionMap = {};
+    if (_userDropDownSelectionMap == null) {
+      _userDropDownSelectionMap = {};
     }
-    selectionMap[key] = value;
-    String? selectionString = JsonUtils.encode(selectionMap);
-    setStringWithName(_userDropDownSelectionKey, selectionString);
+    _userDropDownSelectionMap![key] = value;
   }
 
   String get _profileUserDropDownSelectionKey => 'user.drop.down.selection.profile';
