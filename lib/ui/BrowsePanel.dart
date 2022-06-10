@@ -4,6 +4,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/News.dart';
+import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -41,6 +45,8 @@ import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -716,42 +722,42 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapMyGroups(BuildContext context) {
     Analytics().logSelect(target: "My Groups");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel( /* TBD: pass desired paramter */); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
   void _onTapMyEvents(BuildContext context) {
     Analytics().logSelect(target: "My Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel( /* TBD: pass desired paramter */); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Event.favoriteKeyName]); } ));
   }
 
   void _onTapMyDinings(BuildContext context) {
     Analytics().logSelect(target: "My Dinings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel( /* TBD: pass desired paramter */); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Dining.favoriteKeyName]); } ));
   }
 
   void _onTapMyAthletics(BuildContext context) {
     Analytics().logSelect(target: "My Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel( /* TBD: pass desired paramter */); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Game.favoriteKeyName]); } ));
   }
 
   void _onTapMyNews(BuildContext context) {
     Analytics().logSelect(target: "My News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel( /* TBD: pass desired paramter */); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [News.favoriteKeyName]); } ));
   }
 
   void _onTapMyLaundry(BuildContext context) {
     Analytics().logSelect(target: "My Laundry");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel( /* TBD: pass desired paramter */); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [LaundryRoom.favoriteKeyName]); } ));
   }
 
   void _onTapMyNotifications(BuildContext context) {
     Analytics().logSelect(target: "My Notifications");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel( /* TBD: pass desired paramter */); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [InboxMessage.favoriteKeyName]); } ));
   }
 
   void _onTapMyCampusGuide(BuildContext context) {
     Analytics().logSelect(target: "My Campus Guide");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel( /* TBD: pass desired paramter */); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [GuideFavorite.favoriteKeyName]); } ));
   }
 
   void _onTapCreatePoll(BuildContext context) {

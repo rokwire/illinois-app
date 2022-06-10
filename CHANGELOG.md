@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Content for Academics Panel [#1701](https://github.com/rokwire/illinois-app/issues/1701).
+### Changed
+- Handled properly different "My ___" types from Browse panel [#1705](https://github.com/rokwire/illinois-app/issues/1705).
 
 ## [4.0.26] - 2022-06-09
 ### Added
