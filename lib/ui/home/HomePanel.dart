@@ -266,6 +266,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
   }
 
+  static const String _favoritesHeaderId = 'edit.favorites';
+  static const String _unfavoritesHeaderId = 'edit.unfavorites';
+
   List<Widget> _buildEditingContentList() {
     List<Widget> widgets = [];
 
@@ -273,7 +276,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     if (homeFavorites != null) {
 
-      widgets.add(_buildEditingHeader(title: 'Favorites', favoriteId: '', dropAnchorAlignment: CrossAxisAlignment.end,
+      widgets.add(_buildEditingHeader(title: 'Favorites', favoriteId: _favoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus sapien, tempus sed bibendum et, accumsan interdum velit. Integer bibendum feugiat lectus, eget sollicitudin enim vulputate sit amet. Pellentesque at risus odio.',
       ));
        
@@ -292,7 +295,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     List<String>? fullContent = JsonUtils.listStringsValue(FlexUI()['home']);
     if (fullContent != null) {
 
-      widgets.add(_buildEditingHeader(title: 'Unused Favorites', favoriteId: null, dropAnchorAlignment: CrossAxisAlignment.end,
+      widgets.add(_buildEditingHeader(title: 'Unused Favorites', favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus sapien, tempus sed bibendum et, accumsan interdum velit. Integer bibendum feugiat lectus, eget sollicitudin enim vulputate sit amet. Pellentesque at risus odio.',
       ));
 
@@ -482,7 +485,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
         }
       }
-      else if ((0 <= dropIndex)) {
+      else if (0 <= dropIndex) {
         // Add favorite at specific position
         HomeFavoriteButton.promptFavorite(context, HomeFavorite(dragFavoriteId)).then((bool? result) {
           if (result == true) {
@@ -493,9 +496,24 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
             Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
           }
         });
-
       }
-      else if ((0 <= dragIndex) && (dropFavoriteId != '')) {
+      else if (dropFavoriteId == _favoritesHeaderId) {
+        if (0 <= dragIndex) {
+          // move drag favorite at 
+          favoritesList.removeAt(dragIndex);
+          favoritesList.insert(favoritesList.length, dragFavoriteId);
+          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
+        }
+        else {
+          // add favorite
+          HomeFavoriteButton.promptFavorite(context, HomeFavorite(dragFavoriteId)).then((bool? result) {
+            if (result == true) {
+              Auth2().prefs?.toggleFavorite(HomeFavorite(dragFavoriteId));
+            }
+          });
+        }
+      }
+      else if (dropFavoriteId == _unfavoritesHeaderId) {
         // Remove favorite
         HomeFavoriteButton.promptFavorite(context, HomeFavorite(dragFavoriteId)).then((bool? result) {
           if (result == true) {

@@ -18,7 +18,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
-import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
+import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
@@ -29,12 +29,15 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
+import 'package:illinois/ui/home/HomeTwitterWidget.dart';
+import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
@@ -381,7 +384,9 @@ class _BrowseEntry extends StatelessWidget {
                 onToggle: () => _onTapFavorite(context)
               ),
               Expanded(child:
-                Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary)),
+                Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+                  Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary)),
+                ),
               ),
               Padding(padding: EdgeInsets.only(right: 16), child:
                 Image.asset('images/chevron-right.png'),
@@ -496,7 +501,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapCanvasCourses(BuildContext context) {
     Analytics().logSelect(target: "Canvas Course");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseHomePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCoursesListPanel()));
   }
 
   void _onTapMyIllini(BuildContext context) {
@@ -589,7 +594,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapPrefSports(BuildContext context) {
     Analytics().logSelect(target: "Sport Prefs");
-    _notImplemented(context);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel(content: SettingsContent.sports)));
   }
 
   void _onTapBuildingAccess(BuildContext context) {
@@ -707,12 +712,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapTwitter(BuildContext context) {
     Analytics().logSelect(target: "Twitter");
-    _notImplemented(context);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return TwitterPanel(); } ));
   }
 
   void _onTapWPGUFMRadio(BuildContext context) {
     Analytics().logSelect(target: "WPGU FM Radio");
-    _notImplemented(context);
+    HomeWPGUFMRadioWidget.showPopup(context);
   }
 
   void _onTapIlliniNews(BuildContext context) {
@@ -819,12 +824,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapWellnessRings(BuildContext context) {
     Analytics().logSelect(target: "Wellness Rings");
-    _notImplemented(context);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.rings,)));
   }
 
   void _onTapWellnessToDo(BuildContext context) {
     Analytics().logSelect(target: "Wellness To Do");
-    _notImplemented(context);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.todo,)));
   }
 
   void _notImplemented(BuildContext context) {
