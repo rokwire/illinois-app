@@ -18,7 +18,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
-import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
+import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
@@ -496,7 +496,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapCanvasCourses(BuildContext context) {
     Analytics().logSelect(target: "Canvas Course");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseHomePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCoursesListPanel()));
   }
 
   void _onTapMyIllini(BuildContext context) {
