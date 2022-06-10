@@ -20,7 +20,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
+import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -150,9 +150,8 @@ class _AcademicsPanelState extends State<AcademicsPanel>
   }
 
   void _onTapCanvasCourses() {
-    //TBD: DD - implement Canvas Courses List Panel and push it from here
     Analytics().logSelect(target: "Canvas Courses");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseHomePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCoursesListPanel()));
   }
 
   void _onTapAcademicsEvents() {

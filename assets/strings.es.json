@@ -2173,6 +2173,9 @@
 	"panel.home.safer.test_locations.wait_time.status.label.yellow": "Medium wait time",
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
+    "panel.canvas_courses.header.title": "Cursos",
+    "panel.canvas_courses.load.failed.error.msg": "No se pudieron cargar los cursos. Por favor, inténtelo de nuevo más tarde.",
+
     "panel.home_canvas_course.header.title": "Curso",
     "panel.home_canvas_course.load.failed.error.msg": "No se ha podido cargar el curso. Vuelve a intentarlo más tarde.",
     "panel.home_canvas_course.button.assignments.title": "Tareas",
