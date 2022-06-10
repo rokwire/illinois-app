@@ -54,7 +54,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(titleWidget: _buildHeaderBarTitle()),
+        appBar: _DebugContainer(child: RootHeaderBar(title: _panelHeaderLabel)),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(

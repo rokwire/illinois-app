@@ -76,7 +76,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(key: _headerBarKey, title: _panelHeaderLabel),
+        appBar: RootHeaderBar(key: _headerBarKey, title: _panelHeaderLabel),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Store user selection for Settings, Profile, Notifications and Wellness [#1706](https://github.com/rokwire/illinois-app/issues/1706).
 ### Changed
 - Handled properly different "My ___" types from Browse panel [#1705](https://github.com/rokwire/illinois-app/issues/1705).
+- Place RootHeaderBar in Settings, Profile and Notifications content panels [#1710](https://github.com/rokwire/illinois-app/issues/1710).
 
 ## [4.0.26] - 2022-06-09
 ### Added

@@ -57,7 +57,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(title: _panelHeaderLabel),
+        appBar: RootHeaderBar(title: _panelHeaderLabel),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
