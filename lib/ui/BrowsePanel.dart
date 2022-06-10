@@ -381,7 +381,9 @@ class _BrowseEntry extends StatelessWidget {
                 onToggle: () => _onTapFavorite(context)
               ),
               Expanded(child:
-                Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary)),
+                Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+                  Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary)),
+                ),
               ),
               Padding(padding: EdgeInsets.only(right: 16), child:
                 Image.asset('images/chevron-right.png'),
