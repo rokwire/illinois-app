@@ -480,4 +480,63 @@ class Storage extends rokwire.Storage {
   String get homeToutImageTimeKey => 'edu.illinois.rokwire.home.tout.image.time';
   int? get homeToutImageTime => getIntWithName(homeToutImageTimeKey);
   set homeToutImageTime(int? value) => setIntWithName(homeToutImageTimeKey, value);
+
+  // User's Drop Down Selection - Profile, Notifications, Settings, Wellness
+
+  String get _userDropDownSelectionKey => 'user.drop.down.selection';
+
+  Map<String, dynamic>? get _userDropDownSelectionMap {
+    String? userSelectionValue = getStringWithName(_userDropDownSelectionKey);
+    return JsonUtils.decodeMap(userSelectionValue);
+  }
+
+  void _setUserDropDownSelectionMapValue(String key, String? value) {
+    Map<String, dynamic>? selectionMap = _userDropDownSelectionMap;
+    if (selectionMap == null) {
+      selectionMap = {};
+    }
+    selectionMap[key] = value;
+    String? selectionString = JsonUtils.encode(selectionMap);
+    setStringWithName(_userDropDownSelectionKey, selectionString);
+  }
+
+  String get _profileUserDropDownSelectionKey => 'user.drop.down.selection.profile';
+
+  String? get profileUserDropDownSelectionValue {
+    return _userDropDownSelectionMap?[_profileUserDropDownSelectionKey];
+  }
+
+  set profileUserDropDownSelectionValue(String? value) {
+    _setUserDropDownSelectionMapValue(_profileUserDropDownSelectionKey, value);
+  }
+
+  String get _notificationsUserDropDownSelectionKey => 'user.drop.down.selection.notifications';
+
+  String? get notificationsUserDropDownSelectionValue {
+    return _userDropDownSelectionMap?[_notificationsUserDropDownSelectionKey];
+  }
+
+  set notificationsUserDropDownSelectionValue(String? value) {
+    _setUserDropDownSelectionMapValue(_notificationsUserDropDownSelectionKey, value);
+  }
+
+  String get _settingsUserDropDownSelectionKey => 'user.drop.down.selection.settings';
+
+  String? get settingsUserDropDownSelectionValue {
+    return _userDropDownSelectionMap?[_settingsUserDropDownSelectionKey];
+  }
+
+  set settingsUserDropDownSelectionValue(String? value) {
+    _setUserDropDownSelectionMapValue(_settingsUserDropDownSelectionKey, value);
+  }
+
+  String get _wellnessUserDropDownSelectionKey => 'user.drop.down.selection.wellness';
+
+  String? get wellnessUserDropDownSelectionValue {
+    return _userDropDownSelectionMap?[_wellnessUserDropDownSelectionKey];
+  }
+
+  set wellnessUserDropDownSelectionValue(String? value) {
+    _setUserDropDownSelectionMapValue(_wellnessUserDropDownSelectionKey, value);
+  }
 }
