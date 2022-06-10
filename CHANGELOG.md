@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Content for Academics Panel [#1701](https://github.com/rokwire/illinois-app/issues/1701).
+- Store user selection for Settings, Profile, Notifications and Wellness [#1706](https://github.com/rokwire/illinois-app/issues/1706).
 ### Changed
 - Handled properly different "My ___" types from Browse panel [#1705](https://github.com/rokwire/illinois-app/issues/1705).
 
