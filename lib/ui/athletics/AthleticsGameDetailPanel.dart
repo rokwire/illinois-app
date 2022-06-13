@@ -60,7 +60,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
   @override
   void initState() {
     if (game != null)
-      RecentItems().addRecentItem(RecentItem.fromOriginalType(game));
+      RecentItems().addRecentItem(RecentItem.fromSource(game));
     else
       _loadGame();
 
@@ -74,7 +74,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
     _setLoading(true);
     Sports().loadGame(sportName, gameId).then((loadedGame) {
       game = loadedGame;
-      RecentItems().addRecentItem(RecentItem.fromOriginalType(game));
+      RecentItems().addRecentItem(RecentItem.fromSource(game));
       _setLoading(false);
     });
   }

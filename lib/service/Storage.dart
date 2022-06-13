@@ -206,7 +206,7 @@ class Storage extends rokwire.Storage {
   }
 
   //////////////
-  // Recent Items
+  // Recent Items - backward compatability
 
   static const String recentItemsKey  = '_recent_items_json_string';
   
@@ -215,9 +215,9 @@ class Storage extends rokwire.Storage {
     return JsonUtils.decode(jsonString);
   }
 
-  set recentItems(List<dynamic>? recentItems) {
+  /*set recentItems(List<dynamic>? recentItems) {
     setStringWithName(recentItemsKey, recentItems != null ? json.encode(recentItems) : null);
-  }
+  }*/
 
   //////////////
   // Local Date/Time

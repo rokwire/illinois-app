@@ -52,7 +52,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
   void initState() {
     _article = widget.article;
     if (_article != null) {
-      RecentItems().addRecentItem(RecentItem.fromOriginalType(_article));
+      RecentItems().addRecentItem(RecentItem.fromSource(_article));
     }
     else {
       _loadNewsArticle();
@@ -65,7 +65,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
     _setLoading(true);
     Sports().loadNewsArticle(widget.articleId).then((article) {
       _article = article;
-      RecentItems().addRecentItem(RecentItem.fromOriginalType(_article));
+      RecentItems().addRecentItem(RecentItem.fromSource(_article));
       _setLoading(false);
     });
   }

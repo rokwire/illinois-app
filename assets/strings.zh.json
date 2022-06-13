@@ -1026,8 +1026,8 @@
 	"panel.saved.notifications.label": "不要错过任何活动！获取即将发生的事件的提醒。",
 	"panel.saved.notifications.enable.label": " 启用通知",
 	"panel.saved.notifications.skip.label": "不是现在",
-	"panel.saved.events.button.less":"显示更少",
-	"panel.saved.events.button.all":"全部显示",
+	"panel.saved.button.less":"显示更少",
+	"panel.saved.button.all":"全部显示",
 	"panel.saved.button.event_reminders":"活动提醒",
 	"panel.saved.button.dining_specials":"特价晚餐",
 	"panel.saved.message.no_items":"哎呀！这里没什么可看的",
@@ -2310,6 +2310,10 @@
 
 	"widget.home_recent_items.button.more.title":"查看全部",
 	"widget.home_recent_items.button.more.hint":"点击查看全部",
+	"widget.home_recent_items.button.all.title":"Show All",
+	"widget.home_recent_items.button.all.hint":"Tap to show all",
+	"widget.home_recent_items.button.less.title":"Show Less",
+	"widget.home_recent_items.button.less.hint":"Tap to show less",
 
 	"widget.home.campus_resources.label.campus_tools":"校园资源",
 	"widget.home.campus_resources.button.events.title":"活动",
