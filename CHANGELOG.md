@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.0.28] - 2022-06-13
 ### Added
 - Created Recent Items panel, linked to Browse panel [#1701](https://github.com/rokwire/illinois-app/issues/1701).
 - Created HomeWelcomeWidget [#1718](https://github.com/rokwire/illinois-app/issues/1718).
