@@ -2543,6 +2543,8 @@
 	"widget.gies.button.title.review": "審查清單",
 	"widget.gies.button.title.view_notes": "查看我的筆記",
 	"widget.gies.button.title.continue": "繼續",
+    "widget.checklist.gies.title": "iDegrees 新學生清單",
+    "widget.checklist.uiuc.title": "新學生清單",
 
 	"widgets.home.app_help.header.title": "App Help",
 	"widgets.home.app_help.video_tutorial.button.title": "Video Tutorial",

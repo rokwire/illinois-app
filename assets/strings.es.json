@@ -2543,6 +2543,8 @@
     "widget.gies.button.title.review": "Revisar la lista de verificación",
     "widget.gies.button.title.view_notes": "Ver mis notas",
     "widget.gies.button.title.continue": "Continuar",
+    "widget.checklist.gies.title": "Lista de verificación para nuevos estudiantes de iDegrees",
+    "widget.checklist.uiuc.title": "Lista de verificación para nuevos estudiantes",
 
     "widgets.home.app_help.header.title": "App Help",
     "widgets.home.app_help.video_tutorial.button.title": "Video Tutorial",
