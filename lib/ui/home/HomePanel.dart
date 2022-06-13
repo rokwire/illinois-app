@@ -35,6 +35,7 @@ import 'package:illinois/ui/home/HomeTBDWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
+import 'package:illinois/ui/home/HomeWelcomeWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -170,7 +171,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       return handle ? null : HomeLoginWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'welcome') {
-      return null; //TBD
+      return handle? null : HomeWelcomeWidget(favoriteId: code, updateController: _updateController,); //TBD
     }
 
     if (code == 'game_day') {

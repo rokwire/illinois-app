@@ -471,7 +471,6 @@ class Storage extends rokwire.Storage {
   bool? get onCampusRegionManualInside => getBoolWithName(onCampusRegionManualInsideKey);
   set onCampusRegionManualInside(bool? value) => setBoolWithName(onCampusRegionManualInsideKey, value);
 
-
   // Home Tout
 
   String get homeToutImageUrlKey => 'edu.illinois.rokwire.home.tout.image.url';
@@ -481,6 +480,12 @@ class Storage extends rokwire.Storage {
   String get homeToutImageTimeKey => 'edu.illinois.rokwire.home.tout.image.time';
   int? get homeToutImageTime => getIntWithName(homeToutImageTimeKey);
   set homeToutImageTime(int? value) => setIntWithName(homeToutImageTimeKey, value);
+
+  // Home Welcome 
+
+  String get homeWelcomeVisibleKey => 'edu.illinois.rokwire.home.welcome.image.time';
+  bool? get homeWelcomeVisible => getBoolWithName(homeWelcomeVisibleKey);
+  set homeWelcomeVisible(bool? value) => setBoolWithName(homeWelcomeVisibleKey, value);
 
   // User's Drop Down Selection - Profile, Notifications, Settings, Wellness, Academics
 
