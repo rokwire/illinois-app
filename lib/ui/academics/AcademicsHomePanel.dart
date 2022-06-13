@@ -16,14 +16,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AcademicsHomePanel extends StatefulWidget {
   final AcademicsContent? content;
@@ -125,7 +129,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel> with AutomaticK
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconAsset: (contentItem == AcademicsContent.my_illini) ? 'images/external-link.png' : null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));
   }
@@ -166,9 +170,13 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel> with AutomaticK
   }
 
   void _onTapContentItem(AcademicsContent contentItem) {
-    //TBD: DD - properly implement My Illini - open in browser
-    _selectedContent = contentItem;
-    Storage().academicsUserDropDownSelectionValue = _selectedContent.toString();
+    // Open My Illini in an external browser
+    if (contentItem == AcademicsContent.my_illini) {
+      _onMyIlliniSelected();
+    } else {
+      _selectedContent = contentItem;
+      Storage().academicsUserDropDownSelectionValue = _selectedContent.toString();
+    }
     _changeSettingsContentValuesVisibility();
   }
 
@@ -176,6 +184,33 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel> with AutomaticK
     _contentValuesVisible = !_contentValuesVisible;
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  void _onMyIlliniSelected() {
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context,
+          Localization().getStringEx('widget.home.campus_resources.label.my_illini.offline', 'My Illini not available while offline.'));
+    } else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
+      // Please make this use an external browser
+      // Ref: https://github.com/rokwire/illinois-app/issues/1110
+      launch(Config().myIlliniUrl!);
+
+      //
+      // Until webview_flutter get fixed for the dropdowns we will continue using it as a webview plugin,
+      // but we will open in an external browser all problematic pages.
+      // The other plugin doesn't work with VoiceOver
+      // Ref: https://github.com/rokwire/illinois-client/issues/284
+      //      https://github.com/flutter/plugins/pull/2330
+      //
+      // if (Platform.isAndroid) {
+      //   launch(Config().myIlliniUrl);
+      // }
+      // else {
+      //   String myIlliniPanelTitle = Localization().getStringEx(
+      //       'widget.home.campus_resources.header.my_illini.title', 'My Illini');
+      //   Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: myIlliniPanelTitle,)));
+      // }
     }
   }
 
