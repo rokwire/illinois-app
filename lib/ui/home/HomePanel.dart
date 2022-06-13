@@ -35,6 +35,7 @@ import 'package:illinois/ui/home/HomeTBDWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
+import 'package:illinois/ui/home/HomeWelcomeWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -170,7 +171,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       return handle ? null : HomeLoginWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'welcome') {
-      return null; //TBD
+      return handle? null : HomeWelcomeWidget(favoriteId: code, updateController: _updateController,); //TBD
     }
 
     if (code == 'game_day') {
@@ -295,7 +296,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     List<String>? fullContent = JsonUtils.listStringsValue(FlexUI()['home']);
     if (fullContent != null) {
 
-      widgets.add(_buildEditingHeader(title: 'Unused Favorites', favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
+      widgets.add(_buildEditingHeader(title: 'Unused Favorites', favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: null,
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus sapien, tempus sed bibendum et, accumsan interdum velit. Integer bibendum feugiat lectus, eget sollicitudin enim vulputate sit amet. Pellentesque at risus odio.',
       ));
 
@@ -317,7 +318,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   Widget _buildEditingHeader({String? title, String? description, String? favoriteId, CrossAxisAlignment? dropAnchorAlignment}) {
-    return HomeDropTargetWidget(favoriteId: favoriteId, dragAndDropHost: this, childBuilder: (BuildContext context, { bool? dropTarget }) {
+    return HomeDropTargetWidget(favoriteId: favoriteId, dragAndDropHost: this, dropAnchorAlignment: dropAnchorAlignment, childBuilder: (BuildContext context, { bool? dropTarget, CrossAxisAlignment? dropAnchorAlignment }) {
       return Column(children: [
           Container(height: 2, color: ((dropTarget == true) && (dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors?.fillColorSecondary : Colors.transparent,),
           Row(children: [
@@ -514,12 +515,22 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         }
       }
       else if (dropFavoriteId == _unfavoritesHeaderId) {
-        // Remove favorite
-        HomeFavoriteButton.promptFavorite(context, HomeFavorite(dragFavoriteId)).then((bool? result) {
-          if (result == true) {
-            Auth2().prefs?.toggleFavorite(HomeFavorite(dragFavoriteId));
+        if (0 <= dragIndex) {
+          if (dropAnchor == CrossAxisAlignment.start) {
+            // move drag favorite at 
+            favoritesList.removeAt(dragIndex);
+            favoritesList.insert(0, dragFavoriteId);
+            Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
           }
-        });
+          else {
+            // remove favorite
+            HomeFavoriteButton.promptFavorite(context, HomeFavorite(dragFavoriteId)).then((bool? result) {
+              if (result == true) {
+                Auth2().prefs?.toggleFavorite(HomeFavorite(dragFavoriteId));
+              }
+            });
+          }
+        }
       }
     }
 

@@ -7,7 +7,7 @@
 			"my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide",
 			"wpgufm_radio", "illini_news", "app_help", "campus_highlights", "campus_links", "state_farm_center", "wellness_rings", "wellness_todo"
 		],
-		"home.system": ["tout", "emergency", "voter_registration", "connect", "welcome"],
+		"home.system": ["tout", "welcome", "emergency", "voter_registration", "connect"],
 		"home.connect": ["netid", "phone_or_email"],
 		"home.app_help": ["video_tutorial", "feedback", "faqs"],
 		"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],

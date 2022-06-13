@@ -66,6 +66,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     return Visibility(visible: _visible, child:
         HomeSlantWidget(favoriteId: widget.favoriteId,
           title: Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"),
+          titleIcon: Image.asset('images/icon-browse-quick-polls.png', scale: 32 / 18,),
           flatHeight: 0, slantHeight: 0,
           child: _buildContent(),
           childPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),

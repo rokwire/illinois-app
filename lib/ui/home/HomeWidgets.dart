@@ -121,9 +121,10 @@ class HomeDropTargetWidget extends StatefulWidget {
 
   final String? favoriteId;
   final HomeDragAndDropHost? dragAndDropHost;
-  final Widget Function(BuildContext context, { bool? dropTarget }) childBuilder;
+  final CrossAxisAlignment? dropAnchorAlignment;
+  final Widget Function(BuildContext context, { bool? dropTarget, CrossAxisAlignment? dropAnchorAlignment }) childBuilder;
 
-  const HomeDropTargetWidget({Key? key, required this.childBuilder, this.dragAndDropHost, this.favoriteId}): super(key: key);
+  const HomeDropTargetWidget({Key? key, required this.childBuilder, this.dragAndDropHost, this.favoriteId, this.dropAnchorAlignment }): super(key: key);
 
   @override
   _HomeDropTargetWidgetState createState() => _HomeDropTargetWidgetState();
@@ -131,9 +132,13 @@ class HomeDropTargetWidget extends StatefulWidget {
 
 class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
 
+  final GlobalKey _contentKey = GlobalKey();
+  CrossAxisAlignment? _dropAnchorAlignment;
+
   @override
   void initState() {
     super.initState();
+    _dropAnchorAlignment = widget.dropAnchorAlignment;
   }
 
   @override
@@ -141,7 +146,9 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
     return DragTarget<HomeFavorite>(
       builder: (BuildContext context, List <HomeFavorite?> candidateData, List<dynamic> rejectedData) {
         HomeFavorite? homeFavorite = candidateData.isNotEmpty ? candidateData.first : null;
-        return widget.childBuilder(context, dropTarget: homeFavorite != null,);
+        return Container(key: _contentKey, child:
+          widget.childBuilder(context, dropTarget: homeFavorite != null, dropAnchorAlignment: _dropAnchorAlignment)
+        );
       },
       onMove: (DragTargetDetails<HomeFavorite> details) {
         _onDragMove(details.offset);
@@ -150,15 +157,35 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
         _onDragLeave();
       },
       onAccept: (HomeFavorite favorite) {
-        widget.dragAndDropHost?.onDragAndDrop(dragFavoriteId: favorite.favoriteId, dropFavoriteId: widget.favoriteId, dropAnchor: null);
+        widget.dragAndDropHost?.onDragAndDrop(dragFavoriteId: favorite.favoriteId, dropFavoriteId: widget.favoriteId, dropAnchor: _dropAnchorAlignment);
       },
     );
   }
 
   void _onDragMove(Offset offset) {
+    if (widget.dropAnchorAlignment == null) {
+      RenderBox render = _contentKey.currentContext?.findRenderObject() as RenderBox;
+      Offset position = render.localToGlobal(Offset.zero);
+      double topY = position.dy;  // top position of the widget
+      double middleY = topY + render.size.height / 2;
+      double eventY = offset.dy; //TBD: handle properly the offset
+      
+      CrossAxisAlignment dropAnchorAlignment = (eventY < middleY) ? CrossAxisAlignment.start : CrossAxisAlignment.end;
+
+      if ((_dropAnchorAlignment != dropAnchorAlignment) && mounted) {
+        setState(() {
+          _dropAnchorAlignment = dropAnchorAlignment;
+        });
+      }
+    }
   }
 
   void _onDragLeave() {
+    if ((widget.dropAnchorAlignment == null) && (_dropAnchorAlignment != null) && mounted) {
+      setState(() {
+        _dropAnchorAlignment = null;
+      });
+    }
   }
 }
 
