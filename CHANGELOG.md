@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Cleaned up recent items handling [#1708](https://github.com/rokwire/illinois-app/issues/1708).
 - Updated Wellness health rings (Work in progress)  [#1692](https://github.com/rokwire/illinois-app/issues/1692).
+- Academics Panel UI [#1714](https://github.com/rokwire/illinois-app/issues/1714).
 
 ## [4.0.27] - 2022-06-10
 ### Added

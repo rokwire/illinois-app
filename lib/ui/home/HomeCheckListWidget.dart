@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/CheckList.dart';
+import 'package:illinois/ui/gies/CheckListContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -34,9 +35,9 @@ class HomeCheckListWidget extends StatefulWidget{
 
   static String titleFromKey(String contentKey) {
     if(contentKey == "gies"){
-      return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');// TBD localize
+      return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');
     } else if (contentKey == "uiuc_student"){
-      return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist'); // TBD localize
+      return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist');
     }
 
     return "";
