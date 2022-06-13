@@ -20,6 +20,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
+import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -233,8 +234,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         //TBD: DD - implement
         return Container();
       case AcademicsContent.courses:
-        //TBD: DD - implement
-        return Container();
+        return CanvasCoursesContentWidget();
       default:
         return Container();
     }
