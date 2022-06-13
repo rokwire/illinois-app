@@ -345,6 +345,8 @@
     "panel.academics.section.uiuc_checklist.label": "New Student Checklist",
     "panel.academics.section.courses.label": "Courses",
     "panel.academics.section.my_illini.label": "My Illini",
+    "panel.academics.section.events.offline.msg": "No academic events available while offline.",
+    "panel.academics.section.events.empty.msg": "No academic events.",
 
     "panel.athletics.header.title": "Athletics",
     "panel.athletics.label.upcoming_events.title": "Upcoming Events",

@@ -19,6 +19,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -38,7 +39,9 @@ class AcademicsHomePanel extends StatefulWidget {
   _AcademicsHomePanelState createState() => _AcademicsHomePanelState();
 }
 
-class _AcademicsHomePanelState extends State<AcademicsHomePanel> with AutomaticKeepAliveClientMixin<AcademicsHomePanel> implements NotificationsListener {
+class _AcademicsHomePanelState extends State<AcademicsHomePanel>
+    with AutomaticKeepAliveClientMixin<AcademicsHomePanel>
+    implements NotificationsListener {
   late AcademicsContent _selectedContent;
   List<AcademicsContent>? _contentValues;
   bool _contentValuesVisible = false;
@@ -77,15 +80,17 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel> with AutomaticK
                       color: Styles().colors!.background,
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Padding(
-                            padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-                            child: RibbonButton(
-                                textColor: Styles().colors!.fillColorSecondary,
-                                backgroundColor: Styles().colors!.white,
-                                borderRadius: BorderRadius.all(Radius.circular(5)),
-                                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                                rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                                label: _getContentLabel(_selectedContent),
-                                onTap: _changeSettingsContentValuesVisibility)),
+                            padding: EdgeInsets.only(top: 16),
+                            child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: RibbonButton(
+                                    textColor: Styles().colors!.fillColorSecondary,
+                                    backgroundColor: Styles().colors!.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                                    rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                                    label: _getContentLabel(_selectedContent),
+                                    onTap: _changeSettingsContentValuesVisibility))),
                         _buildContent()
                       ]))))
         ]),
@@ -220,8 +225,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel> with AutomaticK
     // There is no content for AcademicsContent.my_illini - it is a web url opened in an external browser
     switch (_selectedContent) {
       case AcademicsContent.events:
-        //TBD: DD - implement
-        return Container();
+        return AcademicsEventsContentWidget();
       case AcademicsContent.gies_checklist:
         //TBD: DD - implement
         return Container();
