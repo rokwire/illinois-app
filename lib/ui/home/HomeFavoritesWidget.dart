@@ -57,8 +57,8 @@ class HomeFavoritesWidget extends StatefulWidget {
       case Game.favoriteKeyName: return Localization().getStringEx('panel.saved.label.athletics', 'Athletics');
       case News.favoriteKeyName: return Localization().getStringEx('panel.saved.label.news', 'My News');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
-      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.inbox', 'My Notifications');
+      case InboxMessage.favoriteKeyName: return Localization().getStringEx('panel.saved.label.inbox', 'My Notifications');
+      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
     }
     return null;
   }

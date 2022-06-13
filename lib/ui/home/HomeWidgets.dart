@@ -335,7 +335,7 @@ class HomeFavoriteButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
       InkWell(onTap: () => _onFavorite(context), child:
-        HomeFavoriteStar(selected: _isFavorite, style: style)
+        HomeFavoriteStar(selected: _isFavorite, style: style, padding: padding,)
       ),
     );
   }
