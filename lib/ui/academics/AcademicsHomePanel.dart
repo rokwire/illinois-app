@@ -117,9 +117,11 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel> with AutomaticK
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
-    for (AcademicsContent section in AcademicsContent.values) {
-      if ((_selectedContent != section)) {
-        sectionList.add(_buildContentItem(section));
+    if (CollectionUtils.isNotEmpty(_contentValues)) {
+      for (AcademicsContent section in _contentValues!) {
+        if ((_selectedContent != section)) {
+          sectionList.add(_buildContentItem(section));
+        }
       }
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
