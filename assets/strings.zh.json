@@ -341,11 +341,13 @@
 	"panel.maps.header.title": "地圖",
 
 	"panel.academics.header.title": "學者",
-    "panel.academics.gies_checklist.button.title": "iDegrees 新學生清單",
-    "panel.academics.new_student_checklist.button.title": "新學生清單",
-    "panel.academics.courses.button.title": "培訓班",
-    "panel.academics.events.button.title": "學術活動",
-    "panel.academics.my_illini.button.title": "米利尼",
+    "panel.academics.section.events.label": "學術活動",
+    "panel.academics.section.gies_checklist.label": "iDegrees 新學生清單",
+    "panel.academics.section.uiuc_checklist.label": "新學生清單",
+    "panel.academics.section.courses.label": "培訓班",
+    "panel.academics.section.my_illini.label": "米利尼",
+    "panel.academics.section.events.offline.msg": "離線時沒有可用的學術活動.",
+    "panel.academics.section.events.empty.msg": "沒有學術活動.",
 
 	"panel.athletics.header.title":"运动",
 	"panel.athletics.label.upcoming_events.title":"近期活动",
@@ -2541,6 +2543,8 @@
 	"widget.gies.button.title.review": "審查清單",
 	"widget.gies.button.title.view_notes": "查看我的筆記",
 	"widget.gies.button.title.continue": "繼續",
+    "widget.checklist.gies.title": "iDegrees 新學生清單",
+    "widget.checklist.uiuc.title": "新學生清單",
 
 	"widgets.home.app_help.header.title": "App Help",
 	"widgets.home.app_help.video_tutorial.button.title": "Video Tutorial",
