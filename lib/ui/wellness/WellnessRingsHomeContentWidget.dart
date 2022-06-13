@@ -618,6 +618,7 @@ class WellnessRingService with Service{
     {'name': "Mindfulness", 'goal': 10, 'color': 'FF2196F3' , 'id': "id_2", 'unit':'moment'},
   ];
 
+  // ignore: unused_field
   final List <WellnessRingRecord> _mocWellnessRecords = [
     WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: "id_0",),
     WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: "id_0"),
