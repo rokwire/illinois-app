@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Better processing of Home editing headers as drop targets [#1718](https://github.com/rokwire/illinois-app/issues/1718).
 - Updated Wellness health rings (Work in progress)  [#1692](https://github.com/rokwire/illinois-app/issues/1692).
 - Academics Panel UI [#1714](https://github.com/rokwire/illinois-app/issues/1714).
+### Fixed
+- Store user's drop down selection in each panel [#1721](https://github.com/rokwire/illinois-app/issues/1721).
 
 ## [4.0.27] - 2022-06-10
 ### Added
