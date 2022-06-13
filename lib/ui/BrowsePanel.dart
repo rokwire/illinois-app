@@ -26,6 +26,7 @@ import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomeCampusResourcesWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
@@ -772,7 +773,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapRecentItems(BuildContext context) {
     Analytics().logSelect(target: "Recent Items");
-    _notImplemented(context);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
   }
 
   void _onTapParking(BuildContext context) {
