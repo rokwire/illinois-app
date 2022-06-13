@@ -2398,6 +2398,10 @@
     "widget.home.prompt.add.favorite": "Are you sure you want to ADD this favorite?",
     "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this favorite?",
 
+    "widget.home.welcome.text.title": "Welcome to Illinois 4",
+    "widget.home.welcome.text.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam finibus, neque non mattis finibus, ante mauris laoreet ante, volutpat semper turpis massa nec sapien.\n\nNullam semper dolor a turpis faucibus, id sollicitudin risus lobortis. Quisque nulla odio, vehicula ac finibus ac, consectetur vel lectus. Vestibulum viverra vestibulum eleifend.",
+    "widget.home.welcome.button.close.label": "Close",
+
     "widget.athletics_card.button.get_tickets.title":"Get Tickets",
     "widget.athletics_card.button.get_tickets.hint":"",
 

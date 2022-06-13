@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Created Recent Items panel, linked to Browse panel [#1701](https://github.com/rokwire/illinois-app/issues/1701).
+- Created HomeWelcomeWidget [#1718](https://github.com/rokwire/illinois-app/issues/1718).
 ### Changed
 - Cleaned up recent items handling [#1708](https://github.com/rokwire/illinois-app/issues/1708).
+- Better processing of Home editing headers as drop targets [#1718](https://github.com/rokwire/illinois-app/issues/1718).
 - Updated Wellness health rings (Work in progress)  [#1692](https://github.com/rokwire/illinois-app/issues/1692).
 - Academics Panel UI [#1714](https://github.com/rokwire/illinois-app/issues/1714).
 
