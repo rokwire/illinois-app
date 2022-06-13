@@ -166,19 +166,6 @@ class RecentItem {
     }
   }
 
-  String? getIconPath() {
-    switch (type) {
-      case RecentItemType.event: return 'images/icon-calendar.png';
-      case RecentItemType.dining: return 'images/icon-dining-yellow.png';
-      case RecentItemType.game: return 'images/icon-athletics-blue.png';
-      case RecentItemType.news: return 'images/icon-news.png';
-      case RecentItemType.laundry: return 'images/icon-news.png';
-      case RecentItemType.guide: return 'images/icon-news.png';
-      default:
-        return null;
-    }
-  }
-
   bool operator ==(o) =>
       o is RecentItem &&
           o.type == type &&

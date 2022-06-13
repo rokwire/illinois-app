@@ -51,6 +51,7 @@ import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
@@ -130,6 +131,7 @@ void main() async {
     Canvas(),
     Rewards(),
     OnCampus(),
+    WellnessRingService(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // Laundries(),
