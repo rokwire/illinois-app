@@ -18,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
@@ -44,6 +43,7 @@ class AcademicsHomePanel extends StatefulWidget {
 class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     with AutomaticKeepAliveClientMixin<AcademicsHomePanel>
     implements NotificationsListener {
+  static AcademicsContent? _lastSelectedContent;
   late AcademicsContent _selectedContent;
   List<AcademicsContent>? _contentValues;
   bool _contentValuesVisible = false;
@@ -52,8 +52,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   void initState() {
     NotificationService().subscribe(this, [FlexUI.notifyChanged, Auth2.notifyLoginChanged]);
     _buildContentValues();
-    AcademicsContent? lastSelectedContent = _contentFromString(Storage().academicsUserDropDownSelectionValue);
-    _selectedContent = widget.content ?? (lastSelectedContent ?? AcademicsContent.events);
+    _selectedContent = widget.content ?? (_lastSelectedContent ?? AcademicsContent.events);
     super.initState();
   }
 
@@ -183,8 +182,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     if (contentItem == AcademicsContent.my_illini) {
       _onMyIlliniSelected();
     } else {
-      _selectedContent = contentItem;
-      Storage().academicsUserDropDownSelectionValue = _selectedContent.toString();
+      _selectedContent = _lastSelectedContent = contentItem;
     }
     _changeSettingsContentValuesVisibility();
   }
@@ -240,13 +238,6 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 
   // Utilities
-
-  static AcademicsContent? _contentFromString(String? value) {
-    if (value == null) {
-      return null;
-    }
-    return AcademicsContent.values.firstWhere((element) => (element.toString() == value));
-  }
 
   String _getContentLabel(AcademicsContent section) {
     switch (section) {

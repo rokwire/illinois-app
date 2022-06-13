@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Academics Panel UI [#1714](https://github.com/rokwire/illinois-app/issues/1714).
 ### Fixed
 - Fixed HomeFavoritesWidget titles for Notifications and Guide Items [#1718](https://github.com/rokwire/illinois-app/issues/1718).
+- Store user's drop down selection in each panel [#1721](https://github.com/rokwire/illinois-app/issues/1721).
 
 ## [4.0.27] - 2022-06-10
 ### Added

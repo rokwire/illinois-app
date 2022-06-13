@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessSectionsContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessToDoHomeContentWidget.dart';
@@ -36,14 +35,14 @@ class WellnessHomePanel extends StatefulWidget {
 }
 
 class _WellnessHomePanelState extends State<WellnessHomePanel> {
+  static WellnessContent? _lastSelectedContent;
   late WellnessContent _selectedContent;
   bool _contentValuesVisible = false;
 
   @override
   void initState() {
     super.initState();
-    WellnessContent? lastSelectedContent = _contentFromString(Storage().wellnessUserDropDownSelectionValue);
-    _selectedContent = widget.content ?? (lastSelectedContent ?? WellnessContent.sections);
+    _selectedContent = widget.content ?? (_lastSelectedContent ?? WellnessContent.sections);
   }
 
   @override
@@ -117,8 +116,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   }
 
   void _onTapContentItem(WellnessContent contentItem) {
-    _selectedContent = contentItem;
-    Storage().wellnessUserDropDownSelectionValue = _selectedContent.toString();
+    _selectedContent = _lastSelectedContent = contentItem;
     _changeSettingsContentValuesVisibility();
   }
 
@@ -155,13 +153,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   }
 
   // Utilities
-
-  static WellnessContent? _contentFromString(String? value) {
-    if (value == null) {
-      return null;
-    }
-    return WellnessContent.values.firstWhere((element) => (element.toString() == value));
-  }
 
   String get _panelHeaderLabel {
     switch (_selectedContent) {
