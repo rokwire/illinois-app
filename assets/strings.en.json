@@ -340,11 +340,11 @@
     "panel.maps.header.title": "Maps",
 
     "panel.academics.header.title": "Academics",
-    "panel.academics.gies_checklist.button.title": "iDegrees New Student Checklist",
-    "panel.academics.new_student_checklist.button.title": "New Student Checklist",
-    "panel.academics.courses.button.title": "Courses",
-    "panel.academics.events.button.title": "Academics Events",
-    "panel.academics.my_illini.button.title": "My Illini",
+    "panel.academics.section.events.label": "Academic Events",
+    "panel.academics.section.gies_checklist.label": "iDegrees New Student Checklist",
+    "panel.academics.section.uiuc_checklist.label": "New Student Checklist",
+    "panel.academics.section.courses.label": "Courses",
+    "panel.academics.section.my_illini.label": "My Illini",
 
     "panel.athletics.header.title": "Athletics",
     "panel.athletics.label.upcoming_events.title": "Upcoming Events",
