@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -30,6 +32,7 @@ class WellnessRingsHomeContentWidget extends StatefulWidget {
 }
 
 class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeContentWidget> implements NotificationsListener{
+
 
   @override
   void initState() {
@@ -53,17 +56,20 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
 
   _buildTodaysRingsContent(){
     return Container(
-      child: Column(
-        children: [
-          Container(height: 16,),
-          WellnessRing(),
-          Container(height: 16,),
-          _buildButtons(),
-          Container(height: 16,),
-          WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total", onTapWidget: (context){}, showLeftIcon: true,),
-          Container(height: 16,),
+      child:
+      Stack(children:[
+        Column(
+          children: [
+            Container(height: 16,),
+            WellnessRing(),
+            Container(height: 16,),
+            _buildButtons(),
+            Container(height: 16,),
+            WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total", onTapWidget: (context){}, showLeftIcon: true,),
+            Container(height: 16,),
         ],
       ),
+      ])
     );
   }
 
@@ -83,7 +89,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
             description: "${WellnessRingService().getRingDailyValue(data.id).toInt()}/${data.goal.toInt()} ${data.unit}s",
             onTapWidget: (context){
               WellnessRingService().addRecord(WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: data.id));
-           }));
+            }));
         content.add(Container(height: 10,));
       }
     }
@@ -126,14 +132,18 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   List<WellnessRingData>? _ringsData ;
   Map<String, AnimationController> _animationControllers = {};
 
+  late ConfettiController _controllerCenter;
 
   @override
-  void initState() { //TBD add to services, for now this is not called
+  void initState() {
     super.initState();
     NotificationService().subscribe(this, [
         WellnessRingService.notifyUserRingsUpdated,
+        WellnessRingService.notifyUserRingsAccomplished,
     ]);
     _loadRingsData();
+    _controllerCenter =
+        ConfettiController(duration: const Duration(seconds: 5));
     // _animateControllers();
   }
 
@@ -146,6 +156,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
         controller.dispose();
       });
     }
+    _controllerCenter.dispose();
   }
 
   void _loadRingsData() async {
@@ -156,23 +167,12 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     });
   }
 
-  // void _animateControllers(){
-  //   for(int i = 0; i<_animationControllers.length; i++){
-  //     AnimationController controller = _animationControllers[i];
-  //     WellnessRingData? data = _ringsData?[i];
-  //     if(data!=null)
-  //       controller.animateTo(WellnessRingService().getRingDailyValue(data.id));
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10),
       child:
       Center(
-        // This Tween Animation Builder is Just For Demonstration, Do not use this AS-IS in Projects
-        // Create and Animation Controller and Control the animation that way.
         child: _buildRingsContent()
     ));
   }
@@ -281,7 +281,26 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   }
 
   Widget _buildProfilePicture() { //TBD update image resource
-    return Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true).image)));
+    return
+      Stack(
+        children: [
+          Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true).image))),
+          Center(
+              child: ConfettiWidget(
+                confettiController: _controllerCenter,
+                numberOfParticles: 110,
+                blastDirectionality: BlastDirectionality.explosive,
+                shouldLoop: false, // start again as soon as the animation is finished
+                colors: const [
+                  Colors.green,
+                  Colors.blue,
+                  Colors.orange,
+                  Colors.red,
+                ], // manually specify the colors to be used
+                // createParticlePath: drawStar, // define a custom shape/path
+              ))
+        ],
+      );
   }
 
   @override
@@ -293,7 +312,84 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
             setState(() {});
           }
         });
+      } else if( name == WellnessRingService.notifyUserRingsAccomplished){
+        if (param != null && param is String) {
+          WellnessRingData? data = WellnessRingService().wellnessRings
+              ?.firstWhere((element) => element.id == param);
+          if (data != null) {
+            AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.all(0),
+              contentWidget:
+                Container(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                      Row(
+                        children: [
+                          Expanded(child:
+                            Container(height: 3, color: data.color,)
+                          )
+                        ],
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(child: Container()),
+                                Container(
+                                  padding: EdgeInsets.only(left: 50, bottom: 10),
+                                  child: GestureDetector(
+                                  onTap: () => Navigator.of(context).pop(),
+                                  child: Text("x", style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 22),),
+                                )),
+                              ],
+                            ),
+                            Container(height: 2,),
+                            Row(
+                              children: [
+                                Expanded(child:
+                                  Text("Congratulations!", textAlign: TextAlign.center,
+                                    style :TextStyle(color: Styles().colors!.fillColorPrimary!, fontFamily: Styles().fontFamilies!.bold, fontSize: 18),
+                                  )
+                                )
+                              ],
+                            ),
+                            Container(height: 12,),
+                            Row(
+                              children: [
+                                Expanded(child:
+                                  RichText(
+                                  textAlign: TextAlign.center,
+                                    text: TextSpan(
+                                      children:[
+                                      TextSpan(text:"You've completed your ",
+                                          style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),),
+                                      TextSpan(text:"${data.name} ", //TBD
+                                          style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.bold, fontSize: 16),),
+                                      TextSpan(text:"ring for ",
+                                          style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),),
+                                      TextSpan(text:"${WellnessRingService().getTotalCompletionCountString(param)} time!",
+                                          style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.bold, fontSize: 16),),
+                                      ]
+                                  ))
+                                ),
+                              ],
+                            ),
+                            Container(height: 12,),
+                    ],)
+            )]
+            )));
+          }
+        }
+        _playConfetti();
       }
+  }
+
+  void _playConfetti(){
+    _controllerCenter.play();
+    // Future.delayed(Duration(seconds: 5), (){_controllerCenter.stop();});
   }
 }
 
@@ -513,7 +609,8 @@ class WellnessRingRecord {
 //Service //TBD move to service class
 
 class WellnessRingService with Service{
-  static const String notifyUserRingsUpdated = "edu.illinois.rokwire.wellness.user.rings.updated";
+  static const String notifyUserRingsUpdated = "edu.illinois.rokwire.wellness.user.ring.updated";
+  static const String notifyUserRingsAccomplished = "edu.illinois.rokwire.wellness.user.ring.accomplished";
   static const int MAX_RINGS = 4;
   static const List<dynamic> predefinedRings = [
     {'name': "Hobby", 'goal': 10, 'color': 'FFF57C00' , 'id': "id_0", 'unit':'session'},
@@ -599,8 +696,12 @@ class WellnessRingService with Service{
   void addRecord(WellnessRingRecord record){
     Log.d("addRecord ${record.toJson()}");
     //TBD store
+    bool alreadyAccomplished = _isAccomplished(record.wellnessRingId);
     _wellnessRecords?.add(record);
     NotificationService().notify(notifyUserRingsUpdated);
+    if(alreadyAccomplished == false) {
+      _checkForAccomplishment(record.wellnessRingId);
+    }
   }
 
   double getRingDailyValue(String wellnessRingId){
@@ -612,6 +713,16 @@ class WellnessRingService with Service{
       value += record.value;
     });
     return value; //TBD implement
+  }
+
+  void _checkForAccomplishment(String id){
+      if(_isAccomplished(id)){
+        NotificationService().notify(notifyUserRingsAccomplished, id);
+      }
+  }
+
+  bool _isAccomplished(String id){
+    return(getRingData(id)?.goal ?? 0) <= getRingDailyValue(id);
   }
 
   bool get canAddRing{
@@ -633,10 +744,28 @@ class WellnessRingService with Service{
     return _wellnessRings;
   }
 
+  int getTotalCompletionCount(String id){
+    //TODO
+    return 3;
+  }
+
+  String getTotalCompletionCountString(String id){
+    int count = getTotalCompletionCount(id);
+    switch(count){
+      case 1 : return "1st";
+      case 2 : return "2nd";
+      default :return "${count}rd";
+    }
+  }
+
   double getRingDailyCompletion(String id) {
     double value = getRingDailyValue(id);
     double goal = 1;
-    try{ goal = wellnessRings?.firstWhere((ring) => ring.id == id).goal ?? 0;} catch (e){ print(e);}
+    try{ goal = getRingData(id)?.goal ?? 0;} catch (e){ print(e);}
     return value / goal;
+  }
+
+  WellnessRingData? getRingData(String id){
+    return wellnessRings?.firstWhere((ring) => ring.id == id);
   }
 }
