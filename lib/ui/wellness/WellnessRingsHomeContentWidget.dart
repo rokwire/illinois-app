@@ -18,6 +18,7 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -465,17 +466,22 @@ class WellnessRingData {
   String? unit;
   int timestamp;
 
-  WellnessRingData({required this.id , this.name, required this.goal, this.unit = "times" , this.color = Colors.orange, required this.timestamp});
+  //helper property to avoid creating date everytime
+  DateTime? date;
+
+  WellnessRingData({required this.id , this.name, required this.goal, this.date, this.unit = "times" , this.color = Colors.orange, required this.timestamp});
 
   static WellnessRingData? fromJson(Map<String, dynamic>? json){
     if(json!=null) {
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(JsonUtils.intValue(json['timestamp'])??0);
       return WellnessRingData(
         id:     JsonUtils.stringValue(json['id']) ?? "",
         goal:   JsonUtils.doubleValue(json['goal']) ?? 1.0,
         name:   JsonUtils.stringValue(json['name']),
         unit:   JsonUtils.stringValue(json['unit']),
         timestamp:   JsonUtils.intValue(json['timestamp']) ?? DateTime.now().millisecondsSinceEpoch,
-        color:  UiColors.fromHex(JsonUtils.stringValue(json['color']))
+        color:  UiColors.fromHex(JsonUtils.stringValue(json['color'])),
+        date: date
       );
     }
     return null;
@@ -499,6 +505,7 @@ class WellnessRingData {
     this.name= other.name;
     this.unit = other.unit;
     this.timestamp = other.timestamp;
+    this.date = other.date != null ? DateTimeUtils().copyDateTime(other.date!): null;
   }
 
   @override
@@ -548,15 +555,22 @@ class WellnessRingRecord {
   final double value;
   final int timestamp;
 
+  //helper property to avoid creating date everytime
+  DateTime? date;
+
   WellnessRingRecord(
-      {required this.value, required this.timestamp, required this.wellnessRingId});
+      {required this.value, required this.timestamp, required this.wellnessRingId}){
+    if(date==null){
+      date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    }
+  }
 
   static WellnessRingRecord? fromJson(Map<String, dynamic>? json) {
     if (json != null) {
       return WellnessRingRecord(
           wellnessRingId: JsonUtils.stringValue(json['wellnessRingId']) ?? "",
           value: JsonUtils.doubleValue(json['value']) ?? 0.0,
-          timestamp: JsonUtils.intValue(json['timestamp']) ?? 0
+          timestamp: JsonUtils.intValue(json['timestamp']) ?? 0,
       );
     }
     return null;
@@ -746,9 +760,96 @@ class WellnessRingService with Service{
   }
 
   int getTotalCompletionCount(String id){
-    //TODO
-    return 3;
+
+    //Split records by date
+    Map<String, List<WellnessRingRecord>> ringDateRecords = {};
+    _wellnessRecords?.forEach((record) {
+      String? recordDayName = record.date != null? DateFormat("yyyy-MM-dd").format(DateUtils.dateOnly(record.date!)) : null;
+      if(recordDayName!=null) {
+        List<WellnessRingRecord>? recordsForDay = ringDateRecords[recordDayName];
+        if (recordsForDay == null) {
+          recordsForDay = [];
+          ringDateRecords[recordDayName] = recordsForDay;
+        }
+        recordsForDay.add(record);
+      }
+    });
+
+    //
+    int count = 0;
+    WellnessRingData? ringData = _wellnessRings?.firstWhere((element) => element.id == id);
+    if(ringData!=null){
+      double goal = ringData.goal;//TBD implement updated Rings(will be list of data with update time) get the Data matching the ime period
+      for (List<WellnessRingRecord> dayRecords in ringDateRecords.values){
+        int dayCount = 0;
+        for(WellnessRingRecord record in dayRecords){
+          dayCount += record.value.toInt();
+        }
+        if(dayCount >= goal){
+          //Match
+          count++;
+        }
+      }
+    }
+    return count;
   }
+
+  void _splitRecordsByDay(){
+
+  }
+  //Other way to split use for dayly completions
+  // int getTotalCompletionCount(String id){
+  //
+  //   //Split records by date
+  //   Map<String, Map<String, List<WellnessRingRecord>>> splitedRecords = _splitRecordsByDay();
+  //
+  //
+  //   //
+  //   int count = 0;
+  //   WellnessRingData? ringData = _wellnessRings?.firstWhere((element) => element.id == id);
+  //   if(ringData!=null){
+  //     double goal = ringData.goal;//TBD implement updated Rings(will be list of data with update time) get the Data matching the ime period
+  //     for (Map<String,List<WellnessRingRecord>> dayRecords in splitedRecords.values){
+  //
+  //       List<WellnessRingRecord>? ringRecords = dayRecords[ringData.id];
+  //       int dayCount = 0;
+  //       if(ringRecords != null) {
+  //         for (WellnessRingRecord record in ringRecords) {
+  //           dayCount += record.value.toInt();
+  //         }
+  //         if (dayCount >= goal) {
+  //           //Match
+  //           count++;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   return count;
+  // }
+  //
+  // Map<String, Map<String, List<WellnessRingRecord>>> _splitRecordsByDay(){
+  //   Map<String, Map<String, List<WellnessRingRecord>>> ringDateRecords = {};
+  //   _wellnessRecords?.forEach((record) {
+  //     String? recordDayName = record.date != null? DateFormat("yyyy-MM-dd").format(DateUtils.dateOnly(record.date!)) : null;
+  //     if(recordDayName!=null) {
+  //       Map<String, List<WellnessRingRecord>>? recordsForDay = ringDateRecords[recordDayName];
+  //       if (recordsForDay == null) {
+  //         recordsForDay = {};
+  //         ringDateRecords[recordDayName] = recordsForDay;
+  //       }
+  //
+  //       String recordId = record.wellnessRingId;
+  //       List<WellnessRingRecord>? recordsForId = recordsForDay[recordId];
+  //       if(recordsForId == null){
+  //         recordsForId = [];
+  //         recordsForDay[recordId] = recordsForId;
+  //       }
+  //       recordsForId.add(record);
+  //     }
+  //   });
+  //
+  //   return ringDateRecords;
+  // }
 
   String getTotalCompletionCountString(String id){
     int count = getTotalCompletionCount(id);
