@@ -1027,8 +1027,8 @@
     "panel.saved.notifications.label": "Don’t miss an event! Get reminders of upcoming events.",
     "panel.saved.notifications.enable.label": "Enable notifications",
     "panel.saved.notifications.skip.label": "Not right now",
-    "panel.saved.events.button.less": "Show Less",
-    "panel.saved.events.button.all":"Show All",
+    "panel.saved.button.less": "Show Less",
+    "panel.saved.button.all":"Show All",
     "panel.saved.button.event_reminders":"Event reminders",
     "panel.saved.button.dining_specials":"Dining specials",
     "panel.saved.message.no_items":"Whoops! Nothing to see here.",
@@ -2315,6 +2315,10 @@
 
     "widget.home_recent_items.button.more.title":"View All",
     "widget.home_recent_items.button.more.hint":"Tap to view all",
+    "widget.home_recent_items.button.all.title":"Show All",
+    "widget.home_recent_items.button.all.hint":"Tap to show all",
+    "widget.home_recent_items.button.less.title":"Show Less",
+    "widget.home_recent_items.button.less.hint":"Tap to show less",
 
     "widget.home.campus_resources.label.campus_tools":"Campus Resources",
     "widget.home.campus_resources.button.events.title":"Events",

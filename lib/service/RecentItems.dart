@@ -15,6 +15,10 @@
  */
 
 import 'dart:collection';
+import 'dart:io';
+import 'package:illinois/service/Config.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -27,6 +31,8 @@ class RecentItems with Service implements NotificationsListener {
   
   static const String notifyChanged  = "edu.illinois.rokwire.recentitems.changed";
 
+  static const String _cacheFileName = "recentItems.json";
+
   static final RecentItems _logic = new RecentItems._internal();
   factory RecentItems() {
     return _logic;
@@ -35,9 +41,7 @@ class RecentItems with Service implements NotificationsListener {
 
   Queue<RecentItem> _recentItems = Queue<RecentItem>();
 
-  Queue<RecentItem> get recentItems{
-    return _recentItems;
-  }
+  Queue<RecentItem> get recentItems => _recentItems;
 
   @override
   void createService() {
@@ -51,7 +55,7 @@ class RecentItems with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    _loadRecentItems();
+    _recentItems = await _loadRecentItems() ?? Queue<RecentItem>();
     await super.initService();
   }
 
@@ -62,36 +66,46 @@ class RecentItems with Service implements NotificationsListener {
 
   void addRecentItem(RecentItem? item) {
 
-    if ((item == null) || (recentItems.contains(item) == true)) {
-      return;
-    }
-    recentItems.addFirst(item);
-    if (recentItems.length > 3) {
-      recentItems.removeLast();
-    }
-    _saveRecentItems();
-    _notifyRecentItemsChanged();
-
-  }
-
-  void _loadRecentItems() {
-    List<dynamic>? jsonListData = Storage().recentItems;
-    if (jsonListData != null) {
-      List<RecentItem> recentItemsList = <RecentItem>[];
-      for (dynamic jsonData in jsonListData) {
-        ListUtils.add(recentItemsList, RecentItem.fromJson(JsonUtils.mapValue(jsonData) ));
+    if ((item != null) && !_recentItems.contains(item)) {
+      _recentItems.addFirst(item);
+      
+      while (_recentItems.length > Config().recentItemsCount) {
+        _recentItems.removeLast();
       }
-      _recentItems = Queue.from(recentItemsList);
-      _notifyRecentItemsChanged();
+      _saveRecentItems(_recentItems);
+      NotificationService().notify(notifyChanged, null);
     }
   }
 
-  void _saveRecentItems() {
-    Storage().recentItems = recentItems.toList();
+  void _clearRecentItems() {
+    if (_recentItems.isNotEmpty) {
+      _recentItems.clear();
+      _saveRecentItems(_recentItems);
+      NotificationService().notify(notifyChanged, null);
+    }
   }
 
-  void _notifyRecentItemsChanged(){
-    NotificationService().notify(notifyChanged, null);
+  static Future<File> get _recentItemsFile async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String cacheFilePath = join(appDocDir.path, _cacheFileName);
+    return File(cacheFilePath);
+  }
+
+  static Future<Queue<RecentItem>?> _loadRecentItems() async {
+    File cacheFile = await _recentItemsFile;
+    if (await cacheFile.exists()) {
+      String jsonString = await cacheFile.readAsString();
+      return RecentItem.queueFromJson(JsonUtils.decodeList(jsonString));
+    }
+    // backward compatability
+    return RecentItem.queueFromJson(Storage().recentItems);
+  }
+
+  static Future<void> _saveRecentItems(Queue<RecentItem>? recentItems) async {
+    File cacheFile = await _recentItemsFile;
+    String? jsonString = JsonUtils.encode(RecentItem.queueToJson(recentItems));
+    await cacheFile.writeAsString(jsonString ?? '', flush: true);
+
   }
 
   // NotificationsListener
@@ -99,7 +113,7 @@ class RecentItems with Service implements NotificationsListener {
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyUserDeleted) {
-      _loadRecentItems();
+      _clearRecentItems();
     }
   }
 }

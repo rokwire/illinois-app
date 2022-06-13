@@ -1028,8 +1028,8 @@
     "panel.saved.notifications.label": "¡No te pierdas un evento! Reciba recordatorios de los próximos eventos!",
     "panel.saved.notifications.enable.label": "Permitir notificaciones",
     "panel.saved.notifications.skip.label": "No en este momento",
-    "panel.saved.events.button.less": "Mostrar menos",
-    "panel.saved.events.button.all":"Mostrar todo",
+    "panel.saved.button.less": "Mostrar menos",
+    "panel.saved.button.all":"Mostrar todo",
     "panel.saved.button.event_reminders":"Recordatorios de eventos",
     "panel.saved.button.dining_specials":"Especiales de comidas",
     "panel.saved.message.no_items":"Whoops! Nada que ver aqui",
@@ -2312,6 +2312,10 @@
 
     "widget.home_recent_items.button.more.title":"Ver todo",
     "widget.home_recent_items.button.more.hint":"Toca para ver todo",
+    "widget.home_recent_items.button.all.title":"Show All",
+    "widget.home_recent_items.button.all.hint":"Tap to show all",
+    "widget.home_recent_items.button.less.title":"Show Less",
+    "widget.home_recent_items.button.less.hint":"Tap to show less",
 
     "widget.home.campus_resources.label.campus_tools":"Recursos del campus",
     "widget.home.campus_resources.button.events.title":"Eventos",

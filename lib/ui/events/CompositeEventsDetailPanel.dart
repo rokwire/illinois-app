@@ -524,7 +524,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _addRecentItem() {
-    RecentItems().addRecentItem(RecentItem.fromOriginalType(widget.parentEvent));
+    RecentItems().addRecentItem(RecentItem.fromSource(widget.parentEvent));
   }
 
   void _onTapGetTickets(String? ticketsUrl) {

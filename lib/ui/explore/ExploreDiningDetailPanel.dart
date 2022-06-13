@@ -569,7 +569,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   void _addRecentItem(){
-    RecentItems().addRecentItem(RecentItem.fromOriginalType(dining));
+    RecentItems().addRecentItem(RecentItem.fromSource(dining));
   }
 
   void _onDiningWorktimeTapped(){

@@ -157,7 +157,7 @@ class Config extends rokwire.Config {
   String? get canvasAssignmentDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['assignment_format']);
 
   // Getters: settings
-
+  int  get recentItemsCount    => JsonUtils.intValue(settings['recentItemsCount']) ?? 32;
   String get appPrivacyVersion => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
 
   @override
