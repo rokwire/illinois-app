@@ -15,6 +15,7 @@ import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -68,22 +69,22 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
     List<Widget> contentList = <Widget>[];
     List<dynamic>? contentListCodes = FlexUI()['home.wallet'];
     if (contentListCodes != null) {
-      for (dynamic contentListCode in contentListCodes) {
+      for (dynamic code in contentListCodes) {
         Widget? contentEntry;
-        if (contentListCode == 'illini_cash_card') {
-          contentEntry = HomeIlliniCashWalletWidget(updateController: widget.updateController,);
+        if (code == 'illini_cash_card') {
+          contentEntry = HomeIlliniCashWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
         }
-        else if (contentListCode == 'meal_plan_card') {
-          contentEntry = HomeMealPlanWalletWidget(updateController: widget.updateController,);
+        else if (code == 'meal_plan_card') {
+          contentEntry = HomeMealPlanWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
         }
-        else if (contentListCode == 'bus_pass_card') {
-          contentEntry = HomeBusPassWalletWidget(updateController: widget.updateController,);
+        else if (code == 'bus_pass_card') {
+          contentEntry = HomeBusPassWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
         }
-        else if (contentListCode == 'illini_id_card') {
-          contentEntry = HomeIlliniIdWalletWidget(updateController: widget.updateController,);
+        else if (code == 'illini_id_card') {
+          contentEntry = HomeIlliniIdWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
         }
-        else if (contentListCode == 'library_card') {
-          contentEntry = HomeLibraryCardWalletWidget(updateController: widget.updateController,);
+        else if (code == 'library_card') {
+          contentEntry = HomeLibraryCardWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
         }
 
         if (contentEntry != null) {
@@ -109,9 +110,10 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
 // HomeIlliniCashWalletWidget
 
 class HomeIlliniCashWalletWidget extends StatefulWidget {
+  final Favorite? favorite;
   final StreamController<String>? updateController;
 
-  HomeIlliniCashWalletWidget({Key? key, this.updateController}) : super(key: key);
+  HomeIlliniCashWalletWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
 
   @override
   State<HomeIlliniCashWalletWidget> createState() => _HomeIlliniCashWalletWidgetState();
@@ -141,13 +143,13 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
             Expanded(child:
               Column(children: <Widget>[
                 Container(color: Styles().colors!.white, child:
-                  Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Expanded(child: Text(Localization().getStringEx('widget.home.wallet.illini_cash.title', 'Illini Cash'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))),
-                      Row(children: <Widget>[
-                      ])
-                    ])
-                  ),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
+                        Text(Localization().getStringEx('widget.home.wallet.illini_cash.title', 'Illini Cash'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))),
+                      ),
+                    HomeFavoriteButton(favorite: widget.favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.all(12), prompt: true)
+                  ])
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
                 Container(color: Styles().colors!.white, child:
@@ -198,9 +200,10 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
 // HomeMealPlanWalletWidget
 
 class HomeMealPlanWalletWidget extends StatefulWidget {
+  final Favorite? favorite;
   final StreamController<String>? updateController;
 
-  HomeMealPlanWalletWidget({Key? key, this.updateController}) : super(key: key);
+  HomeMealPlanWalletWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
 
   @override
   State<HomeMealPlanWalletWidget> createState() => _HomeMealPlanWalletWidgetState();
@@ -230,16 +233,15 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
             Expanded(child:
               Column(children: <Widget>[
                 Container(color: Styles().colors!.white, child:
-                  Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Expanded(child:
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
                         Text(Localization().getStringEx('widget.home.wallet.meal_plan.title', 'Meal Plan'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
                       ),
-                      Row(children: <Widget>[
-                      ]),
-                    ]),
-                  ),
-                ),
+                    ),
+                    HomeFavoriteButton(favorite: widget.favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.all(12), prompt: true)
+                  ]),
+              ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
                 Container(color: Styles().colors!.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
@@ -288,9 +290,10 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
 // HomeBusPassWalletWidget
 
 class HomeBusPassWalletWidget extends StatefulWidget {
+  final Favorite? favorite;
   final StreamController<String>? updateController;
 
-  HomeBusPassWalletWidget({Key? key, this.updateController}) : super(key: key);
+  HomeBusPassWalletWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
 
   @override
   State<HomeBusPassWalletWidget> createState() => _HomeBusPassWalletWidgetState();
@@ -320,15 +323,14 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
             Expanded(child:
               Column(children: <Widget>[
                 Container(color: Styles().colors!.white, child:
-                  Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Expanded(child:
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
                         Text(Localization().getStringEx('widget.home.wallet.bus_pass.title', 'MTD'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
                       ),
-                      Row(children: <Widget>[
-                      ]),
-                    ]),
-                  ),
+                    ),
+                    HomeFavoriteButton(favorite: widget.favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.all(12), prompt: true)
+                  ]),
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
                 Container(color: Styles().colors!.white, child:
@@ -377,9 +379,10 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
 // HomeIlliniIdWalletWidget
 
 class HomeIlliniIdWalletWidget extends StatefulWidget {
+  final Favorite? favorite;
   final StreamController<String>? updateController;
 
-  HomeIlliniIdWalletWidget({Key? key, this.updateController}) : super(key: key);
+  HomeIlliniIdWalletWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
 
   @override
   State<HomeIlliniIdWalletWidget> createState() => _HomeIlliniIdWalletWidgetState();
@@ -409,15 +412,14 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
             Expanded(child:
               Column(children: <Widget>[
                 Container(color: Styles().colors!.white, child:
-                  Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Expanded(child:
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
                         Text(Localization().getStringEx('widget.home.wallet.illini_id.title', 'Illini ID'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
                       ),
-                      Row(children: <Widget>[
-            ]),
-                    ]),
-                  ),
+                    ),
+                    HomeFavoriteButton(favorite: widget.favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.all(12), prompt: true),
+                  ]),
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
                 Container(color: Styles().colors!.white, child:
@@ -464,9 +466,10 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
 // HomeLibraryCardWalletWidget
 
 class HomeLibraryCardWalletWidget extends StatefulWidget {
+  final Favorite? favorite;
   final StreamController<String>? updateController;
 
-  HomeLibraryCardWalletWidget({Key? key, this.updateController}) : super(key: key);
+  HomeLibraryCardWalletWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
 
   @override
   State<HomeLibraryCardWalletWidget> createState() => _HomeLibraryCardWalletWidgetState();
@@ -500,15 +503,14 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
             Expanded(child:
               Column(children: <Widget>[
                 Container(color: Styles().colors!.white, child:
-                  Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Expanded(child:
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
                         Text(Localization().getStringEx('widget.home.wallet.library_card.title', 'Library Card'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
                       ),
-                      Row(children: <Widget>[
-                      ]),
-                    ]),
-                  ),
+                    ),
+                    HomeFavoriteButton(favorite: widget.favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.all(12), prompt: true),
+                  ]),
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
                 Container(color: Styles().colors!.white, child:
